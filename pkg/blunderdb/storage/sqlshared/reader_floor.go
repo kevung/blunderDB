@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -36,11 +37,28 @@ func CheckReaderFloor(ctx context.Context, db Execer) error {
 // writing. It writes only when the value changes: an open with nothing to
 // raise leaves the database as it was.
 func RaiseReaderFloor(ctx context.Context, db Execer) error {
+	return RaiseReaderFloorTo(ctx, db, domain.MinReaderVersion)
+}
+
+// RaiseReaderFloorForAnalysis raises the floor to what the blob of a needs
+// to be read (domain.CheckerSourcesReaderVersion when it carries per-source
+// checker evaluations), in the caller's transaction; an analysis any reader
+// reads costs nothing.
+func RaiseReaderFloorForAnalysis(ctx context.Context, db Execer, a *domain.PositionAnalysis) error {
+	if a == nil || len(a.AllCheckerAnalyses) == 0 {
+		return nil
+	}
+	return RaiseReaderFloorTo(ctx, db, domain.CheckerSourcesReaderVersion)
+}
+
+// RaiseReaderFloorTo records storage.RaisedReaderFloorTo(stored, floor),
+// writing only when the value changes.
+func RaiseReaderFloorTo(ctx context.Context, db Execer, to string) error {
 	floor, err := ReaderFloor(ctx, db)
 	if err != nil {
 		return err
 	}
-	raised := storage.RaisedReaderFloor(floor)
+	raised := storage.RaisedReaderFloorTo(floor, to)
 	if raised == floor {
 		return nil
 	}

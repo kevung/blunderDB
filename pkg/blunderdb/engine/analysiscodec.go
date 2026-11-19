@@ -65,10 +65,15 @@ var analysisZstdDict []byte
 var analysisBinDict []byte
 
 // binHeaderTag opens every binary blob; the byte after it is the version.
+// Version 2 is version 1 followed by the per-source checker evaluations
+// (binFlagCheckerSources); a blob without them is still written as version
+// 1, byte for byte what it was, so only a position several sources evaluated
+// needs a reader that knows version 2.
 const (
-	binHeaderTag     = 0xBA
-	binFormatVersion = 1
-	binHeaderLen     = 2
+	binHeaderTag            = 0xBA
+	binFormatVersion        = 1
+	binFormatVersionSources = 2
+	binHeaderLen            = 2
 )
 
 // ErrUnknownAnalysisFormat reports a binary blob of a version this build
@@ -122,6 +127,9 @@ func encodeBinaryBlob(enc *zstd.Encoder, payload []byte) []byte {
 	frame := enc.EncodeAll(payload, make([]byte, 0, len(payload)/2+32))
 	frame[2] = binHeaderTag
 	frame[3] = binFormatVersion
+	if len(payload) > 0 && payload[0]&binFlagCheckerSources != 0 {
+		frame[3] = binFormatVersionSources
+	}
 	return frame[len(zstdMagic)-binHeaderLen:]
 }
 
@@ -151,8 +159,9 @@ func decodeBinaryBlobWith(dec *zstd.Decoder, data []byte) (domain.PositionAnalys
 // payload, not the frame, is what the codec fixes byte for byte — the zstd
 // encoder may frame the same payload differently from one release to the next.
 func binaryBlobPayloadWith(dec *zstd.Decoder, data []byte) ([]byte, error) {
-	if data[1] != binFormatVersion {
-		return nil, fmt.Errorf("%w: version %d", ErrUnknownAnalysisFormat, data[1])
+	version := data[1]
+	if version != binFormatVersion && version != binFormatVersionSources {
+		return nil, fmt.Errorf("%w: version %d", ErrUnknownAnalysisFormat, version)
 	}
 	frame := make([]byte, 0, len(zstdMagic)+len(data)-binHeaderLen)
 	frame = append(frame, zstdMagic...)
@@ -163,6 +172,11 @@ func binaryBlobPayloadWith(dec *zstd.Decoder, data []byte) ([]byte, error) {
 			return nil, ErrAnalysisTooLarge
 		}
 		return nil, err
+	}
+	// The flags are one byte: a version that does not match them is a blob
+	// no release wrote.
+	if hasSources := len(payload) > 0 && payload[0]&binFlagCheckerSources != 0; hasSources != (version == binFormatVersionSources) {
+		return nil, fmt.Errorf("%w: version %d", ErrCorruptAnalysis, version)
 	}
 	return payload, nil
 }
@@ -974,20 +988,28 @@ func RoundAnalysisForStorage(a *domain.PositionAnalysis) {
 		roundDCA(&a.AllCubeAnalyses[i])
 	}
 	if ca := a.CheckerAnalysis; ca != nil {
-		for i := range ca.Moves {
-			m := &ca.Moves[i]
-			m.Equity = RoundToMillipoint(m.Equity)
-			if m.EquityError != nil {
-				rounded := RoundToMillipoint(*m.EquityError)
-				m.EquityError = &rounded
-			}
-			m.PlayerWinChance = RoundToHundredthPercent(m.PlayerWinChance)
-			m.PlayerGammonChance = RoundToHundredthPercent(m.PlayerGammonChance)
-			m.PlayerBackgammonChance = RoundToHundredthPercent(m.PlayerBackgammonChance)
-			m.OpponentWinChance = RoundToHundredthPercent(m.OpponentWinChance)
-			m.OpponentGammonChance = RoundToHundredthPercent(m.OpponentGammonChance)
-			m.OpponentBackgammonChance = RoundToHundredthPercent(m.OpponentBackgammonChance)
+		roundCheckerMoves(ca.Moves)
+	}
+	for i := range a.AllCheckerAnalyses {
+		roundCheckerMoves(a.AllCheckerAnalyses[i].Moves)
+	}
+}
+
+// roundCheckerMoves rounds candidate moves as RoundAnalysisForStorage does.
+func roundCheckerMoves(moves []domain.CheckerMove) {
+	for i := range moves {
+		m := &moves[i]
+		m.Equity = RoundToMillipoint(m.Equity)
+		if m.EquityError != nil {
+			rounded := RoundToMillipoint(*m.EquityError)
+			m.EquityError = &rounded
 		}
+		m.PlayerWinChance = RoundToHundredthPercent(m.PlayerWinChance)
+		m.PlayerGammonChance = RoundToHundredthPercent(m.PlayerGammonChance)
+		m.PlayerBackgammonChance = RoundToHundredthPercent(m.PlayerBackgammonChance)
+		m.OpponentWinChance = RoundToHundredthPercent(m.OpponentWinChance)
+		m.OpponentGammonChance = RoundToHundredthPercent(m.OpponentGammonChance)
+		m.OpponentBackgammonChance = RoundToHundredthPercent(m.OpponentBackgammonChance)
 	}
 }
 

@@ -1,6 +1,6 @@
 # Le blob d'analyse est un binaire versionné qui rend chaque champ à l'identique
 
-Statut : acceptée.
+Statut : acceptée. Règles 1 et 6 amendées par l'ADR-0113 (version 2 du blob, plancher monté par l'écriture).
 Voir aussi : ADR-0030 (zstd avec dictionnaire, le blob nomme son codec).
 
 ## Contexte

@@ -36,6 +36,7 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"TranscriptionRevision", checkTranscriptionRevisionIsolation},
 	{"Duel", checkDuelIsolation},
 	{"Analysis", checkAnalysisIsolation},
+	{"CheckerSources", checkCheckerSourcesIsolation},
 	{"AnalysisGapsInMatch", checkAnalysisGapsInMatchIsolation},
 	{"Collection", checkCollectionIsolation},
 	{"LivingCollection", checkLivingCollectionIsolation},

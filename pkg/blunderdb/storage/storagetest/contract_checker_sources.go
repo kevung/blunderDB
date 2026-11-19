@@ -1,0 +1,208 @@
+// Contract cases for the per-source checker evaluations
+// (domain.PositionAnalysis.AllCheckerAnalyses). The table that runs them
+// lives in contract.go; the tenant case in tenant_isolation.go.
+package storagetest
+
+import (
+	"context"
+	"reflect"
+	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+)
+
+// sourceAnalysis is one engine's evaluation of checkerPos's candidates.
+func sourceAnalysis(eng, depth string, equities ...float64) domain.PositionAnalysis {
+	notations := []string{"13/11 24/23", "24/21", "13/10"}
+	moves := make([]domain.CheckerMove, len(equities))
+	for i, e := range equities {
+		moves[i] = domain.CheckerMove{Move: notations[i], AnalysisEngine: eng, AnalysisDepth: depth, Equity: e}
+	}
+	engine.RankCheckerMovesDepthFirst(moves)
+	return domain.PositionAnalysis{AnalysisType: "CheckerMove", CheckerAnalysis: &domain.CheckerAnalysis{Moves: moves}}
+}
+
+// mergeSaved folds incoming into what scope stores at posID, as
+// analyses.merge, the desktop and the CLI save it, and reports a write.
+func mergeSaved(t *testing.T, s storage.Storage, scope string, posID int64, incoming domain.PositionAnalysis) bool {
+	t.Helper()
+	wrote, err := s.Analyses().Merge(tenantContext(t, context.Background(), scope), scope, posID, nil, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+		m := storage.MergeSavedAnalysis(existing, incoming)
+		return &m
+	})
+	if err != nil {
+		t.Fatalf("Merge(%q): %v", scope, err)
+	}
+	return wrote
+}
+
+// testAnalysisKeepsCheckerSources: a second engine's evaluation of a position
+// joins the first as its own source, Load and LoadMany give both, the merged
+// view is the one the deepest-wins rule gives, and merging a source again
+// writes nothing.
+func testAnalysisKeepsCheckerSources(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	xg := sourceAnalysis("XG", "XG Roller++", 0.30, 0.20, 0.10)
+	gnu := sourceAnalysis("GNUbg", "2-ply", 0.25, 0.28)
+	mergeSaved(t, s, "", posID, xg)
+	mergeSaved(t, s, "", posID, gnu)
+
+	got, err := s.Analyses().Load(ctx, "", posID)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	srcs := got.AllCheckerAnalyses
+	if len(srcs) != 2 || srcs[0].AnalysisEngine != "XG" || srcs[1].AnalysisEngine != "GNUbg" ||
+		srcs[1].AnalysisDepth != "2-ply" || len(srcs[1].Moves) != 2 || srcs[1].Moves[0].Equity != 0.28 {
+		t.Fatalf("sources = %+v, want XG then GNUbg with its own moves", srcs)
+	}
+	view := engine.MergeCheckerMoves(sourceAnalysis("XG", "XG Roller++", 0.30, 0.20, 0.10).CheckerAnalysis.Moves,
+		sourceAnalysis("GNUbg", "2-ply", 0.25, 0.28).CheckerAnalysis.Moves)
+	engine.RankCheckerMoves(view)
+	want := domain.PositionAnalysis{CheckerAnalysis: &domain.CheckerAnalysis{Moves: view}}
+	engine.RoundAnalysisForStorage(&want)
+	if !reflect.DeepEqual(got.CheckerAnalysis.Moves, view) {
+		t.Errorf("merged view = %+v\nwant %+v", got.CheckerAnalysis.Moves, view)
+	}
+	many, err := s.Analyses().LoadMany(ctx, "", []int64{posID})
+	if err != nil {
+		t.Fatalf("LoadMany: %v", err)
+	}
+	if a := many[posID]; a == nil || !reflect.DeepEqual(a.AllCheckerAnalyses, srcs) {
+		t.Errorf("LoadMany sources = %+v, want Load's", a)
+	}
+
+	if mergeSaved(t, s, "", posID, sourceAnalysis("GNUbg", "2-ply", 0.25, 0.28)) {
+		t.Error("merging the same source again wrote the analysis")
+	}
+	if mergeSaved(t, s, "", posID, *got) {
+		t.Error("saving back the loaded analysis wrote it")
+	}
+}
+
+// checkCheckerSourcesIsolation: one position under two tenants keeps each
+// tenant's sources apart.
+func checkCheckerSourcesIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	ctxA, ctxB := tenantContext(t, ctx, a), tenantContext(t, ctx, b)
+	pa, pb := checkerPos(), checkerPos()
+	idA, err := s.Positions().Save(ctxA, a, &pa)
+	if err != nil {
+		t.Fatalf("Save position(%s): %v", a, err)
+	}
+	idB, err := s.Positions().Save(ctxB, b, &pb)
+	if err != nil {
+		t.Fatalf("Save position(%s): %v", b, err)
+	}
+	mergeSaved(t, s, a, idA, sourceAnalysis("XG", "XG Roller++", 0.30, 0.20))
+	mergeSaved(t, s, a, idA, sourceAnalysis("GNUbg", "2-ply", 0.25, 0.28))
+	mergeSaved(t, s, b, idB, sourceAnalysis("XG", "3-ply", 0.10, 0.05))
+
+	gotA, err := s.Analyses().Load(ctxA, a, idA)
+	if err != nil || len(gotA.AllCheckerAnalyses) != 2 {
+		t.Fatalf("Load(%s) sources = %+v, %v; want two", a, gotA, err)
+	}
+	gotB, err := s.Analyses().Load(ctxB, b, idB)
+	if err != nil {
+		t.Fatalf("Load(%s): %v", b, err)
+	}
+	if other, err := s.Analyses().Load(ctxB, b, idA); err == nil && other != nil {
+		t.Errorf("Load(%s) of %s's position = %+v, want nothing", b, a, other)
+	}
+	if gotB.AllCheckerAnalyses != nil || gotB.CheckerAnalysis.Moves[0].AnalysisDepth != "3-ply" {
+		t.Errorf("Load(%s) = %+v, want its single 3-ply source", b, gotB)
+	}
+}
+
+// readerFloor is the floor s records.
+func readerFloor(t *testing.T, s storage.Storage) string {
+	t.Helper()
+	m, err := s.Metadata().Load(context.Background(), "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return m[storage.MinReaderVersionKey]
+}
+
+// floorRaisedByWrite checks the floor before and after write, which stores
+// a second source: a single source leaves a database readable by older
+// binaries, the first blob carrying sources raises the floor (ADR-0113).
+func floorRaisedByWrite(t *testing.T, s storage.Storage, write func(posID int64, a domain.PositionAnalysis)) {
+	t.Helper()
+	ctx := context.Background()
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	mergeSaved(t, s, "", posID, sourceAnalysis("XG", "XG Roller++", 0.30, 0.20, 0.10))
+	if got := readerFloor(t, s); got != domain.MinReaderVersion {
+		t.Fatalf("floor after a single source = %q, want %q", got, domain.MinReaderVersion)
+	}
+	write(posID, sourceAnalysis("GNUbg", "2-ply", 0.25, 0.28))
+	a, err := s.Analyses().Load(ctx, "", posID)
+	if err != nil || len(a.AllCheckerAnalyses) != 2 {
+		t.Fatalf("stored sources = %+v, %v; want two", a, err)
+	}
+	if got := readerFloor(t, s); got != domain.CheckerSourcesReaderVersion {
+		t.Errorf("floor after the first blob with sources = %q, want %q", got, domain.CheckerSourcesReaderVersion)
+	}
+}
+
+// testCheckerSourcesRaiseFloorOnMerge: the floor rises on Merge's write.
+func testCheckerSourcesRaiseFloorOnMerge(t *testing.T, s storage.Storage) {
+	floorRaisedByWrite(t, s, func(posID int64, a domain.PositionAnalysis) {
+		mergeSaved(t, s, "", posID, a)
+	})
+}
+
+// testCheckerSourcesRaiseFloorOnSaveMany: the floor rises on SaveMany's
+// write, the batch path imports take.
+func testCheckerSourcesRaiseFloorOnSaveMany(t *testing.T, s storage.Storage) {
+	floorRaisedByWrite(t, s, func(posID int64, a domain.PositionAnalysis) {
+		ctx := context.Background()
+		existing, err := s.Analyses().Load(ctx, "", posID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		m := storage.MergeSavedAnalysis(existing, a)
+		if err := s.Analyses().SaveMany(ctx, "", map[int64]*domain.PositionAnalysis{posID: &m}); err != nil {
+			t.Fatalf("SaveMany: %v", err)
+		}
+	})
+}
+
+// CheckCheckerSourcesUnderRLS is checkCheckerSourcesIsolation for a store
+// that holds row-level security as a restricted role, the daemon's
+// deployment: each tenant keeps its own sources, and the role writes the
+// reader floor the first blob carrying sources raises, in the global
+// metadata table (ADR-0113).
+func CheckCheckerSourcesUnderRLS(t *testing.T, s storage.Storage, a, b string) {
+	t.Helper()
+	checkCheckerSourcesIsolation(t, context.Background(), s, a, b)
+	m, err := s.Metadata().Load(tenantContext(t, context.Background(), a), a)
+	if err != nil {
+		t.Fatalf("Metadata.Load(%s): %v", a, err)
+	}
+	if got := m[storage.MinReaderVersionKey]; got != domain.CheckerSourcesReaderVersion {
+		t.Errorf("floor = %q, want %q raised by the restricted role", got, domain.CheckerSourcesReaderVersion)
+	}
+}
+
+// tenantContext is ctx carrying scope's tenant, as the daemon's handlers
+// give it: a store under row-level security reads and writes nothing
+// without one.
+func tenantContext(t *testing.T, ctx context.Context, scope string) context.Context {
+	t.Helper()
+	n, err := storage.ParseTenant(scope)
+	if err != nil {
+		t.Fatalf("tenant %q: %v", scope, err)
+	}
+	return storage.WithTenant(ctx, n)
+}

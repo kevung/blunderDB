@@ -32,6 +32,7 @@ func SupersedeEntries(existing *domain.PositionAnalysis, verdict domain.Position
 	}
 	out.PlayedMove, out.PlayedCubeAction = "", ""
 	if existing == nil {
+		out.AllCheckerAnalyses = engine.MergeAnalysisCheckerSources(nil, &out)
 		rankCheckerMoves(out.CheckerAnalysis)
 		return out
 	}
@@ -50,6 +51,7 @@ func SupersedeEntries(existing *domain.PositionAnalysis, verdict domain.Position
 		out.Player2 = kept.Player2
 	}
 
+	out.AllCheckerAnalyses = engine.MergeAnalysisCheckerSources(&kept, &out)
 	switch {
 	case kept.CheckerAnalysis != nil && out.CheckerAnalysis != nil:
 		out.CheckerAnalysis = &domain.CheckerAnalysis{
@@ -97,6 +99,12 @@ func withoutOurEntries(a *domain.PositionAnalysis) domain.PositionAnalysis {
 		out.CheckerAnalysis = nil
 		if len(moves) > 0 {
 			out.CheckerAnalysis = &domain.CheckerAnalysis{Moves: moves}
+		}
+	}
+	out.AllCheckerAnalyses = nil
+	for _, src := range a.AllCheckerAnalyses {
+		if !isOurs(src.AnalysisEngine) {
+			out.AllCheckerAnalyses = append(out.AllCheckerAnalyses, src)
 		}
 	}
 	var others []domain.DoublingCubeAnalysis

@@ -43,6 +43,9 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 	if existing != nil {
 		a.CreationDate = existing.CreationDate
 
+		// Each source keeps its own evaluation, whichever wins the merge.
+		a.AllCheckerAnalyses = engine.MergeAnalysisCheckerSources(existing, &a)
+
 		// Merge checker analysis.
 		if existing.CheckerAnalysis != nil && a.CheckerAnalysis != nil {
 			a.CheckerAnalysis = &domain.CheckerAnalysis{
@@ -92,6 +95,7 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 	}
 
 	// Insert path: no existing analysis.
+	a.AllCheckerAnalyses = engine.MergeAnalysisCheckerSources(nil, &a)
 	if a.CreationDate.IsZero() {
 		a.CreationDate = time.Now()
 	}
@@ -208,6 +212,13 @@ func deepenAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionA
 			a.Rollouts = merged
 			changed = true
 		}
+	}
+
+	// Every source comes in beside the others, a shallower one too: what
+	// deepens the merged view is decided above, what a source is by engine.
+	if sources := engine.MergeAnalysisCheckerSources(existing, &incoming); !reflect.DeepEqual(sources, existing.AllCheckerAnalyses) {
+		a.AllCheckerAnalyses = sources
+		changed = true
 	}
 
 	if !changed {
