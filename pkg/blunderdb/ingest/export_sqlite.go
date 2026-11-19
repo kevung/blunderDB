@@ -1428,6 +1428,9 @@ func (e *exporter) writeMatches() error {
 			e.skip("inserting match", "matchID", id, "err", err)
 			continue
 		}
+		if err := sqlite.RaiseReaderFloorForMatch(e.ctx, e.tx, m); err != nil {
+			return fmt.Errorf("ingest: export match %d: %w", id, err)
+		}
 		newMatchID, err := res.LastInsertId()
 		if err != nil {
 			return fmt.Errorf("ingest: match id: %w", err)

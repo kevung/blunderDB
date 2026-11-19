@@ -5708,6 +5708,12 @@ func TestMigrate_2_58_0_to_2_59_0_MatchResult(t *testing.T) {
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM change_log WHERE family = 'match' AND op = 'update'`).Scan(&journaled); err != nil || journaled != 0 {
 		t.Errorf("computing the results journaled %d match update(s), %v; want none", journaled, err)
 	}
+	// The backfill is no write of a new result: the floor stays where the
+	// open left it, and an older binary still opens the library.
+	var floor string
+	if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'min_reader_version'`).Scan(&floor); err != nil || floor != domain.MinReaderVersion {
+		t.Errorf("floor after migration = %q, %v; want %q", floor, err, domain.MinReaderVersion)
+	}
 	if err := d.migrate_2_58_0_to_2_59_0(context.Background()); err != nil {
 		t.Errorf("second run of the step: %v", err)
 	}

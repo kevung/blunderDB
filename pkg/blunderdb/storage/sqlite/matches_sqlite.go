@@ -246,21 +246,46 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
 		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
 	args = append(args, resultArgs(m)...)
-	res, err := s.db.ExecContext(ctx, matchInsertSQL, args...)
-	if err != nil {
-		return 0, fmt.Errorf("sqlite: save match: %w", err)
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return 0, fmt.Errorf("sqlite: save match id: %w", err)
-	}
+	var id int64
 	var importDate sql.NullTime
-	if err := s.db.QueryRowContext(ctx,
-		`SELECT import_date FROM match WHERE id = ?`, id).Scan(&importDate); err == nil && importDate.Valid {
+	err := withResultFloor(ctx, s.db, m, func(db execer) error {
+		res, err := db.ExecContext(ctx, matchInsertSQL, args...)
+		if err != nil {
+			return fmt.Errorf("sqlite: save match: %w", err)
+		}
+		if id, err = res.LastInsertId(); err != nil {
+			return fmt.Errorf("sqlite: save match id: %w", err)
+		}
+		if err := db.QueryRowContext(ctx,
+			`SELECT import_date FROM match WHERE id = ?`, id).Scan(&importDate); err != nil {
+			importDate.Valid = false
+		}
+		return nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	if importDate.Valid {
 		m.ImportDate = importDate.Time
 	}
 	m.ID = id
 	return id, nil
+}
+
+// withResultFloor runs the write fn of m, raising the reader floor to
+// domain.MatchResultReaderVersion in the same transaction when m carries a
+// known result: an older binary would add matches whose result nothing
+// derives later. A match without a result writes as before.
+func withResultFloor(ctx context.Context, db execer, m *domain.Match, fn func(execer) error) error {
+	if m == nil || m.FinalScore == nil {
+		return fn(db)
+	}
+	return withTx(ctx, db, func(tx execer) error {
+		if err := sqlshared.RaiseReaderFloorForMatch(ctx, binder{db: tx}.shared(), m); err != nil {
+			return err
+		}
+		return fn(tx)
+	})
 }
 
 // matchReinstateSQL is matchInsertSQL with the id and the import date stated.
@@ -297,13 +322,15 @@ func (s *matchStore) Reinstate(ctx context.Context, scope string, m *domain.Matc
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
 		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
 	args = append(args, resultArgs(m)...)
-	if _, err := s.db.ExecContext(ctx, matchReinstateSQL, args...); err != nil {
-		if isKeyViolation(err) {
-			return fmt.Errorf("sqlite: reinstate match %d: %w", m.ID, storage.ErrConflict)
+	return withResultFloor(ctx, s.db, m, func(db execer) error {
+		if _, err := db.ExecContext(ctx, matchReinstateSQL, args...); err != nil {
+			if isKeyViolation(err) {
+				return fmt.Errorf("sqlite: reinstate match %d: %w", m.ID, storage.ErrConflict)
+			}
+			return fmt.Errorf("sqlite: reinstate match %d: %w", m.ID, referenced(err))
 		}
-		return fmt.Errorf("sqlite: reinstate match %d: %w", m.ID, referenced(err))
-	}
-	return nil
+		return nil
+	})
 }
 
 // FindByHash returns the id of a match matching hash (preferred) or
@@ -578,8 +605,9 @@ func (s *matchStore) SetVideoSource(ctx context.Context, scope string, id int64,
 // reason Save does it: their UNIQUE index counts two empty strings as a
 // duplicate, where two NULLs are two unknowns.
 func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, m *domain.Match) error {
-	res, err := s.db.ExecContext(ctx,
-		`UPDATE match SET player1_name = ?, player2_name = ?, event = ?, location = ?,
+	return withResultFloor(ctx, s.db, m, func(db execer) error {
+		res, err := db.ExecContext(ctx,
+			`UPDATE match SET player1_name = ?, player2_name = ?, event = ?, location = ?,
 		                  round = ?, match_length = ?, match_date = ?, game_count = ?,
 		                  match_hash = ?, canonical_hash = ?, dice_hash = ?,
 		                  player1_elo = ?, player2_elo = ?, player1_experience = ?, player2_experience = ?,
@@ -588,24 +616,25 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 		                  final_score_1 = COALESCE(?, final_score_1), final_score_2 = COALESCE(?, final_score_2),
 		                  winner = CASE WHEN ? IS NULL THEN winner ELSE ? END
 		 WHERE id = ?`,
-		append(append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
-			m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
-			nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash)},
-			sourceMetadataArgs(m)...), headerResultArgs(m)...), id)...)
-	if err != nil {
-		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
-	}
-	// A replacement names its match: none there means the caller holds a
-	// stale id, which must not pass for a rewrite.
-	if n, err := res.RowsAffected(); err != nil {
-		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
-	} else if n == 0 {
-		return fmt.Errorf("sqlite: replace match %d header: %w", id, storage.ErrNotFound)
-	}
-	if err := refreshMatchPositionDates(ctx, s.db, id); err != nil {
-		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
-	}
-	return nil
+			append(append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
+				m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
+				nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash)},
+				sourceMetadataArgs(m)...), headerResultArgs(m)...), id)...)
+		if err != nil {
+			return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
+		}
+		// A replacement names its match: none there means the caller holds a
+		// stale id, which must not pass for a rewrite.
+		if n, err := res.RowsAffected(); err != nil {
+			return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
+		} else if n == 0 {
+			return fmt.Errorf("sqlite: replace match %d header: %w", id, storage.ErrNotFound)
+		}
+		if err := refreshMatchPositionDates(ctx, db, id); err != nil {
+			return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
+		}
+		return nil
+	})
 }
 
 // UpdateComment sets the free-text comment on a match, signed by the

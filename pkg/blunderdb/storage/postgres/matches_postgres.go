@@ -160,13 +160,36 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
 		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
 	args = append(args, resultArgs(m)...)
-	err := s.db.QueryRow(ctx, matchInsertSQL, args...).Scan(&id, &importDate)
+	err := withResultFloor(ctx, s.db, m, func(db execer) error {
+		if err := db.QueryRow(ctx, matchInsertSQL, args...).Scan(&id, &importDate); err != nil {
+			return fmt.Errorf("postgres: save match: %w", referenced(err))
+		}
+		return nil
+	})
 	if err != nil {
-		return 0, fmt.Errorf("postgres: save match: %w", referenced(err))
+		return 0, err
 	}
 	m.ID = id
 	m.ImportDate = importDate
 	return id, nil
+}
+
+// withResultFloor runs the write fn of m, raising the reader floor to
+// domain.MatchResultReaderVersion in the same transaction when m carries a
+// known result: an older binary would add matches whose result nothing
+// derives later. The floor lives in the global metadata table, outside RLS,
+// which the daemon's role already writes for the analyses' floor. A match
+// without a result writes as before.
+func withResultFloor(ctx context.Context, db execer, m *domain.Match, fn func(execer) error) error {
+	if m == nil || m.FinalScore == nil {
+		return fn(db)
+	}
+	return withTx(ctx, db, func(tx execer) error {
+		if err := sqlshared.RaiseReaderFloorForMatch(ctx, shared{tx}, m); err != nil {
+			return err
+		}
+		return fn(tx)
+	})
 }
 
 // matchReinstateSQL is matchInsertSQL with the id and the import date stated.
@@ -210,13 +233,15 @@ func (s *matchStore) Reinstate(ctx context.Context, scope string, m *domain.Matc
 		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
 	args = append(args, resultArgs(m)...)
 	args = append(args, m.ID, nullableTime(m.ImportDate))
-	if _, err := s.db.Exec(ctx, matchReinstateSQL, args...); err != nil {
-		if isUniqueViolation(err) {
-			return fmt.Errorf("postgres: reinstate match %d: %w", m.ID, storage.ErrConflict)
+	return withResultFloor(ctx, s.db, m, func(db execer) error {
+		if _, err := db.Exec(ctx, matchReinstateSQL, args...); err != nil {
+			if isUniqueViolation(err) {
+				return fmt.Errorf("postgres: reinstate match %d: %w", m.ID, storage.ErrConflict)
+			}
+			return fmt.Errorf("postgres: reinstate match %d: %w", m.ID, referenced(err))
 		}
-		return fmt.Errorf("postgres: reinstate match %d: %w", m.ID, referenced(err))
-	}
-	return nil
+		return nil
+	})
 }
 
 // FindByHash returns the id of a match matching hash (preferred) or
@@ -473,8 +498,9 @@ func (s *matchStore) Update(ctx context.Context, scope string, id int64, player1
 // reason Save does it: their UNIQUE index counts two empty strings as a
 // duplicate, where two NULLs are two unknowns.
 func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, m *domain.Match) error {
-	tag, err := s.db.Exec(ctx,
-		`UPDATE match SET player1_name = $1, player2_name = $2, event = $3, location = $4,
+	return withResultFloor(ctx, s.db, m, func(db execer) error {
+		tag, err := db.Exec(ctx,
+			`UPDATE match SET player1_name = $1, player2_name = $2, event = $3, location = $4,
 		                  round = $5, match_length = $6, match_date = $7, game_count = $8,
 		                  match_hash = $9, canonical_hash = $10, dice_hash = $11,
 		                  player1_elo = $12, player2_elo = $13, player1_experience = $14,
@@ -484,22 +510,23 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 		                  final_score_1 = COALESCE($21, final_score_1), final_score_2 = COALESCE($22, final_score_2),
 		                  winner = CASE WHEN $21::integer IS NULL THEN winner ELSE $23 END
 		 WHERE id = $24 AND tenant_id = $25`,
-		append(append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
-			m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
-			nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash)},
-			sourceMetadataArgs(m)...), resultArgs(m)...), id, tenantID(scope))...)
-	if err != nil {
-		return fmt.Errorf("postgres: replace match %d header: %w", id, err)
-	}
-	// A replacement names its match: none there means the caller holds a
-	// stale id, which must not pass for a rewrite.
-	if tag.RowsAffected() == 0 {
-		return fmt.Errorf("postgres: replace match %d header: %w", id, storage.ErrNotFound)
-	}
-	if err := refreshMatchPositionDates(ctx, s.db, tenantID(scope), id); err != nil {
-		return fmt.Errorf("postgres: replace match %d header: %w", id, err)
-	}
-	return nil
+			append(append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
+				m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
+				nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash)},
+				sourceMetadataArgs(m)...), resultArgs(m)...), id, tenantID(scope))...)
+		if err != nil {
+			return fmt.Errorf("postgres: replace match %d header: %w", id, err)
+		}
+		// A replacement names its match: none there means the caller holds a
+		// stale id, which must not pass for a rewrite.
+		if tag.RowsAffected() == 0 {
+			return fmt.Errorf("postgres: replace match %d header: %w", id, storage.ErrNotFound)
+		}
+		if err := refreshMatchPositionDates(ctx, db, tenantID(scope), id); err != nil {
+			return fmt.Errorf("postgres: replace match %d header: %w", id, err)
+		}
+		return nil
+	})
 }
 
 // SetVideoSource attaches or detaches (empty) a match's video source.
