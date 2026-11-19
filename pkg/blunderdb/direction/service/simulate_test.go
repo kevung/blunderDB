@@ -376,6 +376,10 @@ func TestSimulate_UsefulOrTooHeavy(t *testing.T) {
 	if testing.Short() {
 		t.Skip("plays some three hundred runs")
 	}
+	if raceEnabled {
+		// Slowed tenfold, the runs outlast the minute unhurried gives them; the nightly plays it.
+		t.Skip("plays some three hundred runs, past its minute under the race detector")
+	}
 	unhurried(t)
 	for name, tc := range map[string]struct {
 		config, players string
