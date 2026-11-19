@@ -282,7 +282,7 @@ Affiche le contenu de la base de données.
 * ``matches`` — Liste des matchs importés, avec leur résultat : score final
   et vainqueur, ou ``unfinished`` quand aucun joueur n'a atteint la longueur
   du match.
-* ``tournaments`` — Liste des tournois.
+* ``tournaments`` — Liste des tournois : nom, date, lieu, origine quand elle est connue et nombre de matchs.
 * ``positions`` — Liste des positions (limité à 10 par défaut ;
   ``--offset <n>`` saute les *n* premières). Chaque position porte l'erreur
   de la décision jouée (ou ``no analysis``), sa date et ses collections, comme

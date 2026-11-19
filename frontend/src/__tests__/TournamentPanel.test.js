@@ -47,6 +47,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveLastVisitedPosition: vi.fn().mockResolvedValue(undefined),
     UpdateMatchComment: vi.fn().mockResolvedValue(undefined),
     UpdateTournamentComment: vi.fn().mockResolvedValue(undefined),
+    UpdateTournamentOrigin: vi.fn().mockResolvedValue(undefined),
     ReorderTournamentMatches: vi.fn().mockResolvedValue(undefined),
     GetTournamentReview: vi.fn().mockResolvedValue(null),
     GetPositionIDsByTournament: vi.fn().mockResolvedValue([])
@@ -57,6 +58,7 @@ import {
     CreateTournament,
     DeleteTournament,
     UpdateTournament,
+    UpdateTournamentOrigin,
     GetTournamentMatches,
     ListMatches,
     GetTournamentReview,
@@ -335,6 +337,22 @@ describe('TournamentPanel — list view', () => {
 
         await vi.waitFor(() => expect(UpdateTournament).toHaveBeenCalled());
         expect(UpdateTournament).toHaveBeenCalledWith(1, 'Blunder Cup (2026)', '2026-01-01', 'Paris');
+        expect(UpdateTournamentOrigin).not.toHaveBeenCalled();
+    });
+
+    test('the origin shows in its column and is written only when the editor changes it', async () => {
+        vi.mocked(GetAllTournaments).mockResolvedValue([/** @type {any} */ ({ id: 7, name: 'Online Cup', date: '', location: '', origin: 'platform', matchCount: 0 })]);
+        renderOpen();
+        const row = (await screen.findByText('Online Cup')).closest('tr');
+        expect(within(must(row)).getByTestId('tournament-origin').textContent).toBe('platform');
+
+        await fireEvent.click(within(must(row)).getByTitle(/^edit$/i));
+        const originInput = within(must(row)).getByDisplayValue('platform');
+        await fireEvent.input(originInput, { target: { value: '  club ' } });
+        await fireEvent.keyDown(originInput, { key: 'Enter' });
+
+        await vi.waitFor(() => expect(UpdateTournamentOrigin).toHaveBeenCalledWith(7, 'club'));
+        expect(UpdateTournament).toHaveBeenCalledWith(7, 'Online Cup', '', '');
     });
 
     test('# and Date lead the row; a date read from the matches is greyed, shown beside the empty form field, never written unless typed', async () => {

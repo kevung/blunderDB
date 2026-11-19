@@ -641,6 +641,8 @@
         "noTournaments": "Aucun tournoi",
         "openHint": "Double-clic ou Entrée pour ouvrir",
         "notesPlaceholder": "Notes…",
+        "origin": "Origine",
+        "originHint": "Où le tournoi a été joué, en texte libre : importé, plateforme, club…",
         "player1": "Joueur 1",
         "player2": "Joueur 2",
         "prReferencePlayer": "PR de {player}",

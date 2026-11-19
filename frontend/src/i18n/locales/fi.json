@@ -641,6 +641,8 @@
         "noTournaments": "Ei turnauksia",
         "openHint": "Avaa kaksoisnapsautuksella tai Enterillä",
         "notesPlaceholder": "Muistiinpanot…",
+        "origin": "Alkuperä",
+        "originHint": "Missä turnaus pelattiin, vapaa teksti: tuotu, alusta, kerho…",
         "player1": "Pelaaja 1",
         "player2": "Pelaaja 2",
         "prReferencePlayer": "Pelaajan {player} PR",

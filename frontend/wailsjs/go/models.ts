@@ -3527,6 +3527,7 @@ export namespace domain {
 	    date: string;
 	    effectiveDate: string;
 	    location: string;
+	    origin: string;
 	    sortOrder: number;
 	    createdAt: string;
 	    updatedAt: string;
@@ -3548,6 +3549,7 @@ export namespace domain {
 	        this.date = source["date"];
 	        this.effectiveDate = source["effectiveDate"];
 	        this.location = source["location"];
+	        this.origin = source["origin"];
 	        this.sortOrder = source["sortOrder"];
 	        this.createdAt = source["createdAt"];
 	        this.updatedAt = source["updatedAt"];

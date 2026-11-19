@@ -641,6 +641,8 @@
         "noTournaments": "Keine Turniere",
         "openHint": "Doppelklick oder Eingabetaste zum Öffnen",
         "notesPlaceholder": "Notizen…",
+        "origin": "Herkunft",
+        "originHint": "Wo das Turnier gespielt wurde, freier Text: importiert, Plattform, Klub…",
         "player1": "Spieler 1",
         "player2": "Spieler 2",
         "prReferencePlayer": "PR von {player}",

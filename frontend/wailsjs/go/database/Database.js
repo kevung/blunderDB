@@ -1882,6 +1882,10 @@ export function UpdateTournamentComment(arg1, arg2) {
   return window['go']['database']['Database']['UpdateTournamentComment'](arg1, arg2);
 }
 
+export function UpdateTournamentOrigin(arg1, arg2) {
+  return window['go']['database']['Database']['UpdateTournamentOrigin'](arg1, arg2);
+}
+
 export function Vacuum() {
   return window['go']['database']['Database']['Vacuum']();
 }
