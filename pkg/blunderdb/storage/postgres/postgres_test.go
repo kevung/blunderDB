@@ -93,7 +93,7 @@ var wantIndexes = []string{
 	"idx_position_game_type", "idx_position_individual", "idx_position_match_date",
 	"idx_position_multi_played", "idx_position_no_contact", "idx_position_occupancy1",
 	"idx_position_occupancy2", "idx_position_off", "idx_position_part_fact_pending",
-	"idx_position_phase_off", "idx_position_pip_diff", "idx_position_pip_order", "idx_position_pip_order_desc",
+	"idx_position_phase_off", "idx_position_pip_band", "idx_position_pip_diff", "idx_position_pip_order", "idx_position_pip_order_desc",
 	"idx_position_score_cube", "idx_position_structure", "idx_position_uuid", "idx_position_zobrist",
 	"idx_table_setting_rencontre", "idx_table_setting_tournament", "idx_tournament_rencontre",
 	"idx_tournament_uuid", "idx_training_item_position", "idx_training_item_session",
