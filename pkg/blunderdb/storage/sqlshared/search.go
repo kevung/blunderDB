@@ -72,6 +72,9 @@ type searchWhereClause struct {
 	likeTarget *domain.Position
 	// structure is set by masks on the checkers: predicates no statistics describe.
 	structure bool
+	// blackFloor is what a structure asks of black's checkers, for a read in pip order
+	// (pipBandWindow); nil without one.
+	blackFloor *blackFloor
 	// blunder is the threshold of a move-error search read by blunderWindow, "" otherwise.
 	blunder string
 	// matchWalk is the clause for a bounded walk, when a match-level filter
@@ -531,6 +534,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 	ctx = context.WithValue(ctx, matchProbeKey{}, probe)
 	useSQLFilters := !f.MirrorFilter
 	moveErrorInGo, blunder := false, ""
+	var black1 *blackFloor
 
 	// Decode the compressed analysis blob per row only when a Go-side filter
 	// reads it: move pattern, mirror re-checks, date, equity, margin. The rate, cube
@@ -713,6 +717,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		if searchfilter.HasBoardFilter(effInclude.Board) {
 			occ1Req, pt1Req, occ2Req, pt2Req, tight := engine.CheckerStructureMasks(effInclude)
 			bitboardTight, structure = tight, true
+			black1 = newBlackFloor(effInclude.Board)
 			appendMaskClauses(&where, &args, [4]uint32{occ1Req, pt1Req, occ2Req, pt2Req}, true)
 			// A side whose fifteen checkers are all placed has nowhere else to be: its
 			// occupancy is implied whole, and an index answers what masks cannot.
@@ -777,6 +782,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		useSQLFilters: useSQLFilters,
 		bitboardTight: bitboardTight,
 		structure:     structure,
+		blackFloor:    black1,
 		moveErrorInGo: moveErrorInGo,
 		blunder:       blunder,
 		matchWalk:     probe.walked(where.String(), args),
@@ -1093,7 +1099,13 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 	}
 	if !skipKeyed {
 		var err error
-		ids, err = s.readIDs(ctx, keyed, keyedFilter, keyedOrder, key, keyedArgs, limit, offset, wc.keys)
+		read := false
+		if key == "p.pip_1" && !desc && keyedOrder == key+dir+", p.id" {
+			ids, read, err = s.pipBandWindow(ctx, wc.blackFloor, keyed, keyedFilter, keyedArgs, limit, offset, wc.keys)
+		}
+		if !read && err == nil {
+			ids, err = s.readIDs(ctx, keyed, keyedFilter, keyedOrder, key, keyedArgs, limit, offset, wc.keys)
+		}
 		if err != nil || len(ids) == limit {
 			return ids, err
 		}
@@ -1267,11 +1279,12 @@ func (s *SearchStore) probeMatchWalk(ctx context.Context, wc searchWhereClause, 
 }
 
 // matchRestLimit is how many positions the other filters of a match-level search may keep
-// and still be read first, each then checked against its own moves: about half a second of
-// checks at worst. Atomic so a test can move it (SetMatchRestLimit) while other searches run.
+// and still be read first, each then checked against its own moves. Under it the checks
+// cost a fraction of a second on a full library, where the statement they stand in for
+// crosses every move of the matches, or walks the tenant, for seconds. Atomic so a test can move it (SetMatchRestLimit) while other searches run.
 var matchRestLimit atomic.Int64
 
-func init() { matchRestLimit.Store(10000) }
+func init() { matchRestLimit.Store(100000) }
 
 // SetMatchRestLimit sets matchRestLimit, 0 for never reading them first, and returns a
 // function that restores the previous value.

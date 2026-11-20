@@ -85,6 +85,8 @@ var postgresOnlyIndexes = []string{
 	// file sorts its matching rows in the time the index would save.
 	"idx_position_pip_order",
 	"idx_position_pip_order_desc",
+	// The same read for a structure in ascending pips, by bands of black's farthest checker.
+	"idx_position_pip_band",
 }
 
 // indexDecl is one CREATE INDEX statement, normalised for comparison.

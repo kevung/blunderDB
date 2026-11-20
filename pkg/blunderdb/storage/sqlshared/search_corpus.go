@@ -116,6 +116,13 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 			cond.WriteString(" AND 0=1")
 		}
 		searchfilter.AppendIntRangeSQL("mt.match_length", lo, hi, hasLo, hasHi, &cond, &condArgs)
+		// A side never stands farther away than the match is long: an away bound past
+		// the longest match admitted keeps nothing, which no index of either side
+		// tells without reading every position of one of them.
+		if hasHi && awayBeyond(f, hi) {
+			where.WriteString(" AND 0=1")
+			return nil
+		}
 	}
 
 	if f.PlayerPRFilter != "" {
@@ -549,4 +556,18 @@ func (s *SearchStore) prOfMissingMatches(ctx context.Context, scope, filter stri
 		}
 	}
 	return out, nil
+}
+
+// awayBeyond tells that an away filter of f asks for a side farther away than
+// length points: no position of a match that long has it.
+func awayBeyond(f domain.SearchFilters, length int) bool {
+	for _, side := range []struct{ tok, prefix string }{{f.AwayFilter, "aw"}, {f.OpponentAwayFilter, "AW"}} {
+		if side.tok == "" {
+			continue
+		}
+		if lo, _, _, none := domain.AwayStoredRange(side.tok, side.prefix); !none && lo > length {
+			return true
+		}
+	}
+	return false
 }

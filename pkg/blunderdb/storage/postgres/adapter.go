@@ -231,6 +231,15 @@ func (searchDB) InlineIDs(expr string, ids []string) string {
 	return expr + " = ANY('{" + strings.Join(ids, ",") + "}'::bigint[])"
 }
 
+// pipBandBounds are the powers of two width_bucket counts an occupancy against.
+const pipBandBounds = "'{1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,2097152,4194304,8388608,16777216,33554432}'::integer[]"
+
+// PipBand — see sqlshared.pipBandWindow. The text is idx_position_pip_band's
+// expression (migration 074): the planner reads that index for it only.
+func (searchDB) PipBand(alias string) string {
+	return "width_bucket(" + alias + ".occupancy_1, " + pipBandBounds + ")"
+}
+
 // ProbesIDWalk — see sqlshared.probeIDWalk.
 func (searchDB) ProbesIDWalk() bool { return true }
 
