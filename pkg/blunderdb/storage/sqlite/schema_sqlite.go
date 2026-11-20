@@ -636,6 +636,8 @@ var schemaStatements = []string{
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		comment TEXT DEFAULT '',
+		-- Where the tournament was played, free text; '' when unknown.
+		origin TEXT NOT NULL DEFAULT '',
 		-- The Rencontre this Tournament plays in, if any. Deleting the
 		-- Rencontre detaches its Tournaments; it never deletes one.
 		rencontre_id INTEGER REFERENCES rencontre(id) ON DELETE SET NULL,

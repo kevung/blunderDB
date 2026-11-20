@@ -641,6 +641,8 @@
         "noTournaments": "Δεν υπάρχουν τουρνουά",
         "openHint": "Διπλό κλικ ή Enter για άνοιγμα",
         "notesPlaceholder": "Σημειώσεις…",
+        "origin": "Προέλευση",
+        "originHint": "Πού παίχτηκε το τουρνουά, ελεύθερο κείμενο: εισαγωγή, πλατφόρμα, σύλλογος…",
         "player1": "Παίκτης 1",
         "player2": "Παίκτης 2",
         "prReferencePlayer": "PR του {player}",

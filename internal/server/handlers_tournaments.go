@@ -26,6 +26,11 @@ type tournamentCommentReq struct {
 	Comment string `json:"comment"`
 }
 
+type tournamentOriginReq struct {
+	ID     int64  `json:"id"`
+	Origin string `json:"origin"`
+}
+
 type tournamentMatchReq struct {
 	TournamentID int64 `json:"tournamentId"`
 	MatchID      int64 `json:"matchId"`
@@ -64,6 +69,9 @@ func (s *Server) tournamentRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/tournaments.updateComment", rpcVoid(func(ctx context.Context, scope string, req tournamentCommentReq) error {
 			return ts().UpdateComment(ctx, scope, req.ID, req.Comment)
+		})},
+		{http.MethodPost, "/v1/tournaments.updateOrigin", rpcVoid(func(ctx context.Context, scope string, req tournamentOriginReq) error {
+			return ts().UpdateOrigin(ctx, scope, req.ID, req.Origin)
 		})},
 		{http.MethodPost, "/v1/tournaments.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ts().Delete(ctx, scope, req.ID)

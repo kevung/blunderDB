@@ -8266,6 +8266,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/tournaments.updateOrigin:
+    post:
+      operationId: tournaments.updateOrigin
+      tags: [tournaments]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/tournamentOriginReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/training.generateBearoff:
     post:
       operationId: training.generateBearoff
@@ -11420,6 +11437,14 @@ components:
         matchId:
           type: integer
           format: int64
+    tournamentOriginReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        origin:
+          type: string
     tournamentReviewReq:
       type: object
       properties:

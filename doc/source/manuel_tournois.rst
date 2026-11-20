@@ -24,7 +24,7 @@ Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau.
 **Nouveau tournoi** ouvre le champ de création, qui prend le focus ; *ÉCHAP* ou
 **Annuler** le referme. Le champ de filtre, dans la bande d'en-tête, restreint
 la liste à la frappe : tous les mots saisis doivent se retrouver dans le nom, le
-lieu ou la date, le compteur indique « affichés / total » et *ÉCHAP* efface le
+lieu, l'origine ou la date, le compteur indique « affichés / total » et *ÉCHAP* efface le
 champ. Un clic surligne une ligne, un double-clic ou *ENTRÉE* ouvre le tournoi. Son en-tête porte la date, le lieu et le nombre de matchs, qu'un
 clic change en liste des positions du tournoi ; à droite, les notes, **Diriger**
 et **Bilan**. Dessous, ses matchs, un par ligne, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
@@ -40,10 +40,16 @@ affichée en grisé ; elle est lue, jamais écrite dans la base. Le champ date d
 d'édition reste vide tant que rien n'y est saisi : la date lue ne
 paraît qu'en grisé, à côté du champ, et l'enregistrement n'écrit une date que saisie.
 
+La colonne **Origine** dit d'où vient le tournoi, en texte libre : « importé »,
+« plateforme », « club »… Elle se renseigne dans le formulaire d'édition, avec
+le nom, la date et le lieu, et reste vide tant qu'on ne l'y saisit pas. Un
+tournoi joué sur une plateforme et un tournoi importé vivent ainsi dans la même
+liste ; l'origine part avec le tournoi à l'export et à la synchronisation.
+
 Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et
 BGF nomment leur événement ; à l'import d'un match nouveau, blunderDB le classe
-dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. Le lieu
-reste vide, et la date est celle du plus ancien match tant qu'on ne la
+dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. Le lieu et
+l'origine restent vides, et la date est celle du plus ancien match tant qu'on ne la
 renseigne pas ici. Un match déjà
 présent dans la base n'est jamais reclassé : réimporter son fichier ne défait
 pas le rangement fait à la main.

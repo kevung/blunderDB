@@ -1250,9 +1250,9 @@ func (e *exporter) writeTournaments() error {
 			comment = ""
 		}
 		res, err := e.tx.ExecContext(e.ctx,
-			`INSERT INTO tournament (name, date, location, sort_order, comment, created_at, updated_at)
-			 VALUES (?, ?, ?, ?, ?, COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP), COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP))`,
-			t.Name, t.Date, t.Location, t.SortOrder, comment, t.CreatedAt, t.UpdatedAt)
+			`INSERT INTO tournament (name, date, location, origin, sort_order, comment, created_at, updated_at)
+			 VALUES (?, ?, ?, ?, ?, ?, COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP), COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP))`,
+			t.Name, t.Date, t.Location, t.Origin, t.SortOrder, comment, t.CreatedAt, t.UpdatedAt)
 		if err != nil {
 			e.skip("inserting tournament", "tournamentID", id, "err", err)
 			continue

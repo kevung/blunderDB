@@ -963,6 +963,8 @@ export function UpdateTournament(arg1:number,arg2:string,arg3:string,arg4:string
 
 export function UpdateTournamentComment(arg1:number,arg2:string):Promise<void>;
 
+export function UpdateTournamentOrigin(arg1:number,arg2:string):Promise<void>;
+
 export function Vacuum():Promise<database.VacuumResult>;
 
 export function WithdrawParticipant(arg1:number,arg2:string,arg3:boolean):Promise<service.DirectionView>;

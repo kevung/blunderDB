@@ -641,6 +641,8 @@
         "noTournaments": "トーナメントがありません",
         "openHint": "ダブルクリックまたは Enter で開く",
         "notesPlaceholder": "メモ…",
+        "origin": "出所",
+        "originHint": "大会が行われた場所（自由入力）：インポート、プラットフォーム、クラブ…",
         "player1": "プレイヤー 1",
         "player2": "プレイヤー 2",
         "prReferencePlayer": "{player}のPR",

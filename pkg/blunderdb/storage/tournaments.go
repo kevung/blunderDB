@@ -14,6 +14,9 @@ type TournamentStore interface {
 	List(ctx context.Context, scope string, opts ListOpts) iter.Seq2[*domain.Tournament, error]
 	Update(ctx context.Context, scope string, id int64, name, date, location string) error
 	UpdateComment(ctx context.Context, scope string, id int64, comment string) error
+	// UpdateOrigin sets where tournament id was played: free text, '' for
+	// unknown. An id outside the scope changes nothing.
+	UpdateOrigin(ctx context.Context, scope string, id int64, origin string) error
 	// KeepDates gives tournament id the created_at/updated_at text its
 	// source row bore (an empty one is left as is): an import keeps the
 	// tournament's history. An id outside the scope changes nothing.

@@ -267,8 +267,12 @@ func TestCLI_ListTournaments(t *testing.T) {
 		t.Errorf("expected empty-DB message, got:\n%s", out)
 	}
 
-	if _, err := cli.db.CreateTournament("World Championship", "2026-01-01", "Monte Carlo"); err != nil {
+	id, err := cli.db.CreateTournament("World Championship", "2026-01-01", "Monte Carlo")
+	if err != nil {
 		t.Fatalf("CreateTournament: %v", err)
+	}
+	if err := cli.db.UpdateTournamentOrigin(id, "imported"); err != nil {
+		t.Fatalf("UpdateTournamentOrigin: %v", err)
 	}
 
 	out = captureOut(t, cli, func() {
@@ -278,6 +282,9 @@ func TestCLI_ListTournaments(t *testing.T) {
 	})
 	if !bytes.Contains([]byte(out), []byte("World Championship")) {
 		t.Errorf("listTournaments output missing tournament name:\n%s", out)
+	}
+	if !bytes.Contains([]byte(out), []byte("Origin: imported")) {
+		t.Errorf("listTournaments output missing the origin:\n%s", out)
 	}
 }
 

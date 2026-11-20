@@ -207,6 +207,11 @@ func mergeTournaments(ctx context.Context, tx storage.Stores, scope string, sour
 				return fmt.Errorf("ingest: import tournament %q comment: %w", t.Name, err)
 			}
 		}
+		if t.Origin != "" {
+			if err := tx.Tournaments().UpdateOrigin(ctx, scope, id, t.Origin); err != nil {
+				return fmt.Errorf("ingest: import tournament %q origin: %w", t.Name, err)
+			}
+		}
 		if res.keptDates == nil {
 			res.keptDates = map[int64][2]string{}
 		}

@@ -574,6 +574,7 @@ var databaseParity = map[string]parityEntry{
 	"SetPositionIndividuallyImported":   {Server: "/v1/positions.setIndividuallyImported", Why: whyGUIEdit},
 	"UpdateTournament":                  {Server: "/v1/tournaments.update", Why: whyGUIEdit},
 	"UpdateTournamentComment":           {Server: "/v1/tournaments.updateComment", Why: whyGUIEdit},
+	"UpdateTournamentOrigin":            {Server: "/v1/tournaments.updateOrigin", Why: whyGUIEdit},
 	"RemoveAnkiCard":                    {CLI: "anki card", Server: "/v1/anki.removeCard"},
 	"RepairAnalyses":                    {CLI: "repair", Server: "/v1/analyses.repair"},
 	"RepairGamePhases":                  {CLI: "repair", Server: "/v1/positions.reclassifyPhases"},

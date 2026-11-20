@@ -125,11 +125,14 @@ var transcriptionCodec = codec{
 // it, and in what order, stays in each library. updated_at stays out: it
 // moves at every attachment, here and on the peer alike.
 type tournamentPayload struct {
-	Name      string `json:"name"`
-	Date      string `json:"date,omitempty"`
-	Location  string `json:"location,omitempty"`
-	Comment   string `json:"comment,omitempty"`
-	CreatedAt string `json:"createdAt,omitempty"`
+	Name     string `json:"name"`
+	Date     string `json:"date,omitempty"`
+	Location string `json:"location,omitempty"`
+	// Origin is a pointer so that a payload written by a schema without it
+	// (no key) leaves the stored origin alone, while "" clears it.
+	Origin    *string `json:"origin,omitempty"`
+	Comment   string  `json:"comment,omitempty"`
+	CreatedAt string  `json:"createdAt,omitempty"`
 }
 
 // joinText settles two texts of one field: the one that is not empty, the one
@@ -144,6 +147,14 @@ func joinText(a, b string) string {
 		a, b = b, a
 	}
 	return a + "\n\n" + b
+}
+
+// deref is the text p points to, "" for none.
+func deref(p *string) string {
+	if p == nil {
+		return ""
+	}
+	return *p
 }
 
 // firstOf is the first of two texts that is not empty.
@@ -169,6 +180,9 @@ var tournamentCodec = codec{
 		}
 		w.Comment = joinText(w.Comment, l.Comment)
 		w.Date, w.Location = firstOf(w.Date, l.Date), firstOf(w.Location, l.Location)
+		if o := firstOf(deref(w.Origin), deref(l.Origin)); o != "" || w.Origin != nil || l.Origin != nil {
+			w.Origin = &o
+		}
 		if w.CreatedAt == "" || (l.CreatedAt != "" && l.CreatedAt < w.CreatedAt) {
 			w.CreatedAt = l.CreatedAt
 		}
@@ -179,7 +193,7 @@ var tournamentCodec = codec{
 		if err != nil {
 			return nil, err
 		}
-		return tournamentPayload{Name: t.Name, Date: t.Date, Location: t.Location, Comment: t.Comment, CreatedAt: t.CreatedAt}, nil
+		return tournamentPayload{Name: t.Name, Date: t.Date, Location: t.Location, Origin: &t.Origin, Comment: t.Comment, CreatedAt: t.CreatedAt}, nil
 	},
 	create: func(ctx context.Context, s storage.Stores, scope string, raw json.RawMessage) (int64, error) {
 		var p tournamentPayload
@@ -210,6 +224,11 @@ var tournamentCodec = codec{
 func fillTournament(ctx context.Context, s storage.Stores, scope string, id int64, p tournamentPayload) error {
 	if err := s.Tournaments().UpdateComment(ctx, scope, id, p.Comment); err != nil {
 		return err
+	}
+	if p.Origin != nil {
+		if err := s.Tournaments().UpdateOrigin(ctx, scope, id, *p.Origin); err != nil {
+			return err
+		}
 	}
 	return s.Tournaments().KeepDates(ctx, scope, id, p.CreatedAt, "")
 }

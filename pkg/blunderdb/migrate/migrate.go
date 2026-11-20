@@ -485,6 +485,11 @@ func (m *mover) copyTournaments(rep *Report) error {
 				return fmt.Errorf("migrate: set tournament comment: %w", err)
 			}
 		}
+		if tr.Origin != "" {
+			if err := m.dst.Tournaments().UpdateOrigin(m.ctx, m.scope, newID, tr.Origin); err != nil {
+				return fmt.Errorf("migrate: set tournament origin: %w", err)
+			}
+		}
 		m.tourID[tr.ID] = newID
 		rep.Tournaments++
 	}

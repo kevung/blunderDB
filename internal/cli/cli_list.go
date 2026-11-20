@@ -309,6 +309,9 @@ func (cli *CLI) listTournaments(limit int) error {
 		if tour.Location != "" {
 			fmt.Fprintf(cli.stdout(), "  Location: %s\n", tour.Location)
 		}
+		if tour.Origin != "" {
+			fmt.Fprintf(cli.stdout(), "  Origin: %s\n", tour.Origin)
+		}
 		fmt.Fprintf(cli.stdout(), "  Matches: %d\n", tour.MatchCount)
 		fmt.Fprintln(cli.stdout())
 	}

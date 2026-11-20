@@ -639,7 +639,7 @@ func registerMatches(tb *Toolbox) {
 		Offset int `json:"offset,omitempty" jsonschema:"rows to skip, for the next page"`
 	}
 	Add(tb, Reads, &sdk.Tool{Name: "list_tournaments", Title: "Tournaments",
-		Description: "Tournaments of the database: id, name, date, location, match count, comment. Pass an id to list_matches or player_stats."},
+		Description: "Tournaments of the database: id, name, date, location, origin (where it was played, empty when unknown), match count, comment. Pass an id to list_matches or player_stats."},
 		func(ctx context.Context, req *sdk.CallToolRequest, a pageIn) (any, error) {
 			rows, err := Stream[obj](ctx, tb.Engine, req, "tournaments.list", obj{"limit": clampLimit(a.Limit), "offset": a.Offset}, clampLimit(a.Limit))
 			if err != nil {

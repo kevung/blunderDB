@@ -641,6 +641,8 @@
         "noTournaments": "Нет турниров",
         "openHint": "Двойной щелчок или Enter, чтобы открыть",
         "notesPlaceholder": "Заметки…",
+        "origin": "Происхождение",
+        "originHint": "Где проходил турнир, свободный текст: импорт, платформа, клуб…",
         "player1": "Игрок 1",
         "player2": "Игрок 2",
         "prReferencePlayer": "PR игрока {player}",

@@ -34,6 +34,7 @@
         SaveLastVisitedPosition,
         UpdateMatchComment,
         UpdateTournamentComment,
+        UpdateTournamentOrigin,
         ReorderTournamentMatches,
         GetPositionIDsByTournament
     } from '../../wailsjs/go/database/Database.js';
@@ -107,7 +108,7 @@
     let sort = $state(/** @type {{ column: string | null, direction: string }} */ ({ column: null, direction: 'asc' }));
     let highlightedId = $state(/** @type {number | null} */ (null)); // a single click only highlights; opening is the double-click
     let listTable = $state(/** @type {{ scrollToRow: (row: Tournament) => Promise<void>, focusRow: (row: Tournament) => Promise<void> } | null} */ (null)); // PanelTable of the tournament list, mounted while none is selected
-    // The list narrows as the user types: name, location or date, every word must match.
+    // The list narrows as the user types: name, location, origin or date, every word must match.
     let filterText = $state('');
     // A Stats count restricts the list to the tournaments it counts, until cleared.
     const idSet = $derived($tournamentIDsFilterStore ? new Set($tournamentIDsFilterStore) : null);
@@ -117,7 +118,7 @@
         const pool = idSet ? tournaments.filter((tr) => idSet.has(tr.id)) : tournaments;
         if (words.length === 0) return pool;
         return pool.filter((tr) => {
-            const haystack = `${tr.name ?? ''} ${tr.location ?? ''} ${tr.date || tr.effectiveDate || ''}`.toLowerCase();
+            const haystack = `${tr.name ?? ''} ${tr.location ?? ''} ${tr.origin ?? ''} ${tr.date || tr.effectiveDate || ''}`.toLowerCase();
             return words.every((w) => haystack.includes(w));
         });
     });
@@ -129,6 +130,7 @@
         { key: 'name', label: $t('tournament.name'), sortable: true },
         { key: 'matches', label: $t('tournament.matches'), sortable: true, narrow: true },
         { key: 'location', label: $t('tournament.location'), sortable: true },
+        { key: 'origin', label: $t('tournament.origin'), sortable: true, title: $t('tournament.originHint') },
         { key: 'pr', label: 'PR', sortable: true, narrow: true },
         { key: 'mwc', label: 'MWC', sortable: true, narrow: true },
         { key: 'mwc7', label: $t('mwc7.short'), sortable: true, narrow: true, title: $t('mwc7.name') },
@@ -158,13 +160,20 @@
     let newTournamentDate = $state('');
     let newTournamentLocation = $state('');
 
-    // Edit tournament (name, date, location in one row)
+    // Edit tournament (name, date, location and origin in one row)
     const tournamentEdit = createInlineEdit({
         onSave: async (id, draft, mark) => {
             const name = draft.name.trim();
             if (!name) return false; // a tournament keeps its name until a new one is typed
             try {
-                if (!(await writingOnLibrary(mark, async () => (await UpdateTournament(id, name, draft.date.trim(), draft.location.trim()), true)))) return;
+                const origin = draft.origin.trim();
+                const before = get(tournamentsStore).find((tr) => tr.id === id);
+                const write = async () => {
+                    await UpdateTournament(id, name, draft.date.trim(), draft.location.trim());
+                    if (origin !== (before?.origin ?? '')) await UpdateTournamentOrigin(id, origin);
+                    return true;
+                };
+                if (!(await writingOnLibrary(mark, write))) return;
                 await loadTournaments();
                 if (selectedTournament && selectedTournament.id === id) {
                     // The effective date is derived by the database: only the
@@ -314,6 +323,9 @@
             } else if (sortBy === 'location') {
                 valA = (a.location || '').toLowerCase();
                 valB = (b.location || '').toLowerCase();
+            } else if (sortBy === 'origin') {
+                valA = (a.origin || '').toLowerCase();
+                valB = (b.origin || '').toLowerCase();
             } else if (sortBy === 'matches') {
                 valA = a.matchCount || 0;
                 valB = b.matchCount || 0;
@@ -466,7 +478,8 @@
             name: tournament.name,
             date: tournament.date || '',
 
-            location: tournament.location || ''
+            location: tournament.location || '',
+            origin: tournament.origin || ''
         });
     }
 
@@ -858,6 +871,7 @@
                             <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} use:autofocus /></td>
                             <td class="narrow-col"></td>
                             <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.location} placeholder={$t('tournament.location')} onkeydown={tournamentEdit.onKeyDown} /></td>
+                            <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.origin} placeholder={$t('tournament.origin')} onkeydown={tournamentEdit.onKeyDown} /></td>
                             <td class="narrow-col no-select"></td>
                             <td class="narrow-col no-select"></td>
                             <td class="actions-col no-select">
@@ -872,6 +886,7 @@
                             <td class="no-select">{tournament.name}</td>
                             <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
                             <td class="no-select">{tournament.location || ''}</td>
+                            <td class="no-select" data-testid="tournament-origin">{tournament.origin || ''}</td>
                             <td class="narrow-col no-select stat-col" title={tournament.pr > 0 && tournament.ref_player ? $t('tournament.prReferencePlayer', { player: tournament.ref_player }) : ''}
                                 >{tournament.pr > 0 ? tournament.pr.toFixed(2) : statsFilling ? '…' : '—'}</td
                             >

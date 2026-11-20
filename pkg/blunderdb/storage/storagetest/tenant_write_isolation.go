@@ -261,13 +261,14 @@ func checkWriteTournament(t *testing.T, cx func(scope string) context.Context, s
 	}
 	_ = s.Tournaments().Update(cx(b), b, tid, "intruder", "", "")
 	_ = s.Tournaments().UpdateComment(cx(b), b, tid, "intruder")
+	_ = s.Tournaments().UpdateOrigin(cx(b), b, tid, "intruder")
 	_ = s.Tournaments().Delete(cx(b), b, tid)
 	got, err := s.Tournaments().Get(cx(a), a, tid)
 	if err != nil {
 		t.Fatalf("tenant %s's tournament after tenant %s's writes: %v", a, b, err)
 	}
-	if got.Name != "owner" || got.Comment != "" {
-		t.Errorf("tenant %s's tournament is %q / %q after tenant %s's writes", a, got.Name, got.Comment, b)
+	if got.Name != "owner" || got.Comment != "" || got.Origin != "" {
+		t.Errorf("tenant %s's tournament is %q / %q / %q after tenant %s's writes", a, got.Name, got.Comment, got.Origin, b)
 	}
 }
 

@@ -544,6 +544,7 @@ Shows all tournaments with details:
 - Name
 - Date
 - Location
+- Origin (where it was played, such as `imported` or `platform`), when known
 - Number of matches
 
 **Example output:**
@@ -554,6 +555,7 @@ ID: 1
   Name: World Championship
   Date: 2026-01-01
   Location: Monte Carlo
+  Origin: imported
   Matches: 5
 
 ID: 2
