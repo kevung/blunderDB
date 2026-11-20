@@ -1,6 +1,6 @@
-# Reprise — 2026-11-19
+# Reprise — 2026-11-20
 
-État de main au 19 novembre, pour reprendre depuis GitHub sur un autre poste.
+État de main au 20 novembre, pour reprendre depuis GitHub sur un autre poste.
 
 ## État
 
@@ -19,8 +19,8 @@
   le match (`stats.matchWinTrace`, première case de #961), évaluations de pions gardées par source
   (ADR-0113, étape 2.57 → 2.58), graphe des durées de décision, nicomaque v0.10.0, bornes de
   `directions.simulate`, plateau de fin de partie lu par son index (#914, fusionnée le 19).
-- Issues ouvertes : #961 (bibliothèque, trois cases restantes), #952 (portée par #959), #935
-  (nightly), #846 (poste Windows), #858 et #870 (vision).
+- Issues ouvertes : #961 (bibliothèque, trois cases restantes), #952 (portée par #959), #846
+  (poste Windows), #858 et #870 (vision).
 
 ## CI
 
@@ -32,8 +32,8 @@
   statistiques de match en plus, voulues, empreinte déjà ré-épinglée ; puis, depuis les sources de
   pions, un réimport de `.xg` ou `.sgf` qui réécrivait `analysis_data` et annonçait des analyses
   « approfondies ». `MergeCheckerSources` garde la source tenue quand l'évaluation est la même
-  (`TestReimportOfAStoredSourceWritesNothing`, hors nightly). **Fermer #935 à la première nuit
-  verte.** Le lien gnu.org du linkcheck est une panne passagère (job consultatif).
+  (`TestReimportOfAStoredSourceWritesNothing`, hors nightly). Nightly vert le 19 au soir, **#935
+  fermée**. Le lien gnu.org du linkcheck est une panne passagère (job consultatif).
 - Proposé, non fait : `TestImportStoredRowsAreStable` dans le job `test-postgres` de `build.yml`
   (≈ 35 s), qui aurait signalé les deux rouges dès la PR. Vu, laissé : le tri de la vue fusionnée
   est instable (`sort.Slice` dans `rankCheckerMoves`).
@@ -51,17 +51,19 @@
   2.59.0 et le plancher y monte dans la transaction qui écrit un résultat connu (`Save`,
   `Reinstate`, `ReplaceHeader` des deux backends, export SQLite). main refusionnée, suite
   PostgreSQL complète verte en local, CI de la PR verte.
-- **Deux points à valider avant fusion** :
+- **Deux points validés le 20** (rien à changer dans la branche) :
   - le rôle `blunderdb_loader` reçoit `INSERT, UPDATE` sur `metadata` (il n'avait que `SELECT`),
-    sans quoi `bulkload` échoue à monter le plancher — un rôle censé n'atteindre que son tenant
-    écrit dans une table globale ;
-  - une base migrée de 2.58 garde ses résultats rétro-calculés **sans** monter le plancher : un
-    binaire 2.58 peut encore y importer des matchs au résultat inconnu, jusqu'au premier résultat
-    écrit par un binaire 2.59. Écrit dans l'ADR-0114 ; monter à la migration reviendrait à monter
-    à l'ouverture.
-- **Reste avant fusion** : ces deux validations ; toutes les mesures « à mesurer » du corps de
-  la PR, au banc gammonGo base pleine ; puis sortir du brouillon, fusionner, fermer #952.
-- **Mesure toujours due depuis #911** : Q11 et Q12 à 50 clients sur la pile du banc.
+    comme le rôle du démon ; sans quoi `bulkload` échoue à monter le plancher. Suivi possible, non
+    exigé : une fonction `SECURITY DEFINER` qui ne fait que monter `min_reader_version` ;
+  - une base migrée de 2.58 garde ses résultats rétro-calculés **sans** monter le plancher
+    (ADR-0114 §3) : un binaire 2.58 peut encore y importer des matchs au résultat inconnu, jusqu'au
+    premier résultat écrit par un binaire 2.59.
+- **Mesures au banc, lancées le 20** : sur `mochy`, pile `bmab-nvme` (base pleine, 15,6 M
+  positions, en 0.55.0 au départ), sauvegarde à froid sous `~/bmab-banc/sauvegarde/` puis (A) main
+  fusionné dans la PR contre (B) `13b9d4426` ; les « à mesurer » du corps de la PR, plus Q11 et Q12
+  à 50 clients (dû depuis #911). Rapport : `~/bmab-banc/RAPPORT-959.md` sur mochy.
+- **Reste avant fusion** : reporter ces mesures dans le corps de la PR ; puis sortir du
+  brouillon, fusionner, fermer #952.
 
 ## Chantier vision — en pause, bloqué hors dépôt
 
@@ -83,14 +85,12 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. #959 : les deux validations (rôle de chargement, base migrée), mesures au banc, fusion ;
-   fermer #952.
-2. #935 : fermer à la première nuit verte.
-3. #961 : tri des matchs par PR, origine d'un tournoi, critères des collections vivantes (la
+1. #959 : mesures au banc (en cours sur mochy), fusion ; fermer #952.
+2. #961 : tri des matchs par PR, origine d'un tournoi, critères des collections vivantes (la
    version qui les porte demande l'accord du propriétaire).
-4. Vision : campagne matériels, voir son `ETAT.md`.
-5. #846 (LNA WebView2) : attend un poste Windows.
-6. Travail de fond : voir `tasks/BACKLOG.md`.
+3. Vision : campagne matériels, voir son `ETAT.md`.
+4. #846 (LNA WebView2) : attend un poste Windows.
+5. Travail de fond : voir `tasks/BACKLOG.md`.
 
 ## Pièges
 
