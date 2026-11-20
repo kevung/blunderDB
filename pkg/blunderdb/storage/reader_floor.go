@@ -23,16 +23,22 @@ var ErrDatabaseTooNew = errors.New("this database requires a newer blunderDB")
 // schema this binary speaks. An absent floor ("") predates the marker and is
 // accepted; an unparsable one is refused, since nothing proves it is safe.
 func CheckReaderFloor(floor string) error {
+	return CheckReaderFloorAs(floor, domain.DatabaseVersion)
+}
+
+// CheckReaderFloorAs is CheckReaderFloor for a binary that speaks schema
+// speaks: the answer an older binary gives a database this one wrote.
+func CheckReaderFloorAs(floor, speaks string) error {
 	if floor == "" {
 		return nil
 	}
-	cmp, err := CompareSchemaVersions(floor, domain.DatabaseVersion)
+	cmp, err := CompareSchemaVersions(floor, speaks)
 	if err != nil {
 		return fmt.Errorf("%s %q: %w", MinReaderVersionKey, floor, err)
 	}
 	if cmp > 0 {
 		return fmt.Errorf("%w: it needs a blunderDB that reads schema %s or later, this one reads %s; update blunderDB to open it",
-			ErrDatabaseTooNew, floor, domain.DatabaseVersion)
+			ErrDatabaseTooNew, floor, speaks)
 	}
 	return nil
 }

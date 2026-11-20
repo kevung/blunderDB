@@ -53,9 +53,17 @@ func loaderTenantFromEnv() int64 {
 // policy filters.
 var loaderPrivileges = []string{"SELECT", "INSERT", "UPDATE", "DELETE"}
 
-// loaderReads are infrastructure tables without a tenant that opening a
-// database reads.
-var loaderReads = []string{"metadata", "schema_migrations"}
+// loaderGlobals are the infrastructure tables without a tenant the loader
+// reaches, with its rights there: opening a database reads both, and an
+// import raises the reader floor in metadata when it first writes a match
+// result or an analysis carrying several sources (ADR-0113 §7, ADR-0114).
+var loaderGlobals = []struct {
+	table string
+	privs []string
+}{
+	{"metadata", []string{"SELECT", "INSERT", "UPDATE"}},
+	{"schema_migrations", []string{"SELECT"}},
+}
 
 // ApplyLoaderRole grants the loader role what an import writes and installs
 // its policy for tenant on every tenant table, when an exploitant created the
@@ -99,13 +107,15 @@ func (s *Storage) ApplyLoaderRole(ctx context.Context, tenant int64) error {
 			}
 		}
 	}
-	for _, t := range loaderReads {
-		var granted bool
-		if err := s.pool.QueryRow(ctx, `SELECT has_table_privilege($1, $2, 'SELECT')`, LoaderRole, t).Scan(&granted); err != nil {
-			return fmt.Errorf("postgres: loader role on %s: %w", t, err)
-		}
-		if !granted {
-			stmts = append(stmts, `GRANT SELECT ON `+t+` TO `+LoaderRole)
+	for _, g := range loaderGlobals {
+		for _, priv := range g.privs {
+			var granted bool
+			if err := s.pool.QueryRow(ctx, `SELECT has_table_privilege($1, $2, $3)`, LoaderRole, g.table, priv).Scan(&granted); err != nil {
+				return fmt.Errorf("postgres: loader role on %s: %w", g.table, err)
+			}
+			if !granted {
+				stmts = append(stmts, `GRANT `+priv+` ON `+g.table+` TO `+LoaderRole)
+			}
 		}
 	}
 	if len(stmts) == 0 {
@@ -145,13 +155,15 @@ func (s *Storage) closeLoaderRole(ctx context.Context) error {
 			}
 		}
 	}
-	for _, t := range loaderReads {
-		var granted bool
-		if err := s.pool.QueryRow(ctx, `SELECT has_table_privilege($1, $2, 'SELECT')`, LoaderRole, t).Scan(&granted); err != nil {
-			return fmt.Errorf("postgres: loader role on %s: %w", t, err)
-		}
-		if granted {
-			stmts = append(stmts, `REVOKE SELECT ON `+t+` FROM `+LoaderRole)
+	for _, g := range loaderGlobals {
+		for _, priv := range g.privs {
+			var granted bool
+			if err := s.pool.QueryRow(ctx, `SELECT has_table_privilege($1, $2, $3)`, LoaderRole, g.table, priv).Scan(&granted); err != nil {
+				return fmt.Errorf("postgres: loader role on %s: %w", g.table, err)
+			}
+			if granted {
+				stmts = append(stmts, `REVOKE `+priv+` ON `+g.table+` FROM `+LoaderRole)
+			}
 		}
 	}
 	if len(stmts) == 0 {

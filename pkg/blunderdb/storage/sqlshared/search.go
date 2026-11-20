@@ -77,6 +77,8 @@ type searchWhereClause struct {
 	// matchWalk is the clause for a bounded walk, when a match-level filter
 	// has its moves sorted for the query (matchProbe); nil otherwise.
 	matchWalk *matchWalk
+	// matchRest is the clause without its match-level filter (matchProbe.rest).
+	matchRest *matchRest
 	// after is the cursor a page resumes from, nil for the first page.
 	after *searchCursor
 	// keys, for a page read by cursor, receives the sort key of every id the window
@@ -778,6 +780,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		moveErrorInGo: moveErrorInGo,
 		blunder:       blunder,
 		matchWalk:     probe.walked(where.String(), args),
+		matchRest:     probe.rest(where.String(), args),
 		effInclude:    effInclude,
 		likeTarget:    likeTarget,
 	}, nil
@@ -1034,6 +1037,12 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 				return ids, err
 			}
 		}
+		if wc.matchRest != nil && atIDs && wc.blunder == "" && !wc.structure {
+			ids, done, err := s.probeMatchRest(ctx, wc.matchRest, joins, start, startArgs, limit)
+			if err != nil || done {
+				return ids, err
+			}
+		}
 		if wc.blunder != "" {
 			return s.blunderWindow(ctx, wc, filter, args, limit, offset)
 		}
@@ -1255,6 +1264,56 @@ func (s *SearchStore) probeMatchWalk(ctx context.Context, wc searchWhereClause, 
 		return nil, false, nil
 	}
 	return ids[:limit], true, nil
+}
+
+// matchRestLimit is how many positions the other filters of a match-level search may keep
+// and still be read first, each then checked against its own moves: about half a second of
+// checks at worst. Atomic so a test can move it (SetMatchRestLimit) while other searches run.
+var matchRestLimit atomic.Int64
+
+func init() { matchRestLimit.Store(10000) }
+
+// SetMatchRestLimit sets matchRestLimit, 0 for never reading them first, and returns a
+// function that restores the previous value.
+func SetMatchRestLimit(n int) (restore func()) {
+	old := matchRestLimit.Swap(int64(n))
+	return func() { matchRestLimit.Store(old) }
+}
+
+// probeMatchRest reads a window of a match-level search whose other filters are rare from
+// those filters first: their positions, read by their own indexes, are checked one by one
+// against their moves. The match-level filter written for the query is the trap there:
+// joined to a rare column, the planner walks the tenant in id order, or reads and hashes
+// every move of the matches, for a window that a few hundred candidates hold, or that is
+// empty. done tells that the window is the answer.
+//
+// The planner's estimate of the other filters gates the read: a column it describes is
+// estimated well, and above the limit the read is not attempted; under it, a read that
+// still finds more positions than the limit is thrown away, its cost bounded by the limit.
+// Masks are left to the walk: no statistics describe them.
+func (s *SearchStore) probeMatchRest(ctx context.Context, m *matchRest, joins, start string, startArgs []any, limit int) (ids []int64, done bool, err error) {
+	n := int(matchRestLimit.Load())
+	p, ok := s.DB.(idWalkProber)
+	if !ok || !p.ProbesIDWalk() || n <= 0 || limit <= 0 {
+		return nil, false, nil
+	}
+	from := "position p" + joins
+	filter := m.where + start
+	args := append(append([]any{}, m.args...), startArgs...)
+	if rows, err := p.EstimateRows(ctx, `SELECT p.id FROM `+from+` WHERE `+filter, args...); err != nil || rows > float64(n) {
+		return nil, false, nil
+	}
+	found, err := s.readIDList(ctx, `SELECT p.id FROM `+from+` WHERE `+filter, args, n+1)
+	if err != nil || len(found) > n {
+		return nil, false, err
+	}
+	if len(found) == 0 {
+		return nil, true, nil
+	}
+	in, inArgs := s.DB.IDsIn("p.id", found)
+	args = append(append(args, inArgs...), m.checkArgs...)
+	ids, err = s.readIDs(ctx, from, filter+" AND "+in+m.check, "p.id", "", args, limit, 0, nil)
+	return ids, err == nil, err
 }
 
 // readIDs reads the ids of a window; with keys, it also reads keyCol beside each id.
@@ -1491,7 +1550,7 @@ func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.Sear
 	// A move error alone calls for Go only on the rows played more than one way: the others
 	// are counted from their columns, without reading an analysis.
 	// The two halves of the count alter the clause: no walk written from the whole one.
-	wc.matchWalk = nil
+	wc.matchWalk, wc.matchRest = nil, nil
 	bySQL := wc
 	bySQL.moveErrorInGo = false
 	if wc.moveErrorInGo && !bySQL.goPhase(f) {

@@ -12,6 +12,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -243,6 +244,9 @@ func (cli *CLI) listMatches(limit int, query, sort string, ids []int64) error {
 		}
 		fmt.Fprintf(cli.stdout(), "  Match Length: %d\n", match.MatchLength)
 		fmt.Fprintf(cli.stdout(), "  Games: %d\n", match.GameCount)
+		if r := matchResultText(&match); r != "" {
+			fmt.Fprintf(cli.stdout(), "  Result: %s\n", r)
+		}
 		fmt.Fprintf(cli.stdout(), "  Imported: %s\n", match.ImportDate.Format("2006-01-02 15:04:05"))
 		if match.FilePath != "" {
 			fmt.Fprintf(cli.stdout(), "  File: %s\n", match.FilePath)
@@ -255,6 +259,22 @@ func (cli *CLI) listMatches(limit int, query, sort string, ids []int64) error {
 	}
 
 	return nil
+}
+
+// matchResultText is a match's final score, player 1 first, and who won it;
+// "" for a match stored without games.
+func matchResultText(m *Match) string {
+	if m.FinalScore == nil {
+		return ""
+	}
+	score := fmt.Sprintf("%d-%d", m.FinalScore[0], m.FinalScore[1])
+	switch m.Winner {
+	case domain.WinnerPlayer1:
+		return score + ", won by " + m.Player1Name
+	case domain.WinnerPlayer2:
+		return score + ", won by " + m.Player2Name
+	}
+	return score + ", unfinished"
 }
 
 // listTournaments lists all tournaments in the database
@@ -321,6 +341,11 @@ func (cli *CLI) listPositions(offset, limit int) error {
 		return fmt.Errorf("failed to get positions: %w", err)
 	}
 
+	fields, err := cli.listFieldsByID(positions)
+	if err != nil {
+		return err
+	}
+
 	fmt.Fprintf(cli.stdout(), "Found %d position(s):\n\n", total)
 
 	displayCount := len(positions)
@@ -334,6 +359,14 @@ func (cli *CLI) listPositions(offset, limit int) error {
 			fmt.Fprintf(cli.stdout(), "  Decision: Checker play\n")
 		} else {
 			fmt.Fprintf(cli.stdout(), "  Decision: Cube action\n")
+		}
+		f := fields[pos.ID]
+		fmt.Fprintf(cli.stdout(), "  Error: %s\n", playedErrorText(f))
+		if f.Date != "" {
+			fmt.Fprintf(cli.stdout(), "  Date: %s\n", f.Date)
+		}
+		if names := collectionNames(f); names != "" {
+			fmt.Fprintf(cli.stdout(), "  Collections: %s\n", names)
 		}
 		fmt.Fprintln(cli.stdout())
 	}

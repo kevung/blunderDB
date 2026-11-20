@@ -18,7 +18,10 @@ tournoi ou la date contient le texte saisi. Le filtre et le tri des colonnes
 sont faits par la base : la liste se charge par pages au fil du défilement, et
 le compteur « n / N matchs » indique la part chargée. La colonne **PR**
 (celle du joueur 1) se trie aussi par la base, sur toute la bibliothèque ; un
-match sans PR vient en dernier dans les deux sens. Corriger un joueur, une
+match sans PR vient en dernier dans les deux sens. La colonne **Résultat**
+donne le score final, les points du vainqueur en gras (son nom au survol) ; un
+match qu'aucun joueur n'a mené à la longueur prévue s'affiche en gris. Corriger
+un joueur, une
 date ou un tournoi dans la liste ne met à jour que la ligne éditée.
 
 Quand la liste est vide, le panneau propose **Importer… (Ctrl+I)** ; sans base

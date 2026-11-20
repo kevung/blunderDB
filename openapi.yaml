@@ -6115,6 +6115,25 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_Position"
                 nullable: true
+  /v1/positions.listFields:
+    post:
+      operationId: positions.listFields
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_PositionListFields"
   /v1/positions.listIds:
     post:
       operationId: positions.listIds
@@ -10893,6 +10912,9 @@ components:
         cursor:
           type: string
           nullable: true
+        listFields:
+          type: boolean
+          nullable: true
     searchPageResp:
       type: object
       properties:
@@ -10902,6 +10924,11 @@ components:
             $ref: "#/components/schemas/domain_Position"
         nextCursor:
           type: string
+        listFields:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/storage_PositionListFields"
     searchParseResp:
       type: object
       properties:
@@ -11189,6 +11216,9 @@ components:
     storage_PlayerRow:
       type: object
       description: "Opaque: see the Go type storage.PlayerRow (defined outside internal/server, not expanded here)."
+    storage_PositionListFields:
+      type: object
+      description: "Opaque: see the Go type storage.PositionListFields (defined outside internal/server, not expanded here)."
     storage_RankedPlayer:
       type: object
       description: "Opaque: see the Go type storage.RankedPlayer (defined outside internal/server, not expanded here)."

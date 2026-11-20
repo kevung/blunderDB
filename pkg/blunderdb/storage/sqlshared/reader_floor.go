@@ -51,6 +51,16 @@ func RaiseReaderFloorForAnalysis(ctx context.Context, db Execer, a *domain.Posit
 	return RaiseReaderFloorTo(ctx, db, domain.CheckerSourcesReaderVersion)
 }
 
+// RaiseReaderFloorForMatch raises the floor to domain.MatchResultReaderVersion
+// when m carries a known result, in the caller's transaction; a match whose
+// result is unknown costs nothing.
+func RaiseReaderFloorForMatch(ctx context.Context, db Execer, m *domain.Match) error {
+	if m == nil || m.FinalScore == nil {
+		return nil
+	}
+	return RaiseReaderFloorTo(ctx, db, domain.MatchResultReaderVersion)
+}
+
 // RaiseReaderFloorTo records storage.RaisedReaderFloorTo(stored, floor),
 // writing only when the value changes.
 func RaiseReaderFloorTo(ctx context.Context, db Execer, to string) error {

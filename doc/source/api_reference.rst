@@ -311,6 +311,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.indexOf                    JSON
      POST /v1/positions.legalMoves                 JSON
      POST /v1/positions.list                       NDJSON
+     POST /v1/positions.listFields                 JSON
      POST /v1/positions.listIds                    JSON
      POST /v1/positions.load                       JSON
      POST /v1/positions.loadByIds                  JSON

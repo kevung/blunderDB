@@ -168,8 +168,15 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 		" WHERE " + mtTenant + cond.String()
 	sub := "SELECT mv.position_id" + joined
 	subArgs := append(append([]any{}, mtArgs...), condArgs...)
+	probe, _ := ctx.Value(matchProbeKey{}).(*matchProbe)
+	check := " AND EXISTS (SELECT 1" + joined + " AND mv.position_id = p.id LIMIT 1 OFFSET 0)"
 	if strings.Contains(cond.String(), "mv.") || narrowLimit.Load() < 0 {
-		return s.narrowToIDs(ctx, sub, subArgs, where, args, nil)
+		return s.narrowToIDs(ctx, sub, subArgs, where, args, func() {
+			clause := " AND p.id IN (" + sub + ")"
+			probe.restOf(clause, len(*args), len(subArgs), check, subArgs)
+			where.WriteString(clause)
+			*args = append(*args, subArgs...)
+		})
 	}
 	// Heavy, the filter is checked position by position in the walk in id order, through the
 	// moves of each position: the predicate itself, never the list of games, which as a
@@ -189,7 +196,8 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 		return nil
 	}
 	if narrowLimit.Load() == 0 || len(games)*movesPerGame > matchSortLimit {
-		where.WriteString(" AND EXISTS (SELECT 1" + joined + " AND mv.position_id = p.id LIMIT 1 OFFSET 0)")
+		probe.restOf(check, len(*args), len(subArgs), check, subArgs)
+		where.WriteString(check)
 		*args = append(*args, subArgs...)
 		return nil
 	}
@@ -200,9 +208,10 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 	// OFFSET keeping the planner from probing them position by position.
 	sorted := func() {
 		clause := " AND p.id IN (" + sub + " LIMIT 2147483647 OFFSET 0)"
-		if probe, ok := ctx.Value(matchProbeKey{}).(*matchProbe); ok {
+		if probe != nil {
 			probe.offer(s, clause, len(*args), len(listArgs), games)
 		}
+		probe.restOf(clause, len(*args), len(listArgs), check, subArgs)
 		where.WriteString(clause)
 		*args = append(*args, listArgs...)
 	}
@@ -223,6 +232,45 @@ type matchProbe struct {
 	at, n  int
 	// check is the clause of the walk. It binds nothing.
 	check string
+	// clause is the match-level clause as written, whatever its form but a
+	// list, its cn arguments at index cat; restCheck is the same filter as a
+	// check of one position, binding restArgs.
+	clause    string
+	cat, cn   int
+	restCheck string
+	restArgs  []any
+}
+
+func (m *matchProbe) restOf(clause string, at, n int, check string, checkArgs []any) {
+	if m == nil {
+		return
+	}
+	m.clause, m.cat, m.cn = clause, at, n
+	m.restCheck, m.restArgs = check, append([]any{}, checkArgs...)
+}
+
+// rest returns the search's clause and arguments without the match-level
+// clause, and the check that puts it back position by position; nil when the
+// search writes no such clause.
+func (m *matchProbe) rest(where string, args []any) *matchRest {
+	if m.clause == "" || !strings.Contains(where, m.clause) {
+		return nil
+	}
+	return &matchRest{
+		where:     strings.Replace(where, m.clause, "", 1),
+		args:      append(append([]any{}, args[:m.cat]...), args[m.cat+m.cn:]...),
+		check:     m.restCheck,
+		checkArgs: m.restArgs,
+	}
+}
+
+// matchRest is a search's WHERE clause without its match-level filter, for
+// probeMatchRest.
+type matchRest struct {
+	where     string
+	args      []any
+	check     string
+	checkArgs []any
 }
 
 type matchProbeKey struct{}

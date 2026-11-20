@@ -22,6 +22,7 @@ type shared struct {
 	db    execer
 	probe *writeProbe
 	stmts *poolStmts
+	cols  *columnProbe
 }
 
 var _ sqlshared.Execer = shared{}

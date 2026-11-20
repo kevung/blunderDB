@@ -157,7 +157,50 @@ func (cli *CLI) runSearchPage(params *searchParams) error {
 	if len(positions) == 0 {
 		return nil
 	}
-	return renderResults(cli.stdout(), positions, analysisMap, params.format)
+	fields, err := cli.listFieldsByID(positions)
+	if err != nil {
+		return err
+	}
+	return renderResults(cli.stdout(), positions, analysisMap, fields, params.format)
+}
+
+// listFieldsByID reads the list fields of the positions about to be printed,
+// in one call for the whole page.
+func (cli *CLI) listFieldsByID(positions []Position) (map[int64]storage.PositionListFields, error) {
+	ids := make([]int64, len(positions))
+	for i := range positions {
+		ids[i] = positions[i].ID
+	}
+	fields, err := cli.db.PositionListFields(ids)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read the list fields: %w", err)
+	}
+	byID := make(map[int64]storage.PositionListFields, len(fields))
+	for _, f := range fields {
+		byID[f.PositionID] = f
+	}
+	return byID, nil
+}
+
+// playedErrorText is the played error of a list row, in equity on the
+// position's own scale, or "no analysis".
+func playedErrorText(f storage.PositionListFields) string {
+	switch {
+	case !f.Analysed:
+		return "no analysis"
+	case f.PlayedErrorMP == nil:
+		return "-"
+	}
+	return fmt.Sprintf("%.3f", float64(*f.PlayedErrorMP)/1000)
+}
+
+// collectionNames joins the names of the collections holding a position.
+func collectionNames(f storage.PositionListFields) string {
+	names := make([]string, len(f.Collections))
+	for i, c := range f.Collections {
+		names[i] = c.Name
+	}
+	return strings.Join(names, ", ")
 }
 
 // filterFlagsSet names the filter flags the user actually passed. Only the
@@ -332,7 +375,11 @@ func (cli *CLI) runSearch(args []string) error {
 	fmt.Fprintf(status, "Found %d position(s)\n\n", len(filteredPositions))
 
 	if len(filteredPositions) > 0 {
-		if err := renderResults(cli.stdout(), filteredPositions, analysisMap, params.format); err != nil {
+		fields, err := cli.listFieldsByID(filteredPositions)
+		if err != nil {
+			return err
+		}
+		if err := renderResults(cli.stdout(), filteredPositions, analysisMap, fields, params.format); err != nil {
 			return err
 		}
 	}
@@ -374,14 +421,21 @@ type searchPositionResult struct {
 	Dice         [2]int  `json:"dice"`
 	BestMove     string  `json:"best_move,omitempty"`
 	Equity       float64 `json:"equity,omitempty"`
+	// The list fields: the played error (null without analysis, or when the
+	// play is none of the candidates), the date and the collections.
+	Analysed    bool     `json:"analysed"`
+	PlayedError *float64 `json:"played_error"`
+	Date        string   `json:"date,omitempty"`
+	Collections []string `json:"collections"`
 }
 
 // renderResults writes already-filtered, already-limited search results to w
 // in the requested format (table, json, or xgid — anything else falls back
 // to table, matching the flag's own default): pure formatting over the
 // positions and the analyses the search already returned, which fill in
-// best-move/equity/XGID. A position absent from analyses has none.
-func renderResults(w io.Writer, positions []Position, analyses map[int64]*PositionAnalysis, format string) error {
+// best-move/equity/XGID, and the list fields of the page (played error,
+// date, collections). A position absent from analyses has none.
+func renderResults(w io.Writer, positions []Position, analyses map[int64]*PositionAnalysis, fields map[int64]storage.PositionListFields, format string) error {
 	switch format {
 	case "json":
 		var results []searchPositionResult
@@ -395,6 +449,16 @@ func renderResults(w io.Writer, positions []Position, analyses map[int64]*Positi
 				Score: pos.Score,
 				Cube:  pos.Cube.Value,
 				Dice:  pos.Dice,
+			}
+			f := fields[pos.ID]
+			result.Analysed, result.Date = f.Analysed, f.Date
+			if f.PlayedErrorMP != nil {
+				e := float64(*f.PlayedErrorMP) / 1000
+				result.PlayedError = &e
+			}
+			result.Collections = []string{}
+			for _, c := range f.Collections {
+				result.Collections = append(result.Collections, c.Name)
 			}
 
 			if pos.DecisionType == CheckerAction {
@@ -436,8 +500,8 @@ func renderResults(w io.Writer, positions []Position, analyses map[int64]*Positi
 
 	default: // table format
 		tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
-		fmt.Fprintln(tw, "ID\tScore\tCube\tType\tDice\tBest Move\tEquity")
-		fmt.Fprintln(tw, "--\t-----\t----\t----\t----\t---------\t------")
+		fmt.Fprintln(tw, "ID\tScore\tCube\tType\tDice\tBest Move\tEquity\tError\tDate\tCollections")
+		fmt.Fprintln(tw, "--\t-----\t----\t----\t----\t---------\t------\t-----\t----\t-----------")
 
 		for i := range positions {
 			pos := &positions[i]
@@ -464,8 +528,10 @@ func renderResults(w io.Writer, positions []Position, analyses map[int64]*Positi
 				}
 			}
 
-			fmt.Fprintf(tw, "%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\n",
-				pos.ID, pos.Score[0], pos.Score[1], pos.Cube.Value, decType, diceStr, bestMove, equityStr)
+			f := fields[pos.ID]
+			fmt.Fprintf(tw, "%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+				pos.ID, pos.Score[0], pos.Score[1], pos.Cube.Value, decType, diceStr, bestMove, equityStr,
+				playedErrorText(f), f.Date, collectionNames(f))
 		}
 		tw.Flush()
 	}

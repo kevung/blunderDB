@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.58.0"
+	DatabaseVersion = "2.59.0"
 
 	// MinReaderVersion is the oldest schema version a binary must speak to
 	// open a database this binary has opened for writing. Raised only when a
@@ -58,6 +58,15 @@ const (
 	// Raised by the write itself, never at open, so a library that holds no
 	// such blob stays readable by 2.50 to 2.57 (ADR-0113).
 	CheckerSourcesReaderVersion = "2.58.0"
+
+	// MatchResultReaderVersion is the floor a database is raised to when it
+	// first stores a match with a known result (final score and winner): a
+	// binary of an older schema would add matches whose result stays unknown
+	// for good, since nothing derives it after the migration. Raised by the
+	// write itself, never at open nor by the migration's backfill, so a
+	// library this schema has added no result to stays readable by older
+	// binaries (ADR-0114).
+	MatchResultReaderVersion = "2.59.0"
 )
 
 // Anki deck source types
@@ -1059,6 +1068,15 @@ type Match struct {
 	// RenderMAT states it in a MATPostCrawfordHeader line. It has no column:
 	// the first game's Positions carry it (the PostCrawford away score).
 	PostCrawford bool `json:"post_crawford,omitempty"`
+
+	// FinalScore and Winner are the match's result (MatchResultOf), computed
+	// at import from its games and stored, so a list of matches reads it
+	// without its games. FinalScore is player 1's then player 2's score after
+	// the last game, nil for a match stored without games; Winner is
+	// WinnerPlayer1 or WinnerPlayer2 once a player reached the match length,
+	// WinnerUnfinished otherwise (an abandoned match, a money session).
+	FinalScore *[2]int32 `json:"final_score"`
+	Winner     int32     `json:"winner"`
 }
 
 // MATPostCrawfordHeader is the .mat header line stating [Match.PostCrawford].

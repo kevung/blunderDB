@@ -292,7 +292,13 @@ var schemaStatements = []string{
 		engine_version TEXT DEFAULT '',
 		-- The video the Match was transcribed from (domain.Match.VideoSource,
 		-- ADR-0082): an http(s) URL or a local path, NULL when none.
-		video_source TEXT
+		video_source TEXT,
+		-- The result (domain.MatchResultOf), computed at import from the
+		-- games: the score after the last game, NULL without games, and the
+		-- seat that reached the length (1, -1, 0 for none).
+		final_score_1 INTEGER,
+		final_score_2 INTEGER,
+		winner INTEGER NOT NULL DEFAULT 0
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_dice_hash ON match(dice_hash) WHERE dice_hash IS NOT NULL`,
@@ -539,6 +545,7 @@ var schemaStatements = []string{
 		UNIQUE(collection_id, position_id)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`,
+	`CREATE INDEX IF NOT EXISTS idx_collection_position_position ON collection_position(position_id)`,
 	// The trash: a SNAPSHOT of what was deleted, not a deleted_at column, so
 	// no live query, statistic or retention predicate has to know about it
 	// (ADR-0036).

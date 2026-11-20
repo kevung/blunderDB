@@ -237,6 +237,7 @@
         { key: 'player1', label: $t('match.player1'), sortable: true },
         { key: 'player2', label: $t('match.player2'), sortable: true },
         { key: 'length', label: $t('match.pts'), sortable: true, narrow: true, align: 'right' },
+        { key: 'result', label: $t('match.result'), narrow: true, align: 'right' },
         { key: 'tournament', label: $t('match.tournament'), sortable: true, class: 'tournament-col' },
         { key: 'pr', label: 'PR', sortable: true, narrow: true, align: 'right' },
         { key: 'mwc', label: 'MWC', sortable: true, narrow: true, align: 'right' },
@@ -549,6 +550,16 @@
                 {#if matches.length > 0 && matches.length < matchTotal}<span class="match-count">{$t('match.countOfTotal', { shown: matches.length, total: matchTotal })}</span>{/if}
                 <button class="toolbar-btn" onclick={() => (showManagePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
+            {#snippet result(/** @type {Match} */ match)}
+                {#if match.final_score}
+                    <span
+                        class="match-result"
+                        class:unfinished={!match.winner}
+                        title={match.winner ? $t('match.resultWonBy', { player: match.winner === 1 ? match.player1_name : match.player2_name }) : $t('match.resultUnfinished')}
+                        ><span class:winner={match.winner === 1}>{match.final_score[0]}</span>–<span class:winner={match.winner === -1}>{match.final_score[1]}</span></span
+                    >
+                {:else}—{/if}
+            {/snippet}
             <PanelTable
                 bind:this={table}
                 rows={sortedMatches}
@@ -604,6 +615,7 @@
                             <input type="text" class="match-edit-input" bind:value={matchEdit.draft.player2} onkeydown={matchEdit.onKeyDown} placeholder={$t('match.player2')} />
                         </td>
                         <td class="narrow-col align-right no-select">{match.match_length}</td>
+                        <td class="narrow-col align-right no-select">{@render result(match)}</td>
                         <td class="tournament-col no-select">{match.tournament_name || match.event || ''}</td>
                         <td class="narrow-col align-right no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
                         <td class="narrow-col align-right no-select">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : ''}</td>
@@ -634,6 +646,7 @@
                         <td class="no-select">{match.player1_name}</td>
                         <td class="no-select">{match.player2_name}</td>
                         <td class="narrow-col align-right no-select">{match.match_length}</td>
+                        <td class="narrow-col align-right no-select" data-testid="match-result">{@render result(match)}</td>
                         <td
                             class="tournament-col no-select tournament-meta-cell"
                             onclick={(e) => {
@@ -892,6 +905,19 @@
 
     .tournament-display:hover {
         color: var(--color-primary);
+    }
+
+    .match-result {
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .match-result .winner {
+        font-weight: 600;
+    }
+
+    .match-result.unfinished {
+        color: var(--color-text-muted);
     }
 
     .sheet-slot {
