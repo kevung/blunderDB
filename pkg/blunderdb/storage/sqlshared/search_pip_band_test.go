@@ -6,18 +6,19 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// The least pips of a band count every checker of the template on its point,
-// and the farthest checker of the band where the template puts none.
+// The least pips of a band count the checkers the masks hold on each point of
+// the template — two at most — and the farthest checker of the band where the
+// template puts none.
 func TestBlackFloorBands(t *testing.T) {
 	var b domain.Board
 	b.Points[5] = domain.Point{Checkers: 2, Color: domain.Black}
 	b.Points[8] = domain.Point{Checkers: 3, Color: domain.Black}
 	b.Points[20] = domain.Point{Checkers: 2, Color: domain.White}
 	f := newBlackFloor(b)
-	if f == nil || f.top != 8 || f.pips != 34 {
-		t.Fatalf("floor %+v, want top 8 and 34 pips", f)
+	if f == nil || f.top != 8 || f.pips != 26 {
+		t.Fatalf("floor %+v, want top 8 and 26 pips", f)
 	}
-	for band, want := range map[int]int{9: 34, 10: 43, 26: 59} {
+	for band, want := range map[int]int{9: 26, 10: 35, 26: 51} {
 		if got := f.band(band); got != want {
 			t.Errorf("band %d: least pips %d, want %d", band, got, want)
 		}

@@ -475,6 +475,7 @@ func searchContractCases() []contractCase {
 		{"Search/ErrorSortOfCubeDecisions", testSearchErrorSortOfCubeDecisions},
 		{"Search/ExcludePositionIDs", testSearchExcludePositionIDs},
 		{"Search/FilterByAway", testSearchFilterByAway},
+		{"Search/AwayBeyondMatchLength", testSearchAwayBeyondMatchLength},
 		{"Search/FilterByMargin", testSearchFilterByMargin},
 		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
 		{"Search/FilterByCubeResponse", testSearchFilterByCubeResponse},

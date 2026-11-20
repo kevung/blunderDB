@@ -26,8 +26,8 @@ type blackFloor struct {
 	on [pipBandBands]bool
 	// top is the farthest of them, 0 for none.
 	top int
-	// pips is the least pip count a position the structure keeps can have: the
-	// template's checkers each stand on their point or farther.
+	// pips is the least pip count a row the masks keep can have: on each point of
+	// the template stand at least min(Checkers, 2) black checkers.
 	pips int
 }
 
@@ -38,7 +38,11 @@ func newBlackFloor(b domain.Board) *blackFloor {
 			continue
 		}
 		f.on[i], f.top = true, i
-		f.pips += p.Checkers * i
+		// The masks hold one checker (occupancy) or two (made point) on a point, never
+		// three: a floor counting the template's third checker would drop rows the
+		// read without bands keeps, and the count that offsets its tail would no
+		// longer describe what was read. The Go phase checks the rest.
+		f.pips += min(p.Checkers, 2) * i
 	}
 	if f.top == 0 {
 		return nil
