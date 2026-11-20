@@ -58,12 +58,24 @@
   - une base migrée de 2.58 garde ses résultats rétro-calculés **sans** monter le plancher
     (ADR-0114 §3) : un binaire 2.58 peut encore y importer des matchs au résultat inconnu, jusqu'au
     premier résultat écrit par un binaire 2.59.
-- **Mesures au banc, lancées le 20** : sur `mochy`, pile `bmab-nvme` (base pleine, 15,6 M
-  positions, en 0.55.0 au départ), sauvegarde à froid sous `~/bmab-banc/sauvegarde/` puis (A) main
-  fusionné dans la PR contre (B) `13b9d4426` ; les « à mesurer » du corps de la PR, plus Q11 et Q12
-  à 50 clients (dû depuis #911). Rapport : `~/bmab-banc/RAPPORT-959.md` sur mochy.
-- **Reste avant fusion** : reporter ces mesures dans le corps de la PR ; puis sortir du
-  brouillon, fusionner, fermer #952.
+- **Mesures au banc faites le 20**, reportées dans le corps de la PR (rapport :
+  `~/bmab-banc/RAPPORT-959.md` sur mochy). (A) main `48013308e` contre (B) `13b9d4426`, base
+  pleine, p50 / p95 en ms :
+  - tri par pips ASC sur une structure : 1 207 / 2 315 → 296 / 518 ; **seuil p95 ≤ 250 non tenu**
+    (plan voulu, sans Sort ; reste le filtre de structure lu ligne à ligne dans l'index). DESC
+    6,9 / 50 : tenu ;
+  - filtre de match × colonne rare : tenu quand la colonne est sous la borne de 10 000 positions
+    (p95 82 à 114 contre 220 à 809) ; **inchangé au-dessus** (p95 jusqu'à 6,5 s), la PR retombant
+    sur l'ancien énoncé ;
+  - aucune régression des filtres seuls ; un passage lent du filtre d'erreur aux réglages de
+    production ne s'est pas reproduit (B, A, B égaux), cause non trouvée ;
+  - champs de liste : + 0,6 ms au p50 d'une page ; Q11 et Q12 à 50 clients (dû depuis #911) : pas
+    de régression ; migration 071 : 45 s et 2 × 935 Mo ; 072 : 1 à 2 s.
+- **Banc laissé** en (B), schéma 072, réglages levés ; sauvegarde d'avant montée :
+  `~/bmab-banc/sauvegarde/pgdata-nvme-0.55.0-avant-959-20261120`. `/` de mochy : 8,6 Go libres.
+- **Reste avant fusion** : décider si les deux seuils non tenus bloquent la fusion ou partent en
+  suivi (la PR ne dégrade rien et gagne partout où elle agit) ; puis sortir du brouillon,
+  fusionner, fermer #952.
 
 ## Chantier vision — en pause, bloqué hors dépôt
 
@@ -85,7 +97,8 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. #959 : mesures au banc (en cours sur mochy), fusion ; fermer #952.
+1. #959 : trancher sur les deux seuils non tenus (tri par pips ASC, colonne au-dessus de la
+   borne), fusion ; fermer #952.
 2. #961 : tri des matchs par PR, origine d'un tournoi, critères des collections vivantes (la
    version qui les porte demande l'accord du propriétaire).
 3. Vision : campagne matériels, voir son `ETAT.md`.
