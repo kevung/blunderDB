@@ -1164,6 +1164,31 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/storage_Collection"
                 nullable: true
+  /v1/collections.copy:
+    post:
+      operationId: collections.copy
+      tags: [collections]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collectionCopyReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_CollectionCopyResult"
   /v1/collections.copyPosition:
     post:
       operationId: collections.copyPosition
@@ -9386,6 +9411,19 @@ components:
           items:
             type: integer
             format: int64
+    collectionCopyReq:
+      type: object
+      properties:
+        fromCollectionId:
+          type: integer
+          format: int64
+        toCollectionId:
+          type: integer
+          format: int64
+          nullable: true
+        name:
+          type: string
+          nullable: true
     collectionCreateReq:
       type: object
       properties:
@@ -11164,6 +11202,9 @@ components:
     storage_Collection:
       type: object
       description: "Opaque: see the Go type storage.Collection (defined outside internal/server, not expanded here)."
+    storage_CollectionCopyResult:
+      type: object
+      description: "Opaque: see the Go type storage.CollectionCopyResult (defined outside internal/server, not expanded here)."
     storage_CollectionEvaluation:
       type: object
       description: "Opaque: see the Go type storage.CollectionEvaluation (defined outside internal/server, not expanded here)."

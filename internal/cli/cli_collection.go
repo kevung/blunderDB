@@ -48,6 +48,7 @@ func (cli *CLI) collectionHandlers() map[string]func([]string) error {
 		"list":     cli.runCollectionList,
 		"show":     cli.runCollectionShow,
 		"create":   cli.runCollectionCreate,
+		"copy":     cli.runCollectionCopy,
 		"filter":   cli.runCollectionFilter,
 		"freeze":   cli.runCollectionFreeze,
 		"evaluate": cli.runCollectionEvaluate,
@@ -81,6 +82,7 @@ func (cli *CLI) printCollectionUsage() {
 	fmt.Fprintln(cli.stdout(), "  show      List the positions of one collection (id, index, XGID)")
 	fmt.Fprintln(cli.stdout(), "  pile      Put a position on the Pile, or take it off; without one, print the Pile")
 	fmt.Fprintln(cli.stdout(), "  create    Create an empty collection")
+	fmt.Fprintln(cli.stdout(), "  copy      Copy a collection to a new one, or append it to an existing one")
 	fmt.Fprintln(cli.stdout(), "  rename    Rename a collection")
 	fmt.Fprintln(cli.stdout(), "  delete    Delete a collection (its positions stay in the database)")
 	fmt.Fprintln(cli.stdout(), "  export    Export one or more collections to a new database file")
@@ -90,6 +92,7 @@ func (cli *CLI) printCollectionUsage() {
 	fmt.Fprintln(cli.stdout(), "  blunderdb collection list --db database.db")
 	fmt.Fprintln(cli.stdout(), "  blunderdb collection show --db database.db --id 3 --format json")
 	fmt.Fprintln(cli.stdout(), "  blunderdb collection create --db database.db --name \"Blitz openings\"")
+	fmt.Fprintln(cli.stdout(), "  blunderdb collection copy --db database.db --id 3 --name \"Openings (copy)\"")
 	fmt.Fprintln(cli.stdout(), "  blunderdb collection rename --db database.db --id 3 --name \"Openings\"")
 	fmt.Fprintln(cli.stdout(), "  blunderdb collection delete --db database.db --id 3 --confirm")
 	fmt.Fprintln(cli.stdout(), "  blunderdb collection export --db database.db --id 3,4 --out openings.db")
@@ -305,6 +308,34 @@ func (cli *CLI) runCollectionCreate(args []string) error {
 		return fmt.Errorf("failed to create collection: %w", err)
 	}
 	fmt.Fprintf(cli.stdout(), "Successfully created collection %q (ID: %d)\n", strings.TrimSpace(*name), id)
+	return nil
+}
+
+// runCollectionCopy copies a whole collection, in one transaction, to a new
+// collection or to the end of an existing one.
+func (cli *CLI) runCollectionCopy(args []string) error {
+	fs, dbPath := cli.collectionFlagSet("copy", "Copy a whole collection, keeping its order: to a new collection (--name, which takes the source's description), or to the end of an existing one (--to), skipping the positions it already holds. Nothing is copied if any part fails. A living collection cannot be copied or copied into: freeze it first.",
+		"blunderdb collection copy --db database.db --id 3 --name \"Openings (copy)\"",
+		"blunderdb collection copy --db database.db --id 3 --to 5")
+	id := fs.Int64("id", 0, "ID of the collection to copy (required)")
+	to := fs.Int64("to", 0, "ID of an existing collection to append to (or --name)")
+	name := fs.String("name", "", "Name of a new collection to copy to (or --to)")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *id == 0 {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --id")
+	}
+	if (*to != 0) == (strings.TrimSpace(*name) != "") {
+		fs.Usage()
+		return fmt.Errorf("give exactly one of --to and --name")
+	}
+	res, err := cli.db.CopyCollection(*id, *to, *name)
+	if err != nil {
+		return fmt.Errorf("failed to copy the collection: %w", err)
+	}
+	fmt.Fprintf(cli.stdout(), "Copied %d position(s) from collection %d to collection %d.\n", res.Copied, *id, res.ID)
 	return nil
 }
 

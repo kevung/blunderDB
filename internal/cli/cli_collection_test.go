@@ -303,3 +303,55 @@ func TestCLI_CollectionExport_CarriesTranscriptionsAliasesAndPassword(t *testing
 		t.Errorf("collections = %d, want 1", len(rows["collection"]))
 	}
 }
+
+// collection copy makes a new collection holding the source's positions in
+// its order, appends to an existing one without duplicates, and refuses a
+// call naming both targets or neither.
+func TestCLI_CollectionCopy(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	src, ids := seedCollection(t, cli, "Source", 3)
+
+	out := captureOut(t, cli, func() {
+		if err := cli.Run([]string{"collection", "copy", "--db", dbPath, "--id", fmt.Sprint(src), "--name", "Copy"}); err != nil {
+			t.Fatalf("collection copy --name: %v", err)
+		}
+	})
+	if !strings.Contains(out, "Copied 3 position(s)") {
+		t.Errorf("copy output = %q", out)
+	}
+	dst, err := cli.db.CreateCollection("Target", "")
+	if err != nil {
+		t.Fatalf("CreateCollection: %v", err)
+	}
+	if err := cli.db.AddPositionsToCollection(dst, ids[1:2]); err != nil {
+		t.Fatalf("AddPositionsToCollection: %v", err)
+	}
+	out = captureOut(t, cli, func() {
+		if err := cli.Run([]string{"collection", "copy", "--db", dbPath, "--id", fmt.Sprint(src), "--to", fmt.Sprint(dst)}); err != nil {
+			t.Fatalf("collection copy --to: %v", err)
+		}
+	})
+	if !strings.Contains(out, "Copied 2 position(s)") {
+		t.Errorf("copy --to output = %q", out)
+	}
+	positions, err := cli.db.GetCollectionPositions(dst)
+	if err != nil {
+		t.Fatalf("GetCollectionPositions: %v", err)
+	}
+	var got []int64
+	for _, p := range positions {
+		got = append(got, p.ID)
+	}
+	if want := []int64{ids[1], ids[0], ids[2]}; fmt.Sprint(got) != fmt.Sprint(want) {
+		t.Errorf("target holds %v, want %v", got, want)
+	}
+
+	captureOut(t, cli, func() {
+		if err := cli.Run([]string{"collection", "copy", "--db", dbPath, "--id", fmt.Sprint(src)}); err == nil {
+			t.Error("expected an error with neither --to nor --name")
+		}
+		if err := cli.Run([]string{"collection", "copy", "--db", dbPath, "--id", fmt.Sprint(src), "--to", fmt.Sprint(dst), "--name", "X"}); err == nil {
+			t.Error("expected an error with both --to and --name")
+		}
+	})
+}

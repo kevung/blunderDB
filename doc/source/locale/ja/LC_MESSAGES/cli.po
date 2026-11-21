@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 16:01+0200\n"
+"POT-Creation-Date: 2026-11-21 09:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -238,9 +238,9 @@ msgstr "collection"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Gère les collections (liste, contenu, création, renommage, suppression, "
-"export)."
-msgstr "コレクションを管理します（一覧、内容、作成、名前変更、削除、エクスポート）。"
+"Gère les collections (liste, contenu, création, copie, renommage, "
+"suppression, export)."
+msgstr "コレクションを管理します（一覧、内容、作成、コピー、名前変更、削除、エクスポート）。"
 
 #: ../../source/cli.rst:1
 msgid "study"
@@ -7154,3 +7154,4 @@ msgstr "これにより、エラー処理を含むスクリプトでCLIを使用
 #~ "la première chose à joindre à un"
 #~ " rapport de bug."
 #~ msgstr "blunderDB のバージョンと、このバイナリが書き込むデータベーススキーマのバージョンを表示します。バグ報告に最初に添えるべき情報です。"
+

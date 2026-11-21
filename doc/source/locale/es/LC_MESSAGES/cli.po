@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 16:01+0200\n"
+"POT-Creation-Date: 2026-11-21 09:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -265,10 +265,10 @@ msgstr "collection"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Gère les collections (liste, contenu, création, renommage, suppression, "
-"export)."
+"Gère les collections (liste, contenu, création, copie, renommage, "
+"suppression, export)."
 msgstr ""
-"Gestiona las colecciones (lista, contenido, creación, cambio de nombre, "
+"Gestiona las colecciones (lista, contenido, creación, copia, cambio de nombre, "
 "eliminación, exportación)."
 
 #: ../../source/cli.rst:1
@@ -9259,3 +9259,4 @@ msgstr "Esto permite usar la CLI en scripts con gestión de errores:"
 #~ " que escribe este binario; es lo "
 #~ "primero que hay que adjuntar a un"
 #~ " informe de error."
+

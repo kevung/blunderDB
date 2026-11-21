@@ -77,6 +77,8 @@ var covered = map[string]bool{
 	"Anki/ReviewUpdatesScheduling":                           true,
 	"Comment/SignatureCarried":                               true,
 	"Collection/CopyPosition":                                true,
+	"Collection/CopyWhole":                                   true,
+	"Collection/CopyWholeRefused":                            true,
 	"Collection/EvaluateUnderCeiling":                        true,
 	"Collection/FilterQueryRoundTrips":                       true,
 	"Collection/IDWindows":                                   true,
