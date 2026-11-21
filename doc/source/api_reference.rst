@@ -529,12 +529,22 @@ lecture. ``error_mp`` est l'équité que le coup joué a perdue, en millipoints.
 ``best_move``, sur un coup de pions, est le premier coup candidat de l'analyse,
 dans sa notation, du point de vue du joueur au trait — celui qui a joué le coup ;
 il est rendu même quand le coup joué n'est pas parmi les candidats.
-``best_cube_action``, sur une action de videau, est la meilleure réponse à la
-décision qu'avait ce joueur, dans le vocabulaire de ``cube_action`` : ``Double`` ou
-``No Double`` pour le joueur qui pouvait doubler (trop fort pour doubler donne
-``No Double``), ``Take`` ou ``Pass`` pour celui à qui le videau a été
-proposé. Les trois champs sont absents quand la position n'a pas d'analyse du type
-voulu ; une position atteinte par plusieurs matchs y nomme le même meilleur coup.
+``best_cube_action``, sur une action de videau, est la moins coûteuse des deux
+décisions qu'avait ce joueur : ``Double`` ou ``No Double`` pour le joueur qui pouvait
+doubler (trop fort pour doubler donne ``No Double``), ``Take`` ou ``Pass`` pour
+celui à qui le videau a été proposé. Elle est rangée par les erreurs mêmes dont
+``error_mp`` est tiré, jamais par le libellé de meilleure action que porte
+l'analyse : importé, ce libellé peut contredire les équités qu'il accompagne. À
+coût égal, c'est la décision jouée.
+
+Sans analyse du type voulu, les trois champs sont absents. ``error_mp`` l'est
+aussi quand le coup joué ne figure pas parmi les candidats, alors que ``best_move``
+est rendu. Une position atteinte par plusieurs matchs y nomme le même meilleur coup.
+
+Un client affiche « mieux » seulement quand ``error_mp`` est présent et non
+nul ; il ne compare pas le coup joué à ``best_move`` ou ``best_cube_action`` :
+deux notations d'un même coup peuvent différer, et deux coups d'égale équité
+coûtent 0 l'un comme l'autre.
 
 Repères d'une transcription
 ---------------------------

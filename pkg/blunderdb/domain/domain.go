@@ -1218,7 +1218,12 @@ type Move struct {
 	// Move's player faced, in the vocabulary of CubeAction: "Double" or
 	// "No Double" for the player holding the cube decision (too good to
 	// double is "No Double"), "Take" or "Pass" for the player the cube was
-	// offered to. Empty means no analysis of that kind. Not stored.
+	// offered to. It is the cheaper of the two choices by the very errors
+	// ErrorMP is drawn from, never the analysis's recorded best-action label,
+	// which an import can bring in contradicting its equities; at equal cost,
+	// the action played. Empty means no analysis of that kind. Not stored.
+	// A client shows "better" only when ErrorMP is set and non-zero, rather
+	// than comparing strings: two notations of one play can differ.
 	BestMove       string `json:"best_move,omitempty"`
 	BestCubeAction string `json:"best_cube_action,omitempty"`
 

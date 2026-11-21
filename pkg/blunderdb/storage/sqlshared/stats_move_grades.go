@@ -120,11 +120,13 @@ func checkerPlayError(ca *domain.CheckerAnalysis, played string) (float64, bool)
 }
 
 // bestPlay names what the analysis ranks first for the decision a Move
-// records, with the same half-of-the-analysis rule as playError. The doubling
-// decision follows the engine's own ruling (bestCubeAction), read by
-// BestCubeVerdict; the answer to a double follows the equities, as
-// CubeActionError scores it. The equities stand in for a missing or unknown
-// label; an analysis carrying neither names no best action.
+// records, with the same half-of-the-analysis rule as playError. A cube
+// decision is ranked by engine.CubeActionError, the very figure error_mp is
+// drawn from, never by the recorded bestCubeAction label: an imported label
+// can contradict the equities it travels with, and "better: No Double" beside
+// a double that cost nothing would be a lie. The cheaper of the two choices
+// open to the player is best; when both cost the same to the millipoint,
+// neither beats the one played. An analysis without any equity names none.
 func bestPlay(analysis *domain.PositionAnalysis, moveType, cubeAction string) (checker, cube string) {
 	if moveType != "cube" {
 		if ca := analysis.CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {
@@ -133,39 +135,50 @@ func bestPlay(analysis *domain.PositionAnalysis, moveType, cubeAction string) (c
 		return checker, ""
 	}
 	dca := analysis.DoublingCubeAnalysis
-	if dca == nil {
+	if dca == nil || !hasCubefulFigures(dca) {
 		return "", ""
 	}
-	verdict, labelled := engine.BestCubeVerdict(dca.BestCubeAction)
-	switch engine.CanonicalCubeAction(cubeAction) {
+	var choices [2]string
+	played := engine.CanonicalCubeAction(cubeAction)
+	switch played {
 	case engine.CubeTake, engine.CubePass:
-		// The analysis is the doubler's: the responder's best answer is the
-		// one leaving the doubler the lower equity.
-		pass := dca.CubefulDoublePassEquity < dca.CubefulDoubleTakeEquity
-		if dca.CubefulDoublePassEquity == 0 && dca.CubefulDoubleTakeEquity == 0 {
-			if !labelled {
-				return "", ""
-			}
-			pass = verdict.ShouldPass
-		}
-		if pass {
-			return "", "Pass"
-		}
-		return "", "Take"
+		choices = [2]string{engine.CubeTake, engine.CubePass}
 	case engine.CubeDouble, engine.CubeNoDouble:
-		double := verdict.ShouldDouble
-		if !labelled {
-			if dca.CubefulNoDoubleEquity == 0 && dca.CubefulDoubleTakeEquity == 0 && dca.CubefulDoublePassEquity == 0 {
-				return "", ""
-			}
-			double = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) > dca.CubefulNoDoubleEquity
-		}
-		if double {
-			return "", "Double"
-		}
-		return "", "No Double"
+		choices = [2]string{engine.CubeDouble, engine.CubeNoDouble}
+	default:
+		return "", ""
 	}
-	return "", ""
+	costMP := func(action string) int64 {
+		e, _ := engine.CubeActionError(dca, action)
+		return int64(math.Round(math.Abs(e) * 1000))
+	}
+	best := played
+	if a, b := costMP(choices[0]), costMP(choices[1]); a < b {
+		best = choices[0]
+	} else if b < a {
+		best = choices[1]
+	}
+	return "", cubeActionLabel[best]
+}
+
+// hasCubefulFigures reports whether a cube analysis carries any cubeful
+// equity or error: without one, every choice costs 0 and none is ranked.
+func hasCubefulFigures(dca *domain.DoublingCubeAnalysis) bool {
+	for _, v := range []float64{dca.CubefulNoDoubleEquity, dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity,
+		dca.CubefulNoDoubleError, dca.CubefulDoubleTakeError, dca.CubefulDoublePassError} {
+		if v != 0 {
+			return true
+		}
+	}
+	return false
+}
+
+// cubeActionLabel spells a canonical cube action in cube_action's vocabulary.
+var cubeActionLabel = map[string]string{
+	engine.CubeDouble:   "Double",
+	engine.CubeNoDouble: "No Double",
+	engine.CubeTake:     "Take",
+	engine.CubePass:     "Pass",
 }
 
 // PlayScorer fills Move.ErrorMP, BestMove and BestCubeAction from the

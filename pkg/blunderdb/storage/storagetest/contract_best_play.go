@@ -6,6 +6,7 @@ package storagetest
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -45,21 +46,37 @@ func testMatchMovesBestPlay(t *testing.T, s storage.Storage) {
 			{Move: "13/11 24/23", Equity: 0.440, EquityError: &e60},
 		}}})
 	bare := savePos(11, false) // never analysed
-	// The engine's label rules; the equities agree with it here.
+	// The stored errors rule, as they score error_mp; the label agrees here.
 	doublePass := savePos(12, true)
 	saveAnalysis(doublePass, domain.PositionAnalysis{AnalysisType: "DoublingCube",
 		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{BestCubeAction: "Double, Pass",
-			CubefulNoDoubleEquity: 0.700, CubefulDoubleTakeEquity: 1.300, CubefulDoublePassEquity: 1.000}})
-	// No label: the equities decide, as they score error_mp.
+			CubefulNoDoubleEquity: 0.700, CubefulDoubleTakeEquity: 1.300, CubefulDoublePassEquity: 1.000,
+			CubefulNoDoubleError: -0.300, CubefulDoubleTakeError: 0.300}})
+	// No label: the errors decide alone.
 	doubleTake := savePos(13, true)
 	saveAnalysis(doubleTake, domain.PositionAnalysis{AnalysisType: "DoublingCube",
 		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{
-			CubefulNoDoubleEquity: 0.500, CubefulDoubleTakeEquity: 0.800, CubefulDoublePassEquity: 1.000}})
+			CubefulNoDoubleEquity: 0.500, CubefulDoubleTakeEquity: 0.800, CubefulDoublePassEquity: 1.000,
+			CubefulNoDoubleError: -0.300, CubefulDoublePassError: 0.200}})
 	// Too good contains "double" yet rules against the double.
 	tooGood := savePos(14, true)
 	saveAnalysis(tooGood, domain.PositionAnalysis{AnalysisType: "DoublingCube",
 		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{BestCubeAction: "Too good to double, pass",
-			CubefulNoDoubleEquity: 1.400, CubefulDoubleTakeEquity: 1.800, CubefulDoublePassEquity: 1.000}})
+			CubefulNoDoubleEquity: 1.400, CubefulDoubleTakeEquity: 1.800, CubefulDoublePassEquity: 1.000,
+			CubefulDoubleTakeError: 0.400, CubefulDoublePassError: -0.400}})
+	// An imported label can contradict the equities it travels with (BGF, XG
+	// text): doubling is worth 0.640 against 0.620, whatever the label says.
+	mislabelled := savePos(16, true)
+	saveAnalysis(mislabelled, domain.PositionAnalysis{AnalysisType: "DoublingCube",
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{BestCubeAction: "No Double",
+			CubefulNoDoubleEquity: 0.620, CubefulDoubleTakeEquity: 0.640, CubefulDoublePassEquity: 1.000,
+			CubefulNoDoubleError: -0.020, CubefulDoublePassError: 0.360}})
+	// Both doubling choices cost the same: neither is better than the one played.
+	even := savePos(17, true)
+	saveAnalysis(even, domain.PositionAnalysis{AnalysisType: "DoublingCube",
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{BestCubeAction: "Double, Take",
+			CubefulNoDoubleEquity: 0.640, CubefulDoubleTakeEquity: 0.640, CubefulDoublePassEquity: 1.000,
+			CubefulDoublePassError: 0.360}})
 
 	type play struct {
 		posID           int64
@@ -78,6 +95,11 @@ func testMatchMovesBestPlay(t *testing.T, s storage.Storage) {
 		{doubleTake, 1, "cube", "Pass", "", "Take"},
 		{tooGood, 1, "cube", "Double", "", "No Double"},
 		{tooGood, -1, "cube", "Take", "", "Pass"},
+		{mislabelled, 1, "cube", "Double", "", "Double"},
+		{mislabelled, 1, "cube", "No Double", "", "Double"},
+		{mislabelled, -1, "cube", "Pass", "", "Take"},
+		{even, 1, "cube", "No Double", "", "No Double"},
+		{even, 1, "cube", "Double", "", "Double"},
 		{doublePass, 1, "checker", "13/9", "", ""}, // a checker play on a cube-only analysis
 	}
 
@@ -134,18 +156,21 @@ func testMatchMovesBestPlay(t *testing.T, s storage.Storage) {
 	check("MovesByMatch", s.Matches().MovesByMatch(ctx, "", matchID))
 	check("Moves", s.Matches().Moves(ctx, "", gameID))
 
-	// The cost and the best action come from one analysis: the best play,
-	// played, costs nothing.
+	// The cost and the best action come from one analysis, both ways: the
+	// best play, played, costs nothing; any other scored play costs something.
 	for mv, err := range s.Matches().Moves(ctx, "", gameID) {
 		if err != nil {
 			t.Fatalf("Moves: %v", err)
 		}
-		played := mv.CheckerMove
+		played, best := mv.CheckerMove, mv.BestMove
 		if mv.MoveType == "cube" {
-			played = mv.CubeAction
+			played, best = mv.CubeAction, mv.BestCubeAction
 		}
-		if best := mv.BestMove + mv.BestCubeAction; best != "" && best == played && (mv.ErrorMP == nil || *mv.ErrorMP != 0) {
-			t.Errorf("move %d plays its best %q but ErrorMP = %v", mv.ID, best, mv.ErrorMP)
+		if best == "" || mv.ErrorMP == nil {
+			continue
+		}
+		if same := strings.EqualFold(best, played); same != (*mv.ErrorMP == 0) {
+			t.Errorf("move %d plays %q, best %q, yet ErrorMP = %d", mv.ID, played, best, *mv.ErrorMP)
 		}
 	}
 
@@ -176,38 +201,25 @@ func testMatchMovesBestPlay(t *testing.T, s storage.Storage) {
 }
 
 // CheckBestPlayTenantIsolation proves the best play a tenant's moves carry
-// comes from that tenant's analysis only: tenants a and b hold the same
-// Position, and b's moves name nothing until b analyses it, then b's own best.
-// Run under row-level security by the PostgreSQL backend.
+// comes from that tenant's rows only. Row ids are drawn from sequences shared
+// by every tenant, so two tenants never hold the same Position id and an
+// analysis cannot cross over by its position_id; what can leak is a whole
+// move list reached by another tenant's match or game id. Tenant b therefore
+// asks for tenant a's match and game and must read nothing, then reads its own
+// moves with its own best play. Run under row-level security by the
+// PostgreSQL backend.
 func CheckBestPlayTenantIsolation(t *testing.T, s storage.Storage, a, b string) {
 	t.Helper()
 	ctxA := tenantContext(t, context.Background(), a)
 	ctxB := tenantContext(t, context.Background(), b)
 
-	setUp := func(ctx context.Context, scope string) (posID, matchID int64) {
+	setUp := func(ctx context.Context, scope, best string) (matchID, gameID int64) {
 		t.Helper()
 		p := statsDecisionPos(t, 15)
 		posID, err := s.Positions().Save(ctx, scope, &p)
 		if err != nil {
 			t.Fatalf("%s: Save position: %v", scope, err)
 		}
-		m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 5,
-			MatchDate: time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC)}
-		if matchID, err = s.Matches().Save(ctx, scope, &m); err != nil {
-			t.Fatalf("%s: Save match: %v", scope, err)
-		}
-		gameID, err := s.Matches().CreateGame(ctx, scope, &domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 1})
-		if err != nil {
-			t.Fatalf("%s: CreateGame: %v", scope, err)
-		}
-		if _, err := s.Matches().CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 1,
-			MoveType: "checker", PositionID: posID, Player: 1, CheckerMove: "13/11 24/23"}); err != nil {
-			t.Fatalf("%s: CreateMove: %v", scope, err)
-		}
-		return posID, matchID
-	}
-	analyse := func(ctx context.Context, scope string, posID int64, best string) {
-		t.Helper()
 		e := 0.050
 		if err := s.Analyses().Save(ctx, scope, posID, &domain.PositionAnalysis{AnalysisType: "CheckerMove",
 			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
@@ -216,37 +228,55 @@ func CheckBestPlayTenantIsolation(t *testing.T, s storage.Storage, a, b string) 
 			}}}); err != nil {
 			t.Fatalf("%s: Save analysis: %v", scope, err)
 		}
+		m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 5,
+			MatchDate: time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC)}
+		if matchID, err = s.Matches().Save(ctx, scope, &m); err != nil {
+			t.Fatalf("%s: Save match: %v", scope, err)
+		}
+		if gameID, err = s.Matches().CreateGame(ctx, scope, &domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 1}); err != nil {
+			t.Fatalf("%s: CreateGame: %v", scope, err)
+		}
+		if _, err := s.Matches().CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 1,
+			MoveType: "checker", PositionID: posID, Player: 1, CheckerMove: "13/11 24/23"}); err != nil {
+			t.Fatalf("%s: CreateMove: %v", scope, err)
+		}
+		return matchID, gameID
 	}
-	best := func(ctx context.Context, scope string, matchID int64) (string, *int32) {
+	read := func(scope, via string, it func(func(*domain.Move, error) bool)) []string {
 		t.Helper()
-		var got string
-		var errMP *int32
-		n := 0
-		for mv, err := range s.Matches().MovesByMatch(ctx, scope, matchID) {
+		var bests []string
+		for mv, err := range it {
 			if err != nil {
-				t.Fatalf("%s: MovesByMatch: %v", scope, err)
+				t.Fatalf("%s: %s: %v", scope, via, err)
 			}
-			got, errMP = mv.BestMove, mv.ErrorMP
-			n++
+			bests = append(bests, mv.BestMove)
 		}
-		if n != 1 {
-			t.Fatalf("%s: MovesByMatch read %d moves, want 1", scope, n)
-		}
-		return got, errMP
+		return bests
 	}
 
-	posA, matchA := setUp(ctxA, a)
-	analyse(ctxA, a, posA, "24/22 13/11")
-	posB, matchB := setUp(ctxB, b)
+	matchA, gameA := setUp(ctxA, a, "24/22 13/11")
+	matchB, gameB := setUp(ctxB, b, "8/5 6/5")
 
-	if got, errMP := best(ctxB, b, matchB); got != "" || errMP != nil {
-		t.Errorf("tenant %s, unanalysed: best = %q, ErrorMP = %v; another tenant's analysis leaked in", b, got, errMP)
+	if got := read(b, "MovesByMatch", s.Matches().MovesByMatch(ctxB, b, matchA)); len(got) != 0 {
+		t.Errorf("tenant %s reads tenant %s's match: best plays %q leaked", b, a, got)
 	}
-	analyse(ctxB, b, posB, "8/5 6/5")
-	if got, _ := best(ctxB, b, matchB); got != "8/5 6/5" {
-		t.Errorf("tenant %s: best = %q, want its own 8/5 6/5", b, got)
+	if got := read(b, "Moves", s.Matches().Moves(ctxB, b, gameA)); len(got) != 0 {
+		t.Errorf("tenant %s reads tenant %s's game: best plays %q leaked", b, a, got)
 	}
-	if got, _ := best(ctxA, a, matchA); got != "24/22 13/11" {
-		t.Errorf("tenant %s: best = %q, want its own 24/22 13/11", a, got)
+	for _, c := range []struct {
+		scope    string
+		ctx      context.Context
+		matchID  int64
+		gameID   int64
+		wantBest string
+	}{{a, ctxA, matchA, gameA, "24/22 13/11"}, {b, ctxB, matchB, gameB, "8/5 6/5"}} {
+		for via, it := range map[string]func(func(*domain.Move, error) bool){
+			"MovesByMatch": s.Matches().MovesByMatch(c.ctx, c.scope, c.matchID),
+			"Moves":        s.Matches().Moves(c.ctx, c.scope, c.gameID),
+		} {
+			if got := read(c.scope, via, it); len(got) != 1 || got[0] != c.wantBest {
+				t.Errorf("tenant %s %s: best plays %q, want its own [%s]", c.scope, via, got, c.wantBest)
+			}
+		}
 	}
 }

@@ -42,7 +42,8 @@ func TestMatchMovesBestPlayHTTP(t *testing.T) {
 	}
 	if err := st.Analyses().Save(ctx, testTenant, cubeID, &domain.PositionAnalysis{AnalysisType: "DoublingCube",
 		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{BestCubeAction: "No Double",
-			CubefulNoDoubleEquity: 0.300, CubefulDoubleTakeEquity: 0.100, CubefulDoublePassEquity: 1.000}}); err != nil {
+			CubefulNoDoubleEquity: 0.300, CubefulDoubleTakeEquity: 0.100, CubefulDoublePassEquity: 1.000,
+			CubefulDoubleTakeError: -0.200, CubefulDoublePassError: 0.700}}); err != nil {
 		t.Fatal(err)
 	}
 	barePos := domain.InitializePosition()
