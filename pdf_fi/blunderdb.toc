@@ -1,0 +1,418 @@
+\xpg@aux {}{finnish}
+\contentsline {chapter}{\numberline {1}Lataaminen ja asentaminen}{3}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Minkä tiedoston valitsen?}{3}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Latauksen tarkistaminen}{4}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Asentaminen Linuxiin}{5}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}Natiivipaketit (.deb / .rpm)}{5}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}Arch Linux (AUR)}{5}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}Flatpak}{5}{subsection.1.3.3}%
+\contentsline {subsection}{\numberline {1.3.4}Ottelun videot Linuxissa}{5}{subsection.1.3.4}%
+\contentsline {subsection}{\numberline {1.3.5}.tar.gz\sphinxhyphen {}arkisto}{6}{subsection.1.3.5}%
+\contentsline {subsection}{\numberline {1.3.6}Raaka binääri (edistynyt menetelmä)}{6}{subsection.1.3.6}%
+\contentsline {section}{\numberline {1.4}Docker\sphinxhyphen {}levykuva (palvelintila)}{6}{section.1.4}%
+\contentsline {section}{\numberline {1.5}winget\sphinxhyphen {} ja Homebrew\sphinxhyphen {}manifestit}{6}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Windows\sphinxhyphen {} ja Mac\sphinxhyphen {}varoitukset}{7}{section.1.6}%
+\contentsline {chapter}{\numberline {2}Käyttöopas}{9}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Alusta loppuun \sphinxhyphen {}opastukset}{9}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Ensimmäinen tuontini}{9}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Ottelun tutkiminen}{11}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Anki\sphinxhyphen {}istunto}{14}{subsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.1.4}Ensimmäisen turnauksen johtaminen}{15}{subsection.2.1.4}%
+\contentsline {subsection}{\numberline {2.1.5}Palvelintilan käyttöönotto proxyn takana}{15}{subsection.2.1.5}%
+\contentsline {section}{\numberline {2.2}Miten kehittyä blunderDB:n avulla}{17}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Luo uusi tietokanta}{17}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Avaa olemassa oleva tietokanta}{17}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Tietokannan yhdistäminen}{18}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Muokkaa asemaa}{19}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Lisää asema tietokantaan}{19}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Merkitse asema tunnisteella}{19}{section.2.8}%
+\contentsline {section}{\numberline {2.9}Poista asema}{20}{section.2.9}%
+\contentsline {section}{\numberline {2.10}Tuo asema XG:stä}{20}{section.2.10}%
+\contentsline {section}{\numberline {2.11}Tuo ottelu}{20}{section.2.11}%
+\contentsline {section}{\numberline {2.12}Tuo ottelukansio}{21}{section.2.12}%
+\contentsline {section}{\numberline {2.13}Tuontiraportti}{21}{section.2.13}%
+\contentsline {section}{\numberline {2.14}Opiskelujono}{21}{section.2.14}%
+\contentsline {subsection}{\numberline {2.14.1}Blunderit, joita mikään ei ole vielä käsitellyt}{22}{subsection.2.14.1}%
+\contentsline {section}{\numberline {2.15}Vedä ja pudota}{22}{section.2.15}%
+\contentsline {section}{\numberline {2.16}Selaa ottelua}{22}{section.2.16}%
+\contentsline {section}{\numberline {2.17}Hallitse ottelupaneelia}{23}{section.2.17}%
+\contentsline {section}{\numberline {2.18}Hallitse kokoelmia}{23}{section.2.18}%
+\contentsline {section}{\numberline {2.19}Hallitse turnauksia}{24}{section.2.19}%
+\contentsline {section}{\numberline {2.20}Näytä suoritustilastot}{24}{section.2.20}%
+\contentsline {section}{\numberline {2.21}Aseman arviointi (Eval\sphinxhyphen {}paneeli)}{24}{section.2.21}%
+\contentsline {section}{\numberline {2.22}Näytä XG:stä tuodun aseman analyysi}{26}{section.2.22}%
+\contentsline {section}{\numberline {2.23}Vie asema XG:hen}{26}{section.2.23}%
+\contentsline {section}{\numberline {2.24}Tarkastele eri asemia}{26}{section.2.24}%
+\contentsline {section}{\numberline {2.25}Hae asemia kriteerien perusteella}{26}{section.2.25}%
+\contentsline {section}{\numberline {2.26}Pidemmälle}{27}{section.2.26}%
+\contentsline {chapter}{\numberline {3}Käyttöopas}{29}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Aloitus ja käyttöliittymä}{29}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Johdanto}{29}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Päätoiminnot}{29}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}Käyttöliittymän kuvaus}{30}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.4}Näkymävälilehdet}{32}{subsection.3.1.4}%
+\contentsline {subsubsection}{Useita avoimia kirjastoja}{32}{subsubsection*.4}%
+\contentsline {subsubsection}{Vertaa ja vaihda: Muut tietokannat \sphinxhyphen {}paneeli}{34}{subsubsection*.5}%
+\contentsline {subsection}{\numberline {3.1.5}Asetukset}{35}{subsection.3.1.5}%
+\contentsline {subsubsection}{Valvottu kansio}{40}{subsubsection*.8}%
+\contentsline {subsubsection}{Kahden koneen synkronointi}{40}{subsubsection*.9}%
+\contentsline {subsubsection}{Avustaja ja MCP}{41}{subsubsection*.10}%
+\contentsline {subsubsection}{Synkronointi}{42}{subsubsection*.11}%
+\contentsline {subsection}{\numberline {3.1.6}Asemien selaaminen}{42}{subsection.3.1.6}%
+\contentsline {subsection}{\numberline {3.1.7}Asemien muokkaus}{42}{subsection.3.1.7}%
+\contentsline {subsection}{\numberline {3.1.8}Komentorivi}{43}{subsection.3.1.8}%
+\contentsline {subsection}{\numberline {3.1.9}Komentopaletti}{43}{subsection.3.1.9}%
+\contentsline {section}{\numberline {3.2}Analyysi, kommentit ja haku}{43}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Analyysipaneeli}{43}{subsection.3.2.1}%
+\contentsline {subsubsection}{Rolloutit}{44}{subsubsection*.12}%
+\contentsline {subsection}{\numberline {3.2.2}Kommenttipaneeli}{45}{subsection.3.2.2}%
+\contentsline {subsubsection}{Tunnisteet}{45}{subsubsection*.13}%
+\contentsline {subsection}{\numberline {3.2.3}Kontekstivalikko}{46}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Roskakori}{46}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}Hakupaneeli}{47}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.6}Kokoelmapaneeli}{51}{subsection.3.2.6}%
+\contentsline {subsubsection}{Oppitunnit}{53}{subsubsection*.15}%
+\contentsline {section}{\numberline {3.3}Ottelut ja litterointi}{54}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Ottelupaneeli}{54}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Litterointipaneeli}{59}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Turnaukset}{66}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Turnauspaneeli}{66}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Turnauksen johtaminen}{68}{subsection.3.4.2}%
+\contentsline {subsubsection}{Johtamissivu}{69}{subsubsection*.20}%
+\contentsline {subsubsection}{Tuloskortti}{70}{subsubsection*.21}%
+\contentsline {subsubsection}{Kontekstivalikot}{70}{subsubsection*.22}%
+\contentsline {subsubsection}{Koko näyttö}{71}{subsubsection*.23}%
+\contentsline {subsubsection}{Pikahaku}{71}{subsubsection*.24}%
+\contentsline {subsubsection}{Pelaajat}{71}{subsubsection*.25}%
+\contentsline {subsubsection}{Kaaviot, paikat, sijoitukset, historia}{72}{subsubsection*.26}%
+\contentsline {subsubsection}{Asetukset}{72}{subsubsection*.29}%
+\contentsline {subsubsection}{Tapahtuman kilpailut}{73}{subsubsection*.30}%
+\contentsline {subsubsection}{Turnauksen näyttö}{74}{subsubsection*.31}%
+\contentsline {section}{\numberline {3.5}Tilastot}{75}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Stats\sphinxhyphen {}paneeli}{75}{subsection.3.5.1}%
+\contentsline {subsubsection}{Johdanto}{75}{subsubsection*.32}%
+\contentsline {subsubsection}{Paneelin avaaminen}{76}{subsubsection*.33}%
+\contentsline {subsubsection}{Suodatinpalkki}{76}{subsubsection*.34}%
+\contentsline {paragraph}{Pelaajanäkökulma}{76}{paragraph*.35}%
+\contentsline {paragraph}{Saatavilla olevat suodattimet}{76}{paragraph*.36}%
+\contentsline {subsubsection}{PR / MWC \sphinxhyphen {}vaihto}{76}{subsubsection*.37}%
+\contentsline {subsubsection}{HTML\sphinxhyphen {}raportti}{78}{subsubsection*.39}%
+\contentsline {subsubsection}{Yleiskatsaus\sphinxhyphen {}välilehti}{78}{subsubsection*.40}%
+\contentsline {paragraph}{Tasokortit}{78}{paragraph*.41}%
+\contentsline {paragraph}{Opintosuunnitelma}{80}{paragraph*.42}%
+\contentsline {paragraph}{Ennen/jälkeen opiskelun}{80}{paragraph*.43}%
+\contentsline {paragraph}{Etumerkilliset vinoumat}{81}{paragraph*.44}%
+\contentsline {paragraph}{Liukuva PR viimeisten N päätöksen perusteella}{81}{paragraph*.45}%
+\contentsline {paragraph}{Top blunders}{81}{paragraph*.46}%
+\contentsline {subsubsection}{Progression\sphinxhyphen {}välilehti}{81}{subsubsection*.47}%
+\contentsline {paragraph}{Turnauskohtainen viivakaavio}{82}{paragraph*.48}%
+\contentsline {paragraph}{Ottelukohtainen hajontakaavio}{82}{paragraph*.49}%
+\contentsline {subsubsection}{Erreurs\sphinxhyphen {}välilehti}{82}{subsubsection*.50}%
+\contentsline {paragraph}{Toistuvat virheet}{82}{paragraph*.51}%
+\contentsline {paragraph}{Jakauma kuutiotoimen mukaan}{84}{paragraph*.52}%
+\contentsline {paragraph}{Kuutiovirheiden suunta}{84}{paragraph*.53}%
+\contentsline {paragraph}{Checker / Cube \sphinxhyphen {}vertailu}{84}{paragraph*.54}%
+\contentsline {paragraph}{Virheiden suuruusjakauman histogrammi}{84}{paragraph*.55}%
+\contentsline {subsubsection}{Harjoittelu ajan myötä}{84}{subsubsection*.56}%
+\contentsline {subsubsection}{Erittelyt\sphinxhyphen {}välilehti}{85}{subsubsection*.57}%
+\contentsline {subsubsection}{Harjoittelu ja oikea peli}{85}{subsubsection*.58}%
+\contentsline {subsubsection}{Pelaajat\sphinxhyphen {}välilehti}{86}{subsubsection*.59}%
+\contentsline {subsubsection}{Yhdistämissääntö}{88}{subsubsection*.60}%
+\contentsline {subsubsection}{MWC: rajoitukset}{89}{subsubsection*.61}%
+\contentsline {section}{\numberline {3.6}Arviointi}{89}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Eval\sphinxhyphen {}paneeli}{89}{subsection.3.6.1}%
+\contentsline {subsubsection}{Tuplauskuution matriisi}{91}{subsubsection*.62}%
+\contentsline {subsubsection}{Viitetiedot\sphinxhyphen {}paneeli}{92}{subsubsection*.63}%
+\contentsline {subsubsection}{Aseman tuominen Eval\sphinxhyphen {}paneeliin}{92}{subsubsection*.64}%
+\contentsline {subsubsection}{Eval\sphinxhyphen {}paneelin metodologia ja oletukset}{94}{subsubsection*.66}%
+\contentsline {section}{\numberline {3.7}Harjoittelu, Anki ja kaksintaistelu}{96}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}Anki\sphinxhyphen {}paneeli}{96}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {3.7.2}Harjoittelu\sphinxhyphen {}paneeli}{98}{subsection.3.7.2}%
+\contentsline {subsubsection}{Aloitin}{99}{subsubsection*.67}%
+\contentsline {subsubsection}{Kuusi harjoitusta}{99}{subsubsection*.68}%
+\contentsline {subsubsection}{Vastaaminen}{100}{subsubsection*.69}%
+\contentsline {subsubsection}{Päiväkirja ja yhteenveto}{101}{subsubsection*.70}%
+\contentsline {subsection}{\numberline {3.7.3}Kaksintaistelu\sphinxhyphen {}paneeli}{102}{subsection.3.7.3}%
+\contentsline {section}{\numberline {3.8}Tuonti, alkuperä ja jakaminen}{104}{section.3.8}%
+\contentsline {subsection}{\numberline {3.8.1}Tuonti: mitä kirjoitetaan ja mitä ei koskaan}{104}{subsection.3.8.1}%
+\contentsline {subsection}{\numberline {3.8.2}Metatietopaneeli}{105}{subsection.3.8.2}%
+\contentsline {subsection}{\numberline {3.8.3}Tietokannan jakaminen: alkuperä ja salasana}{106}{subsection.3.8.3}%
+\contentsline {subsubsection}{Tietokannan merkitseminen alkuperällään}{106}{subsubsection*.71}%
+\contentsline {subsubsection}{Merkitsijän identiteetti}{107}{subsubsection*.72}%
+\contentsline {subsubsection}{Tietokannan suojaaminen salasanalla}{107}{subsubsection*.73}%
+\contentsline {subsubsection}{Tiedoston alkuperän lukeminen}{108}{subsubsection*.74}%
+\contentsline {subsubsection}{Tietokannan julkaiseminen muille}{108}{subsubsection*.75}%
+\contentsline {chapter}{\numberline {4}Mittarit ja opiskelutyökalut}{111}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Päätöksen virhe ja menetys}{112}{section.4.1}%
+\contentsline {section}{\numberline {4.2}PR (\sphinxstyleemphasis {Performance Rating})}{112}{section.4.2}%
+\contentsline {section}{\numberline {4.3}MWC\sphinxhyphen {}menetys päätöstä kohden ja ottelukaavio}{113}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Ottelun voittotodennäköisyyksien käyrä}{114}{section.4.4}%
+\contentsline {section}{\numberline {4.5}MWC\sphinxhyphen {}menetys (7 pisteen ekv.) L₇ ja Elo moottoria vastaan}{114}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Vaikeus, vältettävissä olevat virheet, ylijäämä ja suhde}{115}{section.4.6}%
+\contentsline {section}{\numberline {4.7}95 \%:n välit}{116}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Ottelun yhteenveto}{117}{section.4.8}%
+\contentsline {section}{\numberline {4.9}Opiskelusuunnitelma}{117}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Viiteasemat}{118}{section.4.10}%
+\contentsline {section}{\numberline {4.11}Ennen/jälkeen opiskelun}{118}{section.4.11}%
+\contentsline {section}{\numberline {4.12}Etumerkilliset vinoumat}{119}{section.4.12}%
+\contentsline {section}{\numberline {4.13}Turnauksen yhteenveto}{119}{section.4.13}%
+\contentsline {section}{\numberline {4.14}Avauskirja: ero, 95 \%:n luottamusväli ja tasoissa olo}{120}{section.4.14}%
+\contentsline {chapter}{\numberline {5}Komentoluettelo}{121}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Yleiset toiminnot}{122}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Asemat ja navigointi}{123}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Muokkaus ja haku}{124}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Hakusuodattimet}{124}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Litterointi päätteestä}{129}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Sekalaisia komentoja}{129}{section.5.6}%
+\contentsline {chapter}{\numberline {6}Näppäimistöoikotiet}{131}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Tietokanta}{131}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Asema}{132}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Navigointi}{132}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Näyttö}{133}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Toiminnot}{133}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Työkalut}{133}{section.6.6}%
+\contentsline {section}{\numberline {6.7}Kaksintaistelu laudalla}{134}{section.6.7}%
+\contentsline {section}{\numberline {6.8}Näkymävälilehdet}{135}{section.6.8}%
+\contentsline {section}{\numberline {6.9}Komentorivi}{135}{section.6.9}%
+\contentsline {section}{\numberline {6.10}Hakuhistoria}{135}{section.6.10}%
+\contentsline {section}{\numberline {6.11}Suodatinkirjasto}{135}{section.6.11}%
+\contentsline {section}{\numberline {6.12}Analyysipaneeli}{136}{section.6.12}%
+\contentsline {section}{\numberline {6.13}Eval\sphinxhyphen {}paneeli}{136}{section.6.13}%
+\contentsline {section}{\numberline {6.14}Ottelupaneeli}{137}{section.6.14}%
+\contentsline {section}{\numberline {6.15}Anki\sphinxhyphen {}paneeli (välitoistoharjoittelu)}{137}{section.6.15}%
+\contentsline {section}{\numberline {6.16}Turnauspaneeli}{137}{section.6.16}%
+\contentsline {section}{\numberline {6.17}Johtamissivu}{138}{section.6.17}%
+\contentsline {section}{\numberline {6.18}Kokoelmapaneeli}{138}{section.6.18}%
+\contentsline {section}{\numberline {6.19}Litterointipaneeli}{138}{section.6.19}%
+\contentsline {section}{\numberline {6.20}Vedosarkki}{142}{section.6.20}%
+\contentsline {section}{\numberline {6.21}Ohjepaneeli}{142}{section.6.21}%
+\contentsline {chapter}{\numberline {7}Komentoriviliittymä (CLI)}{143}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Johdanto}{143}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Yleinen syntaksi}{144}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Käytettävissä olevat komennot}{144}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}Tuonti, vienti, siirto}{145}{subsection.7.3.1}%
+\contentsline {subsubsection}{create — Luo tietokanta}{145}{subsubsection*.91}%
+\contentsline {subsubsection}{import — Tuo tietoja}{146}{subsubsection*.92}%
+\contentsline {paragraph}{Kansion valvonta}{146}{paragraph*.93}%
+\contentsline {paragraph}{Ottelun tuonti}{147}{paragraph*.94}%
+\contentsline {paragraph}{Asemien tuonti}{147}{paragraph*.95}%
+\contentsline {paragraph}{Tietokannan tuonti}{148}{paragraph*.96}%
+\contentsline {paragraph}{Erätuonti}{148}{paragraph*.97}%
+\contentsline {subsubsection}{export — Vie tietoja}{149}{subsubsection*.98}%
+\contentsline {subsubsection}{transfer — Kopiointi kirjastosta toiseen}{151}{subsubsection*.99}%
+\contentsline {subsubsection}{identity — Liikkeeseenlaskijan identiteetti}{152}{subsubsection*.100}%
+\contentsline {subsubsection}{open — Suojatun tiedoston avaaminen}{153}{subsubsection*.101}%
+\contentsline {subsection}{\numberline {7.3.2}Kirjasto: haku, luettelot, kokoelmat}{153}{subsection.7.3.2}%
+\contentsline {subsubsection}{search — Hae asemia}{153}{subsubsection*.102}%
+\contentsline {subsubsection}{list — Luettele sisältö}{157}{subsubsection*.103}%
+\contentsline {paragraph}{Taulukkoviennit}{158}{paragraph*.104}%
+\contentsline {subsubsection}{collection — Kokoelmien hallinta}{160}{subsubsection*.105}%
+\contentsline {subsubsection}{comment — Position kommentit}{162}{subsubsection*.106}%
+\contentsline {subsubsection}{elsewhere — Muualla: asema muissa tietokannoissa}{162}{subsubsection*.107}%
+\contentsline {subsubsection}{trash — Roskakori}{163}{subsubsection*.108}%
+\contentsline {subsection}{\numberline {7.3.3}Ottelut, turnaukset ja pelit}{164}{subsection.7.3.3}%
+\contentsline {subsubsection}{match — Näytä ottelu}{164}{subsubsection*.109}%
+\contentsline {subsubsection}{tournament — Johdetun turnauksen lukeminen}{166}{subsubsection*.110}%
+\contentsline {subsubsection}{transcribe — Toista litterointi uudelleen}{167}{subsubsection*.111}%
+\contentsline {subsubsection}{duel — Pelaa Kaksintaistelu}{169}{subsubsection*.112}%
+\contentsline {subsection}{\numberline {7.3.4}Analyysi ja pelimoottori}{170}{subsection.7.3.4}%
+\contentsline {subsubsection}{analyze — gammonNet\sphinxhyphen {}täydennysanalyysi}{170}{subsubsection*.113}%
+\contentsline {subsubsection}{rollout — Aseman rollout}{172}{subsubsection*.115}%
+\contentsline {subsubsection}{epc — EPC\sphinxhyphen {}laskin}{173}{subsubsection*.116}%
+\contentsline {subsubsection}{gnubgid — GNUbg\sphinxhyphen {}tunnus}{173}{subsubsection*.117}%
+\contentsline {subsubsection}{cubematrix — Tuplauskuution matriisi}{174}{subsubsection*.118}%
+\contentsline {subsubsection}{capture — Asema kuvakaappauksesta}{174}{subsubsection*.119}%
+\contentsline {subsubsection}{bearoff — Bearoff\sphinxhyphen {}tietokannat}{175}{subsubsection*.120}%
+\contentsline {subsubsection}{openingbook — Mikä siirto tällä pistetilanteella?}{176}{subsubsection*.121}%
+\contentsline {subsection}{\numberline {7.3.5}Opiskelu, oppitunnit ja harjoittelu}{177}{subsection.7.3.5}%
+\contentsline {subsubsection}{study — Tuonnit ylittävä opiskelujono}{177}{subsubsection*.122}%
+\contentsline {subsubsection}{lesson — Hallitse oppitunteja}{177}{subsubsection*.123}%
+\contentsline {subsubsection}{anki — Välitoistopakat}{178}{subsubsection*.124}%
+\contentsline {subsubsection}{training — Harjoituspäiväkirja}{179}{subsubsection*.125}%
+\contentsline {subsection}{\numberline {7.3.6}Tilastot}{180}{subsection.7.3.6}%
+\contentsline {subsubsection}{stats — Toistuvat virheet}{180}{subsubsection*.126}%
+\contentsline {subsection}{\numberline {7.3.7}Tietokannan hallinta}{185}{subsection.7.3.7}%
+\contentsline {subsubsection}{info — Tietokannan metatiedot}{185}{subsubsection*.127}%
+\contentsline {subsubsection}{edit — Muokkaa metatietoja}{186}{subsubsection*.128}%
+\contentsline {subsubsection}{verify — Tarkista eheys}{187}{subsubsection*.129}%
+\contentsline {subsubsection}{vacuum — Tietokannan tiivistäminen}{189}{subsubsection*.130}%
+\contentsline {subsubsection}{met — Tietokannan ottelun pääomataulukko}{189}{subsubsection*.131}%
+\contentsline {subsubsection}{reencode — Analyysien uudelleenkirjoitus kompaktiin muotoon}{190}{subsubsection*.132}%
+\contentsline {subsubsection}{maintenance — Tietokannan terveydentila}{190}{subsubsection*.133}%
+\contentsline {subsubsection}{players — Pelaajan kirjoitusasut}{191}{subsubsection*.134}%
+\contentsline {subsubsection}{events — Tapahtuman kirjoitusasut}{192}{subsubsection*.135}%
+\contentsline {subsubsection}{repair — Laske uudelleen se, mikä on johdettua}{192}{subsubsection*.136}%
+\contentsline {subsubsection}{delete — Poista tietoja}{194}{subsubsection*.137}%
+\contentsline {subsubsection}{healthcheck — Taustaprosessin tarkistus}{194}{subsubsection*.138}%
+\contentsline {subsubsection}{mcp — Tietokannan tarjoaminen tekoälyavustajalle}{195}{subsubsection*.139}%
+\contentsline {subsubsection}{completion — Shell\sphinxhyphen {}täydennys}{195}{subsubsection*.140}%
+\contentsline {subsubsection}{version — Näytä versio}{196}{subsubsection*.141}%
+\contentsline {section}{\numberline {7.4}Työnkulkuesimerkkejä}{196}{section.7.4}%
+\contentsline {subsection}{\numberline {7.4.1}Turnaushakemiston tuonti}{196}{subsection.7.4.1}%
+\contentsline {subsection}{\numberline {7.4.2}Säännöllinen varmuuskopiointi}{196}{subsection.7.4.2}%
+\contentsline {subsection}{\numberline {7.4.3}Virheiden analysointi}{196}{subsection.7.4.3}%
+\contentsline {section}{\numberline {7.5}Paluukoodit}{196}{section.7.5}%
+\contentsline {chapter}{\numberline {8}Sanasto}{197}{chapter.8}%
+\contentsline {chapter}{\numberline {9}Usein kysytyt kysymykset (UKK)}{201}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Mihin blunderDB:tä käytetään?}{201}{section.9.1}%
+\contentsline {section}{\numberline {9.2}Mikä motivoi blunderDB:n luomiseen?}{201}{section.9.2}%
+\contentsline {section}{\numberline {9.3}Miten nykyisen tietokannan tila tallennetaan?}{201}{section.9.3}%
+\contentsline {section}{\numberline {9.4}Pitäisikö minun luoda eri tietokantoja eri asemaluokille?}{201}{section.9.4}%
+\contentsline {section}{\numberline {9.5}Miten useita tietokantoja yhdistetään?}{202}{section.9.5}%
+\contentsline {section}{\numberline {9.6}Mitä ottelutiedostomuotoja tuetaan?}{202}{section.9.6}%
+\contentsline {section}{\numberline {9.7}Voinko tuoda verkossa pelaamani ottelut?}{202}{section.9.7}%
+\contentsline {section}{\numberline {9.8}Voinko synkronoida tietokantani useiden koneiden välillä?}{203}{section.9.8}%
+\contentsline {section}{\numberline {9.9}Tarvitsenko eXtreme Gammonia käyttääkseni blunderDB:tä?}{203}{section.9.9}%
+\contentsline {section}{\numberline {9.10}Käytän jo eXtreme Gammonia: mihin tarvitsen blunderDB:tä?}{203}{section.9.10}%
+\contentsline {section}{\numberline {9.11}Tuodaanko XG:n rollout\sphinxhyphen {}analyysit? Tekeekö blunderDB rollouteja?}{204}{section.9.11}%
+\contentsline {section}{\numberline {9.12}Mitä sisäänrakennetusta evaluaattorista on mitattu ja mitä ei ole?}{204}{section.9.12}%
+\contentsline {section}{\numberline {9.13}Mikä on kokoelma?}{204}{section.9.13}%
+\contentsline {section}{\numberline {9.14}Mikä on EPC?}{204}{section.9.14}%
+\contentsline {section}{\numberline {9.15}Mitä sisäänrakennettu arviointimoottori (gammonNet) on arvoinen?}{204}{section.9.15}%
+\contentsline {section}{\numberline {9.16}Mikä on ero PR:n ja Snowie Error Raten välillä?}{205}{section.9.16}%
+\contentsline {section}{\numberline {9.17}Onko blunderDB:ssä komentorivikäyttöliittymä?}{205}{section.9.17}%
+\contentsline {section}{\numberline {9.18}Tarjoaako blunderDB palvelintilan?}{205}{section.9.18}%
+\contentsline {section}{\numberline {9.19}Voinko muokata, kopioida ja jakaa blunderDB:tä?}{205}{section.9.19}%
+\contentsline {section}{\numberline {9.20}Missä tietoni säilytetään?}{205}{section.9.20}%
+\contentsline {section}{\numberline {9.21}Voinko jakaa tietokannan toisen pelaajan kanssa?}{205}{section.9.21}%
+\contentsline {section}{\numberline {9.22}Mitä tietomuotoa blunderDB käyttää?}{206}{section.9.22}%
+\contentsline {section}{\numberline {9.23}Mitkä olivat blunderDB:n suunnitteluperiaatteet?}{206}{section.9.23}%
+\contentsline {section}{\numberline {9.24}Mikä on blunderDB:n ohjelmistoarkkitehtuuri?}{206}{section.9.24}%
+\contentsline {section}{\numberline {9.25}Millä alustoilla blunderDB toimii?}{206}{section.9.25}%
+\contentsline {section}{\numberline {9.26}Mistä blunderDB:n kuvake on peräisin?}{206}{section.9.26}%
+\contentsline {chapter}{\numberline {10}Headless\sphinxhyphen {}tila (palvelin)}{207}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Yleiskatsaus}{207}{section.10.1}%
+\contentsline {section}{\numberline {10.2}\sphinxstyleliteralintitle {\sphinxupquote {serve}}\sphinxhyphen {}demoni}{207}{section.10.2}%
+\contentsline {subsection}{\numberline {10.2.1}Päätepisteet}{211}{subsection.10.2.1}%
+\contentsline {subsection}{\numberline {10.2.2}Verkkosivu}{211}{subsection.10.2.2}%
+\contentsline {subsubsection}{Mitä \sphinxstyleliteralintitle {\sphinxupquote {/v1}} lupaa}{212}{subsubsection*.142}%
+\contentsline {subsubsection}{Oppitunnit}{212}{subsubsection*.143}%
+\contentsline {subsubsection}{Litterointi rajapinnan kautta}{213}{subsubsection*.144}%
+\contentsline {subsubsection}{Kaksintaistelun pelaaminen API:n kautta}{214}{subsubsection*.145}%
+\contentsline {subsubsection}{Python\sphinxhyphen {}asiakas}{215}{subsubsection*.146}%
+\contentsline {subsubsection}{Moottorin upottaminen Go\sphinxhyphen {}ohjelmaan}{215}{subsubsection*.147}%
+\contentsline {subsection}{\numberline {10.2.3}Turnauksen johto ja tapahtumat}{216}{subsection.10.2.3}%
+\contentsline {subsubsection}{Johtotoiminnot}{217}{subsubsection*.148}%
+\contentsline {subsubsection}{Toiminnoista ilmoittaminen: \sphinxstyleliteralintitle {\sphinxupquote {/v1/events}}}{219}{subsubsection*.149}%
+\contentsline {subsection}{\numberline {10.2.4}Bearoff\sphinxhyphen {}tietokannat}{220}{subsection.10.2.4}%
+\contentsline {subsection}{\numberline {10.2.5}Ylläpitoreitit}{221}{subsection.10.2.5}%
+\contentsline {subsection}{\numberline {10.2.6}Korrelaatio ja liiketoimintamittarit}{229}{subsection.10.2.6}%
+\contentsline {subsection}{\numberline {10.2.7}Virtojen pakkaus}{230}{subsection.10.2.7}%
+\contentsline {subsection}{\numberline {10.2.8}Vain yksi tenant SQLitessä}{230}{subsection.10.2.8}%
+\contentsline {subsection}{\numberline {10.2.9}Useiden tenanttien lukeminen}{230}{subsection.10.2.9}%
+\contentsline {subsection}{\numberline {10.2.10}Kopion vetäminen luetusta tenantista}{231}{subsection.10.2.10}%
+\contentsline {subsection}{\numberline {10.2.11}Varmuuskopiointi ja palautus}{232}{subsection.10.2.11}%
+\contentsline {subsection}{\numberline {10.2.12}Työasema ja palvelin}{233}{subsection.10.2.12}%
+\contentsline {subsection}{\numberline {10.2.13}Käyttöönotto Dockerilla}{233}{subsection.10.2.13}%
+\contentsline {subsubsection}{Julkaistu kuva}{233}{subsubsection*.150}%
+\contentsline {subsection}{\numberline {10.2.14}Käyttöönotto todentavan proxyn takana}{234}{subsection.10.2.14}%
+\contentsline {subsubsection}{Tenanttikohtaiset kiintiöt}{238}{subsubsection*.151}%
+\contentsline {subsection}{\numberline {10.2.15}Käyttöönoton päivittäminen}{239}{subsection.10.2.15}%
+\contentsline {section}{\numberline {10.3}PostgreSQL\sphinxhyphen {}taustajärjestelmä ja monikäyttäjäisyys}{240}{section.10.3}%
+\contentsline {subsection}{\numberline {10.3.1}Row\sphinxhyphen {}Level Security}{240}{subsection.10.3.1}%
+\contentsline {subsection}{\numberline {10.3.2}Tenantin avaaminen ja sulkeminen}{241}{subsection.10.3.2}%
+\contentsline {subsection}{\numberline {10.3.3}Tiivistys ja yhteyspooli}{241}{subsection.10.3.3}%
+\contentsline {section}{\numberline {10.4}SQLite\sphinxhyphen {}tietokannan siirtäminen PostgreSQL:ään}{242}{section.10.4}%
+\contentsline {section}{\numberline {10.5}Yleiskäyttöinen \sphinxstyleliteralintitle {\sphinxupquote {call}}\sphinxhyphen {}välittäjä}{243}{section.10.5}%
+\contentsline {section}{\numberline {10.6}Työkalut tekoälyavustajalle (MCP)}{244}{section.10.6}%
+\contentsline {chapter}{\numberline {11}API\sphinxhyphen {}sopimus}{247}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Idempotenssi}{256}{section.11.1}%
+\contentsline {section}{\numberline {11.2}Ehdolliset lukemiset}{256}{section.11.2}%
+\contentsline {section}{\numberline {11.3}Analyysin tallentaminen ja lukeminen}{256}{section.11.3}%
+\contentsline {section}{\numberline {11.4}Ottelun siirtojen lukeminen}{257}{section.11.4}%
+\contentsline {section}{\numberline {11.5}Litteroinnin aikaleimat}{257}{section.11.5}%
+\contentsline {chapter}{\numberline {12}Liite: Suodattimien edistynyt käyttö}{259}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Suodatinkirjasto}{259}{section.12.1}%
+\contentsline {section}{\numberline {12.2}Esimerkkejä}{260}{section.12.2}%
+\contentsline {chapter}{\numberline {13}Windows\sphinxhyphen {}liite: mitä tehdä, jos Windows estää käynnistyksen}{261}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Windows SmartScreen \sphinxhyphen {}varoitus}{261}{section.13.1}%
+\contentsline {section}{\numberline {13.2}Windows Defenderin esto}{262}{section.13.2}%
+\contentsline {section}{\numberline {13.3}Latauksen eheyden tarkistus (SHA256)}{263}{section.13.3}%
+\contentsline {chapter}{\numberline {14}Mac\sphinxhyphen {}liite: blunderDB:n mahdollinen esto}{273}{chapter.14}%
+\contentsline {section}{\numberline {14.1}blunderDB:n asennus}{273}{section.14.1}%
+\contentsline {section}{\numberline {14.2}Luvan antaminen blunderDB:n suorittamiseen}{273}{section.14.2}%
+\contentsline {chapter}{\numberline {15}Liite: Tietokannan skeema}{275}{chapter.15}%
+\contentsline {section}{\numberline {15.1}Versiointi ja migraatiot}{275}{section.15.1}%
+\contentsline {section}{\numberline {15.2}Päätaulut}{276}{section.15.2}%
+\contentsline {section}{\numberline {15.3}Suunnitteluperiaatteet}{276}{section.15.3}%
+\contentsline {chapter}{\numberline {16}Liite: Tilastomalli — XG / gnuBG / blunderDB \sphinxhyphen {}yhdenmukaisuus}{277}{chapter.16}%
+\contentsline {section}{\numberline {16.1}Muodolliset määritelmät}{278}{section.16.1}%
+\contentsline {subsection}{\numberline {16.1.1}PR (Performance Rating)}{278}{subsection.16.1.1}%
+\contentsline {subsection}{\numberline {16.1.2}Snowie Error Rate}{278}{subsection.16.1.2}%
+\contentsline {subsection}{\numberline {16.1.3}MWC\sphinxhyphen {}tappio (Match Winning Chance)}{278}{subsection.16.1.3}%
+\contentsline {subsection}{\numberline {16.1.4}Tuuri (\sphinxstyleemphasis {luck})}{279}{subsection.16.1.4}%
+\contentsline {subsection}{\numberline {16.1.5}Voitot ja tappiot}{279}{subsection.16.1.5}%
+\contentsline {subsection}{\numberline {16.1.6}Virheet ja karkeat virheet}{279}{subsection.16.1.6}%
+\contentsline {section}{\numberline {16.2}Lasketut päätökset: XG ja gnuBG}{280}{section.16.2}%
+\contentsline {section}{\numberline {16.3}Vastaavuus blunderDB ↔ XG ↔ gnuBG}{280}{section.16.3}%
+\contentsline {subsection}{\numberline {16.3.1}Vertailu XG ↔ blunderDB (sama analyysi)}{280}{subsection.16.3.1}%
+\contentsline {subsection}{\numberline {16.3.2}Tunnetut jäännöspoikkeamat}{280}{subsection.16.3.2}%
+\contentsline {subsection}{\numberline {16.3.3}Vertailu gnuBG ↔ blunderDB (SGF\sphinxhyphen {}tuonti — eri moottorit)}{281}{subsection.16.3.3}%
+\contentsline {section}{\numberline {16.4}Omien lukujen tarkistaminen}{281}{section.16.4}%
+\contentsline {section}{\numberline {16.5}gnuBG\sphinxhyphen {}viite}{281}{section.16.5}%
+\contentsline {chapter}{\numberline {17}Versiohistoria}{283}{chapter.17}%
+\contentsline {section}{\numberline {17.1}Päivityksen jälkeen}{283}{section.17.1}%
+\contentsline {section}{\numberline {17.2}0.59.0 (2026\sphinxhyphen {}11\sphinxhyphen {}21)}{284}{section.17.2}%
+\contentsline {section}{\numberline {17.3}0.58.0 (2026\sphinxhyphen {}11\sphinxhyphen {}21)}{284}{section.17.3}%
+\contentsline {section}{\numberline {17.4}0.57.0 (2026\sphinxhyphen {}11\sphinxhyphen {}16)}{285}{section.17.4}%
+\contentsline {section}{\numberline {17.5}0.56.0 (2026\sphinxhyphen {}11\sphinxhyphen {}13)}{285}{section.17.5}%
+\contentsline {section}{\numberline {17.6}0.55.0 (2026\sphinxhyphen {}11\sphinxhyphen {}13)}{286}{section.17.6}%
+\contentsline {section}{\numberline {17.7}0.54.0 (2026\sphinxhyphen {}11\sphinxhyphen {}13)}{286}{section.17.7}%
+\contentsline {section}{\numberline {17.8}0.53.0 (2026\sphinxhyphen {}11\sphinxhyphen {}09)}{287}{section.17.8}%
+\contentsline {section}{\numberline {17.9}0.52.0 (2026\sphinxhyphen {}11\sphinxhyphen {}09)}{287}{section.17.9}%
+\contentsline {section}{\numberline {17.10}0.51.0 (2026\sphinxhyphen {}11\sphinxhyphen {}06)}{287}{section.17.10}%
+\contentsline {section}{\numberline {17.11}0.50.0 (2026\sphinxhyphen {}11\sphinxhyphen {}05)}{288}{section.17.11}%
+\contentsline {section}{\numberline {17.12}0.49.0 (2026\sphinxhyphen {}11\sphinxhyphen {}02)}{288}{section.17.12}%
+\contentsline {section}{\numberline {17.13}0.48.0 (2026\sphinxhyphen {}11\sphinxhyphen {}02)}{289}{section.17.13}%
+\contentsline {section}{\numberline {17.14}0.47.0 (2026\sphinxhyphen {}10\sphinxhyphen {}26)}{289}{section.17.14}%
+\contentsline {section}{\numberline {17.15}0.46.0 (2026\sphinxhyphen {}10\sphinxhyphen {}23)}{290}{section.17.15}%
+\contentsline {section}{\numberline {17.16}0.45.0 (2026\sphinxhyphen {}10\sphinxhyphen {}21)}{291}{section.17.16}%
+\contentsline {section}{\numberline {17.17}0.44.0 (2026\sphinxhyphen {}10\sphinxhyphen {}19)}{292}{section.17.17}%
+\contentsline {section}{\numberline {17.18}0.43.0 (2026\sphinxhyphen {}10\sphinxhyphen {}18)}{293}{section.17.18}%
+\contentsline {section}{\numberline {17.19}0.42.0 (2026\sphinxhyphen {}10\sphinxhyphen {}17)}{293}{section.17.19}%
+\contentsline {section}{\numberline {17.20}0.41.0 (2026\sphinxhyphen {}10\sphinxhyphen {}16)}{293}{section.17.20}%
+\contentsline {section}{\numberline {17.21}0.40.0 (2026\sphinxhyphen {}10\sphinxhyphen {}12)}{294}{section.17.21}%
+\contentsline {section}{\numberline {17.22}0.39.0 (2026\sphinxhyphen {}10\sphinxhyphen {}10)}{296}{section.17.22}%
+\contentsline {section}{\numberline {17.23}0.38.0 (2026\sphinxhyphen {}10\sphinxhyphen {}06)}{298}{section.17.23}%
+\contentsline {section}{\numberline {17.24}0.37.0 (5.10.2026)}{299}{section.17.24}%
+\contentsline {section}{\numberline {17.25}0.36.0 (5.9.2026)}{300}{section.17.25}%
+\contentsline {section}{\numberline {17.26}0.35.0 (2026\sphinxhyphen {}09\sphinxhyphen {}02)}{301}{section.17.26}%
+\contentsline {section}{\numberline {17.27}0.34.0 (2026\sphinxhyphen {}09\sphinxhyphen {}02)}{301}{section.17.27}%
+\contentsline {section}{\numberline {17.28}0.33.0 (2026\sphinxhyphen {}08\sphinxhyphen {}26)}{302}{section.17.28}%
+\contentsline {section}{\numberline {17.29}0.32.0 (2026\sphinxhyphen {}08\sphinxhyphen {}09)}{302}{section.17.29}%
+\contentsline {section}{\numberline {17.30}0.31.0 (2026\sphinxhyphen {}08\sphinxhyphen {}04)}{303}{section.17.30}%
+\contentsline {section}{\numberline {17.31}0.30.0 (2026\sphinxhyphen {}07\sphinxhyphen {}26)}{303}{section.17.31}%
+\contentsline {section}{\numberline {17.32}0.29.0 (2026\sphinxhyphen {}07\sphinxhyphen {}18)}{304}{section.17.32}%
+\contentsline {section}{\numberline {17.33}0.28.0 (2026\sphinxhyphen {}07\sphinxhyphen {}15)}{304}{section.17.33}%
+\contentsline {section}{\numberline {17.34}0.27.0 (2026\sphinxhyphen {}06\sphinxhyphen {}13)}{305}{section.17.34}%
+\contentsline {section}{\numberline {17.35}0.26.0 (2026\sphinxhyphen {}06\sphinxhyphen {}09)}{305}{section.17.35}%
+\contentsline {section}{\numberline {17.36}0.25.0 (2026\sphinxhyphen {}06\sphinxhyphen {}07)}{305}{section.17.36}%
+\contentsline {section}{\numberline {17.37}0.24.0 (2026\sphinxhyphen {}06\sphinxhyphen {}06)}{306}{section.17.37}%
+\contentsline {section}{\numberline {17.38}0.23.0 (2026\sphinxhyphen {}06\sphinxhyphen {}05)}{306}{section.17.38}%
+\contentsline {section}{\numberline {17.39}0.22.0 (2026\sphinxhyphen {}06\sphinxhyphen {}02)}{306}{section.17.39}%
+\contentsline {section}{\numberline {17.40}0.21.0 (2026\sphinxhyphen {}06\sphinxhyphen {}01)}{306}{section.17.40}%
+\contentsline {section}{\numberline {17.41}0.20.0 (2026\sphinxhyphen {}05\sphinxhyphen {}31)}{307}{section.17.41}%
+\contentsline {section}{\numberline {17.42}0.19.0 (2026\sphinxhyphen {}05\sphinxhyphen {}07)}{307}{section.17.42}%
+\contentsline {section}{\numberline {17.43}0.18.0 (2026\sphinxhyphen {}04\sphinxhyphen {}20)}{307}{section.17.43}%
+\contentsline {section}{\numberline {17.44}0.17.0 (2026\sphinxhyphen {}04\sphinxhyphen {}20)}{308}{section.17.44}%
+\contentsline {section}{\numberline {17.45}0.16.0 (2026\sphinxhyphen {}04\sphinxhyphen {}18)}{308}{section.17.45}%
+\contentsline {section}{\numberline {17.46}0.15.0 (2026\sphinxhyphen {}03\sphinxhyphen {}31)}{308}{section.17.46}%
+\contentsline {section}{\numberline {17.47}0.14.0 (2026\sphinxhyphen {}03\sphinxhyphen {}30)}{308}{section.17.47}%
+\contentsline {section}{\numberline {17.48}0.13.0 (2026\sphinxhyphen {}03\sphinxhyphen {}28)}{308}{section.17.48}%
+\contentsline {section}{\numberline {17.49}0.12.0 (2026\sphinxhyphen {}03\sphinxhyphen {}19)}{309}{section.17.49}%
+\contentsline {section}{\numberline {17.50}0.11.0 (2026\sphinxhyphen {}03\sphinxhyphen {}06)}{309}{section.17.50}%
+\contentsline {section}{\numberline {17.51}0.10.0 (2026\sphinxhyphen {}02\sphinxhyphen {}25)}{309}{section.17.51}%
+\contentsline {section}{\numberline {17.52}0.9.0 (2025\sphinxhyphen {}11\sphinxhyphen {}02)}{309}{section.17.52}%
+\contentsline {section}{\numberline {17.53}0.8.0 (2025\sphinxhyphen {}05\sphinxhyphen {}03)}{310}{section.17.53}%
+\contentsline {section}{\numberline {17.54}0.7.0 (2025\sphinxhyphen {}02\sphinxhyphen {}16)}{310}{section.17.54}%
+\contentsline {section}{\numberline {17.55}0.6.0 (2025\sphinxhyphen {}02\sphinxhyphen {}13)}{310}{section.17.55}%
+\contentsline {section}{\numberline {17.56}0.5.0 (2025\sphinxhyphen {}02\sphinxhyphen {}04)}{310}{section.17.56}%
+\contentsline {section}{\numberline {17.57}0.4.0 (2025\sphinxhyphen {}02\sphinxhyphen {}03)}{310}{section.17.57}%
+\contentsline {section}{\numberline {17.58}0.3.0 (2025\sphinxhyphen {}01\sphinxhyphen {}27)}{310}{section.17.58}%
+\contentsline {section}{\numberline {17.59}0.2.0 (2025\sphinxhyphen {}01\sphinxhyphen {}06)}{310}{section.17.59}%
+\contentsline {section}{\numberline {17.60}0.1.0 (2024\sphinxhyphen {}12\sphinxhyphen {}31)}{311}{section.17.60}%
+\contentsline {chapter}{\numberline {18}Tietoja}{313}{chapter.18}%
+\contentsline {section}{\numberline {18.1}Yhteystiedot}{313}{section.18.1}%
+\contentsline {section}{\numberline {18.2}Lahjoita}{313}{section.18.2}%
+\contentsline {section}{\numberline {18.3}Kiitokset}{314}{section.18.3}%
+\contentsline {section}{\numberline {18.4}Kiitokset kolmansille osapuolille}{314}{section.18.4}%

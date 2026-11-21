@@ -1,0 +1,417 @@
+\contentsline {chapter}{\numberline {第1章}ダウンロードとインストール}{3}{chapter.1}%
+\contentsline {section}{\numberline {1.1}どのファイルを選ぶか}{3}{section.1.1}%
+\contentsline {section}{\numberline {1.2}ダウンロードの検証}{4}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Linux へのインストール}{5}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}ネイティブパッケージ (.deb / .rpm)}{5}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}Arch Linux (AUR)}{5}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}Flatpak}{5}{subsection.1.3.3}%
+\contentsline {subsection}{\numberline {1.3.4}Linux でのマッチ動画}{6}{subsection.1.3.4}%
+\contentsline {subsection}{\numberline {1.3.5}.tar.gz アーカイブ}{6}{subsection.1.3.5}%
+\contentsline {subsection}{\numberline {1.3.6}生のバイナリ (上級者向けの方法)}{6}{subsection.1.3.6}%
+\contentsline {section}{\numberline {1.4}Docker イメージ（サーバーモード）}{7}{section.1.4}%
+\contentsline {section}{\numberline {1.5}winget と Homebrew のマニフェスト}{7}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Windows と Mac に関する警告}{7}{section.1.6}%
+\contentsline {chapter}{\numberline {第2章}ユーザーガイド}{9}{chapter.2}%
+\contentsline {section}{\numberline {2.1}エンドツーエンドのチュートリアル}{9}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}最初のインポート}{9}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}マッチを研究する}{11}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Anki セッション}{14}{subsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.1.4}はじめての大会運営}{15}{subsection.2.1.4}%
+\contentsline {subsection}{\numberline {2.1.5}サーバーモードをプロキシの背後に展開する}{15}{subsection.2.1.5}%
+\contentsline {section}{\numberline {2.2}blunderDB で上達するには}{17}{section.2.2}%
+\contentsline {section}{\numberline {2.3}新しいデータベースを作成する}{18}{section.2.3}%
+\contentsline {section}{\numberline {2.4}既存のデータベースを開く}{18}{section.2.4}%
+\contentsline {section}{\numberline {2.5}データベースの統合}{18}{section.2.5}%
+\contentsline {section}{\numberline {2.6}ポジションを編集する}{20}{section.2.6}%
+\contentsline {section}{\numberline {2.7}ポジションをデータベースに追加する}{20}{section.2.7}%
+\contentsline {section}{\numberline {2.8}ポジションにタグを付ける}{21}{section.2.8}%
+\contentsline {section}{\numberline {2.9}ポジションを削除する}{21}{section.2.9}%
+\contentsline {section}{\numberline {2.10}XG からポジションをインポートする}{21}{section.2.10}%
+\contentsline {section}{\numberline {2.11}マッチをインポートする}{21}{section.2.11}%
+\contentsline {section}{\numberline {2.12}マッチのフォルダをインポートする}{22}{section.2.12}%
+\contentsline {section}{\numberline {2.13}インポート報告}{22}{section.2.13}%
+\contentsline {section}{\numberline {2.14}学習キュー}{23}{section.2.14}%
+\contentsline {subsection}{\numberline {2.14.1}まだ何も処理されていないブランダー}{23}{subsection.2.14.1}%
+\contentsline {section}{\numberline {2.15}ドラッグ＆ドロップ}{24}{section.2.15}%
+\contentsline {section}{\numberline {2.16}マッチ内を移動する}{24}{section.2.16}%
+\contentsline {section}{\numberline {2.17}マッチパネルを管理する}{24}{section.2.17}%
+\contentsline {section}{\numberline {2.18}コレクションを管理する}{25}{section.2.18}%
+\contentsline {section}{\numberline {2.19}トーナメントを管理する}{25}{section.2.19}%
+\contentsline {section}{\numberline {2.20}パフォーマンス統計を表示する}{26}{section.2.20}%
+\contentsline {section}{\numberline {2.21}ポジションを評価する（Eval パネル）}{26}{section.2.21}%
+\contentsline {section}{\numberline {2.22}XGからインポートしたポジションの分析を表示する}{27}{section.2.22}%
+\contentsline {section}{\numberline {2.23}XGにポジションをエクスポートする}{28}{section.2.23}%
+\contentsline {section}{\numberline {2.24}様々なポジションを表示する}{28}{section.2.24}%
+\contentsline {section}{\numberline {2.25}条件に基づいてポジションを検索する}{28}{section.2.25}%
+\contentsline {section}{\numberline {2.26}さらに先へ}{29}{section.2.26}%
+\contentsline {chapter}{\numberline {第3章}マニュアル}{31}{chapter.3}%
+\contentsline {section}{\numberline {3.1}はじめにとインターフェース}{31}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}はじめに}{31}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}主な操作}{31}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}インターフェースの説明}{32}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.4}ビュータブ}{34}{subsection.3.1.4}%
+\contentsline {subsubsection}{複数のライブラリを開く}{35}{subsubsection*.4}%
+\contentsline {subsubsection}{比較と交換：「他のデータベース」パネル}{37}{subsubsection*.5}%
+\contentsline {subsection}{\numberline {3.1.5}設定}{39}{subsection.3.1.5}%
+\contentsline {subsubsection}{監視フォルダ}{44}{subsubsection*.8}%
+\contentsline {subsubsection}{2台のマシンを同期する}{45}{subsubsection*.9}%
+\contentsline {subsubsection}{アシスタントと MCP}{46}{subsubsection*.10}%
+\contentsline {subsubsection}{同期}{47}{subsubsection*.11}%
+\contentsline {subsection}{\numberline {3.1.6}ポジションのナビゲーション}{48}{subsection.3.1.6}%
+\contentsline {subsection}{\numberline {3.1.7}ポジションの編集}{48}{subsection.3.1.7}%
+\contentsline {subsection}{\numberline {3.1.8}コマンドライン}{48}{subsection.3.1.8}%
+\contentsline {subsection}{\numberline {3.1.9}コマンドパレット}{49}{subsection.3.1.9}%
+\contentsline {section}{\numberline {3.2}分析、コメント、検索}{49}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}分析パネル}{49}{subsection.3.2.1}%
+\contentsline {subsubsection}{ロールアウト}{50}{subsubsection*.12}%
+\contentsline {subsection}{\numberline {3.2.2}コメントパネル}{51}{subsection.3.2.2}%
+\contentsline {subsubsection}{タグ}{52}{subsubsection*.13}%
+\contentsline {subsection}{\numberline {3.2.3}コンテキストメニュー}{52}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}ごみ箱}{53}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}検索パネル}{54}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.6}コレクションパネル}{58}{subsection.3.2.6}%
+\contentsline {subsubsection}{レッスン}{60}{subsubsection*.15}%
+\contentsline {section}{\numberline {3.3}マッチと記譜}{61}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}マッチパネル}{61}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}記譜パネル}{68}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}トーナメント}{76}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}トーナメントパネル}{76}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}大会を運営する}{79}{subsection.3.4.2}%
+\contentsline {subsubsection}{運営ページ}{79}{subsubsection*.20}%
+\contentsline {subsubsection}{結果カード}{80}{subsubsection*.21}%
+\contentsline {subsubsection}{コンテキストメニュー}{81}{subsubsection*.22}%
+\contentsline {subsubsection}{全画面表示}{82}{subsubsection*.23}%
+\contentsline {subsubsection}{クイック検索}{82}{subsubsection*.24}%
+\contentsline {subsubsection}{プレイヤー}{82}{subsubsection*.25}%
+\contentsline {subsubsection}{トーナメント表、枠、順位表、履歴}{83}{subsubsection*.26}%
+\contentsline {subsubsection}{設定}{84}{subsubsection*.29}%
+\contentsline {subsubsection}{イベントの種目}{85}{subsubsection*.30}%
+\contentsline {subsubsection}{大会の表示}{86}{subsubsection*.31}%
+\contentsline {section}{\numberline {3.5}統計}{87}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Stats パネル}{87}{subsection.3.5.1}%
+\contentsline {subsubsection}{はじめに}{87}{subsubsection*.32}%
+\contentsline {subsubsection}{パネルを開く}{88}{subsubsection*.33}%
+\contentsline {subsubsection}{フィルターバー}{88}{subsubsection*.34}%
+\contentsline {paragraph}{プレイヤーの視点}{88}{paragraph*.35}%
+\contentsline {paragraph}{利用可能なフィルター}{88}{paragraph*.36}%
+\contentsline {subsubsection}{PR / MWC の切り替え}{89}{subsubsection*.37}%
+\contentsline {subsubsection}{HTML レポート}{91}{subsubsection*.39}%
+\contentsline {subsubsection}{ダッシュボード タブ}{91}{subsubsection*.40}%
+\contentsline {paragraph}{レベルカード}{91}{paragraph*.41}%
+\contentsline {paragraph}{学習プラン}{93}{paragraph*.42}%
+\contentsline {paragraph}{学習の前後}{93}{paragraph*.43}%
+\contentsline {paragraph}{符号付きバイアス}{94}{paragraph*.44}%
+\contentsline {paragraph}{直近 N 回の判断にわたる移動 PR}{95}{paragraph*.45}%
+\contentsline {paragraph}{Top blunders}{95}{paragraph*.46}%
+\contentsline {subsubsection}{Progression タブ}{95}{subsubsection*.47}%
+\contentsline {paragraph}{トーナメントごとの曲線}{95}{paragraph*.48}%
+\contentsline {paragraph}{マッチごとの散布図}{95}{paragraph*.49}%
+\contentsline {subsubsection}{Erreurs タブ}{96}{subsubsection*.50}%
+\contentsline {paragraph}{繰り返されるミス}{96}{paragraph*.51}%
+\contentsline {paragraph}{キューブのアクションごとの内訳}{97}{paragraph*.52}%
+\contentsline {paragraph}{キューブエラーの方向}{97}{paragraph*.53}%
+\contentsline {paragraph}{Checker / Cube の内訳}{97}{paragraph*.54}%
+\contentsline {paragraph}{エラーの大きさのヒストグラム}{98}{paragraph*.55}%
+\contentsline {subsubsection}{時間経過でのトレーニング}{98}{subsubsection*.56}%
+\contentsline {subsubsection}{内訳タブ}{98}{subsubsection*.57}%
+\contentsline {subsubsection}{学習と実戦}{99}{subsubsection*.58}%
+\contentsline {subsubsection}{プレイヤータブ}{99}{subsubsection*.59}%
+\contentsline {subsubsection}{集計ルール}{103}{subsubsection*.60}%
+\contentsline {subsubsection}{MWC：制限事項}{103}{subsubsection*.61}%
+\contentsline {section}{\numberline {3.6}評価}{103}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Eval パネル}{103}{subsection.3.6.1}%
+\contentsline {subsubsection}{キューブ判断のマトリクス}{107}{subsubsection*.62}%
+\contentsline {subsubsection}{参照データパネル}{107}{subsubsection*.63}%
+\contentsline {subsubsection}{ポジションを Eval パネルに持ち込む}{108}{subsubsection*.64}%
+\contentsline {subsubsection}{Eval パネルの方法論と仮定}{110}{subsubsection*.66}%
+\contentsline {section}{\numberline {3.7}トレーニング、Anki、デュエル}{113}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}Anki パネル}{113}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {3.7.2}トレーニングパネル}{116}{subsection.3.7.2}%
+\contentsline {subsubsection}{ランチャー}{116}{subsubsection*.67}%
+\contentsline {subsubsection}{六つの練習}{116}{subsubsection*.68}%
+\contentsline {subsubsection}{答える}{118}{subsubsection*.69}%
+\contentsline {subsubsection}{ジャーナルと集計}{119}{subsubsection*.70}%
+\contentsline {subsection}{\numberline {3.7.3}デュエルパネル}{120}{subsection.3.7.3}%
+\contentsline {section}{\numberline {3.8}インポート、出所、共有}{122}{section.3.8}%
+\contentsline {subsection}{\numberline {3.8.1}インポート：何が書き込まれ、何が決して書き込まれないか}{122}{subsection.3.8.1}%
+\contentsline {subsection}{\numberline {3.8.2}メタデータパネル}{124}{subsection.3.8.2}%
+\contentsline {subsection}{\numberline {3.8.3}データベースの配布：出所とパスワード}{124}{subsection.3.8.3}%
+\contentsline {subsubsection}{データベースに出所を記載する}{125}{subsubsection*.71}%
+\contentsline {subsubsection}{発行者の識別情報}{126}{subsubsection*.72}%
+\contentsline {subsubsection}{データベースをパスワードで保護する}{127}{subsubsection*.73}%
+\contentsline {subsubsection}{ファイルの出所を読む}{127}{subsubsection*.74}%
+\contentsline {subsubsection}{データベースを他者に公開する}{128}{subsubsection*.75}%
+\contentsline {chapter}{\numberline {第4章}指標と学習ツール}{129}{chapter.4}%
+\contentsline {section}{\numberline {4.1}判断の誤差と損失}{129}{section.4.1}%
+\contentsline {section}{\numberline {4.2}PR (\sphinxstyleemphasis {Performance Rating})}{130}{section.4.2}%
+\contentsline {section}{\numberline {4.3}判断あたりの MWC 損失とマッチのグラフ}{131}{section.4.3}%
+\contentsline {section}{\numberline {4.4}マッチ勝率の曲線}{132}{section.4.4}%
+\contentsline {section}{\numberline {4.5}MWC 損失（7 点等価）L\(\sb {\text {7}}\) とエンジンに対する Elo}{133}{section.4.5}%
+\contentsline {section}{\numberline {4.6}難易度、回避可能な誤り、超過、比}{134}{section.4.6}%
+\contentsline {section}{\numberline {4.7}95 \% 区間}{135}{section.4.7}%
+\contentsline {section}{\numberline {4.8}マッチの総括}{135}{section.4.8}%
+\contentsline {section}{\numberline {4.9}学習プラン}{136}{section.4.9}%
+\contentsline {section}{\numberline {4.10}基準局面}{137}{section.4.10}%
+\contentsline {section}{\numberline {4.11}学習の前後}{137}{section.4.11}%
+\contentsline {section}{\numberline {4.12}符号付きバイアス}{138}{section.4.12}%
+\contentsline {section}{\numberline {4.13}トーナメントの総括}{138}{section.4.13}%
+\contentsline {section}{\numberline {4.14}オープニングブック：差、95 \% 信頼区間、同等}{139}{section.4.14}%
+\contentsline {chapter}{\numberline {第5章}コマンド一覧}{141}{chapter.5}%
+\contentsline {section}{\numberline {5.1}全体操作}{142}{section.5.1}%
+\contentsline {section}{\numberline {5.2}局面とナビゲーション}{143}{section.5.2}%
+\contentsline {section}{\numberline {5.3}編集と検索}{144}{section.5.3}%
+\contentsline {section}{\numberline {5.4}検索フィルタ}{144}{section.5.4}%
+\contentsline {section}{\numberline {5.5}ターミナルから転記する}{150}{section.5.5}%
+\contentsline {section}{\numberline {5.6}その他のコマンド}{150}{section.5.6}%
+\contentsline {chapter}{\numberline {第6章}キーボードショートカット}{151}{chapter.6}%
+\contentsline {section}{\numberline {6.1}データベース}{151}{section.6.1}%
+\contentsline {section}{\numberline {6.2}ポジション}{152}{section.6.2}%
+\contentsline {section}{\numberline {6.3}ナビゲーション}{153}{section.6.3}%
+\contentsline {section}{\numberline {6.4}表示}{153}{section.6.4}%
+\contentsline {section}{\numberline {6.5}アクション}{154}{section.6.5}%
+\contentsline {section}{\numberline {6.6}ツール}{154}{section.6.6}%
+\contentsline {section}{\numberline {6.7}盤面でのデュエル}{155}{section.6.7}%
+\contentsline {section}{\numberline {6.8}ビュータブ}{156}{section.6.8}%
+\contentsline {section}{\numberline {6.9}コマンドライン}{156}{section.6.9}%
+\contentsline {section}{\numberline {6.10}検索履歴}{156}{section.6.10}%
+\contentsline {section}{\numberline {6.11}フィルターライブラリ}{157}{section.6.11}%
+\contentsline {section}{\numberline {6.12}分析パネル}{157}{section.6.12}%
+\contentsline {section}{\numberline {6.13}Eval パネル}{157}{section.6.13}%
+\contentsline {section}{\numberline {6.14}マッチパネル}{158}{section.6.14}%
+\contentsline {section}{\numberline {6.15}Ankiパネル（間隔反復）}{158}{section.6.15}%
+\contentsline {section}{\numberline {6.16}トーナメントパネル}{159}{section.6.16}%
+\contentsline {section}{\numberline {6.17}Direction ページ}{159}{section.6.17}%
+\contentsline {section}{\numberline {6.18}コレクションパネル}{160}{section.6.18}%
+\contentsline {section}{\numberline {6.19}トランスクリプションパネル}{160}{section.6.19}%
+\contentsline {section}{\numberline {6.20}コンタクトシート}{164}{section.6.20}%
+\contentsline {section}{\numberline {6.21}ヘルプパネル}{164}{section.6.21}%
+\contentsline {chapter}{\numberline {第7章}コマンドラインインターフェース（CLI）}{165}{chapter.7}%
+\contentsline {section}{\numberline {7.1}はじめに}{165}{section.7.1}%
+\contentsline {section}{\numberline {7.2}一般的な構文}{165}{section.7.2}%
+\contentsline {section}{\numberline {7.3}利用可能なコマンド}{166}{section.7.3}%
+\contentsline {subsection}{\numberline {7.3.1}インポート、エクスポート、転送}{167}{subsection.7.3.1}%
+\contentsline {subsubsection}{create — データベースを作成する}{167}{subsubsection*.91}%
+\contentsline {subsubsection}{import — データをインポートする}{168}{subsubsection*.92}%
+\contentsline {paragraph}{フォルダを監視する}{169}{paragraph*.93}%
+\contentsline {paragraph}{マッチのインポート}{169}{paragraph*.94}%
+\contentsline {paragraph}{ポジションのインポート}{170}{paragraph*.95}%
+\contentsline {paragraph}{データベースのインポート}{170}{paragraph*.96}%
+\contentsline {paragraph}{一括インポート}{171}{paragraph*.97}%
+\contentsline {subsubsection}{export — データをエクスポートする}{172}{subsubsection*.98}%
+\contentsline {subsubsection}{transfer — ライブラリから別のライブラリへコピーする}{174}{subsubsection*.99}%
+\contentsline {subsubsection}{identity — 発行者アイデンティティ}{176}{subsubsection*.100}%
+\contentsline {subsubsection}{open — 保護されたファイルを開く}{176}{subsubsection*.101}%
+\contentsline {subsection}{\numberline {7.3.2}ライブラリ: 検索、一覧、コレクション}{177}{subsection.7.3.2}%
+\contentsline {subsubsection}{search — ポジションを検索する}{177}{subsubsection*.102}%
+\contentsline {subsubsection}{list — 内容を一覧表示する}{182}{subsubsection*.103}%
+\contentsline {paragraph}{表形式のエクスポート}{183}{paragraph*.104}%
+\contentsline {subsubsection}{collection — コレクションを管理する}{185}{subsubsection*.105}%
+\contentsline {subsubsection}{comment — ポジションのコメント}{187}{subsubsection*.106}%
+\contentsline {subsubsection}{elsewhere — 他所: 他のデータベースにある局面}{188}{subsubsection*.107}%
+\contentsline {subsubsection}{trash — ごみ箱}{189}{subsubsection*.108}%
+\contentsline {subsection}{\numberline {7.3.3}マッチ、トーナメント、ゲーム}{190}{subsection.7.3.3}%
+\contentsline {subsubsection}{match — マッチを表示する}{190}{subsubsection*.109}%
+\contentsline {subsubsection}{tournament — 運営した大会を読む}{192}{subsubsection*.110}%
+\contentsline {subsubsection}{transcribe — 記譜を再生する}{193}{subsubsection*.111}%
+\contentsline {subsubsection}{duel — デュエルをプレイする}{195}{subsubsection*.112}%
+\contentsline {subsection}{\numberline {7.3.4}解析とエンジン}{197}{subsection.7.3.4}%
+\contentsline {subsubsection}{analyze — gammonNet の補完分析}{197}{subsubsection*.113}%
+\contentsline {subsubsection}{rollout — 局面のロールアウト}{200}{subsubsection*.115}%
+\contentsline {subsubsection}{epc — EPC 計算機}{201}{subsubsection*.116}%
+\contentsline {subsubsection}{gnubgid — GNUbg ID}{201}{subsubsection*.117}%
+\contentsline {subsubsection}{cubematrix — キューブ判断のマトリクス}{202}{subsubsection*.118}%
+\contentsline {subsubsection}{capture — スクリーンショットからの局面}{202}{subsubsection*.119}%
+\contentsline {subsubsection}{bearoff — ベアオフ・データベース}{203}{subsubsection*.120}%
+\contentsline {subsubsection}{openingbook — このスコアでどの手か}{204}{subsubsection*.121}%
+\contentsline {subsection}{\numberline {7.3.5}学習、レッスン、トレーニング}{205}{subsection.7.3.5}%
+\contentsline {subsubsection}{study — 横断学習キュー}{205}{subsubsection*.122}%
+\contentsline {subsubsection}{lesson — レッスンの管理}{206}{subsubsection*.123}%
+\contentsline {subsubsection}{anki — 間隔反復デッキ}{207}{subsubsection*.124}%
+\contentsline {subsubsection}{training — トレーニングジャーナル}{209}{subsubsection*.125}%
+\contentsline {subsection}{\numberline {7.3.6}統計}{209}{subsection.7.3.6}%
+\contentsline {subsubsection}{stats — 繰り返されるミス}{209}{subsubsection*.126}%
+\contentsline {subsection}{\numberline {7.3.7}データベースの管理}{215}{subsection.7.3.7}%
+\contentsline {subsubsection}{info — データベースのメタデータ}{215}{subsubsection*.127}%
+\contentsline {subsubsection}{edit — メタデータを編集する}{216}{subsubsection*.128}%
+\contentsline {subsubsection}{verify — 整合性を確認する}{217}{subsubsection*.129}%
+\contentsline {subsubsection}{vacuum — データベースを最適化する}{219}{subsubsection*.130}%
+\contentsline {subsubsection}{met — データベースのマッチエクイティテーブル}{220}{subsubsection*.131}%
+\contentsline {subsubsection}{reencode — 分析をコンパクトな形式で書き直す}{220}{subsubsection*.132}%
+\contentsline {subsubsection}{maintenance — データベースの健全性}{221}{subsubsection*.133}%
+\contentsline {subsubsection}{players — プレイヤー名の表記}{222}{subsubsection*.134}%
+\contentsline {subsubsection}{events — イベント名の表記}{224}{subsubsection*.135}%
+\contentsline {subsubsection}{repair — 導かれたものを再計算する}{224}{subsubsection*.136}%
+\contentsline {subsubsection}{delete — データを削除する}{225}{subsubsection*.137}%
+\contentsline {subsubsection}{healthcheck — デーモンを確認する}{226}{subsubsection*.138}%
+\contentsline {subsubsection}{mcp — データベースを AI アシスタントに提供する}{227}{subsubsection*.139}%
+\contentsline {subsubsection}{completion ――― シェル補完}{227}{subsubsection*.140}%
+\contentsline {subsubsection}{version — バージョンを表示する}{228}{subsubsection*.141}%
+\contentsline {section}{\numberline {7.4}ワークフロー例}{228}{section.7.4}%
+\contentsline {subsection}{\numberline {7.4.1}トーナメントディレクトリのインポート}{228}{subsection.7.4.1}%
+\contentsline {subsection}{\numberline {7.4.2}定期バックアップ}{228}{subsection.7.4.2}%
+\contentsline {subsection}{\numberline {7.4.3}エラー分析}{228}{subsection.7.4.3}%
+\contentsline {section}{\numberline {7.5}終了コード}{228}{section.7.5}%
+\contentsline {chapter}{\numberline {第8章}用語集}{231}{chapter.8}%
+\contentsline {chapter}{\numberline {第9章}よくある質問（FAQ）}{235}{chapter.9}%
+\contentsline {section}{\numberline {9.1}blunderDB の用途は何ですか？}{235}{section.9.1}%
+\contentsline {section}{\numberline {9.2}blunderDB 作成の動機は何ですか？}{235}{section.9.2}%
+\contentsline {section}{\numberline {9.3}現在のデータベースを保存するにはどうすればよいですか？}{235}{section.9.3}%
+\contentsline {section}{\numberline {9.4}ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？}{235}{section.9.4}%
+\contentsline {section}{\numberline {9.5}複数のデータベースを統合するにはどうすればよいですか？}{236}{section.9.5}%
+\contentsline {section}{\numberline {9.6}どのマッチファイル形式がサポートされていますか？}{236}{section.9.6}%
+\contentsline {section}{\numberline {9.7}オンラインで指したマッチはインポートできますか。}{236}{section.9.7}%
+\contentsline {section}{\numberline {9.8}データベースを複数のマシン間で同期できますか。}{237}{section.9.8}%
+\contentsline {section}{\numberline {9.9}blunderDB を使うのに eXtreme Gammon は必要ですか？}{237}{section.9.9}%
+\contentsline {section}{\numberline {9.10}すでに eXtreme Gammon を使っています。blunderDB は何の役に立ちますか？}{237}{section.9.10}%
+\contentsline {section}{\numberline {9.11}XG のロールアウトはインポートされますか？ blunderDB はロールアウトを行いますか？}{238}{section.9.11}%
+\contentsline {section}{\numberline {9.12}内蔵の評価エンジンについて、何が測定され、何が測定されていないのですか？}{238}{section.9.12}%
+\contentsline {section}{\numberline {9.13}コレクションとは何ですか？}{238}{section.9.13}%
+\contentsline {section}{\numberline {9.14}EPC とは何ですか？}{238}{section.9.14}%
+\contentsline {section}{\numberline {9.15}内蔵の評価エンジン（gammonNet）はどれほどのものですか？}{239}{section.9.15}%
+\contentsline {section}{\numberline {9.16}PR と Snowie Error Rate の違いは何ですか？}{239}{section.9.16}%
+\contentsline {section}{\numberline {9.17}blunderDB にはコマンドラインインターフェースがありますか？}{239}{section.9.17}%
+\contentsline {section}{\numberline {9.18}blunderDB はサーバーモードを提供していますか？}{239}{section.9.18}%
+\contentsline {section}{\numberline {9.19}blunderDB を変更、コピー、共有できますか？}{240}{section.9.19}%
+\contentsline {section}{\numberline {9.20}データはどこに保存されますか？}{240}{section.9.20}%
+\contentsline {section}{\numberline {9.21}データベースを他のプレイヤーと共有できますか？}{240}{section.9.21}%
+\contentsline {section}{\numberline {9.22}blunderDB はどのデータ形式を使用していますか？}{240}{section.9.22}%
+\contentsline {section}{\numberline {9.23}blunderDB の設計原則は何でしたか？}{240}{section.9.23}%
+\contentsline {section}{\numberline {9.24}blunderDB のソフトウェアアーキテクチャは何ですか？}{241}{section.9.24}%
+\contentsline {section}{\numberline {9.25}blunderDB はどのプラットフォームで動作しますか？}{241}{section.9.25}%
+\contentsline {section}{\numberline {9.26}blunderDB のアイコンはどこから来ていますか？}{241}{section.9.26}%
+\contentsline {chapter}{\numberline {第10章}ヘッドレスモード（サーバー）}{243}{chapter.10}%
+\contentsline {section}{\numberline {10.1}概要}{243}{section.10.1}%
+\contentsline {section}{\numberline {10.2}デーモン \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{243}{section.10.2}%
+\contentsline {subsection}{\numberline {10.2.1}エンドポイント}{247}{subsection.10.2.1}%
+\contentsline {subsection}{\numberline {10.2.2}閲覧用のウェブページ}{247}{subsection.10.2.2}%
+\contentsline {subsubsection}{\sphinxstyleliteralintitle {\sphinxupquote {/v1}} が約束すること}{249}{subsubsection*.142}%
+\contentsline {subsubsection}{レッスン}{249}{subsubsection*.143}%
+\contentsline {subsubsection}{APIで記譜する}{249}{subsubsection*.144}%
+\contentsline {subsubsection}{API でデュエルをプレイする}{251}{subsubsection*.145}%
+\contentsline {subsubsection}{Python クライアント}{252}{subsubsection*.146}%
+\contentsline {subsubsection}{エンジンを Go のプログラムに組み込む}{253}{subsubsection*.147}%
+\contentsline {subsection}{\numberline {10.2.3}大会の運営とイベント}{253}{subsection.10.2.3}%
+\contentsline {subsubsection}{運営操作}{254}{subsubsection*.148}%
+\contentsline {subsubsection}{操作の通知を受け取る: \sphinxstyleliteralintitle {\sphinxupquote {/v1/events}}}{258}{subsubsection*.149}%
+\contentsline {subsection}{\numberline {10.2.4}ベアオフのデータベース}{259}{subsection.10.2.4}%
+\contentsline {subsection}{\numberline {10.2.5}運用向けのルート}{260}{subsection.10.2.5}%
+\contentsline {subsection}{\numberline {10.2.6}相関付けと業務メトリクス}{270}{subsection.10.2.6}%
+\contentsline {subsection}{\numberline {10.2.7}ストリームの圧縮}{271}{subsection.10.2.7}%
+\contentsline {subsection}{\numberline {10.2.8}SQLite ではテナントは一つだけ}{271}{subsection.10.2.8}%
+\contentsline {subsection}{\numberline {10.2.9}複数のテナントの読み取り}{271}{subsection.10.2.9}%
+\contentsline {subsection}{\numberline {10.2.10}読み取り対象のテナントからコピーを引き寄せる}{273}{subsection.10.2.10}%
+\contentsline {subsection}{\numberline {10.2.11}バックアップと復元}{273}{subsection.10.2.11}%
+\contentsline {subsection}{\numberline {10.2.12}ワークステーションとサーバー}{274}{subsection.10.2.12}%
+\contentsline {subsection}{\numberline {10.2.13}Docker によるデプロイ}{275}{subsection.10.2.13}%
+\contentsline {subsubsection}{公開イメージ}{275}{subsubsection*.150}%
+\contentsline {subsection}{\numberline {10.2.14}認証プロキシの背後への配置}{276}{subsection.10.2.14}%
+\contentsline {subsubsection}{テナントごとのクォータ}{281}{subsubsection*.151}%
+\contentsline {subsection}{\numberline {10.2.15}デプロイを更新する}{283}{subsection.10.2.15}%
+\contentsline {section}{\numberline {10.3}PostgreSQL バックエンドとマルチユーザー}{283}{section.10.3}%
+\contentsline {subsection}{\numberline {10.3.1}Row\sphinxhyphen {}Level Security}{284}{subsection.10.3.1}%
+\contentsline {subsection}{\numberline {10.3.2}テナントを開設し、閉鎖する}{284}{subsection.10.3.2}%
+\contentsline {subsection}{\numberline {10.3.3}最適化と接続プール}{285}{subsection.10.3.3}%
+\contentsline {section}{\numberline {10.4}SQLite データベースを PostgreSQL へ移行する}{285}{section.10.4}%
+\contentsline {section}{\numberline {10.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{286}{section.10.5}%
+\contentsline {section}{\numberline {10.6}AI アシスタント向けツール（MCP）}{288}{section.10.6}%
+\contentsline {chapter}{\numberline {第11章}API コントラクト}{291}{chapter.11}%
+\contentsline {section}{\numberline {11.1}冪等性}{301}{section.11.1}%
+\contentsline {section}{\numberline {11.2}条件付き読み取り}{301}{section.11.2}%
+\contentsline {section}{\numberline {11.3}解析の保存と読み込み}{301}{section.11.3}%
+\contentsline {section}{\numberline {11.4}マッチの手を読む}{302}{section.11.4}%
+\contentsline {section}{\numberline {11.5}文字起こしのタイムコード}{302}{section.11.5}%
+\contentsline {chapter}{\numberline {第12章}付録：フィルターの高度な使い方}{305}{chapter.12}%
+\contentsline {section}{\numberline {12.1}フィルターライブラリ}{305}{section.12.1}%
+\contentsline {section}{\numberline {12.2}例}{306}{section.12.2}%
+\contentsline {chapter}{\numberline {第13章}Windows 付録：Windows が起動をブロックしたときの対処}{307}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Windows SmartScreen の警告}{307}{section.13.1}%
+\contentsline {section}{\numberline {13.2}Windows Defender によるブロック}{308}{section.13.2}%
+\contentsline {section}{\numberline {13.3}ダウンロードの整合性を確認する（SHA256）}{315}{section.13.3}%
+\contentsline {chapter}{\numberline {第14章}Mac 付録：blunderDB の起動ブロックについて}{317}{chapter.14}%
+\contentsline {section}{\numberline {14.1}blunderDB のインストール}{317}{section.14.1}%
+\contentsline {section}{\numberline {14.2}blunderDB の実行を許可する}{317}{section.14.2}%
+\contentsline {chapter}{\numberline {第15章}付録: データベーススキーマ}{319}{chapter.15}%
+\contentsline {section}{\numberline {15.1}バージョン管理と移行}{319}{section.15.1}%
+\contentsline {section}{\numberline {15.2}主なテーブル}{319}{section.15.2}%
+\contentsline {section}{\numberline {15.3}設計の原則}{320}{section.15.3}%
+\contentsline {chapter}{\numberline {第16章}付録：統計モデル — XG / gnuBG / blunderDB の整合}{321}{chapter.16}%
+\contentsline {section}{\numberline {16.1}正式な定義}{321}{section.16.1}%
+\contentsline {subsection}{\numberline {16.1.1}PR（Performance Rating）}{321}{subsection.16.1.1}%
+\contentsline {subsection}{\numberline {16.1.2}Snowie Error Rate}{322}{subsection.16.1.2}%
+\contentsline {subsection}{\numberline {16.1.3}MWC 損失（Match Winning Chance）}{322}{subsection.16.1.3}%
+\contentsline {subsection}{\numberline {16.1.4}運（\sphinxstyleemphasis {luck}）}{323}{subsection.16.1.4}%
+\contentsline {subsection}{\numberline {16.1.5}勝敗}{323}{subsection.16.1.5}%
+\contentsline {subsection}{\numberline {16.1.6}エラーとブランダー}{324}{subsection.16.1.6}%
+\contentsline {section}{\numberline {16.2}カウントされる判断：XG と gnuBG}{324}{section.16.2}%
+\contentsline {section}{\numberline {16.3}blunderDB ↔ XG ↔ gnuBG の対応}{324}{section.16.3}%
+\contentsline {subsection}{\numberline {16.3.1}XG ↔ blunderDB の比較（同じ解析）}{324}{subsection.16.3.1}%
+\contentsline {subsection}{\numberline {16.3.2}既知の残差}{325}{subsection.16.3.2}%
+\contentsline {subsection}{\numberline {16.3.3}gnuBG ↔ blunderDB の比較（SGF インポート — 異なるエンジン）}{325}{subsection.16.3.3}%
+\contentsline {section}{\numberline {16.4}自分の数値を検証する}{325}{section.16.4}%
+\contentsline {section}{\numberline {16.5}gnuBG 参照}{326}{section.16.5}%
+\contentsline {chapter}{\numberline {第17章}バージョン履歴}{327}{chapter.17}%
+\contentsline {section}{\numberline {17.1}更新のあとに}{327}{section.17.1}%
+\contentsline {section}{\numberline {17.2}0.59.0 (2026\sphinxhyphen {}11\sphinxhyphen {}21)}{328}{section.17.2}%
+\contentsline {section}{\numberline {17.3}0.58.0 (2026\sphinxhyphen {}11\sphinxhyphen {}21)}{328}{section.17.3}%
+\contentsline {section}{\numberline {17.4}0.57.0 (2026\sphinxhyphen {}11\sphinxhyphen {}16)}{329}{section.17.4}%
+\contentsline {section}{\numberline {17.5}0.56.0 (2026\sphinxhyphen {}11\sphinxhyphen {}13)}{329}{section.17.5}%
+\contentsline {section}{\numberline {17.6}0.55.0 (2026\sphinxhyphen {}11\sphinxhyphen {}13)}{330}{section.17.6}%
+\contentsline {section}{\numberline {17.7}0.54.0 (2026\sphinxhyphen {}11\sphinxhyphen {}13)}{331}{section.17.7}%
+\contentsline {section}{\numberline {17.8}0.53.0 (2026\sphinxhyphen {}11\sphinxhyphen {}09)}{331}{section.17.8}%
+\contentsline {section}{\numberline {17.9}0.52.0 (2026\sphinxhyphen {}11\sphinxhyphen {}09)}{332}{section.17.9}%
+\contentsline {section}{\numberline {17.10}0.51.0 (2026\sphinxhyphen {}11\sphinxhyphen {}06)}{332}{section.17.10}%
+\contentsline {section}{\numberline {17.11}0.50.0 (2026\sphinxhyphen {}11\sphinxhyphen {}05)}{333}{section.17.11}%
+\contentsline {section}{\numberline {17.12}0.49.0 (2026\sphinxhyphen {}11\sphinxhyphen {}02)}{333}{section.17.12}%
+\contentsline {section}{\numberline {17.13}0.48.0 (2026\sphinxhyphen {}11\sphinxhyphen {}02)}{334}{section.17.13}%
+\contentsline {section}{\numberline {17.14}0.47.0 (2026\sphinxhyphen {}10\sphinxhyphen {}26)}{334}{section.17.14}%
+\contentsline {section}{\numberline {17.15}0.46.0 (2026\sphinxhyphen {}10\sphinxhyphen {}23)}{335}{section.17.15}%
+\contentsline {section}{\numberline {17.16}0.45.0 (2026\sphinxhyphen {}10\sphinxhyphen {}21)}{337}{section.17.16}%
+\contentsline {section}{\numberline {17.17}0.44.0 (2026\sphinxhyphen {}10\sphinxhyphen {}19)}{338}{section.17.17}%
+\contentsline {section}{\numberline {17.18}0.43.0 (2026\sphinxhyphen {}10\sphinxhyphen {}18)}{338}{section.17.18}%
+\contentsline {section}{\numberline {17.19}0.42.0 (2026\sphinxhyphen {}10\sphinxhyphen {}17)}{339}{section.17.19}%
+\contentsline {section}{\numberline {17.20}0.41.0 (2026\sphinxhyphen {}10\sphinxhyphen {}16)}{339}{section.17.20}%
+\contentsline {section}{\numberline {17.21}0.40.0 (2026\sphinxhyphen {}10\sphinxhyphen {}12)}{340}{section.17.21}%
+\contentsline {section}{\numberline {17.22}0.39.0 (2026\sphinxhyphen {}10\sphinxhyphen {}10)}{343}{section.17.22}%
+\contentsline {section}{\numberline {17.23}0.38.0 (2026\sphinxhyphen {}10\sphinxhyphen {}06)}{345}{section.17.23}%
+\contentsline {section}{\numberline {17.24}0.37.0（2026\sphinxhyphen {}10\sphinxhyphen {}05）}{346}{section.17.24}%
+\contentsline {section}{\numberline {17.25}0.36.0（2026\sphinxhyphen {}09\sphinxhyphen {}05）}{348}{section.17.25}%
+\contentsline {section}{\numberline {17.26}0.35.0 (2026\sphinxhyphen {}09\sphinxhyphen {}02)}{348}{section.17.26}%
+\contentsline {section}{\numberline {17.27}0.34.0 (2026\sphinxhyphen {}09\sphinxhyphen {}02)}{349}{section.17.27}%
+\contentsline {section}{\numberline {17.28}0.33.0 (2026\sphinxhyphen {}08\sphinxhyphen {}26)}{350}{section.17.28}%
+\contentsline {section}{\numberline {17.29}0.32.0 (2026\sphinxhyphen {}08\sphinxhyphen {}09)}{350}{section.17.29}%
+\contentsline {section}{\numberline {17.30}0.31.0 (2026\sphinxhyphen {}08\sphinxhyphen {}04)}{351}{section.17.30}%
+\contentsline {section}{\numberline {17.31}0.30.0 (2026\sphinxhyphen {}07\sphinxhyphen {}26)}{352}{section.17.31}%
+\contentsline {section}{\numberline {17.32}0.29.0 (2026\sphinxhyphen {}07\sphinxhyphen {}18)}{352}{section.17.32}%
+\contentsline {section}{\numberline {17.33}0.28.0 (2026\sphinxhyphen {}07\sphinxhyphen {}15)}{353}{section.17.33}%
+\contentsline {section}{\numberline {17.34}0.27.0 (2026\sphinxhyphen {}06\sphinxhyphen {}13)}{353}{section.17.34}%
+\contentsline {section}{\numberline {17.35}0.26.0 (2026\sphinxhyphen {}06\sphinxhyphen {}09)}{354}{section.17.35}%
+\contentsline {section}{\numberline {17.36}0.25.0 (2026\sphinxhyphen {}06\sphinxhyphen {}07)}{354}{section.17.36}%
+\contentsline {section}{\numberline {17.37}0.24.0 (2026\sphinxhyphen {}06\sphinxhyphen {}06)}{354}{section.17.37}%
+\contentsline {section}{\numberline {17.38}0.23.0 (2026\sphinxhyphen {}06\sphinxhyphen {}05)}{355}{section.17.38}%
+\contentsline {section}{\numberline {17.39}0.22.0 (2026\sphinxhyphen {}06\sphinxhyphen {}02)}{355}{section.17.39}%
+\contentsline {section}{\numberline {17.40}0.21.0 (2026\sphinxhyphen {}06\sphinxhyphen {}01)}{355}{section.17.40}%
+\contentsline {section}{\numberline {17.41}0.20.0 (2026\sphinxhyphen {}05\sphinxhyphen {}31)}{356}{section.17.41}%
+\contentsline {section}{\numberline {17.42}0.19.0 (2026\sphinxhyphen {}05\sphinxhyphen {}07)}{356}{section.17.42}%
+\contentsline {section}{\numberline {17.43}0.18.0 (2026\sphinxhyphen {}04\sphinxhyphen {}20)}{356}{section.17.43}%
+\contentsline {section}{\numberline {17.44}0.17.0 (2026\sphinxhyphen {}04\sphinxhyphen {}20)}{357}{section.17.44}%
+\contentsline {section}{\numberline {17.45}0.16.0 (2026\sphinxhyphen {}04\sphinxhyphen {}18)}{357}{section.17.45}%
+\contentsline {section}{\numberline {17.46}0.15.0 (2026\sphinxhyphen {}03\sphinxhyphen {}31)}{357}{section.17.46}%
+\contentsline {section}{\numberline {17.47}0.14.0 (2026\sphinxhyphen {}03\sphinxhyphen {}30)}{357}{section.17.47}%
+\contentsline {section}{\numberline {17.48}0.13.0 (2026\sphinxhyphen {}03\sphinxhyphen {}28)}{357}{section.17.48}%
+\contentsline {section}{\numberline {17.49}0.12.0 (2026\sphinxhyphen {}03\sphinxhyphen {}19)}{358}{section.17.49}%
+\contentsline {section}{\numberline {17.50}0.11.0 (2026\sphinxhyphen {}03\sphinxhyphen {}06)}{358}{section.17.50}%
+\contentsline {section}{\numberline {17.51}0.10.0 (2026\sphinxhyphen {}02\sphinxhyphen {}25)}{358}{section.17.51}%
+\contentsline {section}{\numberline {17.52}0.9.0 (2025\sphinxhyphen {}11\sphinxhyphen {}02)}{359}{section.17.52}%
+\contentsline {section}{\numberline {17.53}0.8.0 (2025\sphinxhyphen {}05\sphinxhyphen {}03)}{359}{section.17.53}%
+\contentsline {section}{\numberline {17.54}0.7.0 (2025\sphinxhyphen {}02\sphinxhyphen {}16)}{359}{section.17.54}%
+\contentsline {section}{\numberline {17.55}0.6.0 (2025\sphinxhyphen {}02\sphinxhyphen {}13)}{359}{section.17.55}%
+\contentsline {section}{\numberline {17.56}0.5.0 (2025\sphinxhyphen {}02\sphinxhyphen {}04)}{359}{section.17.56}%
+\contentsline {section}{\numberline {17.57}0.4.0 (2025\sphinxhyphen {}02\sphinxhyphen {}03)}{359}{section.17.57}%
+\contentsline {section}{\numberline {17.58}0.3.0 (2025\sphinxhyphen {}01\sphinxhyphen {}27)}{359}{section.17.58}%
+\contentsline {section}{\numberline {17.59}0.2.0 (2025\sphinxhyphen {}01\sphinxhyphen {}06)}{360}{section.17.59}%
+\contentsline {section}{\numberline {17.60}0.1.0 (2024\sphinxhyphen {}12\sphinxhyphen {}31)}{360}{section.17.60}%
+\contentsline {chapter}{\numberline {第18章}blunderDB について}{361}{chapter.18}%
+\contentsline {section}{\numberline {18.1}連絡先}{361}{section.18.1}%
+\contentsline {section}{\numberline {18.2}寄付する}{361}{section.18.2}%
+\contentsline {section}{\numberline {18.3}謝辞}{361}{section.18.3}%
+\contentsline {section}{\numberline {18.4}クレジット}{362}{section.18.4}%

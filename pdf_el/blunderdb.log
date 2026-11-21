@@ -1,0 +1,2650 @@
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025/Debian) (preloaded format=xelatex 2026.11.21)  21 NOV 2026 11:11
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**blunderdb.tex
+(./blunderdb.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(./sphinxmanual.cls
+Document Class: sphinxmanual 2019/12/01 v2.3.0 Document class (Sphinx manual)
+(/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
+Document Class: report 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count271
+\c@chapter=\count272
+\c@section=\count273
+\c@subsection=\count274
+\c@subsubsection=\count275
+\c@paragraph=\count276
+\c@subparagraph=\count277
+\c@figure=\count278
+\c@table=\count279
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+)
+LaTeX Info: Redefining \and on input line 35.
+)
+\sphinxpxdimen=\dimen149
+\sphinxremdimen=\dimen150
+
+(/usr/share/texlive/texmf-dist/tex/latex/cmap/cmap.sty
+Package: cmap 2021/02/06 v1.0j CMap support: searchable PDF
+
+
+Package cmap Warning: pdftex not detected - exiting.
+
+) (/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2026-01-19 L3 programming layer (loader) 
+
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
+File: l3backend-xetex.def 2025-10-09 L3 backend support: XeTeX
+\g__graphics_track_int=\count280
+\g__pdfannot_backend_int=\count281
+\g__pdfannot_backend_link_int=\count282
+))
+Package: xparse 2025-10-09 L3 Experimental document command parser
+)
+Package: fontspec 2025/09/29 v2.9g Font selection for XeLaTeX and LuaLaTeX
+
+(/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+Package: fontspec-xetex 2025/09/29 v2.9g Font selection for XeLaTeX and LuaLaTe
+X
+\l__fontspec_script_int=\count283
+\l__fontspec_language_int=\count284
+\l__fontspec_strnum_int=\count285
+\l__fontspec_tmp_int=\count286
+\l__fontspec_tmpa_int=\count287
+\l__fontspec_tmpb_int=\count288
+\l__fontspec_tmpc_int=\count289
+\l__fontspec_em_int=\count290
+\l__fontspec_emdef_int=\count291
+\l__fontspec_strong_int=\count292
+\l__fontspec_strongdef_int=\count293
+\l__fontspec_tmpa_dim=\dimen151
+\l__fontspec_tmpb_dim=\dimen152
+\l__fontspec_tmpc_dim=\dimen153
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2025/07/09 v2.17z AMS math features
+\@mathmargin=\skip51
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2024/11/17 v2.01 AMS text
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks17
+\ex@=\dimen154
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen155
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count294
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count295
+\leftroot@=\count296
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count297
+\DOTSCASE@=\count298
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box53
+\strutbox@=\box54
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen156
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count299
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count300
+\dotsspace@=\muskip17
+\c@parentequation=\count301
+\dspbrk@lvl=\count302
+\tag@help=\toks18
+\row@=\count303
+\column@=\count304
+\maxfields@=\count305
+\andhelp@=\toks19
+\eqnshift@=\dimen157
+\alignsep@=\dimen158
+\tagshift@=\dimen159
+\tagwidth@=\dimen160
+\totwidth@=\dimen161
+\lineht@=\dimen162
+\@envbody=\toks20
+\multlinegap=\skip52
+\multlinetaggap=\skip53
+\mathdisplay@stack=\toks21
+LaTeX Info: Redefining \[ on input line 2950.
+LaTeX Info: Redefining \] on input line 2951.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/polyglossia.sty
+Package: polyglossia 2025/12/01 v2.9 Modern multilingual typesetting with XeLaT
+eX and LuaLaTeX
+
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count306
+)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+)
+\l_xpg_alias_keyvals_int=\count307
+
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/gloss-latex.ldf
+File: gloss-latex.ldf polyglossia: module for default language
+))
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/gloss-greek.ldf
+File: gloss-greek.ldf polyglossia: module for Greek
+
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/xgreek-fixes.def)
+\@attic@num=\count308
+)
+
+Package polyglossia Info: Default language is greek
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'FreeSerif(0)' created for font 'FreeSerif'
+(fontspec)             with options [].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"FreeSerif/OT:script=latn;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.:
+(fontspec)             <->"FreeSerif/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->"FreeSerif/B/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.:
+(fontspec)             <->"FreeSerif/B/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'italic' (m/it) with NFSS spec.:
+(fontspec)             <->"FreeSerif/I/OT:script=latn;language=dflt;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.:
+(fontspec)             <->"FreeSerif/I/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->"FreeSerif/BI/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.:
+(fontspec)             <->"FreeSerif/BI/OT:script=latn;language=dflt;+smcp;"
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'FreeSans(0)' created for font 'FreeSans'
+(fontspec)             with options [].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"FreeSans/OT:script=latn;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.:
+(fontspec)             <->"FreeSans/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->"FreeSans/B/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.:
+(fontspec)             <->"FreeSans/B/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'italic' (m/it) with NFSS spec.:
+(fontspec)             <->"FreeSans/I/OT:script=latn;language=dflt;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.:
+(fontspec)             <->"FreeSans/I/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->"FreeSans/BI/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.:
+(fontspec)             <->"FreeSans/BI/OT:script=latn;language=dflt;+smcp;"
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'FreeMono(0)' created for font 'FreeMono'
+(fontspec)             with options [].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"FreeMono/OT:script=latn;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.:
+(fontspec)             <->"FreeMono/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->"FreeMono/B/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.:
+(fontspec)             <->"FreeMono/B/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'italic' (m/it) with NFSS spec.:
+(fontspec)             <->"FreeMono/I/OT:script=latn;language=dflt;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.:
+(fontspec)             <->"FreeMono/I/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->"FreeMono/BI/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.:
+(fontspec)             <->"FreeMono/BI/OT:script=latn;language=dflt;+smcp;"
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'FreeMono(1)' created for font 'FreeMono'
+(fontspec)             with options [BoldFont=FreeMono].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"FreeMono/OT:script=latn;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.:
+(fontspec)             <->"FreeMono/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->"FreeMono/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.:
+(fontspec)             <->"FreeMono/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'italic' (m/it) with NFSS spec.:
+(fontspec)             <->"FreeMono/I/OT:script=latn;language=dflt;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.:
+(fontspec)             <->"FreeMono/I/OT:script=latn;language=dflt;+smcp;"
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->"FreeMono/I/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.:
+(fontspec)             <->"FreeMono/I/OT:script=latn;language=dflt;+smcp;"
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/fncychap/fncychap.sty
+Package: fncychap 2007/07/30 v1.34 LaTeX package (Revised chapters)
+\RW=\skip54
+\mylen=\skip55
+\myhi=\skip56
+\px=\skip57
+\py=\skip58
+\pyy=\skip59
+\pxx=\skip60
+) (./sphinx.sty
+Package: sphinx 2025/12/26 v9.1.0 Sphinx LaTeX package (sphinx-doc)
+
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: xetex.def on input line 274.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/xetex.def
+File: xetex.def 2025/11/01 v5.0p Graphics/color driver for xetex
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks22
+)
+(/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+))
+(./sphinxoptionshyperref.sty
+Package: sphinxoptionshyperref 2021/01/27 hyperref
+) (./sphinxoptionsgeometry.sty
+Package: sphinxoptionsgeometry 2021/01/27 geometry
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
+)
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count309
+\float@exts=\toks23
+\float@box=\box55
+\@float@everytoks=\toks24
+\@floatcapt=\box56
+)
+(/usr/share/texlive/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen163
+\WF@size=\dimen164
+\c@WF@wrappedlines=\count310
+\WF@box=\box57
+\WF@everypar=\toks25
+Package: wrapfig 2003/01/31  v 3.6
+)
+(/usr/share/texlive/texmf-dist/tex/latex/capt-of/capt-of.sty
+Package: capt-of 2009/12/29 v0.2 standard captions outside of floats
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/multicol.sty
+Package: multicol 2025/10/21 v2.0b multicolumn formatting (FMi)
+\c@tracingmulticols=\count311
+\mult@box=\box58
+\multicol@leftmargin=\dimen165
+\c@unbalance=\count312
+\c@collectmore=\count313
+\doublecol@number=\count314
+\multicoltolerance=\count315
+\multicolpretolerance=\count316
+\full@width=\dimen166
+\page@free=\dimen167
+\premulticols=\dimen168
+\postmulticols=\dimen169
+\multicolsep=\skip61
+\multicolbaselineskip=\skip62
+\partial@page=\box59
+\last@line=\box60
+\mc@boxedresult=\box61
+\maxbalancingoverflow=\dimen170
+\mult@rightbox=\box62
+\mult@grightbox=\box63
+\mult@firstbox=\box64
+\mult@gfirstbox=\box65
+\@tempa=\box66
+\@tempa=\box67
+\@tempa=\box68
+\@tempa=\box69
+\@tempa=\box70
+\@tempa=\box71
+\@tempa=\box72
+\@tempa=\box73
+\@tempa=\box74
+\@tempa=\box75
+\@tempa=\box76
+\@tempa=\box77
+\@tempa=\box78
+\@tempa=\box79
+\@tempa=\box80
+\@tempa=\box81
+\@tempa=\box82
+\@tempa=\box83
+\@tempa=\box84
+\@tempa=\box85
+\@tempa=\box86
+\@tempa=\box87
+\@tempa=\box88
+\@tempa=\box89
+\@tempa=\box90
+\@tempa=\box91
+\@tempa=\box92
+\@tempa=\box93
+\@tempa=\box94
+\@tempa=\box95
+\@tempa=\box96
+\@tempa=\box97
+\@tempa=\box98
+\@tempa=\box99
+\@tempa=\box100
+\@tempa=\box101
+\c@minrows=\count317
+\c@columnbadness=\count318
+\c@finalcolumnbadness=\count319
+\last@try=\dimen171
+\multicolovershoot=\dimen172
+\multicolundershoot=\dimen173
+\mult@nat@firstbox=\box102
+\colbreak@box=\box103
+\mc@col@check@num=\count320
+\g__mc_curr_col_int=\count321
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: xetex.def on input line 106.
+)
+\Gin@req@height=\dimen174
+\Gin@req@width=\dimen175
+)
+(./sphinxlatexgraphics.sty
+Package: sphinxlatexgraphics 2024/08/13 v8.1.0 graphics
+\spx@image@maxheight=\dimen176
+\spx@image@box=\box104
+) (./sphinxpackageboxes.sty
+Package: sphinxpackageboxes 2024/07/01 v7.4.0 advanced colored boxes
+
+(/usr/share/texlive/texmf-dist/tex/latex/pict2e/pict2e.sty
+Package: pict2e 2020/09/30 v0.4b Improved picture commands (HjG,RN,JT)
+
+(/usr/share/texlive/texmf-dist/tex/latex/pict2e/pict2e.cfg
+File: pict2e.cfg 2016/02/05 v0.1u pict2e configuration for teTeX/TeXLive
+)
+Package pict2e Info: Driver file: xetex.def on input line 112.
+Package pict2e Info: Driver file for pict2e: p2e-xetex.def on input line 114.
+
+(/usr/share/texlive/texmf-dist/tex/latex/pict2e/p2e-xetex.def
+File: p2e-xetex.def 2016/02/05 v0.1u Driver-dependant file (RN,HjG,JT)
+)
+\pIIe@GRAPH=\toks26
+\@arclen=\dimen177
+\@arcrad=\dimen178
+\pIIe@tempdima=\dimen179
+\pIIe@tempdimb=\dimen180
+\pIIe@tempdimc=\dimen181
+\pIIe@tempdimd=\dimen182
+\pIIe@tempdime=\dimen183
+\pIIe@tempdimf=\dimen184
+)
+(/usr/share/texlive/texmf-dist/tex/latex/ellipse/ellipse.sty
+Package: ellipse 2004/11/05 v1.0 .dtx ellipse file
+)
+\@tempdimd=\dimen185
+\spx@tempboxa=\box105
+\spx@tempboxb=\box106
+\spx@boxes@border@top=\dimen186
+\spx@boxes@border@right=\dimen187
+\spx@boxes@border@bottom=\dimen188
+\spx@boxes@border@left=\dimen189
+\spx@boxes@padding@top=\dimen190
+\spx@boxes@padding@right=\dimen191
+\spx@boxes@padding@bottom=\dimen192
+\spx@boxes@padding@left=\dimen193
+\spx@boxes@shadow@xoffset=\dimen194
+\spx@boxes@shadow@yoffset=\dimen195
+\spx@boxes@radius@topleft@x=\dimen196
+\spx@boxes@radius@topright@x=\dimen197
+\spx@boxes@radius@bottomright@x=\dimen198
+\spx@boxes@radius@bottomleft@x=\dimen199
+\spx@boxes@radius@topleft@y=\dimen256
+\spx@boxes@radius@topright@y=\dimen257
+\spx@boxes@radius@bottomright@y=\dimen258
+\spx@boxes@radius@bottomleft@y=\dimen259
+)
+(./sphinxlatexadmonitions.sty
+Package: sphinxlatexadmonitions 2025/10/24 v9.0.0 admonitions
+
+(/usr/share/texlive/texmf-dist/tex/latex/framed/framed.sty
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip63
+\fb@frw=\dimen260
+\fb@frh=\dimen261
+\FrameRule=\dimen262
+\FrameSep=\dimen263
+)
+(/usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty
+Package: needspace 2025/03/13 v1.3e reserve vertical space
+)
+(./sphinxpackagefootnote.sty
+Package: sphinxpackagefootnote 2025/11/15 v9.0.0 Sphinx custom footnotehyper pa
+ckage (Sphinx team)
+\FNH@notes=\box107
+\FNH@toks=\toks27
+\FNH@width=\dimen264
+\c@sphinxfootnotemark=\count322
+)
+\spx@notice@border=\dimen265
+\c@sphinxtodo=\count323
+) (./sphinxlatexliterals.sty
+Package: sphinxlatexliterals 2025/12/26 v9.1.0 code-blocks and parsed literals
+
+(/usr/share/texlive/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2025/07/28 4.6 verbatim text (tvz,hv)
+\FV@CodeLineNo=\count324
+\FV@InFile=\read2
+\FV@TabBox=\box108
+\c@FancyVerbLine=\count325
+\FV@StepNumber=\count326
+\FV@OutFile=\write3
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 2024/07/07 v2.0g defines alltt environment
+)
+(/usr/share/texlive/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+)
+\sphinxcontinuationbox=\box109
+\sphinxvisiblespacebox=\box110
+\sphinxVerbatim@TitleBox=\box111
+\sphinxVerbatim@ContentsBox=\box112
+)
+(./sphinxlatexshadowbox.sty
+Package: sphinxlatexshadowbox 2024/07/28 v8.1.0 sphinxShadowBox
+) (./sphinxlatexcontainers.sty
+Package: sphinxlatexcontainers 2021/05/03 containers
+)
+(./sphinxhighlight.sty
+Package: sphinxhighlight 2022/06/30 stylesheet for highlighting with pygments
+) (./sphinxlatextables.sty
+Package: sphinxlatextables 2025/12/30 v9.1.0 tables
+
+(/usr/share/texlive/texmf-dist/tex/latex/tabulary/tabulary.sty
+Package: tabulary 2024/06/04 v0.11 tabulary package (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
+Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
+\col@sep=\dimen266
+\ar@mcellbox=\box113
+\extrarowheight=\dimen267
+\NC@list=\toks28
+\extratabsurround=\skip64
+\backup@length=\skip65
+\ar@cellbox=\box114
+)
+\TY@count=\count327
+\TY@linewidth=\dimen268
+\tymin=\dimen269
+\tymax=\dimen270
+\TY@tablewidth=\dimen271
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
+\LTleft=\skip66
+\LTright=\skip67
+\LTpre=\skip68
+\LTpost=\skip69
+\LTchunksize=\count328
+\LTcapwidth=\dimen272
+\LT@head=\box115
+\LT@firsthead=\box116
+\LT@foot=\box117
+\LT@lastfoot=\box118
+\LT@gbox=\box119
+\LT@cols=\count329
+\LT@rows=\count330
+\c@LT@tables=\count331
+\c@LT@chunks=\count332
+\LT@p@ftn=\toks29
+)
+(/usr/share/texlive/texmf-dist/tex/latex/varwidth/varwidth.sty
+Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
+\@vwid@box=\box120
+\sift@deathcycles=\count333
+\@vwid@loff=\dimen273
+\@vwid@roff=\dimen274
+)
+==> First Aid for varwidth.sty applied!
+\sphinx@TY@tablewidth=\dimen275
+(/usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty
+Package: colortbl 2024/10/29 v1.0k Color table columns (DPC)
+\everycr=\toks30
+\minrowclearance=\skip70
+\rownum=\count334
+)
+(/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen276
+\lightrulewidth=\dimen277
+\cmidrulewidth=\dimen278
+\belowrulesep=\dimen279
+\belowbottomsep=\dimen280
+\aboverulesep=\dimen281
+\abovetopsep=\dimen282
+\cmidrulesep=\dimen283
+\cmidrulekern=\dimen284
+\defaultaddspace=\dimen285
+\@cmidla=\count335
+\@cmidlb=\count336
+\@aboverulesep=\dimen286
+\@belowrulesep=\dimen287
+\@thisruleclass=\count337
+\@lastruleclass=\count338
+\@thisrulewidth=\dimen288
+))
+(./sphinxlatexnumfig.sty
+Package: sphinxlatexnumfig 2024/07/31 v8.1.0 numbering
+) (./sphinxlatexlists.sty
+Package: sphinxlatexlists 2021/12/20 lists
+\spx@lineitemlabel=\toks31
+)
+\c@sphinxscope=\count339
+ (./sphinxlatexindbibtoc.sty
+Package: sphinxlatexindbibtoc 2021/01/27 index, bib., toc
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/makeidx.sty
+Package: makeidx 2021/10/04 v1.0m Standard LaTeX package
+))
+(./sphinxlatexstylepage.sty
+Package: sphinxlatexstylepage 2021/01/27 page styling
+
+(/usr/share/texlive/texmf-dist/tex/latex/parskip/parskip.sty
+Package: parskip 2021-03-14 v2.0h non-zero parskip adjustments
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
+
+\f@nch@headwidth=\skip71
+\f@nch@offset@elh=\skip72
+\f@nch@offset@erh=\skip73
+\f@nch@offset@olh=\skip74
+\f@nch@offset@orh=\skip75
+\f@nch@offset@elf=\skip76
+\f@nch@offset@erf=\skip77
+\f@nch@offset@olf=\skip78
+\f@nch@offset@orf=\skip79
+\f@nch@height=\skip80
+\f@nch@footalignment=\skip81
+\f@nch@widthL=\skip82
+\f@nch@widthC=\skip83
+\f@nch@widthR=\skip84
+\@temptokenb=\toks32
+))
+(./sphinxlatexstyleheadings.sty
+Package: sphinxlatexstyleheadings 2023/02/11 headings
+
+(/usr/share/texlive/texmf-dist/tex/latex/titlesec/titlesec.sty
+Package: titlesec 2025/01/04 v2.17 Sectioning titles
+\ttl@box=\box121
+\beforetitleunit=\skip85
+\aftertitleunit=\skip86
+\ttl@plus=\dimen289
+\ttl@minus=\dimen290
+\ttl@toksa=\toks33
+\titlewidth=\dimen291
+\titlewidthlast=\dimen292
+\titlewidthfirst=\dimen293
+))
+(./sphinxlatexstyletext.sty
+Package: sphinxlatexstyletext 2025/05/24 v9.0.0 text styling
+) (./sphinxlatexobjects.sty
+Package: sphinxlatexobjects 2025/06/06 documentation environments
+\sphinxsignaturesep=\skip87
+\sphinxsignaturelistskip=\skip88
+\py@argswidth=\skip89
+\lineblockindentation=\skip90
+\DUlineblockindent=\skip91
+)
+\sphinxvwdimen=\dimen294
+\sphinxvhdimen=\dimen295
+\sphinxvmindimen=\dimen296
+\sphinxvmaxdimen=\dimen297
+\sphinxQdimen=\dimen298
+)
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+)
+\Gm@cnth=\count340
+\Gm@cntv=\count341
+\c@Gm@tempcnt=\count342
+\Gm@bindingoffset=\dimen299
+\Gm@wd@mp=\dimen300
+\Gm@odd@mp=\dimen301
+\Gm@even@mp=\dimen302
+\Gm@layoutwidth=\dimen303
+\Gm@layoutheight=\dimen304
+\Gm@layouthoffset=\dimen305
+\Gm@layoutvoffset=\dimen306
+\Gm@dimlist=\toks34
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode not found.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count343
+)
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+\@linkdim=\dimen307
+\Hy@linkcounter=\count344
+\Hy@pagecounter=\count345
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count346
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
+)
+Package hyperref Info: Option `hyperindex' set `false' on input line 4066.
+Package hyperref Info: Option `unicode' set `true' on input line 4066.
+Package hyperref Info: Option `colorlinks' set `true' on input line 4066.
+Package hyperref Info: Option `breaklinks' set `true' on input line 4066.
+Package hyperref Info: Hyper figures OFF on input line 4195.
+Package hyperref Info: Link nesting OFF on input line 4200.
+Package hyperref Info: Hyper index OFF on input line 4205.
+Package hyperref Info: Plain pages OFF on input line 4210.
+Package hyperref Info: Backreferencing OFF on input line 4215.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4462.
+\c@Hy@tempcnt=\count347
+
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip18
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4801.
+\XeTeXLinkMargin=\dimen308
+
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count348
+\Field@Width=\dimen309
+\Fld@charsize=\dimen310
+Package hyperref Info: Hyper figures OFF on input line 6078.
+Package hyperref Info: Link nesting OFF on input line 6083.
+Package hyperref Info: Hyper index OFF on input line 6088.
+Package hyperref Info: backreferencing OFF on input line 6093.
+Package hyperref Info: Link coloring ON on input line 6096.
+Package hyperref Info: Link coloring with OCG OFF on input line 6103.
+Package hyperref Info: PDF/A mode OFF on input line 6108.
+\Hy@abspage=\count349
+\c@Item=\count350
+\c@Hfootnote=\count351
+)
+Package hyperref Info: Driver (autodetected): hxetex.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hxetex.def
+File: hxetex.def 2025-07-12 v7.01o Hyperref driver for XeTeX
+\pdfm@box=\box122
+\c@Hy@AnnotLevel=\count352
+\HyField@AnnotCount=\count353
+\Fld@listcount=\count354
+\c@bookmark@seq@number=\count355
+
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+84.
+)
+\Hy@SectionHShift=\skip92
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hypcap/hypcap.sty
+Package: hypcap 2024-07-26 v1.13 Adjusting the anchors of captions (HO)
+
+(/usr/share/texlive/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+))
+(./sphinxmessages.sty
+Package: sphinxmessages 2019/01/04 v2.0 Localized LaTeX macros (Sphinx team)
+)
+\@indexfile=\write4
+\openout4 = `blunderdb.idx'.
+
+
+Writing index file blunderdb.idx
+
+Package fontspec Info: 
+(fontspec)             Font family 'FreeSerif(1)' created for font 'FreeSerif'
+(fontspec)             with options [Script=Greek].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"FreeSerif/OT:script=grek;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.:
+(fontspec)             <->"FreeSerif/OT:script=grek;language=dflt;+smcp;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->"FreeSerif/B/OT:script=grek;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.:
+(fontspec)             <->"FreeSerif/B/OT:script=grek;language=dflt;+smcp;"
+(fontspec)             - 'italic' (m/it) with NFSS spec.:
+(fontspec)             <->"FreeSerif/I/OT:script=grek;language=dflt;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.:
+(fontspec)             <->"FreeSerif/I/OT:script=grek;language=dflt;+smcp;"
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->"FreeSerif/BI/OT:script=grek;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.:
+(fontspec)             <->"FreeSerif/BI/OT:script=grek;language=dflt;+smcp;"
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'FreeSerif(2)' created for font 'FreeSerif'
+(fontspec)             with options [Script=Greek,Language=Greek].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"FreeSerif/OT:script=grek;language=ELL;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.:
+(fontspec)             <->"FreeSerif/OT:script=grek;language=ELL;+smcp;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->"FreeSerif/B/OT:script=grek;language=ELL;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.:
+(fontspec)             <->"FreeSerif/B/OT:script=grek;language=ELL;+smcp;"
+(fontspec)             - 'italic' (m/it) with NFSS spec.:
+(fontspec)             <->"FreeSerif/I/OT:script=grek;language=ELL;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.:
+(fontspec)             <->"FreeSerif/I/OT:script=grek;language=ELL;+smcp;"
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->"FreeSerif/BI/OT:script=grek;language=ELL;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.:
+(fontspec)             <->"FreeSerif/BI/OT:script=grek;language=ELL;+smcp;"
+
+(./blunderdb.aux)
+\openout1 = `blunderdb.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+
+Package fontspec Info: 
+(fontspec)             Adjusting the maths setup (use [no-math] to avoid
+(fontspec)             this).
+
+\symlegacymaths=\mathgroup6
+LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 73.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 73.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 73.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 73.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 73.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 73.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 73.
+LaTeX Font Info:    Redeclaring math accent \check on input line 73.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 73.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 73.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 73.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 73.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 73.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `normal' on input line 73.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> TU/FreeSerif(0)/m/n on input line 73.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `bold' on input line 73.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> TU/FreeSerif(0)/m/n on input line 73.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  TU/FreeSerif(0)/m/n --> TU/FreeSerif(0)/m/n on input li
+ne 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> TU/FreeSerif(0)/m/it on input line 73.
+
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> TU/FreeSerif(0)/b/n on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> TU/FreeSans(0)/m/n on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> TU/FreeMono(0)/m/n on input line 73.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  TU/FreeSerif(0)/m/n --> TU/FreeSerif(0)/b/n on input li
+ne 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> TU/FreeSerif(0)/b/it on input line 73
+.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> TU/FreeSans(0)/b/n on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> TU/FreeMono(0)/b/n on input line 73.
+\c@literalblock=\count356
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: xetex
+*geometry* verbose mode - [ preamble ] result:
+* driver: xetex
+* paper: letterpaper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: twoside 
+* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=469.75502pt
+* \textheight=650.43001pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-37.0pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=36.135pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidetrue
+* \@mparswitchtrue
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+Package hyperref Info: Link coloring ON on input line 73.
+(./blunderdb.out) (./blunderdb.out)
+\@outlinefile=\write5
+\openout5 = `blunderdb.out'.
+
+Package hyperref Info: Option `pageanchor' set `false' on input line 76.
+
+Package fontspec Info: 
+(fontspec)             Font family 'FreeSans(1)' created for font 'FreeSans'
+(fontspec)             with options [Script=Greek].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"FreeSans/OT:script=grek;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.:
+(fontspec)             <->"FreeSans/OT:script=grek;language=dflt;+smcp;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->"FreeSans/B/OT:script=grek;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.:
+(fontspec)             <->"FreeSans/B/OT:script=grek;language=dflt;+smcp;"
+(fontspec)             - 'italic' (m/it) with NFSS spec.:
+(fontspec)             <->"FreeSans/I/OT:script=grek;language=dflt;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.:
+(fontspec)             <->"FreeSans/I/OT:script=grek;language=dflt;+smcp;"
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->"FreeSans/BI/OT:script=grek;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.:
+(fontspec)             <->"FreeSans/BI/OT:script=grek;language=dflt;+smcp;"
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'FreeSans(2)' created for font 'FreeSans'
+(fontspec)             with options [Script=Greek,Language=Greek].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"FreeSans/OT:script=grek;language=ELL;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.:
+(fontspec)             <->"FreeSans/OT:script=grek;language=ELL;+smcp;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->"FreeSans/B/OT:script=grek;language=ELL;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.:
+(fontspec)             <->"FreeSans/B/OT:script=grek;language=ELL;+smcp;"
+(fontspec)             - 'italic' (m/it) with NFSS spec.:
+(fontspec)             <->"FreeSans/I/OT:script=grek;language=ELL;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.:
+(fontspec)             <->"FreeSans/I/OT:script=grek;language=ELL;+smcp;"
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->"FreeSans/BI/OT:script=grek;language=ELL;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.:
+(fontspec)             <->"FreeSans/BI/OT:script=grek;language=ELL;+smcp;"
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 76.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 76.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) [1
+
+] [2
+
+
+]
+(./blunderdb.toc)
+\tf@toc=\write6
+\openout6 = `blunderdb.toc'.
+
+ [1
+
+] [2
+
+] [1] [2
+
+]
+Κεφάλαιο 1.
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 168--170
+[]\TU/FreeMono(1)/m/n/10 blunderDB[]windows[]x.y.z.
+ []
+
+
+Underfull \hbox (badness 5592) in paragraph at lines 173--175
+[]\TU/FreeSerif(2)/m/n/10 Εκτελέστε το απευθείας, χωρίς εγκατά-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--186
+[]\TU/FreeMono(1)/m/n/10 blunderDB[]macos[]x.y.z.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 200--202
+[]\TU/FreeMono(1)/m/n/10 blunderdb_x.y.z_amd64.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 216--218
+[]\TU/FreeMono(1)/m/n/10 blunderdb[]x.y.z.x86_64.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 243--245
+[]\TU/FreeSerif(2)/m/n/10 Οποιαδήποτε διανομή
+ []
+
+
+Overfull \hbox (26.2833pt too wide) in paragraph at lines 264--266
+[]\TU/FreeMono(1)/m/n/10 blunderDB[]linux[]webkit2gtk[]4.
+ []
+
+
+Overfull \hbox (26.2833pt too wide) detected at line 267
+[]\TU/FreeMono(1)/m/n/10 blunderDB[]linux[]webkit2gtk[]4.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--282
+[]\TU/FreeMono(1)/m/n/10 blunderdb_x.y.z_arm64.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--282
+\TU/FreeMono(1)/m/n/10 deb\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/m/n/10 blun
+derdb[]x.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--282
+\TU/FreeMono(1)/m/n/10 y.z.aarch64.rpm \TU/FreeSerif(2)/m/n/10 ή
+ []
+
+
+Overfull \hbox (62.2833pt too wide) in paragraph at lines 280--282
+\TU/FreeMono(1)/m/n/10 blunderDB[]linux[]arm64[]webkit2gtk[]4.
+ []
+
+
+Overfull \hbox (62.2833pt too wide) detected at line 283
+\TU/FreeMono(1)/m/n/10 blunderDB[]linux[]arm64[]webkit2gtk[]4.
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 283
+\TU/FreeMono(1)/m/n/10 y.z.aarch64.rpm \TU/FreeSerif(2)/m/n/10 ή
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 283
+\TU/FreeMono(1)/m/n/10 deb\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/m/n/10 blun
+derdb[]x.
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 283
+[]\TU/FreeMono(1)/m/n/10 blunderdb_x.y.z_arm64.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 285--287
+[]\TU/FreeSerif(2)/m/n/10 Όπως παραπάνω, με το αρχείο
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 291--293
+[]\TU/FreeSerif(2)/m/n/10 Διακομιστής (λειτουρ-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 296--298
+[]\TU/FreeSerif(2)/m/n/10 εικόνα \TU/FreeMono(1)/m/n/10 ghcr.io/kevung/
+ []
+
+
+Underfull \hbox (badness 5847) in paragraph at lines 301--303
+[]\TU/FreeMono(1)/m/n/10 docker pull ghcr.io/kevung/
+ []
+
+[4] [5] [6] [7] [8
+
+]
+Κεφάλαιο 2.
+[9]
+File: panel_analysis.png Graphic file (type bmp)
+<panel_analysis.png>
+File: panel_matches.png Graphic file (type bmp)
+<panel_matches.png>
+ [10] [11]
+File: panel_cube.png Graphic file (type bmp)
+<panel_cube.png>
+File: panel_comments.png Graphic file (type bmp)
+<panel_comments.png>
+File: panel_anki.png Graphic file (type bmp)
+<panel_anki.png>
+ [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23]
+[24]
+File: panel_eval.png Graphic file (type bmp)
+<panel_eval.png>
+ [25] [26] [27] [28]
+Κεφάλαιο 3.
+[29
+
+] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43]
+[44] [45] [46] [47] [48] [49]
+File: panel_search.png Graphic file (type bmp)
+<panel_search.png>
+ [50] [51] [52] [53] [54]
+File: panel_collections.png Graphic file (type bmp)
+<panel_collections.png>
+ [55] [56] [57] [58]
+Missing character: There is no 🎞 (U+1F39E) in font FreeSerif/OT:script=grek;lan
+guage=ELL;!
+File: panel_match_sheet.png Graphic file (type bmp)
+<panel_match_sheet.png>
+[59] [60] [61] [62]
+Missing character: There is no 🎞 (U+1F39E) in font FreeSerif/OT:script=grek;lan
+guage=ELL;!
+[63] [64] [65] [66] [67] [68] [69] [70] [71] [72]
+File: panel_tournaments.png Graphic file (type bmp)
+<panel_tournaments.png>
+ [73] [74] [75] [76] [77]
+[78] [79] [80] [81] [82] [83] [84] [85]
+File: panel_stats_dashboard.png Graphic file (type bmp)
+<panel_stats_dashboard.png>
+ [86] [87] [88] [89] [90]
+File: panel_stats_errors.png Graphic file (type bmp)
+<panel_stats_errors.png>
+ [91] [92]
+[93]
+File: panel_stats_players.png Graphic file (type bmp)
+<panel_stats_players.png>
+ [94] [95] [96] [97] [98] [99] [100] [101] [102] [103] [104] [105]
+Underfull \hbox (badness 6125) in paragraph at lines 4585--4587
+[]\TU/FreeSerif(2)/m/n/10 Αυτό το καθεστώς μετρήθηκε, δεν υποτέθηκε απλώς, έναν
+τι του ενσωματωμένου two-sided πίνακα
+ []
+
+[106] [107] [108] [109] [110] [111] [112] [113] [114] [115] [116] [117]
+[118] [119] [120] [121] [122]
+Κεφάλαιο 4.
+[123
+
+] [124] [125] [126] [127] [128] [129] [130] [131] [132] [133] [134
+
+]
+Κεφάλαιο 5.
+
+Underfull \hbox (badness 10000) in paragraph at lines 6090--6092
+[]\TU/FreeSerif(2)/m/n/10 tp2, tp2_live,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6090--6092
+\TU/FreeSerif(2)/m/n/10 tp2_last, tp4,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 6093
+\TU/FreeSerif(2)/m/n/10 tp2_last, tp4,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 6093
+[]\TU/FreeSerif(2)/m/n/10 tp2, tp2_live,
+ []
+
+[135] [136] [137]
+Underfull \hbox (badness 10000) in paragraph at lines 6548--6550
+[][][]\TU/FreeMono(1)/b/n/10 score1
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6580--6582
+[][][]\TU/FreeMono(1)/b/n/10 cube[]response
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6596--6598
+[][][]\TU/FreeMono(1)/b/n/10 cube[]response
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6687--6689
+\TU/FreeSerif(2)/m/n/10 υπό επαφή), \TU/FreeMono(1)/b/n/10 crunch\TU/FreeSerif(
+2)/m/n/10 , \TU/FreeMono(1)/b/n/10 backgame\TU/FreeSerif(2)/m/n/10 , \TU/FreeMo
+no(1)/b/n/10 acepoint\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 blitz\TU/
+FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6687--6689
+\TU/FreeMono(1)/b/n/10 primevprime\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n
+/10 mutualholding\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 holding\TU/Fr
+eeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 contact\TU/FreeSerif(2)/m/n/10 .
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6836--6838
+[][][]\TU/FreeMono(1)/b/n/10 pip[]min
+ []
+
+
+Overfull \hbox (1.23749pt too wide) in paragraph at lines 6948--6950
+[][][]\TU/FreeMono(1)/b/n/10 move[]error[]min 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) detected at line 6951
+[][][]\TU/FreeMono(1)/b/n/10 move[]error[]min 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) in paragraph at lines 6964--6966
+[][][]\TU/FreeMono(1)/b/n/10 move[]error[]max 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) detected at line 6967
+[][][]\TU/FreeMono(1)/b/n/10 move[]error[]max 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) in paragraph at lines 6980--6982
+[][][]\TU/FreeMono(1)/b/n/10 move[]error[]min
+ []
+
+
+Overfull \hbox (1.23749pt too wide) in paragraph at lines 6980--6982
+[][]\TU/FreeMono(1)/b/n/10 move[]error[]max 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) detected at line 6983
+[][]\TU/FreeMono(1)/b/n/10 move[]error[]max 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) detected at line 6983
+[][][]\TU/FreeMono(1)/b/n/10 move[]error[]min
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7124--7126
+[][][]\TU/FreeMono(1)/b/n/10 winrate[]min
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7850--7852
+[]\TU/FreeMono(1)/b/n/10 t[]λέξη1;
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 7853
+[]\TU/FreeMono(1)/b/n/10 t[]λέξη1;
+ []
+
+
+Overfull \hbox (1.23749pt too wide) in paragraph at lines 7908--7910
+[][][]\TU/FreeMono(1)/b/n/10 comment[]origin 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) detected at line 7911
+[][][]\TU/FreeMono(1)/b/n/10 comment[]origin 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) in paragraph at lines 7924--7926
+[][][]\TU/FreeMono(1)/b/n/10 comment[]author 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) detected at line 7927
+[][][]\TU/FreeMono(1)/b/n/10 comment[]author 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7930--7932
+[]\TU/FreeMono(1)/b/n/10 m[]μοτίβο1,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 7933
+[]\TU/FreeMono(1)/b/n/10 m[]μοτίβο1,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7946--7948
+[]\TU/FreeMono(1)/b/n/10 m[]ND,DT,DP,.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7999--8001
+[]\TU/FreeSerif(2)/m/n/10 Ημερομηνία προσθήκης της θέσης μεταξύ x και y
+ []
+
+
+Overfull \hbox (1.23749pt too wide) in paragraph at lines 8052--8054
+[][][]\TU/FreeMono(1)/b/n/10 tournament[]ids 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) detected at line 8055
+[][][]\TU/FreeMono(1)/b/n/10 tournament[]ids 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) in paragraph at lines 8068--8070
+[][][]\TU/FreeMono(1)/b/n/10 tournament[]ids 
+ []
+
+
+Overfull \hbox (1.23749pt too wide) detected at line 8071
+[][][]\TU/FreeMono(1)/b/n/10 tournament[]ids 
+ []
+
+
+Overfull \hbox (7.23749pt too wide) in paragraph at lines 8084--8086
+[][][]\TU/FreeMono(1)/b/n/10 tournament[]name 
+ []
+
+
+Overfull \hbox (7.23749pt too wide) detected at line 8087
+[][][]\TU/FreeMono(1)/b/n/10 tournament[]name 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 8095--8097
+[]\TU/FreeSerif(2)/m/n/10 Αναζήτηση στους αγώνες του γύρου x (π.χ. \TU/FreeMono
+(1)/b/n/10 rd:3\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 5231) in paragraph at lines 8095--8097
+\TU/FreeMono(1)/b/n/10 rd:Τελικός\TU/FreeSerif(2)/m/n/10 ): το κείμενο του γύρο
+υ συγκρίνεται χωρίς
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 8098
+[]\TU/FreeSerif(2)/m/n/10 Αναζήτηση στους αγώνες του γύρου x (π.χ. \TU/FreeMono
+(1)/b/n/10 rd:3\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 8260--8262
+[][][]\TU/FreeMono(1)/b/n/10 player
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 8263
+[][][]\TU/FreeMono(1)/b/n/10 player
+ []
+
+
+Underfull \hbox (badness 6016) in paragraph at lines 8303--8305
+[]\TU/FreeSerif(2)/m/n/10 Μηχανή και βάθος της ανάλυσης που έχει καταγραφεί
+ []
+
+
+Underfull \hbox (badness 6016) detected at line 8306
+[]\TU/FreeSerif(2)/m/n/10 Μηχανή και βάθος της ανάλυσης που έχει καταγραφεί
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 8314--8316
+[]\TU/FreeSerif(2)/m/n/10 like, like42,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 8317
+[]\TU/FreeSerif(2)/m/n/10 like, like42,
+ []
+
+ignored error: Infinite glue shrinkage found in box being split [138]
+ignored error: Infinite glue shrinkage found in box being split [139]
+ignored error: Infinite glue shrinkage found in box being split [140]
+ignored error: Infinite glue shrinkage found in box being split [141]
+ignored error: Infinite glue shrinkage found in box being split [142] [143]
+[144]
+Κεφάλαιο 6.
+
+Underfull \hbox (badness 10000) in paragraph at lines 8679--8681
+\TU/FreeSerif(2)/m/n/10 SHIFT-F10 στη γραμμή
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 8682
+\TU/FreeSerif(2)/m/n/10 SHIFT-F10 στη γραμμή
+ []
+
+[145
+
+] [146] [147]
+Underfull \hbox (badness 10000) in paragraph at lines 9159--9161
+[]\TU/FreeSerif(2)/m/n/10 BACKSPACE (Μονομα-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 9291--9293
+[]\TU/FreeSerif(2)/m/n/10 CTRL-ALT-← / CTRL-
+ []
+
+ignored error: Infinite glue shrinkage found in box being split [148]
+Underfull \hbox (badness 10000) in paragraph at lines 9586--9588
+[]\TU/FreeSerif(2)/m/n/10 CTRL-SHIFT-PageUp /
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 9589
+[]\TU/FreeSerif(2)/m/n/10 CTRL-SHIFT-PageUp /
+ []
+
+[149]
+Underfull \hbox (badness 6348) in paragraph at lines 9818--9820
+[]\TU/FreeSerif(2)/m/n/10 Κλικ (σε καρφιτσωμένη
+ []
+
+[150]
+Underfull \hbox (badness 10000) in paragraph at lines 10193--10195
+[]\TU/FreeSerif(2)/m/n/10 ΑΡΙΣΤΕΡΆ / ΔΕΞΙΆ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 10196
+[]\TU/FreeSerif(2)/m/n/10 ΑΡΙΣΤΕΡΆ / ΔΕΞΙΆ,
+ []
+
+[151]
+Underfull \hbox (badness 10000) in paragraph at lines 10366--10368
+[]\TU/FreeSerif(2)/m/n/10 Διπλό κλικ, ENTER
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 10461--10463
+[]\TU/FreeSerif(2)/m/n/10 ΑΡΙΣΤΕΡΆ, ΔΕΞΙΆ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 10461--10463
+\TU/FreeSerif(2)/m/n/10 ΠΆΝΩ, ΚΆΤΩ, HOME,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 10464
+[]\TU/FreeSerif(2)/m/n/10 ΑΡΙΣΤΕΡΆ, ΔΕΞΙΆ,
+ []
+
+[152]
+Underfull \hbox (badness 10000) in paragraph at lines 10680--10682
+[]\TU/FreeSerif(2)/m/n/10 ENTER (λίστα προσχε-
+ []
+
+
+Underfull \hbox (badness 7397) in paragraph at lines 10746--10748
+[]\TU/FreeSerif(2)/m/n/10 1 … 6 (δρομέας στην
+ []
+
+
+Underfull \hbox (badness 7397) detected at line 10749
+[]\TU/FreeSerif(2)/m/n/10 1 … 6 (δρομέας στην
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 10801--10803
+[]\TU/FreeSerif(2)/m/n/10 Διπλό κλικ (σε μια
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 11164--11166
+[]\TU/FreeSerif(2)/m/n/10 SHIFT-ΑΡΙΣΤΕΡΆ /
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 11164--11166
+\TU/FreeSerif(2)/m/n/10 SHIFT-ΔΕΞΙΆ (επισυνα-
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 11167
+[]\TU/FreeSerif(2)/m/n/10 SHIFT-ΑΡΙΣΤΕΡΆ /
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 11175--11177
+[]\TU/FreeSerif(2)/m/n/10 CTRL-SHIFT-ΑΡΙΣΤΕΡΆ
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 11175--11177
+\TU/FreeSerif(2)/m/n/10 / CTRL-SHIFT-ΔΕΞΙΆ
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 11178
+\TU/FreeSerif(2)/m/n/10 / CTRL-SHIFT-ΔΕΞΙΆ
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 11186--11188
+[]\TU/FreeSerif(2)/m/n/10 v (επισυναπτόμενο βί-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 11197--11199
+[]\TU/FreeSerif(2)/m/n/10 SHIFT-V (επισυναπτό-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 11219--11221
+[]\TU/FreeSerif(2)/m/n/10 o (επισυναπτόμενο βί-
+ []
+
+ignored error: Infinite glue shrinkage found in box being split [153]
+ignored error: Infinite glue shrinkage found in box being split [154]
+ignored error: Infinite glue shrinkage found in box being split [155] [156]
+Underfull \hbox (badness 10000) in paragraph at lines 11305--11307
+[]\TU/FreeSerif(2)/m/n/10 ΑΡΙΣΤΕΡΆ, ΔΕΞΙΆ,
+ []
+
+[157] [158]
+Κεφάλαιο 7.
+[159
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 11561--11563
+[]\TU/FreeSerif(2)/m/n/10 Οι δυαδικές επιλογές που δηλώνονται ως «προεπιλογή: ν
+αι» απενεργοποιούνται με τη μορφή
+ []
+
+ignored error: Infinite glue shrinkage found in box being split [160] [161]
+[162] [163]
+Overfull \hbox (1132.24498pt too wide) in paragraph at lines 12339--12339
+[]\TU/FreeMono(1)/b/n/10 "id":1,"board":{"points":[{"checkers":0,"color":0},{"c
+heckers":1,"color":1},…],"bearoff":[0,0]},"cube":{"owner":-1,"value":0},"dice":
+[0,0],"score":[7,7],"player_on_roll":0,"decision_type":1,"has_jacoby":0,"has_be
+aver":0,"individually_imported":true,"flagged":false}|  
+ []
+
+[164] [165] [166] [167] [168] [169] [170] [171] [172] [173] [174] [175]
+Underfull \hbox (badness 7468) in paragraph at lines 13167--13169
+[][][]\TU/FreeMono(1)/b/n/10 sort \TU/FreeSerif(2)/m/n/10 — Σειρά: \TU/FreeMono
+(1)/b/n/10 date \TU/FreeSerif(2)/m/n/10 (προεπιλογή, οι πιο πρόσφατοι πρώτα), \
+TU/FreeMono(1)/b/n/10 date_asc\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 
+length_asc\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 13167--13169
+\TU/FreeMono(1)/b/n/10 length_desc\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n
+/10 player1\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 player1_desc\TU/Fre
+eSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 player2\TU/FreeSerif(2)/m/n/10 , \TU/
+FreeMono(1)/b/n/10 player2_desc\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10
+ tournament\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+[176] [177]
+Underfull \hbox (badness 10000) in paragraph at lines 13312--13314
+[]\TU/FreeMono(1)/b/n/10 export [][]id <id[,id…]> [][]out <αρχείο.db> [[][]anal
+ysis=false]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 13312--13314
+\TU/FreeMono(1)/b/n/10 [[][]comments=false] [[][]matches=false] [[][]transcript
+ions=false]
+ []
+
+[178] [179] [180] [181] [182] [183]
+Underfull \hbox (badness 6910) in paragraph at lines 13655--13657
+[]\TU/FreeSerif(2)/b/n/10 Κοινές επιλογές: [][]\TU/FreeMono(1)/b/n/10 db \TU/Fr
+eeSerif(2)/m/n/10 (υποχρεωτικό), [][]\TU/FreeMono(1)/b/n/10 id \TU/FreeSerif(2)
+/m/n/10 (υποχρεωτικό εκτός από τα \TU/FreeMono(1)/b/n/10 list\TU/FreeSerif(2)/m
+/n/10 , \TU/FreeMono(1)/b/n/10 ranking\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)
+/b/n/10 page
+ []
+
+[184] [185] [186] [187] [188] [189] [190] [191] [192] [193] [194] [195]
+[196] [197] [198] [199] [200] [201]
+Underfull \hbox (badness 7291) in paragraph at lines 14860--14862
+[]\TU/FreeSerif(2)/b/n/10 Κοινές επιλογές: [][]\TU/FreeMono(1)/b/n/10 tournamen
+t <ids>\TU/FreeSerif(2)/m/n/10 , [][]\TU/FreeMono(1)/b/n/10 from <ΕΕΕΕ[]ΜΜ[]ΗΗ>
+\TU/FreeSerif(2)/m/n/10 , [][]\TU/FreeMono(1)/b/n/10 to <ΕΕΕΕ[]ΜΜ[]ΗΗ>\TU/FreeS
+erif(2)/m/n/10 ,
+ []
+
+[202] [203] [204] [205] [206]
+Underfull \hbox (badness 10000) in paragraph at lines 15235--15237
+[]\TU/FreeSerif(2)/m/n/10 Τρία πεδία αξίζουν συναγερμό: τα \TU/FreeMono(1)/b/n/
+10 orphan_total\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 schema_drift_co
+unt \TU/FreeSerif(2)/m/n/10 και
+ []
+
+[207] [208] [209]
+Underfull \hbox (badness 10000) in paragraph at lines 15431--15433
+[]\TU/FreeMono(1)/b/n/10 analysis.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 15463--15465
+[]\TU/FreeMono(1)/b/n/10 analysis.
+ []
+
+[210] [211] [212] [213] [214]
+Underfull \hbox (badness 10000) in paragraph at lines 15846--15848
+[]\TU/FreeSerif(2)/m/n/10 Τα πακέτα το εγκαθιστούν αυτόματα: το \TU/FreeMono(1)
+/b/n/10 .deb\TU/FreeSerif(2)/m/n/10 /\TU/FreeMono(1)/b/n/10 .rpm \TU/FreeSerif(
+2)/m/n/10 (nfpm) και το πακέτο AUR παράγουν τα
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 15846--15848
+\TU/FreeSerif(2)/m/n/10 cask εκτελεί \TU/FreeMono(1)/b/n/10 blunderdb completio
+n <shell> \TU/FreeSerif(2)/m/n/10 μία φορά κατά την εγκατάσταση μέσω
+ []
+
+
+Underfull \hbox (badness 5431) in paragraph at lines 15846--15848
+\TU/FreeMono(1)/b/n/10 generate_completions_from_executable\TU/FreeSerif(2)/m/n
+/10 . Τίποτα δεν αποθηκεύεται στο αποθετήριο, οπότε η
+ []
+
+[215] [216]
+Κεφάλαιο 8.
+[217
+
+] [218] [219] [220]
+Κεφάλαιο 9.
+[221
+
+] [222] [223] [224] [225] [226] [227] [228
+
+]
+Κεφάλαιο 10.
+[229]
+Underfull \hbox (badness 5954) in paragraph at lines 16446--16448
+[]\TU/FreeSerif(2)/b/n/10 Ο δαίμονας δεν εκτελεί καμία πιστοποίηση ταυτότητας. 
+\TU/FreeSerif(2)/m/n/10 Εμπιστεύεται την κεφαλίδα αιτήματος
+ []
+
+
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 16557--16559
+[]\TU/FreeMono(1)/b/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Overfull \hbox (19.82352pt too wide) detected at line 16560
+[]\TU/FreeMono(1)/b/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16674--16676
+[]\TU/FreeSerif(2)/m/n/10 εξυπηρετεί τις κινήσεις μεταγραφής
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16674--16676
+\TU/FreeSerif(2)/m/n/10 (\TU/FreeMono(1)/b/n/10 transcriptions.create\TU/FreeSe
+rif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 apply\TU/FreeSerif(2)/m/n/10 , \TU/FreeM
+ono(1)/b/n/10 finish\TU/FreeSerif(2)/m/n/10 …)·
+ []
+
+
+Underfull \hbox (badness 7925) in paragraph at lines 16674--16676
+\TU/FreeSerif(2)/b/n/10 απενεργοποιημένο από προεπιλογή\TU/FreeSerif(2)/m/n/10 
+, βλ. [][]\TU/FreeSerif(2)/m/it/10 Μεταγραφή
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 16677
+[]\TU/FreeSerif(2)/m/n/10 εξυπηρετεί τις κινήσεις μεταγραφής
+ []
+
+
+Underfull \hbox (badness 6157) in paragraph at lines 16690--16692
+[]\TU/FreeSerif(2)/m/n/10 εξυπηρετεί τις κινήσεις μιας Μονομαχίας (\TU/FreeMono
+(1)/b/n/10 duels.
+ []
+
+
+Underfull \hbox (badness 5787) detected at line 16693
+[]\TU/FreeSerif(2)/m/n/10 εξυπηρετεί τις κινήσεις μιας Μονομαχίας (\TU/FreeMono
+(1)/b/n/10 duels.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16696--16698
+[][][]\TU/FreeMono(1)/b/n/10 transcription[]ttl
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16712--16714
+[][][]\TU/FreeMono(1)/b/n/10 cors[]allow[]origin
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16744--16746
+[][][]\TU/FreeMono(1)/b/n/10 rate[]limit[]burst
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16770--16772
+[]\TU/FreeSerif(2)/m/n/10 θέσεις που μπορεί να αποθηκεύσει ένας tenant,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16770--16772
+\TU/FreeSerif(2)/m/n/10 με έλεγχο στην αρχή μιας εισαγωγής: μόλις επι-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16770--16772
+\TU/FreeSerif(2)/m/n/10 τευχθεί το όριο, η εισαγωγή απορρίπτεται (413,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 16773
+\TU/FreeSerif(2)/m/n/10 τευχθεί το όριο, η εισαγωγή απορρίπτεται (413,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 16773
+\TU/FreeSerif(2)/m/n/10 με έλεγχο στην αρχή μιας εισαγωγής: μόλις επι-
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 16773
+[]\TU/FreeSerif(2)/m/n/10 θέσεις που μπορεί να αποθηκεύσει ένας tenant,
+ []
+
+
+Overfull \hbox (16.34311pt too wide) in paragraph at lines 16792--16794
+[][][]\TU/FreeMono(1)/b/n/10 quota[]analysis[]seconds
+ []
+
+
+Overfull \hbox (16.34311pt too wide) detected at line 16795
+[][][]\TU/FreeMono(1)/b/n/10 quota[]analysis[]seconds
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16840--16842
+[][][]\TU/FreeMono(1)/b/n/10 analysis[]workers
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16872--16874
+[][][]\TU/FreeMono(1)/b/n/10 analysis[]weights
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16920--16922
+[][][]\TU/FreeMono(1)/b/n/10 bearoff[]ts
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16936--16938
+[][][]\TU/FreeMono(1)/b/n/10 identity[]dir
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16952--16954
+[][][]\TU/FreeMono(1)/b/n/10 identity[]name
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16968--16970
+[][][]\TU/FreeMono(1)/b/n/10 import[]dir
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16984--16986
+[][][]\TU/FreeMono(1)/b/n/10 ops[]addr
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 16987
+[][][]\TU/FreeMono(1)/b/n/10 ops[]addr
+ []
+
+
+Underfull \hbox (badness 6542) in paragraph at lines 16994--16996
+[]\TU/FreeSerif(2)/m/n/10 εξυπηρετεί την οικογένεια \TU/FreeMono(1)/b/n/10 /ops
+/ \TU/FreeSerif(2)/m/n/10 (\TU/FreeMono(1)/b/n/10 maintenance.
+ []
+
+
+Underfull \hbox (badness 6542) detected at line 16997
+[]\TU/FreeSerif(2)/m/n/10 εξυπηρετεί την οικογένεια \TU/FreeMono(1)/b/n/10 /ops
+/ \TU/FreeSerif(2)/m/n/10 (\TU/FreeMono(1)/b/n/10 maintenance.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17000--17002
+[][][]\TU/FreeMono(1)/b/n/10 pprof[]addr
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 17003
+[][][]\TU/FreeMono(1)/b/n/10 pprof[]addr
+ []
+
+ignored error: Infinite glue shrinkage found in box being split [230]
+ignored error: Infinite glue shrinkage found in box being split [231]
+Underfull \hbox (badness 10000) in paragraph at lines 17021--17023
+\TU/FreeMono(1)/b/n/10 BLUNDERDB_METRICS\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(
+1)/b/n/10 BLUNDERDB_WEB\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 BLUNDER
+DB_DIRECTION\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 BLUNDERDB_MCP_WRIT
+E\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17021--17023
+\TU/FreeMono(1)/b/n/10 BLUNDERDB_TRANSCRIPTION\TU/FreeSerif(2)/m/n/10 , \TU/Fre
+eMono(1)/b/n/10 BLUNDERDB_DUEL\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 
+BLUNDERDB_CORS_ALLOW_ORIGIN\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17021--17023
+\TU/FreeMono(1)/b/n/10 BLUNDERDB_ANALYSIS_WORKERS\TU/FreeSerif(2)/m/n/10 , \TU/
+FreeMono(1)/b/n/10 BLUNDERDB_HEAVY_SLOTS\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(
+1)/b/n/10 BLUNDERDB_ANALYSIS_WEIGHTS\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17021--17023
+\TU/FreeMono(1)/b/n/10 BLUNDERDB_IDENTITY_NAME\TU/FreeSerif(2)/m/n/10 , \TU/Fre
+eMono(1)/b/n/10 BLUNDERDB_IMPORT_DIR\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b
+/n/10 BLUNDERDB_OPS_ADDR\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+[232] [233] [234]
+Underfull \hbox (badness 7030) in paragraph at lines 17144--17146
+\TU/FreeMono(1)/b/n/10 lessons.removeStep\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono
+(1)/b/n/10 lessons.reorderSteps\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10
+ lessons.setStepDone \TU/FreeSerif(2)/m/n/10 (\TU/FreeMono(1)/b/n/10 {"id": <βή
+μα>,
+ []
+
+[235] [236] [237] [238]
+Underfull \hbox (badness 6380) in paragraph at lines 17278--17280
+\TU/FreeSerif(2)/m/n/10 που ένας καθυστερημένος μπορεί ακόμη να πάρει), \TU/Fre
+eMono(1)/b/n/10 directions.brackets\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/
+n/10 directions.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17278--17280
+\TU/FreeMono(1)/b/n/10 standings\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/1
+0 directions.standingsCsv\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 direc
+tions.history \TU/FreeSerif(2)/m/n/10 (προαιρετικά φίλτρα
+ []
+
+[239]
+Underfull \hbox (badness 10000) in paragraph at lines 17322--17324
+[]\TU/FreeMono(1)/b/n/10 directions.create \TU/FreeSerif(2)/m/n/10 (\TU/FreeMon
+o(1)/b/n/10 tournamentId\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 config
+\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 seed\TU/FreeSerif(2)/m/n/10 ),
+ \TU/FreeMono(1)/b/n/10 directions.setConfig \TU/FreeSerif(2)/m/n/10 και
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17326--17328
+\TU/FreeMono(1)/b/n/10 updateParticipant\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(
+1)/b/n/10 directions.withdraw\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 d
+irections.reinstate\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 directions.
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17326--17328
+\TU/FreeMono(1)/b/n/10 makeAbsent\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/
+10 directions.makeAvailable\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 dir
+ections.addPair\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 directions.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17330--17332
+\TU/FreeMono(1)/b/n/10 get\TU/FreeSerif(2)/m/n/10 ), \TU/FreeMono(1)/b/n/10 dir
+ections.confirmAllProposals\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 dir
+ections.startMatch\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 directions.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17330--17332
+\TU/FreeMono(1)/b/n/10 cancelMatch\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n
+/10 directions.correctResult\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 di
+rections.close\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 directions.reope
+n\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+[240]
+Underfull \hbox (badness 10000) in paragraph at lines 17350--17352
+[]\TU/FreeSerif(2)/m/n/10 η διοργάνωση: \TU/FreeMono(1)/b/n/10 rencontres.creat
+e\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 rencontres.update\TU/FreeSeri
+f(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 rencontres.attach\TU/FreeSerif(2)/m/n/10 ,
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17350--17352
+\TU/FreeMono(1)/b/n/10 rencontres.detach\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(
+1)/b/n/10 rencontres.trash\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 renc
+ontres.setTableOutOfService\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+[241] [242] [243] [244] [245]
+Underfull \hbox (badness 10000) in paragraph at lines 17582--17584
+\TU/FreeMono(1)/b/n/10 includeAnkiDecks\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1
+)/b/n/10 includeFilterLibrary\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 i
+ncludeTranscriptions\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 includeAli
+ases\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+[246] [247] [248]
+Overfull \hbox (16.24498pt too wide) in paragraph at lines 17649--17649
+[]\TU/FreeMono(1)/b/n/10 "includeLessons":false,"includeFilterLibrary":false,"i
+ncludeAnkiHistory":false,[]|  
+ []
+
+
+Overfull \vbox (2.76196pt too high) detected at line 17655
+ []
+
+[249] [250] [251] [252]
+Underfull \hbox (badness 10000) in paragraph at lines 17722--17724
+[]\TU/FreeSerif(2)/m/n/10 Κάθε αίτημα φέρει \TU/FreeMono(1)/b/n/10 Authorizatio
+n: Bearer <διακριτικό> \TU/FreeSerif(2)/m/n/10 και \TU/FreeMono(1)/b/n/10 Conte
+nt[]Type:
+ []
+
+[253] [254] [255]
+Underfull \hbox (badness 7759) in paragraph at lines 17808--17810
+[]\TU/FreeSerif(2)/m/n/10 Κάθε εγγραφή μένει στο \TU/FreeMono(1)/b/n/10 X[]Tena
+nt[]ID\TU/FreeSerif(2)/m/n/10 : καμία διαδρομή εκτός του \TU/FreeMono(1)/b/n/10
+ across.* \TU/FreeSerif(2)/m/n/10 δεν διαβάζει το
+ []
+
+
+Underfull \hbox (badness 5417) in paragraph at lines 17811--17813
+[]\TU/FreeSerif(2)/m/n/10 Ένα αίτημα \TU/FreeMono(1)/b/n/10 across.* \TU/FreeSe
+rif(2)/m/n/10 κοστίζει έως και 64 αναγνώσεις στην αποθήκευση, αλλά το όριο ρυθμ
+ού
+ []
+
+[256]
+Underfull \hbox (badness 6461) in paragraph at lines 17838--17840
+[]\TU/FreeSerif(2)/m/n/10 Το \TU/FreeMono(1)/b/n/10 across.transferPull \TU/Fre
+eSerif(2)/m/n/10 αντιγράφει ένα μέρος ενός tenant της λίστας \TU/FreeMono(1)/b/
+n/10 X[]Read[]Tenants \TU/FreeSerif(2)/m/n/10 στο
+ []
+
+
+Overfull \hbox (394.24498pt too wide) in paragraph at lines 17845--17845
+[]\TU/FreeMono(1)/b/n/10 "tenant":"2","export":{"collectionIDs":[3],"includeMat
+ches":false,"includeTournaments":false,"includeLessons":false,"includeAnkiDecks
+":false}} 
+ []
+
+[257] [258] [259]
+Package hyperref Info: bookmark level for unknown literalblock defaults to 0 on
+ input line 18017.
+ [260]
+Underfull \vbox (badness 10000) detected at line 18114
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 18114
+ []
+
+[261]
+Overfull \vbox (0.95393pt too high) detected at line 18183
+ []
+
+[262]
+Underfull \vbox (badness 10000) detected at line 18183
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 18183
+ []
+
+[263]
+Underfull \hbox (badness 6220) in paragraph at lines 18191--18193
+\TU/FreeSerif(2)/m/n/10 στο \TU/FreeMono(1)/b/n/10 /oauth2/auth\TU/FreeSerif(2)
+/m/n/10 ), το οποίο απαντά 202 με τη διεύθυνση του συνδεδεμένου λογαριασμού στο
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18197--18199
+\TU/FreeMono(1)/b/n/10 analyzeMissing\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/
+b/n/10 gammonnet.sweepStale\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 gam
+monnet.compare\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 gammonnet.cubeMa
+trix\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+[264]
+Underfull \hbox (badness 10000) in paragraph at lines 18203--18205
+\TU/FreeMono(1)/b/n/10 analyzeMissing\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/
+b/n/10 gammonnet.sweepStale\TU/FreeSerif(2)/m/n/10 ), αξιολογήσεις (\TU/FreeMon
+o(1)/b/n/10 gammonnet.evaluate\TU/FreeSerif(2)/m/n/10 ), συγκρίσεις
+ []
+
+[265] [266] [267]
+Underfull \hbox (badness 10000) in paragraph at lines 18325--18327
+[]\TU/FreeSerif(2)/m/n/10 Η δεξαμενή συνδέσεων PostgreSQL ρυθμίζεται μέσω μεταβ
+λητών περιβάλλοντος:
+ []
+
+[268]
+Underfull \hbox (badness 10000) in paragraph at lines 18448--18450
+[][][]\TU/FreeMono(1)/b/n/10 on[]conflict
+ []
+
+[269]
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 18561--18563
+[]\TU/FreeMono(1)/b/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Overfull \hbox (9.46619pt too wide) detected at line 18564
+[]\TU/FreeMono(1)/b/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18572--18574
+[][][]\TU/FreeMono(1)/b/n/10 header "Όνομα:
+ []
+
+[270]
+Underfull \hbox (badness 10000) in paragraph at lines 18750--18752
+[]\TU/FreeMono(1)/b/n/10 search_comments\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18750--18752
+\TU/FreeMono(1)/b/n/10 position_comments\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18753
+[]\TU/FreeMono(1)/b/n/10 search_comments\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18783--18786
+[]\TU/FreeMono(1)/b/n/10 similar_positions\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18783--18786
+\TU/FreeMono(1)/b/n/10 decode_position\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18787
+\TU/FreeMono(1)/b/n/10 decode_position\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18787
+[]\TU/FreeMono(1)/b/n/10 similar_positions\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18795--18798
+[]\TU/FreeMono(1)/b/n/10 list_players\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18795--18798
+\TU/FreeMono(1)/b/n/10 player_aliases\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18795--18798
+\TU/FreeMono(1)/b/n/10 player_stats\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18795--18798
+\TU/FreeMono(1)/b/n/10 recurring_errors\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18795--18798
+\TU/FreeMono(1)/b/n/10 training_stats\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18799
+\TU/FreeMono(1)/b/n/10 training_stats\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18799
+\TU/FreeMono(1)/b/n/10 player_stats\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18799
+\TU/FreeMono(1)/b/n/10 player_aliases\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18799
+[]\TU/FreeMono(1)/b/n/10 list_players\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18807--18809
+[]\TU/FreeMono(1)/b/n/10 head_to_head\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18807--18809
+\TU/FreeMono(1)/b/n/10 pr_by_window\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18810
+\TU/FreeMono(1)/b/n/10 pr_by_window\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18810
+[]\TU/FreeMono(1)/b/n/10 head_to_head\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18818--18820
+[]\TU/FreeMono(1)/b/n/10 list_matches\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18818--18820
+\TU/FreeMono(1)/b/n/10 get_match\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18821
+\TU/FreeMono(1)/b/n/10 get_match\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18821
+[]\TU/FreeMono(1)/b/n/10 list_matches\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18829--18831
+[]\TU/FreeMono(1)/b/n/10 list_collections\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18829--18831
+\TU/FreeMono(1)/b/n/10 collection_positions\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18832
+[]\TU/FreeMono(1)/b/n/10 list_collections\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18884--18886
+[]\TU/FreeMono(1)/b/n/10 transcribe_list\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18884--18886
+\TU/FreeMono(1)/b/n/10 transcribe_get\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18887
+\TU/FreeMono(1)/b/n/10 transcribe_get\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18895--18897
+[]\TU/FreeMono(1)/b/n/10 direction_list\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18895--18897
+\TU/FreeMono(1)/b/n/10 direction_standings\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18898
+[]\TU/FreeMono(1)/b/n/10 direction_list\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18917--18920
+[]\TU/FreeMono(1)/b/n/10 club_matches\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18917--18920
+\TU/FreeMono(1)/b/n/10 club_match_positions\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18917--18920
+\TU/FreeMono(1)/b/n/10 club_comments\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18917--18920
+\TU/FreeMono(1)/b/n/10 club_library\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Overfull \hbox (5.57349pt too wide) in paragraph at lines 18917--18920
+\TU/FreeMono(1)/b/n/10 club_library_positions\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Overfull \hbox (5.57349pt too wide) detected at line 18921
+\TU/FreeMono(1)/b/n/10 club_library_positions\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18921
+\TU/FreeMono(1)/b/n/10 club_library\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18921
+\TU/FreeMono(1)/b/n/10 club_comments\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18921
+\TU/FreeMono(1)/b/n/10 club_match_positions\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 18921
+[]\TU/FreeMono(1)/b/n/10 club_matches\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+[271]
+Underfull \hbox (badness 10000) in paragraph at lines 18933--18935
+\TU/FreeMono(1)/b/n/10 anki_review\TU/FreeSerif(2)/m/n/10 , που βαθμολογεί μια 
+κάρτα που τράβηξε το \TU/FreeMono(1)/b/n/10 anki_next\TU/FreeSerif(2)/m/n/10 , 
+και οι κινήσεις μετα-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18933--18935
+\TU/FreeSerif(2)/m/n/10 γραφής \TU/FreeMono(1)/b/n/10 transcribe_create\TU/Free
+Serif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 transcribe_open\TU/FreeSerif(2)/m/n/10
+ , \TU/FreeMono(1)/b/n/10 transcribe_apply\TU/FreeSerif(2)/m/n/10 , \TU/FreeMon
+o(1)/b/n/10 transcribe_undo\TU/FreeSerif(2)/m/n/10 ,
+ []
+
+[272] [273] [274
+
+]
+Κεφάλαιο 11.
+
+Overfull \vbox (2.76198pt too high) detected at line 19410
+ []
+
+[275]
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+[276]
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+[277]
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+[278]
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+[279]
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+[280]
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+[281]
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+[282]
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+[283]
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 19410
+ []
+
+[284] [285] [286]
+Κεφάλαιο 12.
+[287
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 19650--19652
+\TU/FreeSerif(2)/m/n/10 τερικό, πούλια στην
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 19653
+\TU/FreeSerif(2)/m/n/10 τερικό, πούλια στην
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 19675--19677
+[]\TU/FreeSerif(2)/m/n/10 Θέσεις των οποίων
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 19675--19677
+\TU/FreeSerif(2)/m/n/10 ένα σχόλιο περιέχει
+ []
+
+
+Underfull \hbox (badness 5288) in paragraph at lines 19689--19691
+[]\TU/FreeSerif(2)/m/n/10 Ένα πίσω πούλι προς
+ []
+
+[288] [289] [290
+
+]
+Κεφάλαιο 13.
+File: smartscreen_en.png Graphic file (type bmp)
+<smartscreen_en.png>
+[291]
+File: blunderdb_potential_virus.png Graphic file (type bmp)
+<blunderdb_potential_virus.png>
+File: threat_found_action_needed.png Graphic file (type bmp)
+<threat_found_action_needed.png>
+ [292] [293]
+File: win1.png Graphic file (type bmp)
+<win1.png>
+ [294]
+File: win2.png Graphic file (type bmp)
+<win2.png>
+File: win3.png Graphic file (type bmp)
+<win3.png>
+File: win4.png Graphic file (type bmp)
+<win4.png>
+File: win5.png Graphic file (type bmp)
+<win5.png>
+File: win6.png Graphic file (type bmp)
+<win6.png>
+File: win7.png Graphic file (type bmp)
+<win7.png>
+ [295] [296] [297] [298] [299] [300] [301] [302
+
+]
+Κεφάλαιο 14.
+[303] [304]
+Κεφάλαιο 15.
+[305
+
+] [306]
+Κεφάλαιο 16.
+[307
+
+] [308] [309]
+Underfull \hbox (badness 10000) in paragraph at lines 20603--20603
+[]\TU/FreeSerif(2)/m/n/10 Προτει-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 20603--20603
+\TU/FreeSerif(2)/m/n/10 νόμενο
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 20603
+\TU/FreeSerif(2)/m/n/10 νόμενο
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 20603
+[]\TU/FreeSerif(2)/m/n/10 Προτει-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 20603--20603
+[]\TU/FreeSerif(2)/m/n/10 Αποδοχή,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 20603--20603
+[]\TU/FreeSerif(2)/m/n/10 Όχι διπλά-
+ []
+
+[310] [311] [312]
+Κεφάλαιο 17.
+
+Underfull \hbox (badness 10000) in paragraph at lines 20865--20867
+\TU/FreeSerif(2)/m/n/10 που γράφτηκε από προηγούμενη έκδοση της μηχανής (σήμερα
+ gammonNet v1.9.0, δίκτυο
+ []
+
+[313
+
+] [314] [315] [316] [317]
+Underfull \hbox (badness 10000) in paragraph at lines 21097--21099
+[]\TU/FreeSerif(2)/b/n/10 Το gammonNet v1.9.0 αναλύει με μεγαλύτερο δίκτυο\TU/F
+reeSerif(2)/m/n/10 : το προεπιλεγμένο δί-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 21097--21099
+\TU/FreeSerif(2)/m/n/10 κτυο είναι το \TU/FreeMono(1)/b/n/10 strehl[]prob5[]768
+[]768[]256[]256[]256\TU/FreeSerif(2)/m/n/10 , με πέντε στρώματα· το
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 21142--21144
+[]\TU/FreeSerif(2)/b/n/10 Το αρχείο καταγραφής μπορεί να απενεργοποιηθεί για έν
+αν ενοικιαστή\TU/FreeSerif(2)/m/n/10 : το \TU/FreeMono(1)/b/n/10 changeset.
+ []
+
+[318]
+Underfull \hbox (badness 5133) in paragraph at lines 21171--21173
+\TU/FreeMono(1)/b/n/10 truncated\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/1
+0 corrupt\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 too_large\TU/FreeSeri
+f(2)/m/n/10 , \TU/FreeMono(1)/b/n/10 empty \TU/FreeSerif(2)/m/n/10 ή \TU/FreeMo
+no(1)/b/n/10 internal\TU/FreeSerif(2)/m/n/10 ) επιπλέον του κειμένου του· το \T
+U/FreeMono(1)/b/n/10 ?
+ []
+
+
+Underfull \hbox (badness 7667) in paragraph at lines 21196--21198
+[]\TU/FreeSerif(2)/b/n/10 Δύο βιβλιοθήκες συγχρονίζονται\TU/FreeSerif(2)/m/n/10
+ : στην πλευρά του διακομιστή, τα \TU/FreeMono(1)/b/n/10 changeset.export \TU/F
+reeSerif(2)/m/n/10 και
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 21204--21206
+[]\TU/FreeSerif(2)/b/n/10 Ο σύνδεσμος μιας παραλλαγής με την προέλευσή της\TU/F
+reeSerif(2)/m/n/10 : τα \TU/FreeMono(1)/b/n/10 positions.setDerivedFrom\TU/Free
+Serif(2)/m/n/10 ,
+ []
+
+[319]
+Underfull \hbox (badness 10000) in paragraph at lines 21241--21243
+[]\TU/FreeSerif(2)/b/n/10 Από την πλευρά του διακομιστή\TU/FreeSerif(2)/m/n/10 
+: οι \TU/FreeMono(1)/b/n/10 training.generateBearoff \TU/FreeSerif(2)/m/n/10 κα
+ι \TU/FreeMono(1)/b/n/10 training.
+ []
+
+[320] [321] [322]
+Underfull \hbox (badness 10000) in paragraph at lines 21388--21390
+[]\TU/FreeSerif(2)/b/n/10 Συγχρονισμός δύο μηχανημάτων\TU/FreeSerif(2)/m/n/10 :
+ μια σταδιακή εξαγωγή (\TU/FreeMono(1)/b/n/10 export [][]type database
+ []
+
+[323] [324] [325] [326] [327] [328] [329] [330] [331] [332] [333] [334]
+[335] [336] [337] [338] [339] [340] [341] [342] [343] [344]
+Κεφάλαιο 18.
+[345
+
+] (./blunderdb.ind) [346] (./blunderdb.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+ ***********
+Package rerunfilecheck Info: File `blunderdb.out' has not changed.
+(rerunfilecheck)             Checksum: 30B50BADA8CBB59A671A4DAEB93701AD;103778.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 19576 strings out of 468247
+ 402768 string characters out of 5437544
+ 1802210 words of memory out of 5000000
+ 47833 multiletter control sequences out of 15000+600000
+ 637838 words of font info for 176 fonts, out of 8000000 for 9000
+ 1317 hyphenation exceptions out of 8191
+ 73i,19n,100p,6259b,803s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on blunderdb.pdf (350 pages).

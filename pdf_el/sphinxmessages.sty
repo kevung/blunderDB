@@ -1,0 +1,21 @@
+%
+% sphinxmessages.sty
+%
+% message resources for Sphinx
+%
+\ProvidesPackage{sphinxmessages}[2019/01/04 v2.0 Localized LaTeX macros (Sphinx team)]
+
+\renewcommand{\literalblockcontinuedname}{συνεχίζεται από την προηγούμενη σελίδα}
+\renewcommand{\literalblockcontinuesname}{συνέχεια στην επόμενη σελίδα}
+\renewcommand{\sphinxnonalphabeticalgroupname}{μη\sphinxhyphen{}αλφαβιτικά}
+\renewcommand{\sphinxsymbolsname}{Σύμβολα}
+\renewcommand{\sphinxnumbersname}{Αριιθμοί}
+\def\pageautorefname{σελίδα}
+
+\addto\captionsgreek{\renewcommand{\figurename}{Εικ.\@{} }}
+\def\fnum@figure{\figurename\thefigure{}}
+
+\addto\captionsgreek{\renewcommand{\tablename}{Πίνακας }}
+\def\fnum@table{\tablename\thetable{}}
+
+\addto\captionsgreek{\renewcommand{\literalblockname}{Λίστα}}
