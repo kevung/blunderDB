@@ -42,6 +42,14 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.59.0 (2026-11-21)
+-------------------
+
+- **Les piles d'étude dans la liste des positions** : ``blunderdb search`` ajoute une colonne *Decks* (clé ``decks`` en JSON) et ``blunderdb list positions`` une ligne ``Decks:``, qui nomment les piles d'étude ayant une carte de la position ; le mode serveur les rend par ``positions.listFields`` (champ ``decks``).
+- **Le meilleur coup sur les coups d'un match** : en mode serveur, ``matches.moves`` et ``matches.movesByMatch`` rendent à côté de l'erreur ``best_move`` et ``best_cube_action``, ce que l'analyse enregistrée classe en tête pour la décision ; absents sans analyse.
+- **Les piles d'une page de positions se lisent par un index** (migration 075 sur PostgreSQL), aussi en SQLite ; le schéma ne change pas.
+- Voir :ref:`cli_bibliotheque_chapitre` et :ref:`api_reference`.
+
 0.58.0 (2026-11-21)
 -------------------
 

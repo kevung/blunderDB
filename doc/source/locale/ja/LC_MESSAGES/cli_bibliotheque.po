@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 20:58+0100\n"
+"POT-Creation-Date: 2026-11-21 11:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -377,10 +377,10 @@ msgid ""
 "vides pour une position sans analyse. Suivent **Error**, l'équité perdue "
 "par la décision jouée, sur l'échelle de la position (points en money, "
 "équité normalisée à un score de match) : ``no analysis`` sans analyse, "
-"``-`` quand la décision jouée n'est pas parmi celles analysées ; "
-"**Date**, le jour du plus ancien match qui atteint la position, sinon "
-"celui de son entrée dans la base ; **Collections**, les collections qui "
-"la contiennent."
+"``-`` quand la décision jouée n'est pas parmi celles analysées ; **Date**,"
+" le jour du plus ancien match qui atteint la position, sinon celui de son "
+"entrée dans la base ; **Collections**, les collections qui la contiennent "
+"; **Decks**, les piles d'étude (Anki) qui ont une carte de la position."
 msgstr ""
 "``--format table``\\ (既定)は、ポジションごとに 1 "
 "行を出力します：識別子、スコア、キューブの値、判断の種類、ダイス、最善の判断とそのエクイティ。この最後の 2 "
@@ -388,18 +388,18 @@ msgstr ""
 "は、指した判断で失われたエクイティで、ポジションの尺度(マネーゲームではポイント、マッチスコアでは正規化エクイティ)で表します。解析がなければ "
 "``no analysis``\\ 、指した判断が解析された判断に含まれないときは ``-`` になります。\\ **Date** "
 "は、そのポジションに到達する最も古いマッチの日付で、なければデータベースに入った日です。\\ **Collections** "
-"は、そのポジションを含むコレクションです。"
+"は、そのポジションを含むコレクションです。\\ **Decks** は、そのポジションのカードを持つ学習デッキ(Anki)です。"
 
-#: ../../source/cli_bibliotheque.rst:149
+#: ../../source/cli_bibliotheque.rst:150
 msgid ""
 "``--format json`` donne un tableau des mêmes positions. Les champs sont "
 "``id``, ``xgid``, ``score``, ``cube``, ``decision_type`` (``checker`` ou "
 "``cube``) et ``dice``, toujours présents ; ``best_move`` et ``equity`` "
-"n'apparaissent que si la position porte une analyse qui les renseigne. "
-"Les champs de liste suivent : ``analysed``, ``played_error`` (``null`` "
-"sans analyse, ou quand la décision jouée n'est pas parmi celles "
-"analysées), ``date`` et ``collections`` (les noms, liste vide si aucune)."
-" La ligne ``Found n position(s)`` va sur la sortie d'erreur : la sortie "
+"n'apparaissent que si la position porte une analyse qui les renseigne. Les"
+" champs de liste suivent : ``analysed``, ``played_error`` (``null`` sans "
+"analyse, ou quand la décision jouée n'est pas parmi celles analysées), "
+"``date``, ``collections`` et ``decks`` (les noms, liste vide si aucune). "
+"La ligne ``Found n position(s)`` va sur la sortie d'erreur : la sortie "
 "standard ne porte que le JSON."
 msgstr ""
 "``--format json`` は同じ局面の配列を返します。フィールドは ``id``\\ 、\\ ``xgid``\\ 、\\ "
@@ -407,10 +407,10 @@ msgstr ""
 "``cube``\\ )、\\ ``dice`` で、常に存在します。\\ ``best_move`` と ``equity`` "
 "は、それらを与える解析が局面にある場合にのみ現れます。続いて一覧用のフィールドがあります：\\ ``analysed``\\ 、\\ "
 "``played_error``\\ (解析がないとき、または指した判断が解析された判断に含まれないときは ``null``\\ )、\\ "
-"``date``\\ 、\\ ``collections``\\ (名前の一覧で、なければ空の一覧)。\\ ``Found n "
-"position(s)`` の行はエラー出力に出ます。標準出力には JSON だけが出ます。"
+"``date``\\ 、\\ ``collections``\\ 、\\ ``decks``\\ (名前の一覧で、なければ空の一覧)。\\ "
+"``Found n position(s)`` の行はエラー出力に出ます。標準出力には JSON だけが出ます。"
 
-#: ../../source/cli_bibliotheque.rst:185
+#: ../../source/cli_bibliotheque.rst:187
 msgid ""
 "``--format xgid`` imprime un XGID par ligne, préfixé de ``XGID=``, et "
 "**rien d'autre** sur la sortie standard. Le XGID enregistré avec "
@@ -423,11 +423,11 @@ msgstr ""
 "が優先されます。そこにはソースのマッチ長が含まれているためです。なければ盤面から再生成されます。同じ XGID が JSON の ``xgid``"
 " フィールドにも入ります。"
 
-#: ../../source/cli_bibliotheque.rst:190
+#: ../../source/cli_bibliotheque.rst:192
 msgid "**Le langage de requête:**"
 msgstr "**クエリ言語:**"
 
-#: ../../source/cli_bibliotheque.rst:192
+#: ../../source/cli_bibliotheque.rst:194
 msgid ""
 "Les drapeaux ci-dessus couvrent une partie des filtres seulement. "
 "``--query`` donne accès au langage de requête de l'application — celui de"
@@ -438,7 +438,7 @@ msgstr ""
 "上記のフラグが扱えるのはフィルターの一部だけです。\\ ``--query`` "
 "は、アプリケーションのクエリ言語——コマンドバーのもの——へのアクセスを与えます。したがって、盤面に描かれないすべてのフィルター、すなわち手のパターン、コメント本文、追加日、エクイティ、除外するダイス、ゾーン、ブロットが使えます。"
 
-#: ../../source/cli_bibliotheque.rst:198
+#: ../../source/cli_bibliotheque.rst:200
 msgid ""
 "La grammaire n'est écrite qu'à un seul endroit, :ref:`cmd_filter`. Sa "
 "table donne chaque jeton, sa forme, et le drapeau de ``search`` qui lui "
@@ -447,7 +447,7 @@ msgstr ""
 "文法が書かれている場所は1つだけ、\\ :ref:`cmd_filter` です。その表が、各トークン、その形、そして対応する "
 "``search`` のフラグ（存在する場合）を示します。このページはそれを繰り返しません。"
 
-#: ../../source/cli_bibliotheque.rst:207
+#: ../../source/cli_bibliotheque.rst:209
 msgid ""
 "Le classement des voisines d'une position passe par la même grammaire : "
 "``--query 's like42'``, seul ou suivi d'autres jetons pour restreindre "
@@ -456,11 +456,11 @@ msgstr ""
 "局面の近傍の並べ替えも同じ文法を通ります。\\ ``--query 's like42'`` "
 "を単独で、あるいは並んだ集合を絞り込む他のトークンを続けて使います。"
 
-#: ../../source/cli_bibliotheque.rst:211
+#: ../../source/cli_bibliotheque.rst:213
 msgid "``--query-help`` en rappelle la liste sans ouvrir de base :"
 msgstr "``--query-help`` は、データベースを開かずにその一覧を示します："
 
-#: ../../source/cli_bibliotheque.rst:237
+#: ../../source/cli_bibliotheque.rst:239
 msgid ""
 "``--query`` remplace les drapeaux de filtre au lieu de s'y ajouter : les "
 "combiner est refusé, avec le nom du drapeau en cause. Les drapeaux qui "
@@ -472,7 +472,7 @@ msgstr ""
 "探すか、\\ *どのように*\\ 表示するかを指定するフラグ — ``--db``、\\ ``--format``、\\ "
 "``--limit``、\\ ``--offset``、\\ ``--export`` — は引き続き使えます。"
 
-#: ../../source/cli_bibliotheque.rst:242
+#: ../../source/cli_bibliotheque.rst:244
 msgid ""
 "Un jeton que rien ne reconnaît fait échouer la commande plutôt que de "
 "réduire la recherche en silence. Deux limites tiennent à l'absence de "
@@ -489,25 +489,25 @@ msgstr ""
 "**すべて**\\ フラグで書きます — 例えば、30 ピップ遅れている状況でのキューブの決定のうち、少なくとも 50 "
 "ミリポイントのエラーがあるものは次のようになります："
 
-#: ../../source/cli_bibliotheque.rst:255 ../../source/cli_bibliotheque.rst:463
-#: ../../source/cli_bibliotheque.rst:559 ../../source/cli_bibliotheque.rst:615
-#: ../../source/cli_bibliotheque.rst:676 ../../source/cli_bibliotheque.rst:732
+#: ../../source/cli_bibliotheque.rst:257 ../../source/cli_bibliotheque.rst:465
+#: ../../source/cli_bibliotheque.rst:561 ../../source/cli_bibliotheque.rst:617
+#: ../../source/cli_bibliotheque.rst:678 ../../source/cli_bibliotheque.rst:734
 msgid "**Exemples:**"
 msgstr "**例：**"
 
-#: ../../source/cli_bibliotheque.rst:272
+#: ../../source/cli_bibliotheque.rst:274
 msgid "list — Lister le contenu"
 msgstr "list — 内容を一覧表示する"
 
-#: ../../source/cli_bibliotheque.rst:274
+#: ../../source/cli_bibliotheque.rst:276
 msgid "Affiche le contenu de la base de données."
 msgstr "データベースの内容を表示します。"
 
-#: ../../source/cli_bibliotheque.rst:280
+#: ../../source/cli_bibliotheque.rst:282
 msgid "**Types:**"
 msgstr "**タイプ：**"
 
-#: ../../source/cli_bibliotheque.rst:282
+#: ../../source/cli_bibliotheque.rst:284
 msgid ""
 "``matches`` — Liste des matchs importés, avec leur résultat : score final"
 " et vainqueur, ou ``unfinished`` quand aucun joueur n'a atteint la "
@@ -516,29 +516,30 @@ msgstr ""
 "``matches`` — インポートしたマッチの一覧で、結果(最終スコアと勝者)を伴います。どちらのプレイヤーもマッチの長さに達していないときは"
 " ``unfinished`` です。"
 
-#: ../../source/cli_bibliotheque.rst:285
+#: ../../source/cli_bibliotheque.rst:287
 msgid ""
 "``tournaments`` — Liste des tournois : nom, date, lieu, origine quand "
 "elle est connue et nombre de matchs."
 msgstr "``tournaments`` — トーナメントの一覧：名前、日付、場所、判明している場合は出所、マッチ数。"
 
-#: ../../source/cli_bibliotheque.rst:287
+#: ../../source/cli_bibliotheque.rst:288
 msgid ""
 "``positions`` — Liste des positions (limité à 10 par défaut ; ``--offset "
 "<n>`` saute les *n* premières). Chaque position porte l'erreur de la "
-"décision jouée (ou ``no analysis``), sa date et ses collections, comme la"
-" sortie de ``search``. Seule la fenêtre affichée est lue, quelle que soit"
-" la taille de la base. Avec ``--format csv``, devient un **export "
-"tabulaire** : une ligne par position, avec son XGID, sa phase, son score,"
-" son videau, ses pips et les colonnes d'analyse dérivées."
+"décision jouée (ou ``no analysis``), sa date, ses collections et ses piles"
+" d'étude (ligne ``Decks:``, absente s'il n'y en a aucune), comme la sortie"
+" de ``search``. Seule la fenêtre affichée est lue, quelle que soit la "
+"taille de la base. Avec ``--format csv``, devient un **export tabulaire** "
+": une ligne par position, avec son XGID, sa phase, son score, son videau, "
+"ses pips et les colonnes d'analyse dérivées."
 msgstr ""
 "``positions`` — ポジションの一覧（既定は 10 件。\\ ``--offset <n>`` で先頭の *n* "
-"件を飛ばします）。各ポジションには、指した判断のエラー(または ``no analysis``\\ )、日付、コレクションが付き、\\ "
-"``search`` の出力と同じです。データベースの大きさにかかわらず、読み込むのは表示する範囲だけです。\\ ``--format csv``"
-" を付けると\\ **表形式のエクスポート**\\ になります：ポジションごとに 1 "
-"行で、XGID、局面、スコア、キューブ、ピップ、導出された分析列を含みます。"
+"件を飛ばします）。各ポジションには、指した判断のエラー(または ``no analysis``\\ )、日付、コレクション、学習デッキ(\\ "
+"``Decks:`` の行。なければ表示されません)が付き、\\ ``search`` "
+"の出力と同じです。データベースの大きさにかかわらず、読み込むのは表示する範囲だけです。\\ ``--format csv`` を付けると\\ "
+"**表形式のエクスポート**\\ になります：ポジションごとに 1 行で、XGID、局面、スコア、キューブ、ピップ、導出された分析列を含みます。"
 
-#: ../../source/cli_bibliotheque.rst:295
+#: ../../source/cli_bibliotheque.rst:297
 msgid ""
 "``imports`` — Liste des imports enregistrés, du plus récent au plus "
 "ancien : identifiant, date, format, source, matchs importés / ignorés / "
@@ -552,7 +553,7 @@ msgstr ""
 "を付けると一つのインポートの\\ **完全な報告**\\ を表示する\\ ：マーク済みの局面、解析のない局面、そのロットの "
 "PR、最も損の大きい五つの判断\\ （:ref:`compte_rendu_import` を参照\\ ）。"
 
-#: ../../source/cli_bibliotheque.rst:301
+#: ../../source/cli_bibliotheque.rst:303
 msgid ""
 "``stats`` — Rapport de statistiques de performance : PR / Snowie ER / MWC"
 " (global, pions, videau), PR glissant sur les N dernières décisions, top "
@@ -562,7 +563,7 @@ msgstr ""
 "``stats`` — パフォーマンス統計レポート：PR / Snowie ER / "
 "MWC（全体、チェッカー、ダブリングキューブ）、直近N手の決定に対する移動平均PR、トップブランダー、ダブリングキューブアクション別の内訳、エラーの大きさのヒストグラム。"
 
-#: ../../source/cli_bibliotheque.rst:305
+#: ../../source/cli_bibliotheque.rst:307
 msgid ""
 "``players`` — Tableau comparatif, **une ligne par joueur** de la base : "
 "matchs, victoires/défaites, décisions comptées, PR global / pions / "
@@ -572,7 +573,7 @@ msgstr ""
 "``players`` — データベースの\\ **プレイヤーごとに1行**\\ の比較表：対戦数、勝敗、集計された判断数、PR "
 "の全体／チェッカー／キューブ、Snowie ER、エラー数、ブランダー数、運。統計パネルのプレイヤータブに対応するコマンドライン版です。"
 
-#: ../../source/cli_bibliotheque.rst:309
+#: ../../source/cli_bibliotheque.rst:311
 msgid ""
 "``moves`` — **Export tabulaire** des coups enregistrés, un par ligne, "
 "avec le match auquel ils appartiennent recopié sur chaque ligne : "
@@ -583,7 +584,7 @@ msgstr ""
 "手、その手が属するマッチを各行に繰り返して載せます。識別子、日付、対戦者、マッチ長、手数と種類、局面、出目、指した手、キューブの行動、運。``--format"
 " csv`` が必要です。"
 
-#: ../../source/cli_bibliotheque.rst:313
+#: ../../source/cli_bibliotheque.rst:315
 msgid ""
 "``analyses`` — **Export tabulaire** des analyses stockées, une par ligne "
 ": moteur, profondeur, meilleur coup et son équité, erreur du coup joué, "
@@ -594,7 +595,7 @@ msgstr ""
 "件で、エンジン、深さ、最善手とそのエクイティ、指した手の誤差、最善のキューブ行動とその誤差、六つの勝率が並びます。``--format csv``"
 " が必要です。"
 
-#: ../../source/cli_bibliotheque.rst:317
+#: ../../source/cli_bibliotheque.rst:319
 msgid ""
 "``tags`` — Vocabulaire de tags de la base : chaque ``#mot`` écrit dans un"
 " commentaire, avec le nombre de **positions** qui le portent, du plus "
@@ -606,7 +607,7 @@ msgstr ""
 "の数を、よく使う順に並べます。タグがひとつもないデータベースでは、空のリストではなく推奨語彙を表示します（:ref:`tags` "
 "を参照）。``--format json`` と ``--format csv`` を受け付けます。"
 
-#: ../../source/cli_bibliotheque.rst:322
+#: ../../source/cli_bibliotheque.rst:324
 msgid ""
 "``study`` — Par plan de jeu, les positions distinctes révisées dans les "
 "paquets Anki sur les ``--days`` derniers jours (défaut : 30) et le PR des"
@@ -620,11 +621,11 @@ msgstr ""
 "PR は「—」と表示されます。並んだ三つの数字であって効果ではありません。対戦相手、形式、ダイスは一切考慮されていません。\\ "
 "``--format json`` と ``--format csv`` を受け付けます。"
 
-#: ../../source/cli_bibliotheque.rst:332
+#: ../../source/cli_bibliotheque.rst:334
 msgid "Exports tabulaires"
 msgstr "表形式のエクスポート"
 
-#: ../../source/cli_bibliotheque.rst:334
+#: ../../source/cli_bibliotheque.rst:336
 msgid ""
 "Trois types — ``positions``, ``moves`` et ``analyses`` — s'exportent en "
 "CSV pour un notebook, un tableur ou un script :"
@@ -632,7 +633,7 @@ msgstr ""
 "``positions``、``moves``、``analyses`` の三つの型は、notebook や表計算、スクリプトのために CSV "
 "で書き出せます。"
 
-#: ../../source/cli_bibliotheque.rst:343
+#: ../../source/cli_bibliotheque.rst:345
 msgid ""
 "``--limit`` ne s'applique **que si vous le passez**. Sa valeur par défaut"
 " (10) existe pour qu'un ``list`` affiché dans un terminal ne fasse pas "
@@ -644,7 +645,7 @@ msgstr ""
 "がデータベース全体を流してしまわないためのものです。エクスポートはプログラムが読むファイルへ行くので、黙って 10 "
 "行で切ると、数字がおかしくなるまで誰も気づかない罠になります。"
 
-#: ../../source/cli_bibliotheque.rst:349
+#: ../../source/cli_bibliotheque.rst:351
 msgid ""
 "**Les colonnes sont un contrat.** Un notebook ou un script écrit contre "
 "ces noms doit continuer de fonctionner : les colonnes s'ajoutent à la "
@@ -656,7 +657,7 @@ msgstr ""
 "やスクリプトは動き続けなければなりません。列は末尾に追加され、名前が変わることも順序が変わることもありません。エクイティはすべて\\ "
 "**整数のミリポイント**\\ です。保存形式がそうであることに加え、CSV 中の小数はロケールに書式を変えさせる誘いになるからです。"
 
-#: ../../source/cli_bibliotheque.rst:355
+#: ../../source/cli_bibliotheque.rst:357
 msgid ""
 "**Parquet n'est pas proposé**, et c'est mesuré plutôt que dogmatique : "
 "une bibliothèque colonnaire pèse plusieurs mégaoctets dans un binaire "
@@ -673,7 +674,7 @@ msgstr ""
 "を一行で読めます（``pd.read_csv``、``polars.read_csv``、``read.csv``、表計算）。Parquet "
 "が効くのは数千万行の規模で、十年もののバックギャモンのライブラリは十万行です。いつか実際のデータベースでその差が測れたなら、その計測こそがこの判断を開き直すものです。"
 
-#: ../../source/cli_bibliotheque.rst:363
+#: ../../source/cli_bibliotheque.rst:365
 msgid ""
 "Un **notebook Jupyter d'exemple** accompagne ces exports (``notebooks"
 "/blunderdb-analyse.ipynb`` dans le dépôt) : PR dans le temps, "
@@ -688,33 +689,33 @@ msgstr ""
 "件を扱います。使うのはその三つの CSV だけで、\\ **毎晩の継続的インテグレーションで実行されます**\\ 。誰も走らせない "
 "notebook は、誰にも気づかれないまま動かなくなった notebook だからです。"
 
-#: ../../source/cli_bibliotheque.rst:370
+#: ../../source/cli_bibliotheque.rst:372
 msgid "**Options** (type ``stats`` uniquement) :"
 msgstr "**オプション**\\ （\\ ``stats`` タイプのみ）："
 
-#: ../../source/cli_bibliotheque.rst:372
+#: ../../source/cli_bibliotheque.rst:374
 msgid "``--metric`` — Métrique affichée: ``pr`` ou ``mwc`` (défaut: ``pr``)."
 msgstr "``--metric`` — 表示するメトリック：\\ ``pr`` または ``mwc``\\ （デフォルト：\\ ``pr``\\ ）。"
 
-#: ../../source/cli_bibliotheque.rst:373
+#: ../../source/cli_bibliotheque.rst:375
 msgid "``--player`` — Restreindre au joueur indiqué."
 msgstr "``--player`` — 指定したプレイヤーに限定する。"
 
-#: ../../source/cli_bibliotheque.rst:374
+#: ../../source/cli_bibliotheque.rst:376
 msgid ""
 "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois (séparés"
 " par des virgules)."
 msgstr "``--tournament`` — 1つまたは複数のトーナメントIDに限定する（カンマ区切り）。"
 
-#: ../../source/cli_bibliotheque.rst:376
+#: ../../source/cli_bibliotheque.rst:378
 msgid "``--from`` — Date de début (AAAA-MM-JJ)."
 msgstr "``--from`` — 開始日（YYYY-MM-DD）。"
 
-#: ../../source/cli_bibliotheque.rst:377
+#: ../../source/cli_bibliotheque.rst:379
 msgid "``--to`` — Date de fin (AAAA-MM-JJ)."
 msgstr "``--to`` — 終了日（YYYY-MM-DD）。"
 
-#: ../../source/cli_bibliotheque.rst:378
+#: ../../source/cli_bibliotheque.rst:380
 msgid ""
 "``--decision-type`` — Type de décision: ``all``, ``checker`` ou ``cube`` "
 "(défaut: ``all``)."
@@ -722,11 +723,11 @@ msgstr ""
 "``--decision-type`` — 決定の種類：\\ ``all``\\ 、\\ ``checker`` または ``cube``\\ "
 "（デフォルト：\\ ``all``\\ ）。"
 
-#: ../../source/cli_bibliotheque.rst:380
+#: ../../source/cli_bibliotheque.rst:382
 msgid "``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10)."
 msgstr "``--top-blunders`` — リストする最悪のエラーの数（デフォルト：10）。"
 
-#: ../../source/cli_bibliotheque.rst:381
+#: ../../source/cli_bibliotheque.rst:383
 msgid ""
 "``--engine`` / ``--min-depth`` — Ne compte que les décisions analysées "
 "par ce moteur (nom exact, tel qu'enregistré) ou à cette profondeur au "
@@ -736,15 +737,15 @@ msgstr ""
 "そのエンジン（記録されたとおりの正確な名前）で、または少なくともその深さ（ply）で分析された判断のみを数えます。\\ ``players`` "
 "タイプでも受け付けられます。"
 
-#: ../../source/cli_bibliotheque.rst:384 ../../source/cli_bibliotheque.rst:415
+#: ../../source/cli_bibliotheque.rst:386 ../../source/cli_bibliotheque.rst:417
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr "``--format`` — 出力フォーマット：\\ ``text`` または ``json``\\ （デフォルト：\\ ``text``\\ ）。"
 
-#: ../../source/cli_bibliotheque.rst:386
+#: ../../source/cli_bibliotheque.rst:388
 msgid "**Options** (type ``matches`` uniquement) :"
 msgstr "**オプション** (タイプ ``matches`` のみ):"
 
-#: ../../source/cli_bibliotheque.rst:388
+#: ../../source/cli_bibliotheque.rst:390
 msgid ""
 "``--query`` — Ne garde que les matchs dont un joueur, l'événement, le "
 "lieu, la manche, le tournoi ou la date contient ce texte (sans tenir "
@@ -753,13 +754,13 @@ msgstr ""
 "``--query`` — "
 "プレイヤー、イベント、会場、ラウンド、トーナメント、日付のいずれかがこのテキストを含むマッチだけを残します(大文字小文字は区別しません)。"
 
-#: ../../source/cli_bibliotheque.rst:391
+#: ../../source/cli_bibliotheque.rst:393
 msgid ""
 "``--ids`` — Ne garde que ces identifiants de match, séparés par des "
 "virgules (ceux qu'imprime ``stats matches``)."
 msgstr "``--ids`` — 指定したマッチ ID だけを残します（カンマ区切り。``stats matches`` が出力する ID）。"
 
-#: ../../source/cli_bibliotheque.rst:393
+#: ../../source/cli_bibliotheque.rst:395
 msgid ""
 "``--sort`` — Ordre : ``date`` (défaut, le plus récent d'abord), "
 "``date_asc``, ``length_asc``, ``length_desc``, ``player1``, "
@@ -781,7 +782,7 @@ msgstr ""
 " ``pr_opponent`` / ``pr_opponent_desc``\\ (その対戦相手)。その PR のないマッチ "
 "(数えられた判断がない、またはメインプレイヤーが打っていないマッチ) は、どちらの向きでも最後に来ます。"
 
-#: ../../source/cli_bibliotheque.rst:402
+#: ../../source/cli_bibliotheque.rst:404
 msgid ""
 "Le filtre et le tri sont faits par la base, comme dans le panneau Matchs "
 "; le total annoncé est celui des matchs retenus. Le serveur les offre sur"
@@ -792,17 +793,17 @@ msgstr ""
 "``/v1/matches.list`` (``text`` と ``sort`` フィールド)と ``/v1/matches.count`` "
 "で提供します。"
 
-#: ../../source/cli_bibliotheque.rst:406
+#: ../../source/cli_bibliotheque.rst:408
 msgid "**Options** (type ``imports`` uniquement) :"
 msgstr "**オプション**\\ （\\ ``imports`` タイプのみ）："
 
-#: ../../source/cli_bibliotheque.rst:408
+#: ../../source/cli_bibliotheque.rst:410
 msgid ""
 "``--batch`` — Identifiant d'un lot : affiche son compte rendu complet au "
 "lieu de la liste."
 msgstr "``--batch`` — ロットの識別子\\ ：一覧の代わりにその完全な報告を表示する。"
 
-#: ../../source/cli_bibliotheque.rst:410
+#: ../../source/cli_bibliotheque.rst:412
 msgid ""
 "``--queue`` — Avec ``--batch`` : la **file d'étude** du lot plutôt que "
 "son compte rendu — les positions qui méritent un second regard, dans "
@@ -815,34 +816,34 @@ msgstr ""
 "**学習キュー**\\ 、すなわち見直す価値のある局面を、たどるべき順に返します（:ref:`file_etude` "
 "を参照）。まず損失を生んだ判断、次に元のソフトで印の付いた局面、最後に際どいキューブ判断。ひとつの局面は一度しか現れません。"
 
-#: ../../source/cli_bibliotheque.rst:417
+#: ../../source/cli_bibliotheque.rst:419
 msgid ""
 "La moitié mesurée du compte rendu est recalculée à chaque appel : un lot "
 "dont les positions ont été analysées depuis rend les chiffres "
 "d'aujourd'hui, non ceux du jour de l'import."
 msgstr "報告の測定部分は呼び出しのたびに再計算される\\ ：以後に局面が解析されたロットは、インポート当日の数字ではなく今日の数字を返す。"
 
-#: ../../source/cli_bibliotheque.rst:421
+#: ../../source/cli_bibliotheque.rst:423
 msgid "**Options** (type ``players`` uniquement) :"
 msgstr "**オプション**\\ （\\ ``players`` タイプのみ）："
 
-#: ../../source/cli_bibliotheque.rst:423
+#: ../../source/cli_bibliotheque.rst:425
 msgid ""
 "``--from`` / ``--to`` — Bornes de dates (AAAA-MM-JJ), par exemple les "
 "jours d'une compétition."
 msgstr "``--from`` / ``--to`` — 日付の範囲（YYYY-MM-DD）。たとえば大会の開催日。"
 
-#: ../../source/cli_bibliotheque.rst:425
+#: ../../source/cli_bibliotheque.rst:427
 msgid "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois."
 msgstr "``--tournament`` — 1つまたは複数のトーナメント ID に絞り込みます。"
 
-#: ../../source/cli_bibliotheque.rst:426
+#: ../../source/cli_bibliotheque.rst:428
 msgid ""
 "``--format`` — Format de sortie: ``text``, ``json`` ou ``csv`` (défaut: "
 "``text``)."
 msgstr "``--format`` — 出力形式：``text``、``json``、``csv``\\ （既定：``text``）。"
 
-#: ../../source/cli_bibliotheque.rst:429
+#: ../../source/cli_bibliotheque.rst:431
 msgid ""
 "``--player`` et ``--decision-type`` ne s'appliquent **pas** à ce type : "
 "le tableau porte sur tous les joueurs et ventile déjà pions et videau en "
@@ -851,7 +852,7 @@ msgstr ""
 "``--player`` と ``--decision-type`` はこのタイプには\\ **適用されません**\\ "
 "。表はすべてのプレイヤーを対象とし、チェッカーとキューブはすでに別の列に分けているからです。"
 
-#: ../../source/cli_bibliotheque.rst:434
+#: ../../source/cli_bibliotheque.rst:436
 msgid ""
 "Un tiret « — » (champ vide en CSV) signale une valeur **jamais mesurée**,"
 " à ne pas confondre avec zéro. C'est le cas de la chance pour tout match "
@@ -865,7 +866,7 @@ msgstr ""
 "``.mat``）がこれにあたります。取得するには元ファイルを再インポートしてください。``luck_rolls`` "
 "列は、その平均が何回のロールに基づくかを示します。"
 
-#: ../../source/cli_bibliotheque.rst:441
+#: ../../source/cli_bibliotheque.rst:443
 msgid ""
 "Chaque type imprime un bloc par élément, précédé du total trouvé. La "
 "ligne finale rappelle quelle fenêtre est affichée, tronquée par "
@@ -875,11 +876,11 @@ msgstr ""
 "各タイプは要素ごとに 1 ブロックを出力し、その前に見つかった総数を表示します。最後の行は表示中の範囲を示します。範囲は\\ "
 "``--limit``\\ （ポジションの既定値は 10）で切り詰められ、\\ ``--offset``\\ でずらされます："
 
-#: ../../source/cli_bibliotheque.rst:486
+#: ../../source/cli_bibliotheque.rst:488
 msgid "collection — Gérer les collections"
 msgstr "collection — コレクションを管理する"
 
-#: ../../source/cli_bibliotheque.rst:488
+#: ../../source/cli_bibliotheque.rst:490
 msgid ""
 "Gère les collections, ces ensembles de positions choisies à la main dans "
 "le panneau Collections de l'interface graphique. Chaque sous-commande "
@@ -890,18 +891,18 @@ msgstr ""
 " ``--db``\\ を取ります。\\ ``list``\\ と\\ ``show``\\ は、\\ ``list``\\ コマンドと同様に\\"
 " ``--format text``\\ （デフォルト）、\\ ``json``\\ 、\\ ``csv``\\ を受け付けます。"
 
-#: ../../source/cli_bibliotheque.rst:497 ../../source/cli_bibliotheque.rst:605
-#: ../../source/cli_bibliotheque.rst:697
+#: ../../source/cli_bibliotheque.rst:499 ../../source/cli_bibliotheque.rst:607
+#: ../../source/cli_bibliotheque.rst:699
 msgid "**Sous-commandes:**"
 msgstr "**サブコマンド：**"
 
-#: ../../source/cli_bibliotheque.rst:499
+#: ../../source/cli_bibliotheque.rst:501
 msgid ""
 "``list`` — Liste des collections : id, nom, nombre de positions, "
 "description."
 msgstr "``list`` — コレクションのリスト：id、名前、ポジション数、説明。"
 
-#: ../../source/cli_bibliotheque.rst:500
+#: ../../source/cli_bibliotheque.rst:502
 msgid ""
 "``show --id <id>`` — Positions d'une collection : id, index (le numéro "
 "1-based affiché dans la barre d'état de l'interface graphique), score, "
@@ -910,7 +911,7 @@ msgstr ""
 "``show --id <id>`` — "
 "コレクションのポジション：id、index（グラフィカルインターフェースのステータスバーに表示される1始まりの番号）、score、決定の種類、XGID。"
 
-#: ../../source/cli_bibliotheque.rst:503
+#: ../../source/cli_bibliotheque.rst:505
 msgid ""
 "``create --name <nom> [--description <texte>] [--query <requête>]`` — "
 "Crée une collection vide ou, avec ``--query``, une collection vivante "
@@ -921,7 +922,7 @@ msgstr ""
 "空のコレクションを作成します。``--query`` "
 "を指定すると、最初からライブコレクションとして作成します。どのルールにも認識されないトークンを含むクエリは、何かが書き込まれる前に拒否されます。"
 
-#: ../../source/cli_bibliotheque.rst:507
+#: ../../source/cli_bibliotheque.rst:509
 msgid ""
 "``filter --id <id> --query <requête>`` — Rend une collection **vivante** "
 ": son contenu devient le résultat d'une recherche, réévalué chaque fois "
@@ -933,7 +934,7 @@ msgstr ""
 "ものにします。その内容は検索の結果となり、開くたびに再評価されます。クエリはアプリケーション自身の検索文法で書きます（\\ "
 ":ref:`cmd_filter`\\ を参照）。``--clear`` は手作業の一覧に戻し、それまで含んでいた局面を保ちます。"
 
-#: ../../source/cli_bibliotheque.rst:512
+#: ../../source/cli_bibliotheque.rst:514
 msgid ""
 "``freeze --id <id>`` — Fige une collection vivante : les positions que sa"
 " requête sélectionne maintenant deviennent sa composition, la requête "
@@ -942,7 +943,7 @@ msgstr ""
 "``freeze --id <id>`` — "
 "ライブコレクションを固定します。クエリがその時点で選ぶポジションがコレクションの内容となり、クエリは消去されます。ライブでないコレクションでは拒否されます。"
 
-#: ../../source/cli_bibliotheque.rst:515
+#: ../../source/cli_bibliotheque.rst:517
 msgid ""
 "``evaluate --id <id> [--limit <n>] [--format text|json]`` — Lit les "
 "identifiants des positions d'une collection, en rejouant maintenant la "
@@ -957,7 +958,7 @@ msgstr ""
 "ポジションで制限され（``--limit`` で下げられます）、常にポジションの実際の数と ``truncated`` "
 "フラグを返します。黙って切り詰めることはありません。テキスト形式では、識別子は標準出力に、件数は標準エラー出力に送られます。"
 
-#: ../../source/cli_bibliotheque.rst:522
+#: ../../source/cli_bibliotheque.rst:524
 msgid ""
 "``pile [--position-id <id> | --xgid <XGID>]`` — Met une position sur la "
 "Pile (la collection « à revoir plus tard »), ou l'en retire quand elle y "
@@ -969,7 +970,7 @@ msgstr ""
 "ポジションをパイル（「後で見直す」コレクション）に載せ、すでに載っていれば外します。XGID "
 "で指定したポジションがデータベースにない場合は、まず単独で取り込んだポジションとして書き込まれます。ポジションを指定しない場合はパイルを表示します。"
 
-#: ../../source/cli_bibliotheque.rst:526
+#: ../../source/cli_bibliotheque.rst:528
 msgid ""
 "``rename --id <id> --name <nom> [--description <texte>]`` — Renomme une "
 "collection (la description est conservée si elle n'est pas donnée)."
@@ -977,13 +978,13 @@ msgstr ""
 "``rename --id <id> --name <nom> [--description <texte>]`` — "
 "コレクションの名前を変更します（説明が指定されない場合は既存のものが保持されます）。"
 
-#: ../../source/cli_bibliotheque.rst:528
+#: ../../source/cli_bibliotheque.rst:530
 msgid ""
 "``delete --id <id> [--confirm]`` — Supprime une collection ; ses "
 "positions restent dans la base."
 msgstr "``delete --id <id> [--confirm]`` — コレクションを削除します。ポジション自体はデータベースに残ります。"
 
-#: ../../source/cli_bibliotheque.rst:530
+#: ../../source/cli_bibliotheque.rst:532
 msgid ""
 "``export --id <id[,id…]> --out <fichier.db> [--analysis=false] "
 "[--comments=false] [--matches=false] [--transcriptions=false] "
@@ -1004,7 +1005,7 @@ msgstr ""
 "と同じエクスポート処理を通るため、ファイルにはそれらのポジションがプレイされたマッチも、文字起こしや、プレイヤーとイベントのエイリアスとともに含まれます(透かしとパスワードについては"
 " ``export`` コマンドを参照)。"
 
-#: ../../source/cli_bibliotheque.rst:539
+#: ../../source/cli_bibliotheque.rst:541
 msgid ""
 "``suggest [--player <nom>] [--match <ids>] [--tournament <ids>] [--from "
 "<date>] [--to <date>] [--decision-type all|checker|cube] [--size <n>] "
@@ -1030,7 +1031,7 @@ msgstr ""
 "デッキにする)がなければ何も書き込まれません。各行には、ファミリー、キューブ参照のスコア、要約するミスとマッチ、カバーする MWC "
 "と、その理由(教訓が半分として数えられるときに数えられる値を示します)が表示されます。``--format json`` は同じ要素を返します。"
 
-#: ../../source/cli_bibliotheque.rst:553
+#: ../../source/cli_bibliotheque.rst:555
 msgid ""
 "Le XGID affiché par ``show`` est celui enregistré avec l'analyse de la "
 "position quand il existe (imports BGF et XGP) ; sinon il est généré "
@@ -1042,7 +1043,7 @@ msgstr ""
 "インポート）です。存在しない場合は、グラフィカルインターフェースの\\ *ポジションをコピー*\\ "
 "と全く同じ方法でボードから生成されます——このときマッチの長さは残り2つのスコアのうち大きい方になります。記録されたポジションは実際の値を保持していないためです。"
 
-#: ../../source/cli_bibliotheque.rst:572
+#: ../../source/cli_bibliotheque.rst:574
 msgid ""
 "Une base sans collection répond ``No collections found in database`` et "
 "sort tout de même avec le code 0."
@@ -1050,11 +1051,11 @@ msgstr ""
 "コレクションのないデータベースは ``No collections found in database`` と応答しますが、それでも終了コード 0"
 " で終わります。"
 
-#: ../../source/cli_bibliotheque.rst:592
+#: ../../source/cli_bibliotheque.rst:594
 msgid "comment — Les commentaires d'une position"
 msgstr "comment — ポジションのコメント"
 
-#: ../../source/cli_bibliotheque.rst:594
+#: ../../source/cli_bibliotheque.rst:596
 msgid ""
 "Une position porte autant de commentaires qu'on veut, chacun attribué à "
 "son auteur (texte libre). Un commentaire reçu dans un export filigrané "
@@ -1067,7 +1068,7 @@ msgstr ""
 " ``list`` は、*Signed by* 列に名前、フィンガープリント、署名された内容と一致しなくなった場合は "
 "``(unverified)`` を表示し、*Origin* 列に出所を表示します（blunderDB で書かれたコメントでは空）。"
 
-#: ../../source/cli_bibliotheque.rst:607
+#: ../../source/cli_bibliotheque.rst:609
 msgid ""
 "``add --position N --text T [--author A]`` — Ajoute un commentaire à la "
 "position N, attribué à A (sans ``--author``, il n'a pas d'auteur)."
@@ -1075,7 +1076,7 @@ msgstr ""
 "``add --position N --text T [--author A]`` — ポジション N に、A "
 "に帰属するコメントを追加します（``--author`` を省略すると作者なしになります）。"
 
-#: ../../source/cli_bibliotheque.rst:609
+#: ../../source/cli_bibliotheque.rst:611
 msgid ""
 "``list [--position N] [--author A]`` — Liste les commentaires d'une "
 "position, ou de toute la base, éventuellement ceux d'un seul auteur."
@@ -1083,7 +1084,7 @@ msgstr ""
 "``list [--position N] [--author A]`` — "
 "ポジション、またはデータベース全体のコメントを一覧表示します。必要に応じて、特定の著者のコメントだけに絞れます。"
 
-#: ../../source/cli_bibliotheque.rst:612
+#: ../../source/cli_bibliotheque.rst:614
 msgid ""
 "**Options communes:** ``--db`` (obligatoire) ; ``list`` accepte "
 "``--format`` (``text`` ou ``json``)."
@@ -1091,11 +1092,11 @@ msgstr ""
 "**共通オプション:** ``--db``\\ (必須)。``list`` は ``--format``\\ (``text`` または "
 "``json``)を受け付けます。"
 
-#: ../../source/cli_bibliotheque.rst:624
+#: ../../source/cli_bibliotheque.rst:626
 msgid "elsewhere — Ailleurs : une position dans d'autres bases"
 msgstr "elsewhere — 他所: 他のデータベースにある局面"
 
-#: ../../source/cli_bibliotheque.rst:626
+#: ../../source/cli_bibliotheque.rst:628
 msgid ""
 "Cherche une position, par son hachage Zobrist, dans d'autres fichiers de "
 "base passés à la même commande, et rend pour chacun ce qu'il en sait : "
@@ -1108,7 +1109,7 @@ msgstr ""
 "ハッシュで局面を検索し、それぞれについて分かっていることを返します。解析、コメント、その局面がプレイされたマッチ（プレイヤー、長さ、日付、指された手とそのコスト）、そして最も近い局面（検索の\\"
 " ``like``\\ トークンと同じ順位付けで、手数）です。"
 
-#: ../../source/cli_bibliotheque.rst:632
+#: ../../source/cli_bibliotheque.rst:634
 msgid ""
 "Le coût d'un coup joué ailleurs est jugé avec les seuils d'erreur et de "
 "blunder de la base ``--db``, jamais avec ceux de la base lue : ``error``,"
@@ -1143,35 +1144,35 @@ msgstr ""
 "を超えると、最後にインポートされた 50 試合だけが読まれます。出力はそのことを総数とともに示します（JSON では\\ "
 "``matchesTotal``\\ と\\ ``playsTruncated``\\ ）。"
 
-#: ../../source/cli_bibliotheque.rst:653
+#: ../../source/cli_bibliotheque.rst:655
 msgid "**Options:**"
 msgstr "**オプション：**"
 
-#: ../../source/cli_bibliotheque.rst:655
+#: ../../source/cli_bibliotheque.rst:657
 msgid ""
 "``--db`` (obligatoire) — La base qui juge : ses seuils et sa table "
 "d'équité."
 msgstr "``--db``\\ （必須）— 判定を行うデータベース。そのしきい値とエクイティテーブルを使います。"
 
-#: ../../source/cli_bibliotheque.rst:656
+#: ../../source/cli_bibliotheque.rst:658
 msgid "``--other`` (obligatoire, répétable) — Un fichier de base où chercher."
 msgstr "``--other``\\ （必須、繰り返し指定可）— 検索対象のデータベースファイル。"
 
-#: ../../source/cli_bibliotheque.rst:657
+#: ../../source/cli_bibliotheque.rst:659
 msgid "``--position N`` — La position, par son identifiant dans ``--db``."
 msgstr "``--position N`` — ``--db``\\ 内の識別子による局面の指定。"
 
-#: ../../source/cli_bibliotheque.rst:658
+#: ../../source/cli_bibliotheque.rst:660
 msgid "``--xgid X`` — La position, par son XGID."
 msgstr "``--xgid X`` — XGID による局面の指定。"
 
-#: ../../source/cli_bibliotheque.rst:659
+#: ../../source/cli_bibliotheque.rst:661
 msgid ""
 "``--zobrist H`` — La position, par son hachage (décimal) ; ses voisines "
 "ne sont alors cherchées que dans les bases qui la détiennent."
 msgstr "``--zobrist H`` — ハッシュ（10 進数）による局面の指定。この場合、近傍局面はその局面を持つデータベースの中だけで検索されます。"
 
-#: ../../source/cli_bibliotheque.rst:661
+#: ../../source/cli_bibliotheque.rst:663
 msgid ""
 "``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — "
 "Au lieu d'une position, un match, un tournoi, une collection ou une leçon"
@@ -1184,13 +1185,13 @@ msgstr ""
 "ポジションの代わりに、``--db`` "
 "のマッチ、トーナメント、コレクション、レッスンを指定します。コマンドは、他の各データベースがそれを持っているかどうかを、コピーが統合するときのキー（マッチはフィンガープリントで、別の形式からインポートされたものも対象。それ以外は名前）のもとに、そこでの識別子と含まれるもの（ゲーム、マッチ、ポジション、ステップ）とともに表示します。"
 
-#: ../../source/cli_bibliotheque.rst:667
+#: ../../source/cli_bibliotheque.rst:669
 msgid ""
 "``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,"
 " 50 au plus)."
 msgstr "``--neighbours N`` — データベースごとの近傍局面の数（デフォルト: 5、0: なし、最大 50）。"
 
-#: ../../source/cli_bibliotheque.rst:669
+#: ../../source/cli_bibliotheque.rst:671
 msgid ""
 "``--max-distance D`` — Écarte les voisines à plus de D jets (0 : deux "
 "jets, le plus servi ; au-delà, refusé)."
@@ -1198,11 +1199,11 @@ msgstr ""
 "``--max-distance D`` — D 手を超えて離れた近傍局面を除外します（0: 2 "
 "手まで。これが提供される最大で、それを超えると拒否されます）。"
 
-#: ../../source/cli_bibliotheque.rst:671
+#: ../../source/cli_bibliotheque.rst:673
 msgid "``--format`` — ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — ``text``\\ （デフォルト）または\\ ``json``\\ 。"
 
-#: ../../source/cli_bibliotheque.rst:673
+#: ../../source/cli_bibliotheque.rst:675
 msgid ""
 "Le démon sert les mêmes lectures à travers les tenants : "
 "``across.positionElsewhere`` et ``across.objectElsewhere`` (voir "
@@ -1211,11 +1212,11 @@ msgstr ""
 "デーモンはテナントをまたいで同じ読み取りを提供します: ``across.positionElsewhere`` と "
 "``across.objectElsewhere``\\ （:ref:`headless`\\ を参照）。"
 
-#: ../../source/cli_bibliotheque.rst:686
+#: ../../source/cli_bibliotheque.rst:688
 msgid "trash — La corbeille"
 msgstr "trash — ごみ箱"
 
-#: ../../source/cli_bibliotheque.rst:688
+#: ../../source/cli_bibliotheque.rst:690
 msgid ""
 "Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une "
 "suppression : un instantané JSON de ce qui disparaît est écrit avant, et "
@@ -1225,27 +1226,27 @@ msgstr ""
 "何が削除され、それを何で戻せるか。削除はやはり削除である\\ ：消えるものの JSON "
 "スナップショットが先に書かれ、そのテーブルの存在をデータベースの他の何も知らない——検索フィルタも、統計も、保持規則も。"
 
-#: ../../source/cli_bibliotheque.rst:699
+#: ../../source/cli_bibliotheque.rst:701
 msgid ""
 "``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au "
 "plus ancien."
 msgstr "``list`` — ごみ箱の中身を、最近削除したものから順に。"
 
-#: ../../source/cli_bibliotheque.rst:701
+#: ../../source/cli_bibliotheque.rst:703
 msgid "``restore --id N`` — Remet l'entrée N et la retire de la corbeille."
 msgstr "``restore --id N`` — 項目 N を戻し、ごみ箱から取り除く。"
 
-#: ../../source/cli_bibliotheque.rst:702
+#: ../../source/cli_bibliotheque.rst:704
 msgid "``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer."
 msgstr "``discard --id N`` — 項目 N を復元せずに今すぐ削除する。"
 
-#: ../../source/cli_bibliotheque.rst:703
+#: ../../source/cli_bibliotheque.rst:705
 msgid ""
 "``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a "
 "plus de J jours."
 msgstr "``empty [--older-than D]`` — ごみ箱を空にする、または D 日より古いものだけを消す。"
 
-#: ../../source/cli_bibliotheque.rst:705
+#: ../../source/cli_bibliotheque.rst:707
 msgid ""
 "``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour"
 " que le geste soit annulable. ``K`` vaut ``position``, ``collection``, "
@@ -1254,7 +1255,7 @@ msgstr ""
 "``delete --kind K --id N`` — 取り消せるように、\\ **ごみ箱を経由して**\\ オブジェクトを削除する。``K``"
 " は ``position``、``collection``、``comment``、``match`` のいずれか。"
 
-#: ../../source/cli_bibliotheque.rst:709
+#: ../../source/cli_bibliotheque.rst:711
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit`` "
 "(défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, "
@@ -1266,7 +1267,7 @@ msgstr ""
 "で一覧を一種類のオブジェクトに絞り込めます：``position``、``collection``、``comment``、``match``、``anki_card``\\"
 " 。"
 
-#: ../../source/cli_bibliotheque.rst:714
+#: ../../source/cli_bibliotheque.rst:716
 msgid ""
 "``blunderdb delete`` supprime toujours **sans** filet : un script qui "
 "supprime une position s'attend à ce qu'elle disparaisse, et laisser un "
@@ -1277,7 +1278,7 @@ msgstr ""
 "：局面を削除するスクリプトはそれが消えることを期待しており、黙ってスナップショットを残せば、誰も大きくしてくれと頼んでいないファイルが太る。取り消しを残すのは"
 " ``trash delete`` のほうである。"
 
-#: ../../source/cli_bibliotheque.rst:719
+#: ../../source/cli_bibliotheque.rst:721
 msgid ""
 "Une restauration de position repasse par la déduplication Zobrist : elle "
 "ne crée jamais de doublon. Une position restaurée reprend son ancien "
@@ -1293,30 +1294,26 @@ msgstr ""
 "局面の復元は Zobrist "
 "重複排除を再び通ります。重複を作ることは決してありません。復元された局面は元の番号に戻ります。その間に同じ局面が保存されていれば、そちらが保持され、足りないものを受け取ります。復元されたマッチも元の番号のまま、そのゲーム、手、解析、局面とともに戻ります。他のマッチがその番号を使っている場合、またはその間にファイルのフィンガープリントが同じマッチがインポートされた場合は拒否されます。復元が成功しても元に戻せなかったもの(使用済みまたは消えたディレクションの枠、削除されたトーナメント)は警告で知らされます。"
 
-#: ../../source/cli_bibliotheque.rst:729
+#: ../../source/cli_bibliotheque.rst:731
 msgid ""
 "Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — "
 "jamais à l'ouverture d'une base."
 msgstr "三十日より古いものは ``blunderdb vacuum`` が削除する——データベースを開いたときには決して削除しない。"
 
 #~ msgid ""
-#~ "``--sort`` — Ordre : ``date`` (défaut,"
-#~ " le plus récent d'abord), ``date_asc``, "
-#~ "``length_asc``, ``length_desc``, ``player1``, "
-#~ "``player1_desc``, ``player2``, ``player2_desc``, "
-#~ "``tournament``, ``tournament_desc`` ou ``opponent``."
+#~ "``--sort`` — Ordre : ``date`` (défaut, le plus récent d'abord), "
+#~ "``date_asc``, ``length_asc``, ``length_desc``, ``player1``, "
+#~ "``player1_desc``, ``player2``, ``player2_desc``, ``tournament``, "
+#~ "``tournament_desc`` ou ``opponent``."
 #~ msgstr ""
 #~ "``--sort`` — 並び順：``date`` (既定、新しい順)、 "
 #~ "``date_asc``、``length_asc``、``length_desc``、``player1``、``player1_desc``、``player2``、``player2_desc``、``tournament``、``tournament_desc``、``opponent``。"
 
 #~ msgid ""
-#~ "``--format table`` (le défaut) donne une"
-#~ " ligne par position : l'identifiant, "
-#~ "le score, la valeur du videau, le"
-#~ " type de décision, le lancer, la "
-#~ "meilleure décision et son équité. Les"
-#~ " deux dernières colonnes restent vides "
-#~ "pour une position sans analyse."
+#~ "``--format table`` (le défaut) donne une ligne par position : "
+#~ "l'identifiant, le score, la valeur du videau, le type de décision, le "
+#~ "lancer, la meilleure décision et son équité. Les deux dernières colonnes "
+#~ "restent vides pour une position sans analyse."
 #~ msgstr ""
 #~ "``--format table``\\ "
 #~ "（デフォルト）は、ポジションごとに1行を出します。識別子、スコア、キューブの値、決定の種類、出目、最善の決定とそのエクイティです。分析のないポジションでは、最後の2列は空のままになります。"
@@ -1326,3 +1323,4 @@ msgstr "三十日より古いものは ``blunderdb vacuum`` が削除する—�
 
 #~ msgid "``tournaments`` — Liste des tournois."
 #~ msgstr "``tournaments`` — トーナメントのリスト。"
+
