@@ -203,6 +203,15 @@ func collectionNames(f storage.PositionListFields) string {
 	return strings.Join(names, ", ")
 }
 
+// deckNames joins the names of the study decks holding a position.
+func deckNames(f storage.PositionListFields) string {
+	names := make([]string, len(f.Decks))
+	for i, d := range f.Decks {
+		names[i] = d.Name
+	}
+	return strings.Join(names, ", ")
+}
+
 // filterFlagsSet names the filter flags the user actually passed. Only the
 // flags that select positions count: --db, --format, --limit, --offset and
 // --export say where to look and how to print, and stay compatible with
@@ -422,11 +431,13 @@ type searchPositionResult struct {
 	BestMove     string  `json:"best_move,omitempty"`
 	Equity       float64 `json:"equity,omitempty"`
 	// The list fields: the played error (null without analysis, or when the
-	// play is none of the candidates), the date and the collections.
+	// play is none of the candidates), the date, the collections and the
+	// study decks.
 	Analysed    bool     `json:"analysed"`
 	PlayedError *float64 `json:"played_error"`
 	Date        string   `json:"date,omitempty"`
 	Collections []string `json:"collections"`
+	Decks       []string `json:"decks"`
 }
 
 // renderResults writes already-filtered, already-limited search results to w
@@ -434,7 +445,7 @@ type searchPositionResult struct {
 // to table, matching the flag's own default): pure formatting over the
 // positions and the analyses the search already returned, which fill in
 // best-move/equity/XGID, and the list fields of the page (played error,
-// date, collections). A position absent from analyses has none.
+// date, collections, study decks). A position absent from analyses has none.
 func renderResults(w io.Writer, positions []Position, analyses map[int64]*PositionAnalysis, fields map[int64]storage.PositionListFields, format string) error {
 	switch format {
 	case "json":
@@ -459,6 +470,10 @@ func renderResults(w io.Writer, positions []Position, analyses map[int64]*Positi
 			result.Collections = []string{}
 			for _, c := range f.Collections {
 				result.Collections = append(result.Collections, c.Name)
+			}
+			result.Decks = []string{}
+			for _, d := range f.Decks {
+				result.Decks = append(result.Decks, d.Name)
 			}
 
 			if pos.DecisionType == CheckerAction {
@@ -500,8 +515,8 @@ func renderResults(w io.Writer, positions []Position, analyses map[int64]*Positi
 
 	default: // table format
 		tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
-		fmt.Fprintln(tw, "ID\tScore\tCube\tType\tDice\tBest Move\tEquity\tError\tDate\tCollections")
-		fmt.Fprintln(tw, "--\t-----\t----\t----\t----\t---------\t------\t-----\t----\t-----------")
+		fmt.Fprintln(tw, "ID\tScore\tCube\tType\tDice\tBest Move\tEquity\tError\tDate\tCollections\tDecks")
+		fmt.Fprintln(tw, "--\t-----\t----\t----\t----\t---------\t------\t-----\t----\t-----------\t-----")
 
 		for i := range positions {
 			pos := &positions[i]
@@ -529,9 +544,9 @@ func renderResults(w io.Writer, positions []Position, analyses map[int64]*Positi
 			}
 
 			f := fields[pos.ID]
-			fmt.Fprintf(tw, "%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+			fmt.Fprintf(tw, "%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
 				pos.ID, pos.Score[0], pos.Score[1], pos.Cube.Value, decType, diceStr, bestMove, equityStr,
-				playedErrorText(f), f.Date, collectionNames(f))
+				playedErrorText(f), f.Date, collectionNames(f), deckNames(f))
 		}
 		tw.Flush()
 	}

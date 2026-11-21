@@ -164,7 +164,7 @@ func (s *Server) searchRoutes() []route {
 			for i, id := range ids {
 				f, ok := byID[id]
 				if !ok {
-					f = storage.PositionListFields{PositionID: id, Collections: []storage.CollectionRef{}}
+					f = storage.PositionListFields{PositionID: id, Collections: []storage.CollectionRef{}, Decks: []storage.DeckRef{}}
 				}
 				resp.ListFields[i] = f
 			}

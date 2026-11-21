@@ -1,5 +1,6 @@
 // Contract case for the list fields of a page of positions: the played error
-// or its absence, the date, the collections, in the order asked.
+// or its absence, the date, the collections, the study decks, in the order
+// asked.
 package storagetest
 
 import (
@@ -8,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -43,6 +45,22 @@ func testPositionListFields(t *testing.T, s storage.Storage) {
 		}
 	}
 
+	anki := s.Anki()
+	deckA, err := anki.CreateDeck(ctx, "", "Deck A", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	deckB, err := anki.CreateDeck(ctx, "", "Deck B", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := anki.SyncWithPositions(ctx, "", deckB, []int64{played[0]}); err != nil {
+		t.Fatal(err)
+	}
+	if err := anki.SyncWithPositions(ctx, "", deckA, []int64{played[0], looseID}); err != nil {
+		t.Fatal(err)
+	}
+
 	got, err := lf.ListFields(ctx, "", []int64{looseID, 987654, played[0], played[1], looseID})
 	if err != nil {
 		t.Fatal(err)
@@ -64,6 +82,15 @@ func testPositionListFields(t *testing.T, s storage.Storage) {
 	}
 	if b := got[2]; b.Collections == nil || len(b.Collections) != 0 {
 		t.Errorf("a position in no collection lists %#v, want an empty list", b.Collections)
+	}
+	if len(a.Decks) != 2 || a.Decks[0].ID != deckA || a.Decks[0].Name != "Deck A" || a.Decks[1].ID != deckB || a.Decks[1].Name != "Deck B" {
+		t.Errorf("decks = %+v, want Deck A then Deck B, in the order decks were created", a.Decks)
+	}
+	if b := got[2]; b.Decks == nil || len(b.Decks) != 0 {
+		t.Errorf("a position in no deck lists %#v, want an empty list", b.Decks)
+	}
+	if l := got[0]; len(l.Decks) != 1 || l.Decks[0].ID != deckA {
+		t.Errorf("loose position decks = %+v, want Deck A alone", l.Decks)
 	}
 
 	l := got[0]

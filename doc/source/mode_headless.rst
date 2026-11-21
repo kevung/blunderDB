@@ -1192,6 +1192,16 @@ active la structure d'exclusion, laquelle est un plateau et non du texte —
 voyage dans l'en-tête ``X-BlunderDB-Query-Diagnostics`` afin que le corps
 reste du NDJSON de positions pour tous les clients existants.
 
+``positions.listFields`` rend, pour une page d'identifiants, ce qu'une table
+de positions affiche à côté du plateau : ``analysed``, ``playedErrorMp``
+(l'erreur jouée, en millipoints), ``date`` et ``matchDated``, puis deux
+listes de ``{id, name}`` — ``collections``, dans l'ordre de la
+bibliothèque, et ``decks``, les piles d'étude qui ont une carte de la
+position, dans l'ordre de leur création. Une liste vide vaut ``[]``, jamais
+``null``. ``search.page`` rend les mêmes lignes quand on lui demande
+``listFields``. Le coût est un nombre fixe de requêtes par page, quelle que
+soit sa longueur.
+
 Deux méthodes de la famille ``positions`` décodent une position sans
 l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir d'une
 chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
