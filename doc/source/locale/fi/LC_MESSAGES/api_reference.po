@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 01:36+0100\n"
+"POT-Creation-Date: 2026-11-21 09:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -42,11 +42,11 @@ msgstr ""
 "vastausmuodon kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos "
 "se on olemassa, maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
 
-#: ../../source/api_reference.rst:468
+#: ../../source/api_reference.rst:471
 msgid "Idempotence"
 msgstr "Idempotenssi"
 
-#: ../../source/api_reference.rst:470
+#: ../../source/api_reference.rst:473
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -74,11 +74,11 @@ msgstr ""
 " merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. Mikään muu "
 "menetelmä ei tarvitse tai hyväksy tätä otsaketta."
 
-#: ../../source/api_reference.rst:482
+#: ../../source/api_reference.rst:485
 msgid "Lectures conditionnelles"
 msgstr "Ehdolliset lukemiset"
 
-#: ../../source/api_reference.rst:484
+#: ../../source/api_reference.rst:487
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -90,11 +90,11 @@ msgstr ""
 "rungoton ``304``-vastaus niin kauan kuin mikään metodin lukema ei ole "
 "muuttunut — katso :ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:489
+#: ../../source/api_reference.rst:492
 msgid "Enregistrer et lire une analyse"
 msgstr "Analyysin tallentaminen ja lukeminen"
 
-#: ../../source/api_reference.rst:491
+#: ../../source/api_reference.rst:494
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -125,7 +125,7 @@ msgstr ""
 "sitä, ohittaa ``withPlayed``-kentän ja palauttaa analyysin ilman "
 "otteluiden siirtoja."
 
-#: ../../source/api_reference.rst:503
+#: ../../source/api_reference.rst:506
 msgid ""
 "``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
 "chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
@@ -150,7 +150,7 @@ msgstr ""
 "useita syvyyksiä (XG rollouttaa parhaat siirtonsa ja arvioi muut "
 "matalammin). Uudelleen tuotu lähde korvaa oman merkintänsä."
 
-#: ../../source/api_reference.rst:514
+#: ../../source/api_reference.rst:517
 msgid ""
 "Quand ``allCheckerAnalyses`` est absent et que les coups de "
 "``checkerAnalysis`` portent plusieurs ``analysisEngine``, la position a "
@@ -166,11 +166,47 @@ msgstr ""
 "enää tiedetä. Lähdettä ei silloin ole saatavilla, eikä uusi tuonti "
 "rakenna sitä uudelleen."
 
-#: ../../source/api_reference.rst:521
+#: ../../source/api_reference.rst:524
+msgid "Lire les coups d'un match"
+msgstr "Ottelun siirtojen lukeminen"
+
+#: ../../source/api_reference.rst:526
+msgid ""
+"Chaque coup que rendent ``matches.moves`` et ``matches.movesByMatch`` est"
+" jugé par l'analyse enregistrée de sa position, sans qu'aucun moteur ne "
+"soit lancé par la lecture. ``error_mp`` est l'équité que le coup joué a "
+"perdue, en millipoints. ``best_move``, sur un coup de pions, est le "
+"premier coup candidat de l'analyse, dans sa notation, du point de vue du "
+"joueur au trait — celui qui a joué le coup ; il est rendu même quand le "
+"coup joué n'est pas parmi les candidats. ``best_cube_action``, sur une "
+"action de videau, est la meilleure réponse à la décision qu'avait ce "
+"joueur, dans le vocabulaire de ``cube_action`` : ``Double`` ou ``No "
+"Double`` pour le joueur qui pouvait doubler (trop fort pour doubler donne"
+" ``No Double``), ``Take`` ou ``Pass`` pour celui à qui le videau a été "
+"proposé. Les trois champs sont absents quand la position n'a pas "
+"d'analyse du type voulu ; une position atteinte par plusieurs matchs y "
+"nomme le même meilleur coup."
+msgstr ""
+"Jokainen siirto, jonka ``matches.moves`` ja ``matches.movesByMatch`` "
+"palauttavat, arvioidaan sen aseman tallennetun analyysin perusteella; "
+"lukeminen ei koskaan käynnistä moottoria. ``error_mp`` on pelatun siirron"
+" menettämä equity milliyksikköinä. ``best_move`` on nappulasiirrossa "
+"analyysin ensimmäinen ehdokas sen omassa notaatiossa, vuorossa olevan "
+"pelaajan — siirron tehneen — näkökulmasta; se palautetaan myös silloin, "
+"kun pelattu siirto ei ole ehdokkaiden joukossa. ``best_cube_action`` on "
+"kuutiotoiminnossa paras vastaus siihen päätökseen, joka pelaajalla oli, "
+"``cube_action``-kentän sanastolla: ``Double`` tai ``No Double`` "
+"pelaajalle, joka saattoi tuplata (liian hyvä tuplattavaksi antaa ``No "
+"Double``), ``Take`` tai ``Pass`` pelaajalle, jolle kuutiota tarjottiin. "
+"Kolme kenttää puuttuvat, kun asemalla ei ole sopivan tyyppistä analyysia;"
+" useassa ottelussa saavutettu asema nimeää kussakin saman parhaan "
+"siirron."
+
+#: ../../source/api_reference.rst:540
 msgid "Repères d'une transcription"
 msgstr "Litteroinnin aikaleimat"
 
-#: ../../source/api_reference.rst:523
+#: ../../source/api_reference.rst:542
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -200,7 +236,7 @@ msgstr ""
 "paikallinen polku), tyhjä merkkijono irrottaa sen; ``set_header`` asettaa"
 " sen myös, kun sen otsake nimeää lähteen, mutta ei koskaan poista sitä."
 
-#: ../../source/api_reference.rst:535
+#: ../../source/api_reference.rst:554
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -216,7 +252,7 @@ msgstr ""
 " ilman toiminnan aikamerkkiä, mitattuna heitosta seuraavan toiminnon "
 "ensimmäiseen hetkeen."
 
-#: ../../source/api_reference.rst:541
+#: ../../source/api_reference.rst:560
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

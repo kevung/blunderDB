@@ -175,7 +175,7 @@ func testStatsMatchMoveGrades(t *testing.T, s storage.Storage) {
 		if err != nil {
 			t.Fatalf("Moves: %v", err)
 		}
-		mv.ErrorMP = nil
+		mv.ErrorMP, mv.BestMove, mv.BestCubeAction = nil, "", ""
 		scored = append(scored, *mv)
 	}
 	for mv, err := range s.Matches().RecordedMoves(ctx, "", gameID) {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 01:36+0100\n"
+"POT-Creation-Date: 2026-11-21 09:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -43,11 +43,11 @@ msgstr ""
 "NDJSON για μια ροή λίστας) και, όπου υπάρχει, μια σημείωση για την "
 "προαιρετική κεφαλίδα ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:468
+#: ../../source/api_reference.rst:471
 msgid "Idempotence"
 msgstr "Ιδεμποτότητα"
 
-#: ../../source/api_reference.rst:470
+#: ../../source/api_reference.rst:473
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -76,11 +76,11 @@ msgstr ""
 "αποτέλεσμά της — βλ. την ένδειξη «(Idempotency-Key)» στον παραπάνω "
 "πίνακα. Καμία άλλη μέθοδος δεν χρειάζεται ούτε δέχεται αυτή την κεφαλίδα."
 
-#: ../../source/api_reference.rst:482
+#: ../../source/api_reference.rst:485
 msgid "Lectures conditionnelles"
 msgstr "Υπό συνθήκη αναγνώσεις"
 
-#: ../../source/api_reference.rst:484
+#: ../../source/api_reference.rst:487
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -92,11 +92,11 @@ msgstr ""
 "σώμα εφόσον δεν έχει αλλάξει τίποτα από όσα διαβάζει η μέθοδος — βλέπε "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:489
+#: ../../source/api_reference.rst:492
 msgid "Enregistrer et lire une analyse"
 msgstr "Αποθήκευση και ανάγνωση ανάλυσης"
 
-#: ../../source/api_reference.rst:491
+#: ../../source/api_reference.rst:494
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -128,7 +128,7 @@ msgstr ""
 "αγνοεί το ``withPlayed`` και επιστρέφει την ανάλυση χωρίς τις κινήσεις "
 "των αγώνων."
 
-#: ../../source/api_reference.rst:503
+#: ../../source/api_reference.rst:506
 msgid ""
 "``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
 "chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
@@ -155,7 +155,7 @@ msgstr ""
 "μικρότερο βάθος). Μια πηγή που εισάγεται ξανά αντικαθιστά τη δική της "
 "εγγραφή."
 
-#: ../../source/api_reference.rst:514
+#: ../../source/api_reference.rst:517
 msgid ""
 "Quand ``allCheckerAnalyses`` est absent et que les coups de "
 "``checkerAnalysis`` portent plusieurs ``analysisEngine``, la position a "
@@ -171,11 +171,48 @@ msgstr ""
 "γνωστό. Καμία πηγή δεν είναι τότε διαθέσιμη, και μια νέα εισαγωγή δεν την"
 " ανακατασκευάζει."
 
-#: ../../source/api_reference.rst:521
+#: ../../source/api_reference.rst:524
+msgid "Lire les coups d'un match"
+msgstr "Ανάγνωση των κινήσεων ενός ματς"
+
+#: ../../source/api_reference.rst:526
+msgid ""
+"Chaque coup que rendent ``matches.moves`` et ``matches.movesByMatch`` est"
+" jugé par l'analyse enregistrée de sa position, sans qu'aucun moteur ne "
+"soit lancé par la lecture. ``error_mp`` est l'équité que le coup joué a "
+"perdue, en millipoints. ``best_move``, sur un coup de pions, est le "
+"premier coup candidat de l'analyse, dans sa notation, du point de vue du "
+"joueur au trait — celui qui a joué le coup ; il est rendu même quand le "
+"coup joué n'est pas parmi les candidats. ``best_cube_action``, sur une "
+"action de videau, est la meilleure réponse à la décision qu'avait ce "
+"joueur, dans le vocabulaire de ``cube_action`` : ``Double`` ou ``No "
+"Double`` pour le joueur qui pouvait doubler (trop fort pour doubler donne"
+" ``No Double``), ``Take`` ou ``Pass`` pour celui à qui le videau a été "
+"proposé. Les trois champs sont absents quand la position n'a pas "
+"d'analyse du type voulu ; une position atteinte par plusieurs matchs y "
+"nomme le même meilleur coup."
+msgstr ""
+"Κάθε κίνηση που επιστρέφουν τα ``matches.moves`` και "
+"``matches.movesByMatch`` κρίνεται από την αποθηκευμένη ανάλυση της θέσης "
+"της· η ανάγνωση δεν εκκινεί ποτέ μηχανή. Το ``error_mp`` είναι η equity "
+"που έχασε η παιγμένη κίνηση, σε χιλιοστά του πόντου. Το ``best_move``, σε"
+" κίνηση πουλιών, είναι η πρώτη υποψήφια κίνηση της ανάλυσης, στη "
+"σημειογραφία της, από την οπτική του παίκτη που έχει σειρά — εκείνου που "
+"έπαιξε την κίνηση· επιστρέφεται ακόμη κι όταν η παιγμένη κίνηση δεν είναι"
+" μεταξύ των υποψηφίων. Το ``best_cube_action``, σε ενέργεια κύβου, είναι "
+"η καλύτερη απάντηση στην απόφαση που είχε αυτός ο παίκτης, στο λεξιλόγιο "
+"του ``cube_action``: ``Double`` ή ``No Double`` για τον παίκτη που "
+"μπορούσε να διπλασιάσει (το «πολύ καλό για διπλασιασμό» δίνει ``No "
+"Double``), ``Take`` ή ``Pass`` για εκείνον στον οποίο προτάθηκε ο κύβος. "
+"Τα τρία πεδία απουσιάζουν όταν η θέση δεν έχει ανάλυση του κατάλληλου "
+"είδους· μια θέση στην οποία έφτασαν πολλά ματς ονομάζει σε καθένα την "
+"ίδια καλύτερη κίνηση."
+
+#: ../../source/api_reference.rst:540
 msgid "Repères d'une transcription"
 msgstr "Χρονοσημάνσεις μιας μεταγραφής"
 
-#: ../../source/api_reference.rst:523
+#: ../../source/api_reference.rst:542
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -206,7 +243,7 @@ msgstr ""
 "διαδρομή), μια κενή συμβολοσειρά την αποσυνδέει· το ``set_header`` την "
 "ορίζει επίσης όταν η κεφαλίδα του ονομάζει μία, χωρίς ποτέ να τη σβήνει."
 
-#: ../../source/api_reference.rst:535
+#: ../../source/api_reference.rst:554
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -222,7 +259,7 @@ msgstr ""
 "``decision_estimated`` είναι εκτίμηση: κίνηση χωρίς σημάδι ενέργειας, "
 "μετρημένη από τη ζαριά έως την πρώτη στιγμή της επόμενης ενέργειας."
 
-#: ../../source/api_reference.rst:541
+#: ../../source/api_reference.rst:560
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

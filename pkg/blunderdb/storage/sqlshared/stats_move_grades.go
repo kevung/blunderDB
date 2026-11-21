@@ -119,12 +119,63 @@ func checkerPlayError(ca *domain.CheckerAnalysis, played string) (float64, bool)
 	return 0, false
 }
 
-// PlayScorer fills Move.ErrorMP from the analysis blob read beside each Move,
-// decoding a Position's blob once however many Moves reach it. A nil blob
-// (no analysis) or an undecodable one leaves the Move unscored.
+// bestPlay names what the analysis ranks first for the decision a Move
+// records, with the same half-of-the-analysis rule as playError. The doubling
+// decision follows the engine's own ruling (bestCubeAction), read by
+// BestCubeVerdict; the answer to a double follows the equities, as
+// CubeActionError scores it. The equities stand in for a missing or unknown
+// label; an analysis carrying neither names no best action.
+func bestPlay(analysis *domain.PositionAnalysis, moveType, cubeAction string) (checker, cube string) {
+	if moveType != "cube" {
+		if ca := analysis.CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {
+			checker = ca.Moves[0].Move
+		}
+		return checker, ""
+	}
+	dca := analysis.DoublingCubeAnalysis
+	if dca == nil {
+		return "", ""
+	}
+	verdict, labelled := engine.BestCubeVerdict(dca.BestCubeAction)
+	switch engine.CanonicalCubeAction(cubeAction) {
+	case engine.CubeTake, engine.CubePass:
+		// The analysis is the doubler's: the responder's best answer is the
+		// one leaving the doubler the lower equity.
+		pass := dca.CubefulDoublePassEquity < dca.CubefulDoubleTakeEquity
+		if dca.CubefulDoublePassEquity == 0 && dca.CubefulDoubleTakeEquity == 0 {
+			if !labelled {
+				return "", ""
+			}
+			pass = verdict.ShouldPass
+		}
+		if pass {
+			return "", "Pass"
+		}
+		return "", "Take"
+	case engine.CubeDouble, engine.CubeNoDouble:
+		double := verdict.ShouldDouble
+		if !labelled {
+			if dca.CubefulNoDoubleEquity == 0 && dca.CubefulDoubleTakeEquity == 0 && dca.CubefulDoublePassEquity == 0 {
+				return "", ""
+			}
+			double = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) > dca.CubefulNoDoubleEquity
+		}
+		if double {
+			return "", "Double"
+		}
+		return "", "No Double"
+	}
+	return "", ""
+}
+
+// PlayScorer fills Move.ErrorMP, BestMove and BestCubeAction from the
+// analysis blob read beside each Move, decoding a Position's blob once however
+// many Moves reach it. A nil blob (no analysis) or an undecodable one leaves
+// the Move unscored.
 type PlayScorer map[int64]*domain.PositionAnalysis
 
-// Score sets mv.ErrorMP from data, the stored analysis of mv's Position.
+// Score sets mv.ErrorMP and mv's best play from data, the stored analysis of
+// mv's Position.
 func (p PlayScorer) Score(mv *domain.Move, data []byte) {
 	if len(data) == 0 || mv.PositionID == 0 {
 		return
@@ -139,6 +190,7 @@ func (p PlayScorer) Score(mv *domain.Move, data []byte) {
 	if analysis == nil {
 		return
 	}
+	mv.BestMove, mv.BestCubeAction = bestPlay(analysis, mv.MoveType, mv.CubeAction)
 	cost, ok := playError(analysis, mv.MoveType, mv.CheckerMove, mv.CubeAction)
 	if !ok {
 		return

@@ -78,6 +78,22 @@ schéma antérieur à 2.58.0 : chaque coup y porte l'évaluation la plus profond
 qu'a dit chaque moteur seul n'est plus connu. Aucune source n'est alors disponible, et
 un nouvel import ne la reconstruit pas.
 
+Lire les coups d'un match
+-------------------------
+
+Chaque coup que rendent ` + "``matches.moves``" + ` et ` + "``matches.movesByMatch``" + ` est jugé par
+l'analyse enregistrée de sa position, sans qu'aucun moteur ne soit lancé par la
+lecture. ` + "``error_mp``" + ` est l'équité que le coup joué a perdue, en millipoints.
+` + "``best_move``" + `, sur un coup de pions, est le premier coup candidat de l'analyse,
+dans sa notation, du point de vue du joueur au trait — celui qui a joué le coup ;
+il est rendu même quand le coup joué n'est pas parmi les candidats.
+` + "``best_cube_action``" + `, sur une action de videau, est la meilleure réponse à la
+décision qu'avait ce joueur, dans le vocabulaire de ` + "``cube_action``" + ` : ` + "``Double``" + ` ou
+` + "``No Double``" + ` pour le joueur qui pouvait doubler (trop fort pour doubler donne
+` + "``No Double``" + `), ` + "``Take``" + ` ou ` + "``Pass``" + ` pour celui à qui le videau a été
+proposé. Les trois champs sont absents quand la position n'a pas d'analyse du type
+voulu ; une position atteinte par plusieurs matchs y nomme le même meilleur coup.
+
 Repères d'une transcription
 ---------------------------
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 01:36+0100\n"
+"POT-Creation-Date: 2026-11-21 09:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -43,11 +43,11 @@ msgstr ""
 " с их формой ответа (JSON или NDJSON для потокового списка) и, если "
 "применимо, упоминанием необязательного заголовка ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:468
+#: ../../source/api_reference.rst:471
 msgid "Idempotence"
 msgstr "Идемпотентность"
 
-#: ../../source/api_reference.rst:470
+#: ../../source/api_reference.rst:473
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -74,11 +74,11 @@ msgstr ""
 "пометку «(Idempotency-Key)» в таблице выше. Ни одному другому методу этот"
 " заголовок не нужен, и они его не принимают."
 
-#: ../../source/api_reference.rst:482
+#: ../../source/api_reference.rst:485
 msgid "Lectures conditionnelles"
 msgstr "Условные чтения"
 
-#: ../../source/api_reference.rst:484
+#: ../../source/api_reference.rst:487
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -90,11 +90,11 @@ msgstr ""
 "без тела, пока не изменилось ничто из того, что читает метод — см. "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:489
+#: ../../source/api_reference.rst:492
 msgid "Enregistrer et lire une analyse"
 msgstr "Сохранение и чтение анализа"
 
-#: ../../source/api_reference.rst:491
+#: ../../source/api_reference.rst:494
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -123,7 +123,7 @@ msgstr ""
 "With-Played``: демон, который его не отправляет, игнорирует "
 "``withPlayed`` и возвращает анализ без ходов матчей."
 
-#: ../../source/api_reference.rst:503
+#: ../../source/api_reference.rst:506
 msgid ""
 "``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
 "chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
@@ -149,7 +149,7 @@ msgstr ""
 "и оценивает остальные менее глубоко). Повторно импортированный источник "
 "заменяет свою собственную запись."
 
-#: ../../source/api_reference.rst:514
+#: ../../source/api_reference.rst:517
 msgid ""
 "Quand ``allCheckerAnalyses`` est absent et que les coups de "
 "``checkerAnalysis`` portent plusieurs ``analysisEngine``, la position a "
@@ -165,11 +165,46 @@ msgstr ""
 "неизвестно. Тогда ни один источник недоступен, и новый импорт его не "
 "восстанавливает."
 
-#: ../../source/api_reference.rst:521
+#: ../../source/api_reference.rst:524
+msgid "Lire les coups d'un match"
+msgstr "Чтение ходов матча"
+
+#: ../../source/api_reference.rst:526
+msgid ""
+"Chaque coup que rendent ``matches.moves`` et ``matches.movesByMatch`` est"
+" jugé par l'analyse enregistrée de sa position, sans qu'aucun moteur ne "
+"soit lancé par la lecture. ``error_mp`` est l'équité que le coup joué a "
+"perdue, en millipoints. ``best_move``, sur un coup de pions, est le "
+"premier coup candidat de l'analyse, dans sa notation, du point de vue du "
+"joueur au trait — celui qui a joué le coup ; il est rendu même quand le "
+"coup joué n'est pas parmi les candidats. ``best_cube_action``, sur une "
+"action de videau, est la meilleure réponse à la décision qu'avait ce "
+"joueur, dans le vocabulaire de ``cube_action`` : ``Double`` ou ``No "
+"Double`` pour le joueur qui pouvait doubler (trop fort pour doubler donne"
+" ``No Double``), ``Take`` ou ``Pass`` pour celui à qui le videau a été "
+"proposé. Les trois champs sont absents quand la position n'a pas "
+"d'analyse du type voulu ; une position atteinte par plusieurs matchs y "
+"nomme le même meilleur coup."
+msgstr ""
+"Каждый ход, который возвращают ``matches.moves`` и "
+"``matches.movesByMatch``, оценивается по сохранённому анализу его "
+"позиции; чтение никогда не запускает движок. ``error_mp`` — эквити, "
+"потерянное сыгранным ходом, в миллипунктах. ``best_move`` для хода "
+"шашками — первый кандидат анализа, в его нотации, с точки зрения игрока, "
+"имеющего ход, — того, кто сделал ход; он возвращается, даже если "
+"сыгранного хода нет среди кандидатов. ``best_cube_action`` для действия с"
+" кубом — лучший ответ на решение, стоявшее перед этим игроком, в словаре "
+"``cube_action``: ``Double`` или ``No Double`` для игрока, который мог "
+"удвоить (слишком хорошо для удвоения даёт ``No Double``), ``Take`` или "
+"``Pass`` для игрока, которому предложили куб. Три поля отсутствуют, когда"
+" у позиции нет анализа нужного типа; позиция, достигнутая в нескольких "
+"матчах, называет в каждом один и тот же лучший ход."
+
+#: ../../source/api_reference.rst:540
 msgid "Repères d'une transcription"
 msgstr "Таймкоды транскрипции"
 
-#: ../../source/api_reference.rst:523
+#: ../../source/api_reference.rst:542
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -199,7 +234,7 @@ msgstr ""
 "путь), пустая строка отвязывает его; ``set_header`` тоже задаёт его, "
 "когда его заголовок называет источник, но никогда не стирает."
 
-#: ../../source/api_reference.rst:535
+#: ../../source/api_reference.rst:554
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -214,7 +249,7 @@ msgstr ""
 "вместе с ``decision_estimated`` — это оценка: ход без метки действия, "
 "измеренный от броска до первого момента следующего действия."
 
-#: ../../source/api_reference.rst:541
+#: ../../source/api_reference.rst:560
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "
