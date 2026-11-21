@@ -2589,6 +2589,28 @@ Examples:
   blunderdb capture --db my.db --save --score money --turn 2 cube.png
 ```
 
+### `blunderdb collection copy`
+
+```
+Usage: blunderdb collection copy [options]
+
+Copy a whole collection, keeping its order: to a new collection (--name, which takes the source's description), or to the end of an existing one (--to), skipping the positions it already holds. Nothing is copied if any part fails. A living collection cannot be copied or copied into: freeze it first.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	ID of the collection to copy (required)
+  -name string
+    	Name of a new collection to copy to (or --to)
+  -to int
+    	ID of an existing collection to append to (or --name)
+
+Examples:
+  blunderdb collection copy --db database.db --id 3 --name "Openings (copy)"
+  blunderdb collection copy --db database.db --id 3 --to 5
+```
+
 ### `blunderdb collection create`
 
 ```

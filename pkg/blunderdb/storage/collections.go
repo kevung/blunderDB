@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"iter"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -131,4 +132,109 @@ func FreezeCollection(ctx context.Context, st Storage, scope string, id int64, f
 		return 0, err
 	}
 	return len(ids), nil
+}
+
+// CollectionCopyTarget says where CopyCollection copies to: exactly one of
+// ToID (an existing collection) and Name (a new collection) is set.
+type CollectionCopyTarget struct {
+	ToID int64
+	Name string
+}
+
+// CollectionCopyResult is what CopyCollection wrote: the target collection
+// and how many positions it gained.
+type CollectionCopyResult struct {
+	ID     int64 `json:"id"`
+	Copied int   `json:"copied"`
+}
+
+// CollectionCopier is implemented by a backend that runs CopyCollection
+// itself, whole: the remote backend, which has no transaction to offer and
+// hands the copy to the daemon's own.
+type CollectionCopier interface {
+	CopyCollection(ctx context.Context, scope string, fromID int64, target CollectionCopyTarget) (CollectionCopyResult, error)
+}
+
+// CopyCollection copies the membership of collection fromID, in its order,
+// to a new collection named target.Name or to the end of the existing
+// collection target.ToID, in one transaction: a failure copies nothing and
+// creates nothing. A position the target already holds is skipped, so
+// Copied counts only the positions added.
+//
+// A new collection takes the source's description and is placed last in the
+// collection list; it is a hand-made list. A living collection is refused on
+// either side: its membership is a query's result, not rows to copy, and rows
+// added to it would be ignored — freezing it first makes the gesture explicit.
+// Names are not unique, so a new name never conflicts.
+func CopyCollection(ctx context.Context, st Storage, scope string, fromID int64, target CollectionCopyTarget) (CollectionCopyResult, error) {
+	name := strings.TrimSpace(target.Name)
+	if (target.ToID != 0) == (name != "") {
+		return CollectionCopyResult{}, fmt.Errorf("%w: copy collection %d: give exactly one of a target collection and a new name", ErrInvalid, fromID)
+	}
+	if target.ToID == fromID {
+		return CollectionCopyResult{}, fmt.Errorf("%w: copy collection %d onto itself", ErrInvalid, fromID)
+	}
+	if c, ok := st.(CollectionCopier); ok {
+		return c.CopyCollection(ctx, scope, fromID, CollectionCopyTarget{ToID: target.ToID, Name: name})
+	}
+	// Guarded: the target's membership read below must still hold when the
+	// missing positions are appended, or a concurrent copy could interleave.
+	tx, err := BeginGuarded(ctx, st, fmt.Sprintf("collection-copy:%s:%d", scope, target.ToID))
+	if err != nil {
+		return CollectionCopyResult{}, err
+	}
+	defer func() { _ = tx.Rollback() }()
+	cs := tx.Collections()
+
+	src, err := cs.Get(ctx, scope, fromID)
+	if err != nil {
+		return CollectionCopyResult{}, err
+	}
+	if strings.TrimSpace(src.FilterQuery) != "" {
+		return CollectionCopyResult{}, fmt.Errorf("%w: collection %d is living: freeze it before copying it", ErrInvalid, fromID)
+	}
+	ids, err := cs.PositionIDs(ctx, scope, fromID, ListOpts{})
+	if err != nil {
+		return CollectionCopyResult{}, err
+	}
+
+	held := map[int64]bool{}
+	toID := target.ToID
+	if toID == 0 {
+		if toID, err = cs.Create(ctx, scope, name, src.Description); err != nil {
+			return CollectionCopyResult{}, err
+		}
+	} else {
+		dst, err := cs.Get(ctx, scope, toID)
+		if err != nil {
+			return CollectionCopyResult{}, err
+		}
+		if strings.TrimSpace(dst.FilterQuery) != "" {
+			return CollectionCopyResult{}, fmt.Errorf("%w: collection %d is living: its content is its query's result", ErrInvalid, toID)
+		}
+		have, err := cs.PositionIDs(ctx, scope, toID, ListOpts{})
+		if err != nil {
+			return CollectionCopyResult{}, err
+		}
+		for _, id := range have {
+			held[id] = true
+		}
+	}
+
+	missing := make([]int64, 0, len(ids))
+	for _, id := range ids {
+		if !held[id] {
+			held[id] = true
+			missing = append(missing, id)
+		}
+	}
+	if len(missing) > 0 {
+		if err := cs.AddPositions(ctx, scope, toID, missing); err != nil {
+			return CollectionCopyResult{}, err
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		return CollectionCopyResult{}, err
+	}
+	return CollectionCopyResult{ID: toID, Copied: len(missing)}, nil
 }

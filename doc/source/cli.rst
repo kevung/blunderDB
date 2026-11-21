@@ -84,7 +84,7 @@ Commandes disponibles
    "match", "Affiche les positions et analyses d'un match."
    "transcribe", "Rejoue une transcription et rend compte de ce que le rejeu trouve."
    "duel", "Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
-   "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
+   "collection", "Gère les collections (liste, contenu, création, copie, renommage, suppression, export)."
    "study", "La file d'étude : les blunders non traités du joueur de référence, et la marque « vu »."
    "lesson", "Gère les leçons (étapes ordonnées montrant collections et positions) et les exporte."
    "anki", "Paquets de répétition espacée (liste, statistiques, prévision, synchronisation)."

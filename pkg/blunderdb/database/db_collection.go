@@ -224,6 +224,21 @@ func (d *Database) CreateLivingCollection(name, description, query string) (int6
 	return storage.CreateCollection(context.Background(), d.store, "", name, description, query)
 }
 
+// CopyCollection copies a whole collection in one transaction: to a new
+// collection called name when toCollectionID is 0, else to the end of
+// collection toCollectionID, skipping the positions it already holds
+// (storage.CopyCollection).
+func (d *Database) CopyCollection(fromCollectionID, toCollectionID int64, name string) (storage.CollectionCopyResult, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if _, err := d.collectionStore(); err != nil {
+		return storage.CollectionCopyResult{}, err
+	}
+	return storage.CopyCollection(context.Background(), d.store, "", fromCollectionID,
+		storage.CollectionCopyTarget{ToID: toCollectionID, Name: name})
+}
+
 // EvaluateCollection reads a collection's position ids under the declared
 // ceiling (storage.LivingCollectionCap), saying how many it holds in truth and
 // whether the answer stops short of it. limit <= 0 asks for the ceiling.

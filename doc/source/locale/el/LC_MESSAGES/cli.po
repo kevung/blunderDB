@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 16:01+0200\n"
+"POT-Creation-Date: 2026-11-21 09:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -263,10 +263,10 @@ msgstr "collection"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Gère les collections (liste, contenu, création, renommage, suppression, "
-"export)."
+"Gère les collections (liste, contenu, création, copie, renommage, "
+"suppression, export)."
 msgstr ""
-"Διαχειρίζεται τις συλλογές (λίστα, περιεχόμενο, δημιουργία, μετονομασία, "
+"Διαχειρίζεται τις συλλογές (λίστα, περιεχόμενο, δημιουργία, αντιγραφή, μετονομασία, "
 "διαγραφή, εξαγωγή)."
 
 #: ../../source/cli.rst:1
@@ -9250,3 +9250,4 @@ msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρι
 #~ "δεδομένων που γράφει αυτό το εκτελέσιμο·"
 #~ " είναι το πρώτο πράγμα που "
 #~ "επισυνάπτεται σε μια αναφορά σφάλματος."
+

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 16:01+0200\n"
+"POT-Creation-Date: 2026-11-21 09:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -262,10 +262,10 @@ msgstr "collection"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Gère les collections (liste, contenu, création, renommage, suppression, "
-"export)."
+"Gère les collections (liste, contenu, création, copie, renommage, "
+"suppression, export)."
 msgstr ""
-"Управляет коллекциями (список, содержимое, создание, переименование, "
+"Управляет коллекциями (список, содержимое, создание, копирование, переименование, "
 "удаление, экспорт)."
 
 #: ../../source/cli.rst:1
@@ -8836,3 +8836,4 @@ msgstr "Это позволяет использовать CLI в скрипта
 #~ " базы данных, которую записывает этот "
 #~ "бинарный файл; это первое, что нужно "
 #~ "приложить к отчёту об ошибке."
+

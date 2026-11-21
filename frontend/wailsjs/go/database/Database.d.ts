@@ -149,6 +149,8 @@ export function ConfirmProposals(arg1:number,arg2:string):Promise<service.Direct
 
 export function ContributeDuel(arg1:number,arg2:number,arg3:number,arg4:string):Promise<database.DuelState>;
 
+export function CopyCollection(arg1:number,arg2:number,arg3:string):Promise<storage.CollectionCopyResult>;
+
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CorrectResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<service.DirectionView>;

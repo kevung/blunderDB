@@ -104,6 +104,18 @@ func (s collectionStore) CopyPosition(ctx context.Context, scope string, toColle
 	}{toCollectionID, positionID}, nil)
 }
 
+// CopyCollection hands the whole copy to the daemon, which runs it in one
+// transaction of its own (storage.CollectionCopier).
+func (s *Storage) CopyCollection(ctx context.Context, scope string, fromID int64, target storage.CollectionCopyTarget) (storage.CollectionCopyResult, error) {
+	var res storage.CollectionCopyResult
+	err := s.c.call(ctx, scope, "collections.copy", struct {
+		FromCollectionID int64  `json:"fromCollectionId"`
+		ToCollectionID   int64  `json:"toCollectionId,omitempty"`
+		Name             string `json:"name,omitempty"`
+	}{fromID, target.ToID, target.Name}, &res)
+	return res, err
+}
+
 func (s collectionStore) Positions(ctx context.Context, scope string, collectionID int64, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
 	return stream[*domain.Position](ctx, s.c, scope, "collections.positions", collectionPositionsReq{collectionID, opts.Limit, opts.Offset})
 }
