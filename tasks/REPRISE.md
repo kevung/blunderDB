@@ -1,6 +1,6 @@
-# Reprise — 2026-11-20 (soir)
+# Reprise — 2026-11-21
 
-État de main au 20 novembre, pour reprendre depuis GitHub sur un autre poste.
+État de main au 21 novembre, pour reprendre depuis GitHub sur un autre poste.
 
 ## État
 
@@ -15,15 +15,17 @@
     (migration 068) ; les statistiques de match survivent à un import.
   - **0.57.0** : collage d'un identifiant GNU Backgammon ; blot en SQL (migration 069), erreur par
     deux branches bornées, joueur / adversaire / tournoi / longueur par marche bornée.
-- Sur main après 0.57.0, sans release (`DatabaseVersion` **2.58.0**) : trace des chances de gagner
-  le match (`stats.matchWinTrace`, première case de #961), évaluations de pions gardées par source
-  (ADR-0113, étape 2.57 → 2.58), graphe des durées de décision, nicomaque v0.10.0, bornes de
-  `directions.simulate`, plateau de fin de partie lu par son index (#914, fusionnée le 19).
-- Le 20 : **#959 fusionnée** (#952 fermée ; champs de liste, index couvrant du tri, filtre de
-  match × colonne rare, résultat de match stocké, schéma 2.59.0, ADR-0114) puis **origine d'un
-  tournoi** (schéma **2.60.0**, PG 073 ; #961 fermée, ses quatre cases sur main). Les deux seuils
-  non tenus au banc partent en suivi : **#965**.
-- Issues ouvertes : #965 (seuils de #959), #846 (poste Windows), #858 et #870 (vision).
+  - **0.58.0** (2026-11-21, schéma **2.60.0**) : évaluations de pions par source (ADR-0113),
+    résultat de match stocké (ADR-0114), origine des tournois, trace des chances de gagner le
+    match, tri des matchs par PR, critères de provenance des collections vivantes, histogramme
+    des durées de décision, champs de liste, recherche PostgreSQL plus rapide (#952, #959, #965 :
+    migrations 071 à 074), nicomaque v0.10.0. #952, #961 et #965 fermées.
+- #965 mesurée sur une base PostgreSQL locale pleine (BMAB, `~/src/bench-scale/pg965`, port
+  55965, arrêtée ; relance : `pg_ctl -D ~/src/bench-scale/pg965/data -l ~/src/bench-scale/pg965/log
+  start`) : tri pips ASC 5+8 76 → 20 ms, ancre 880 → 24 ms ; au-dessus de la borne 1,8 s → 0,14 s.
+  Reste lent : `ml:17 aw:12` (652 ms) et DESC sur « ancre » (880 ms), hors périmètre. Recette pour
+  mochy en commentaire de #965.
+- Issues ouvertes : #846 (poste Windows), #858 et #870 (vision).
 
 ## CI
 
@@ -70,9 +72,8 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. Release portant 2.58 → 2.60 (sources de pions, résultat de match, origine des tournois, #961) :
-   demande l'accord du propriétaire.
-2. #965 : les deux seuils non tenus de #959.
+1. Vérifier la CI du tag 0.58.0, AUR et Homebrew.
+2. Facultatif : rejouer la recette de #965 sur mochy.
 3. Vision : campagne matériels, voir son `ETAT.md`.
 4. #846 (LNA WebView2) : attend un poste Windows.
 5. Travail de fond : voir `tasks/BACKLOG.md`.
