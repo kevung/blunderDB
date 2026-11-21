@@ -21,8 +21,8 @@ func TestListFieldsQueriesDoNotGrowWithThePage(t *testing.T) {
 	}
 	q1, r1 := calls(1)
 	q24, r24 := calls(24)
-	if q1 != q24 || r1 != r24 || q24 > 2 {
-		t.Errorf("1 row: %d queries + %d single-row; 24 rows: %d + %d; want the same, at most 2", q1, r1, q24, r24)
+	if q1 != q24 || r1 != r24 || q24 > 3 {
+		t.Errorf("1 row: %d queries + %d single-row; 24 rows: %d + %d; want the same, at most 3", q1, r1, q24, r24)
 	}
 }
 

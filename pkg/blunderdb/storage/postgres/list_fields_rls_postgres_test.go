@@ -8,13 +8,14 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 )
 
 // TestListFieldsUnderRLS reads list fields as a role row-level security
-// binds: ids of another tenant name nothing, and a tenant's collections are
-// never listed against another's position.
+// binds: ids of another tenant name nothing, and a tenant's collections and
+// study decks are never listed against another's position.
 func TestListFieldsUnderRLS(t *testing.T) {
 	ctx := context.Background()
 	dsn := startPostgres(t)
@@ -70,6 +71,13 @@ func TestListFieldsUnderRLS(t *testing.T) {
 		if err := app.Collections().AddPosition(c, scope, col, id); err != nil {
 			t.Fatal(err)
 		}
+		deck, err := app.Anki().CreateDeck(c, scope, "deck of "+scope, "", domain.AnkiSourceSearch, 0, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := app.Anki().SyncWithPositions(c, scope, deck, []int64{id}); err != nil {
+			t.Fatal(err)
+		}
 		return id
 	}
 	mine, theirs := seed(1, "1", 1), seed(2, "2", 2)
@@ -89,6 +97,9 @@ func TestListFieldsUnderRLS(t *testing.T) {
 		}
 		if len(got[0].Collections) != 1 || got[0].Collections[0].Name != "of "+c.scope {
 			t.Errorf("tenant %s collections = %+v, want only its own", c.scope, got[0].Collections)
+		}
+		if len(got[0].Decks) != 1 || got[0].Decks[0].Name != "deck of "+c.scope {
+			t.Errorf("tenant %s decks = %+v, want only its own", c.scope, got[0].Decks)
 		}
 	}
 }

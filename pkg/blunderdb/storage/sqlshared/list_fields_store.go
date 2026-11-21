@@ -9,8 +9,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// ListFieldsStore implements storage.ListFieldsStore: two queries per chunk of
-// ids, one over position and its analysis, one over the collections.
+// ListFieldsStore implements storage.ListFieldsStore: three queries per chunk
+// of ids, one over position and its analysis, one over the collections, one
+// over the study decks.
 type ListFieldsStore struct{ DB Execer }
 
 var _ storage.ListFieldsStore = (*ListFieldsStore)(nil)
@@ -23,6 +24,9 @@ func (s *ListFieldsStore) ListFields(ctx context.Context, scope string, ids []in
 			return nil, err
 		}
 		if err := s.readCollections(ctx, scope, batch, byID); err != nil {
+			return nil, err
+		}
+		if err := s.readDecks(ctx, scope, batch, byID); err != nil {
 			return nil, err
 		}
 	}
@@ -66,7 +70,7 @@ func (s *ListFieldsStore) readPositions(ctx context.Context, scope string, batch
 		if err := rows.Scan(&id, &decisionType, &matchDate, &uuid, &analysed, &cubeErr, &moveErr); err != nil {
 			return errf(s.DB, "list fields", err)
 		}
-		f := &storage.PositionListFields{PositionID: id, Analysed: analysed, Collections: []storage.CollectionRef{}}
+		f := &storage.PositionListFields{PositionID: id, Analysed: analysed, Collections: []storage.CollectionRef{}, Decks: []storage.DeckRef{}}
 		if analysed {
 			f.PlayedErrorMP = moveErr
 			if decisionType == 1 {
@@ -113,6 +117,37 @@ func (s *ListFieldsStore) readCollections(ctx context.Context, scope string, bat
 	}
 	if err := rows.Err(); err != nil {
 		return errf(s.DB, "list fields collections", err)
+	}
+	return nil
+}
+
+func (s *ListFieldsStore) readDecks(ctx context.Context, scope string, batch []int64, byID map[int64]*storage.PositionListFields) error {
+	tenant, targs := s.DB.TenantFilter("ac", scope)
+	args := make([]any, 0, len(batch)+len(targs))
+	for _, id := range batch {
+		args = append(args, id)
+	}
+	args = append(args, targs...)
+	rows, err := s.DB.Query(ctx, `SELECT DISTINCT ac.position_id, d.id, COALESCE(d.name, '')
+		  FROM anki_card ac JOIN anki_deck d ON d.id = ac.deck_id`+andSameTenant(s.DB, "d", "ac")+`
+		 WHERE ac.position_id IN (`+Placeholders(len(batch))+`) AND `+tenant+`
+		 ORDER BY ac.position_id, d.id`, args...)
+	if err != nil {
+		return errf(s.DB, "list fields decks", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var posID int64
+		var d storage.DeckRef
+		if err := rows.Scan(&posID, &d.ID, &d.Name); err != nil {
+			return errf(s.DB, "list fields decks", err)
+		}
+		if f, ok := byID[posID]; ok {
+			f.Decks = append(f.Decks, d)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return errf(s.DB, "list fields decks", err)
 	}
 	return nil
 }

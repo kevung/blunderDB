@@ -23,10 +23,20 @@ type PositionListFields struct {
 	// Collections holds the position, in the library's collection order;
 	// empty, never nil, when none does.
 	Collections []CollectionRef `json:"collections"`
+	// Decks are the study decks with a card of the position, in the order
+	// decks were created (the order the decks are listed in); empty, never
+	// nil, when none does.
+	Decks []DeckRef `json:"decks"`
 }
 
 // CollectionRef names a collection without its contents.
 type CollectionRef struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
+
+// DeckRef names a study deck without its cards.
+type DeckRef struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }

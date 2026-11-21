@@ -371,6 +371,9 @@ func (cli *CLI) listPositions(offset, limit int) error {
 		if names := collectionNames(f); names != "" {
 			fmt.Fprintf(cli.stdout(), "  Collections: %s\n", names)
 		}
+		if names := deckNames(f); names != "" {
+			fmt.Fprintf(cli.stdout(), "  Decks: %s\n", names)
+		}
 		fmt.Fprintln(cli.stdout())
 	}
 

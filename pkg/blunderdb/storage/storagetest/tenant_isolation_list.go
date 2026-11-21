@@ -47,7 +47,8 @@ func checkMatchResultIsolation(t *testing.T, ctx context.Context, s storage.Stor
 }
 
 // checkListFieldsIsolation: the list fields of a page answer only the
-// tenant's positions, and their collections only its own.
+// tenant's positions, and their collections and study decks only its own: a
+// deck of the other tenant never shows, even beside a position it may reach.
 func checkListFieldsIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
 	prov, ok := s.(storage.ListFieldsProvider)
 	if !ok {
@@ -65,11 +66,36 @@ func checkListFieldsIsolation(t *testing.T, ctx context.Context, s storage.Stora
 	if err := s.Collections().AddPosition(ctx, a, c, id); err != nil {
 		t.Fatal(err)
 	}
+	deck, err := s.Anki().CreateDeck(ctx, a, "Kept deck", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, a, deck, []int64{id}); err != nil {
+		t.Fatal(err)
+	}
+	pb := checkerPos()
+	idB, err := s.Positions().Save(ctx, b, &pb)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deckB, err := s.Anki().CreateDeck(ctx, b, "Foreign deck", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// B's deck asks for A's position too: whatever the backend makes of that,
+	// A's list fields must not show it.
+	_ = s.Anki().SyncWithPositions(ctx, b, deckB, []int64{idB, id})
+	if got, err := prov.PositionListFields().ListFields(ctx, a, []int64{idB}); err != nil || len(got) != 0 {
+		t.Errorf("tenant %s reads the list fields of %s's position: %+v, %v", a, b, got, err)
+	}
 	if got, err := prov.PositionListFields().ListFields(ctx, b, []int64{id}); err != nil || len(got) != 0 {
 		t.Errorf("tenant %s reads the list fields of %s's position: %+v, %v", b, a, got, err)
 	}
 	got, err := prov.PositionListFields().ListFields(ctx, a, []int64{id})
 	if err != nil || len(got) != 1 || len(got[0].Collections) != 1 || got[0].Collections[0].ID != c || got[0].Analysed {
 		t.Errorf("tenant %s list fields = %+v, %v; want its position, unanalysed, in its collection", a, got, err)
+	}
+	if err == nil && len(got) == 1 && (len(got[0].Decks) != 1 || got[0].Decks[0].ID != deck) {
+		t.Errorf("tenant %s decks = %+v; want its own deck alone, never %s's", a, got[0].Decks, b)
 	}
 }

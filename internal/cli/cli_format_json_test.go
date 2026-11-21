@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // B.8 (#176): --format json on the nine commands that lacked it. Each test
@@ -313,5 +315,36 @@ func TestSearch_MachineFormatsOwnStdout(t *testing.T) {
 	lines := strings.Split(strings.TrimSpace(out), "\n")
 	if len(lines) != 3 || !strings.HasPrefix(lines[0], "XGID=") {
 		t.Errorf("want 3 XGID lines, got %q", out)
+	}
+}
+
+// The list rows name the study decks holding each position beside its
+// collections, in the table and in JSON alike.
+func TestRenderResults_Decks(t *testing.T) {
+	t.Parallel()
+	positions := []Position{{ID: 7}, {ID: 8}}
+	fields := map[int64]storage.PositionListFields{
+		7: {PositionID: 7, Collections: []storage.CollectionRef{}, Decks: []storage.DeckRef{{ID: 1, Name: "Pile A"}, {ID: 2, Name: "Pile B"}}},
+		8: {PositionID: 8, Collections: []storage.CollectionRef{}, Decks: []storage.DeckRef{}},
+	}
+	var table bytes.Buffer
+	if err := renderResults(&table, positions, nil, fields, "table"); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(table.String(), "Decks") || !strings.Contains(table.String(), "Pile A, Pile B") {
+		t.Errorf("table lacks the decks column:\n%s", table.String())
+	}
+	var out bytes.Buffer
+	if err := renderResults(&out, positions, nil, fields, "json"); err != nil {
+		t.Fatal(err)
+	}
+	var rows []struct {
+		Decks []string `json:"decks"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &rows); err != nil || len(rows) != 2 {
+		t.Fatalf("json = %s, %v", out.String(), err)
+	}
+	if len(rows[0].Decks) != 2 || rows[0].Decks[1] != "Pile B" || rows[1].Decks == nil || len(rows[1].Decks) != 0 {
+		t.Errorf("json decks = %+v, want [Pile A Pile B] then []", rows)
 	}
 }

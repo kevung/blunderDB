@@ -8415,6 +8415,20 @@ export namespace storage {
 	        this.away = source["away"];
 	    }
 	}
+	export class DeckRef {
+	    id: number;
+	    name: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DeckRef(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	    }
+	}
 	export class DeckSync {
 	    deckId: number;
 	    source?: CollectionEvaluation;
@@ -9278,6 +9292,7 @@ export namespace storage {
 	    date: string;
 	    matchDated: boolean;
 	    collections: CollectionRef[];
+	    decks: DeckRef[];
 	
 	    static createFrom(source: any = {}) {
 	        return new PositionListFields(source);
@@ -9291,6 +9306,7 @@ export namespace storage {
 	        this.date = source["date"];
 	        this.matchDated = source["matchDated"];
 	        this.collections = this.convertValues(source["collections"], CollectionRef);
+	        this.decks = this.convertValues(source["decks"], DeckRef);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
