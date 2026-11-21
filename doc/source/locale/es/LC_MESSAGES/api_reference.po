@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 01:36+0100\n"
+"POT-Creation-Date: 2026-11-21 10:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -43,11 +43,11 @@ msgstr ""
 "lista en flujo) y, cuando exista, una mención de la cabecera opcional "
 "``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:468
+#: ../../source/api_reference.rst:471
 msgid "Idempotence"
 msgstr "Idempotencia"
 
-#: ../../source/api_reference.rst:470
+#: ../../source/api_reference.rst:473
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -75,11 +75,11 @@ msgstr ""
 "marca «(Idempotency-Key)» en la tabla anterior. Ningún otro método "
 "necesita ni acepta esta cabecera."
 
-#: ../../source/api_reference.rst:482
+#: ../../source/api_reference.rst:485
 msgid "Lectures conditionnelles"
 msgstr "Lecturas condicionales"
 
-#: ../../source/api_reference.rst:484
+#: ../../source/api_reference.rst:487
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -91,11 +91,11 @@ msgstr ""
 "no haya cambiado nada de lo que el método lee — véase "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:489
+#: ../../source/api_reference.rst:492
 msgid "Enregistrer et lire une analyse"
 msgstr "Guardar y leer un análisis"
 
-#: ../../source/api_reference.rst:491
+#: ../../source/api_reference.rst:494
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -125,7 +125,7 @@ msgstr ""
 "Played``: un demonio que no la envía ignora ``withPlayed`` y devuelve el "
 "análisis sin los movimientos de los partidos."
 
-#: ../../source/api_reference.rst:503
+#: ../../source/api_reference.rst:506
 msgid ""
 "``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
 "chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
@@ -151,7 +151,7 @@ msgstr ""
 "un rollout de sus mejores jugadas y evalúa las demás a menor "
 "profundidad). Una fuente importada de nuevo sustituye su propia entrada."
 
-#: ../../source/api_reference.rst:514
+#: ../../source/api_reference.rst:517
 msgid ""
 "Quand ``allCheckerAnalyses`` est absent et que les coups de "
 "``checkerAnalysis`` portent plusieurs ``analysisEngine``, la position a "
@@ -167,11 +167,72 @@ msgstr ""
 "separado ya no se conoce. No hay entonces ninguna fuente disponible, y "
 "una nueva importación no la reconstruye."
 
-#: ../../source/api_reference.rst:521
+#: ../../source/api_reference.rst:524
+msgid "Lire les coups d'un match"
+msgstr "Leer los movimientos de un match"
+
+#: ../../source/api_reference.rst:526
+msgid ""
+"Chaque coup que rendent ``matches.moves`` et ``matches.movesByMatch`` est"
+" jugé par l'analyse enregistrée de sa position, sans qu'aucun moteur ne "
+"soit lancé par la lecture. ``error_mp`` est l'équité que le coup joué a "
+"perdue, en millipoints. ``best_move``, sur un coup de pions, est le "
+"premier coup candidat de l'analyse, dans sa notation, du point de vue du "
+"joueur au trait — celui qui a joué le coup ; il est rendu même quand le "
+"coup joué n'est pas parmi les candidats. ``best_cube_action``, sur une "
+"action de videau, est la moins coûteuse des deux décisions qu'avait ce "
+"joueur : ``Double`` ou ``No Double`` pour le joueur qui pouvait doubler "
+"(trop fort pour doubler donne ``No Double``), ``Take`` ou ``Pass`` pour "
+"celui à qui le videau a été proposé. Elle est rangée par les erreurs "
+"mêmes dont ``error_mp`` est tiré, jamais par le libellé de meilleure "
+"action que porte l'analyse : importé, ce libellé peut contredire les "
+"équités qu'il accompagne. À coût égal, c'est la décision jouée."
+msgstr ""
+"Cada jugada que devuelven ``matches.moves`` y ``matches.movesByMatch`` se"
+" juzga por el análisis guardado de su posición, sin que la lectura lance "
+"ningún motor. ``error_mp`` es la equity que perdió la jugada realizada, "
+"en milipuntos. ``best_move``, en una jugada de fichas, es la primera "
+"jugada candidata del análisis, en su notación, desde el punto de vista "
+"del jugador al turno — el que hizo la jugada; se devuelve incluso cuando "
+"la jugada realizada no está entre las candidatas. ``best_cube_action``, "
+"en una acción de cubo, es la menos costosa de las dos decisiones que "
+"tenía ese jugador: ``Double`` o ``No Double`` para el jugador que podía "
+"doblar (demasiado bueno para doblar da ``No Double``), ``Take`` o "
+"``Pass`` para aquel a quien se ofreció el cubo. Se clasifica por los "
+"mismos errores de los que se obtiene ``error_mp``, nunca por la etiqueta "
+"de mejor acción que lleva el análisis: importada, esa etiqueta puede "
+"contradecir las equities que la acompañan. A igual coste, es la decisión "
+"jugada."
+
+#: ../../source/api_reference.rst:540
+msgid ""
+"Sans analyse du type voulu, les trois champs sont absents. ``error_mp`` "
+"l'est aussi quand le coup joué ne figure pas parmi les candidats, alors "
+"que ``best_move`` est rendu. Une position atteinte par plusieurs matchs y"
+" nomme le même meilleur coup."
+msgstr ""
+"Sin un análisis del tipo adecuado, los tres campos están ausentes. "
+"``error_mp`` también lo está cuando la jugada realizada no figura entre "
+"las candidatas, mientras que ``best_move`` sí se devuelve. Una posición "
+"alcanzada por varios partidos nombra en todos la misma mejor jugada."
+
+#: ../../source/api_reference.rst:544
+msgid ""
+"Un client affiche « mieux » seulement quand ``error_mp`` est présent et "
+"non nul ; il ne compare pas le coup joué à ``best_move`` ou "
+"``best_cube_action`` : deux notations d'un même coup peuvent différer, et"
+" deux coups d'égale équité coûtent 0 l'un comme l'autre."
+msgstr ""
+"Un cliente muestra «mejor» solo cuando ``error_mp`` está presente y no es"
+" cero; no compara la jugada realizada con ``best_move`` o "
+"``best_cube_action``: dos notaciones de una misma jugada pueden diferir, "
+"y dos jugadas de igual equity cuestan 0 ambas."
+
+#: ../../source/api_reference.rst:550
 msgid "Repères d'une transcription"
 msgstr "Marcas de tiempo de una transcripción"
 
-#: ../../source/api_reference.rst:523
+#: ../../source/api_reference.rst:552
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -201,7 +262,7 @@ msgstr ""
 "ruta local), una cadena vacía la desvincula; ``set_header`` también la "
 "fija cuando su encabezado nombra una, sin borrarla nunca."
 
-#: ../../source/api_reference.rst:535
+#: ../../source/api_reference.rst:564
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -217,7 +278,7 @@ msgstr ""
 "una estimación: una jugada sin marca de acción, medida desde la tirada "
 "hasta el primer instante de la acción siguiente."
 
-#: ../../source/api_reference.rst:541
+#: ../../source/api_reference.rst:570
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

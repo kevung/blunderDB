@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 01:36+0100\n"
+"POT-Creation-Date: 2026-11-21 10:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -43,11 +43,11 @@ msgstr ""
 "NDJSON για μια ροή λίστας) και, όπου υπάρχει, μια σημείωση για την "
 "προαιρετική κεφαλίδα ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:468
+#: ../../source/api_reference.rst:471
 msgid "Idempotence"
 msgstr "Ιδεμποτότητα"
 
-#: ../../source/api_reference.rst:470
+#: ../../source/api_reference.rst:473
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -76,11 +76,11 @@ msgstr ""
 "αποτέλεσμά της — βλ. την ένδειξη «(Idempotency-Key)» στον παραπάνω "
 "πίνακα. Καμία άλλη μέθοδος δεν χρειάζεται ούτε δέχεται αυτή την κεφαλίδα."
 
-#: ../../source/api_reference.rst:482
+#: ../../source/api_reference.rst:485
 msgid "Lectures conditionnelles"
 msgstr "Υπό συνθήκη αναγνώσεις"
 
-#: ../../source/api_reference.rst:484
+#: ../../source/api_reference.rst:487
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -92,11 +92,11 @@ msgstr ""
 "σώμα εφόσον δεν έχει αλλάξει τίποτα από όσα διαβάζει η μέθοδος — βλέπε "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:489
+#: ../../source/api_reference.rst:492
 msgid "Enregistrer et lire une analyse"
 msgstr "Αποθήκευση και ανάγνωση ανάλυσης"
 
-#: ../../source/api_reference.rst:491
+#: ../../source/api_reference.rst:494
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -128,7 +128,7 @@ msgstr ""
 "αγνοεί το ``withPlayed`` και επιστρέφει την ανάλυση χωρίς τις κινήσεις "
 "των αγώνων."
 
-#: ../../source/api_reference.rst:503
+#: ../../source/api_reference.rst:506
 msgid ""
 "``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
 "chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
@@ -155,7 +155,7 @@ msgstr ""
 "μικρότερο βάθος). Μια πηγή που εισάγεται ξανά αντικαθιστά τη δική της "
 "εγγραφή."
 
-#: ../../source/api_reference.rst:514
+#: ../../source/api_reference.rst:517
 msgid ""
 "Quand ``allCheckerAnalyses`` est absent et que les coups de "
 "``checkerAnalysis`` portent plusieurs ``analysisEngine``, la position a "
@@ -171,11 +171,73 @@ msgstr ""
 "γνωστό. Καμία πηγή δεν είναι τότε διαθέσιμη, και μια νέα εισαγωγή δεν την"
 " ανακατασκευάζει."
 
-#: ../../source/api_reference.rst:521
+#: ../../source/api_reference.rst:524
+msgid "Lire les coups d'un match"
+msgstr "Ανάγνωση των κινήσεων ενός ματς"
+
+#: ../../source/api_reference.rst:526
+msgid ""
+"Chaque coup que rendent ``matches.moves`` et ``matches.movesByMatch`` est"
+" jugé par l'analyse enregistrée de sa position, sans qu'aucun moteur ne "
+"soit lancé par la lecture. ``error_mp`` est l'équité que le coup joué a "
+"perdue, en millipoints. ``best_move``, sur un coup de pions, est le "
+"premier coup candidat de l'analyse, dans sa notation, du point de vue du "
+"joueur au trait — celui qui a joué le coup ; il est rendu même quand le "
+"coup joué n'est pas parmi les candidats. ``best_cube_action``, sur une "
+"action de videau, est la moins coûteuse des deux décisions qu'avait ce "
+"joueur : ``Double`` ou ``No Double`` pour le joueur qui pouvait doubler "
+"(trop fort pour doubler donne ``No Double``), ``Take`` ou ``Pass`` pour "
+"celui à qui le videau a été proposé. Elle est rangée par les erreurs "
+"mêmes dont ``error_mp`` est tiré, jamais par le libellé de meilleure "
+"action que porte l'analyse : importé, ce libellé peut contredire les "
+"équités qu'il accompagne. À coût égal, c'est la décision jouée."
+msgstr ""
+"Κάθε κίνηση που επιστρέφουν τα ``matches.moves`` και "
+"``matches.movesByMatch`` κρίνεται από την αποθηκευμένη ανάλυση της θέσης "
+"της, χωρίς η ανάγνωση να εκκινεί καμία μηχανή. Το ``error_mp`` είναι το "
+"equity που έχασε η παιγμένη κίνηση, σε χιλιοστά του πόντου. Το "
+"``best_move``, σε κίνηση πουλιών, είναι η πρώτη υποψήφια κίνηση της "
+"ανάλυσης, στη σημειογραφία της, από την οπτική του παίκτη που έχει σειρά "
+"— εκείνου που έπαιξε την κίνηση· επιστρέφεται ακόμη κι όταν η παιγμένη "
+"κίνηση δεν είναι μεταξύ των υποψηφίων. Το ``best_cube_action``, σε "
+"ενέργεια κύβου, είναι η φθηνότερη από τις δύο αποφάσεις που είχε αυτός ο "
+"παίκτης: ``Double`` ή ``No Double`` για τον παίκτη που μπορούσε να "
+"διπλασιάσει (πολύ καλό για διπλασιασμό δίνει ``No Double``), ``Take`` ή "
+"``Pass`` για τον παίκτη στον οποίο προτάθηκε ο κύβος. Κατατάσσεται με τα "
+"ίδια ακριβώς σφάλματα από τα οποία προκύπτει το ``error_mp``, ποτέ με την"
+" ετικέτα καλύτερης ενέργειας που φέρει η ανάλυση: όταν εισάγεται, η "
+"ετικέτα αυτή μπορεί να αντιφάσκει με τα equity που τη συνοδεύουν. Με ίσο "
+"κόστος, είναι η απόφαση που παίχτηκε."
+
+#: ../../source/api_reference.rst:540
+msgid ""
+"Sans analyse du type voulu, les trois champs sont absents. ``error_mp`` "
+"l'est aussi quand le coup joué ne figure pas parmi les candidats, alors "
+"que ``best_move`` est rendu. Une position atteinte par plusieurs matchs y"
+" nomme le même meilleur coup."
+msgstr ""
+"Χωρίς ανάλυση του κατάλληλου τύπου, και τα τρία πεδία απουσιάζουν. Το "
+"``error_mp`` απουσιάζει επίσης όταν η παιγμένη κίνηση δεν είναι μεταξύ "
+"των υποψηφίων, ενώ το ``best_move`` επιστρέφεται. Μια θέση στην οποία "
+"φτάνουν πολλά ματς ονομάζει σε καθένα την ίδια καλύτερη κίνηση."
+
+#: ../../source/api_reference.rst:544
+msgid ""
+"Un client affiche « mieux » seulement quand ``error_mp`` est présent et "
+"non nul ; il ne compare pas le coup joué à ``best_move`` ou "
+"``best_cube_action`` : deux notations d'un même coup peuvent différer, et"
+" deux coups d'égale équité coûtent 0 l'un comme l'autre."
+msgstr ""
+"Ένας πελάτης εμφανίζει «καλύτερα» μόνο όταν το ``error_mp`` υπάρχει και "
+"είναι μη μηδενικό· δεν συγκρίνει την παιγμένη κίνηση με το ``best_move`` "
+"ή το ``best_cube_action``: δύο σημειογραφίες της ίδιας κίνησης μπορεί να "
+"διαφέρουν, και δύο κινήσεις ίσου equity κοστίζουν και οι δύο 0."
+
+#: ../../source/api_reference.rst:550
 msgid "Repères d'une transcription"
 msgstr "Χρονοσημάνσεις μιας μεταγραφής"
 
-#: ../../source/api_reference.rst:523
+#: ../../source/api_reference.rst:552
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -206,7 +268,7 @@ msgstr ""
 "διαδρομή), μια κενή συμβολοσειρά την αποσυνδέει· το ``set_header`` την "
 "ορίζει επίσης όταν η κεφαλίδα του ονομάζει μία, χωρίς ποτέ να τη σβήνει."
 
-#: ../../source/api_reference.rst:535
+#: ../../source/api_reference.rst:564
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -222,7 +284,7 @@ msgstr ""
 "``decision_estimated`` είναι εκτίμηση: κίνηση χωρίς σημάδι ενέργειας, "
 "μετρημένη από τη ζαριά έως την πρώτη στιγμή της επόμενης ενέργειας."
 
-#: ../../source/api_reference.rst:541
+#: ../../source/api_reference.rst:570
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

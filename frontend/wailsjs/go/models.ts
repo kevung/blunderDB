@@ -3072,6 +3072,8 @@ export namespace domain {
 	    cube_action?: string;
 	    luck_mp?: number;
 	    error_mp?: number;
+	    best_move?: string;
+	    best_cube_action?: string;
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
 	    roll_tick_ms?: number;
@@ -3094,6 +3096,8 @@ export namespace domain {
 	        this.cube_action = source["cube_action"];
 	        this.luck_mp = source["luck_mp"];
 	        this.error_mp = source["error_mp"];
+	        this.best_move = source["best_move"];
+	        this.best_cube_action = source["best_cube_action"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
 	        this.roll_tick_ms = source["roll_tick_ms"];

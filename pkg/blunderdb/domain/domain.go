@@ -1209,6 +1209,24 @@ type Move struct {
 	// stored (the statistics read move.decision_error_mp).
 	ErrorMP *int32 `json:"error_mp,omitempty"`
 
+	// BestMove and BestCubeAction are the play the same analysis ranks first
+	// for this Move's decision, read beside ErrorMP and never computed by an
+	// engine on read. BestMove, on a checker Move, is the first candidate in
+	// the analysis's own notation, from the side of the player on roll — the
+	// Move's player — and stays set when the played move is not among the
+	// candidates. BestCubeAction, on a cube Move, answers the decision this
+	// Move's player faced, in the vocabulary of CubeAction: "Double" or
+	// "No Double" for the player holding the cube decision (too good to
+	// double is "No Double"), "Take" or "Pass" for the player the cube was
+	// offered to. It is the cheaper of the two choices by the very errors
+	// ErrorMP is drawn from, never the analysis's recorded best-action label,
+	// which an import can bring in contradicting its equities; at equal cost,
+	// the action played. Empty means no analysis of that kind. Not stored.
+	// A client shows "better" only when ErrorMP is set and non-zero, rather
+	// than comparing strings: two notations of one play can differ.
+	BestMove       string `json:"best_move,omitempty"`
+	BestCubeAction string `json:"best_cube_action,omitempty"`
+
 	// DecisionMS is how long the player took over this Move's decision, in
 	// milliseconds from the moment they had the trait, delay included: the
 	// checker play from the roll, the double, the take or the pass on its own
