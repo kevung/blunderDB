@@ -403,11 +403,13 @@ jobs:
   # runner or a few more tests would eat. The package is split by name, not by
   # test index (scripts/go-test-shard.sh): two tests carry 60% of its time
   # (TestContract_Postgres about 420 s, TestChangeSet_Postgres about 180 s), and
-  # an index split put both in one half (817 s against 196 s).
+  # an index split put both in one half (817 s against 196 s). The rest shard
+  # grew to 18-19.5 min of a 20 min job and a tag run was cut at the limit:
+  # 30 min and a 1800 s go test leave the margin a slower runner needs.
   test-postgres:
     name: test-postgres (${{ matrix.shard }})
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -422,7 +424,7 @@ jobs:
                 ./pkg/blunderdb/storage/postgres/ 2>&1 | tee test-output.txt
           - shard: rest
             run: |
-              go test -tags postgres -timeout 1200s -count=1 -skip '^(TestContract_Postgres|TestChangeSet_Postgres)$' -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
+              go test -tags postgres -timeout 1800s -count=1 -skip '^(TestContract_Postgres|TestChangeSet_Postgres)$' -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
                 ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/bulkload/... ./pkg/blunderdb/migrate/... ./pkg/blunderdb/events/pgnotify/... 2>&1 | tee test-output.txt
     env:
       BLUNDERDB_REQUIRE_PG: "1"
