@@ -911,6 +911,8 @@ var schemaStatements = []string{
 	// than a duplicate.
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_anki_card_identity ON anki_card(deck_id, kind, key)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_card_due ON anki_card(deck_id, due)`,
+	// The decks of a page of positions, and the cascade from a deleted position.
+	`CREATE INDEX IF NOT EXISTS idx_anki_card_position ON anki_card(position_id)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_card ON anki_review_log(card_id, reviewed_at)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_deck ON anki_review_log(deck_id, reviewed_at)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
