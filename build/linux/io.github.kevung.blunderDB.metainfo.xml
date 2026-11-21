@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.58.0" date="2026-11-21">
+      <description>
+        <ul>
+          <li>A match's result (final score and winner) is kept: a Result column in the match list, matches sortable by PR, in the interface and on the command line</li>
+          <li>Match winning chances charted along the decisions, and a histogram of decision times</li>
+          <li>Checker evaluations kept per source; a tournament's origin in the Tournaments panel; two provenance criteria for live collections</li>
+          <li>Faster search on large PostgreSQL databases, and a choice of PostgreSQL query execution mode</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.57.0" date="2026-11-16">
       <description>
         <ul>

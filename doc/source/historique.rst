@@ -42,6 +42,24 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.58.0 (2026-11-21)
+-------------------
+
+- **Le résultat d'un match est conservé** : l'import garde le score final et le vainqueur, la migration les déduit pour les matchs déjà présents. La liste du panneau Matchs porte une colonne **Résultat** (les points du vainqueur en gras, un match inachevé en gris), ``blunderdb list matches`` affiche le résultat ou ``unfinished``.
+- **Trier les matchs par PR** : la colonne **PR** du panneau Matchs se trie sur toute la bibliothèque, comme ``blunderdb list matches --sort pr1`` ; le tri s'offre aussi sur le PR du joueur principal (alias compris) et sur celui de son adversaire. Un match sans PR vient en dernier dans les deux sens.
+- **Les chances de gagner le match au fil des décisions** : un troisième graphique de l'onglet *Graphes* d'un match trace les chances de gagner du premier joueur, de la meilleure option au coup joué, une erreur marquée d'un point. ``blunderdb match`` les donne en ``json`` (``win_trace``) et en ``text``, le mode serveur par ``stats.matchWinTrace``.
+- **Histogramme des durées de décision** : à côté du résumé des durées, l'onglet *Graphes* compte les décisions de chaque joueur par tranche de durée, et un clic sur une tranche ouvre ses décisions l'une après l'autre ; la sortie ``text`` de ``blunderdb match`` et ``stats.matchTimeSummary`` livrent les mêmes tranches.
+- **Chaque évaluation de pions est gardée par source** : quand plusieurs moteurs ou profondeurs ont évalué une position (XG, GNU Backgammon, gammonNet, rollout), la vue fusionnée « la plus profonde gagne » reste, et l'analyse porte aussi ce qu'a dit chaque source, ``allCheckerAnalyses`` en mode serveur. Réimporter une source déjà tenue n'écrit rien.
+- **L'origine d'un tournoi** : la colonne **Origine** du panneau Tournois dit d'où vient le tournoi (« importé », « plateforme », « club »…), se renseigne dans le formulaire d'édition, entre dans le filtre de la liste et part avec le tournoi à l'export et à la synchronisation ; ``tournaments.updateOrigin`` la change en mode serveur.
+- **Deux critères de provenance pour les collections vivantes** : ``s i`` garde les positions apportées une à une plutôt qu'avec un match, ``s fl`` celles que le logiciel d'origine avait marquées ; les deux se combinent avec tout autre critère.
+- **La liste des positions porte l'erreur jouée, la date et les collections** : ``blunderdb search`` et ``blunderdb list positions`` ajoutent les colonnes *Error* (l'équité perdue par la décision jouée), *Date* et *Collections* ; le mode serveur les rend par ``positions.listFields``.
+- **Recherche plus rapide sur les grandes bases PostgreSQL** : une structure triée par pips se lit dans l'ordre par un index qui porte ses masques, et par bandes de pips en tri croissant (migrations 071 et 074) ; un filtre de joueur, d'adversaire, de tournoi ou de longueur joint à un filtre rarement vrai lit d'abord les autres filtres ; une occupation de fin de partie se lit par son index quand son compte de pips en laisse peu ; une distance au-delà de la plus longue longueur de match admise ne rend rien sans lecture.
+- **Mode d'exécution des requêtes PostgreSQL** : ``BLUNDERDB_POSTGRES_QUERY_EXEC_MODE`` le choisit ; par défaut ``cache_describe``, qui ne laisse aucun plan nommé en mémoire sur les connexions du pool.
+- **Simulation d'un tournoi, verdict reproductible** (nicomaque 0.10.0) : ``directions.simulate`` compte le travail du premier ``run``, sans chronomètre, et refuse un format trop lourd (``too_heavy``) du même verdict sur toute machine ; les poules suivent le tirage du moteur, et la recherche d'appariement d'un suisse par rondes entre dans le compte au lieu d'une borne sur le nombre de rondes.
+- **Compatibilité** : une base qui a reçu une évaluation de pions de plusieurs sources (schéma 2.58.0) ou un résultat de match (schéma 2.59.0) ne se rouvre plus avec blunderDB 0.57.0 ou une version antérieure ; une base qui n'en a reçu aucun, si.
+- **Corrections notables** : la conversion de l'équité en chances de gagner le match donne les mêmes chiffres sur toutes les architectures (arm64 et amd64 récents compris).
+- Voir :ref:`manuel_matchs`, :ref:`manuel_tournois`, :ref:`panneau_collections`, :ref:`metrique_trace_mwc`, :ref:`cli`, :ref:`api_reference` et :ref:`headless_postgres`.
+
 0.57.0 (2026-11-16)
 -------------------
 
