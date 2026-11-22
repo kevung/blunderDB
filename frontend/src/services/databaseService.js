@@ -29,7 +29,7 @@ import { activeGroupId, groupSwitchingStore, holdingSwitch, libraryReplaced } fr
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { translate, tMsg } from '../i18n';
-import { tooNewMessage } from './readerFloor.js';
+import { heldElsewhereMessage, tooNewMessage } from './readerFloor.js';
 
 export const warningMessageStore = writable('');
 
@@ -204,8 +204,8 @@ export function libraryGroupError(error, context = {}) {
         return BUSY_JOB_KEYS[job] ? tMsg(BUSY_JOB_KEYS[job]) : tMsg('libraryGroups.busy', { job: job || '?' });
     }
     if (isCancelled(error)) return tMsg('libraryGroups.migrationCancelled');
-    const tooNew = tooNewMessage(error);
-    if (tooNew) return tooNew;
+    const refused = tooNewMessage(error) ?? heldElsewhereMessage(error);
+    if (refused) return refused;
     if (context.switching !== undefined) return tMsg('libraryGroups.switchFailed', { name: context.switching });
     return tMsg('commands.errorOpeningDb');
 }
@@ -429,7 +429,7 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
         await restoreSessionState();
     } catch (error) {
         logger.error('Error opening database:', error);
-        setStatusBarMessage(tooNewMessage(error) ?? tMsg('commands.errorOpeningDb'));
+        setStatusBarMessage(tooNewMessage(error) ?? heldElsewhereMessage(error) ?? tMsg('commands.errorOpeningDb'));
         statusBarModeStore.set('NORMAL');
         // A failure after a successful open leaves the database open, and its path displayed.
         if (openFailed && (await showWhatFailedLeft(previous))) await resumeSessionSave();

@@ -229,6 +229,7 @@
         "errorCreatingDb": "Ошибка создания новой базы данных",
         "errorOpeningDb": "Ошибка открытия базы данных",
         "databaseTooNew": "Эта база данных требует более новую версию blunderDB (схема {version} или новее): обновите blunderDB, чтобы открыть её",
+        "databaseHeldElsewhere": "Другой экземпляр blunderDB всё ещё держит эту базу данных (схема {schema}, этот читает {reads}): закройте его и откройте базу снова",
         "errorSavingFilter": "Ошибка сохранения фильтра",
         "filterSaved": "Фильтр успешно сохранён",
         "goToPosition": "Перейти к позиции {n}",

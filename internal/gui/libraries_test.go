@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -14,6 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/filelock"
 	_ "modernc.org/sqlite"
 )
 
@@ -563,5 +565,61 @@ func TestOpenLibrary_PreviousReopenedReadOnlyWhenLockTaken(t *testing.T) {
 	}
 	if !db.IsReadOnly() {
 		t.Error("the previous library was reopened for writing though another handle holds its lock")
+	}
+}
+
+// A library another blunderDB holds — an older one that never migrated it —
+// opens read-only and is refused, as the startup reopening meets it: the
+// refusal names its cause, the empty library the window started on stays
+// usable, and nothing of the refused open is kept, so the library opens for
+// writing, migrated, once the other instance lets it go.
+func TestOpenLibrary_StaleLibraryHeldByAnotherInstance(t *testing.T) {
+	dir := t.TempDir()
+	stale := newLibraryFile(t, dir, "stale.db", 3)
+	raw, err := sql.Open("sqlite", stale)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE metadata SET value = '2.57.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	_ = raw.Close()
+	held, ok, err := filelock.TryExclusive(filelock.LockPath(stale))
+	if err != nil || !ok {
+		t.Fatalf("taking the other instance's lock: ok=%v err=%v", ok, err)
+	}
+
+	db := database.NewDatabase()
+	if err := db.SetupDatabase(":memory:"); err != nil {
+		t.Fatal(err)
+	}
+	a := NewApp(db)
+	t.Cleanup(func() { a.closeParkedLibraries(); _ = db.Close() })
+
+	err = a.OpenLibrary(stale)
+	if !errors.Is(err, database.ErrHeldByAnotherInstance) {
+		t.Fatalf("open of a stale library another instance holds: %v, want ErrHeldByAnotherInstance", err)
+	}
+	if strings.Contains(err.Error(), "no such table") {
+		t.Errorf("the refusal carries a failure of its own fallback: %v", err)
+	}
+	if got := database.OpenPath(db); got != ":memory:" {
+		t.Errorf("after the refusal %q is open, want the empty library :memory:", got)
+	}
+	if _, err := db.CheckDatabaseVersion(); err != nil {
+		t.Errorf("the library left after the refusal is unusable: %v", err)
+	}
+
+	if err := held.Release(); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.OpenLibrary(stale); err != nil {
+		t.Fatalf("opening once the other instance let it go: %v", err)
+	}
+	if db.IsReadOnly() {
+		t.Error("opened read-only though nobody else holds the lock")
+	}
+	if v, err := db.CheckDatabaseVersion(); err != nil || v != database.DatabaseVersion {
+		t.Errorf("version after the open: %s, %v; want %s", v, err, database.DatabaseVersion)
 	}
 }

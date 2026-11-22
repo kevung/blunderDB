@@ -300,8 +300,16 @@ func (a *App) OpenLibrary(path string) error {
 	if err == nil || previous == "" || database.OpenPath(a.db) != "" {
 		return err
 	}
-	// The failure came after the previous library was closed.
-	if rerr := database.OpenDatabaseContext(a.db, context.Background(), previous, nil); rerr != nil {
+	// The failure came after the previous library was closed. The empty
+	// library a window starts on has no file to reopen: an open of :memory:
+	// would find a blank database without its schema, so it is set up anew.
+	var rerr error
+	if previous == ":memory:" {
+		rerr = a.db.SetupDatabase(previous)
+	} else {
+		rerr = database.OpenDatabaseContext(a.db, context.Background(), previous, nil)
+	}
+	if rerr != nil {
 		slog.Warn("reopening the previous library failed", "path", previous, "err", rerr)
 		return errors.Join(err, rerr)
 	}

@@ -229,6 +229,7 @@
         "errorCreatingDb": "新規データベースの作成中にエラーが発生しました",
         "errorOpeningDb": "データベースを開く際にエラーが発生しました",
         "databaseTooNew": "このデータベースにはより新しい blunderDB が必要です（スキーマ {version} 以降）。開くには blunderDB を更新してください",
+        "databaseHeldElsewhere": "別の blunderDB がまだこのデータベースを開いています（スキーマ {schema}、この blunderDB は {reads} を読みます）。それを閉じてから、データベースを開き直してください",
         "errorSavingFilter": "フィルターの保存中にエラーが発生しました",
         "filterSaved": "フィルターを正常に保存しました",
         "goToPosition": "ポジション {n} へ移動",

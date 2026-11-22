@@ -229,6 +229,7 @@
         "errorCreatingDb": "Virhe uuden tietokannan luonnissa",
         "errorOpeningDb": "Virhe tietokannan avaamisessa",
         "databaseTooNew": "Tämä tietokanta vaatii uudemman blunderDB:n (skeema {version} tai uudempi): päivitä blunderDB avataksesi sen",
+        "databaseHeldElsewhere": "Toinen blunderDB pitää yhä tätä tietokantaa auki (skeema {schema}, tämä lukee {reads}): sulje se ja avaa tietokanta uudelleen",
         "errorSavingFilter": "Virhe suodattimen tallentamisessa",
         "filterSaved": "Suodatin tallennettu onnistuneesti",
         "goToPosition": "Siirry asemaan {n}",

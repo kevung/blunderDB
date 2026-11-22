@@ -229,6 +229,7 @@
         "errorCreatingDb": "Erreur lors de la création de la nouvelle base de données",
         "errorOpeningDb": "Erreur lors de l'ouverture de la base de données",
         "databaseTooNew": "Cette base demande un blunderDB plus récent (schéma {version} ou ultérieur) : mettez blunderDB à jour pour l'ouvrir",
+        "databaseHeldElsewhere": "Un autre blunderDB tient encore cette base (schéma {schema}, celui-ci lit {reads}) : fermez-le, puis rouvrez la base",
         "errorSavingFilter": "Erreur lors de l'enregistrement du filtre",
         "filterSaved": "Filtre enregistré avec succès",
         "goToPosition": "Aller à la position {n}",

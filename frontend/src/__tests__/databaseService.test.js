@@ -384,6 +384,17 @@ describe('openDatabaseByPath', () => {
         expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'commands.databaseTooNew', i18nParams: { version: refusal.floor } });
     });
 
+    test('a stale database another blunderDB holds is refused with its cause', async () => {
+        databasePathStore.set('/tmp/old.db');
+        vi.mocked(OpenLibrary).mockRejectedValueOnce(
+            new Error('another blunderDB instance holds this database for writing and its schema is 2.57.0, this blunderDB reads 2.60.0; close the other blunderDB so this one can open and migrate it')
+        );
+
+        await openDatabaseByPath('/tmp/held.db');
+
+        expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'commands.databaseHeldElsewhere', i18nParams: { schema: '2.57.0', reads: '2.60.0' } });
+    });
+
     test('a failed open that lost the library forgets what the screen held of it', async () => {
         databasePathStore.set('/tmp/old.db');
         commentTextStore.set('of the old library');

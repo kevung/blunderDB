@@ -186,6 +186,13 @@ func (d *Database) currentGeneration() uint64 {
 	return d.generation
 }
 
+// ErrHeldByAnotherInstance refuses a library another blunderDB process holds
+// for writing while its schema is not the one this binary reads: that other
+// instance, older or newer, is the only one allowed to migrate it, and a
+// read-only open cannot read it with today's queries. Closing it lets this
+// one open the library for writing.
+var ErrHeldByAnotherInstance = errors.New("another blunderDB instance holds this database")
+
 // acquireFileLock takes the single-writer advisory lock before a file-backed
 // database is opened. If another instance holds it, d.readOnly is set and the
 // caller must open read-only (ADR-0004: never read-write twice). A lock
@@ -684,8 +691,8 @@ func (d *Database) openDatabase(ctx context.Context, path string, progress func(
 			return err
 		}
 		if cmp, cerr := compareVersions(onDisk, DatabaseVersion); cerr != nil || cmp != 0 {
-			return fmt.Errorf("cannot open database read-only: its schema is %s and this blunderDB reads %s; "+
-				"close the other instance holding it so this one can open it for writing", onDisk, DatabaseVersion)
+			return fmt.Errorf("%w for writing and its schema is %s, this blunderDB reads %s; "+
+				"close the other blunderDB so this one can open and migrate it", ErrHeldByAnotherInstance, onDisk, DatabaseVersion)
 		}
 		if err = ctx.Err(); err != nil {
 			return err

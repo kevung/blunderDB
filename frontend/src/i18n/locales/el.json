@@ -229,6 +229,7 @@
         "errorCreatingDb": "Σφάλμα δημιουργίας νέας βάσης δεδομένων",
         "errorOpeningDb": "Σφάλμα ανοίγματος βάσης δεδομένων",
         "databaseTooNew": "Αυτή η βάση απαιτεί νεότερο blunderDB (σχήμα {version} ή νεότερο): ενημερώστε το blunderDB για να την ανοίξετε",
+        "databaseHeldElsewhere": "Ένα άλλο blunderDB κρατά ακόμη αυτή τη βάση (σχήμα {schema}, αυτό διαβάζει {reads}): κλείστε το και ανοίξτε ξανά τη βάση",
         "errorSavingFilter": "Σφάλμα αποθήκευσης φίλτρου",
         "filterSaved": "Το φίλτρο αποθηκεύτηκε με επιτυχία",
         "goToPosition": "Μετάβαση στη θέση {n}",
