@@ -250,6 +250,20 @@ func (s *LibrarySettingsStore) MainPlayer(ctx context.Context, scope string) (st
 	return strings.TrimSpace(name), nil
 }
 
+// GuardMainPlayer — see storage.LibrarySettingsStore. The guard is an
+// advisory lock on PostgreSQL; on SQLite every transaction holds the write
+// lock from its start, which already guards more than the scope.
+func (s *LibrarySettingsStore) GuardMainPlayer(ctx context.Context, scope string) error {
+	q, args := s.DB.Guard(storage.MainPlayerGuardKey(scope))
+	if q == "" {
+		return nil
+	}
+	if _, err := s.DB.Exec(ctx, q, args...); err != nil {
+		return errf(s.DB, "guard main player", err)
+	}
+	return nil
+}
+
 // SetMainPlayer — see storage.LibrarySettingsStore. Forgetting deletes the
 // row, so a library that never had a Main player and one that had it
 // removed read the same.

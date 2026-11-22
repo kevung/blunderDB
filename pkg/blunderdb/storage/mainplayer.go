@@ -99,6 +99,11 @@ func DesignateMainPlayer(ctx context.Context, st Storage, scope, name string) (M
 		return MainPlayerPlan{}, err
 	}
 	defer func() { _ = tx.Rollback() }()
+	// Taken before the plan is read: a designation running alongside would
+	// otherwise read the same plan and swap each of its matches back.
+	if err := tx.LibrarySettings().GuardMainPlayer(ctx, scope); err != nil {
+		return MainPlayerPlan{}, err
+	}
 	plan, err := PlanMainPlayer(ctx, tx, scope, name)
 	if err != nil {
 		return plan, err
@@ -132,10 +137,19 @@ func ClearMainPlayer(ctx context.Context, st Stores, scope string) error {
 // PlaceMainPlayerFirst swaps the match when the scope's Main player sits at
 // its seat 2, and reports whether it did. A match whose swap is refused (a
 // draft open on it, played here) is left as it is. The caller refreshes the
-// match's stats.
+// match's stats. Run inside a transaction, it takes the scope's Main-player
+// guard before reading the match, so no other placement or designation swaps
+// it in between; a library without a Main player takes none.
 func PlaceMainPlayerFirst(ctx context.Context, st Stores, scope string, matchID int64) (bool, error) {
 	main, err := st.LibrarySettings().MainPlayer(ctx, scope)
 	if err != nil || main == "" {
+		return false, err
+	}
+	if err := st.LibrarySettings().GuardMainPlayer(ctx, scope); err != nil {
+		return false, err
+	}
+	// Read again under the guard: a designation may have just committed.
+	if main, err = st.LibrarySettings().MainPlayer(ctx, scope); err != nil || main == "" {
 		return false, err
 	}
 	list, err := st.Aliases().List(ctx, scope, AliasPlayer)

@@ -98,6 +98,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Match/MainPlayerBulkSwapLosesNothing", testMainPlayerBulkSwapLosesNothing},
 		{"Match/MainPlayerFirstAtImport", testMainPlayerFirstAtImport},
 		{"Match/MainPlayerMergeReopensPlan", testMainPlayerMergeReopensPlan},
+		{"Match/MainPlayerConcurrentDesignations", testMainPlayerConcurrentDesignations},
 		{"Match/RepairFromSource", testMatchRepairFromSource},
 		{"Match/RepairKeepsDeeperAnalysis", testMatchRepairKeepsDeeperAnalysis},
 		{"Match/RepairSeatsUnclear", testMatchRepairSeatsUnclear},
