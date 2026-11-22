@@ -167,6 +167,13 @@ type LibrarySettingsStore interface {
 	// SetMainPlayer records the Main player's name; "" forgets it.
 	SetMainPlayer(ctx context.Context, scope string, name string) error
 
+	// GuardMainPlayer takes, until the enclosing transaction ends, the
+	// scope's Main-player guard: a gesture that reads which matches seat the
+	// Main player second and then swaps them takes it before reading, so two
+	// such gestures never both swap one match. Outside a transaction it
+	// guards nothing.
+	GuardMainPlayer(ctx context.Context, scope string) error
+
 	// MaintenanceLog returns the scope's maintenance journal: every row whose
 	// key starts with MaintenanceKeyPrefix, keyed by the full key. A library
 	// on which nothing was ever run returns an empty map.

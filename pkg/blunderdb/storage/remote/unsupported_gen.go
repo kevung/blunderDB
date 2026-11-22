@@ -66,6 +66,7 @@ var Unsupported = []string{
 	"ImportBatchStore.StudyBacklog",
 	"ImportBatchStore.StudyMark",
 	"ImportBatchStore.StudyQueue",
+	"LibrarySettingsStore.GuardMainPlayer",
 	"LibrarySettingsStore.MainPlayer",
 	"LibrarySettingsStore.MaintenanceLog",
 	"LibrarySettingsStore.PileCollection",
@@ -344,6 +345,10 @@ func (importBatchStore) StudyMark(_ context.Context, _ string, _ int64) (r0 int6
 
 func (importBatchStore) StudyQueue(_ context.Context, _ string, _ int64, _ []string, _ int) (r0 []domain.StudyQueueEntry, err error) {
 	return r0, unsupported("ImportBatchStore.StudyQueue")
+}
+
+func (librarySettingsStore) GuardMainPlayer(_ context.Context, _ string) error {
+	return unsupported("LibrarySettingsStore.GuardMainPlayer")
 }
 
 func (librarySettingsStore) MainPlayer(_ context.Context, _ string) (r0 string, err error) {

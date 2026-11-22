@@ -64,6 +64,13 @@ func AnalysisGuardKey(scope string, positionID int64) string {
 	return fmt.Sprintf("analysis:%s:%d", scope, positionID)
 }
 
+// MainPlayerGuardKey is the guard LibrarySettingsStore.GuardMainPlayer
+// takes: every swap that follows the scope's Main player depends on which
+// matches seat them second, which another such swap changes.
+func MainPlayerGuardKey(scope string) string {
+	return "main-player:" + scope
+}
+
 // DerivationGuardKey is the guard every writer of a derivation link takes:
 // whether a link closes a loop depends on all the others of its scope.
 func DerivationGuardKey(scope string) string {
