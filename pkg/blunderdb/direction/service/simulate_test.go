@@ -8,6 +8,8 @@ import (
 	"math"
 	"reflect"
 	"runtime"
+	"runtime/debug"
+	"runtime/metrics"
 	"slices"
 	"strings"
 	"testing"
@@ -290,7 +292,10 @@ func TestSimulate_BudgetIsTwoSeconds(t *testing.T) {
 // bounds admit are answered, or refused as too heavy at their first run, and hold little
 // memory; the requests whose single draw would outgrow both are refused before anything is
 // played. The pools are those the engine draws: as many as the size asks, the field dealt
-// evenly between them.
+// evenly between them. Nothing here reads a clock: the verdict of the first run is counted
+// (simulateMaxRunCost), so each request has the same one on every machine, and what a request
+// refused at once costs is what it allocates. The time a run at the bound takes is
+// BenchmarkSimulate_HeaviestFirstRun's.
 func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 	if testing.Short() {
 		t.Skip("plays the budget of production several times")
@@ -299,72 +304,96 @@ func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 		return fmt.Sprintf(`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":%d,"qualifiers":1%s}]}`, size, more)
 	}
 	const refusal = "matches a phase"
+	// The live heap the collector marked, not HeapAlloc: HeapAlloc counts the garbage not yet
+	// collected, up to twice the live heap at the default GOGC, and how much of it a sampler
+	// sees depends on how fast the machine runs against its collector. A tight GOGC marks
+	// often enough for the peak to be seen; the live heap is never above what the run holds.
+	defer debug.SetGCPercent(debug.SetGCPercent(10))
+	live := []metrics.Sample{{Name: "/gc/heap/live:bytes"}}
+	liveHeap := func() uint64 { metrics.Read(live); return live[0].Value.Uint64() }
 	for name, tc := range map[string]struct {
 		config, players string
-		refused         bool
+		refused, heavy  bool
 	}{
-		"one pool of 91":                   {rr(91, ""), "91", false},
-		"100 players in pools of 91":       {rr(91, ""), "100", false},
-		"100 players in pools of 92":       {rr(92, ""), "100", false},
-		"pools of 17 for the full field":   {rr(17, ""), "512", false},
-		"91 players in one group":          {`{"name":"x","phases":[{"kind":"round_robin","length":1,"groups":1}]}`, "91", false},
-		"a Swiss of 100 lives by rounds":   {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"mode":"rounds","pairing":"wins"}]}`, "512", false},
-		"a Swiss of 100 lives by batches":  {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"batch_minutes":1}]}`, "512", false},
-		"a double elimination":             {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "512", false},
-		"one pool of 92":                   {rr(92, ""), "92", true},
-		"one pool of the full field":       {rr(512, ""), "512", true},
-		"one group of the full field":      {`{"name":"x","phases":[{"kind":"round_robin","length":1,"groups":1}]}`, "512", true},
-		"92 players in one group":          {`{"name":"x","phases":[{"kind":"round_robin","length":1,"groups":1}]}`, "92", true},
-		"pools of 18 for the full field":   {rr(18, ""), "512", true},
-		"pools of 92 entered later by 100": {`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":2,"qualifiers":1},{"kind":"round_robin","length":1,"group_size":92,"qualifiers":1,"entry":"all"}]}`, "100", true},
+		"one pool of 91":                   {rr(91, ""), "91", false, true},
+		"100 players in pools of 91":       {rr(91, ""), "100", false, true},
+		"100 players in pools of 92":       {rr(92, ""), "100", false, true},
+		"pools of 17 for the full field":   {rr(17, ""), "512", false, true},
+		"91 players in one group":          {`{"name":"x","phases":[{"kind":"round_robin","length":1,"groups":1}]}`, "91", false, true},
+		"a Swiss of 100 lives by rounds":   {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"mode":"rounds","pairing":"wins"}]}`, "512", false, true},
+		"a Swiss of 100 lives by batches":  {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"batch_minutes":1}]}`, "512", false, true},
+		"a double elimination":             {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "512", false, true},
+		"one pool of 92":                   {rr(92, ""), "92", true, false},
+		"one pool of the full field":       {rr(512, ""), "512", true, false},
+		"one group of the full field":      {`{"name":"x","phases":[{"kind":"round_robin","length":1,"groups":1}]}`, "512", true, false},
+		"92 players in one group":          {`{"name":"x","phases":[{"kind":"round_robin","length":1,"groups":1}]}`, "92", true, false},
+		"pools of 18 for the full field":   {rr(18, ""), "512", true, false},
+		"pools of 92 entered later by 100": {`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":2,"qualifiers":1},{"kind":"round_robin","length":1,"group_size":92,"qualifiers":1,"entry":"all"}]}`, "100", true, false},
 		"a large pool entered later": {`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":2,"qualifiers":1},` +
-			`{"kind":"round_robin","length":1,"group_size":512,"qualifiers":1,"entry":"all"}]}`, "512", true},
+			`{"kind":"round_robin","length":1,"group_size":512,"qualifiers":1,"entry":"all"}]}`, "512", true, false},
 	} {
 		req := service.SimulateRequest{Config: json.RawMessage(tc.config), Players: json.RawMessage(tc.players), Runs: 1}
+		if tc.refused {
+			// Refused before its draw: what it allocates is its request read, a few tens of
+			// kilobytes, where the draw of a pool of 92 alone allocates megabytes.
+			var before, after runtime.MemStats
+			runtime.ReadMemStats(&before)
+			_, err := service.Simulate(context.Background(), req)
+			runtime.ReadMemStats(&after)
+			allocated := (after.TotalAlloc - before.TotalAlloc) >> 10
+			t.Logf("%s: %d KiB allocated (%v)", name, allocated, err)
+			if !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), refusal) || allocated > 512 {
+				t.Errorf("%s: %v after %d KiB allocated; want the refusal of the phase's matches, before the draw", name, err, allocated)
+			}
+			continue
+		}
 		runtime.GC()
-		var m runtime.MemStats
-		runtime.ReadMemStats(&m)
-		base, peak := m.HeapAlloc, m.HeapAlloc
+		base := liveHeap()
+		peak := base
 		stop, sampled := make(chan struct{}), make(chan struct{})
 		go func() {
 			defer close(sampled)
-			tick := time.NewTicker(2 * time.Millisecond)
+			tick := time.NewTicker(time.Millisecond)
 			defer tick.Stop()
 			for {
 				select {
 				case <-stop:
 					return
 				case <-tick.C:
-					var m runtime.MemStats
-					runtime.ReadMemStats(&m)
-					peak = max(peak, m.HeapAlloc)
+					peak = max(peak, liveHeap())
 				}
 			}
 		}()
-		began := time.Now()
 		_, err := service.Simulate(context.Background(), req)
-		elapsed := time.Since(began)
 		close(stop)
 		<-sampled
-		grew := (peak - base) >> 20
-		t.Logf("%s: %v, %d MiB of heap (%v)", name, elapsed.Round(time.Millisecond), grew, err)
-		if tc.refused {
-			if !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), refusal) || elapsed > 100*time.Millisecond {
-				t.Errorf("%s: %v after %v and %d MiB of heap; want the refusal of the phase's matches, at once", name, err, elapsed, grew)
-			}
-			continue
-		}
+		grew := (max(peak, liveHeap()) - base) >> 20
+		t.Logf("%s: %d MiB of live heap (%v)", name, grew, err)
 		if err != nil && !errors.Is(err, service.ErrSimulationTooHeavy) {
 			t.Errorf("%s: %v; want an answer, or too heavy", name, err)
 		}
 		if err != nil && strings.Contains(err.Error(), refusal) {
 			t.Errorf("%s: %v; the pools the engine draws are within the bound", name, err)
 		}
-		if over := elapsed - service.SimulateBudget; over > 250*time.Millisecond && !raceEnabled {
-			t.Errorf("%s: answered %v past the budget; want a run cut within a quarter of a second", name, over)
+		if heavy := errors.Is(err, service.ErrSimulationTooHeavy); heavy != tc.heavy {
+			t.Errorf("%s: too heavy %v (%v); want %v, counted on its first run", name, heavy, err, tc.heavy)
 		}
-		if grew > 64 {
-			t.Errorf("%s: held %d MiB of heap; want 64 at most", name, grew)
+		if grew > 16 {
+			t.Errorf("%s: held %d MiB of live heap; want 16 at most", name, grew)
+		}
+	}
+}
+
+// BenchmarkSimulate_HeaviestFirstRun: the time a first run takes up to simulateMaxRunCost,
+// which the cost is calibrated against (about 0.3 s on an ordinary processor, a fraction of
+// SimulateBudget). Measured here rather than asserted in a test: the wall clock of a shared
+// runner says nothing about the cost the verdict counts.
+func BenchmarkSimulate_HeaviestFirstRun(b *testing.B) {
+	req := service.SimulateRequest{Players: json.RawMessage("100"), Runs: 1,
+		Config: json.RawMessage(`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":92,"qualifiers":1}]}`)}
+	for b.Loop() {
+		if _, err := service.Simulate(context.Background(), req); !errors.Is(err, service.ErrSimulationTooHeavy) {
+			b.Fatalf("%v; want too heavy at the first run", err)
 		}
 	}
 }
