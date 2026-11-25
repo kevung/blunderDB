@@ -1515,6 +1515,14 @@ rien lire ni écrire dans le tenant : avec dés, les meilleurs coups
 ``ply`` va de 0 à 2 (2 par défaut) ; une recherche plus profonde est le travail
 d'``analyzeMissing``.
 
+``gammonnet.rolls`` donne les 21 jets d'une position nue (``position`` ou
+``xgid``) dont le joueur au trait n'a pas lancé : pour chaque jet, le meilleur
+coup, l'équité et, si le joueur a accès au videau, le marché perdu — comme la
+commande :ref:`rolls <cli_rolls>`. Avec ``dice`` (deux dés) et ``move`` (un coup
+légal, vide pour une danse), la position est d'abord jouée et la réponse porte
+sur les jets de l'adversaire. ``ply`` va de 0 à 2 (2 par défaut). Rien n'est lu
+dans le tenant hors sa table d'équités, rien n'y est écrit.
+
 La famille ``anki`` gagne six méthodes qui étendent le planificateur à
 répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque révision —
 notation et résultat FSRS — pour les statistiques de rétention et un
@@ -2242,7 +2250,8 @@ Une instance partagée borne ce que chaque tenant lui prend avec
 ``--quota-imports`` (sans option, rien n'est borné). Le temps de calcul compte chaque calcul du
 moteur demandé par le tenant : ``gammonnet.analyzeMissing``,
 ``gammonnet.sweepStale``, ``gammonnet.compare``, ``gammonnet.cubeMatrix``,
-``gammonnet.evaluate``, ``rollout.position`` et ``rollout.filter``. Il se
+``gammonnet.evaluate``, ``gammonnet.rolls``, ``rollout.position`` et
+``rollout.filter``. Il se
 compte en secondes CPU : le temps écoulé de chaque calcul, plus celui des
 travailleurs inactifs sur lesquels sa recherche s'est étalée, si bien qu'un
 calcul réparti sur tous les cœurs coûte autant que le même travail mené
@@ -2274,7 +2283,7 @@ s'appliquent au tenant que le proxy a posé dans ``X-Tenant-ID``.
 Tous les calculs du moteur passent par une seule file d'analyse : balayages
 (``gammonnet.analyzeMissing``, ``gammonnet.sweepStale``), évaluations
 (``gammonnet.evaluate``), comparaisons (``gammonnet.compare``), matrices de
-videau (``gammonnet.cubeMatrix``) et rollouts (``rollout.position``,
+videau (``gammonnet.cubeMatrix``), cartes des jets (``gammonnet.rolls``) et rollouts (``rollout.position``,
 ``rollout.filter``). C'est un
 jeu de travailleurs du moteur (``--analysis-workers``), chacun avec son
 chercheur réutilisé, qui prennent les positions une à une en faisant le tour

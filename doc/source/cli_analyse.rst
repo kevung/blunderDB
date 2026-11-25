@@ -350,6 +350,58 @@ Sortie ``text`` : une grille dont les lignes sont les points restant à faire
 au joueur au trait, les colonnes ceux de l'adversaire, puis la légende des
 sigles ``ND`` / ``DT`` / ``DP`` / ``TG`` et la raison de chaque case refusée.
 
+.. _cli_rolls:
+
+rolls — Carte des jets
+----------------------
+
+Donne, pour une position où le joueur au trait n'a pas encore lancé, ce que
+fait **chacun des 21 jets** : le meilleur coup, l'équité du joueur après ce
+coup et, quand il a accès au videau, si le jet lui fait **perdre le marché**.
+Calcul pur : aucune base de données n'est ouverte, la position arrive par son
+XGID ou son OGID. Les dés de la position sont ignorés.
+
+.. code-block:: bash
+
+   ./blunderdb rolls [options] '<XGID|OGID>'
+
+**Options:**
+
+* ``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : ``text``).
+* ``--ply`` — Profondeur de recherche de chaque jet, de 0 à 2 (défaut : 2).
+* ``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage
+  (défaut : 12).
+* ``--jobs`` — Recherches menées en parallèle (défaut : une par cœur).
+* ``--roll`` — Joue d'abord ce jet (par exemple ``31``) : la carte est alors
+  celle des réponses de l'adversaire.
+* ``--move`` — Avec ``--roll`` : le coup joué, n'importe quel coup légal, pas
+  forcément le meilleur ; vide pour un jet qui danse.
+
+L'équité suit l'échelle des autres évaluations : points de money en money,
+équité normalisée à un score de match. Le poids d'un jet est 1 sur 36 pour un
+double, 2 sur 36 sinon. La moyenne pondérée des 21 lignes est l'équité de la
+position un ply plus profond, videau non tourné : la carte décompose ce
+chiffre jet par jet.
+
+Un jet **perd le marché** quand, après ce jet et le meilleur coup, un double du
+joueur serait refusé : la décision de videau du joueur, lue sur la position que
+l'adversaire va lancer, est « double, passe » ou « trop bon ». Cette décision
+est cherchée un ply moins profond que le jet. La colonne est vide quand le
+joueur n'a pas accès au videau (videau adverse, partie Crawford).
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Les 21 jets de l'ouverture
+   ./blunderdb rolls 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
+
+   # Les réponses de l'adversaire à 31 joué 8/5 6/5
+   ./blunderdb rolls --roll 31 --move '8/5 6/5' '<XGID>'
+
+Sortie ``text`` : une ligne par jet (jet, poids sur 36, équité, marché
+``kept`` / ``lost``, meilleur coup), puis la moyenne.
+
 capture — Position depuis une capture d'écran
 ----------------------------------------------
 

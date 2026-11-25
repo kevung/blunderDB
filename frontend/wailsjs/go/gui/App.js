@@ -70,6 +70,10 @@ export function CancelMaintenance() {
   return window['go']['gui']['App']['CancelMaintenance']();
 }
 
+export function CancelRollMap() {
+  return window['go']['gui']['App']['CancelRollMap']();
+}
+
 export function CancelRollout() {
   return window['go']['gui']['App']['CancelRollout']();
 }
@@ -412,6 +416,14 @@ export function StartGammonNetStaleBatch(arg1, arg2, arg3) {
 
 export function StartMaintenance(arg1) {
   return window['go']['gui']['App']['StartMaintenance'](arg1);
+}
+
+export function StartRollMap(arg1, arg2, arg3, arg4) {
+  return window['go']['gui']['App']['StartRollMap'](arg1, arg2, arg3, arg4);
+}
+
+export function StartRollMapAfterPlay(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+  return window['go']['gui']['App']['StartRollMapAfterPlay'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
 
 export function StartRollout(arg1) {

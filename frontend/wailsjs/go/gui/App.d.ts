@@ -43,6 +43,8 @@ export function CancelLibraryOpen():Promise<void>;
 
 export function CancelMaintenance():Promise<void>;
 
+export function CancelRollMap():Promise<void>;
+
 export function CancelRollout():Promise<void>;
 
 export function CancelVideoRepair(arg1:string):Promise<void>;
@@ -214,6 +216,10 @@ export function StartGammonNetMatchBatch(arg1:number,arg2:number,arg3:number,arg
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function StartMaintenance(arg1:string):Promise<void>;
+
+export function StartRollMap(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<void>;
+
+export function StartRollMapAfterPlay(arg1:domain.Position,arg2:number,arg3:number,arg4:string,arg5:number,arg6:number,arg7:number):Promise<void>;
 
 export function StartRollout(arg1:gui.RolloutRequest):Promise<number>;
 

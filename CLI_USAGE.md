@@ -49,6 +49,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `training` - The Training journal (sessions, missed positions)
 - `openingbook` - Which play at this score? Replies to the opening, judged by the book
 - `cubematrix` - Cube verdict at every score of a match, for one position
+- `rolls` - The 21 rolls of a position: best play, equity, market lost
 - `epc` - EPC, win probability and money cube verdict (bearoff)
 - `gnubgid` - The GNUbg Position ID and Match ID of a position
 - `capture` - Read a position from a screen capture of an XG board
@@ -1084,6 +1085,36 @@ cube), the one scale that leaves the engine at a match score — see ADR-0019.
 ```bash
 ./blunderDB cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
 ./blunderDB cubematrix --match-length 5 --format json '<XGID>'
+```
+
+## Rolls Command
+
+Show what each of the 21 rolls does for the player about to roll: the best
+play, the equity after it, and whether the roll **loses the market** (after
+it, a double from that player would be passed). Use it to see which rolls
+make a position, and which ones end it. The position comes in as an XGID or an
+OGID; its dice are ignored, and nothing is written to a database.
+
+```bash
+./blunderDB rolls [options] <XGID|OGID>
+```
+
+**Options:**
+- `--ply` - Search depth for every roll, `0` to `2` (default `2`)
+- `--roll`, `--move` - Play this roll and move first; the table then lists the
+  opponent's replies (`--move` is any legal play, empty for a dance)
+- `--format` - Output format: `text` (default) or `json`
+
+The roll-weighted average of the 21 equities is the position's equity one ply
+deeper, cube not turned. Equities use the scale of every other evaluation:
+money points at money play, normalised equity at a match score (ADR-0019). The
+market column is empty when the player cannot double (opponent's cube,
+Crawford game).
+
+**Example:**
+```bash
+./blunderDB rolls 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
+./blunderDB rolls --roll 31 --move '8/5 6/5' --format json '<XGID>'
 ```
 
 ## EPC Command
@@ -4691,6 +4722,40 @@ Examples:
   blunderdb rollout --games 648 --truncation 0 --ply 1 '<XGID>'
   blunderdb rollout --db library.db --id 42 --preset standard --store
   blunderdb rollout --db library.db --id 42 --list
+```
+
+### `blunderdb rolls`
+
+```
+Usage: blunderdb rolls [options] <XGID|OGID>
+
+Show what each of the 21 rolls does for the player about to roll: the
+best play, the equity after it, and whether it loses the market (after
+it, a double would be passed). The market is shown only when the player
+may double. The dice of the position are ignored.
+
+The roll-weighted average is the position's equity one ply deeper, cube
+not turned. With --roll and --move, the position is first played and
+the table lists the opponent's replies.
+
+Options:
+  -format string
+    	Output format: text, json (default "text")
+  -jobs int
+    	Parallel searches (0 = one per core)
+  -move string
+    	With --roll: the play made (any legal one; empty for a dance)
+  -ply int
+    	Search depth for every roll (0-2) (default 2)
+  -prune-k int
+    	Candidate moves kept by the prune network (default 12)
+  -roll string
+    	Play this roll first (e.g. 31) and show the opponent's replies
+
+Examples:
+  blunderdb rolls 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
+  blunderdb rolls --ply 1 --format json '<XGID>'
+  blunderdb rolls --roll 31 --move '8/5 6/5' '<XGID>'  # the replies to 8/5 6/5
 ```
 
 ### `blunderdb search`

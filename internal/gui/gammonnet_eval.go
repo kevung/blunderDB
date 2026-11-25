@@ -137,6 +137,16 @@ func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates
 // uncancellable and let the batch stop yielding to it. end reports whether
 // the search was cancelled, then releases ctx.
 func (a *App) beginEvaluationAtRest() (ctx context.Context, end func() (cancelled bool)) {
+	ctx, _, end = a.beginInteractiveSearch()
+	return ctx, end
+}
+
+// beginInteractiveSearch is beginEvaluationAtRest also naming the search, so
+// a caller can later cancel that search and not whichever replaced it. Every
+// deep interactive search goes through this one slot — the panel's, the roll
+// and score maps' — so the batch yields to each of them and a new one
+// supersedes the old.
+func (a *App) beginInteractiveSearch() (ctx context.Context, seq uint64, end func() (cancelled bool)) {
 	a.gnEvalMu.Lock()
 	defer a.gnEvalMu.Unlock()
 	if a.gnEvalCancel != nil {
@@ -145,8 +155,8 @@ func (a *App) beginEvaluationAtRest() (ctx context.Context, end func() (cancelle
 	ctx, cancel := context.WithCancel(a.batchCtx())
 	a.gnEvalCancel = cancel
 	a.gnEvalSeq++
-	seq := a.gnEvalSeq
-	return ctx, func() bool {
+	seq = a.gnEvalSeq
+	return ctx, seq, func() bool {
 		a.gnEvalMu.Lock()
 		if a.gnEvalSeq == seq {
 			a.gnEvalCancel = nil
@@ -156,6 +166,17 @@ func (a *App) beginEvaluationAtRest() (ctx context.Context, end func() (cancelle
 		cancel()
 		return cancelled
 	}
+}
+
+// cancelInteractiveSearch cancels the search seq names, if it is still the
+// one in flight.
+func (a *App) cancelInteractiveSearch(seq uint64) {
+	a.gnEvalMu.Lock()
+	if a.gnEvalSeq == seq && a.gnEvalCancel != nil {
+		a.gnEvalCancel()
+		a.gnEvalCancel = nil
+	}
+	a.gnEvalMu.Unlock()
 }
 
 // CancelEvaluationAtRest aborts an in-flight background evaluation, if any.

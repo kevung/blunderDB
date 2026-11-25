@@ -52,6 +52,7 @@ func (s *Server) gammonnetRoutes() []route {
 		{http.MethodPost, "/v1/gammonnet.compare", s.handleGammonNetCompare},
 		{http.MethodPost, "/v1/gammonnet.cubeMatrix", s.handleGammonNetCubeMatrix},
 		{http.MethodPost, "/v1/gammonnet.evaluate", s.handleGammonNetEvaluate},
+		{http.MethodPost, "/v1/gammonnet.rolls", s.handleGammonNetRolls},
 	}
 }
 
