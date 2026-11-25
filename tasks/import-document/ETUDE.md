@@ -34,11 +34,15 @@ Z-Library). Couche texte mauvaise : Olsen. Le décodage de la police XG est à p
    vignettes de vérification sont redessinées depuis le fichier d'origine.
 2. **La prose de l'auteur n'est pas importée** : une Collection exportée ou partagée
    l'emporterait.
-3. **L'analyse n'écrit rien en base.** Elle produit un relevé ; seul l'import du relevé écrit, par
+3. **L'origine de chaque position est gardée.** La description de la Collection porte le
+   titre, l'auteur et l'édition du document (ou son URL) ; chaque position porte sa référence
+   (page, libellé) en commentaire, pour rester lisible hors de la Collection. Le support exact
+   (description, commentaire, champ dédié) se tranche à la tranche 1.
+4. **L'analyse n'écrit rien en base.** Elle produit un relevé ; seul l'import du relevé écrit, par
    `SaveIndividualPosition`.
-4. **Trois états** (ADR-0108 règle 5) : sûr, à vérifier, incertain. Une position n'est sûre que si
+5. **Trois états** (ADR-0108 règle 5) : sûr, à vérifier, incertain. Une position n'est sûre que si
    un recoupement indépendant du lecteur la confirme. Dans le doute, à vérifier.
-5. **Le document vient de l'utilisateur** : un fichier local ou une URL qu'il donne. Une URL est
+6. **Le document vient de l'utilisateur** : un fichier local ou une URL qu'il donne. Une URL est
    une page, sans exploration du site. Aucune source n'est nommée ni suggérée.
 
 ## 3. Recoupements
@@ -104,3 +108,5 @@ Premier périmètre : Deep Cube, puis Robertie 501 et Woolsey.
 
 - Recommandations suivies : rendu PDF, premier périmètre, ADR neuf.
 - Seules les positions entrent en base, pas les captures ni les images (règle 1).
+- Le nom ou l'origine du document reste attaché à chaque position, en commentaire ou dans la
+  description de la Collection (règle 3).
