@@ -220,6 +220,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		GammonNetPruneK:      20,
 		GammonNetCandidates:  15,
 		GammonNetAutoAnalyze: true,
+		MapMatchLength:       13,
 		CheckForUpdates:      true,
 		RolloutChoice:        RolloutChoice{Preset: "custom", Custom: &rolloutCustom},
 		StatsFilter: StatsFilterPersisted{
@@ -268,6 +269,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		{"GammonNetPruneK", loaded.GetGammonNetPruneK(), original.GammonNetPruneK},
 		{"GammonNetCandidates", loaded.GetGammonNetCandidates(), original.GammonNetCandidates},
 		{"GammonNetAutoAnalyze", loaded.GetGammonNetAutoAnalyze(), original.GammonNetAutoAnalyze},
+		{"MapMatchLength", loaded.GetMapMatchLength(), original.MapMatchLength},
 		{"CheckForUpdates", loaded.GetCheckForUpdates(), original.CheckForUpdates},
 		{"StatsFilter", loaded.GetStatsFilter(), original.StatsFilter},
 		{"RolloutChoice", loaded.GetRolloutChoice(), original.RolloutChoice},
@@ -369,6 +371,14 @@ func TestClampGammonNetPruneK(t *testing.T) {
 	for _, c := range cases {
 		if got := clampGammonNetPruneK(c.in); got != c.want {
 			t.Errorf("clampGammonNetPruneK(%d) = %d, want %d", c.in, got, c.want)
+		}
+	}
+}
+
+func TestClampMapMatchLength(t *testing.T) {
+	for in, want := range map[int]int{0: 9, 3: 3, 15: 15, 8: 9, 17: 9, -1: 9} {
+		if got := clampMapMatchLength(in); got != want {
+			t.Errorf("clampMapMatchLength(%d) = %d, want %d", in, got, want)
 		}
 	}
 }

@@ -50,6 +50,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `openingbook` - Which play at this score? Replies to the opening, judged by the book
 - `cubematrix` - Cube verdict at every score of a match, for one position
 - `rolls` - The 21 rolls of a position: best play, equity, market lost
+- `scoremap` - Best play or cube verdict at every score of a match
 - `epc` - EPC, win probability and money cube verdict (bearoff)
 - `gnubgid` - The GNUbg Position ID and Match ID of a position
 - `capture` - Read a position from a screen capture of an XG board
@@ -1115,6 +1116,34 @@ Crawford game).
 ```bash
 ./blunderDB rolls 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
 ./blunderDB rolls --roll 31 --move '8/5 6/5' --format json '<XGID>'
+```
+
+## Scoremap Command
+
+Print the best decision of one position at **every score** of a match: with
+dice, each away × away cell gives the best play, its equity, the second play
+and the gap between them, so you can see at which scores the play changes;
+without dice, the cube verdict, as `cubematrix` gives it. The position comes in
+as an XGID or an OGID; nothing is written to a database.
+
+```bash
+./blunderDB scoremap [options] <XGID|OGID>
+```
+
+**Options:**
+- `--match-length` - Match length: any odd value from `3` to `15` (default `9`)
+- `--ply` - Search depth for every cell, `0` to `2` (default `2`)
+- `--format` - Output format: `text` (default) or `json`
+
+The position's score is replaced by the grid; its cube is kept, and a cell
+where that cube cannot stand (a double from a player who already held the
+match at the previous stake) is marked not evaluable rather than re-centred.
+The grid is post-Crawford throughout. Equities are normalised (ADR-0019).
+
+**Example:**
+```bash
+./blunderDB scoremap 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:6:4:0:9:10'
+./blunderDB scoremap --match-length 5 --ply 0 --format json '<XGID>'
 ```
 
 ## EPC Command
@@ -4756,6 +4785,35 @@ Examples:
   blunderdb rolls 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
   blunderdb rolls --ply 1 --format json '<XGID>'
   blunderdb rolls --roll 31 --move '8/5 6/5' '<XGID>'  # the replies to 8/5 6/5
+```
+
+### `blunderdb scoremap`
+
+```
+Usage: blunderdb scoremap [options] <XGID|OGID>
+
+Show the best decision of one position at every score of a match. With
+dice, each away × away cell gives the best play, its equity, the second
+play and the gap; without dice, the cube verdict, as cubematrix does.
+The position's score is replaced by the grid; its cube is kept, and a
+cell where that cube cannot stand is marked not evaluable. The grid is
+post-Crawford throughout.
+
+Options:
+  -format string
+    	Output format: text, json (default "text")
+  -jobs int
+    	Parallel searches (0 = one per core)
+  -match-length int
+    	Match length the grid spans (odd, 3-15) (default 9)
+  -ply int
+    	Search depth for every cell (0-2) (default 2)
+  -prune-k int
+    	Candidate moves kept by the prune network (default 12)
+
+Examples:
+  blunderdb scoremap 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:6:4:0:9:10'
+  blunderdb scoremap --match-length 5 --ply 0 --format json '<XGID>'
 ```
 
 ### `blunderdb search`

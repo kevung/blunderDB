@@ -196,6 +196,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/gammonnet.cubeMatrix                 custom
      POST /v1/gammonnet.evaluate                   custom
      POST /v1/gammonnet.rolls                      custom
+     POST /v1/gammonnet.scoreMap                   custom
      POST /v1/gammonnet.sweepStale                 custom
    history
      POST /v1/history.clear                        JSON

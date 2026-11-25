@@ -129,6 +129,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"edit":        cli.runEdit,
 		"cubematrix":  cli.runCubeMatrix,
 		"rolls":       cli.runRolls,
+		"scoremap":    cli.runScoreMap,
 		"epc":         cli.runEpc,
 		"gnubgid":     cli.runGnubgID,
 		"capture":     cli.runCapture,
@@ -211,6 +212,7 @@ func (cli *CLI) printUsage() {
 	fmt.Fprintln(cli.stdout(), "  openingbook  Which play at this score? Replies to the opening, judged by the book")
 	fmt.Fprintln(cli.stdout(), "  cubematrix  Cube verdict at every score of a match, for one position")
 	fmt.Fprintln(cli.stdout(), "  rolls     The 21 rolls of a position: best play, equity, market lost")
+	fmt.Fprintln(cli.stdout(), "  scoremap  Best play or cube verdict at every score of a match")
 	fmt.Fprintln(cli.stdout(), "  epc       EPC, win probability and money cube verdict (bearoff)")
 	fmt.Fprintln(cli.stdout(), "  gnubgid   The GNUbg Position ID and Match ID of a position")
 	fmt.Fprintln(cli.stdout(), "  capture   Read a position from a screen capture of an XG board")

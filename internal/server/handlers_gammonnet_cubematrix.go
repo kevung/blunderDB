@@ -1,10 +1,8 @@
 package server
 
 import (
-	"context"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -61,29 +59,8 @@ func (s *Server) handleGammonNetCubeMatrix(w http.ResponseWriter, r *http.Reques
 		writeStorageError(w, err)
 		return
 	}
-	// Each cell is a unit of the shared workers. The grid is one answer:
-	// it is finished and charged even if the tenant's time runs out midway.
-	charge := s.quota.spender(scope)
-	matrix, err := gammonnet.ComputeCubeMatrixExec(r.Context(), pos, met, req.MatchLength, req.Ply, req.PruneK, func(n int, cell func(int, *gammonnet.Searcher)) error {
-		return s.analysis.each(r.Context(), scope, n, func(d time.Duration) bool {
-			charge(d)
-			return true
-		}, func(i int, get searcherFor) {
-			cell(i, get.searcher(req.Ply, req.PruneK))
-		})
-	})
-	switch {
-	case errors.Is(err, context.Canceled):
-		return // nobody is listening
-	case errors.Is(err, errPoolClosed):
-		writeErrorCode(w, CodeUnavailable, err.Error())
-		return
-	}
-	if err != nil {
-		writeErrorCode(w, CodeInvalid, err.Error())
-		return
-	}
-	writeJSONResp(w, matrix)
+	matrix, err := gammonnet.ComputeCubeMatrixExec(r.Context(), pos, met, req.MatchLength, req.Ply, req.PruneK, s.analysisExec(r, scope, req.Ply, req.PruneK))
+	writeMapResult(w, matrix, err)
 }
 
 // cubeMatrixPositionOf reads the one position the request carries, refusing

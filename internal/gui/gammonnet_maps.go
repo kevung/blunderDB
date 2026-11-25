@@ -117,3 +117,48 @@ func (a *App) finishMap(prefix string, tag int, end func() bool, err error, done
 	}
 	a.emitBatch(prefix+":done", done())
 }
+
+// ScoreMapCellEvent is the payload of "gammonnet-scoremap:cell".
+type ScoreMapCellEvent struct {
+	Tag   int                    `json:"tag"`
+	Index int                    `json:"index"`
+	Cell  gammonnet.ScoreMapCell `json:"cell"`
+}
+
+// ScoreMapDoneEvent is the payload of "gammonnet-scoremap:done".
+type ScoreMapDoneEvent struct {
+	Tag int                `json:"tag"`
+	Map gammonnet.ScoreMap `json:"map"`
+}
+
+var gnScoreMap mapRun
+
+// StartScoreMap computes pos at every away × away score of a
+// matchLength-point match — the best play with dice, the cube verdict
+// without — at 0-ply, then at ply from the position's score outwards. Emits
+// "gammonnet-scoremap:cell" (ScoreMapCellEvent) per cell and depth, then
+// "gammonnet-scoremap:done" (ScoreMapDoneEvent), or
+// "gammonnet-scoremap:cancelled" {tag} / "gammonnet-scoremap:error"
+// {tag, message}.
+func (a *App) StartScoreMap(pos domain.Position, matchLength, ply, pruneK, tag int) {
+	ctx, seq, end := a.beginInteractiveSearch()
+	gnScoreMap.set(seq)
+	go func() {
+		defer recoverBackground(a.ctx, "gammonNet score map")
+		met, err := a.currentMET()
+		var m gammonnet.ScoreMap
+		if err == nil {
+			m, err = gammonnet.ComputeScoreMap(ctx, pos, met, matchLength, ply, pruneK, gammonnet.LocalExec(0, ply, pruneK),
+				func(i int, cell gammonnet.ScoreMapCell) {
+					a.emitBatch("gammonnet-scoremap:cell", ScoreMapCellEvent{Tag: tag, Index: i, Cell: cell})
+				})
+		}
+		a.finishMap("gammonnet-scoremap", tag, end, err, func() any { return ScoreMapDoneEvent{Tag: tag, Map: m} })
+	}()
+}
+
+// CancelScoreMap stops the score map in flight, if it is still the
+// interactive search running.
+func (a *App) CancelScoreMap() {
+	a.cancelInteractiveSearch(gnScoreMap.get())
+}

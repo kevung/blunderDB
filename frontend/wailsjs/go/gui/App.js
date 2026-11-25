@@ -78,6 +78,10 @@ export function CancelRollout() {
   return window['go']['gui']['App']['CancelRollout']();
 }
 
+export function CancelScoreMap() {
+  return window['go']['gui']['App']['CancelScoreMap']();
+}
+
 export function CancelVideoRepair(arg1) {
   return window['go']['gui']['App']['CancelVideoRepair'](arg1);
 }
@@ -436,6 +440,10 @@ export function StartRolloutFiltered(arg1, arg2) {
 
 export function StartRolloutIDs(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartRolloutIDs'](arg1, arg2, arg3);
+}
+
+export function StartScoreMap(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['gui']['App']['StartScoreMap'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function StartTournamentDisplay(arg1) {

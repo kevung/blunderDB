@@ -76,6 +76,7 @@ var customContentTypes = map[string][]string{
 	"/v1/gammonnet.cubeMatrix":        {"application/json"},
 	"/v1/gammonnet.evaluate":          {"application/json"},
 	"/v1/gammonnet.rolls":             {"application/json"},
+	"/v1/gammonnet.scoreMap":          {"application/json"},
 	"/v1/training.generateBearoff":    {"application/json"},
 	"/v1/training.generateEvaluation": {"application/json"},
 	// rollout.position answers once the rollout is done: one position, no

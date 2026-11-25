@@ -350,6 +350,51 @@ Sortie ``text`` : une grille dont les lignes sont les points restant à faire
 au joueur au trait, les colonnes ceux de l'adversaire, puis la légende des
 sigles ``ND`` / ``DT`` / ``DP`` / ``TG`` et la raison de chaque case refusée.
 
+.. _cli_scoremap:
+
+scoremap — Carte des scores
+---------------------------
+
+Généralise la :ref:`matrice du videau <cli_cubematrix>` : donne la **meilleure
+décision** d'une position à tous les scores d'un match. Avec dés, chaque case
+*away × away* porte le meilleur coup, son équité, le deuxième coup et l'écart
+entre les deux : on voit à quels scores le coup change. Sans dés, la case porte
+le verdict de videau, comme ``cubematrix``. Calcul pur : aucune base de données
+n'est ouverte.
+
+.. code-block:: bash
+
+   ./blunderdb scoremap [options] '<XGID|OGID>'
+
+**Options:**
+
+* ``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : ``text``).
+* ``--match-length`` — Longueur du match, toute valeur impaire de 3 à 15
+  (défaut : 9).
+* ``--ply`` — Profondeur de recherche de chaque case, de 0 à 2 (défaut : 2).
+* ``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage
+  (défaut : 12).
+* ``--jobs`` — Recherches menées en parallèle (défaut : une par cœur).
+
+Le score de la position est remplacé par la grille ; son **videau** est
+conservé. Une case où ce videau ne peut pas se trouver — il supposerait le
+double d'un joueur à qui la mise précédente donnait déjà le match — est marquée
+non évaluable plutôt que recentrée. La grille est post-Crawford d'un bout à
+l'autre ; les équités sont normalisées.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Le 31 d'ouverture à tous les scores d'un match en 9 points
+   ./blunderdb scoremap 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:6:4:0:9:10'
+
+   # Grille d'un match en 5 points à 0 ply, pour un script
+   ./blunderdb scoremap --match-length 5 --ply 0 --format json '<XGID>'
+
+Sortie ``text`` : avec dés, une ligne par case (score, équité, meilleur coup,
+écart, deuxième coup) ; sans dés, la grille de ``cubematrix``.
+
 .. _cli_rolls:
 
 rolls — Carte des jets

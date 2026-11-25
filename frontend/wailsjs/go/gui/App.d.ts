@@ -47,6 +47,8 @@ export function CancelRollMap():Promise<void>;
 
 export function CancelRollout():Promise<void>;
 
+export function CancelScoreMap():Promise<void>;
+
 export function CancelVideoRepair(arg1:string):Promise<void>;
 
 export function CheckForUpdate():Promise<gui.UpdateCheckResult>;
@@ -226,6 +228,8 @@ export function StartRollout(arg1:gui.RolloutRequest):Promise<number>;
 export function StartRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<number>;
 
 export function StartRolloutIDs(arg1:Array<number>,arg2:rollout.Settings,arg3:number):Promise<number>;
+
+export function StartScoreMap(arg1:domain.Position,arg2:number,arg3:number,arg4:number,arg5:number):Promise<void>;
 
 export function StartTournamentDisplay(arg1:gui.TournamentDisplayConfig):Promise<gui.TournamentDisplayStatus>;
 

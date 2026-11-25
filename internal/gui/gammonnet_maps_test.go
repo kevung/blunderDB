@@ -92,3 +92,42 @@ func TestStartRollMapAfterPlay_RefusesAnIllegalPlay(t *testing.T) {
 		t.Fatalf("ended with %s", last.name)
 	}
 }
+
+func TestStartScoreMap_EmitsCellsThenDone(t *testing.T) {
+	a := &App{}
+	ch := mapEvents(a)
+	pos, err := domain.DecodeXGID("XGID=-b----E-C---eE---c-e----B-:0:0:1:31:6:4:0:9:10")
+	if err != nil {
+		t.Fatal(err)
+	}
+	a.StartScoreMap(pos, 3, 1, 0, 5)
+	last, seen := waitMapEnd(t, ch, "gammonnet-scoremap:done", "gammonnet-scoremap:error", "gammonnet-scoremap:cancelled")
+	if last.name != "gammonnet-scoremap:done" {
+		t.Fatalf("ended with %s %v", last.name, last.payload)
+	}
+	if done := last.payload.(ScoreMapDoneEvent); done.Tag != 5 || len(done.Map.Cells) != 9 || done.Map.Decision != "checker" {
+		t.Fatalf("done = %+v", done)
+	}
+	if seen["gammonnet-scoremap:cell"] != 18 {
+		t.Fatalf("cells emitted = %d, want 9 at 0-ply and 9 at 1-ply", seen["gammonnet-scoremap:cell"])
+	}
+}
+
+func TestStartScoreMap_CancelLeavesThePanelAlone(t *testing.T) {
+	a := &App{}
+	ch := mapEvents(a)
+	pos, _ := domain.DecodeXGID(mapsOpeningXGID)
+	a.StartScoreMap(pos, 15, 2, 0, 2)
+	a.CancelScoreMap()
+	last, _ := waitMapEnd(t, ch, "gammonnet-scoremap:done", "gammonnet-scoremap:error", "gammonnet-scoremap:cancelled")
+	if last.name != "gammonnet-scoremap:cancelled" {
+		t.Fatalf("ended with %s", last.name)
+	}
+	// A later search is not the map's: its cancel must not reach it.
+	ctx, _, end := a.beginInteractiveSearch()
+	a.CancelScoreMap()
+	if ctx.Err() != nil {
+		t.Fatal("CancelScoreMap cancelled a search it did not start")
+	}
+	end()
+}
