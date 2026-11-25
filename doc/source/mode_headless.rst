@@ -1529,7 +1529,9 @@ dans le tenant hors sa table d'équités, rien n'y est écrit.
 équité, le deuxième coup et l'écart ; sans dés, le verdict de videau de
 ``gammonnet.cubeMatrix`` — comme la commande :ref:`scoremap <cli_scoremap>`.
 Le videau de la position est gardé ; une case où il ne peut pas se trouver est
-refusée (``refused``, avec sa raison). ``ply`` va de 0 à 2 (2 par défaut).
+refusée (``refused``, avec sa raison). Avec dés, une case à 1-away contre plus
+est la partie Crawford (``crawford`` vaut ``true``) ; une case de videau reste
+post-Crawford. ``ply`` va de 0 à 2 (2 par défaut).
 
 La famille ``anki`` gagne six méthodes qui étendent le planificateur à
 répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque révision —

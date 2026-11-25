@@ -3,6 +3,7 @@ package gammonnet
 import (
 	"context"
 	"fmt"
+	"slices"
 	"sort"
 	"sync"
 
@@ -13,8 +14,10 @@ import (
 // The score map: the cube matrix generalised to checker play. For a position
 // with dice, every away × away cell holds the best play at that score, its
 // equity, the runner-up and the gap between them; for a position without
-// dice, the cube verdict, as the cube matrix gives it. The grid keeps the
-// matrix's convention: post-Crawford throughout, the position's cube kept.
+// dice, the cube verdict, as the cube matrix gives it. The position's cube is
+// kept. A checker cell at 1-away against more is the Crawford game, the one a
+// player first meets at that score; a cube cell keeps the matrix's
+// post-Crawford convention, the cube being dead in the Crawford game.
 
 // ScoreMapCell is one score's answer. The embedded cube fields carry the
 // coordinates, the refusal and, for a cube decision, the verdict.
@@ -23,10 +26,13 @@ type ScoreMapCell struct {
 	// Ply is the depth this cell was searched at: the grid is filled at
 	// 0-ply first, then refined cell by cell.
 	Ply int `json:"ply"`
+	// Crawford says the cell is the Crawford game (checker cells at 1-away
+	// against more); false is post-Crawford, or no 1-away side.
+	Crawford bool `json:"crawford"`
 	// Move and Equity are the best play and its equity (ADR-0019 scale at
 	// this score). Checker decisions only.
 	Move   string  `json:"move,omitempty"`
-	Equity float64 `json:"equity,omitempty"`
+	Equity float64 `json:"equity"`
 	// SecondMove, SecondEquity and Gap (best minus second, ≥ 0) are absent
 	// when the roll has a single legal play.
 	SecondMove   string   `json:"secondMove,omitempty"`
@@ -165,11 +171,14 @@ func abs(x int) int {
 // the match at that stake never had a reason to double, and a centred cube
 // above 1 never happens in a match. The grid has no Crawford game, so that
 // is the whole rule.
-func cubeReachableAt(pos *domain.Position, awayOnRoll, awayOpponent int) error {
+func cubeReachableAt(pos *domain.Position, awayOnRoll, awayOpponent int, crawford bool) error {
 	if pos.Cube.Value <= 0 {
 		return nil
 	}
 	value := 1 << uint(pos.Cube.Value)
+	if crawford {
+		return fmt.Errorf("%w: a cube at %d cannot stand in the Crawford game, where nobody doubles", ErrNotEvaluable, value)
+	}
 	var doublerAway int
 	switch pos.Cube.Owner {
 	case pos.PlayerOnRoll:
@@ -194,7 +203,7 @@ func refusedCell(onRoll, opponent, depth int, err error) ScoreMapCell {
 
 // scoreMapCubeCell is the cube matrix's cell, under the cube-reachability rule.
 func scoreMapCubeCell(ctx context.Context, pos domain.Position, met *engine.MET, onRoll, opponent int, s *Searcher, depth, pruneK int) ScoreMapCell {
-	if err := cubeReachableAt(&pos, onRoll, opponent); err != nil {
+	if err := cubeReachableAt(&pos, onRoll, opponent, false); err != nil {
 		return refusedCell(onRoll, opponent, depth, err)
 	}
 	if s != nil {
@@ -205,11 +214,23 @@ func scoreMapCubeCell(ctx context.Context, pos domain.Position, met *engine.MET,
 
 // scoreMapCheckerCell ranks pos's plays at one score.
 func scoreMapCheckerCell(ctx context.Context, pos domain.Position, gnPos Position, notations map[Position]string, met *engine.MET, onRoll, opponent int, s *Searcher, depth, pruneK int) ScoreMapCell {
-	if err := cubeReachableAt(&pos, onRoll, opponent); err != nil {
+	crawford := (onRoll == 1) != (opponent == 1)
+	cell := rankAtScore(ctx, pos, gnPos, notations, met, onRoll, opponent, crawford, s, depth, pruneK)
+	cell.Crawford = crawford
+	return cell
+}
+
+// rankAtScore is scoreMapCheckerCell's search, crawford saying whether the
+// 1-away side plays the Crawford game.
+func rankAtScore(ctx context.Context, pos domain.Position, gnPos Position, notations map[Position]string, met *engine.MET, onRoll, opponent int, crawford bool, s *Searcher, depth, pruneK int) ScoreMapCell {
+	if err := cubeReachableAt(&pos, onRoll, opponent, crawford); err != nil {
 		return refusedCell(onRoll, opponent, depth, err)
 	}
 	at := pos
 	at.Score = scoreForCell(pos.PlayerOnRoll, onRoll, opponent)
+	if crawford {
+		at.Score = crawfordScore(at.Score)
+	}
 	cfg, state, err := ConfigForPositionMET(&at, met, depth, pruneK)
 	if err != nil {
 		return refusedCell(onRoll, opponent, depth, err)
@@ -247,4 +268,38 @@ func scoreMapCheckerCell(ctx context.Context, pos domain.Position, gnPos Positio
 		cell.SecondEquity, cell.Gap = &second, &gap
 	}
 	return cell
+}
+
+// crawfordScore turns scoreForCell's post-Crawford 1-away (raw 0) into the
+// Crawford sentinel (raw 1), the storage convention MatchStateFromPosition
+// decodes.
+func crawfordScore(score [2]int) [2]int {
+	for i := range score {
+		if score[i] == 0 {
+			score[i] = 1
+		}
+	}
+	return score
+}
+
+// MaxMapPly is the deepest a roll or score map searches: each is 21 or up to
+// 225 searches answered while the player waits, in every mode alike.
+const MaxMapPly = 2
+
+// ValidateMapPly is the one depth check of the maps, shared by the GUI, the
+// CLI and the daemon so the three accept the same requests.
+func ValidateMapPly(ply int) error {
+	if ply < 0 || ply > MaxMapPly {
+		return fmt.Errorf("ply must be between 0 and %d", MaxMapPly)
+	}
+	return nil
+}
+
+// ValidateMapMatchLength is the one match-length check of the score map:
+// one of CubeMatrixLengths.
+func ValidateMapMatchLength(n int) error {
+	if !slices.Contains(CubeMatrixLengths, n) {
+		return fmt.Errorf("match length must be odd, between %d and %d", CubeMatrixLengths[0], CubeMatrixLengths[len(CubeMatrixLengths)-1])
+	}
+	return nil
 }

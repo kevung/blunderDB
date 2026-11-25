@@ -2,6 +2,7 @@ package gammonnet
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"math"
 	"strings"
@@ -91,7 +92,8 @@ func TestScoreMap_UnreachableCubeIsRefused(t *testing.T) {
 	}
 	for _, c := range m.Cells {
 		// The opponent doubled from 2: pointless once 2 points win them the match.
-		wantRefused := c.AwayOpponent <= 2
+		// The Crawford game resets the cube, so no cube above 1 stands there.
+		wantRefused := c.AwayOpponent <= 2 || (c.AwayOnRoll == 1) != (c.AwayOpponent == 1)
 		if c.Refused != wantRefused {
 			t.Errorf("%d/%d: refused %v (%s), want %v", c.AwayOnRoll, c.AwayOpponent, c.Refused, c.Reason, wantRefused)
 		}
@@ -150,5 +152,48 @@ func TestScoreMap_Refusals(t *testing.T) {
 	dance.Dice = [2]int{6, 6}
 	if _, err := ComputeScoreMap(context.Background(), dance, nil, 5, 0, 0, LocalExec(2, 0, 0), nil); !errors.Is(err, ErrNotEvaluable) {
 		t.Fatalf("a dance: err = %v", err)
+	}
+}
+
+// A checker cell at 1-away against more is the Crawford game: at 1-away /
+// 3-away, busyXGID's 3-1 is played 8/5* 8/7 there, 8/5* 5/4 post-Crawford.
+func TestScoreMap_OneAwayCheckerCellIsTheCrawfordGame(t *testing.T) {
+	pos := decodeXGIDForTest(t, busyXGID)
+	pos.Dice = [2]int{3, 1}
+	m, err := ComputeScoreMap(context.Background(), pos, nil, 5, 0, 0, LocalExec(2, 0, 0), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	c := m.Cells[2] // row 1-away, column 3-away
+	if !c.Crawford || c.Move != "8/5* 8/7" {
+		t.Fatalf("1/3: crawford %v, move %q; want the Crawford game's 8/5* 8/7", c.Crawford, c.Move)
+	}
+	for _, c := range m.Cells {
+		if want := (c.AwayOnRoll == 1) != (c.AwayOpponent == 1); c.Crawford != want {
+			t.Errorf("%d/%d: crawford %v, want %v", c.AwayOnRoll, c.AwayOpponent, c.Crawford, want)
+		}
+	}
+
+	// Cube cells keep the matrix's post-Crawford convention.
+	pos.Dice = [2]int{0, 0}
+	cube, err := ComputeScoreMap(context.Background(), pos, nil, 5, 0, 0, LocalExec(2, 0, 0), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, c := range cube.Cells {
+		if c.Crawford {
+			t.Fatalf("cube cell %d/%d marked Crawford", c.AwayOnRoll, c.AwayOpponent)
+		}
+	}
+}
+
+// An equity of exactly 0 is an answer, not an absence.
+func TestScoreMapCell_ZeroEquityIsSerialised(t *testing.T) {
+	b, err := json.Marshal(ScoreMapCell{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(b), `"equity":0`) {
+		t.Fatalf("%s has no equity", b)
 	}
 }

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"slices"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -13,9 +12,10 @@ import (
 
 // runScoreMap handles the scoremap command: the best decision of one
 // position at every away × away score of a match — the best play when the
-// position has dice, the cube verdict otherwise. cubematrix stays as it was;
-// this is its generalisation. Pure computation: gammonnet.ComputeScoreMap, as
-// the GUI and daemon call it.
+// position has dice, the cube verdict otherwise. A command of its own rather
+// than a cubematrix flag, so cubematrix's scripts keep their output and
+// defaults. Pure computation: gammonnet.ComputeScoreMap, as the GUI and
+// daemon call it.
 func (cli *CLI) runScoreMap(args []string) error {
 	cmd := flag.NewFlagSet("scoremap", flag.ContinueOnError)
 
@@ -32,8 +32,9 @@ func (cli *CLI) runScoreMap(args []string) error {
 		fmt.Fprintln(cli.stdout(), "dice, each away × away cell gives the best play, its equity, the second")
 		fmt.Fprintln(cli.stdout(), "play and the gap; without dice, the cube verdict, as cubematrix does.")
 		fmt.Fprintln(cli.stdout(), "The position's score is replaced by the grid; its cube is kept, and a")
-		fmt.Fprintln(cli.stdout(), "cell where that cube cannot stand is marked not evaluable. The grid is")
-		fmt.Fprintln(cli.stdout(), "post-Crawford throughout.")
+		fmt.Fprintln(cli.stdout(), "cell where that cube cannot stand is marked not evaluable. With dice, a")
+		fmt.Fprintln(cli.stdout(), "cell at 1-away against more is the Crawford game (\"crawford\": true in")
+		fmt.Fprintln(cli.stdout(), "JSON, a C in text); a cube cell is post-Crawford, as in cubematrix.")
 		fmt.Fprintln(cli.stdout())
 		fmt.Fprintln(cli.stdout(), "Options:")
 		cmd.PrintDefaults()
@@ -50,11 +51,11 @@ func (cli *CLI) runScoreMap(args []string) error {
 		cmd.Usage()
 		return fmt.Errorf("expected exactly one XGID or OGID argument")
 	}
-	if !slices.Contains(gammonnet.CubeMatrixLengths, *length) {
-		return fmt.Errorf("match length must be one of %v", gammonnet.CubeMatrixLengths)
+	if err := gammonnet.ValidateMapMatchLength(*length); err != nil {
+		return err
 	}
-	if *ply < 0 || *ply > 2 {
-		return fmt.Errorf("ply must be between 0 and 2")
+	if err := gammonnet.ValidateMapPly(*ply); err != nil {
+		return err
 	}
 
 	pos, err := domain.DecodePositionID(cmd.Arg(0))
@@ -93,6 +94,9 @@ func (cli *CLI) printScoreMap(m gammonnet.ScoreMap) {
 	fmt.Fprintf(cli.stdout(), "%-7s %9s  %-22s %7s  %s\n", "score", "equity", "best play", "gap", "second play")
 	for _, c := range m.Cells {
 		score := fmt.Sprintf("%d/%d", c.AwayOnRoll, c.AwayOpponent)
+		if c.Crawford {
+			score += " C"
+		}
 		if c.Refused {
 			fmt.Fprintf(cli.stdout(), "%-7s not evaluable: %s\n", score, c.Reason)
 			continue

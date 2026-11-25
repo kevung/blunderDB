@@ -32,9 +32,11 @@ func (cli *CLI) runRolls(args []string) error {
 		fmt.Fprintln(cli.stdout(), "it, a double would be passed). The market is shown only when the player")
 		fmt.Fprintln(cli.stdout(), "may double. The dice of the position are ignored.")
 		fmt.Fprintln(cli.stdout())
-		fmt.Fprintln(cli.stdout(), "The roll-weighted average is the position's equity one ply deeper, cube")
-		fmt.Fprintln(cli.stdout(), "not turned. With --roll and --move, the position is first played and")
-		fmt.Fprintln(cli.stdout(), "the table lists the opponent's replies.")
+		fmt.Fprintln(cli.stdout(), "The roll-weighted average, cube not turned, is a search one ply deeper")
+		fmt.Fprintln(cli.stdout(), "with the same settings: the position's 1- or 2-ply equity at --ply 0")
+		fmt.Fprintln(cli.stdout(), "or 1; at --ply 2, a 3-ply search with the 2-ply filters, which is not")
+		fmt.Fprintln(cli.stdout(), "the engine's published 3-ply. With --roll and --move, the position is")
+		fmt.Fprintln(cli.stdout(), "first played and the table lists the opponent's replies.")
 		fmt.Fprintln(cli.stdout())
 		fmt.Fprintln(cli.stdout(), "Options:")
 		cmd.PrintDefaults()
@@ -52,8 +54,8 @@ func (cli *CLI) runRolls(args []string) error {
 		cmd.Usage()
 		return fmt.Errorf("expected exactly one XGID or OGID argument")
 	}
-	if *ply < 0 || *ply > 2 {
-		return fmt.Errorf("ply must be between 0 and 2")
+	if err := gammonnet.ValidateMapPly(*ply); err != nil {
+		return err
 	}
 
 	pos, err := domain.DecodePositionID(cmd.Arg(0))

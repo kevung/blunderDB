@@ -18,8 +18,11 @@ import (
 // roll); PositionAfterPlay builds the second from the first.
 //
 // A row's equity is the search's own value of its best play, so the
-// roll-weighted average of the rows is, term for term, the position's
-// equity one ply deeper: the map decomposes the number the panel shows.
+// roll-weighted average of the rows is, term for term, a search one ply
+// deeper run with the map's own configuration. At 0 and 1 ply that is the
+// position's equity at 1 and 2 ply, the number the panel shows; at 2 ply it
+// is a 3-ply search with the 2-ply filters, not the panel's 3-ply, whose
+// published level filters differently.
 
 // RollMapRow is one roll's answer.
 type RollMapRow struct {
@@ -35,7 +38,8 @@ type RollMapRow struct {
 	// scale ADR-0019 defines (money points, or normalised at a score).
 	Equity float64 `json:"equity"`
 	// MarketLost says that, after this roll and its best play, a double from
-	// the roller would be one the opponent passes (double/pass or too good).
+	// the roller would be one the opponent passes: double/pass, or too good
+	// with a pass ("too good, take" keeps the market).
 	// Nil when the roller has no access to the cube.
 	MarketLost *bool `json:"marketLost,omitempty"`
 	// Ply is the depth this row was searched at: the map is filled at 0-ply
@@ -48,8 +52,9 @@ type RollMap struct {
 	// Ply is the depth the rows were refined to.
 	Ply  int          `json:"ply"`
 	Rows []RollMapRow `json:"rows"`
-	// Average is the roll-weighted mean of the rows' equities: the position's
-	// equity at Ply+1, cube not turned.
+	// Average is the roll-weighted mean of the rows' equities, cube not
+	// turned: a search at Ply+1 with Ply's configuration — the position's
+	// equity at Ply+1 for Ply 0 and 1, not the published 3-ply for Ply 2.
 	Average float64 `json:"average"`
 	// CubeAccess says the roller may double here, so MarketLost is set.
 	CubeAccess bool `json:"cubeAccess"`
@@ -284,7 +289,8 @@ func (j *rollMapJob) row(ctx context.Context, i int, s *Searcher, pruneK int) (R
 
 // marketLost asks the cube decision of the roller, read on the position the
 // opponent is about to roll from, as if the roller could double there: a
-// double/pass or a too-good means the market went with this roll. The
+// double/pass, or a too-good the opponent would pass, means the market went
+// with this roll. The
 // distribution is searched one ply short of the row (the network's answer at
 // 0- and 1-ply, already at hand for a play), which keeps the map at the cost
 // of its plays. ok is false where the model declines the decision.
@@ -305,7 +311,19 @@ func (j *rollMapJob) marketLost(s *Searcher, after *Position, known *[NumOutputs
 	if !good {
 		return false, false, nil
 	}
-	return dec.Action == DoublePass || dec.Action == TooGood, true, nil
+	return losesMarket(dec), true, nil
+}
+
+// losesMarket: the opponent would pass a double. Too good with a take is a
+// player keeping the cube for the gammon, not one the opponent has fled.
+func losesMarket(dec Decision) bool {
+	switch dec.Action {
+	case DoublePass:
+		return true
+	case TooGood:
+		return dec.EquityDoubleTake > dec.EquityDoublePass
+	}
+	return false
 }
 
 // failure names why a search returned nothing: cancelled, or broken.

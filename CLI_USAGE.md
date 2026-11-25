@@ -1106,8 +1106,10 @@ OGID; its dice are ignored, and nothing is written to a database.
   opponent's replies (`--move` is any legal play, empty for a dance)
 - `--format` - Output format: `text` (default) or `json`
 
-The roll-weighted average of the 21 equities is the position's equity one ply
-deeper, cube not turned. Equities use the scale of every other evaluation:
+The roll-weighted average of the 21 equities, cube not turned, is a search one
+ply deeper run with the same settings: the position's 1- or 2-ply equity at
+`--ply 0` or `1`; at `--ply 2`, a 3-ply search with the 2-ply filters, which is
+not the engine's published 3-ply level. Equities use the scale of every other evaluation:
 money points at money play, normalised equity at a match score (ADR-0019). The
 market column is empty when the player cannot double (opponent's cube,
 Crawford game).
@@ -1138,7 +1140,10 @@ as an XGID or an OGID; nothing is written to a database.
 The position's score is replaced by the grid; its cube is kept, and a cell
 where that cube cannot stand (a double from a player who already held the
 match at the previous stake) is marked not evaluable rather than re-centred.
-The grid is post-Crawford throughout. Equities are normalised (ADR-0019).
+With dice, a cell at 1-away against more is the Crawford game, the first one
+played at that score (`crawford: true` in JSON, `C` in text); a cube cell
+stays post-Crawford, as in `cubematrix`, the cube being dead in the Crawford
+game. Equities are normalised (ADR-0019).
 
 **Example:**
 ```bash
@@ -4763,9 +4768,11 @@ best play, the equity after it, and whether it loses the market (after
 it, a double would be passed). The market is shown only when the player
 may double. The dice of the position are ignored.
 
-The roll-weighted average is the position's equity one ply deeper, cube
-not turned. With --roll and --move, the position is first played and
-the table lists the opponent's replies.
+The roll-weighted average, cube not turned, is a search one ply deeper
+with the same settings: the position's 1- or 2-ply equity at --ply 0
+or 1; at --ply 2, a 3-ply search with the 2-ply filters, which is not
+the engine's published 3-ply. With --roll and --move, the position is
+first played and the table lists the opponent's replies.
 
 Options:
   -format string
@@ -4796,8 +4803,9 @@ Show the best decision of one position at every score of a match. With
 dice, each away × away cell gives the best play, its equity, the second
 play and the gap; without dice, the cube verdict, as cubematrix does.
 The position's score is replaced by the grid; its cube is kept, and a
-cell where that cube cannot stand is marked not evaluable. The grid is
-post-Crawford throughout.
+cell where that cube cannot stand is marked not evaluable. With dice, a
+cell at 1-away against more is the Crawford game ("crawford": true in
+JSON, a C in text); a cube cell is post-Crawford, as in cubematrix.
 
 Options:
   -format string

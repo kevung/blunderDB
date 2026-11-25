@@ -379,8 +379,11 @@ n'est ouverte.
 Le score de la position est remplacé par la grille ; son **videau** est
 conservé. Une case où ce videau ne peut pas se trouver — il supposerait le
 double d'un joueur à qui la mise précédente donnait déjà le match — est marquée
-non évaluable plutôt que recentrée. La grille est post-Crawford d'un bout à
-l'autre ; les équités sont normalisées.
+non évaluable plutôt que recentrée. Avec dés, une case à 1-away contre plus est
+la partie Crawford, la première jouée à ce score (``crawford`` vaut ``true`` en
+JSON, ``C`` en texte) ; une case de videau reste post-Crawford, comme dans
+``cubematrix``, puisque le videau est mort pendant la partie Crawford. Les
+équités sont normalisées.
 
 **Exemples:**
 
@@ -424,9 +427,11 @@ XGID ou son OGID. Les dés de la position sont ignorés.
 
 L'équité suit l'échelle des autres évaluations : points de money en money,
 équité normalisée à un score de match. Le poids d'un jet est 1 sur 36 pour un
-double, 2 sur 36 sinon. La moyenne pondérée des 21 lignes est l'équité de la
-position un ply plus profond, videau non tourné : la carte décompose ce
-chiffre jet par jet.
+double, 2 sur 36 sinon. La moyenne pondérée des 21 lignes, videau non tourné,
+est une recherche un ply plus profonde menée avec les mêmes réglages : à
+``--ply 0`` ou ``1``, l'équité de la position à 1 ou 2 ply, que la carte
+décompose jet par jet ; à ``--ply 2``, une recherche à 3 ply avec les filtres
+du 2 ply, qui n'est pas le niveau 3 ply publié du moteur.
 
 Un jet **perd le marché** quand, après ce jet et le meilleur coup, un double du
 joueur serait refusé : la décision de videau du joueur, lue sur la position que

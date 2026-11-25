@@ -195,3 +195,55 @@ func TestRollMap_MarketLostWhenAlreadyTooGood(t *testing.T) {
 		t.Fatalf("market lost on %d/36, want nearly every roll", lost)
 	}
 }
+
+func TestLosesMarket(t *testing.T) {
+	for _, c := range []struct {
+		name string
+		dec  Decision
+		want bool
+	}{
+		{"double/pass", Decision{Action: DoublePass}, true},
+		{"too good, pass", Decision{Action: TooGood, EquityDoubleTake: 1.4, EquityDoublePass: 1}, true},
+		{"too good, take", Decision{Action: TooGood, EquityDoubleTake: 0.9, EquityDoublePass: 1}, false},
+		{"double/take", Decision{Action: DoubleTake}, false},
+		{"no double", Decision{Action: NoDouble}, false},
+	} {
+		if got := losesMarket(c.dec); got != c.want {
+			t.Errorf("%s: %v, want %v", c.name, got, c.want)
+		}
+	}
+}
+
+// At 2 ply the average is not the published 3-ply (its level filters
+// differently): it is a 3-ply search run with the 2-ply configuration.
+func TestRollMap_TwoPlyAverageIsThreePlyWithTheTwoPlyConfig(t *testing.T) {
+	if testing.Short() {
+		t.Skip("a 3-ply search")
+	}
+	pos := decodeXGIDForTest(t, busyXGID)
+	m, err := ComputeRollMap(context.Background(), pos, nil, 2, 0, LocalExec(0, 2, 0), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pos.Dice = [2]int{0, 0}
+	cfg, state, err := ConfigForPositionMET(&pos, nil, 2, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s, err := NewSearcher(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gn, err := FromDomain(&pos)
+	if err != nil {
+		t.Fatal(err)
+	}
+	v, ok := s.positionEquity(&gn, 3, 0, state, cfg.CubeOwner)
+	if !ok {
+		t.Fatal("positionEquity failed")
+	}
+	scale, _ := NewEquityScale(state)
+	if want := scale.FromSearch(v); math.Abs(m.Average-want) > 1e-9 {
+		t.Fatalf("2-ply average %.12f, 3-ply search with the 2-ply config %.12f", m.Average, want)
+	}
+}
