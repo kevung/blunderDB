@@ -134,6 +134,33 @@ de structure est un second lecteur, qui rend le même `capture.Reading`.
 
 Premier périmètre : Deep Cube, puis Robertie 501 et Woolsey.
 
+## Résultats
+
+### Tranche 0 (2026-11-26) — banc `~/bkgm/bancs/import-document/`, `JOURNAL.md`
+
+Seuls Deep Cube 1-3 ont été ouverts. La réserve est intacte.
+
+- **Police décodée** : 1 518 pages à diagramme, 1 518 sûres (15 pions par camp, pips calculés =
+  pips imprimés des deux côtés). Contrôle à l'œil : 33 pages au hasard et 14 cas rares, toutes
+  concordantes. 1 491 positions distinctes. `pdftotext -layout` n'est pas fiable (lignes tracées
+  par morceaux) : il faut lire le flux de contenu avec la position de chaque glyphe. Non prouvé,
+  faute d'occurrence : pile de plus de 9, barre de plus de 3, videau chez Player 2, dés.
+- **`capture` tel quel** (210 pages, 150 et 300 dpi) : 0 exacte, 0 fausse sans doute. Mais il ne
+  refuse pas : il prend le tableau d'analyse gris pour un plateau (fit 0,66-0,72, `MinFit` 0,6)
+  et rend 13 à 20 doutes. Sur le diagramme découpé : refus. À corriger avant de le brancher sur
+  des pages entières.
+- **Prototype de lecteur de structure** (`scripts/structure.py`, 150 dpi, un profil par volume) :
+  1 421 sûres (93,6 %), toutes exactes ; 97 à vérifier, dont 3 fausses (deux piles chiffrées dans
+  le même camp) ; 0 refus. 300 dpi : identique. 100 dpi : presque tout faux mais « à vérifier »,
+  aucune sûre fausse — résolution minimale de rendu : 150 dpi.
+- **Encore propre à Deep Cube dans le prototype** : pips lus dans le texte, cadre de traits
+  pleins, cases, rayon et pas fixés à la main, seuils d'un rendu vectoriel net, pas de lecture des
+  chiffres, des pions sortis ni du videau. Jamais essayé hors de Deep Cube.
+
+Suites : le lecteur à glyphes est la voie de Deep Cube (tranche 2) ; le lecteur de structure se
+généralise d'abord sur les livres de développement scannés (tranche 3), la réserve restant
+fermée.
+
 ## Décisions de l'utilisateur (2026-11-25)
 
 - Recommandations suivies : rendu PDF, premier périmètre, ADR neuf.
