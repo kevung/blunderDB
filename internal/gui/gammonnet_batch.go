@@ -2,13 +2,14 @@ package gui
 
 import (
 	"context"
-	"log/slog"
+	"errors"
 	goruntime "runtime"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 )
 
 // The gammonNet batch (ADR-0013): the loops live on *database.Database, shared
@@ -28,52 +29,75 @@ import (
 const gnYieldPoll = 50 * time.Millisecond
 
 // batchRun is the work of one batch, on the library handle it is given.
+// ctx carries the batch's task (taskFrom), at whose checkpoint the batch
+// yields before each position.
 type batchRun func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error)
 
+type taskKey struct{}
+
+// taskFrom returns the registry task ctx carries, nil for none.
+func taskFrom(ctx context.Context) *jobs.Job {
+	j, _ := ctx.Value(taskKey{}).(*jobs.Job)
+	return j
+}
+
+// batchYield is the yield a batch's loop calls before each position: the
+// task's checkpoint (pause, and every computation that outranks it), then
+// the live evaluation the panel runs.
+func (a *App) batchYield(ctx context.Context) func() {
+	job := taskFrom(ctx)
+	return func() {
+		if job != nil {
+			job.Yield(ctx)
+		}
+		a.waitForInteractiveEvaluation()
+	}
+}
+
 // StartGammonNetBatch analyses every position without an analysis, in the
-// background, cancelling any batch in flight. No-op when db is nil. The user
-// asked for it: refused while another job writes the library.
+// background, cancelling any batch in flight. No-op when db is nil. While
+// another task writes the library it waits its turn in the library's queue
+// (ADR-0115).
 func (a *App) StartGammonNetBatch(ply, pruneK, candidates int) {
-	a.runGammonNetBatch(0, ply, false, a.missingBatch(ply, pruneK, candidates))
+	a.runGammonNetBatch(0, ply, jobs.GammonNetMissing, a.missingBatch(ply, pruneK, candidates))
 }
 
 // QueueGammonNetBatch is StartGammonNetBatch for the analysis an import
-// starts on its own: it waits for the job writing the library instead of
-// being refused (ADR-0088).
+// starts on its own.
 func (a *App) QueueGammonNetBatch(ply, pruneK, candidates int) {
-	a.runGammonNetBatch(0, ply, true, a.missingBatch(ply, pruneK, candidates))
+	a.runGammonNetBatch(0, ply, jobs.GammonNetMissing, a.missingBatch(ply, pruneK, candidates))
 }
 
 // QueueGammonNetBatchIn is QueueGammonNetBatch for the library of group, on
 // screen or not: an import that finished in a group the user left analyses
 // that group's library, not the one shown.
 func (a *App) QueueGammonNetBatchIn(group, ply, pruneK, candidates int) {
-	a.runGammonNetBatch(group, ply, true, a.missingBatch(ply, pruneK, candidates))
+	a.runGammonNetBatch(group, ply, jobs.GammonNetMissing, a.missingBatch(ply, pruneK, candidates))
 }
 
 func (a *App) missingBatch(ply, pruneK, candidates int) batchRun {
 	return func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
 		return db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
-			a.waitForInteractiveEvaluation, onProgress)
+			a.batchYield(ctx), onProgress)
 	}
 }
 
 // StartGammonNetStaleBatch re-runs gammonNet on every position whose analysis
 // is entirely its own but stale: another EngineVersion, or another depth.
 func (a *App) StartGammonNetStaleBatch(ply, pruneK, candidates int) {
-	a.runGammonNetBatch(0, ply, false, func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+	a.runGammonNetBatch(0, ply, jobs.GammonNetStale, func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
 		return db.AnalyzeStaleGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
-			a.waitForInteractiveEvaluation, onProgress)
+			a.batchYield(ctx), onProgress)
 	})
 }
 
 // StartGammonNetMatchBatch is StartGammonNetBatch scoped to one match: the
 // batch a transcription's or a duel's save starts (ADR-0045 §8). The caller
-// sets depth. Started on its own, it waits for the job writing the library.
+// sets depth.
 func (a *App) StartGammonNetMatchBatch(matchID int64, ply, pruneK, candidates int) {
-	a.runGammonNetBatch(0, ply, true, func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+	a.runGammonNetBatch(0, ply, jobs.GammonNetMatch, func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
 		return db.AnalyzeMatchWithGammonNet(ctx, matchID, ply, pruneK, candidates, a.effectiveBatchJobs(),
-			a.waitForInteractiveEvaluation, onProgress)
+			a.batchYield(ctx), onProgress)
 	})
 }
 
@@ -94,9 +118,10 @@ func (a *App) effectiveBatchJobs() int {
 }
 
 // runGammonNetBatch is the shell every batch shares: run does the work, this
-// owns the single-in-flight bookkeeping and the events. A queued batch waits
-// for the job writing the library; any other is refused while one runs.
-func (a *App) runGammonNetBatch(group, ply int, queued bool, run batchRun) {
+// owns the single-in-flight bookkeeping, the task in the registry and the
+// events. The batch waits its turn in its library's queue, then for any job
+// still holding the library outside the registry.
+func (a *App) runGammonNetBatch(group, ply int, kind jobs.Kind, run batchRun) {
 	if a.db == nil {
 		return
 	}
@@ -110,31 +135,25 @@ func (a *App) runGammonNetBatch(group, ply int, queued bool, run batchRun) {
 		return
 	}
 
-	// A rollout batch takes every core as this one does: refused, as the
-	// daemon refuses a second exclusive job.
-	a.roMu.Lock()
-	if !queued && a.rolloutBatchRunning() {
-		a.roMu.Unlock()
-		_ = db.Close()
-		a.emitBatch("gammonnet-batch:error", map[string]any{"message": (&database.BusyError{Job: database.JobRollout}).Error(), "group": group})
-		return
-	}
 	a.gnBatchMu.Lock()
 	if a.gnBatchCancel != nil {
 		a.gnBatchCancel()
 	}
 	ctx, cancel := context.WithCancel(a.batchCtx())
-	if queued {
-		ctx = database.WaitForDatabase(ctx, func(job string) {
-			a.emitBatch("gammonnet-batch:waiting", map[string]any{"job": job, "ply": ply, "group": group})
-		})
+	waiting := func(job string) {
+		a.emitBatch("gammonnet-batch:waiting", map[string]any{"job": job, "ply": ply, "group": group})
 	}
+	ctx = database.WaitForDatabase(ctx, waiting)
+	task := a.jobs.Start(jobs.Spec{
+		Kind: kind, Library: group, Priority: jobs.Background,
+		Exclusive: true, Pausable: true, Compute: true, Cancel: cancel,
+	})
+	ctx = context.WithValue(ctx, taskKey{}, task)
 	stopped := make(chan struct{})
 	a.gnBatchCancel = cancel
 	a.gnBatchDone = stopped
 	a.gnBatchGroup = group
 	a.gnBatchMu.Unlock()
-	a.roMu.Unlock()
 
 	go func() {
 		// Registered first so it runs last, even after a panic: shutdown
@@ -142,9 +161,21 @@ func (a *App) runGammonNetBatch(group, ply int, queued bool, run batchRun) {
 		defer close(stopped)
 		defer recoverBackground(a.ctx, "gammonNet batch analysis")
 		defer db.Close() // lets the borrowed library go; closes nothing
-		summary, err := run(ctx, db, func(done, total int) {
-			a.emitBatch("gammonnet-batch:progress", map[string]int{"done": done, "total": total, "ply": ply, "group": group})
-		})
+		var summary database.GammonNetBatchSummary
+		if holder, ok := task.Behind(); ok {
+			waiting(jobCode(holder))
+		}
+		err := task.Turn(ctx)
+		if err == nil {
+			summary, err = run(ctx, db, func(done, total int) {
+				task.Progress(done, total)
+				a.emitBatch("gammonnet-batch:progress", map[string]int{"done": done, "total": total, "ply": ply, "group": group})
+			})
+		}
+		if ctx.Err() != nil && err != nil {
+			err = context.Canceled
+		}
+		task.Finish(err)
 
 		// Only if still the batch in flight: a newer one may have replaced it.
 		a.gnBatchMu.Lock()
@@ -156,7 +187,7 @@ func (a *App) runGammonNetBatch(group, ply int, queued bool, run batchRun) {
 		a.gnBatchMu.Unlock()
 
 		if err != nil {
-			if ctx.Err() != nil {
+			if ctx.Err() != nil || errors.Is(err, context.Canceled) {
 				a.emitBatch("gammonnet-batch:cancelled", map[string]int{"group": group})
 				return
 			}
@@ -213,8 +244,11 @@ func (a *App) cancelGammonNetBatch() <-chan struct{} {
 }
 
 // waitForInteractiveEvaluation blocks each batch goroutine, before each
-// position, while a live search runs: the batch gives way within `jobs`
-// positions.
+// position, while the Eval panel's at-rest search runs: the batch gives way
+// within `jobs` positions. That search does not enter the registry as a
+// visible computation (beginVisibleComputation), so it is watched through
+// gnEvalCancel; once it enters, the task's checkpoint holds the batch and
+// this wait has nothing left to see.
 func (a *App) waitForInteractiveEvaluation() {
 	for {
 		a.gnEvalMu.Lock()
@@ -235,45 +269,25 @@ func (a *App) stopBackgroundJobs(grace time.Duration) {
 	a.stopDatabaseJobs(grace)
 }
 
-// stopDatabaseJobs cancels every job that writes a library, in any group (the
-// gammonNet batch, the rollout, the maintenance run, the background imports),
+// stopDatabaseJobs cancels every job that writes a library, in any group,
 // and waits for them up to grace, shared: before shutdown.
 func (a *App) stopDatabaseJobs(grace time.Duration) {
 	a.stopGroupJobs(0, grace)
 }
 
-// stopGroupJobs is stopDatabaseJobs for the jobs writing the library of group
-// (0: every group): before that library is closed or replaced. The rollout
-// and the maintenance run write through the bound handle, so they belong to
-// the group on screen.
+// stopGroupJobs is stopDatabaseJobs for the tasks of the registry bound to
+// the library of group (0: every group), running or waiting their turn:
+// before that library is closed or replaced. A task names the group it
+// writes at its start; the rollout and the maintenance run write through the
+// bound handle, so they name the group on screen then.
 func (a *App) stopGroupJobs(group int, grace time.Duration) {
-	// One context for the whole grace period: unlike a timer channel, which
-	// delivers its value once, it stays done for every job still waited on.
+	// One context for the whole grace period, shared by every task waited on.
 	deadline, release := context.WithTimeout(context.Background(), grace)
 	defer release()
-	onScreen := group == 0 || group == a.shownGroup()
-	stops := map[string]<-chan struct{}{}
-	a.gnBatchMu.Lock()
-	batchGroup := a.gnBatchGroup
-	a.gnBatchMu.Unlock()
-	if group == 0 || batchGroup == group {
-		stops["the gammonNet batch"] = a.cancelGammonNetBatch()
-	}
-	if onScreen {
-		stops["the rollout"] = a.cancelRollout()
-	}
-	stops["the imports"] = a.imports.cancel(group)
-	for name, stopped := range stops {
-		if stopped == nil {
-			continue
-		}
-		select {
-		case <-stopped:
-		case <-deadline.Done():
-			slog.Warn("a job writing the database did not stop within the grace period; going ahead", "job", name, "grace", grace)
-		}
-	}
-	if onScreen && a.db != nil {
+	a.stopRegisteredJobs(deadline, group, grace)
+	// The database's own slot, held by a maintenance pass, is waited for
+	// directly: the bound handle is about to change under it.
+	if (group == 0 || group == a.shownGroup()) && a.db != nil {
 		a.db.StopMaintenance(deadline)
 	}
 }

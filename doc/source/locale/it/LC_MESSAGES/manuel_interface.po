@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 02:00+0100\n"
+"POT-Creation-Date: 2026-11-25 23:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -2060,22 +2060,26 @@ msgstr ""
 #: ../../source/manuel_interface.rst:846
 msgid ""
 "Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un "
-"rollout stocké ou une opération de maintenance. Un lot ou une opération "
-"lancés depuis l'onglet *Maintenance* sont refusés tant qu'un autre "
-"travail est en cours, et la barre de statut nomme ce travail ; le lot que"
-" lance un import, une transcription ou un duel attend au contraire qu'il "
-"finisse, et la barre de statut l'annonce « en attente » jusqu'à son "
-"départ."
+"rollout stocké ou une opération de maintenance. Un travail demandé "
+"pendant qu'un autre est en cours n'est pas refusé : il prend place dans "
+"la file de la bibliothèque, après les travaux de même priorité — un "
+"rollout passe avant un lot gammonNet ou une opération de maintenance qui "
+"attendent —, et part dès que son tour vient ; la barre de statut annonce "
+"« en attente » le lot gammonNet qui attend. Un lot gammonNet en cours "
+"cède aussi la main, entre deux positions, à un rollout qui calcule sans "
+"écrire."
 msgstr ""
-"Un solo lavoro scrive nella libreria alla volta: un lotto gammonNet, un "
-"rollout memorizzato o un'operazione di manutenzione. Un lotto o "
-"un'operazione avviati dalla scheda *Manutenzione* vengono rifiutati "
-"finché un altro lavoro è in corso, e la barra di stato nomina quel "
-"lavoro; il lotto avviato da un'importazione, una trascrizione o un duello"
-" attende invece che l'altro finisca, e la barra di stato lo segnala come "
-"« in attesa » fino alla partenza."
+"Un solo lavoro alla volta scrive nella libreria: un lotto gammonNet, un "
+"rollout memorizzato o un'operazione di manutenzione. Un lavoro richiesto "
+"mentre un altro è in corso non viene rifiutato: prende posto nella coda "
+"della libreria, dopo i lavori della stessa priorità — un rollout passa "
+"davanti a un lotto gammonNet o a un'operazione di manutenzione in attesa "
+"— e parte non appena arriva il suo turno; la barra di stato indica come "
+"«in attesa» il lotto gammonNet che aspetta. Un lotto gammonNet in corso "
+"cede inoltre il passo, tra due posizioni, a un rollout che calcola senza "
+"scrivere."
 
-#: ../../source/manuel_interface.rst:855
+#: ../../source/manuel_interface.rst:856
 msgid ""
 "Le même onglet porte le **réglage des rollouts** lancés depuis le panneau"
 " Analyse (voir :ref:`rollouts`), conservé d'une session à l'autre : "
@@ -2093,7 +2097,7 @@ msgstr ""
 "(multipli di 36), limite di JSD, profondità (ply), numero di candidate, "
 "seme e numero di processi."
 
-#: ../../source/manuel_interface.rst:862
+#: ../../source/manuel_interface.rst:863
 msgid ""
 "**Table d'équité de match de la base.** Au bas de l'onglet, la liste "
 "**Table d'équité de match (MET) de la base** choisit la table avec "
@@ -2134,7 +2138,7 @@ msgstr ""
 "non lo è mai. Cambiare tabella non riscrive nessuna analisi: cambia solo "
 "ciò che i confronti considerano."
 
-#: ../../source/manuel_interface.rst:881
+#: ../../source/manuel_interface.rst:882
 msgid ""
 "L'évaluation en direct du panneau et la grille de videau sont valorisées "
 "avec la table de la base, comme les analyses qu'elle enregistre. Une "
@@ -2153,7 +2157,7 @@ msgstr ""
 "gammonNet sostituita da quella di un altro motore (XG, GNUbg) torna a "
 "essere considerata calcolata con Kazaross-XG2."
 
-#: ../../source/manuel_interface.rst:889
+#: ../../source/manuel_interface.rst:890
 msgid ""
 "**Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un "
 "match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a"
@@ -2176,7 +2180,7 @@ msgstr ""
 "proviene dalla tabella delle mosse dell'incontro, scritta "
 "all'importazione, che il file portasse un'analisi o no."
 
-#: ../../source/manuel_interface.rst:899
+#: ../../source/manuel_interface.rst:900
 msgid ""
 "Une base analysée avec une version antérieure à celle-ci n'a pas besoin "
 "d'être réévaluée : ``blunderdb repair`` recalcule les colonnes à partir "
@@ -2188,7 +2192,7 @@ msgstr ""
 " partire dalle analisi e dalle mosse già in archivio e restituisce il "
 "loro PR a quegli incontri (vedere :ref:`repair <cli_repair>`)."
 
-#: ../../source/manuel_interface.rst:904
+#: ../../source/manuel_interface.rst:905
 msgid ""
 "Une réserve honnête : une position est identifiée par sa structure, donc "
 "une position rencontrée deux fois — bien jouée une fois, mal l'autre — ne"
@@ -2202,11 +2206,11 @@ msgstr ""
 "registrata. Non è proprio di questo calcolo: una biblioteca XG ha "
 "esattamente la stessa forma."
 
-#: ../../source/manuel_interface.rst:912
+#: ../../source/manuel_interface.rst:913
 msgid "Dossier surveillé"
 msgstr "Cartella sorvegliata"
 
-#: ../../source/manuel_interface.rst:914
+#: ../../source/manuel_interface.rst:915
 msgid ""
 "L'onglet **Dossier surveillé** demande à blunderDB de regarder un dossier"
 " pendant qu'il tourne et d'importer chaque fichier de match qui y "
@@ -2218,7 +2222,7 @@ msgstr ""
 "**compare**. Giocare una sessione in eXtreme Gammon, tornare a blunderDB,"
 " e trovare gli incontri già lì."
 
-#: ../../source/manuel_interface.rst:919
+#: ../../source/manuel_interface.rst:920
 msgid ""
 "Rien n'est deviné. Tant qu'aucun dossier n'est désigné, il n'y a pas de "
 "surveillance : blunderDB ne se met pas à lire un répertoire parce qu'il a"
@@ -2233,11 +2237,11 @@ msgstr ""
 " posti abituali su questa macchina e ne propone uno solo se esiste "
 "davvero; altrimenti lo dice, e indicare la cartella spetta a voi."
 
-#: ../../source/manuel_interface.rst:925
+#: ../../source/manuel_interface.rst:926
 msgid "Trois points méritent d'être connus avant d'activer la case :"
 msgstr "Tre punti meritano di essere noti prima di attivare la casella:"
 
-#: ../../source/manuel_interface.rst:927
+#: ../../source/manuel_interface.rst:928
 msgid ""
 "**Seuls les fichiers qui apparaissent sont importés.** Ce que le dossier "
 "contient déjà au moment où la surveillance démarre est enregistré comme "
@@ -2253,7 +2257,7 @@ msgstr ""
 "l'importazione di cartella, che esiste per questo — e le due si "
 "compongono benissimo, prima l'importazione, poi la sorveglianza."
 
-#: ../../source/manuel_interface.rst:933
+#: ../../source/manuel_interface.rst:934
 msgid ""
 "**Un fichier n'est importé qu'une fois sa taille stable.** Un match qu'un"
 " autre programme est en train d'écrire grossit d'un coup d'œil à l'autre "
@@ -2267,7 +2271,7 @@ msgstr ""
 "nessuno può agire. blunderDB attende quindi di vedere due volte lo stesso"
 " file immutato."
 
-#: ../../source/manuel_interface.rst:938
+#: ../../source/manuel_interface.rst:939
 msgid ""
 "**L'import est silencieux.** Vous étiez en train d'étudier une position "
 "quand vos matchs sont arrivés : vous reprendre l'écran serait le pire "
@@ -2292,7 +2296,7 @@ msgstr ""
 " rilevati, lo stesso lotto di importazione, la stessa analisi automatica "
 "se è attivata."
 
-#: ../../source/manuel_interface.rst:949
+#: ../../source/manuel_interface.rst:950
 msgid ""
 "L'intervalle par défaut est de dix secondes ; le plancher est de deux. Le"
 " dossier n'est pas parcouru récursivement : un dossier surveillé est "
@@ -2306,7 +2310,7 @@ msgstr ""
 "condivisione di rete smontata non ferma la sorveglianza e non fa nemmeno "
 "passare il suo contenuto per nuovo al ritorno."
 
-#: ../../source/manuel_interface.rst:955
+#: ../../source/manuel_interface.rst:956
 msgid ""
 "La même surveillance existe en ligne de commande, avec ``blunderdb import"
 " --type batch --dir <dossier> --watch`` (voir :ref:`cli`) : c'est la "
@@ -2316,11 +2320,11 @@ msgstr ""
 "--type batch --dir <cartella> --watch`` (vedere :ref:`cli`): è la forma "
 "che un server, un'attività pianificata o uno script possono usare."
 
-#: ../../source/manuel_interface.rst:963
+#: ../../source/manuel_interface.rst:964
 msgid "Synchroniser deux machines"
 msgstr "Sincronizzare due macchine"
 
-#: ../../source/manuel_interface.rst:965
+#: ../../source/manuel_interface.rst:966
 msgid ""
 "Copier sa base ``.db`` d'une machine à l'autre, ou la ranger dans un "
 "dossier synchronisé (Syncthing, Dropbox…), finit par l'abîmer : SQLite "
@@ -2339,7 +2343,7 @@ msgstr ""
 "scelta — Syncthing, chiavetta USB, e-mail: non ci sono né server né "
 "account."
 
-#: ../../source/manuel_interface.rst:973
+#: ../../source/manuel_interface.rst:974
 msgid ""
 "Sur la machine A, dans la fenêtre d'export, choisissez *Toute la "
 "bibliothèque*, cochez *Seulement ce qui est nouveau depuis le dernier "
@@ -2355,7 +2359,7 @@ msgstr ""
 "solo ciò che è entrato nella libreria dall'esportazione precedente verso "
 "la stessa cartella; il primo contiene tutto."
 
-#: ../../source/manuel_interface.rst:979
+#: ../../source/manuel_interface.rst:980
 msgid ""
 "Sur la machine B, faites de ce dossier le :ref:`dossier surveillé "
 "<dossier_surveille>`. Chaque fichier ``.db`` qui y apparaît est fusionné "
@@ -2369,15 +2373,15 @@ msgstr ""
 " non viene duplicata, una partita già nota viene riconosciuta, le "
 "collezioni e le lezioni si uniscono per nome."
 
-#: ../../source/manuel_interface.rst:984
+#: ../../source/manuel_interface.rst:985
 msgid "Faites de même dans l'autre sens, avec un second dossier."
 msgstr "Fate lo stesso nell'altro senso, con una seconda cartella."
 
-#: ../../source/manuel_interface.rst:986
+#: ../../source/manuel_interface.rst:987
 msgid "Ce qu'il faut savoir :"
 msgstr "Cosa bisogna sapere:"
 
-#: ../../source/manuel_interface.rst:988
+#: ../../source/manuel_interface.rst:989
 msgid ""
 "**Le repère « dernière synchronisation » est chez celui qui exporte**, un"
 " par dossier de destination, et n'avance que lorsque le fichier est "
@@ -2389,7 +2393,7 @@ msgstr ""
 " macchina che riceve non registra nulla. Un'esportazione che fallisce "
 "lascia il segnaposto dov'è: la successiva porta le stesse righe."
 
-#: ../../source/manuel_interface.rst:992
+#: ../../source/manuel_interface.rst:993
 msgid ""
 "**La synchronisation se fait par ajout seul.** Une suppression ne se "
 "propage pas : supprimer un match sur A ne le supprime pas sur B. Une "
@@ -2417,7 +2421,7 @@ msgstr ""
 " Anki non ne fanno parte: un'esportazione di *Intera libreria* senza la "
 "casella li porta con sé."
 
-#: ../../source/manuel_interface.rst:1003
+#: ../../source/manuel_interface.rst:1004
 msgid ""
 "**Ce qu'une machine a reçu repart une fois vers l'autre**, puisque c'est "
 "nouveau dans sa bibliothèque ; l'autre le reconnaît sans rien ajouter, et"
@@ -2427,7 +2431,7 @@ msgstr ""
 "poiché è nuovo nella sua libreria; l'altra lo riconosce senza aggiungere "
 "nulla, e lo scambio successivo è vuoto."
 
-#: ../../source/manuel_interface.rst:1006
+#: ../../source/manuel_interface.rst:1007
 msgid ""
 "**Un fichier arrivé pendant que blunderDB était fermé n'est pas perdu** :"
 " au démarrage de la surveillance, chaque ``.db`` déjà présent dans le "
@@ -2445,7 +2449,7 @@ msgstr ""
 "rileggerli. Eliminate ogni tanto i file ``sync-…`` già ricevuti perché "
 "questo avvio resti rapido."
 
-#: ../../source/manuel_interface.rst:1013
+#: ../../source/manuel_interface.rst:1014
 msgid ""
 "**Un export incrémental n'écrase jamais un fichier.** Le fichier "
 "précédent porte peut-être des lignes que l'autre machine n'a pas encore "
@@ -2458,7 +2462,7 @@ msgstr ""
 "rifiutata. Indicate la cartella, e ogni esportazione vi prende un nome "
 "nuovo."
 
-#: ../../source/manuel_interface.rst:1017
+#: ../../source/manuel_interface.rst:1018
 msgid ""
 "**Un fichier réécrit sous un nom déjà vu est fusionné de nouveau** : la "
 "surveillance reconnaît un fichier à son nom, sa taille et sa date de "
@@ -2468,7 +2472,7 @@ msgstr ""
 "sorveglianza riconosce un file dal nome, dalla dimensione e dalla data di"
 " modifica."
 
-#: ../../source/manuel_interface.rst:1020
+#: ../../source/manuel_interface.rst:1021
 msgid ""
 "**La bibliothèque ouverte n'est jamais fusionnée dans elle-même** : si "
 "elle se trouve dans le dossier surveillé, la surveillance la passe."
@@ -2476,7 +2480,7 @@ msgstr ""
 "**La libreria aperta non viene mai fusa con se stessa**: se si trova "
 "nella cartella sorvegliata, la sorveglianza la salta."
 
-#: ../../source/manuel_interface.rst:1022
+#: ../../source/manuel_interface.rst:1023
 msgid ""
 "**Un export qui a dû écarter des lignes** (signalées dans le journal) ne "
 "fait pas avancer le repère : le suivant les retente, avec tout ce qui les"
@@ -2486,7 +2490,7 @@ msgstr ""
 "registro) non fa avanzare il segnaposto: la successiva le ritenta, "
 "insieme a tutto ciò che le segue."
 
-#: ../../source/manuel_interface.rst:1024
+#: ../../source/manuel_interface.rst:1025
 msgid ""
 "**Un export n'est jamais vu à moitié écrit** : il est écrit sous un nom "
 "caché puis renommé d'un coup. Un fichier protégé par mot de passe "
@@ -2498,7 +2502,7 @@ msgstr ""
 "password (``.dbx``) non viene preso dalla sorveglianza, che non può "
 "chiedere la password."
 
-#: ../../source/manuel_interface.rst:1028
+#: ../../source/manuel_interface.rst:1029
 msgid ""
 "En ligne de commande, ``blunderdb export --type database --incremental "
 "--file <dossier>`` d'un côté et ``blunderdb import --type batch --dir "
@@ -2512,11 +2516,11 @@ msgstr ""
 "``\"incremental\": true`` su ``/v1/exports.sqlite`` (vedere "
 ":ref:`headless`)."
 
-#: ../../source/manuel_interface.rst:1036
+#: ../../source/manuel_interface.rst:1037
 msgid "Assistant et MCP"
 msgstr "Assistente e MCP"
 
-#: ../../source/manuel_interface.rst:1038
+#: ../../source/manuel_interface.rst:1039
 msgid ""
 "L'onglet **Assistant et MCP** règle deux choses, toutes deux désactivées "
 "par défaut."
@@ -2524,7 +2528,7 @@ msgstr ""
 "La scheda **Assistente e MCP** regola due cose, entrambe disattivate per "
 "impostazione predefinita."
 
-#: ../../source/manuel_interface.rst:1041
+#: ../../source/manuel_interface.rst:1042
 msgid ""
 "Le **serveur MCP local** offre les outils de blunderDB (recherche, "
 "lecture d'une position et de son analyse, statistiques d'un joueur, "
@@ -2553,7 +2557,7 @@ msgstr ""
 "all'analisi di una posizione; nulla cancella. Senza una finestra aperta, "
 "``blunderdb mcp`` serve gli stessi strumenti (vedi :ref:`cli`)."
 
-#: ../../source/manuel_interface.rst:1053
+#: ../../source/manuel_interface.rst:1054
 msgid ""
 "L'**assistant interne** est un client de ces mêmes outils. Aucun modèle "
 "n'est embarqué : il s'adresse à un fournisseur compatible OpenAI — Ollama"
@@ -2582,7 +2586,7 @@ msgstr ""
 "modelli viene fatta senza un punteggio del banco di misura fornito con il"
 " codice sorgente."
 
-#: ../../source/manuel_interface.rst:1065
+#: ../../source/manuel_interface.rst:1066
 msgid ""
 "Une fois activé, l'assistant est un sous-onglet **Assistant** du panneau "
 "Recherche. Une phrase — « mes erreurs de plus de 50 millipoints dans la "
@@ -2606,11 +2610,11 @@ msgstr ""
 "dalla scrittura del server MCP locale — e ogni modifica che prepara viene"
 " mostrata ed eseguita solo dopo **Conferma**."
 
-#: ../../source/manuel_interface.rst:1078
+#: ../../source/manuel_interface.rst:1079
 msgid "Synchronisation"
 msgstr "Sincronizzazione"
 
-#: ../../source/manuel_interface.rst:1080
+#: ../../source/manuel_interface.rst:1081
 msgid ""
 "L'onglet **Synchronisation** tient la bibliothèque ouverte au même état "
 "qu'une bibliothèque distante. Collez l'**adresse du serveur** "
@@ -2628,7 +2632,7 @@ msgstr ""
 "non viene incluso in un export. Per rimuovere il token, salvate un campo "
 "vuoto."
 
-#: ../../source/manuel_interface.rst:1087
+#: ../../source/manuel_interface.rst:1088
 msgid ""
 "**Synchroniser maintenant** envoie ce qui a changé ici, puis reçoit ce "
 "qui a changé là-bas, une page à la fois ; **Synchroniser au démarrage** "
@@ -2650,7 +2654,7 @@ msgstr ""
 "resta utilizzabile e la sincronizzazione riprende da dove si era "
 "interrotta. Il protocollo è descritto nel capitolo :ref:`headless`."
 
-#: ../../source/manuel_interface.rst:1097
+#: ../../source/manuel_interface.rst:1098
 msgid ""
 "La fenêtre de configuration regroupe également des réglages d'affichage "
 "de l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir"
@@ -2675,15 +2679,15 @@ msgstr ""
 "Come le altre impostazioni, queste scelte vengono conservate da una "
 "sessione all'altra."
 
-#: ../../source/manuel_interface.rst:1110
+#: ../../source/manuel_interface.rst:1111
 msgid "Navigation dans les positions"
 msgstr "Navigazione tra le posizioni"
 
-#: ../../source/manuel_interface.rst:1112
+#: ../../source/manuel_interface.rst:1113
 msgid "Par défaut, blunderDB permet de:"
 msgstr "Per impostazione predefinita, blunderDB permette di:"
 
-#: ../../source/manuel_interface.rst:1114
+#: ../../source/manuel_interface.rst:1115
 msgid ""
 "faire défiler les différentes positions de la bibliothèque courante — qui"
 " n'est jamais chargée d'un bloc : blunderDB n'en tient que la liste des "
@@ -2697,15 +2701,15 @@ msgstr ""
 "quella visualizzata, cosicché un database di diverse decine di migliaia "
 "di posizioni si apre altrettanto velocemente di uno piccolo,"
 
-#: ../../source/manuel_interface.rst:1120
+#: ../../source/manuel_interface.rst:1121
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "visualizzare le informazioni di analisi associate a una posizione,"
 
-#: ../../source/manuel_interface.rst:1122
+#: ../../source/manuel_interface.rst:1123
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "visualizzare, aggiungere e modificare i commenti di una posizione."
 
-#: ../../source/manuel_interface.rst:1124
+#: ../../source/manuel_interface.rst:1125
 msgid ""
 "Le bouton **Aller à la position** de la barre d'outils ouvre une fenêtre "
 "où saisir directement l'indice d'une position pour y sauter, sans avoir à"
@@ -2717,16 +2721,16 @@ msgstr ""
 "saltarci, senza scorrere. È l'equivalente grafico del comando "
 "``[number]`` della riga di comando (vedere :ref:`cmd_positions`)."
 
-#: ../../source/manuel_interface.rst:1129
-#: ../../source/manuel_interface.rst:1142
+#: ../../source/manuel_interface.rst:1130
+#: ../../source/manuel_interface.rst:1143
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Fare riferimento a :ref:`raccourcis` per le scorciatoie disponibili."
 
-#: ../../source/manuel_interface.rst:1134
+#: ../../source/manuel_interface.rst:1135
 msgid "Édition de positions"
 msgstr "Modifica delle posizioni"
 
-#: ../../source/manuel_interface.rst:1136
+#: ../../source/manuel_interface.rst:1137
 msgid ""
 "L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
 "d'éditer une position sur le plateau pour l'ajouter à la base de données "
@@ -2740,11 +2744,11 @@ msgstr ""
 "pedine, il cubo, il punteggio e il turno possono essere modificati con il"
 " mouse (vedi :ref:`guide_edit_position`)."
 
-#: ../../source/manuel_interface.rst:1147
+#: ../../source/manuel_interface.rst:1148
 msgid "La ligne de commande"
 msgstr "La riga di comando"
 
-#: ../../source/manuel_interface.rst:1149
+#: ../../source/manuel_interface.rst:1150
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -2764,7 +2768,7 @@ msgstr ""
 "consente un uso potente e fluido di blunderDB, in particolare per le "
 "funzionalità di ricerca delle posizioni."
 
-#: ../../source/manuel_interface.rst:1158
+#: ../../source/manuel_interface.rst:1159
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
 "envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
@@ -2773,7 +2777,7 @@ msgstr ""
 "Per aprire la riga di comando, premere il tasto *SPAZIO*. Per inviare una"
 " richiesta e chiudere la riga di comando, premere il tasto *INVIO*."
 
-#: ../../source/manuel_interface.rst:1162
+#: ../../source/manuel_interface.rst:1163
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -2784,7 +2788,7 @@ msgstr ""
 "valide e modifica immediatamente lo stato del database se necessario. Non"
 " sono richieste azioni di salvataggio esplicite da parte dell'utente."
 
-#: ../../source/manuel_interface.rst:1167
+#: ../../source/manuel_interface.rst:1168
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de "
 "commandes disponible en ligne de commande."
@@ -2792,11 +2796,11 @@ msgstr ""
 "Fare riferimento a :ref:`elenco dei comandi <cmd_mode>` per l'elenco dei "
 "comandi disponibili nella riga di comando."
 
-#: ../../source/manuel_interface.rst:1173
+#: ../../source/manuel_interface.rst:1174
 msgid "La palette de commandes"
 msgstr "La tavolozza dei comandi"
 
-#: ../../source/manuel_interface.rst:1175
+#: ../../source/manuel_interface.rst:1176
 msgid ""
 "La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce "
 "que l'on ne sait plus où chercher : une commande de la ligne de commande,"
@@ -2812,7 +2816,7 @@ msgstr ""
 "senza badare a maiuscole e accenti: «mtrcb» trova la matrice del cubo, "
 "«lyon» i match di un torneo di Lione."
 
-#: ../../source/manuel_interface.rst:1182
+#: ../../source/manuel_interface.rst:1183
 msgid ""
 "Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se"
 " lance comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne "
@@ -2825,7 +2829,7 @@ msgstr ""
 "per scriverci i filtri; un filtro si esegue come con un doppio clic nella"
 " libreria; un match si apre come con un doppio clic nel pannello Match."
 
-#: ../../source/manuel_interface.rst:1187
+#: ../../source/manuel_interface.rst:1188
 msgid ""
 "Quand une Direction est ouverte, la palette y ajoute le tournoi : "
 "joueurs, tables, matchs en cours et épreuves (voir :ref:`la recherche "
@@ -3048,3 +3052,32 @@ msgstr ""
 #~ " fittizi. Le visite guidate si basano"
 #~ " su questo database quando nessun "
 #~ "database è aperto."
+
+#~ msgid ""
+#~ "Un seul travail écrit la bibliothèque"
+#~ " à la fois : un lot gammonNet,"
+#~ " un rollout stocké ou une opération"
+#~ " de maintenance. Un lot ou une "
+#~ "opération lancés depuis l'onglet *Maintenance*"
+#~ " sont refusés tant qu'un autre "
+#~ "travail est en cours, et la barre"
+#~ " de statut nomme ce travail ; "
+#~ "le lot que lance un import, une"
+#~ " transcription ou un duel attend au"
+#~ " contraire qu'il finisse, et la barre"
+#~ " de statut l'annonce « en attente "
+#~ "» jusqu'à son départ."
+#~ msgstr ""
+#~ "Un solo lavoro scrive nella libreria "
+#~ "alla volta: un lotto gammonNet, un "
+#~ "rollout memorizzato o un'operazione di "
+#~ "manutenzione. Un lotto o un'operazione "
+#~ "avviati dalla scheda *Manutenzione* vengono"
+#~ " rifiutati finché un altro lavoro è"
+#~ " in corso, e la barra di stato"
+#~ " nomina quel lavoro; il lotto avviato"
+#~ " da un'importazione, una trascrizione o "
+#~ "un duello attende invece che l'altro "
+#~ "finisca, e la barra di stato lo"
+#~ " segnala come « in attesa » "
+#~ "fino alla partenza."

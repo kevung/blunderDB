@@ -24,6 +24,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/training"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 )
 
 // App struct
@@ -103,6 +104,9 @@ type App struct {
 	libs libraryGroups
 	// imports are the imports running on borrowed handles (import_files.go).
 	imports backgroundImports
+	// jobs lists every durable task and queues those that write a library
+	// one at a time (jobs.go, ADR-0115).
+	jobs *jobs.Registry
 	// paneCopy is the session's history of position copies between
 	// libraries that can be taken back (CopyPositionToGroup).
 	paneCopy paneCopies
@@ -115,6 +119,8 @@ const blunderCountReadyEvent = "library:blunder-count-ready"
 // NewApp creates a new App application struct.
 func NewApp(db *database.Database) *App {
 	a := &App{db: db}
+	a.jobs = jobs.New(func(name string, payload any) { a.emitBatch(name, payload) })
+	a.imports.reg = a.jobs
 	a.mcp.engine.db = db
 	a.display.engine.db = db
 	if db != nil {

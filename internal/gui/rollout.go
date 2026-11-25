@@ -9,6 +9,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 )
 
@@ -89,23 +90,41 @@ func (a *App) StartRollout(req RolloutRequest) (int64, error) {
 	}
 
 	ctx, stopped, job := a.beginRollout(RolloutStatus{Running: true, Kind: "position", PositionID: req.PositionID, MaxGames: req.Settings.MaxGames})
+	ctx, cancel := context.WithCancel(ctx)
+	// Only a stored rollout writes the library, and waits its turn for it.
+	task := a.jobs.Start(jobs.Spec{
+		Kind: jobs.Rollout, Label: rolloutLabel(req.PositionID), Library: a.shownGroup(),
+		Priority: jobs.Requested, Exclusive: req.Store, Pausable: true, Compute: true, Cancel: cancel,
+	})
 
 	go func() {
 		defer close(stopped)
+		defer cancel()
 		defer recoverBackground(a.ctx, "rollout")
+		// The engine calls progress between batches of games, on the loop
+		// that plays them: the task's checkpoint there pauses the rollout.
 		progress := func(p rollout.Progress) {
 			a.noteRollout(stopped, func(st *RolloutStatus) { st.Games, st.MaxGames = p.Games, p.MaxGames })
+			task.Progress(p.Games, p.MaxGames)
 			a.emitBatch("rollout:progress", RolloutProgressEvent{Job: job, PositionID: req.PositionID, Games: p.Games, MaxGames: p.MaxGames, Candidates: p.Candidates})
+			task.Yield(ctx)
 		}
 		var (
 			res *rollout.Result
 			err error
 		)
-		if req.PositionID != 0 {
-			res, err = a.db.RolloutPosition(ctx, req.PositionID, req.Settings, req.Moves, req.Store, progress)
-		} else {
+		err = task.Turn(ctx)
+		switch {
+		case err != nil:
+		case req.PositionID != 0:
+			res, err = a.db.RolloutPosition(database.WaitForDatabase(ctx, nil), req.PositionID, req.Settings, req.Moves, req.Store, progress)
+		default:
 			res, err = rollout.Run(ctx, *req.Position, req.Settings, rollout.Options{Moves: req.Moves, Progress: progress})
 		}
+		if err != nil && ctx.Err() != nil {
+			err = context.Canceled
+		}
+		task.Finish(err)
 
 		a.endRollout(stopped)
 
@@ -117,7 +136,7 @@ func (a *App) StartRollout(req RolloutRequest) (int64, error) {
 				done.Record = &rec
 			}
 			a.emitBatch("rollout:done", done)
-		case ctx.Err() != nil:
+		case ctx.Err() != nil || errors.Is(err, context.Canceled):
 			a.emitBatch("rollout:cancelled", RolloutDoneEvent{Job: job, PositionID: req.PositionID, Result: res})
 		default:
 			a.emitBatch("rollout:error", map[string]any{"job": job, "positionId": req.PositionID, "message": fmt.Sprint(err)})
@@ -130,8 +149,8 @@ func (a *App) StartRollout(req RolloutRequest) (int64, error) {
 // open database that query selects and that carries no rollout with
 // settings' Signature yet, cancelling any rollout in flight. Each is written
 // as it finishes, so cancelling keeps what was done and a rerun resumes.
-// It is refused while a gammonNet batch runs: the two batches each take
-// every core. An invalid request is refused here; the outcome arrives as
+// While another task writes the library it waits its turn in the library's
+// queue (ADR-0115). An invalid request is refused here; the outcome arrives as
 // events:
 //
 //	rollout-batch:started   {total}, once the positions are gathered
@@ -190,8 +209,8 @@ func (a *App) StartRolloutIDs(ids []int64, settings rollout.Settings, group int)
 	})
 }
 
-// startRolloutBatch runs the batch gather selects, refusing while a gammonNet
-// batch runs. onScreen, when set, vets the group on screen; it runs under
+// startRolloutBatch runs the batch gather selects, once its turn comes in
+// the library's queue. onScreen, when set, vets the group on screen; it runs under
 // libs.mu together with the rollout's registration, so that no switch slips
 // between the check and the moment libraryBusy sees the rollout.
 func (a *App) startRolloutBatch(settings rollout.Settings, onScreen func() error, gather func(context.Context) (*database.RolloutPlan, error)) (int64, error) {
@@ -205,39 +224,51 @@ func (a *App) startRolloutBatch(settings rollout.Settings, onScreen func() error
 	if hook := a.rolloutClaimHook; hook != nil {
 		hook()
 	}
-	a.roMu.Lock()
-	a.gnBatchMu.Lock()
-	gammonNetRunning := a.gnBatchDone != nil
-	a.gnBatchMu.Unlock()
-	a.roMu.Unlock()
-	if gammonNetRunning {
-		a.libs.mu.Unlock()
-		return 0, &database.BusyError{Job: database.JobGammonNet}
-	}
 
 	ctx, stopped, job := a.beginRollout(RolloutStatus{Running: true, Kind: "batch", MaxGames: settings.MaxGames})
+	ctx, cancel := context.WithCancel(ctx)
+	task := a.jobs.Start(jobs.Spec{
+		Kind: jobs.RolloutBatch, Library: a.shownGroup(), Priority: jobs.Requested,
+		Exclusive: true, Pausable: true, Compute: true, Cancel: cancel,
+	})
 	a.libs.mu.Unlock()
 	go func() {
 		defer close(stopped)
+		defer cancel()
 		defer recoverBackground(a.ctx, "rollout batch")
 		var sum rollouts.Summary
-		plan, err := gather(ctx)
+		err := task.Turn(ctx)
+		var plan *database.RolloutPlan
+		if err == nil {
+			plan, err = gather(database.WaitForDatabase(ctx, nil))
+		}
 		if err == nil {
 			a.noteRollout(stopped, func(st *RolloutStatus) { st.Total = len(plan.Positions) })
+			task.Progress(0, len(plan.Positions))
 			a.emitBatch("rollout-batch:started", map[string]int64{"job": job, "total": int64(len(plan.Positions))})
-			sum, err = a.db.RunRolloutPlan(ctx, plan, settings, func(p rollouts.Progress) {
+			sum, err = a.db.RunRolloutPlan(database.WaitForDatabase(ctx, nil), plan, settings, func(p rollouts.Progress) {
 				a.noteRollout(stopped, func(st *RolloutStatus) {
 					st.Done, st.Total, st.PositionID, st.Games, st.MaxGames = p.Done, p.Total, p.PositionID, p.Games, p.MaxGames
 				})
+				task.Progress(p.Done, p.Total)
 				a.emitBatch("rollout-batch:progress", RolloutBatchProgressEvent{Job: job, Done: p.Done, Total: p.Total,
 					PositionID: p.PositionID, Games: p.Games, MaxGames: p.MaxGames})
+				task.Yield(ctx)
 			})
+		}
+		switch {
+		case err != nil && ctx.Err() != nil:
+			task.Finish(context.Canceled)
+		case err == nil && sum.Cancelled:
+			task.Finish(context.Canceled)
+		default:
+			task.Finish(err)
 		}
 		a.endRollout(stopped)
 
 		done := RolloutBatchDoneEvent{Job: job, Total: sum.Total, RolledOut: sum.RolledOut, Refused: sum.Refused, Failed: sum.Failed, Signature: settings.Signature()}
 		switch {
-		case err != nil && ctx.Err() == nil:
+		case err != nil && ctx.Err() == nil && !errors.Is(err, context.Canceled):
 			a.emitBatch("rollout-batch:error", map[string]any{"job": job, "message": fmt.Sprint(err)})
 		case sum.Cancelled || ctx.Err() != nil:
 			a.emitBatch("rollout-batch:cancelled", done)
@@ -345,12 +376,6 @@ func (a *App) endRollout(stopped chan struct{}) {
 	}
 }
 
-// rolloutBatchRunning reports a rollout of a query in flight; the caller
-// holds roMu.
-func (a *App) rolloutBatchRunning() bool {
-	return a.roDone != nil && a.roStatus.Kind == "batch"
-}
-
 // CancelRollout stops the rollout, or the batch, in flight and returns at once; it is not
 // stored.
 func (a *App) CancelRollout() {
@@ -367,4 +392,13 @@ func (a *App) cancelRollout() <-chan struct{} {
 		a.roCancel = nil
 	}
 	return a.roDone
+}
+
+// rolloutLabel names a rollout's position in the list of tasks; empty for a
+// board that is not saved.
+func rolloutLabel(positionID int64) string {
+	if positionID == 0 {
+		return ""
+	}
+	return fmt.Sprintf("#%d", positionID)
 }

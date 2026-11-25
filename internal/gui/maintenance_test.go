@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 	"github.com/kevung/blunderdb/pkg/blunderdb/maintenance"
 )
 
@@ -17,11 +18,15 @@ type event struct {
 	payload any
 }
 
-// recordEvents routes a's events to a channel; onEvent, when set, runs on
-// the emitting goroutine before the event is queued.
+// recordEvents routes a's events to a channel, except the registry's
+// (jobs:*), which recordJobEvents reads; onEvent, when set, runs on the
+// emitting goroutine before the event is queued.
 func recordEvents(a *App, onEvent func(name string)) <-chan event {
 	ch := make(chan event, 64)
 	hook := func(name string, payload ...any) {
+		if strings.HasPrefix(name, "jobs:") {
+			return
+		}
 		if onEvent != nil {
 			onEvent(name)
 		}
@@ -108,17 +113,34 @@ func TestStartMaintenance_CancelEndsThePass(t *testing.T) {
 	}
 }
 
-// A pass asked for while another job holds the library is refused with the
-// BusyError text the frontend's busyMessage reads.
-func TestStartMaintenance_RefusedWhileABatchHoldsTheLibrary(t *testing.T) {
-	a, _, release, _ := queueBehindRollout(t)
-	defer release()
+// A pass asked for while a batch waits for the library takes its place in
+// the library's queue behind it, instead of being refused, and runs once
+// the batch is done.
+func TestStartMaintenance_WaitsBehindTheQueuedBatch(t *testing.T) {
+	a, _, release, stopped := queueBehindRollout(t)
 	events := recordEvents(a, nil)
 	a.StartMaintenance(string(maintenance.StatsMatches))
-	end, _ := lastEvent(t, events)
-	msg, _ := end.payload.(map[string]string)
-	if end.name != "maintenance:error" || !strings.Contains(msg["message"], "database is busy: "+database.JobRollout) {
-		t.Fatalf("got %s %v, want the rollout's busy refusal", end.name, end.payload)
+	select {
+	case e := <-events:
+		if e.name != "gammonnet-batch:progress" {
+			t.Fatalf("got %s %v while the library was held, want the pass waiting", e.name, e.payload)
+		}
+	case <-time.After(50 * time.Millisecond):
+	}
+	if info := a.ListJobs(); len(info) != 2 || info[1].State != jobs.Waiting || info[1].Position != 1 {
+		t.Fatalf("tasks %+v, want the pass waiting first in the queue", info)
+	}
+	release()
+	waitStopped(t, stopped)
+	for {
+		end, seen := lastEvent(t, events)
+		if strings.HasPrefix(end.name, "gammonnet-batch:") {
+			continue
+		}
+		if end.name != "maintenance:done" {
+			t.Fatalf("events %v ended with %s %v, want maintenance:done", seen, end.name, end.payload)
+		}
+		return
 	}
 }
 

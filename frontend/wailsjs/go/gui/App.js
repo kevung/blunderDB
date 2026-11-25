@@ -58,6 +58,10 @@ export function CancelGammonNetBatch() {
   return window['go']['gui']['App']['CancelGammonNetBatch']();
 }
 
+export function CancelJob(arg1) {
+  return window['go']['gui']['App']['CancelJob'](arg1);
+}
+
 export function CancelLibraryImport(arg1) {
   return window['go']['gui']['App']['CancelLibraryImport'](arg1);
 }
@@ -210,6 +214,10 @@ export function LibraryGroupHolding(arg1) {
   return window['go']['gui']['App']['LibraryGroupHolding'](arg1);
 }
 
+export function ListJobs() {
+  return window['go']['gui']['App']['ListJobs']();
+}
+
 export function ListLibraryGroups() {
   return window['go']['gui']['App']['ListLibraryGroups']();
 }
@@ -220,6 +228,10 @@ export function LooksLikePositionID(arg1) {
 
 export function MediaURL(arg1) {
   return window['go']['gui']['App']['MediaURL'](arg1);
+}
+
+export function MoveJob(arg1, arg2) {
+  return window['go']['gui']['App']['MoveJob'](arg1, arg2);
 }
 
 export function OpenBearoffFileDialog() {
@@ -306,6 +318,10 @@ export function PauseBearoffGeneration() {
   return window['go']['gui']['App']['PauseBearoffGeneration']();
 }
 
+export function PauseJob(arg1) {
+  return window['go']['gui']['App']['PauseJob'](arg1);
+}
+
 export function PickIdentityFile() {
   return window['go']['gui']['App']['PickIdentityFile']();
 }
@@ -342,8 +358,16 @@ export function ReleaseMedia(arg1) {
   return window['go']['gui']['App']['ReleaseMedia'](arg1);
 }
 
+export function RemoveJob(arg1) {
+  return window['go']['gui']['App']['RemoveJob'](arg1);
+}
+
 export function RepairVideoMux(arg1) {
   return window['go']['gui']['App']['RepairVideoMux'](arg1);
+}
+
+export function ResumeJob(arg1) {
+  return window['go']['gui']['App']['ResumeJob'](arg1);
 }
 
 export function RolloutPresets() {

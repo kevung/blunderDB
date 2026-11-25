@@ -2185,7 +2185,6 @@ export namespace domain {
 		    return a;
 		}
 	}
-	
 	export class CheckerStep {
 	    from: number;
 	    to: number;
@@ -5676,6 +5675,45 @@ export namespace ingest {
 		    }
 		    return a;
 		}
+	}
+
+}
+
+export namespace jobs {
+	
+	export class Info {
+	    id: number;
+	    kind: string;
+	    label: string;
+	    library: number;
+	    priority: string;
+	    state: string;
+	    done: number;
+	    total: number;
+	    error?: string;
+	    position: number;
+	    pausable: boolean;
+	    cancelable: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Info(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.kind = source["kind"];
+	        this.label = source["label"];
+	        this.library = source["library"];
+	        this.priority = source["priority"];
+	        this.state = source["state"];
+	        this.done = source["done"];
+	        this.total = source["total"];
+	        this.error = source["error"];
+	        this.position = source["position"];
+	        this.pausable = source["pausable"];
+	        this.cancelable = source["cancelable"];
+	    }
 	}
 
 }

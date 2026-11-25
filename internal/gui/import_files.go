@@ -10,6 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 )
 
 // importProgressEvent carries an ImportFiles call's progress, at most four
@@ -85,10 +86,19 @@ func (a *App) ImportFiles(paths []string, background bool) (ImportFilesSummary, 
 	}
 	if !background {
 		group := a.activeGroup()
+		job := a.jobs.Start(jobs.Spec{Kind: jobs.Import, Library: group, Priority: jobs.Requested, Cancel: a.db.CancelImport})
 		out, err := a.db.ImportFiles(paths, database.ImportFilesOptions{
-			OnProgress: func(p ingest.BatchProgress) { a.emitBatch(importProgressEvent, importProgress{p, group}) },
+			OnProgress: func(p ingest.BatchProgress) {
+				job.Progress(p.FilesDone, p.FilesTotal)
+				a.emitBatch(importProgressEvent, importProgress{p, group})
+			},
 		})
 		s, err := summarizeImport(out, len(paths), err)
+		if s.Cancelled {
+			job.Finish(context.Canceled)
+		} else {
+			job.Finish(err)
+		}
 		s.Group = group
 		return s, err
 	}
@@ -138,7 +148,10 @@ func (a *App) importOn(group int, lent *database.Database, paths []string, done 
 	defer lent.Close() // lets the borrowed library go; closes nothing
 	defer done()
 	out, err := lent.ImportFiles(paths, database.ImportFilesOptions{
-		OnProgress: func(p ingest.BatchProgress) { a.emitBatch(importProgressEvent, importProgress{p, group}) },
+		OnProgress: func(p ingest.BatchProgress) {
+			a.imports.progress(lent, p.FilesDone, p.FilesTotal)
+			a.emitBatch(importProgressEvent, importProgress{p, group})
+		},
 	})
 	s, err := summarizeImport(out, len(paths), err)
 	s.Group = group
@@ -184,38 +197,61 @@ func (a *App) importsRunning() int {
 }
 
 // backgroundImports are the imports running on borrowed handles, so that a
-// group's close and the shutdown can stop them and wait.
+// group's close and the shutdown can stop them and wait. Each is also a task
+// of the registry (reg), which lists it.
 type backgroundImports struct {
 	mu      sync.Mutex
 	running map[*database.Database]runningImport
+	reg     *jobs.Registry
 }
 
 type runningImport struct {
 	group  int
 	cancel func()
 	done   chan struct{}
+	job    *jobs.Job // nil without a registry
 }
 
 func (b *backgroundImports) add(group int, lent *database.Database) func() {
-	return b.addCancel(group, lent, lent.CancelImport)
+	return b.register(jobs.Import, group, lent, lent.CancelImport)
 }
 
 // addCancel registers a job writing or reading lent, a handle borrowed from
 // group's library, that cancel stops: a transfer, which holds a handle on
 // each of its two libraries, stops when either group closes.
 func (b *backgroundImports) addCancel(group int, lent *database.Database, cancel func()) func() {
+	return b.register(jobs.Transfer, group, lent, cancel)
+}
+
+func (b *backgroundImports) register(kind jobs.Kind, group int, lent *database.Database, cancel func()) func() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	if b.running == nil {
 		b.running = map[*database.Database]runningImport{}
 	}
 	r := runningImport{group: group, cancel: cancel, done: make(chan struct{})}
+	if b.reg != nil {
+		r.job = b.reg.Start(jobs.Spec{Kind: kind, Library: group, Priority: jobs.Requested, Cancel: cancel})
+	}
 	b.running[lent] = r
 	return func() {
 		b.mu.Lock()
 		delete(b.running, lent)
 		b.mu.Unlock()
+		if r.job != nil {
+			r.job.Finish(nil)
+		}
 		close(r.done)
+	}
+}
+
+// progress records how far the import on lent has gone.
+func (b *backgroundImports) progress(lent *database.Database, done, total int) {
+	b.mu.Lock()
+	r := b.running[lent]
+	b.mu.Unlock()
+	if r.job != nil {
+		r.job.Progress(done, total)
 	}
 }
 
