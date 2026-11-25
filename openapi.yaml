@@ -3841,6 +3841,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_DirectionView"
                 nullable: true
+  /v1/documents.importReleve:
+    post:
+      operationId: documents.importReleve
+      tags: [documents]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/documentImportReleveReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/document_ImportResult"
   /v1/duels.act:
     post:
       operationId: duels.act
@@ -9947,6 +9964,19 @@ components:
           type: string
         afterCurrent:
           type: boolean
+    documentImportReleveReq:
+      type: object
+      properties:
+        releve:
+          type: object
+          description: "Arbitrary JSON value."
+        collection:
+          type: string
+        force:
+          type: boolean
+    document_ImportResult:
+      type: object
+      description: "Opaque: see the Go type document.ImportResult (defined outside internal/server, not expanded here)."
     domain_AnkiDeck:
       type: object
       description: "Opaque: see the Go type domain.AnkiDeck (defined outside internal/server, not expanded here)."

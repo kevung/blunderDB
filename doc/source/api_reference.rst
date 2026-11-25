@@ -157,6 +157,8 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.updatePair                JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.updateParticipant         JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.withdraw                  JSON  (Idempotency-Key)  (If-Match)
+   documents
+     POST /v1/documents.importReleve               JSON
    duels
      POST /v1/duels.act                            custom
      POST /v1/duels.contribute                     custom

@@ -16,6 +16,7 @@ import {direction} from '../models';
 import {engine} from '../models';
 import {apkg} from '../models';
 import {tournoi} from '../models';
+import {document} from '../models';
 import {maintenance} from '../models';
 import {parser} from '../models';
 import {rollout} from '../models';
@@ -440,6 +441,8 @@ export function ImportBGFPosition(arg1:string):Promise<number>;
 export function ImportBGFPositionFromText(arg1:string):Promise<number>;
 
 export function ImportDatabase(arg1:string):Promise<Record<string, any>>;
+
+export function ImportDocumentReleve(arg1:string,arg2:string,arg3:boolean):Promise<document.ImportResult>;
 
 export function ImportFiles(arg1:Array<string>,arg2:database.ImportFilesOptions):Promise<Array<ingest.FileOutcome>>;
 

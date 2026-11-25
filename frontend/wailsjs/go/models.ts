@@ -1727,6 +1727,39 @@ export namespace direction {
 
 }
 
+export namespace document {
+	
+	export class ImportResult {
+	    collectionId: number;
+	    collection: string;
+	    createdCollection: boolean;
+	    entries: number;
+	    positions: number;
+	    newPositions: number;
+	    added: number;
+	    repeated: number;
+	    forced: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.collectionId = source["collectionId"];
+	        this.collection = source["collection"];
+	        this.createdCollection = source["createdCollection"];
+	        this.entries = source["entries"];
+	        this.positions = source["positions"];
+	        this.newPositions = source["newPositions"];
+	        this.added = source["added"];
+	        this.repeated = source["repeated"];
+	        this.forced = source["forced"];
+	    }
+	}
+
+}
+
 export namespace domain {
 	
 	export class PlayerAlias {
