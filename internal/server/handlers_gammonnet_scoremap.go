@@ -2,7 +2,6 @@ package server
 
 import (
 	"net/http"
-	"slices"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -39,16 +38,16 @@ func (s *Server) handleGammonNetScoreMap(w http.ResponseWriter, r *http.Request)
 	if req.MatchLength == 0 {
 		req.MatchLength = gammonnet.DefaultMapMatchLength
 	}
-	if !slices.Contains(gammonnet.CubeMatrixLengths, req.MatchLength) {
-		writeErrorCode(w, CodeInvalid, "matchLength must be odd, between 3 and 15")
+	if err := gammonnet.ValidateMapMatchLength(req.MatchLength); err != nil {
+		writeErrorCode(w, CodeInvalid, err.Error())
 		return
 	}
 	ply := 2
 	if req.Ply != nil {
 		ply = *req.Ply
 	}
-	if ply < 0 || ply > 2 {
-		writeErrorCode(w, CodeInvalid, "ply must be between 0 and 2")
+	if err := gammonnet.ValidateMapPly(ply); err != nil {
+		writeErrorCode(w, CodeInvalid, err.Error())
 		return
 	}
 	if req.PruneK <= 0 {

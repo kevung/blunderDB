@@ -45,6 +45,12 @@ func (s *Server) handleGammonNetCubeMatrix(w http.ResponseWriter, r *http.Reques
 		writeErrorCode(w, CodeInvalid, "matchLength must be between 1 and 25")
 		return
 	}
+	// The depth bound every in-line computation on a bare position keeps
+	// (ADR-0116); length and defaults stay the matrix's own.
+	if err := gammonnet.ValidateMapPly(req.Ply); err != nil {
+		writeErrorCode(w, CodeInvalid, err.Error())
+		return
+	}
 	if req.PruneK <= 0 {
 		req.PruneK = 12
 	}

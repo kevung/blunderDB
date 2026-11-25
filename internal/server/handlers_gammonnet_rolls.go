@@ -45,8 +45,8 @@ func (s *Server) handleGammonNetRolls(w http.ResponseWriter, r *http.Request) {
 	if req.Ply != nil {
 		ply = *req.Ply
 	}
-	if ply < 0 || ply > 2 {
-		writeErrorCode(w, CodeInvalid, "ply must be between 0 and 2")
+	if err := gammonnet.ValidateMapPly(ply); err != nil {
+		writeErrorCode(w, CodeInvalid, err.Error())
 		return
 	}
 	if req.PruneK <= 0 {
