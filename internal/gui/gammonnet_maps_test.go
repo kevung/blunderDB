@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -124,10 +125,55 @@ func TestStartScoreMap_CancelLeavesThePanelAlone(t *testing.T) {
 		t.Fatalf("ended with %s", last.name)
 	}
 	// A later search is not the map's: its cancel must not reach it.
-	ctx, _, end := a.beginInteractiveSearch()
+	ctx, end := a.beginInteractiveSearch(nil)
 	a.CancelScoreMap()
 	if ctx.Err() != nil {
 		t.Fatal("CancelScoreMap cancelled a search it did not start")
 	}
 	end()
+}
+
+// Two Starts racing a Cancel: the sequence is recorded under the slot's
+// lock, so -race sees no unguarded access and both maps end cancelled.
+func TestStartRollMap_ConcurrentStartsThenCancel(t *testing.T) {
+	a := &App{}
+	ch := mapEvents(a)
+	pos, _ := domain.DecodeXGID(mapsOpeningXGID)
+	var wg sync.WaitGroup
+	for tag := 1; tag <= 2; tag++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			a.StartRollMap(pos, 2, 0, tag)
+		}()
+	}
+	go a.CancelRollMap()
+	wg.Wait()
+	a.CancelRollMap()
+	ended := map[int]string{}
+	for len(ended) < 2 {
+		e, _ := waitMapEnd(t, ch, "gammonnet-rolls:done", "gammonnet-rolls:error", "gammonnet-rolls:cancelled")
+		ended[e.payload.(map[string]int)["tag"]] = e.name
+	}
+	for tag, name := range ended {
+		if name != "gammonnet-rolls:cancelled" {
+			t.Errorf("tag %d ended with %s", tag, name)
+		}
+	}
+}
+
+func TestStartMaps_RefuseTheBoundsTheCLIRefuses(t *testing.T) {
+	a := &App{}
+	ch := mapEvents(a)
+	pos, _ := domain.DecodeXGID(mapsOpeningXGID)
+	a.StartRollMap(pos, 3, 0, 1)
+	if e, _ := waitMapEnd(t, ch, "gammonnet-rolls:done", "gammonnet-rolls:error", "gammonnet-rolls:cancelled"); e.name != "gammonnet-rolls:error" {
+		t.Fatalf("roll map at 3 ply: %s", e.name)
+	}
+	for _, c := range []struct{ length, ply int }{{8, 0}, {17, 0}, {9, 3}} {
+		a.StartScoreMap(pos, c.length, c.ply, 0, 1)
+		if e, _ := waitMapEnd(t, ch, "gammonnet-scoremap:done", "gammonnet-scoremap:error", "gammonnet-scoremap:cancelled"); e.name != "gammonnet-scoremap:error" {
+			t.Fatalf("score map %+v: %s", c, e.name)
+		}
+	}
 }

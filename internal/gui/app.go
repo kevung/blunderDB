@@ -51,8 +51,12 @@ type App struct {
 	gnEvalCancel context.CancelFunc
 	// gnEvalSeq names the search gnEvalCancel belongs to, so a finishing
 	// search clears only its own.
-	gnEvalSeq  uint64
-	gnLivePool gammonNetLivePool
+	gnEvalSeq uint64
+	// gnRollMapSeq and gnScoreMapSeq name the search each map last started,
+	// so its Cancel stops that one and never the panel's. Guarded by gnEvalMu.
+	gnRollMapSeq  uint64
+	gnScoreMapSeq uint64
+	gnLivePool    gammonNetLivePool
 
 	// gnBatchMu/gnBatchCancel: the same for the batch (gammonnet_batch.go).
 	gnBatchMu     sync.Mutex

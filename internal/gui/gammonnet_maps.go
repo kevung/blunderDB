@@ -3,7 +3,6 @@ package gui
 import (
 	"context"
 	"errors"
-	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -17,25 +16,6 @@ import (
 // search's slot (beginInteractiveSearch): the batch yields to them as it does
 // to the panel, and a newer interactive search supersedes them. Nothing is
 // written to the library.
-
-// mapRun remembers which interactive search a map kind started, so its
-// Cancel stops that search and never the panel's.
-type mapRun struct {
-	mu  sync.Mutex
-	seq uint64
-}
-
-func (r *mapRun) set(seq uint64) {
-	r.mu.Lock()
-	r.seq = seq
-	r.mu.Unlock()
-}
-
-func (r *mapRun) get() uint64 {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	return r.seq
-}
 
 // RollMapRowEvent is the payload of "gammonnet-rolls:row".
 type RollMapRowEvent struct {
@@ -71,11 +51,12 @@ func (a *App) StartRollMapAfterPlay(pos domain.Position, die1, die2 int, move st
 	a.startRollMap(after, ply, pruneK, tag)
 }
 
-var gnRollMap mapRun
-
 func (a *App) startRollMap(pos domain.Position, ply, pruneK, tag int) {
-	ctx, seq, end := a.beginInteractiveSearch()
-	gnRollMap.set(seq)
+	if err := gammonnet.ValidateMapPly(ply); err != nil {
+		a.emitBatch("gammonnet-rolls:error", map[string]any{"tag": tag, "message": err.Error()})
+		return
+	}
+	ctx, end := a.beginInteractiveSearch(&a.gnRollMapSeq)
 	go func() {
 		defer recoverBackground(a.ctx, "gammonNet roll map")
 		met, err := a.currentMET()
@@ -93,7 +74,7 @@ func (a *App) startRollMap(pos domain.Position, ply, pruneK, tag int) {
 // CancelRollMap stops the roll map in flight, if it is still the interactive
 // search running; the panel's own search is left alone.
 func (a *App) CancelRollMap() {
-	a.cancelInteractiveSearch(gnRollMap.get())
+	a.cancelInteractiveSearch(&a.gnRollMapSeq)
 }
 
 // currentMET is the library's table (ADR-0068), nil for the built-in one.
@@ -131,8 +112,6 @@ type ScoreMapDoneEvent struct {
 	Map gammonnet.ScoreMap `json:"map"`
 }
 
-var gnScoreMap mapRun
-
 // StartScoreMap computes pos at every away × away score of a
 // matchLength-point match — the best play with dice, the cube verdict
 // without — at 0-ply, then at ply from the position's score outwards. Emits
@@ -141,8 +120,11 @@ var gnScoreMap mapRun
 // "gammonnet-scoremap:cancelled" {tag} / "gammonnet-scoremap:error"
 // {tag, message}.
 func (a *App) StartScoreMap(pos domain.Position, matchLength, ply, pruneK, tag int) {
-	ctx, seq, end := a.beginInteractiveSearch()
-	gnScoreMap.set(seq)
+	if err := validateScoreMap(matchLength, ply); err != nil {
+		a.emitBatch("gammonnet-scoremap:error", map[string]any{"tag": tag, "message": err.Error()})
+		return
+	}
+	ctx, end := a.beginInteractiveSearch(&a.gnScoreMapSeq)
 	go func() {
 		defer recoverBackground(a.ctx, "gammonNet score map")
 		met, err := a.currentMET()
@@ -160,5 +142,13 @@ func (a *App) StartScoreMap(pos domain.Position, matchLength, ply, pruneK, tag i
 // CancelScoreMap stops the score map in flight, if it is still the
 // interactive search running.
 func (a *App) CancelScoreMap() {
-	a.cancelInteractiveSearch(gnScoreMap.get())
+	a.cancelInteractiveSearch(&a.gnScoreMapSeq)
+}
+
+// validateScoreMap holds the GUI to the bounds the CLI and the daemon check.
+func validateScoreMap(matchLength, ply int) error {
+	if err := gammonnet.ValidateMapMatchLength(matchLength); err != nil {
+		return err
+	}
+	return gammonnet.ValidateMapPly(ply)
 }
