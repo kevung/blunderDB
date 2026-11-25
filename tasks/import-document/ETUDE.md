@@ -45,6 +45,35 @@ Z-Library). Couche texte mauvaise : Olsen. Le décodage de la police XG est à p
 6. **Le document vient de l'utilisateur** : un fichier local ou une URL qu'il donne. Une URL est
    une page, sans exploration du site. Aucune source n'est nommée ni suggérée.
 
+## 2 bis. Robustesse : un document jamais rencontré
+
+Exigence de l'utilisateur (2026-11-25) : l'outil doit avoir de bonnes chances de marcher sur un
+document qu'il n'a pas vu. Un thème par livre n'y répond pas. Conséquences :
+
+1. **Le lecteur cherche la structure, pas un style.** Ce que tout diagramme partage : deux rangées
+   de douze pointes alternées, coupées par une barre ; des pions qui sont des disques de deux
+   classes, empilés depuis la base d'une pointe. Couleurs, épaisseurs, hachures, sens et
+   numérotation ne sont pas supposés.
+2. **Le style s'apprend du document lui-même, sans intervention.** Un livre dessine tous ses
+   diagrammes de la même façon : la géométrie, les deux classes de pions et l'emplacement des pips
+   s'estiment sur l'ensemble des pages puis s'appliquent à chacune. Rien n'est appris ni gardé
+   d'un document à l'autre.
+3. **Les recoupements ne dépendent d'aucun style** (§3) : ce sont eux qui disent, sur un livre
+   inconnu, si la lecture tient. Un style mal compris donne des positions « à vérifier », jamais
+   des positions fausses déclarées sûres.
+4. **Repli assisté quand le style échappe** : l'utilisateur clique les coins d'un diagramme et
+   désigne un pion de chaque camp ; ce profil vaut pour tout le document. L'outil reste utilisable,
+   il coûte seulement plus de gestes.
+5. **La robustesse se mesure sur une réserve.** Livres de développement : Deep Cube, Robertie 501,
+   Trice, Woolsey, Olsen, Mochizuki, Kageyama (Endgame). Réserve, à ne pas ouvrir avant la mesure :
+   Bagai, Jacoby, Magriel, Kageyama (Back Checker), l'EPUB, le livre FT, plus deux pages web et
+   deux documents que l'utilisateur choisira le jour de la mesure. Critères fixés avant : aucune
+   position fausse parmi les sûres ; taux de sûres ; gestes de l'utilisateur pour 100 positions.
+   Une réserve ouverte est consommée : la mesure suivante en demande une neuve.
+
+Les thèmes de `capture` restent la voie des captures de logiciels connus (XG, Galaxy). Le lecteur
+de structure est un second lecteur, qui rend le même `capture.Reading`.
+
 ## 3. Recoupements
 
 - Pips imprimés à côté du diagramme (Trice, Woolsey, XG).
@@ -97,7 +126,8 @@ Z-Library). Couche texte mauvaise : Olsen. Le décodage de la police XG est à p
 | 0 | Hors dépôt : décoder la police XG de Deep Cube ; vérité exacte ; rasteriser ces pages et mesurer `capture` contre elle | zéro position fausse parmi les sûres ; taux de sûres |
 | 1 | Format du relevé, import en Collection, CLI, doc | contrat de stockage, parité |
 | 2 | Lecteur à glyphes (Deep Cube en entier) | pips du texte = pips de la position, toutes pages |
-| 3 | Thèmes d'imprimerie : redressement, double page, localisation, comptage par pointe | pips imprimés de Trice et Woolsey |
+| 3 | Lecteur de structure (§2 bis) : redressement, double page, localisation, profil estimé sur le document, comptage par pointe | pips imprimés de Trice et Woolsey ; puis la réserve, en un seul passage |
+| 3b | Repli assisté : coins et un pion par camp, profil pour tout le document | gestes pour 100 positions sur un livre où 3 échoue |
 | 4 | Lecture des chiffres | même corpus |
 | 5 | Assistant GUI : profil, planche-contact, reprise | e2e |
 | 6 | HTML et URL, EPUB, DOCX, thèmes XG et Galaxy imprimés | par source |
@@ -110,3 +140,5 @@ Premier périmètre : Deep Cube, puis Robertie 501 et Woolsey.
 - Seules les positions entrent en base, pas les captures ni les images (règle 1).
 - Le nom ou l'origine du document reste attaché à chaque position, en commentaire ou dans la
   description de la Collection (règle 3).
+- L'ordre d'import est l'ordre d'apparition dans le document (§4).
+- Robustesse sur un document jamais rencontré (§2 bis).
