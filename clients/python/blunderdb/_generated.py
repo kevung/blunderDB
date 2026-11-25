@@ -706,6 +706,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/gammonnet.evaluate — hand-written handler — see openapi.yaml."
         return self._call("/v1/gammonnet.evaluate", payload)
 
+    def gammonnet_rolls(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/gammonnet.rolls — hand-written handler — see openapi.yaml."
+        return self._call("/v1/gammonnet.rolls", payload)
+
+    def gammonnet_score_map(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/gammonnet.scoreMap — hand-written handler — see openapi.yaml."
+        return self._call("/v1/gammonnet.scoreMap", payload)
+
     def gammonnet_sweep_stale(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/gammonnet.sweepStale — hand-written handler — see openapi.yaml."
         return self._call("/v1/gammonnet.sweepStale", payload)

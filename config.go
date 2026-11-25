@@ -239,6 +239,9 @@ type Config struct {
 	GammonNetPruneK      int  `json:"gammonnet_prune_k,omitempty"`
 	GammonNetCandidates  int  `json:"gammonnet_candidates,omitempty"`
 	GammonNetAutoAnalyze bool `json:"gammonnet_auto_analyze,omitempty"`
+	// MapMatchLength is the match length the score map and the cube matrix
+	// open on; 0 means DefaultMapMatchLength.
+	MapMatchLength int `json:"map_match_length,omitempty"`
 	// CheckForUpdates opts into gui.App.CheckForUpdate at startup. Off by
 	// default (no unasked network call); forced off on a package-managed
 	// install (gui.isPackageManaged), whose package manager owns updates.
@@ -367,6 +370,15 @@ func clampGammonNetPruneK(k int) int {
 	return k
 }
 
+// clampMapMatchLength keeps n among the lengths the maps offer
+// (gammonnet.CubeMatrixLengths); anything else is the default.
+func clampMapMatchLength(n int) int {
+	if slices.Contains(gammonnet.CubeMatrixLengths, n) {
+		return n
+	}
+	return gammonnet.DefaultMapMatchLength
+}
+
 // clampGammonNetCandidates clamps n, 0 meaning the default.
 func clampGammonNetCandidates(n int) int {
 	if n == 0 {
@@ -397,6 +409,7 @@ func NewConfig() *Config {
 		// accessors report DefaultGammonNetPly for a nil pointer.
 		GammonNetPruneK:     DefaultGammonNetPruneK,
 		GammonNetCandidates: DefaultGammonNetCandidates,
+		MapMatchLength:      gammonnet.DefaultMapMatchLength,
 	}
 }
 
@@ -503,6 +516,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.GammonNetCandidates = clampGammonNetCandidates(config.GammonNetCandidates)
 	config.GammonNetCandidates = c.GammonNetCandidates
 	c.GammonNetAutoAnalyze = config.GammonNetAutoAnalyze
+	c.MapMatchLength = clampMapMatchLength(config.MapMatchLength)
+	config.MapMatchLength = c.MapMatchLength
 	c.CheckForUpdates = config.CheckForUpdates
 	c.CommentAuthor = storage.NormalizeCommentAuthor(config.CommentAuthor)
 	config.CommentAuthor = c.CommentAuthor
@@ -971,6 +986,19 @@ func (c *Config) GetGammonNetCandidates() int {
 // SaveGammonNetCandidates persists the number of candidate moves shown.
 func (c *Config) SaveGammonNetCandidates(n int) error {
 	c.GammonNetCandidates = clampGammonNetCandidates(n)
+	return c.SaveConfig(c)
+}
+
+// GetMapMatchLength returns the match length the score map and the cube
+// matrix open on.
+func (c *Config) GetMapMatchLength() int {
+	return clampMapMatchLength(c.MapMatchLength)
+}
+
+// SaveMapMatchLength persists that length; one the maps do not offer falls
+// back to the default.
+func (c *Config) SaveMapMatchLength(n int) error {
+	c.MapMatchLength = clampMapMatchLength(n)
 	return c.SaveConfig(c)
 }
 

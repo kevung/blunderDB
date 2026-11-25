@@ -90,6 +90,10 @@ export function GetMCPHost() {
   return window['go']['main']['Config']['GetMCPHost']();
 }
 
+export function GetMapMatchLength() {
+  return window['go']['main']['Config']['GetMapMatchLength']();
+}
+
 export function GetPageStep() {
   return window['go']['main']['Config']['GetPageStep']();
 }
@@ -228,6 +232,10 @@ export function SaveLikeMaxDistance(arg1) {
 
 export function SaveMCPHost(arg1) {
   return window['go']['main']['Config']['SaveMCPHost'](arg1);
+}
+
+export function SaveMapMatchLength(arg1) {
+  return window['go']['main']['Config']['SaveMapMatchLength'](arg1);
 }
 
 export function SavePageStep(arg1) {

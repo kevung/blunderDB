@@ -70,8 +70,16 @@ export function CancelMaintenance() {
   return window['go']['gui']['App']['CancelMaintenance']();
 }
 
+export function CancelRollMap() {
+  return window['go']['gui']['App']['CancelRollMap']();
+}
+
 export function CancelRollout() {
   return window['go']['gui']['App']['CancelRollout']();
+}
+
+export function CancelScoreMap() {
+  return window['go']['gui']['App']['CancelScoreMap']();
 }
 
 export function CancelVideoRepair(arg1) {
@@ -414,6 +422,14 @@ export function StartMaintenance(arg1) {
   return window['go']['gui']['App']['StartMaintenance'](arg1);
 }
 
+export function StartRollMap(arg1, arg2, arg3, arg4) {
+  return window['go']['gui']['App']['StartRollMap'](arg1, arg2, arg3, arg4);
+}
+
+export function StartRollMapAfterPlay(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+  return window['go']['gui']['App']['StartRollMapAfterPlay'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+}
+
 export function StartRollout(arg1) {
   return window['go']['gui']['App']['StartRollout'](arg1);
 }
@@ -424,6 +440,10 @@ export function StartRolloutFiltered(arg1, arg2) {
 
 export function StartRolloutIDs(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartRolloutIDs'](arg1, arg2, arg3);
+}
+
+export function StartScoreMap(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['gui']['App']['StartScoreMap'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function StartTournamentDisplay(arg1) {

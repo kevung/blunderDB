@@ -46,6 +46,8 @@ export function GetLikeMaxOrder():Promise<number>;
 
 export function GetMCPHost():Promise<main.MCPHostSettings>;
 
+export function GetMapMatchLength():Promise<number>;
+
 export function GetPageStep():Promise<string>;
 
 export function GetPanelPosition():Promise<string>;
@@ -115,6 +117,8 @@ export function SaveLikeLimit(arg1:number):Promise<void>;
 export function SaveLikeMaxDistance(arg1:number):Promise<void>;
 
 export function SaveMCPHost(arg1:main.MCPHostSettings):Promise<void>;
+
+export function SaveMapMatchLength(arg1:number):Promise<void>;
 
 export function SavePageStep(arg1:string):Promise<void>;
 

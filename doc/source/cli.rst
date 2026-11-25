@@ -93,6 +93,8 @@ Commandes disponibles
    "comment", "Lit et ajoute les commentaires d'une position, attribués à leur auteur."
    "elsewhere", "Ce que d'autres bases savent d'une position, et ses voisines chez elles."
    "cubematrix", "Verdict de videau d'une position à chaque score d'un match."
+   "rolls", "Les 21 jets d'une position : meilleur coup, équité, marché perdu."
+   "scoremap", "Meilleur coup ou verdict de videau d'une position à chaque score d'un match."
    "rollout", "Joue une position jusqu'au bout pour départager ses coups ou sa décision de videau (XGID ou OGID)."
    "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID ou OGID)."
    "gnubgid", "Écrit l'ID de position et l'ID de match que GNU Backgammon donne à une position (XGID ou OGID)."

@@ -134,6 +134,8 @@ var serverOnly = map[string]string{
 	// needs them as routes.
 	"/v1/gammonnet.cubeMatrix":        whyEnginePure,
 	"/v1/gammonnet.evaluate":          whyEngineEvaluate,
+	"/v1/gammonnet.rolls":             whyEnginePure,
+	"/v1/gammonnet.scoreMap":          whyEnginePure,
 	"/v1/training.generateBearoff":    whyTrainingGenerate,
 	"/v1/training.generateEvaluation": whyTrainingGenerate,
 	"/v1/tenants.quota":               whyTenantQuota,

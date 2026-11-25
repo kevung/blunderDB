@@ -187,6 +187,8 @@ func TestQuotaRefusesAnalysisOnceSpent(t *testing.T) {
 	}{
 		{"/v1/gammonnet.evaluate", gammonnetEvaluateReq{XGID: xgid}},
 		{"/v1/gammonnet.cubeMatrix", cubeMatrixReq{XGID: xgid}},
+		{"/v1/gammonnet.rolls", rollsReq{XGID: xgid}},
+		{"/v1/gammonnet.scoreMap", scoreMapReq{XGID: xgid}},
 		{"/v1/gammonnet.compare", gammonnetCompareReq{}},
 		{"/v1/gammonnet.analyzeMissing", nil},
 	} {

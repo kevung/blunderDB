@@ -1,6 +1,6 @@
 # `blunderdb serve` operates on a library; it does not expose an evaluator
 
-Status: accepted.
+Status: accepted; amended by ADR-0116 (stateless computations on a bare position are admitted under the analysis quota, at most 2 plies).
 See also: ADR-0013.
 
 ## Context
