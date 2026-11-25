@@ -12,11 +12,6 @@ propre issue le jour où il est lancé.
   qu'au bureau ; `serve` garde `analyses.queueStatus` et son registre d'imports. L'exposer en
   lecture demande un contrat par tenant (un tenant n'est pas un groupe) : à décider avant
   d'ajouter une route.
-- **Recherche au repos du panneau d'évaluation hors registre** — elle n'entre pas encore par
-  `beginVisibleComputation` ; le lot gammonNet la guette par `waitForInteractiveEvaluation`
-  (sondage à 50 ms). La brancher (ainsi que la matrice de videau et les cartes) retire ce
-  sondage.
-
 - **Journal du changeset : rafale d'écritures sur un même objet** — une écriture locale est datée
   à la milliseconde suivant la date tenue quand l'horloge ne l'a pas dépassée ; plus de 1000
   écritures rapides d'un même objet datent donc à plus de 1 s d'avance (2000 écritures : 1,7 s),

@@ -167,4 +167,47 @@ func TestMatchStatsFill_ReportsAsTheStatsMatchesLine(t *testing.T) {
 	if seen[0] != "maintenance:progress" {
 		t.Errorf("events %v: no progress before the end", seen)
 	}
+	waitTask(t, a, a.ListJobs()[0].ID, jobs.Done)
+}
+
+// A fill ended by the file changing under it ends its own task, cancelled,
+// and the next fill is a task of its own.
+func TestMatchStatsFill_EachFillIsItsOwnTaskEndedOnEveryPath(t *testing.T) {
+	a, d := matchWithoutStats(t)
+	_ = recordEvents(a, nil)
+	if !d.FillMatchStatsInBackground() {
+		t.Fatal("no background fill started")
+	}
+	first := a.ListJobs()[0]
+	if first.Kind != jobs.MatchStatsFill {
+		t.Fatalf("task %+v", first)
+	}
+	if err := a.jobs.Cancel(first.ID); err != nil {
+		t.Fatal(err)
+	}
+	if got := waitTaskEnded(t, a, first.ID); got != jobs.Cancelled && got != jobs.Done {
+		t.Fatalf("first fill ended %s", got)
+	}
+	if d.FillMatchStatsInBackground() {
+		list := a.ListJobs()
+		if len(list) != 2 || list[1].ID == first.ID {
+			t.Fatalf("second fill shares a task: %+v", list)
+		}
+		waitTaskEnded(t, a, list[1].ID)
+	}
+}
+
+func waitTaskEnded(t *testing.T, a *App, id int64) jobs.State {
+	t.Helper()
+	deadline := time.Now().Add(20 * time.Second)
+	for time.Now().Before(deadline) {
+		for _, in := range a.ListJobs() {
+			if in.ID == id && in.State.Finished() {
+				return in.State
+			}
+		}
+		time.Sleep(time.Millisecond)
+	}
+	t.Fatalf("task %d never ended: %+v", id, a.ListJobs())
+	return ""
 }

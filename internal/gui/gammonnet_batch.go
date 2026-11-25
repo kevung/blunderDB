@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	goruntime "runtime"
+	"sync/atomic"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -35,20 +36,31 @@ type batchRun func(ctx context.Context, db *database.Database, onProgress func(d
 
 type taskKey struct{}
 
+// batchTask is what a batch's context carries for its yield: the task, and
+// how a preemption stops the current run (taskFrom).
+type batchTask struct {
+	job       *jobs.Job
+	preempt   context.CancelFunc
+	preempted *atomic.Bool
+}
+
 // taskFrom returns the registry task ctx carries, nil for none.
-func taskFrom(ctx context.Context) *jobs.Job {
-	j, _ := ctx.Value(taskKey{}).(*jobs.Job)
-	return j
+func taskFrom(ctx context.Context) *batchTask {
+	t, _ := ctx.Value(taskKey{}).(*batchTask)
+	return t
 }
 
 // batchYield is the yield a batch's loop calls before each position: the
-// task's checkpoint (pause, and every computation that outranks it), then
-// the live evaluation the panel runs.
+// task's checkpoint (pause, every computation that outranks it, a requested
+// task waiting for the library, which stops the run), then the live
+// evaluation the panel runs.
 func (a *App) batchYield(ctx context.Context) func() {
-	job := taskFrom(ctx)
+	t := taskFrom(ctx)
 	return func() {
-		if job != nil {
-			job.Yield(ctx)
+		if t != nil && errors.Is(t.job.Checkpoint(ctx), jobs.ErrPreempted) {
+			t.preempted.Store(true)
+			t.preempt()
+			return
 		}
 		a.waitForInteractiveEvaluation()
 	}
@@ -120,7 +132,10 @@ func (a *App) effectiveBatchJobs() int {
 // runGammonNetBatch is the shell every batch shares: run does the work, this
 // owns the single-in-flight bookkeeping, the task in the registry and the
 // events. The batch waits its turn in its library's queue, then for any job
-// still holding the library outside the registry.
+// still holding the library outside the registry. A requested task waiting
+// for the library preempts it: the run stops at its next position, the batch
+// goes back into the queue behind that task and, once its turn comes again,
+// runs anew over what is still missing.
 func (a *App) runGammonNetBatch(group, ply int, kind jobs.Kind, run batchRun) {
 	if a.db == nil {
 		return
@@ -146,9 +161,8 @@ func (a *App) runGammonNetBatch(group, ply int, kind jobs.Kind, run batchRun) {
 	ctx = database.WaitForDatabase(ctx, waiting)
 	task := a.jobs.Start(jobs.Spec{
 		Kind: kind, Library: group, Priority: jobs.Background,
-		Exclusive: true, Pausable: true, Compute: true, Cancel: cancel,
+		Exclusive: true, Pausable: true, Compute: true, Preemptible: true, Cancel: cancel,
 	})
-	ctx = context.WithValue(ctx, taskKey{}, task)
 	stopped := make(chan struct{})
 	a.gnBatchCancel = cancel
 	a.gnBatchDone = stopped
@@ -157,20 +171,36 @@ func (a *App) runGammonNetBatch(group, ply int, kind jobs.Kind, run batchRun) {
 
 	go func() {
 		// Registered first so it runs last, even after a panic: shutdown
-		// waits on it.
+		// waits on it, and the task ends, giving its library back.
 		defer close(stopped)
+		defer task.Finish(errTaskPanicked)
 		defer recoverBackground(a.ctx, "gammonNet batch analysis")
 		defer db.Close() // lets the borrowed library go; closes nothing
 		var summary database.GammonNetBatchSummary
-		if holder, ok := task.Behind(); ok {
-			waiting(jobCode(holder))
-		}
-		err := task.Turn(ctx)
-		if err == nil {
-			summary, err = run(ctx, db, func(done, total int) {
+		var err error
+		for {
+			if holder, ok := task.Behind(); ok {
+				waiting(jobCode(holder))
+			}
+			if err = task.Turn(ctx); err != nil {
+				break
+			}
+			runCtx, stopRun := context.WithCancel(ctx)
+			bt := &batchTask{job: task, preempt: stopRun, preempted: new(atomic.Bool)}
+			var part database.GammonNetBatchSummary
+			part, err = run(context.WithValue(runCtx, taskKey{}, bt), db, func(done, total int) {
 				task.Progress(done, total)
 				a.emitBatch("gammonnet-batch:progress", map[string]int{"done": done, "total": total, "ply": ply, "group": group})
 			})
+			stopRun()
+			summary.Evaluated += part.Evaluated
+			summary.Refused += part.Refused
+			summary.Failed += part.Failed
+			if !bt.preempted.Load() || ctx.Err() != nil {
+				break
+			}
+			task.Requeue()
+			err = nil
 		}
 		if ctx.Err() != nil && err != nil {
 			err = context.Canceled

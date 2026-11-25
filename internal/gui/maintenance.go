@@ -3,8 +3,6 @@ package gui
 import (
 	"context"
 	"errors"
-	"sync"
-	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
@@ -27,35 +25,42 @@ func (a *App) StartMaintenance(kind string) {
 		a.emitBatch("maintenance:error", map[string]string{"kind": kind, "message": err.Error()})
 		return
 	}
-	db := a.db
-	// The database cancels the pass holding its slot: a pass still waiting
-	// in the queue is stopped by the registry alone, never one ahead of it.
-	var started atomic.Bool
+	// On a handle borrowed from the library on screen: a pass waiting in the
+	// queue across a switch of groups still runs on the library it was asked
+	// for (ADR-0101 §5).
+	a.libs.mu.Lock()
+	group, db, err := a.borrowLibraryLocked(0)
+	if err != nil {
+		a.libs.mu.Unlock()
+		a.emitBatch("maintenance:error", map[string]string{"kind": kind, "message": err.Error()})
+		return
+	}
+	ctx, cancel := context.WithCancel(a.batchCtx())
 	task := a.jobs.Start(jobs.Spec{
-		Kind: jobs.Maintenance, Label: kind, Library: a.shownGroup(), Priority: jobs.Background,
-		Exclusive: true, Cancel: func() {
-			if started.Load() {
-				db.CancelMaintenance()
-			}
-		},
+		Kind: jobs.Maintenance, Label: kind, Library: group, Priority: jobs.Background,
+		Exclusive: true, Cancel: cancel,
 	})
+	a.libs.mu.Unlock()
 	go func() {
+		defer task.Finish(errTaskPanicked) // after a panic: frees the library
+		defer cancel()
 		defer recoverBackground(a.ctx, "maintenance")
-		if err := task.Turn(a.batchCtx()); err != nil {
-			task.Finish(err)
-			a.emitBatch("maintenance:cancelled", map[string]string{"kind": kind})
-			return
+		defer db.Close() // lets the borrowed library go; closes nothing
+		var run maintenance.Run
+		err := task.Turn(ctx)
+		if err == nil {
+			// A cancel that came after the turn is in ctx: the pass does not
+			// start, or stops between two batches.
+			run, err = database.RunMaintenanceContext(db, database.WaitForDatabase(ctx, nil), kind, func(done, total int) {
+				task.Progress(done, total)
+				a.emitBatch("maintenance:progress", map[string]any{"kind": kind, "done": done, "total": total})
+			})
 		}
-		started.Store(true)
-		run, err := db.RunMaintenanceWithProgress(kind, func(done, total int) {
-			task.Progress(done, total)
-			a.emitBatch("maintenance:progress", map[string]any{"kind": kind, "done": done, "total": total})
-		})
 		switch {
 		case err == nil:
 			task.Finish(nil)
 			a.emitBatch("maintenance:done", run)
-		case run.Outcome == maintenance.OutcomeCancelled || errors.Is(err, context.Canceled):
+		case run.Outcome == maintenance.OutcomeCancelled || errors.Is(err, context.Canceled) || ctx.Err() != nil:
 			task.Finish(context.Canceled)
 			a.emitBatch("maintenance:cancelled", map[string]string{"kind": kind})
 		default:
@@ -68,6 +73,11 @@ func (a *App) StartMaintenance(kind string) {
 // CancelMaintenance ends the background maintenance pass, if any; the pass
 // reports maintenance:cancelled once it has stopped.
 func (a *App) CancelMaintenance() {
+	for _, t := range a.jobs.List() {
+		if t.Kind == jobs.Maintenance && !t.State.Finished() {
+			_ = a.jobs.Cancel(t.ID)
+		}
+	}
 	if a.db != nil {
 		a.db.CancelMaintenance()
 	}
@@ -79,31 +89,20 @@ func (a *App) CancelMaintenance() {
 // panels reading match_stats wait for.
 func (a *App) matchStatsFillReport() *database.MatchStatsFillReport {
 	kind := string(maintenance.StatsMatches)
-	// The fill tells nothing at its start: its task is registered at its
-	// first report and ended at End.
-	var mu sync.Mutex
-	var task *jobs.Job
-	taskOf := func() *jobs.Job {
-		mu.Lock()
-		defer mu.Unlock()
-		if task == nil {
-			task = a.jobs.Start(jobs.Spec{
-				Kind: jobs.MatchStatsFill, Label: kind, Library: a.shownGroup(), Priority: jobs.Background,
-				Cancel: a.CancelMaintenance,
-			})
-		}
-		return task
-	}
 	return &database.MatchStatsFillReport{
+		// Each fill is its own task, ended on every path; its cancel stops
+		// that fill alone.
+		Begin: func(stop func()) (func(done, total int), func(error)) {
+			task := a.jobs.Start(jobs.Spec{
+				Kind: jobs.MatchStatsFill, Label: kind, Library: a.shownGroup(), Priority: jobs.Background,
+				Cancel: stop,
+			})
+			return task.Progress, task.Finish
+		},
 		Progress: func(done, total int) {
-			taskOf().Progress(done, total)
 			a.emitBatch("maintenance:progress", map[string]any{"kind": kind, "done": done, "total": total})
 		},
 		End: func(filled int, err error) {
-			taskOf().Finish(err)
-			mu.Lock()
-			task = nil
-			mu.Unlock()
 			switch {
 			case err == nil:
 				a.emitBatch("maintenance:done", maintenance.Run{Kind: maintenance.StatsMatches, Changed: filled, Outcome: maintenance.OutcomeDone})

@@ -55,6 +55,7 @@ const (
 	Maintenance      Kind = "maintenance"
 	MatchStatsFill   Kind = "match-stats-fill"
 	Import           Kind = "import"
+	Repair           Kind = "repair"
 	Transfer         Kind = "transfer"
 	BearoffTables    Kind = "bearoff"
 	Sync             Kind = "sync"
@@ -75,6 +76,11 @@ type Spec struct {
 	// Compute marks a task that runs the engine: a Background one yields
 	// to it at its checkpoints. A Visible computation always outranks.
 	Compute bool
+	// Preemptible marks an exclusive task whose work resumes where it
+	// stopped (a batch finds what is still missing): its checkpoint returns
+	// ErrPreempted while a task of a higher priority waits for its library,
+	// and its owner gives the library back with Requeue.
+	Preemptible bool
 	// Cancel stops the work; nil for a task that cannot be stopped.
 	Cancel func()
 }
@@ -112,6 +118,8 @@ var (
 	ErrNotQueued   = errors.New("jobs: the task is not waiting in a queue")
 	ErrRunning     = errors.New("jobs: a running task is cancelled, not removed")
 	ErrNoCancel    = errors.New("jobs: the task cannot be cancelled")
+	// ErrPreempted tells a preemptible task to give its library back.
+	ErrPreempted = errors.New("jobs: a task of a higher priority waits for the library")
 )
 
 // keepFinished bounds the finished tasks still listed.
@@ -307,7 +315,7 @@ func (r *Registry) outrankedLocked(j *Job) bool {
 		return false
 	}
 	for _, o := range r.jobs {
-		if o != j && o.spec.Compute && o.spec.Priority < j.spec.Priority && o.state == Running {
+		if o != j && o.spec.Compute && o.spec.Priority < j.spec.Priority && o.state == Running && !o.paused {
 			return true
 		}
 	}
@@ -325,6 +333,10 @@ func (j *Job) Checkpoint(ctx context.Context) error {
 			r.mu.Unlock()
 			return context.Canceled
 		}
+		if r.preemptedLocked(j) {
+			r.mu.Unlock()
+			return ErrPreempted
+		}
 		if !j.paused && !r.outrankedLocked(j) {
 			r.mu.Unlock()
 			return nil
@@ -337,6 +349,42 @@ func (j *Job) Checkpoint(ctx context.Context) error {
 		case <-w:
 		}
 	}
+}
+
+// preemptedLocked reports a preemptible task holding its library while a
+// task of a higher priority, not paused, waits for it.
+func (r *Registry) preemptedLocked(j *Job) bool {
+	if !j.spec.Preemptible || !j.holding {
+		return false
+	}
+	for _, q := range r.queue {
+		if q.spec.Library == j.spec.Library && !q.paused && !q.stopping && q.spec.Priority < j.spec.Priority {
+			return true
+		}
+	}
+	return false
+}
+
+// Requeue gives the library back and puts the task in its queue again,
+// first among the tasks of its priority: its owner calls Turn to resume.
+func (j *Job) Requeue() {
+	r := j.r
+	r.mu.Lock()
+	if !j.holding || j.state.Finished() {
+		r.mu.Unlock()
+		return
+	}
+	j.holding = false
+	j.state = Waiting
+	at := len(r.queue)
+	for i, q := range r.queue {
+		if q.spec.Priority >= j.spec.Priority {
+			at = i
+			break
+		}
+	}
+	r.queue = slices.Insert(r.queue, at, j)
+	r.unlockEmit(r.changedLocked(r.queuedLocked(j.spec.Library, j)...))
 }
 
 // Yield is Checkpoint for a loop that has no error to return: it blocks

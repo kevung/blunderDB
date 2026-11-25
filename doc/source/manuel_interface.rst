@@ -846,9 +846,11 @@ calcul, qui reste sans analyse.
 Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un rollout
 stocké ou une opération de maintenance. Un travail demandé pendant qu'un autre
 est en cours n'est pas refusé : il prend place dans la file de la bibliothèque,
-après les travaux de même priorité — un rollout passe avant un lot gammonNet ou
-une opération de maintenance qui attendent —, et part dès que son tour vient ;
-la barre de statut annonce « en attente » le lot gammonNet qui attend. Un lot gammonNet en cours cède aussi la
+après les travaux de même priorité, et part dès que son tour vient ; la barre
+de statut annonce « en attente » le lot gammonNet qui attend. Un rollout passe
+avant un lot gammonNet ou une opération de maintenance qui attendent ; un lot
+gammonNet en cours lui rend la bibliothèque entre deux positions et reprend
+après lui ce qui reste à analyser. Un lot gammonNet en cours cède aussi la
 main, entre deux positions, à un rollout qui calcule sans écrire.
 
 .. _rollout_reglage:

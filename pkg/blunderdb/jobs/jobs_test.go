@@ -305,3 +305,51 @@ func TestStop_LeavesTasksOfNoLibrary(t *testing.T) {
 		t.Fatalf("Stop(0) touched a task bound to no library: late %v, cancel called %v", late, called)
 	}
 }
+
+func TestCheckpoint_PausedTaskOutranksNothing(t *testing.T) {
+	r := New(nil)
+	bg := r.Start(Spec{Priority: Background, Compute: true, Pausable: true})
+	ro := r.Start(Spec{Priority: Requested, Compute: true, Pausable: true})
+	_ = r.Pause(ro.ID())
+	done := make(chan struct{})
+	go func() { _ = bg.Checkpoint(context.Background()); close(done) }()
+	within(t, done, "background beside a paused rollout")
+}
+
+func TestPreemption_RequestedTaskTakesTheLibraryFromABackgroundBatch(t *testing.T) {
+	r := New(nil)
+	batch := r.Start(Spec{Library: 1, Priority: Background, Exclusive: true, Pausable: true, Preemptible: true})
+	_ = batch.Turn(context.Background())
+	if err := batch.Checkpoint(context.Background()); err != nil {
+		t.Fatalf("alone: %v", err)
+	}
+	ro := r.Start(Spec{Library: 1, Priority: Requested, Exclusive: true})
+	if err := batch.Checkpoint(context.Background()); !errors.Is(err, ErrPreempted) {
+		t.Fatalf("checkpoint with a rollout waiting: %v, want ErrPreempted", err)
+	}
+	batch.Requeue()
+	if got := r.List()[0]; got.State != Waiting || got.Position != 2 {
+		t.Fatalf("requeued batch %+v, want waiting behind the rollout", got)
+	}
+	doneRo, _ := turnAsync(ro, context.Background())
+	within(t, doneRo, "rollout once the batch gave the library back")
+	doneB, _ := turnAsync(batch, context.Background())
+	blocked(t, doneB, "batch while the rollout holds the library")
+	ro.Finish(nil)
+	within(t, doneB, "batch resuming after the rollout")
+
+	// A paused waiting task, or a task that is not preemptible, takes nothing.
+	ro2 := r.Start(Spec{Library: 1, Priority: Requested, Exclusive: true})
+	_ = r.Pause(ro2.ID())
+	if err := batch.Checkpoint(context.Background()); err != nil {
+		t.Fatalf("checkpoint with a paused rollout waiting: %v", err)
+	}
+	m := r.Start(Spec{Library: 2, Priority: Background, Exclusive: true, Pausable: true})
+	_ = m.Turn(context.Background())
+	r.Start(Spec{Library: 2, Priority: Requested, Exclusive: true})
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
+	defer cancel()
+	if err := m.Checkpoint(ctx); err != nil {
+		t.Fatalf("a task that is not preemptible was preempted: %v", err)
+	}
+}

@@ -14,7 +14,13 @@ import (
 
 // ImportXGMatch imports an eXtreme Gammon .xg match file through the shared
 // ingest pipeline (ingest.MapXG → ingest.WriteMatch).
+// The desktop's task tracker lists it (TaskTracker).
 func (d *Database) ImportXGMatch(filePath string) (int64, error) {
+	return tracked(d, TaskImport, filePath, d.CancelImport, func() (int64, error) { return d.importXGMatch(filePath) })
+}
+
+// importXGMatch is ImportXGMatch without the tracker.
+func (d *Database) importXGMatch(filePath string) (int64, error) {
 	ctx, done := d.beginCancellableImport()
 	defer done()
 

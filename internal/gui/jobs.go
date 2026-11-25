@@ -2,6 +2,7 @@ package gui
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"time"
 
@@ -15,9 +16,13 @@ import (
 //	jobs:changed jobs.Info, when a task is registered or changes
 //	jobs:removed {id}, when a task is no longer listed
 //
-// The events each task sent before the registry (gammonnet-batch:*,
-// rollout:*, rollout-batch:*, maintenance:*, the import progress, bearoff:*,
-// sync:status) are still sent: the panels that read them stay as they are.
+// Each task also sends its own events (gammonnet-batch:*, rollout:*,
+// rollout-batch:*, maintenance:*, the import progress, bearoff:*,
+// sync:status), which the panels of that task read.
+
+// errTaskPanicked ends a task whose goroutine panicked: its library goes to
+// the next task in the queue.
+var errTaskPanicked = errors.New("the task stopped on an internal error")
 
 // ListJobs returns every task listed, running, waiting or finished.
 func (a *App) ListJobs() []jobs.Info { return a.jobs.List() }
@@ -65,4 +70,14 @@ func (a *App) stopRegisteredJobs(deadline context.Context, group int, grace time
 		slog.Warn("a job writing the database did not stop within the grace period; going ahead",
 			"job", string(late.Kind), "id", late.ID, "grace", grace)
 	}
+}
+
+// trackDirectTask lists the work the frontend calls directly on the bound
+// handle — the import of one file or of a library, a repair — as a task of
+// the library on screen (database.TaskTracker).
+func (a *App) trackDirectTask(kind, label string, cancel func()) func(err error) {
+	task := a.jobs.Start(jobs.Spec{
+		Kind: jobs.Kind(kind), Label: label, Library: a.shownGroup(), Priority: jobs.Requested, Cancel: cancel,
+	})
+	return task.Finish
 }

@@ -99,6 +99,7 @@ func (a *App) StartRollout(req RolloutRequest) (int64, error) {
 
 	go func() {
 		defer close(stopped)
+		defer task.Finish(errTaskPanicked) // after a panic: frees the library
 		defer cancel()
 		defer recoverBackground(a.ctx, "rollout")
 		// The engine calls progress between batches of games, on the loop
@@ -234,6 +235,7 @@ func (a *App) startRolloutBatch(settings rollout.Settings, onScreen func() error
 	a.libs.mu.Unlock()
 	go func() {
 		defer close(stopped)
+		defer task.Finish(errTaskPanicked) // after a panic: frees the library
 		defer cancel()
 		defer recoverBackground(a.ctx, "rollout batch")
 		var sum rollouts.Summary
