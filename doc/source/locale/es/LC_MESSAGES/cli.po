@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 01:56+0100\n"
+"POT-Creation-Date: 2026-11-26 03:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -294,6 +294,18 @@ msgid ""
 msgstr ""
 "Gestiona las lecciones (pasos ordenados que muestran colecciones y "
 "posiciones) y las exporta."
+
+#: ../../source/cli.rst:1
+msgid "archive"
+msgstr "archive"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Imprime des matchs en codes QR sur des feuilles A4, ou les réimporte "
+"depuis la page ou un scan."
+msgstr ""
+"Imprime partidas como códigos QR en hojas A4, o las vuelve a importar "
+"desde la página o un escaneo."
 
 #: ../../source/cli.rst:1
 msgid "document"
@@ -617,41 +629,41 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "Modo servidor y migración a PostgreSQL: ver :ref:`headless`."
 
-#: ../../source/cli.rst:126
+#: ../../source/cli.rst:127
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
 msgstr "Cada comando acepta la opción ``--help`` para mostrar su ayuda detallada."
 
-#: ../../source/cli.rst:140
+#: ../../source/cli.rst:141
 msgid "Exemples de flux de travail"
 msgstr "Ejemplos de flujos de trabajo"
 
-#: ../../source/cli.rst:143
+#: ../../source/cli.rst:144
 msgid "Import d'un répertoire de tournoi"
 msgstr "Importar un directorio de torneo"
 
-#: ../../source/cli.rst:152
+#: ../../source/cli.rst:153
 msgid "Sauvegarde régulière"
 msgstr "Copia de seguridad periódica"
 
-#: ../../source/cli.rst:159
+#: ../../source/cli.rst:160
 msgid "Analyse des erreurs"
 msgstr "Análisis de errores"
 
-#: ../../source/cli.rst:171
+#: ../../source/cli.rst:172
 msgid "Codes de retour"
 msgstr "Códigos de salida"
 
-#: ../../source/cli.rst:173
+#: ../../source/cli.rst:174
 msgid "``0`` — Succès."
 msgstr "``0`` — Éxito."
 
-#: ../../source/cli.rst:174
+#: ../../source/cli.rst:175
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:176
+#: ../../source/cli.rst:177
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Esto permite usar la CLI en scripts con gestión de errores:"
 

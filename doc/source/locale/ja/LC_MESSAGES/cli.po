@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 01:56+0100\n"
+"POT-Creation-Date: 2026-11-26 03:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -261,6 +261,16 @@ msgid ""
 "Gère les leçons (étapes ordonnées montrant collections et positions) et "
 "les exporte."
 msgstr "レッスン（コレクションやポジションを示す順序付きのステップ）を管理し、書き出します。"
+
+#: ../../source/cli.rst:1
+msgid "archive"
+msgstr "archive"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Imprime des matchs en codes QR sur des feuilles A4, ou les réimporte "
+"depuis la page ou un scan."
+msgstr "マッチを A4 用紙に QR コードとして印刷し、またはページやスキャンから再インポートします。"
 
 #: ../../source/cli.rst:1
 msgid "document"
@@ -562,41 +572,41 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "サーバーモードと PostgreSQL への移行：\\ :ref:`headless` を参照。"
 
-#: ../../source/cli.rst:126
+#: ../../source/cli.rst:127
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
 msgstr "各コマンドは ``--help`` オプションで詳細なヘルプを表示できます。"
 
-#: ../../source/cli.rst:140
+#: ../../source/cli.rst:141
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:143
+#: ../../source/cli.rst:144
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:152
+#: ../../source/cli.rst:153
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:159
+#: ../../source/cli.rst:160
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:171
+#: ../../source/cli.rst:172
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:173
+#: ../../source/cli.rst:174
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:174
+#: ../../source/cli.rst:175
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:176
+#: ../../source/cli.rst:177
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
 

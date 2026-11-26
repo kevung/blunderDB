@@ -19,6 +19,10 @@ import (
 // absence is a decision (ADR-0015), and this table is where it is written.
 
 // parityEntry maps one Database method to its two headless faces.
+// whyPaperArchive: a paper archive is a page written to, and scans read from,
+// the machine's own files; the daemon takes no file path (ADR-0119).
+const whyPaperArchive = "a paper archive writes an HTML page and reads scans from local files, which the daemon does not take; the interface entry follows with the printable sheets"
+
 type parityEntry struct {
 	// CLI is "command" or "command sub-command" (the second token is checked
 	// only for commands that expose a sub-command table). Empty when the CLI
@@ -236,6 +240,8 @@ var databaseParity = map[string]parityEntry{
 	"CreateCollection":                  {CLI: "collection create", Server: "/v1/collections.create"},
 	"LessonHTML":                        {CLI: "lesson export --html", Server: "/v1/lessons.html"},
 	"LessonMarkdown":                    {Server: "/v1/lessons.markdown", Why: "Database.LessonMarkdown serves the desktop, whose interface has no gesture for it yet; the CLI has no verb for it yet"},
+	"ExportPaperArchive":                {CLI: "archive export", Why: whyPaperArchive},
+	"ImportPaperArchive":                {CLI: "archive import", Why: whyPaperArchive},
 	"ImportDocumentReleve":              {CLI: "document import", Server: "/v1/documents.importReleve"},
 	"AnalyzeDocument":                   {CLI: "document analyze", Why: whyDocumentAnalysis},
 	"ImportLessonMarkdown":              {Server: "/v1/lessons.importMarkdown", Why: "Database.ImportLessonMarkdown serves the desktop, whose interface has no gesture for it yet; the CLI has no verb for it yet"},
@@ -699,6 +705,7 @@ func TestDatabaseParity(t *testing.T) {
 		"anki":        c.ankiHandlers(),
 		"lesson":      c.lessonHandlers(),
 		"document":    c.documentHandlers(),
+		"archive":     c.archiveHandlers(),
 		"study":       c.studyHandlers(),
 		"stats":       c.statsHandlers(),
 		"training":    c.trainingHandlers(),

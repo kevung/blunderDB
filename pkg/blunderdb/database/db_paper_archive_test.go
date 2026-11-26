@@ -46,6 +46,9 @@ func playedHashes(t *testing.T, db *Database) []int64 {
 		}
 		out = append(out, z)
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 	return out
 }
 

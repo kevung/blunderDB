@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 01:56+0100\n"
+"POT-Creation-Date: 2026-11-26 03:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -34,10 +34,10 @@ msgid ""
 msgstr "Δημιουργεί ένα νέο αρχείο βάσης δεδομένων με προαιρετικά μεταδεδομένα."
 
 #: ../../source/cli_import_export.rst:15 ../../source/cli_import_export.rst:42
-#: ../../source/cli_import_export.rst:329
-#: ../../source/cli_import_export.rst:453
-#: ../../source/cli_import_export.rst:521
-#: ../../source/cli_import_export.rst:547
+#: ../../source/cli_import_export.rst:366
+#: ../../source/cli_import_export.rst:490
+#: ../../source/cli_import_export.rst:558
+#: ../../source/cli_import_export.rst:584
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
@@ -544,18 +544,86 @@ msgstr ""
 "``/v1/documents.importReleve``. Δεν αναλύει κανένα PDF."
 
 #: ../../source/cli_import_export.rst:321
+msgid "archive — Archive papier des matchs"
+msgstr "archive — Χάρτινο αρχείο αγώνων"
+
+#: ../../source/cli_import_export.rst:323
+msgid ""
+"Imprime des matchs en codes QR sur des feuilles A4, pour garder une "
+"bibliothèque sur papier en peu de place, et les réimporte depuis la page "
+"ou depuis un scan ou une photo de la feuille."
+msgstr ""
+"Εκτυπώνει αγώνες ως κωδικούς QR σε φύλλα A4, για να διατηρείται μια "
+"βιβλιοθήκη σε χαρτί με λίγο χώρο, και τους επανεισάγει από τη σελίδα ή "
+"από σάρωση ή φωτογραφία του φύλλου."
+
+#: ../../source/cli_import_export.rst:334
+msgid ""
+"``export`` écrit une page HTML autonome, à imprimer : chaque match tient "
+"en général dans un seul code (environ 200 octets pour un match en 7 "
+"points), un code plus long est coupé en plusieurs. Chaque code porte "
+"l'identifiant de l'archive, son rang et une somme de contrôle, avec une "
+"correction d'erreur de niveau M ; un code de parité suit chaque groupe de"
+" cinq et reconstruit l'un d'eux devenu illisible. Les codes remplissent "
+"les quatre quarts de la feuille, avec une gouttière blanche sur les deux "
+"lignes de pliure, et une ligne sous chacun donne son rang, les joueurs, "
+"la date et la longueur. Sans ``--match``, toute la bibliothèque est "
+"archivée. ``--origin`` imprime une ligne d'origine en pied de feuille. "
+"L'archive garde les métadonnées du match, ses coups, le videau, les "
+"résultats, le commentaire du match, les commentaires et marques des "
+"positions jouées, et les temps de décision et repères vidéo quand ils "
+"existent (une vidéo seulement par son URL) ; les analyses ne sont pas "
+"gardées : elles se recalculent après l'import."
+msgstr ""
+"Το ``export`` γράφει μια αυτόνομη σελίδα HTML προς εκτύπωση: ένας αγώνας "
+"χωράει συνήθως σε έναν μόνο κωδικό (περίπου 200 byte για αγώνα 7 πόντων),"
+" ενώ ένας μεγαλύτερος χωρίζεται σε περισσότερους. Κάθε κωδικός φέρει το "
+"αναγνωριστικό του αρχείου, τη σειρά του και ένα άθροισμα ελέγχου, με "
+"διόρθωση σφαλμάτων επιπέδου M· ένας κωδικός ισοτιμίας ακολουθεί κάθε "
+"ομάδα των πέντε και ανακατασκευάζει έναν από αυτούς που έγινε "
+"δυσανάγνωστος. Οι κωδικοί γεμίζουν τα τέσσερα τέταρτα του φύλλου, με "
+"λευκό περιθώριο (αύλακα) στις δύο γραμμές αναδίπλωσης, και μια γραμμή "
+"κάτω από τον καθένα δίνει τη σειρά του, τους παίκτες, την ημερομηνία και "
+"το μήκος. Χωρίς ``--match``, αρχειοθετείται ολόκληρη η βιβλιοθήκη. Το "
+"``--origin`` εκτυπώνει μια γραμμή προέλευσης στο κάτω μέρος του φύλλου. "
+"Το αρχείο διατηρεί τα μεταδεδομένα του αγώνα, τις κινήσεις του, τον κύβο,"
+" τα αποτελέσματα, το σχόλιο του αγώνα, τα σχόλια και τους σημαιοδείκτες "
+"των θέσεων που παίχτηκαν, και τους χρόνους απόφασης και τα βιντεοσημεία "
+"όταν υπάρχουν (ένα βίντεο μόνο μέσω του URL του)· οι αναλύσεις δεν "
+"διατηρούνται: υπολογίζονται ξανά μετά την εισαγωγή."
+
+#: ../../source/cli_import_export.rst:349
+msgid ""
+"``import`` lit la page exportée (les matchs y sont aussi inscrits en "
+"clair, sans lecture optique) ou des images PNG et JPEG portant plusieurs "
+"codes, en nombre et dans un ordre quelconques. Les matchs passent par "
+"l'import ordinaire : un lot d'import, et un match déjà en base, de "
+"l'archive ou d'un autre format, est compté comme doublon. ``import --type"
+" match --file archive.html`` lit la page de la même façon. Les codes "
+"illisibles et non reconstruits sont nommés par leur rang."
+msgstr ""
+"Το ``import`` διαβάζει την εξαγόμενη σελίδα (οι αγώνες είναι γραμμένοι "
+"εκεί και σε απλό κείμενο, χωρίς οπτική ανάγνωση) ή εικόνες PNG και JPEG "
+"που φέρουν πολλούς κωδικούς, σε οποιονδήποτε αριθμό και σειρά. Οι αγώνες "
+"περνούν από τη συνήθη εισαγωγή: μία παρτίδα εισαγωγής, και ένας αγώνας "
+"που υπάρχει ήδη στη βάση, από το αρχείο ή από άλλη μορφή, μετράται ως "
+"διπλότυπο. Το ``import --type match --file archive.html`` διαβάζει τη "
+"σελίδα με τον ίδιο τρόπο. Οι δυσανάγνωστοι κωδικοί που δεν "
+"ανακατασκευάστηκαν κατονομάζονται με τη σειρά τους."
+
+#: ../../source/cli_import_export.rst:358
 msgid "export — Exporter des données"
 msgstr "export — Εξαγωγή δεδομένων"
 
-#: ../../source/cli_import_export.rst:323
+#: ../../source/cli_import_export.rst:360
 msgid "Exporte le contenu de la base vers des fichiers."
 msgstr "Εξάγει το περιεχόμενο της βάσης σε αρχεία."
 
-#: ../../source/cli_import_export.rst:331
+#: ../../source/cli_import_export.rst:368
 msgid "``--db`` — Base source (obligatoire)."
 msgstr "``--db`` — Βάση προέλευσης (υποχρεωτικό)."
 
-#: ../../source/cli_import_export.rst:332
+#: ../../source/cli_import_export.rst:369
 msgid ""
 "``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
 "``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
@@ -565,7 +633,7 @@ msgstr ""
 "``mat`` (εξαγωγή ενός ή περισσότερων αγώνων σε μεταγραφή Jellyfish "
 "``.mat``) (υποχρεωτικό)."
 
-#: ../../source/cli_import_export.rst:335
+#: ../../source/cli_import_export.rst:372
 msgid ""
 "``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
 "utilisé avec ``--dir``)."
@@ -573,7 +641,7 @@ msgstr ""
 "``--file`` — Αρχείο εξόδου (υποχρεωτικό, εκτός από το ``--type mat`` που "
 "χρησιμοποιείται με το ``--dir``)."
 
-#: ../../source/cli_import_export.rst:337
+#: ../../source/cli_import_export.rst:374
 msgid ""
 "``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
 "(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
@@ -583,27 +651,27 @@ msgstr ""
 "αγώνες, ένα αρχείο ανά αγώνα· χωρίς ``--match-ids``, εξάγονται όλοι οι "
 "αγώνες)."
 
-#: ../../source/cli_import_export.rst:340
+#: ../../source/cli_import_export.rst:377
 msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
 msgstr "``--analysis`` — Συμπερίληψη των αναλύσεων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:341
+#: ../../source/cli_import_export.rst:378
 msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
 msgstr "``--comments`` — Συμπερίληψη των σχολίων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:342
+#: ../../source/cli_import_export.rst:379
 msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
 msgstr "``--filters`` — Συμπερίληψη της βιβλιοθήκης φίλτρων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:343
+#: ../../source/cli_import_export.rst:380
 msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
 msgstr "``--played-moves`` — Συμπερίληψη των παιγμένων κινήσεων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:344
+#: ../../source/cli_import_export.rst:381
 msgid "``--matches`` — Inclure les matchs (défaut: oui)."
 msgstr "``--matches`` — Συμπερίληψη των αγώνων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:345
+#: ../../source/cli_import_export.rst:382
 msgid ""
 "``--transcriptions`` — Inclure le brouillon de transcription de chaque "
 "match exporté (défaut: oui)."
@@ -611,7 +679,7 @@ msgstr ""
 "``--transcriptions`` — Συμπερίληψη του πρόχειρου απομαγνητοφώνησης κάθε "
 "εξαγόμενου αγώνα (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:347
+#: ../../source/cli_import_export.rst:384
 msgid ""
 "``--aliases`` — Inclure les alias de joueurs et d'événements que les "
 "matchs exportés écrivent, pour que la fusion de joueurs les suive "
@@ -621,19 +689,19 @@ msgstr ""
 "γράφουν οι εξαγόμενοι αγώνες, ώστε η συγχώνευση παικτών να τους ακολουθεί"
 " (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:349
+#: ../../source/cli_import_export.rst:386
 msgid "``--collections`` — Inclure les collections (défaut: oui)."
 msgstr "``--collections`` — Συμπερίληψη των συλλογών (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:350
+#: ../../source/cli_import_export.rst:387
 msgid "``--tournaments`` — Inclure les tournois (défaut: oui)."
 msgstr "``--tournaments`` — Συμπερίληψη των τουρνουά (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:351
+#: ../../source/cli_import_export.rst:388
 msgid "``--decks`` — Inclure les paquets Anki (défaut: oui)."
 msgstr "``--decks`` — Συμπερίληψη των τραπουλών Anki (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:352
+#: ../../source/cli_import_export.rst:389
 msgid ""
 "``--lessons`` — Inclure les leçons, avec les collections et les positions"
 " que leurs étapes montrent (défaut: oui)."
@@ -641,7 +709,7 @@ msgstr ""
 "``--lessons`` — Συμπερίληψη των μαθημάτων, με τις συλλογές και τις θέσεις"
 " που δείχνουν τα βήματά τους (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:354
+#: ../../source/cli_import_export.rst:391
 msgid ""
 "``--anki-history`` — Emporter l'historique de révision des paquets "
 "exportés : l'état de chaque carte et le journal de ses révisions (défaut:"
@@ -651,7 +719,7 @@ msgstr ""
 "τραπουλών: της κατάστασης κάθε κάρτας και του αρχείου καταγραφής των "
 "επαναλήψεών της (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:356
+#: ../../source/cli_import_export.rst:393
 msgid ""
 "``--collection-ids`` — IDs de collections à exporter (séparés par des "
 "virgules, vide = toutes)."
@@ -659,7 +727,7 @@ msgstr ""
 "``--collection-ids`` — IDs συλλογών προς εξαγωγή (χωρισμένα με κόμματα, "
 "κενό = όλες)."
 
-#: ../../source/cli_import_export.rst:358
+#: ../../source/cli_import_export.rst:395
 msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
@@ -667,7 +735,7 @@ msgstr ""
 "``--match-ids`` — IDs αγώνων προς εξαγωγή (χωρισμένα με κόμματα, κενό = "
 "όλα)."
 
-#: ../../source/cli_import_export.rst:359
+#: ../../source/cli_import_export.rst:396
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules, vide = tous)."
@@ -675,7 +743,7 @@ msgstr ""
 "``--tournament-ids`` — IDs τουρνουά προς εξαγωγή (χωρισμένα με κόμματα, "
 "κενό = όλα)."
 
-#: ../../source/cli_import_export.rst:361
+#: ../../source/cli_import_export.rst:398
 msgid ""
 "``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions "
 "(séparés par des virgules, vide = tous)."
@@ -683,7 +751,7 @@ msgstr ""
 "``--deck-ids`` — IDs των τράπουλων Anki που εξάγονται μαζί με τις θέσεις "
 "τους (χωρισμένα με κόμματα, κενό = όλες)."
 
-#: ../../source/cli_import_export.rst:363
+#: ../../source/cli_import_export.rst:400
 msgid ""
 "``--lesson-ids`` — IDs de leçons à exporter (séparés par des virgules, "
 "vide = toutes)."
@@ -691,7 +759,7 @@ msgstr ""
 "``--lesson-ids`` — IDs των μαθημάτων προς εξαγωγή (χωρισμένα με κόμματα, "
 "κενό = όλα)."
 
-#: ../../source/cli_import_export.rst:366
+#: ../../source/cli_import_export.rst:403
 msgid ""
 "``--password`` — Enveloppe le résultat dans un conteneur chiffré "
 "(``.dbx``)."
@@ -699,7 +767,7 @@ msgstr ""
 "``--password`` — Τυλίγει το αποτέλεσμα σε κρυπτογραφημένο κοντέινερ "
 "(``.dbx``)."
 
-#: ../../source/cli_import_export.rst:367
+#: ../../source/cli_import_export.rst:404
 msgid ""
 "``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
 "fichier exporté (voir :ref:`diffusion_controlee`)."
@@ -707,7 +775,7 @@ msgstr ""
 "``--watermark`` — Γράφει μια **υπογεγραμμένη** δήλωση προέλευσης στο "
 "εξαγόμενο αρχείο (βλ. :ref:`diffusion_controlee`)."
 
-#: ../../source/cli_import_export.rst:369
+#: ../../source/cli_import_export.rst:406
 msgid ""
 "``--watermark-note`` — Texte libre associé au filigrane (conditions "
 "d'usage, contact) ; utilisé avec ``--watermark``."
@@ -715,7 +783,7 @@ msgstr ""
 "``--watermark-note`` — Ελεύθερο κείμενο συνδεδεμένο με το υδατογράφημα "
 "(όροι χρήσης, επικοινωνία)· χρησιμοποιείται μαζί με το ``--watermark``."
 
-#: ../../source/cli_import_export.rst:371
+#: ../../source/cli_import_export.rst:408
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document "
 "résumant l'export: chemin, taille en octets, nombres)."
@@ -723,7 +791,7 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` (ένα "
 "έγγραφο που συνοψίζει την εξαγωγή: διαδρομή, μέγεθος σε bytes, πλήθη)."
 
-#: ../../source/cli_import_export.rst:373
+#: ../../source/cli_import_export.rst:410
 msgid ""
 "``--incremental`` — Avec ``--type database`` : n'exporte que ce qui est "
 "entré dans la bibliothèque depuis le dernier export incrémental vers le "
@@ -742,7 +810,7 @@ msgstr ""
 "απορρίπτεται: το υπάρχον αρχείο περιέχει το προηγούμενο δέλτα, που ο "
 "άλλος υπολογιστής ίσως δεν έχει ακόμη συγχωνεύσει."
 
-#: ../../source/cli_import_export.rst:380
+#: ../../source/cli_import_export.rst:417
 msgid ""
 "``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, "
 "à la place du dossier de destination."
@@ -750,7 +818,7 @@ msgstr ""
 "``--sync-cursor`` — Με ``--incremental``: όνομα του σημαδιού που "
 "διαβάζεται και προωθείται, στη θέση του φακέλου προορισμού."
 
-#: ../../source/cli_import_export.rst:382
+#: ../../source/cli_import_export.rst:419
 msgid ""
 "``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille "
 "par famille, ce que l'export écrirait, sans écrire de fichier (``--file``"
@@ -766,7 +834,7 @@ msgstr ""
 "παγωμένες και οι τράπουλες «recherche» των οποίων η πηγή θα έχανε ένα "
 "μέρος. Με άλλον τύπο, η επιλογή απορρίπτεται."
 
-#: ../../source/cli_import_export.rst:388
+#: ../../source/cli_import_export.rst:425
 msgid ""
 "``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des "
 "identifiants derrière un compte : ``positions``, ``comments`` (les "
@@ -785,7 +853,7 @@ msgstr ""
 "``filters``. Τα ``--offset`` και ``--limit`` επιλέγουν τη σελίδα (έως "
 "1000 αναγνωριστικά)."
 
-#: ../../source/cli_import_export.rst:394
+#: ../../source/cli_import_export.rst:431
 msgid ""
 "``--type database`` exporte toute la bibliothèque, comme l'export du "
 "serveur et comme la fenêtre d'export quand la liste affichée est la "
@@ -812,12 +880,12 @@ msgstr ""
 "εξάγονται όλοι οι αγώνες. Το ``--type matches`` μεταφέρει επίσης το "
 "πρόχειρο κάθε αγώνα."
 
-#: ../../source/cli_import_export.rst:403
-#: ../../source/cli_import_export.rst:488
+#: ../../source/cli_import_export.rst:440
+#: ../../source/cli_import_export.rst:525
 msgid "**Exemples:**"
 msgstr "**Παραδείγματα:**"
 
-#: ../../source/cli_import_export.rst:426
+#: ../../source/cli_import_export.rst:463
 msgid ""
 "Un filigrane est signé avec l'identité d'émetteur locale (voir la "
 "commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
@@ -841,11 +909,11 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
 "mark-origin-and-nothing-else.md>`__."
 
-#: ../../source/cli_import_export.rst:438
+#: ../../source/cli_import_export.rst:475
 msgid "transfer — Copier d'une bibliothèque à une autre"
 msgstr "transfer — Αντιγραφή από μια βιβλιοθήκη σε άλλη"
 
-#: ../../source/cli_import_export.rst:440
+#: ../../source/cli_import_export.rst:477
 msgid ""
 "Copie une partie d'une bibliothèque dans une autre, sans fichier "
 "intermédiaire à manipuler. La sélection est celle de ``export --type "
@@ -865,7 +933,7 @@ msgstr ""
 "διπλασιάζεται. Η αντιγραφή από το Α στο Β και μετά από το Β στο Α δεν "
 "δημιουργεί επομένως κανένα διπλότυπο."
 
-#: ../../source/cli_import_export.rst:455
+#: ../../source/cli_import_export.rst:492
 msgid ""
 "``--from`` — Bibliothèque source (obligatoire ; elle doit exister et être"
 " au schéma de cette version de blunderDB). Une bibliothèque plus ancienne"
@@ -879,7 +947,7 @@ msgstr ""
 "αυτήν: ανοίξτε την μία φορά στο blunderDB. Μια νεότερη βιβλιοθήκη "
 "απορρίπτεται επίσης: ενημερώστε το blunderDB."
 
-#: ../../source/cli_import_export.rst:460
+#: ../../source/cli_import_export.rst:497
 msgid ""
 "``--to`` — Bibliothèque de destination (obligatoire ; créée si elle "
 "n'existe pas). Elle ne peut pas être la source."
@@ -887,7 +955,7 @@ msgstr ""
 "``--to`` — Βιβλιοθήκη προορισμού (υποχρεωτικό· δημιουργείται αν δεν "
 "υπάρχει). Δεν μπορεί να είναι η προέλευση."
 
-#: ../../source/cli_import_export.rst:462
+#: ../../source/cli_import_export.rst:499
 msgid ""
 "``--analysis``, ``--comments``, ``--played-moves``, ``--matches``, "
 "``--transcriptions``, ``--aliases``, ``--collections``, "
@@ -900,7 +968,7 @@ msgstr ""
 "επιλογή με τιμή ``false`` αφαιρεί την οικογένειά της (προεπιλογή: ναι για"
 " όλες)."
 
-#: ../../source/cli_import_export.rst:466
+#: ../../source/cli_import_export.rst:503
 msgid ""
 "``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
 "ids``, ``--lesson-ids`` — Une liste d'IDs de la source restreint sa "
@@ -912,7 +980,7 @@ msgstr ""
 "οικογένειά της σε αυτά τα στοιχεία και την περιλαμβάνει. Ένα ID που η "
 "προέλευση δεν περιέχει είναι σφάλμα, και δεν αντιγράφεται τίποτα."
 
-#: ../../source/cli_import_export.rst:470
+#: ../../source/cli_import_export.rst:507
 msgid ""
 "``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la "
 "source et ce que la destination en a pris)."
@@ -920,7 +988,7 @@ msgstr ""
 "``--format`` — ``text`` (προεπιλογή) ή ``json`` (ό,τι διαβάστηκε από την "
 "προέλευση και ό,τι πήρε από αυτήν ο προορισμός)."
 
-#: ../../source/cli_import_export.rst:473
+#: ../../source/cli_import_export.rst:510
 msgid ""
 "**Quelles positions partent.** Sans liste d'IDs, toutes les positions de "
 "la source partent, rangées ou non. Dès qu'une liste d'IDs est donnée, "
@@ -942,7 +1010,7 @@ msgstr ""
 "(όνομα, ημερομηνία, τόπος), αλλά όχι τους άλλους αγώνες αυτού του "
 "τουρνουά· με το ``--tournaments=false``, φτάνει χωρίς τουρνουά."
 
-#: ../../source/cli_import_export.rst:482
+#: ../../source/cli_import_export.rst:519
 msgid ""
 "Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal "
 "d'import, ni métadonnée de la source ; la destination garde les siennes, "
@@ -957,7 +1025,7 @@ msgstr ""
 "Anki δεν αντιγράφονται: μια τράπουλα φτάνει χωρίς ιστορικό, και μια "
 "τράπουλα με το ίδιο όνομα που υπάρχει ήδη κρατά το δικό της."
 
-#: ../../source/cli_import_export.rst:503
+#: ../../source/cli_import_export.rst:540
 msgid ""
 "Le serveur offre le même transfert entre deux tenants, tiré par le tenant"
 " qui reçoit (voir :ref:`mode_headless_transfert`)."
@@ -965,11 +1033,11 @@ msgstr ""
 "Ο διακομιστής προσφέρει την ίδια μεταφορά μεταξύ δύο tenants, που τραβά ο"
 " tenant που λαμβάνει (βλ. :ref:`mode_headless_transfert`)."
 
-#: ../../source/cli_import_export.rst:507
+#: ../../source/cli_import_export.rst:544
 msgid "identity — Identité d'émetteur"
 msgstr "identity — Ταυτότητα εκδότη"
 
-#: ../../source/cli_import_export.rst:509
+#: ../../source/cli_import_export.rst:546
 msgid ""
 "Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
 "signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
@@ -983,19 +1051,19 @@ msgstr ""
 "πρόσωπο, όχι σε μια βάση δεδομένων: ό,τι σημαίνετε φέρει ένα και μόνο "
 "δημόσιο αποτύπωμα."
 
-#: ../../source/cli_import_export.rst:523
+#: ../../source/cli_import_export.rst:560
 msgid "``--name`` — Change le nom affiché de l'identité."
 msgstr "``--name`` — Αλλάζει το εμφανιζόμενο όνομα της ταυτότητας."
 
-#: ../../source/cli_import_export.rst:524
+#: ../../source/cli_import_export.rst:561
 msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
 msgstr "``--export`` — Εξάγει την ταυτότητα σε αρχείο ``.bdbid``."
 
-#: ../../source/cli_import_export.rst:525
+#: ../../source/cli_import_export.rst:562
 msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
 msgstr "``--import`` — Εισάγει μια ταυτότητα από αρχείο ``.bdbid``."
 
-#: ../../source/cli_import_export.rst:526
+#: ../../source/cli_import_export.rst:563
 msgid ""
 "``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
 "exporté/importé (l'identité locale, elle, est volontairement non "
@@ -1005,7 +1073,7 @@ msgstr ""
 "εξαγόμενο/εισαγόμενο αρχείο (η τοπική ταυτότητα παραμένει σκόπιμα "
 "απροστάτευτη)."
 
-#: ../../source/cli_import_export.rst:528
+#: ../../source/cli_import_export.rst:565
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom, "
 "empreinte, chemin de stockage)."
@@ -1013,7 +1081,7 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` (όνομα, "
 "αποτύπωμα, διαδρομή αποθήκευσης)."
 
-#: ../../source/cli_import_export.rst:531
+#: ../../source/cli_import_export.rst:568
 msgid ""
 "Le fichier exporté permet à quiconque le détient de signer en votre nom —"
 " ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
@@ -1025,11 +1093,11 @@ msgstr ""
 "σημασμένα αρχεία διατηρούν το όνομα με το οποίο σφραγίστηκαν και "
 "εξακολουθούν να επαληθεύονται."
 
-#: ../../source/cli_import_export.rst:537
+#: ../../source/cli_import_export.rst:574
 msgid "open — Ouvrir un fichier protégé"
 msgstr "open — Άνοιγμα προστατευμένου αρχείου"
 
-#: ../../source/cli_import_export.rst:539
+#: ../../source/cli_import_export.rst:576
 msgid ""
 "Transforme un fichier protégé par mot de passe (``.dbx``) en base "
 "ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
@@ -1039,15 +1107,15 @@ msgstr ""
 "βάση. Ο κωδικός ζητείται μία μόνο φορά· έπειτα πρόκειται για κανονικό "
 "αρχείο."
 
-#: ../../source/cli_import_export.rst:549
+#: ../../source/cli_import_export.rst:586
 msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
 msgstr "``--db`` — Το αρχείο ``.dbx`` προς άνοιγμα (υποχρεωτικό)."
 
-#: ../../source/cli_import_export.rst:550
+#: ../../source/cli_import_export.rst:587
 msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
 msgstr "``--password`` — Ο κωδικός του κοντέινερ (υποχρεωτικό)."
 
-#: ../../source/cli_import_export.rst:551
+#: ../../source/cli_import_export.rst:588
 msgid ""
 "``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
 "extension ``.db``)."
@@ -1055,7 +1123,7 @@ msgstr ""
 "``--file`` — Διαδρομή εξόδου για τη συνηθισμένη βάση (προεπιλογή: ίδιο "
 "όνομα, κατάληξη ``.db``)."
 
-#: ../../source/cli_import_export.rst:554
+#: ../../source/cli_import_export.rst:591
 msgid ""
 "Ce que le mot de passe protège : le *transport* du fichier — la copie "
 "égarée dans un dossier de téléchargements, la pièce jointe envoyée par "

@@ -44,6 +44,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `lesson` - Manage lessons (ordered steps showing collections and positions; export them)
 - `study` - The study backlog: your unhandled blunders across every import, and the "studied" mark
 - `collection` - Manage collections (list, show, create, rename, delete, export)
+- `archive` - Print matches as QR codes on A4 sheets, or import them back from the page or a scan
 - `document` - Read a PDF's diagrams into a relevé, check one, or import its positions into a collection
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `stats` - Statistics computed apart from list --type stats (recurring)
@@ -892,6 +893,37 @@ nothing. Reading a lesson records nothing on the reader's side.
     --password secret --watermark "Course of 12 March"
 ./blunderDB lesson export --db database.db --id 1 --html --out lesson.html
 ```
+
+## Archive Command
+
+Keep a library of matches on paper: print them as QR codes on A4 sheets and
+import them back from the page, or from a scan or photograph of the sheets.
+
+```bash
+./blunderDB archive export --db <file> --output <page.html> [--match <ids>] [--origin <text>]
+./blunderDB archive import --db <file> <page.html | image.png | image.jpg>...
+```
+
+**Sub-commands:**
+- `export` - Write a self-contained, printable HTML page. A match usually fits in
+  one code (about 200 bytes for a 7-point match); a longer one is cut into
+  several. Every code carries the archive's id, its rank and a checksum, at error
+  correction level M; a parity code follows every group of five and rebuilds any
+  one of them that cannot be read. The codes fill the four quadrants of each
+  sheet, with a white gutter on both fold lines, and a line under each gives its
+  rank, the players, the date and the length. Without `--match` the whole library
+  is archived; `--origin` prints an origin line at the foot of each sheet
+- `import` - Read the exported page (its matches are embedded, no code is read
+  optically) or PNG and JPEG images holding several codes, any number in any
+  order. Unreadable codes that parity could not rebuild are named by their rank
+
+An archive keeps the match's metadata, plays, cube actions, results, the match
+comment, the comments and study marks of the positions played, and the decision
+times and video timecodes when there are any (a video only by its URL). Analyses
+are not archived: they are computed again after the import. Matches go through
+the ordinary import — an import batch, and a match already in the library, from
+the same archive or another format, counts as a duplicate. `import --type match
+--file page.html` reads an archive page the same way.
 
 ## Document Command
 
@@ -2569,6 +2601,54 @@ Examples:
   blunderdb anki sync --db database.db --deck 2
 ```
 
+### `blunderdb archive export`
+
+```
+Usage: blunderdb archive export [options] 
+
+Write matches as a self-contained HTML page of A4 sheets of QR codes (error correction M):
+one match a code when it fits, a parity code every five that rebuilds one unreadable code,
+a white gutter on both fold lines. The matches are embedded too, so the page imports without
+reading a code. Analyses are not archived: they are computed again after an import.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -match string
+    	Comma-separated match ids (default: the whole library)
+  -origin string
+    	Origin line printed at the foot of each sheet
+  -output string
+    	Path of the HTML page to write (required)
+
+Examples:
+  blunderdb archive export --db database.db --output archive.html
+  blunderdb archive export --db database.db --match 12,15 --output archive.html --origin "Club de Lyon"
+```
+
+### `blunderdb archive import`
+
+```
+Usage: blunderdb archive import [options] <file>...
+
+Import the matches of paper archives: the exported HTML page (its embedded matches, no code
+reading), or scans and photographs of its sheets (PNG, JPEG), several codes an image, any
+number of images in any order. A lost code is rebuilt from its parity code. Matches go
+through the ordinary import: an import batch, and a match already held is a duplicate.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb archive import --db database.db archive.html
+  blunderdb archive import --db database.db page1.jpg page2.jpg
+```
+
 ### `blunderdb bearoff delete`
 
 ```
@@ -3889,7 +3969,7 @@ Options:
     	How often --watch looks at the folder (default 10s, floor 2s)
 
 Import Types:
-  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)
+  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) , XGP position (.xgp) or paper archive page (.html)
   position  Import positions from a text file
   batch     Batch import all match/position files from a directory
   database  Merge a blunderDB database (.db): positions, matches, tournaments, collections, lessons, decks, drafts, aliases

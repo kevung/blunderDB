@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 01:56+0100\n"
+"POT-Creation-Date: 2026-11-26 03:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -292,6 +292,18 @@ msgid ""
 msgstr ""
 "Hallitsee oppitunteja (järjestetyt vaiheet, jotka näyttävät kokoelmia ja "
 "asemia) ja vie ne."
+
+#: ../../source/cli.rst:1
+msgid "archive"
+msgstr "archive"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Imprime des matchs en codes QR sur des feuilles A4, ou les réimporte "
+"depuis la page ou un scan."
+msgstr ""
+"Tulostaa otteluita QR-koodeina A4-arkeille tai tuo ne takaisin sivulta "
+"tai skannauksesta."
 
 #: ../../source/cli.rst:1
 msgid "document"
@@ -613,7 +625,7 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "Palvelintila ja siirto PostgreSQL:ään: ks. :ref:`headless`."
 
-#: ../../source/cli.rst:126
+#: ../../source/cli.rst:127
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
@@ -621,35 +633,35 @@ msgstr ""
 "Jokainen komento hyväksyy ``--help``-valitsimen yksityiskohtaisen ohjeen "
 "näyttämiseksi."
 
-#: ../../source/cli.rst:140
+#: ../../source/cli.rst:141
 msgid "Exemples de flux de travail"
 msgstr "Työnkulkuesimerkkejä"
 
-#: ../../source/cli.rst:143
+#: ../../source/cli.rst:144
 msgid "Import d'un répertoire de tournoi"
 msgstr "Turnaushakemiston tuonti"
 
-#: ../../source/cli.rst:152
+#: ../../source/cli.rst:153
 msgid "Sauvegarde régulière"
 msgstr "Säännöllinen varmuuskopiointi"
 
-#: ../../source/cli.rst:159
+#: ../../source/cli.rst:160
 msgid "Analyse des erreurs"
 msgstr "Virheiden analysointi"
 
-#: ../../source/cli.rst:171
+#: ../../source/cli.rst:172
 msgid "Codes de retour"
 msgstr "Paluukoodit"
 
-#: ../../source/cli.rst:173
+#: ../../source/cli.rst:174
 msgid "``0`` — Succès."
 msgstr "``0`` — Onnistui."
 
-#: ../../source/cli.rst:174
+#: ../../source/cli.rst:175
 msgid "``1`` — Erreur."
 msgstr "``1`` — Virhe."
 
-#: ../../source/cli.rst:176
+#: ../../source/cli.rst:177
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 "Tämä tekee CLI:stä sopivan käytettäväksi skripteissä virheenkäsittelyn "

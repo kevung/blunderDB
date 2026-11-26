@@ -54,7 +54,7 @@ func (cli *CLI) runImport(args []string) error {
 		importCmd.PrintDefaults()
 		fmt.Fprintln(cli.stdout())
 		fmt.Fprintln(cli.stdout(), "Import Types:")
-		fmt.Fprintln(cli.stdout(), "  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)")
+		fmt.Fprintln(cli.stdout(), "  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) , XGP position (.xgp) or paper archive page (.html)")
 		fmt.Fprintln(cli.stdout(), "  position  Import positions from a text file")
 		fmt.Fprintln(cli.stdout(), "  batch     Batch import all match/position files from a directory")
 		fmt.Fprintln(cli.stdout(), "  database  Merge a blunderDB database (.db): positions, matches, tournaments, collections, lessons, decks, drafts, aliases")
@@ -202,6 +202,10 @@ func (cli *CLI) importMatch(filePath, format string) error {
 		fmt.Fprintf(cli.stdout(), "Importing match from: %s\n", filePath)
 	}
 
+	// An exported paper archive page holds matches, read like any import.
+	if database.IsPaperArchivePage(filePath) {
+		return cli.importArchive([]string{filePath}, format)
+	}
 	ext := strings.ToLower(filepath.Ext(filePath))
 	batchID := cli.beginImportBatch(filePath, strings.TrimPrefix(ext, "."))
 	var failures domain.ImportReport
@@ -233,7 +237,7 @@ func (cli *CLI) importMatch(filePath, format string) error {
 	case ".ogxm":
 		matchID, err = cli.db.ImportOGXMMatch(filePath)
 	default:
-		return fmt.Errorf("invalid file type: %s (expected .xg, .xgp, .sgf, .mat, .txt, .bgf or .ogxm)", ext)
+		return fmt.Errorf("invalid file type: %s (expected .xg, .xgp, .sgf, .mat, .txt, .bgf, .ogxm or an archive .html)", ext)
 	}
 
 	if err != nil {
