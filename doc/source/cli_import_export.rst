@@ -302,7 +302,7 @@ depuis un scan ou une photo de la feuille.
    ./blunderdb archive import --db autre.db feuille1.jpg feuille2.png
 
 ``export`` écrit une page HTML autonome, à imprimer : chaque match tient en
-général dans un seul code (environ 200 octets pour un match en 7 points), un
+général dans un seul code (environ 250 octets pour un match en 7 points), un
 code plus long est coupé en plusieurs. Chaque code porte l'identifiant de
 l'archive, son rang et une somme de contrôle, avec une correction d'erreur de
 niveau M ; un code de parité suit chaque groupe de cinq et reconstruit l'un
