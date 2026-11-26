@@ -11,9 +11,11 @@ import (
 // ADR-0117), given as its JSON text, into the Collection named collection —
 // the document's title when empty. An entry neither sure nor verified refuses
 // the import unless force, or acceptComplete for an entry of fifteen checkers
-// a side read with no doubt whose context is certified; a refused import
-// writes nothing.
-func (d *Database) ImportDocumentReleve(releveJSON string, collection string, acceptComplete, force bool) (document.ImportResult, error) {
+// a side read with no doubt whose context is certified, or fallback for an
+// entry whose checkers are certified and whose context is to verify,
+// imported under the context its position carries; a refused import writes
+// nothing.
+func (d *Database) ImportDocumentReleve(releveJSON string, collection string, acceptComplete, fallback, force bool) (document.ImportResult, error) {
 	r, err := document.Decode([]byte(releveJSON))
 	if err != nil {
 		return document.ImportResult{}, err
@@ -23,7 +25,7 @@ func (d *Database) ImportDocumentReleve(releveJSON string, collection string, ac
 	if d.db == nil {
 		return document.ImportResult{}, fmt.Errorf("no database is currently open")
 	}
-	return document.Import(context.Background(), d.store, "", r, document.ImportOptions{Collection: collection, AcceptComplete: acceptComplete, Force: force})
+	return document.Import(context.Background(), d.store, "", r, document.ImportOptions{Collection: collection, AcceptComplete: acceptComplete, Fallback: fallback, Force: force})
 }
 
 // AnalyzeDocument reads the diagrams of the document at path (package

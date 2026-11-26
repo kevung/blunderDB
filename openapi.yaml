@@ -10113,6 +10113,8 @@ components:
           type: string
         acceptComplete:
           type: boolean
+        fallback:
+          type: boolean
         force:
           type: boolean
     document_ImportResult:

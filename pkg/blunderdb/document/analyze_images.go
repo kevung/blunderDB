@@ -111,10 +111,10 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 	}
 	r := &Releve{Format: Format, Version: Version, Document: Source{
 		Title: title, Author: strings.TrimSpace(opts.Author), SHA256: hex.EncodeToString(h.Sum(nil)),
-		Profile: structureProfile(res.Profile), Defaults: structureDefaults(res.Profile),
+		Profile: structureProfile(res.Profile), Defaults: learnDefaults(res.Diagrams, res.Profile),
 	}}
 	for _, d := range res.Diagrams {
-		r.Entries = append(r.Entries, structureEntry(d, len(r.Entries)+1))
+		r.Entries = append(r.Entries, structureEntry(d, len(r.Entries)+1, r.Document.Defaults))
 	}
 	if len(r.Entries) == 0 {
 		return nil, fmt.Errorf("document: no backgammon diagram found in the page images: %w", structure.ErrNoDiagram)
@@ -125,7 +125,7 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 	return r, nil
 }
 
-func structureEntry(d structure.Diagram, rank int) Entry {
+func structureEntry(d structure.Diagram, rank int, defaults *Defaults) Entry {
 	// The reader certifies the checkers by the printed pips and the context
 	// field by field (structure.Context): a context read whole is "read";
 	// what it does not read takes the document's defaults, which a person
@@ -147,11 +147,17 @@ func structureEntry(d structure.Diagram, rank int) Entry {
 	} else {
 		e.Doubts = append(e.Doubts, d.Doubts...)
 	}
-	// A context read in part and outside the defaults (an owned cube, a
-	// match score): the position says what was read, which the defaults do
-	// not cover, so it is left to verify.
+	// A score the document prints beside its diagrams and not read here is
+	// not money play: the context is left to verify.
+	if defaults.Prints("score") && d.Context.Score == nil && !drawnContext(e.Doubts) {
+		e.Doubts = append(e.Doubts, MissingScoreDoubt)
+	}
+	// A context read in part and outside the defaults (an owned cube in a
+	// document that does not print its cube): the position says what was
+	// read, which the defaults do not cover, so it is left to verify. A
+	// field the document prints is the entry's own reading.
 	tail := contextXGID(d.Context)
-	if !d.Context.Read && tail != StructureDefaults.Context && !drawnContext(e.Doubts) {
+	if !d.Context.Read && !defaults.Covers(tail) && !drawnContext(e.Doubts) {
 		e.Doubts = append(e.Doubts, capture.Doubt{Field: "context", Reason: "context read in part (" + tail + "), outside the document's defaults: the rest is not read"})
 	}
 	switch {
@@ -350,6 +356,43 @@ func completeLead(d capture.Doubt) bool {
 
 // contextField names the doubts about what surrounds the checkers.
 var contextField = map[string]bool{"context": true, "cube": true, "dice": true, "score": true, "turn": true}
+
+// MissingScoreDoubt is the doubt of a diagram whose score is not read in a
+// document that prints its score beside its diagrams (Defaults.Printed).
+var MissingScoreDoubt = capture.Doubt{Field: "score", Reason: "the document prints its score beside its diagrams, none is read here: it is not taken as money play"}
+
+// learnDefaults learns from the document's diagrams which context fields it
+// prints: a field read beside at least a third of them, the threshold a
+// drawn cube is learned at (structure's missing cubes). The other fields
+// keep StructureDefaults.
+func learnDefaults(ds []structure.Diagram, p structure.Profile) *Defaults {
+	d := structureDefaults(p)
+	var cube, dice, score int
+	for _, x := range ds {
+		c := x.Context
+		if c.CubeRead {
+			cube++
+		}
+		if c.DiceRead && c.TurnRead {
+			dice++
+		}
+		if c.Score != nil {
+			score++
+		}
+	}
+	for _, f := range []struct {
+		name string
+		n    int
+	}{{"cube", cube}, {"dice", dice}, {"score", score}} {
+		if f.n > 0 && 3*f.n >= len(ds) {
+			d.Printed = append(d.Printed, f.name)
+		}
+	}
+	if len(d.Printed) > 0 {
+		d.Description = "for what a diagram does not print: " + d.Description + "; the document prints its " + strings.Join(d.Printed, ", ") + ", read beside each diagram"
+	}
+	return d
+}
 
 // structureDefaults is a fresh, unconfirmed copy of StructureDefaults, with
 // the direction of play the reader assumed when no printed pips voted for

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:42+0100\n"
+"POT-Creation-Date: 2026-11-26 15:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/cli_document.rst:4
 msgid "Importer les positions d'un document"
@@ -499,35 +499,39 @@ msgid ""
 "prend le contexte par défaut du document (``\"context\": \"default\"``, "
 "avec le doute ``context not read: cube, dice, player on roll, score``). "
 "Un videau, des dés ou un score dessinés ou imprimés et non certifiés, un "
-"contexte lu en partie hors du défaut (videau possédé, score de match), un"
-" videau possédé par le joueur du haut sans dés dessinés ou un videau "
-"introuvable dans un document qui le dessine (trouvé à côté d'au moins un "
-"tiers de ses diagrammes) laissent le contexte à vérifier (``\"context\": "
-"\"to-verify\"``, avec un doute nommé) ; le XGID porte alors ce qui a été "
-"lu. Une entrée d'un livre scanné dont le contexte n'est pas lu n'est donc"
-" **jamais** ``sure`` tant que le contexte par défaut n'est pas confirmé, "
-"et celle dont le contexte est à vérifier ne l'est jamais. ``analyze`` et "
-"``check`` comptent les entrées par contexte, et à part celles dont seuls "
-"les pions sont certifiés :"
+"contexte lu en partie hors du défaut sur un champ que le document "
+"n'imprime pas (voir :ref:`cli_document_learned`), un videau possédé par "
+"le joueur du haut sans dés dessinés, un videau introuvable dans un "
+"document qui le dessine ou un score introuvable dans un document qui "
+"l'imprime (trouvés à côté d'au moins un tiers de ses diagrammes) laissent"
+" le contexte à vérifier (``\"context\": \"to-verify\"``, avec un doute "
+"nommé) ; le XGID porte alors ce qui a été lu. Une entrée d'un livre "
+"scanné dont le contexte n'est pas lu n'est donc **jamais** ``sure`` tant "
+"que le contexte par défaut n'est pas confirmé, et celle dont le contexte "
+"est à vérifier ne l'est jamais. ``analyze`` et ``check`` comptent les "
+"entrées par contexte, et à part celles dont seuls les pions sont "
+"certifiés :"
 msgstr ""
-"Una entrada cuyo contexto se lee por completo es ``\"context\": "
+"Una entrada cuyo contexto completo está leído es ``\"context\": "
 "\"read\"``. Un cubo que no se encuentra nunca se toma por centrado: lo "
 "que no se lee toma el contexto por defecto del documento (``\"context\": "
 "\"default\"``, con la duda ``context not read: cube, dice, player on "
 "roll, score``). Un cubo, unos dados o un marcador dibujados o impresos y "
 "no certificados, un contexto leído en parte fuera del valor por defecto "
-"(cubo con propietario, marcador de partido) un cubo propiedad del jugador"
-" de arriba sin dados dibujados o un cubo no encontrado en un documento "
-"que lo dibuja (hallado junto a al menos un tercio de sus diagramas) dejan"
-" el contexto por verificar (``\"context\": \"to-verify\"``, con una duda "
+"en un campo que el documento no imprime (véase "
+":ref:`cli_document_learned`), un cubo en poder del jugador de arriba sin "
+"dados dibujados, un cubo que no se encuentra en un documento que lo "
+"dibuja o un marcador que no se encuentra en un documento que lo imprime "
+"(encontrados junto a al menos un tercio de sus diagramas) dejan el "
+"contexto por verificar (``\"context\": \"to-verify\"``, con una duda "
 "nombrada); el XGID lleva entonces lo que se ha leído. Una entrada de un "
 "libro escaneado cuyo contexto no se lee no es por tanto **nunca** "
 "``sure`` mientras el contexto por defecto no esté confirmado, y aquella "
-"cuyo contexto está por verificar no lo es nunca. ``analyze`` y ``check`` "
-"cuentan las entradas por contexto, y aparte aquellas cuyas fichas son las"
-" únicas certificadas:"
+"cuyo contexto está por verificar tampoco lo es nunca. ``analyze`` y "
+"``check`` cuentan las entradas por contexto, y aparte aquellas cuyas "
+"fichas solas están certificadas:"
 
-#: ../../source/cli_document.rst:246
+#: ../../source/cli_document.rst:247
 msgid ""
 "Pour une entrée dont le contexte reste à vérifier, on ouvre le livre à la"
 " page de l'entrée, on compare au diagramme le videau (valeur et "
@@ -541,11 +545,11 @@ msgstr ""
 "dados, el jugador al que le toca y el marcador, se corrigen estos campos "
 "del XGID si hace falta y después se marca ``\"verified\": true``."
 
-#: ../../source/cli_document.rst:254
+#: ../../source/cli_document.rst:255
 msgid "Le contexte par défaut"
 msgstr "El contexto por defecto"
 
-#: ../../source/cli_document.rst:256
+#: ../../source/cli_document.rst:257
 msgid ""
 "Le contexte par défaut d'un livre scanné est celui qu'écrit la lecture : "
 "videau centré, pas de dés, joueur du bas au trait, partie libre. Il "
@@ -555,7 +559,7 @@ msgstr ""
 "lectura: cubo centrado, sin dados, jugador de abajo al turno, partida "
 "libre. Figura en la cabecera del relevé:"
 
-#: ../../source/cli_document.rst:268
+#: ../../source/cli_document.rst:269
 msgid ""
 "``context`` est la fin du XGID après le plateau ; toute entrée "
 "``default`` la porte. Quand les diagrammes du document suivent ce "
@@ -582,11 +586,61 @@ msgstr ""
 "impreso en la imagen sin capa de texto o un turno dado por el texto no se"
 " ven."
 
-#: ../../source/cli_document.rst:282
+#: ../../source/cli_document.rst:283
+msgid "Le défaut appris sur le document"
+msgstr "El valor por defecto aprendido del documento"
+
+#: ../../source/cli_document.rst:285
+msgid ""
+"La lecture apprend sur le document quels champs du contexte il imprime à "
+"côté de ses diagrammes : le videau, les dés (avec le joueur au trait) ou "
+"le score, lus à côté d'au moins un tiers des diagrammes. Elle les nomme "
+"dans ``printed`` :"
+msgstr ""
+"La lectura aprende del documento qué campos del contexto imprime junto a "
+"sus diagramas: el cubo, los dados (con el jugador con el turno) o el "
+"marcador, leídos junto a al menos un tercio de los diagramas. Los nombra "
+"en ``printed``:"
+
+#: ../../source/cli_document.rst:298
+msgid ""
+"Un champ imprimé est la lecture de chaque entrée, que la lecture a "
+"certifiée ; le contexte par défaut ne couvre que les autres. Dans un "
+"livre de problèmes en match, chaque diagramme porte son score : ses "
+"entrées restent ``default``, chacune avec son score dans le XGID, et la "
+"confirmation unique du contexte par défaut certifie le videau centré, "
+"l'absence de dés et le joueur au trait de toutes. Un diagramme dont le "
+"score n'est pas lu dans un tel document n'est pas pris en partie libre : "
+"son contexte reste à vérifier (``the document prints its score beside its"
+" diagrams, none is read here: it is not taken as money play``). "
+"``analyze`` et ``check`` affichent ce qui a été appris :"
+msgstr ""
+"Un campo impreso es la lectura de cada entrada, que la lectura ha "
+"certificado; el contexto por defecto solo cubre las demás. En un libro de"
+" problemas de partido, cada diagrama lleva su marcador: sus entradas "
+"siguen siendo ``default``, cada una con su marcador en el XGID, y la "
+"confirmación única del contexto por defecto certifica el cubo centrado, "
+"la ausencia de dados y el jugador con el turno de todas ellas. Un "
+"diagrama cuyo marcador no se lee en un documento así no se toma como "
+"partida libre: su contexto queda por verificar (``the document prints its"
+" score beside its diagrams, none is read here: it is not taken as money "
+"play``). ``analyze`` y ``check`` muestran lo aprendido:"
+
+#: ../../source/cli_document.rst:312
+msgid ""
+"Rien n'est gardé d'un document à l'autre. Un relevé sans ``printed`` "
+"garde la règle stricte : tout champ lu hors du défaut laisse le contexte "
+"à vérifier."
+msgstr ""
+"No se conserva nada de un documento a otro. Un relevé sin ``printed`` "
+"mantiene la regla estricta: cualquier campo leído fuera del valor por "
+"defecto deja el contexto por verificar."
+
+#: ../../source/cli_document.rst:318
 msgid "Quinze et quinze sans doute"
 msgstr "Quince y quince sin duda"
 
-#: ../../source/cli_document.rst:284
+#: ../../source/cli_document.rst:320
 msgid ""
 "Un diagramme sans pips imprimés n'a pas de recoupement : ses pions "
 "restent ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils "
@@ -610,7 +664,7 @@ msgstr ""
 "son una duda sobre las fichas: la entrada nunca es entonces completa. Una"
 " posición de la que se han sacado fichas tampoco es nunca completa."
 
-#: ../../source/cli_document.rst:295
+#: ../../source/cli_document.rst:331
 msgid ""
 "Le sens de jeu supposé est lui aussi un défaut du document, avec sa "
 "propre confirmation : un sens faux échangerait les joueurs de toutes les "
@@ -622,7 +676,7 @@ msgstr ""
 "los jugadores de todas las posiciones leídas bajo él. Figura en el "
 "contexto por defecto, bajo ``direction``:"
 
-#: ../../source/cli_document.rst:307
+#: ../../source/cli_document.rst:343
 msgid ""
 "Confirmer le contexte ne le confirme pas. On le contrôle sur quelques "
 "diagrammes, puis on écrit ``\"confirmed\": true`` dans ``direction``."
@@ -630,7 +684,7 @@ msgstr ""
 "Confirmar el contexto no lo confirma. Se comprueba en algunos diagramas y"
 " después se escribe ``\"confirmed\": true`` en ``direction``."
 
-#: ../../source/cli_document.rst:310
+#: ../../source/cli_document.rst:346
 msgid ""
 "``import --accept-complete`` accepte en bloc les entrées complètes dont "
 "le contexte est certifié (lu, ou sous le contexte par défaut confirmé) et"
@@ -644,7 +698,7 @@ msgstr ""
 "supuesto y luego confirmado), sin marcarlas como verificadas; ``check`` "
 "las cuenta, y cuenta aparte las que retiene un sentido sin confirmar:"
 
-#: ../../source/cli_document.rst:326
+#: ../../source/cli_document.rst:362
 msgid ""
 "L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
 " checkers read with no doubt``). Une entrée complète dont le contexte "
@@ -656,7 +710,7 @@ msgstr ""
 "está certificado, o cuyo sentido de juego supuesto no está confirmado, "
 "sigue rechazándose; el mensaje de error dice que hay que confirmarlo."
 
-#: ../../source/cli_document.rst:331
+#: ../../source/cli_document.rst:367
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
@@ -690,7 +744,7 @@ msgstr ""
 "pips leídos sigue ``to-verify`` (``no printed pip count was found next to"
 " the diagram``)."
 
-#: ../../source/cli_document.rst:345
+#: ../../source/cli_document.rst:381
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
@@ -704,7 +758,7 @@ msgstr ""
 "documento y una treintena de diagramas leídos con quince fichas por bando"
 " para aprender ese lugar."
 
-#: ../../source/cli_document.rst:350
+#: ../../source/cli_document.rst:386
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -722,7 +776,7 @@ msgstr ""
 "sacadas contadas por diferencia, un cubo dibujado fuera del centro, dados"
 " dibujados."
 
-#: ../../source/cli_document.rst:357
+#: ../../source/cli_document.rst:393
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
@@ -734,11 +788,11 @@ msgstr ""
 "libre), el jugador al turno (el de abajo), el tablero de salida (un bando"
 " dibujado con menos de quince fichas tiene las demás sacadas)."
 
-#: ../../source/cli_document.rst:363
+#: ../../source/cli_document.rst:399
 msgid "Pourquoi l'import refuse"
 msgstr "Por qué la importación rechaza"
 
-#: ../../source/cli_document.rst:365
+#: ../../source/cli_document.rst:401
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -750,7 +804,7 @@ msgstr ""
 "por tanto **todo** el relevé, antes de escribir nada, nombra los rangos y"
 " dice qué hacer:"
 
-#: ../../source/cli_document.rst:373
+#: ../../source/cli_document.rst:409
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -758,24 +812,64 @@ msgstr ""
 "Cuando hay entradas bajo un contexto por defecto sin confirmar, o "
 "completas sin ``--accept-complete``, el mensaje también lo dice:"
 
-#: ../../source/cli_document.rst:380
+#: ../../source/cli_document.rst:416
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
-" entries neither sure nor verified``). Même avec ``--force``, une entrée "
-"sans position est refusée : il faut la renseigner ou la retirer."
+" entries neither sure nor verified``)."
 msgstr ""
-"Se verifican esas entradas, o se pasa ``--force`` para importar el relevé"
-" tal cual; la importación indica entonces cuántas entradas ha forzado "
-"(``Forced: 3 entries neither sure nor verified``). Incluso con "
-"``--force``, una entrada sin posición se rechaza: hay que rellenarla o "
-"retirarla."
+"Se verifican estas entradas, o se pasa ``--force`` para importar el "
+"relevé tal cual; la importación indica entonces cuántas entradas ha "
+"forzado (``Forced: 3 entries neither sure nor verified``)."
 
-#: ../../source/cli_document.rst:386
+#: ../../source/cli_document.rst:423
+msgid "Le repli"
+msgstr "El repliegue"
+
+#: ../../source/cli_document.rst:425
+msgid ""
+"Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
+"``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
+" reste à vérifier n'est pas forcément rejetée : une fois le contexte par "
+"défaut confirmé, l'import propose de la **replier** sur le contexte que "
+"porte son XGID, ce qui a été lu et le défaut pour le reste. ``check`` "
+"nomme ces rangs, et le message d'erreur propose le repli :"
+msgstr ""
+"Una entrada cuyas fichas están certificadas (``sure``, o completa con "
+"``--accept-complete`` y un sentido de juego cierto) y de la que solo "
+"queda por verificar el contexto no se rechaza necesariamente: una vez "
+"confirmado el contexto por defecto, la importación propone **replegarla**"
+" al contexto que lleva su XGID, es decir, lo leído y el valor por defecto"
+" para el resto. ``check`` nombra estos rangos, y el mensaje de error "
+"propone el repliegue:"
+
+#: ../../source/cli_document.rst:436
+msgid ""
+"``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
+" référence de chacune, dans son commentaire, nomme les champs à contrôler"
+" sur le diagramme (``p. 12, Problem 31 (context not read, to check "
+"against the diagram: cube)``), et l'import les compte (``Fallback: 1 "
+"entries under the context their position carries``). Le repli ne couvre "
+"ni une entrée dont les pions sont à vérifier, ni un contexte "
+"contradictoire, ni un contexte par défaut non confirmé. Même avec "
+"``--force``, une entrée sans position est refusée : il faut la renseigner"
+" ou la retirer."
+msgstr ""
+"``import --fallback`` importa estas entradas sin marcarlas como "
+"verificadas; la referencia de cada una, en su comentario, nombra los "
+"campos que hay que comprobar en el diagrama (``p. 12, Problem 31 (context"
+" not read, to check against the diagram: cube)``), y la importación las "
+"cuenta (``Fallback: 1 entries under the context their position "
+"carries``). El repliegue no cubre ni una entrada cuyas fichas están por "
+"verificar, ni un contexto contradictorio, ni un contexto por defecto sin "
+"confirmar. Incluso con ``--force``, una entrada sin posición se rechaza: "
+"hay que rellenarla o retirarla."
+
+#: ../../source/cli_document.rst:446
 msgid "Ce qui entre en base"
 msgstr "Qué entra en la base"
 
-#: ../../source/cli_document.rst:388
+#: ../../source/cli_document.rst:448
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -789,7 +883,7 @@ msgstr ""
 "su identidad: una posición que ya tiene no se duplica (``new in the "
 "library`` cuenta las que le faltaban)."
 
-#: ../../source/cli_document.rst:394
+#: ../../source/cli_document.rst:454
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -803,7 +897,7 @@ msgstr ""
 "descripción si la tiene; una colección dinámica (definida por una "
 "consulta) se rechaza."
 
-#: ../../source/cli_document.rst:398
+#: ../../source/cli_document.rst:458
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -811,7 +905,7 @@ msgstr ""
 "Cada posición lleva un **comentario** que da su referencia, tras el "
 "título del documento: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:401
+#: ../../source/cli_document.rst:461
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -821,11 +915,11 @@ msgstr ""
 "importación interrumpida o rechazada no escribe nada: es una sola "
 "transacción."
 
-#: ../../source/cli_document.rst:405
+#: ../../source/cli_document.rst:465
 msgid "Une position répétée"
 msgstr "Una posición repetida"
 
-#: ../../source/cli_document.rst:407
+#: ../../source/cli_document.rst:467
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -837,11 +931,11 @@ msgstr ""
 "referencia: ``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` cuenta "
 "estas repeticiones."
 
-#: ../../source/cli_document.rst:413
+#: ../../source/cli_document.rst:473
 msgid "Réimporter"
 msgstr "Reimportar"
 
-#: ../../source/cli_document.rst:415
+#: ../../source/cli_document.rst:475
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -853,11 +947,11 @@ msgstr ""
 "referencia se reescribe solo si sus referencias han cambiado, nunca se "
 "duplica. Se puede, pues, retomar una importación tras corregir el relevé."
 
-#: ../../source/cli_document.rst:421
+#: ../../source/cli_document.rst:481
 msgid "Le démon"
 msgstr "El demonio"
 
-#: ../../source/cli_document.rst:423
+#: ../../source/cli_document.rst:483
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

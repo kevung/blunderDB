@@ -1761,6 +1761,7 @@ export namespace document {
 	    added: number;
 	    repeated: number;
 	    complete: number;
+	    fallback: number;
 	    forced: number;
 	
 	    static createFrom(source: any = {}) {
@@ -1778,6 +1779,7 @@ export namespace document {
 	        this.added = source["added"];
 	        this.repeated = source["repeated"];
 	        this.complete = source["complete"];
+	        this.fallback = source["fallback"];
 	        this.forced = source["forced"];
 	    }
 	}

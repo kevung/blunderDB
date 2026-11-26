@@ -180,6 +180,9 @@ func printCertainties(out io.Writer, s document.Summary) {
 			state = "confirmed"
 		}
 		fmt.Fprintf(out, "Defaults:   %s (%s), %s\n", d.Description, d.Context, state)
+		if len(d.Printed) > 0 {
+			fmt.Fprintf(out, "Printed:    %s, read beside each diagram (learned from the document)\n", strings.Join(d.Printed, ", "))
+		}
 		if dir := d.Direction; dir != nil {
 			state := "not confirmed: check it on a few diagrams, then set \"direction\": {\"confirmed\": true}"
 			if dir.Confirmed {
@@ -234,6 +237,12 @@ func (cli *CLI) runDocumentCheck(args []string) error {
 	default:
 		fmt.Fprintf(out, "Unverified: rank %s (import refused without --force)\n", joinRanks(s.Unverified))
 	}
+	switch {
+	case len(s.Fallback) > 0:
+		fmt.Fprintf(out, "Fallback:   rank %s imported with --fallback under the context its position carries, the fields to check named in its reference\n", joinRanks(s.Fallback))
+	case len(s.FallbackComplete) > 0:
+		fmt.Fprintf(out, "Fallback:   rank %s imported with --fallback --accept-complete under the context its position carries, the fields to check named in its reference\n", joinRanks(s.FallbackComplete))
+	}
 	return nil
 }
 
@@ -244,14 +253,19 @@ func (cli *CLI) runDocumentImport(args []string) error {
 			"label as a comment). An entry is sure when its checkers are and its context is certified:\n"+
 			"read, or under the document's defaults once \"confirmed\" is set on them. An entry neither\n"+
 			"sure nor verified refuses the import unless --force; --accept-complete accepts as a whole\n"+
-			"the entries of 15 + 15 checkers read with no doubt whose context is certified. A refused\n"+
-			"import writes nothing. Importing the same relevé again adds nothing.",
+			"the entries of 15 + 15 checkers read with no doubt whose context is certified; --fallback\n"+
+			"imports, rather than refuse, the entries whose checkers are certified and whose context is\n"+
+			"to verify, under the context their position carries, each reference naming the fields to\n"+
+			"check against the diagram (the document's defaults confirmed). A refused import writes\n"+
+			"nothing. Importing the same relevé again adds nothing.",
 		"blunderdb document import --db database.db releve.json",
 		"blunderdb document import --db database.db releve.json --accept-complete",
+		"blunderdb document import --db database.db releve.json --fallback",
 		"blunderdb document import --db database.db releve.json --collection \"My book\" --force")
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	collection := fs.String("collection", "", "Name of the collection (default: the document's title)")
 	acceptComplete := fs.Bool("accept-complete", false, "Import the entries of 15 + 15 checkers read with no doubt whose context is certified")
+	fallback := fs.Bool("fallback", false, "Import the entries whose checkers are certified and whose context is to verify, under the context their position carries")
 	force := fs.Bool("force", false, "Import entries neither sure nor verified")
 	format := fs.String("format", "text", "Output format: text or json")
 	path, err := documentFlags(fs, args)
@@ -269,7 +283,7 @@ func (cli *CLI) runDocumentImport(args []string) error {
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
 	}
-	res, err := cli.db.ImportDocumentReleve(string(data), *collection, *acceptComplete, *force)
+	res, err := cli.db.ImportDocumentReleve(string(data), *collection, *acceptComplete, *fallback, *force)
 	if err != nil {
 		return err
 	}
@@ -286,6 +300,9 @@ func (cli *CLI) runDocumentImport(args []string) error {
 		res.Entries, res.Positions, res.NewPositions, res.Added, res.Repeated)
 	if res.Complete > 0 {
 		fmt.Fprintf(out, "Complete: %d entries of 15 + 15 checkers read with no doubt\n", res.Complete)
+	}
+	if res.Fallback > 0 {
+		fmt.Fprintf(out, "Fallback: %d entries under the context their position carries, the fields to check named in their reference\n", res.Fallback)
 	}
 	if res.Forced > 0 {
 		fmt.Fprintf(out, "Forced: %d entries neither sure nor verified\n", res.Forced)

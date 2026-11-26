@@ -24,6 +24,11 @@ type ImportOptions struct {
 	// a side were read with no doubt and whose context is certified
 	// (Releve.CompleteCertified), neither sure nor verified.
 	AcceptComplete bool `json:"acceptComplete"`
+	// Fallback imports, rather than refuse, the entries whose checkers are
+	// certified and whose context is to verify, under the context their
+	// position carries (Releve.FallbackCertified); each one's reference
+	// names the fields to check against the diagram.
+	Fallback bool `json:"fallback"`
 	// Force imports entries neither sure nor verified.
 	Force bool `json:"force"`
 }
@@ -46,6 +51,9 @@ type ImportResult struct {
 	Repeated int `json:"repeated"`
 	// Complete counts the entries imported because AcceptComplete was set.
 	Complete int `json:"complete"`
+	// Fallback counts the entries imported under their fallback context
+	// because Fallback was set.
+	Fallback int `json:"fallback"`
 	// Forced counts the entries imported only because Force was set.
 	Forced int `json:"forced"`
 }
@@ -63,13 +71,26 @@ func Unverified(r *Releve, acceptComplete bool) []int {
 	return ranks
 }
 
+// FallbackRanks returns the ranks of the entries an import refuses but
+// accepts under their fallback context (ImportOptions.Fallback).
+func FallbackRanks(r *Releve, acceptComplete bool) []int {
+	r = r.Upgrade()
+	var ranks []int
+	for _, e := range r.Entries {
+		if r.FallbackCertified(e, acceptComplete) {
+			ranks = append(ranks, e.Rank)
+		}
+	}
+	return ranks
+}
+
 // refusalHint says what a person does about the refused ranks.
-func refusalHint(r *Releve, ranks []int, acceptComplete bool) string {
+func refusalHint(r *Releve, ranks []int, acceptComplete, fallback bool) string {
 	want := map[int]bool{}
 	for _, k := range ranks {
 		want[k] = true
 	}
-	var defaults, direction, complete, context bool
+	var defaults, direction, complete, context, repli bool
 	for _, e := range r.Entries {
 		if !want[e.Rank] {
 			continue
@@ -86,6 +107,9 @@ func refusalHint(r *Releve, ranks []int, acceptComplete bool) string {
 		if !r.ContextCertified(e) {
 			context = true
 		}
+		if !fallback && r.FallbackCertified(e, acceptComplete) {
+			repli = true
+		}
 	}
 	var hints []string
 	if defaults {
@@ -99,6 +123,9 @@ func refusalHint(r *Releve, ranks []int, acceptComplete bool) string {
 	}
 	if context {
 		hints = append(hints, "check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram")
+	}
+	if repli {
+		hints = append(hints, "or import the entries whose checkers are certified under the context their position carries, each reference naming the fields to check (fallback)")
 	}
 	hints = append(hints, "verify the others (\"verified\": true)")
 	return strings.Join(hints, "; ")
@@ -127,7 +154,9 @@ func (s Source) commentPrefix() string { return strings.TrimSpace(s.Title) + " â
 // same RelevÃ© again writes nothing new. An entry neither sure nor verified
 // refuses the import, before anything is written, unless opts.Force; an
 // entry complete with its context certified is accepted when
-// opts.AcceptComplete.
+// opts.AcceptComplete, and an entry whose checkers are certified and whose
+// context is to verify is accepted under its fallback context when
+// opts.Fallback, its reference naming what to check.
 func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, opts ImportOptions) (ImportResult, error) {
 	if err := r.Validate(); err != nil {
 		return ImportResult{}, err
@@ -142,9 +171,20 @@ func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, op
 	if len(unread) > 0 {
 		return ImportResult{}, fmt.Errorf("%w: rank %s has no position; fill it in or remove the entry", ErrInvalid, joinInts(unread))
 	}
-	unverified := Unverified(r, opts.AcceptComplete)
+	fallback := map[int]bool{}
+	if opts.Fallback {
+		for _, k := range FallbackRanks(r, opts.AcceptComplete) {
+			fallback[k] = true
+		}
+	}
+	var unverified []int
+	for _, k := range Unverified(r, opts.AcceptComplete) {
+		if !fallback[k] {
+			unverified = append(unverified, k)
+		}
+	}
 	if len(unverified) > 0 && !opts.Force {
-		return ImportResult{}, fmt.Errorf("%w: rank %s; %s, or force the import", ErrUnverified, joinInts(unverified), refusalHint(r, unverified, opts.AcceptComplete))
+		return ImportResult{}, fmt.Errorf("%w: rank %s; %s, or force the import", ErrUnverified, joinInts(unverified), refusalHint(r, unverified, opts.AcceptComplete, opts.Fallback))
 	}
 	complete := 0
 	if opts.AcceptComplete {
@@ -163,7 +203,7 @@ func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, op
 		return ImportResult{}, err
 	}
 	defer func() { _ = tx.Rollback() }()
-	res, err := importTx(ctx, tx, scope, r, name)
+	res, err := importTx(ctx, tx, scope, r, name, fallback)
 	if err != nil {
 		return ImportResult{}, err
 	}
@@ -171,11 +211,12 @@ func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, op
 		return ImportResult{}, err
 	}
 	res.Complete = complete
+	res.Fallback = len(fallback)
 	res.Forced = len(unverified)
 	return res, nil
 }
 
-func importTx(ctx context.Context, st storage.Stores, scope string, r *Releve, name string) (ImportResult, error) {
+func importTx(ctx context.Context, st storage.Stores, scope string, r *Releve, name string, fallback map[int]bool) (ImportResult, error) {
 	res := ImportResult{Collection: name, Entries: len(r.Entries)}
 	cid, created, err := documentCollection(ctx, st, scope, name, r.Document.Description())
 	if err != nil {
@@ -203,7 +244,11 @@ func importTx(ctx context.Context, st storage.Stores, scope string, r *Releve, n
 		} else {
 			order = append(order, id)
 		}
-		refs[id] = append(refs[id], e.Reference())
+		ref := e.Reference()
+		if fallback[e.Rank] {
+			ref += " (" + e.FallbackNote() + ")"
+		}
+		refs[id] = append(refs[id], ref)
 	}
 	res.Positions = len(order)
 

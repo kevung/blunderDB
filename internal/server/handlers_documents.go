@@ -17,6 +17,9 @@ type documentImportReleveReq struct {
 	// AcceptComplete imports the entries of fifteen checkers a side read with
 	// no doubt whose context is certified.
 	AcceptComplete bool `json:"acceptComplete"`
+	// Fallback imports the entries whose checkers are certified and whose
+	// context is to verify, under the context their position carries.
+	Fallback bool `json:"fallback"`
 	// Force imports entries neither sure nor verified.
 	Force bool `json:"force"`
 }
@@ -32,7 +35,7 @@ func (s *Server) documentRoutes() []route {
 			if err != nil {
 				return document.ImportResult{}, err
 			}
-			return document.Import(ctx, s.opts.Storage, scope, r, document.ImportOptions{Collection: req.Collection, AcceptComplete: req.AcceptComplete, Force: req.Force})
+			return document.Import(ctx, s.opts.Storage, scope, r, document.ImportOptions{Collection: req.Collection, AcceptComplete: req.AcceptComplete, Fallback: req.Fallback, Force: req.Force})
 		})},
 	}
 }

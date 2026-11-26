@@ -224,14 +224,14 @@ func TestContextRule(t *testing.T) {
 	}
 	// The hint never offers complete entries whose context is not certified.
 	r.Document.Defaults.Confirmed = false
-	if h := refusalHint(r, []int{3, 4}, false); strings.Contains(h, "accept complete") || !strings.Contains(h, "confirm the document's defaults") {
+	if h := refusalHint(r, []int{3, 4}, false, false); strings.Contains(h, "accept complete") || !strings.Contains(h, "confirm the document's defaults") {
 		t.Errorf("unconfirmed defaults: hint %q", h)
 	}
-	if h := refusalHint(r, []int{4}, false); strings.Contains(h, "accept complete") {
+	if h := refusalHint(r, []int{4}, false, false); strings.Contains(h, "accept complete") {
 		t.Errorf("context to verify: hint %q", h)
 	}
 	r.Document.Defaults.Confirmed = true
-	if h := refusalHint(r, []int{3}, false); !strings.Contains(h, "accept complete") {
+	if h := refusalHint(r, []int{3}, false, false); !strings.Contains(h, "accept complete") {
 		t.Errorf("confirmed defaults: hint %q", h)
 	}
 	// A complete entry under an assumed direction waits for its own
@@ -244,7 +244,7 @@ func TestContextRule(t *testing.T) {
 	if err := r.Validate(); err != nil {
 		t.Fatal(err)
 	}
-	if r.CompleteCertified(r.Entries[2]) || !strings.Contains(refusalHint(r, []int{3}, true), "confirm it once") {
+	if r.CompleteCertified(r.Entries[2]) || !strings.Contains(refusalHint(r, []int{3}, true, false), "confirm it once") {
 		t.Errorf("an unconfirmed direction certifies a complete entry")
 	}
 	// The document decides, not the entry: without its doubt, a complete

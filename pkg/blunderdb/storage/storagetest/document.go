@@ -134,6 +134,29 @@ func CheckDocumentImport(t *testing.T, s storage.Storage, ctx context.Context, s
 	if res, err := document.Import(ctx, s, scope, complete, document.ImportOptions{AcceptComplete: true}); err != nil || res.Complete != 1 || res.Forced != 0 || res.Positions != 1 {
 		t.Errorf("complete import = %+v, %v", res, err)
 	}
+
+	// Checkers sure, a cube drawn and not read: the import proposes the
+	// fallback rather than a bare refusal, and with it imports the position
+	// as it carries its context, its reference naming the field to check.
+	cube := capture.Doubt{Field: "cube", Reason: "cube drawn, value not read"}
+	repli := &document.Releve{Format: document.Format, Version: document.Version,
+		Document: document.Source{Title: "Relevé à replier", Defaults: &document.Defaults{Context: document.StructureDefaults.Context, Confirmed: true}},
+		Entries: []document.Entry{{Rank: 1, Page: 2, Position: "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:2:4:0:7:10",
+			Checkers: document.Sure, Context: document.ContextToVerify, Doubts: []capture.Doubt{document.ContextDoubt, cube}}}}
+	if _, err := document.Import(ctx, s, scope, repli, document.ImportOptions{}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "fallback") {
+		t.Errorf("context to verify without fallback: err = %v", err)
+	}
+	fb, err := document.Import(ctx, s, scope, repli, document.ImportOptions{Fallback: true})
+	if err != nil || fb.Fallback != 1 || fb.Forced != 0 || fb.Positions != 1 {
+		t.Fatalf("fallback import = %+v, %v", fb, err)
+	}
+	fids, err := s.Collections().PositionIDs(ctx, scope, fb.CollectionID, storage.ListOpts{})
+	if err != nil || len(fids) != 1 {
+		t.Fatalf("fallback members = %v, %v", fids, err)
+	}
+	if text, _ := s.Comments().Text(ctx, scope, fids[0]); !strings.Contains(text, "p. 2 (context not read, to check against the diagram: cube)") {
+		t.Errorf("fallback comment = %q", text)
+	}
 }
 
 // CheckDocumentImportAtomic: an import that fails after its positions were
