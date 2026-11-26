@@ -48,6 +48,8 @@ export function AnalysisMETStatus(arg1:number):Promise<mets.Status>;
 
 export function AnalyzeDatabaseFile(arg1:string):Promise<ingest.DBAnalysis>;
 
+export function AnalyzeDocument(arg1:string,arg2:string,arg3:string):Promise<string>;
+
 export function AnalyzeImportDatabase(arg1:string):Promise<Record<string, any>>;
 
 export function AnalyzeMatchWithGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:number,arg7:any,arg8:any):Promise<database.GammonNetBatchSummary>;

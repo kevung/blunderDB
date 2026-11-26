@@ -74,3 +74,28 @@ func TestCLI_DocumentCheckAndImport(t *testing.T) {
 		t.Errorf("forced import: %v", err)
 	}
 }
+
+// document analyze reads a PDF's diagrams into a relevé that document check
+// and document import take, and refuses a PDF it cannot read by its glyphs.
+func TestCLI_DocumentAnalyze(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	releve := filepath.Join(t.TempDir(), "releve.json")
+	out := captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "analyze", "pkg/blunderdb/document/testdata/xg-diagrammes.pdf", "-o", releve, "--title", "Invented"}); err != nil {
+			t.Fatal(err)
+		}
+	})
+	if !strings.Contains(out, "Entries:    6 (sure 3, to verify 2, uncertain 1)") {
+		t.Errorf("analyze:\n%s", out)
+	}
+	data, err := os.ReadFile(releve)
+	if err != nil || !strings.Contains(string(data), `"title": "Invented"`) {
+		t.Fatalf("relevé %v:\n%s", err, data)
+	}
+	if err := cli.Run([]string{"document", "import", releve, "--db", dbPath}); err == nil {
+		t.Errorf("an unverified relevé was imported without --force")
+	}
+	if err := cli.Run([]string{"document", "analyze", exampleReleve, "-o", releve}); err == nil {
+		t.Errorf("a JSON file was analysed as a PDF")
+	}
+}

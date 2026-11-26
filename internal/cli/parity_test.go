@@ -73,6 +73,7 @@ const (
 	whyDirection        = "a Direction is what a tournament DIRECTOR decided while running a tournament (ADR-0047). The daemon serves its reads (/v1/directions.*, /v1/rencontres.*, ADR-0057) and, under `serve --direction` and `call`, its gestures (whyDirectionGesture); this method is neither, a tool of the director's console; the CLI's `tournament` subcommand — list, verify, standings, page, export, move, deliberately non-interactive since Nicomaque ships its own TD console — is the other headless face. This accessor hands out the persistence the direction package runs on; it carries no capability of its own"
 	whyDirectionGesture = "a gesture of a Direction or a Rencontre (ADR-0057): the daemon serves it under `serve --direction`, `call` always, both with If-Match; the CLI adds no writing sub-command, `call` is its writing face (ADR-0056 as amended)"
 	whyDirectionRead    = "a read of the Direction the daemon serves (ADR-0057) to a client that draws the view itself; the CLI's `tournament` subcommand prints the sheets a script needs (list, standings, page, export, verify), not this view"
+	whyDocumentAnalysis = "reading a document is done on the machine that holds the file (ADR-0117 rule 6): the daemon imports a Relevé (/v1/documents.importReleve) and reads no PDF a client would upload"
 	whyTrainingJournal  = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): a session exists only because someone answered it. A client that drills a person records and reads it over /v1/training.*, which `blunderdb call` also serves; a CLI sub-command would have no session of its own to run"
 )
 
@@ -236,6 +237,7 @@ var databaseParity = map[string]parityEntry{
 	"LessonHTML":                        {CLI: "lesson export --html", Server: "/v1/lessons.html"},
 	"LessonMarkdown":                    {Server: "/v1/lessons.markdown", Why: "Database.LessonMarkdown serves the desktop, whose interface has no gesture for it yet; the CLI has no verb for it yet"},
 	"ImportDocumentReleve":              {CLI: "document import", Server: "/v1/documents.importReleve"},
+	"AnalyzeDocument":                   {CLI: "document analyze", Why: whyDocumentAnalysis},
 	"ImportLessonMarkdown":              {Server: "/v1/lessons.importMarkdown", Why: "Database.ImportLessonMarkdown serves the desktop, whose interface has no gesture for it yet; the CLI has no verb for it yet"},
 	"LessonHTMLCtx":                     {Why: whyCtxVariant},
 	"LessonPositionIDs":                 {Why: "lets the desktop draw a Lesson's boards in the palette on screen before asking for the document; the CLI and the daemon draw them with the built-in diagram"},

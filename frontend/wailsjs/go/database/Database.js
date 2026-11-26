@@ -50,6 +50,10 @@ export function AnalyzeDatabaseFile(arg1) {
   return window['go']['database']['Database']['AnalyzeDatabaseFile'](arg1);
 }
 
+export function AnalyzeDocument(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['AnalyzeDocument'](arg1, arg2, arg3);
+}
+
 export function AnalyzeImportDatabase(arg1) {
   return window['go']['database']['Database']['AnalyzeImportDatabase'](arg1);
 }

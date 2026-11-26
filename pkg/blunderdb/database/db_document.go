@@ -23,3 +23,17 @@ func (d *Database) ImportDocumentReleve(releveJSON string, collection string, fo
 	}
 	return document.Import(context.Background(), d.store, "", r, document.ImportOptions{Collection: collection, Force: force})
 }
+
+// AnalyzeDocument reads the diagrams of the PDF at path (package document,
+// ADR-0117) and returns their Relevé as JSON text, the form
+// ImportDocumentReleve takes back. title and author replace the PDF's own
+// metadata when not empty. It reads and writes no database: a document is
+// analysed on the person's machine, then its Relevé is verified and imported.
+func (d *Database) AnalyzeDocument(path, title, author string) (string, error) {
+	r, err := document.AnalyzePDFFile(path, document.AnalyzeOptions{Title: title, Author: author})
+	if err != nil {
+		return "", err
+	}
+	out, err := r.Encode()
+	return string(out), err
+}

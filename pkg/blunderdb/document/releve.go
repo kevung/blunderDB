@@ -82,7 +82,10 @@ type Entry struct {
 	// Label is the document's own name for the diagram ("Problem 191").
 	Label string `json:"label,omitempty"`
 	// Position is the XGID of the diagram: checkers, cube, player on roll,
-	// dice, score and match length.
+	// dice, score and match length. It is empty only for an uncertain entry
+	// whose diagram could not be read as a legal position: the entry keeps
+	// the diagram's place, and the import refuses it until a person fills
+	// the position in.
 	Position string          `json:"position"`
 	State    State           `json:"state"`
 	Doubts   []capture.Doubt `json:"doubts,omitempty"`
@@ -211,6 +214,9 @@ func (e Entry) validate() error {
 		if r.X < 0 || r.Y < 0 || r.W <= 0 || r.H <= 0 || r.X+r.W > 1 || r.Y+r.H > 1 {
 			return fmt.Errorf("rect %+v is not inside the page (fractions of its size)", *r)
 		}
+	}
+	if e.Position == "" && e.State == Uncertain && !e.Verified {
+		return nil // a diagram that could not be read: listed, never importable as is
 	}
 	_, err := ParsePosition(e.Position)
 	return err

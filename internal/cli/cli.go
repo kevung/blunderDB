@@ -207,7 +207,7 @@ func (cli *CLI) printUsage() {
 	fmt.Fprintln(cli.stdout(), "  lesson      Manage lessons (ordered steps showing collections and positions; export them)")
 	fmt.Fprintln(cli.stdout(), "  study       The study backlog: your unhandled blunders across every import, and the \"studied\" mark")
 	fmt.Fprintln(cli.stdout(), "  collection  Manage collections (list, show, create, rename, delete, export)")
-	fmt.Fprintln(cli.stdout(), "  document    Check a document's relevé, or import its positions into a collection")
+	fmt.Fprintln(cli.stdout(), "  document    Read a PDF's diagrams into a relevé, check one, or import its positions into a collection")
 	fmt.Fprintln(cli.stdout(), "  anki      Spaced-repetition decks (decks, stats, forecast, sync)")
 	fmt.Fprintln(cli.stdout(), "  stats     Statistics computed apart from list --type stats (recurring)")
 	fmt.Fprintln(cli.stdout(), "  training  The Training journal (sessions, missed positions)")

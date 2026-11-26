@@ -81,6 +81,15 @@ func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, op
 	if err := r.Validate(); err != nil {
 		return ImportResult{}, err
 	}
+	var unread []int
+	for _, e := range r.Entries {
+		if e.Position == "" {
+			unread = append(unread, e.Rank)
+		}
+	}
+	if len(unread) > 0 {
+		return ImportResult{}, fmt.Errorf("%w: rank %s has no position; fill it in or remove the entry", ErrInvalid, joinInts(unread))
+	}
 	unverified := Unverified(r)
 	if len(unverified) > 0 && !opts.Force {
 		return ImportResult{}, fmt.Errorf("%w: rank %s; verify them, or force the import", ErrUnverified, joinInts(unverified))
