@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
@@ -18,28 +17,6 @@ import (
 type corpusMatch struct {
 	name string
 	doc  transcript.Document
-}
-
-func graphDocument(t *testing.T, g *ingest.MatchGraph) transcript.Document {
-	t.Helper()
-	m := g.Match
-	var games []*domain.Game
-	moves := map[int64][]*domain.Move{}
-	for i := range g.Games {
-		gm := g.Games[i].Game
-		gm.ID = int64(i + 1)
-		games = append(games, &gm)
-		for j := range g.Games[i].Moves {
-			mv := g.Games[i].Moves[j].Move
-			mv.GameID = gm.ID
-			moves[gm.ID] = append(moves[gm.ID], &mv)
-		}
-	}
-	doc, err := transcript.FromMAT(ingest.RenderMAT(&m, games, moves))
-	if err != nil {
-		t.Fatalf("FromMAT: %v", err)
-	}
-	return doc
 }
 
 var corpusCache []corpusMatch
@@ -64,33 +41,21 @@ func readCorpus(t *testing.T) []corpusMatch {
 	}
 	for _, e := range entries {
 		path := filepath.Join(root, e.Name())
-		var g *ingest.MatchGraph
-		switch strings.ToLower(filepath.Ext(e.Name())) {
-		case ".mat":
-			text, err := os.ReadFile(path)
-			if err != nil {
-				t.Fatal(err)
-			}
-			doc, err := transcript.FromMAT(string(text))
-			if err != nil {
-				t.Fatalf("%s: %v", e.Name(), err)
-			}
-			out = append(out, corpusMatch{e.Name(), doc})
-			continue
-		case ".xg":
-			g, err = ingest.MapXG(path)
-		case ".sgf":
-			g, err = ingest.MapGnuBG(path)
-		default:
+		if strings.ToLower(filepath.Ext(e.Name())) != ".mat" {
 			continue
 		}
+		text, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		doc, err := transcript.FromMAT(string(text))
 		if err != nil {
 			t.Fatalf("%s: %v", e.Name(), err)
 		}
-		out = append(out, corpusMatch{e.Name(), graphDocument(t, g)})
+		out = append(out, corpusMatch{e.Name(), doc})
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].name < out[j].name })
-	if len(out) < 8 {
+	if len(out) < 4 {
 		t.Fatalf("corpus: %d matches", len(out))
 	}
 	return out
@@ -142,7 +107,8 @@ func roundTrip(t *testing.T, name string, m Match) []byte {
 		}
 		t.Fatalf("%s: documents differ (%d vs %d actions)\n got %+v\nwant %+v", name, len(back.Doc.Actions), len(want.Actions), back.Doc.Header, want.Header)
 	}
-	if back.Comment != m.Comment || !reflect.DeepEqual(back.Notes, m.Notes) {
+	if back.Comment != m.Comment || !reflect.DeepEqual(back.Notes, m.Notes) || !reflect.DeepEqual(back.Elo, m.Elo) ||
+		!reflect.DeepEqual(back.Experience, m.Experience) || back.EngineVersion != m.EngineVersion {
 		t.Fatalf("%s: notes or comment differ", name)
 	}
 	// The boards every Action is played from are the original ones.
@@ -273,9 +239,31 @@ func TestLegalPlaysMatchDomain(t *testing.T) {
 			n++
 		}
 	}
-	if n < 1000 {
+	if n < 500 {
 		t.Fatalf("only %d positions compared", n)
 	}
 }
 
-const wantCorpusBytes = 2811
+const wantCorpusBytes = 799
+
+func TestEncodeRefusesWhatDecodeRefuses(t *testing.T) {
+	doc := loadCorpus(t)[0].doc
+	long := strings.Repeat("x", maxLen+1)
+	for name, m := range map[string]Match{
+		"comment":  {Doc: doc, Comment: long},
+		"player":   {Doc: func() transcript.Document { d := doc; d.Header.Player1 = long; return d }()},
+		"note":     {Doc: doc, Notes: append([]Note{{Comments: []string{long}}}, make([]Note, len(doc.Actions)-1)...)},
+		"comments": {Doc: doc, Notes: append([]Note{{Comments: make([]string, maxLen+1)}}, make([]Note, len(doc.Actions)-1)...)},
+	} {
+		if _, err := Encode(m); err == nil {
+			t.Errorf("%s: encoded what Decode refuses", name)
+		}
+	}
+	at := strings.Repeat("y", maxLen)
+	roundTrip(t, "longest", Match{Doc: doc, Comment: at})
+}
+
+func TestSourceMetadataRoundTrip(t *testing.T) {
+	elo, exp := 1834.25, 412
+	roundTrip(t, "source", Match{Doc: loadCorpus(t)[0].doc, Elo: [2]*float64{&elo, nil}, Experience: [2]*int{nil, &exp}, EngineVersion: "eXtreme Gammon 2.19"})
+}

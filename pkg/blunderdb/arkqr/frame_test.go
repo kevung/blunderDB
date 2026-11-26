@@ -1,6 +1,7 @@
 package arkqr
 
 import (
+	"errors"
 	"bytes"
 	"image"
 	"image/color"
@@ -31,7 +32,10 @@ func TestFramesAssembleAndRepair(t *testing.T) {
 	payloads := corpusPayloads(t)
 	big := bytes.Repeat([]byte{1, 2, 3, 4, 5, 6, 7}, 400) // too long for one code
 	payloads = append(payloads, big)
-	frames, owner := Frames(payloads)
+	frames, owner, err := Frames(payloads)
+	if err != nil {
+		t.Fatal(err)
+	}
 	nData := 0
 	for i, f := range frames {
 		g, err := ParseText(f.Text())
@@ -123,8 +127,8 @@ func sheetImage(t *testing.T, frames []Frame, scale int) image.Image {
 }
 
 func TestScanImagePNGAndJPEG(t *testing.T) {
-	payloads := corpusPayloads(t)[:6]
-	frames, _ := Frames(payloads)
+	payloads := corpusPayloads(t)
+	frames, _, _ := Frames(payloads)
 	img := sheetImage(t, frames, 4)
 	var pngBuf, jpgBuf bytes.Buffer
 	if err := png.Encode(&pngBuf, img); err != nil {
@@ -149,7 +153,7 @@ func TestPageEmbedsFramesAndKeepsFoldsClear(t *testing.T) {
 	payloads := corpusPayloads(t)
 	payloads = append(payloads, payloads...)
 	payloads = append(payloads, payloads...)
-	frames, _ := Frames(payloads)
+	frames, _, _ := Frames(payloads)
 	codes := make([]Code, len(frames))
 	for i, f := range frames {
 		codes[i] = Code{Frame: f, Label: "Joueur 1 – Joueur 2 · 2026-11-26 · 7 pts"}
@@ -188,7 +192,7 @@ func TestPageEmbedsFramesAndKeepsFoldsClear(t *testing.T) {
 
 // TestCodeLevelM reads a code back with its metadata: error correction M.
 func TestCodeLevelM(t *testing.T) {
-	frames, _ := Frames(corpusPayloads(t)[:1])
+	frames, _, _ := Frames(corpusPayloads(t)[:1])
 	bmp, err := gozxing.NewBinaryBitmapFromImage(sheetImage(t, frames[:1], 4))
 	if err != nil {
 		t.Fatal(err)
@@ -199,5 +203,23 @@ func TestCodeLevelM(t *testing.T) {
 	}
 	if lvl := res.GetResultMetadata()[gozxing.ResultMetadataType_ERROR_CORRECTION_LEVEL]; lvl != "M" {
 		t.Fatalf("error correction level %v, want M", lvl)
+	}
+}
+
+// TestFramesRefuseTooManyCodes: a rank is stated on 16 bits, so an archive
+// of more codes is refused rather than written and misread.
+func TestFramesRefuseTooManyCodes(t *testing.T) {
+	small := make([][]byte, maxFrames+1)
+	for i := range small {
+		small[i] = []byte{1, byte(i)}
+	}
+	if _, _, err := Frames(small); !errors.Is(err, ErrTooLarge) {
+		t.Fatalf("%d codes: %v", len(small), err)
+	}
+	if fs, _, err := Frames(small[:maxFrames]); err != nil || fs[len(fs)-1].Total != maxFrames {
+		t.Fatalf("%d codes: %v", maxFrames, err)
+	}
+	if _, _, err := Frames([][]byte{make([]byte, 256*maxPart)}); !errors.Is(err, ErrTooLarge) {
+		t.Fatalf("a match of 256 parts: %v", err)
 	}
 }

@@ -36,6 +36,13 @@ const (
 	maxPart = 1000
 )
 
+// maxFrames is the most data frames an archive holds.
+const maxFrames = 1<<16 - 1
+
+// ErrTooLarge is a selection of matches too large for one archive: it is
+// archived in several.
+var ErrTooLarge = errors.New("arkqr: too many matches for one archive")
+
 // ErrFrame is a QR code whose content is not a frame of an archive.
 var ErrFrame = errors.New("arkqr: not an archive code")
 
@@ -91,7 +98,7 @@ func ParseText(s string) (Frame, error) {
 // Frames cuts coded matches into frames: one per match when it fits, data
 // frames in match order, each group of ParityGroup followed by its parity.
 // owner[i] is the match a frame belongs to, -1 for a parity frame.
-func Frames(matches [][]byte) (frames []Frame, owner []int) {
+func Frames(matches [][]byte) (frames []Frame, owner []int, err error) {
 	h := sha256.New()
 	for _, m := range matches {
 		h.Write(binary.BigEndian.AppendUint32(nil, uint32(len(m))))
@@ -102,6 +109,9 @@ func Frames(matches [][]byte) (frames []Frame, owner []int) {
 	var dataOwner []int
 	for mi, m := range matches {
 		parts := max(1, (len(m)+maxPart-1)/maxPart)
+		if parts > 255 {
+			return nil, nil, fmt.Errorf("%w: a match of %d bytes", ErrTooLarge, len(m))
+		}
 		size := (len(m) + parts - 1) / parts
 		for p := range parts {
 			chunk := m[min(len(m), p*size):min(len(m), (p+1)*size)]
@@ -109,6 +119,10 @@ func Frames(matches [][]byte) (frames []Frame, owner []int) {
 			data = append(data, Frame{Archive: id, Index: len(data), Body: body})
 			dataOwner = append(dataOwner, mi)
 		}
+	}
+	// A frame states its rank and the archive's size on 16 bits.
+	if len(data) > maxFrames {
+		return nil, nil, fmt.Errorf("%w: %d codes, at most %d an archive", ErrTooLarge, len(data), maxFrames)
 	}
 	for i := range data {
 		data[i].Total = len(data)
@@ -122,7 +136,7 @@ func Frames(matches [][]byte) (frames []Frame, owner []int) {
 		frames = append(frames, Frame{Archive: id, Parity: true, Index: g, Total: len(data), Body: parityOf(group)})
 		owner = append(owner, -1)
 	}
-	return frames, owner
+	return frames, owner, nil
 }
 
 // parityOf is the lengths of the group's bodies, then their XOR.

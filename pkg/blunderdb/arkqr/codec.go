@@ -3,6 +3,7 @@ package arkqr
 import (
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -24,7 +25,17 @@ type Match struct {
 	Comment string
 	// Notes is parallel to Doc.Actions, or nil when no Action has any.
 	Notes []Note
+	// The source metadata of the match, which a transcription document does
+	// not hold: the players' ratings and experience, the program that wrote
+	// the file. Nil is "not stated".
+	Elo           [2]*float64
+	Experience    [2]*int
+	EngineVersion string
 }
+
+// maxLen bounds every string and list the codec writes: what the decoder
+// accepts, so an archive that encodes always decodes.
+const maxLen = 1 << 16
 
 // Note is what an Action's position carries besides the play: its comments,
 // oldest first, and the study mark of the source tool.
@@ -154,6 +165,9 @@ func Encode(m Match) ([]byte, error) {
 			return nil, fmt.Errorf("arkqr: action %d: unknown kind %q", i, a.Kind)
 		}
 	}
+	if err := checkLimits(m); err != nil {
+		return nil, err
+	}
 	ann := transcript.Replay(doc, 0)
 	e := newEncoder()
 	out := m
@@ -175,6 +189,31 @@ func Decode(data []byte) (Match, error) {
 	return m, nil
 }
 
+func checkLimits(m Match) error {
+	h := m.Doc.Header
+	for _, s := range []string{h.Player1, h.Player2, h.Event, h.Location, h.Round, h.Transcriber, h.VideoSource, m.Comment, m.EngineVersion} {
+		if len(s) > maxLen {
+			return fmt.Errorf("arkqr: a header text of %d bytes, at most %d", len(s), maxLen)
+		}
+	}
+	for i, a := range m.Doc.Actions {
+		if len(a.Steps) > maxLen {
+			return fmt.Errorf("arkqr: action %d: %d steps", i, len(a.Steps))
+		}
+	}
+	for i, n := range m.Notes {
+		if len(n.Comments) > maxLen {
+			return fmt.Errorf("arkqr: action %d: %d comments, at most %d", i, len(n.Comments), maxLen)
+		}
+		for _, c := range n.Comments {
+			if len(c) > maxLen {
+				return fmt.Errorf("arkqr: action %d: a comment of %d bytes, at most %d", i, len(c), maxLen)
+			}
+		}
+	}
+	return nil
+}
+
 func kindIndex(k transcript.Kind) int {
 	for i, x := range kinds {
 		if x == k {
@@ -189,7 +228,7 @@ func boolBit(c coder, v bool) bool { return flag(c, 1, 1, v) }
 // str codes a string as its length and its bytes.
 func str(c coder, s string) string {
 	n := int(uvar(c, uint64(len(s))))
-	if d, ok := c.(*decoder); ok && (n > 1<<16 || d.failed) {
+	if d, ok := c.(*decoder); ok && (n > maxLen || d.failed) {
 		d.failed = true
 		return ""
 	}
@@ -206,7 +245,7 @@ func str(c coder, s string) string {
 
 func count(c coder, n int) int {
 	v := int(uvar(c, uint64(n)))
-	if d, ok := c.(*decoder); ok && (v > 1<<16 || d.failed) {
+	if d, ok := c.(*decoder); ok && (v > maxLen || d.failed) {
 		d.failed = true
 		return 0
 	}
@@ -232,6 +271,27 @@ func codeHeader(c coder, m *Match) {
 		sec := svar(c, h.Date.Unix())
 		nsec := svar(c, int64(h.Date.Nanosecond()))
 		h.Date = time.Unix(sec, nsec).UTC()
+	}
+	if boolBit(c, m.Elo[0] != nil || m.Elo[1] != nil || m.Experience[0] != nil || m.Experience[1] != nil || m.EngineVersion != "") {
+		for i := range 2 {
+			if boolBit(c, m.Elo[i] != nil) {
+				var v uint64
+				if m.Elo[i] != nil {
+					v = math.Float64bits(*m.Elo[i])
+				}
+				f := math.Float64frombits(raw(c, 64, v))
+				m.Elo[i] = &f
+			}
+			if boolBit(c, m.Experience[i] != nil) {
+				var v int64
+				if m.Experience[i] != nil {
+					v = int64(*m.Experience[i])
+				}
+				x := int(svar(c, v))
+				m.Experience[i] = &x
+			}
+		}
+		m.EngineVersion = str(c, m.EngineVersion)
 	}
 }
 

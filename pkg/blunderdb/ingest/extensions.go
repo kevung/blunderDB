@@ -18,6 +18,8 @@ var importableExtensions = map[string]bool{
 	".mat":  true, // Jellyfish match
 	".bgf":  true, // BGBlitz match
 	".ogxm": true, // HedgeHog / OpenGammon match
+	".html": true, // blunderDB paper archive page (ADR-0119)
+	".htm":  true,
 }
 
 // IsImportable reports whether path's extension is one blunderDB can read.

@@ -121,23 +121,37 @@ type PipelineOptions struct {
 const DefaultFilesPerTx = 32
 
 type readFile struct {
-	index    int
-	path     string
-	size     int64
-	digest   [sha256.Size]byte
-	dupOf    int  // earlier index with the same bytes, -1 otherwise
-	hashed   bool // the digest is valid: the file could be read
-	mtime    string
-	knownID  int64 // match of the earlier import of these bytes, when known
-	known    bool
-	graph    *MatchGraph
+	index   int
+	path    string
+	size    int64
+	digest  [sha256.Size]byte
+	dupOf   int  // earlier index with the same bytes, -1 otherwise
+	hashed  bool // the digest is valid: the file could be read
+	mtime   string
+	knownID int64 // match of the earlier import of these bytes, when known
+	known   bool
+	// graphs holds the file's matches: one, or every match of an archive page.
+	graphs   []*MatchGraph
 	position []PositionGraph
 	err      error
 }
 
 // mapFile reads one file through the mapper its extension names.
-func mapFile(path string) (*MatchGraph, []PositionGraph, error) {
-	switch strings.ToLower(filepath.Ext(path)) {
+func mapFile(path string) ([]*MatchGraph, []PositionGraph, error) {
+	ext := strings.ToLower(filepath.Ext(path))
+	if ext == ".html" || ext == ".htm" {
+		g, err := mapArchive(path)
+		return g, nil, err
+	}
+	g, p, err := mapOne(path, ext)
+	if g == nil {
+		return nil, p, err
+	}
+	return []*MatchGraph{g}, p, err
+}
+
+func mapOne(path, ext string) (*MatchGraph, []PositionGraph, error) {
+	switch ext {
 	case ".xg":
 		g, err := MapXG(path)
 		return g, nil, err
@@ -255,7 +269,7 @@ func ImportFiles(ctx context.Context, store TxBeginner, paths []string, opts Pip
 					} else if id, ok := lookupKnown(opts.Known, rf.digest); ok {
 						rf.known, rf.knownID = true, id
 					} else if ctx.Err() == nil {
-						rf.graph, rf.position, rf.err = mapFile(rf.path)
+						rf.graphs, rf.position, rf.err = mapFile(rf.path)
 					}
 				}
 				if opts.OnRead != nil {
@@ -479,32 +493,48 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 		o.Status, o.PositionID, o.Positions = FilePosition, firstID, len(rf.position)
 		return o, nil
 	}
-	g := rf.graph
-	if g == nil {
+	if len(rf.graphs) == 0 {
 		o.Status, o.Error, o.Code = FileFailed, errNothingToImport.Error(), ImportErrorCode(errNothingToImport)
 		return o, nil
 	}
-	g.ImportBatchID = w.opts.ImportBatchID
-	g.SkipDuplicates = w.opts.SkipDuplicates
-	o.Player1, o.Player2, o.Games = g.Match.Player1Name, g.Match.Player2Name, len(g.Games)
-	res, err := WriteMatch(w.ctx, tx, w.opts.Scope, g, nil)
-	if err != nil {
-		return o, err
+	// An archive page holds several matches: the file is imported when one
+	// of them is new, enriched when one enriched a match, a duplicate else.
+	o.Status = FileDuplicate
+	for gi, g := range rf.graphs {
+		g.ImportBatchID = w.opts.ImportBatchID
+		g.SkipDuplicates = w.opts.SkipDuplicates
+		if gi == 0 {
+			o.Player1, o.Player2 = g.Match.Player1Name, g.Match.Player2Name
+		}
+		o.Games += len(g.Games)
+		res, err := WriteMatch(w.ctx, tx, w.opts.Scope, g, nil)
+		if err != nil {
+			return o, err
+		}
+		if o.MatchID == 0 || (o.Status != FileImported && !res.Skipped) {
+			o.MatchID = res.MatchID
+		}
+		o.DroppedAnalyses += res.DroppedAnalyses
+		switch {
+		case res.Skipped:
+			o.FlagsApplied += res.FlagsApplied
+			o.Deepened += res.Deepened
+		case res.Enriched:
+			if o.Status != FileImported {
+				o.Status = FileEnriched
+			}
+			o.Positions += res.SavedPositions
+		default:
+			o.Status = FileImported
+			o.Positions += res.SavedPositions
+			if o.ProbableDuplicate == nil {
+				o.ProbableDuplicate = res.ProbableDuplicate
+			}
+		}
 	}
-	o.MatchID = res.MatchID
-	o.DroppedAnalyses = res.DroppedAnalyses
-	switch {
-	case res.Skipped:
-		o.Status, o.FlagsApplied, o.Deepened = FileDuplicate, res.FlagsApplied, res.Deepened
-	case res.Enriched:
-		o.Status, o.Positions = FileEnriched, res.SavedPositions
-	default:
-		o.Status, o.Positions = FileImported, res.SavedPositions
-		o.ProbableDuplicate = res.ProbableDuplicate
-	}
-	// The graph is no longer needed once written; drop it before the group
-	// commits so a group of large files does not stay in memory.
-	rf.graph = nil
+	// The graphs are no longer needed once written; drop them before the
+	// group commits so a group of large files does not stay in memory.
+	rf.graphs = nil
 	return o, nil
 }
 
@@ -566,7 +596,7 @@ func (w *pipelineWriter) replay(files []*readFile) error {
 	w.abort()
 	for _, rf := range files {
 		if rf.err == nil && rf.dupOf < 0 {
-			rf.graph, rf.position, rf.err = mapFile(rf.path)
+			rf.graphs, rf.position, rf.err = mapFile(rf.path)
 		}
 		if err := w.begin(); err != nil {
 			return err
