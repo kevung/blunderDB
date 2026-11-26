@@ -18,10 +18,9 @@ import (
 )
 
 // ErrNoGlyphDiagram refuses a PDF in which no diagram is drawn with a board
-// font: from a PDF only diagrams printed by eXtreme Gammon are read, from
-// their glyphs. A PDF's pictures are not rendered: the pages of a scanned
-// book are read when given as images (AnalyzeFile).
-var ErrNoGlyphDiagram = errors.New("document: no diagram readable by its glyphs (only PDF diagrams drawn with eXtreme Gammon's board font are read); for a scanned book, give its pages as images: a folder of PNG or JPEG files, one a page")
+// font and no page is made of images: a page drawn with vectors is neither
+// read by its glyphs nor rendered.
+var ErrNoGlyphDiagram = errors.New("document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page")
 
 // AnalyzeOptions are a caller's choices for AnalyzePDF.
 type AnalyzeOptions struct {
@@ -31,6 +30,9 @@ type AnalyzeOptions struct {
 	// FileName names the document when neither Title nor the PDF gives a
 	// title; its extension is dropped.
 	FileName string `json:"fileName"`
+	// Warn, when set, receives what the analysis passed over and why (the
+	// pages of a scanned PDF that could not be composed).
+	Warn func(string) `json:"-"`
 }
 
 // AnalyzePDFFile reads the PDF file at path, refusing one larger than the
@@ -58,6 +60,9 @@ func AnalyzePDFFile(path string, opts AnalyzeOptions) (*Releve, error) {
 
 // AnalyzePDF reads every diagram a PDF draws with eXtreme Gammon's board
 // font and returns the Relevé, in the document's order. It writes nothing.
+// A PDF without a page drawn with that font is read as a scanned book: its
+// pages composed from their images, with their text layer, are read by the
+// structure reader (package structure).
 //
 // Each diagram is read exactly from its glyphs, then cross-checked against
 // what the print says next to it: fifteen checkers a side and the printed
@@ -89,14 +94,17 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 	}}
 	outline := rd.Outline()
 	sort.SliceStable(outline, func(a, b int) bool { return outline[a].Page < outline[b].Page })
+	boardFont := false
 	for n := 1; n <= rd.NumPages(); n++ {
 		page, err := rd.Page(n)
 		if err != nil {
 			return nil, fmt.Errorf("document: %w", err)
 		}
+		hasFont := pageHasBoardFont(rd.Fonts(page))
+		boardFont = boardFont || hasFont
 		gs, err := rd.Glyphs(page)
 		if err != nil {
-			if pageHasBoardFont(rd.Fonts(page)) {
+			if hasFont {
 				return nil, fmt.Errorf("document: page %d draws with a board font but cannot be read: %w", n, err)
 			}
 			continue
@@ -111,6 +119,9 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 			e.Chapter = chapterOf(outline, n)
 			r.Entries = append(r.Entries, e)
 		}
+	}
+	if len(r.Entries) == 0 && !boardFont {
+		return analyzeScans(rd, r, opts, outline)
 	}
 	if len(r.Entries) == 0 {
 		return nil, ErrNoGlyphDiagram

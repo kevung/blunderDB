@@ -123,10 +123,13 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 			"label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own\n"+
 			"cross-checks hold (15 checkers a side, the printed pip counts of both players), to-verify\n"+
 			"or uncertain otherwise, with the doubt named. A PDF is read when its diagrams are drawn\n"+
-			"with eXtreme Gammon's board font (XG's PDF prints); a scanned book is read from its pages\n"+
-			"as images (a folder of PNG or JPEG files, one a page, in the order of their names),\n"+
-			"by the structure of each diagram. A page image has no text layer: its entries are never\n"+
-			"sure. Nothing is written to a database: check the relevé, then import it with\n"+
+			"with eXtreme Gammon's board font (XG's PDF prints), from its glyphs. A scanned book is\n"+
+			"read by the structure of each diagram, from a scanned PDF (its pages composed from their\n"+
+			"images; JBIG2 and JPEG 2000 images are not decoded) or from its pages as images (a folder\n"+
+			"of PNG or JPEG files, one a page, in the order of their names). The printed pip counts\n"+
+			"are read in the PDF's text layer and in the image; when the two disagree the entry is not\n"+
+			"sure. Pages that cannot be read are named on standard error. Nothing is written to a\n"+
+			"database: check the relevé, then import it with\n"+
 			"'blunderdb document import'.",
 		"blunderdb document analyze book.pdf -o releve.json",
 		"blunderdb document analyze pages/ -o releve.json --title \"My book\"",
@@ -138,7 +141,8 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 	if err != nil {
 		return err
 	}
-	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: *title, Author: *author})
+	warn := func(s string) { fmt.Fprintln(os.Stderr, "blunderdb document analyze:", s) }
+	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: *title, Author: *author, Warn: warn})
 	if err != nil {
 		return err
 	}

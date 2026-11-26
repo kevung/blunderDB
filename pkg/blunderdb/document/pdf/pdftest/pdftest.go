@@ -167,7 +167,14 @@ func (d Doc) Bytes() []byte {
 		} else {
 			content = add(stream("", []byte(p.Content)))
 		}
-		kids = append(kids, add(fmt.Sprintf("<</Type /Page /Parent %d 0 R /MediaBox [0 0 %g %g] /Rotate %d /Resources <</Font <<%s>> /XObject <<%s>>>> /Contents %d 0 R>>", pages, p.Width, p.Height, p.Rotate, fonts.String(), xo.String(), content)))
+		extra, xobj := "", ""
+		if p.Rotate != 0 {
+			extra = fmt.Sprintf(" /Rotate %d", p.Rotate)
+		}
+		if xo.Len() > 0 {
+			xobj = " /XObject <<" + xo.String() + ">>"
+		}
+		kids = append(kids, add(fmt.Sprintf("<</Type /Page /Parent %d 0 R /MediaBox [0 0 %g %g]%s /Resources <</Font <<%s>>%s>> /Contents %d 0 R>>", pages, p.Width, p.Height, extra, fonts.String(), xobj, content)))
 	}
 	var kidList strings.Builder
 	for _, k := range kids {
