@@ -74,7 +74,7 @@ func (cli *CLI) runRolls(args []string) error {
 		return fmt.Errorf("--move needs --roll")
 	}
 
-	m, err := gammonnet.ComputeRollMap(context.Background(), pos, nil, *ply, *pruneK,
+	m, err := gammonnet.Maps().RollMap(context.Background(), "", pos, nil, *ply, *pruneK,
 		gammonnet.LocalExec(*jobs, *ply, *pruneK), nil)
 	if err != nil {
 		return err

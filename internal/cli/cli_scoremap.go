@@ -63,7 +63,7 @@ func (cli *CLI) runScoreMap(args []string) error {
 		return fmt.Errorf("invalid XGID, OGID or ArkID: %w", err)
 	}
 
-	m, err := gammonnet.ComputeScoreMap(context.Background(), pos, nil, *length, *ply, *pruneK,
+	m, err := gammonnet.Maps().ScoreMap(context.Background(), "", pos, nil, *length, *ply, *pruneK,
 		gammonnet.LocalExec(*jobs, *ply, *pruneK), nil)
 	if err != nil {
 		return err

@@ -15,7 +15,8 @@ import (
 // then one event per refined row or cell, then done. They take the at-rest
 // search's slot (beginInteractiveSearch): the batch yields to them as it does
 // to the panel, and a newer interactive search supersedes them. Nothing is
-// written to the library.
+// written to the library; the phases already computed are served from
+// gammonnet.Maps(), the cache the CLI and the daemon go through as well.
 
 // RollMapRowEvent is the payload of "gammonnet-rolls:row".
 type RollMapRowEvent struct {
@@ -51,7 +52,7 @@ func (a *App) startRollMap(pos domain.Position, ply, pruneK, tag int) {
 		met, err := a.currentMET()
 		var m gammonnet.RollMap
 		if err == nil {
-			m, err = gammonnet.ComputeRollMap(ctx, pos, met, ply, pruneK, gammonnet.LocalExec(0, ply, pruneK),
+			m, err = gammonnet.Maps().RollMap(ctx, "", pos, met, ply, pruneK, gammonnet.LocalExec(0, ply, pruneK),
 				func(i int, row gammonnet.RollMapRow) {
 					a.emitBatch("gammonnet-rolls:row", RollMapRowEvent{Tag: tag, Index: i, Row: row})
 				})
@@ -120,7 +121,7 @@ func (a *App) StartScoreMap(pos domain.Position, matchLength, ply, pruneK, tag i
 		met, err := a.currentMET()
 		var m gammonnet.ScoreMap
 		if err == nil {
-			m, err = gammonnet.ComputeScoreMap(ctx, pos, met, matchLength, ply, pruneK, gammonnet.LocalExec(0, ply, pruneK),
+			m, err = gammonnet.Maps().ScoreMap(ctx, "", pos, met, matchLength, ply, pruneK, gammonnet.LocalExec(0, ply, pruneK),
 				func(i int, cell gammonnet.ScoreMapCell) {
 					a.emitBatch("gammonnet-scoremap:cell", ScoreMapCellEvent{Tag: tag, Index: i, Cell: cell})
 				})

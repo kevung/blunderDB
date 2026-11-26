@@ -84,8 +84,16 @@ func LocalExec(workers, ply, pruneK int) CellExec {
 // roll has not rolled yet (its dice are ignored). Rows go to onRow (may be
 // nil) at each depth of mapDepths(ply). exec runs the rows; ctx cancels
 // between rolls and inside a row's search, and a cancelled call returns what it had
-// with ctx's error. Nothing is stored.
+// with ctx's error. Nothing is stored, not even in a MapCache.
 func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, ply, pruneK int, exec CellExec, onRow RollMapRowFunc) (RollMap, error) {
+	return (*MapCache)(nil).RollMap(ctx, "", pos, met, ply, pruneK, exec, onRow)
+}
+
+// RollMap is ComputeRollMap served from c: a phase already computed under
+// scope for the same position, table and search configuration is replayed to
+// onRow instead of searched, and every phase this call completes is kept. A
+// nil c caches nothing.
+func (c *MapCache) RollMap(ctx context.Context, scope string, pos domain.Position, met *engine.MET, ply, pruneK int, exec CellExec, onRow RollMapRowFunc) (RollMap, error) {
 	if IsResponsePosition(&pos) {
 		return RollMap{}, fmt.Errorf("%w: a take/pass decision has no rolls", ErrNotEvaluable)
 	}
@@ -98,6 +106,12 @@ func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, p
 	}
 	cfg := job.cfg
 	m := RollMap{Ply: ply, Rows: make([]RollMapRow, NumRolls), CubeAccess: job.access}
+	digest := c.metDigest(met)
+	keyAt := func(depth int) mapKey {
+		at := cfg
+		at.Ply = depth
+		return rollMapKey(scope, job.pos, digest, at)
+	}
 
 	var mu sync.Mutex
 	var firstErr error
@@ -128,10 +142,25 @@ func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, p
 		return firstErr
 	}
 
-	for _, depth := range mapDepths(ply) {
+	depths := mapDepths(ply)
+	start := 0
+	for k := len(depths) - 1; k >= 0; k-- {
+		if rows, ok := c.rows(keyAt(depths[k])); ok {
+			copy(m.Rows, rows)
+			if onRow != nil {
+				for i, r := range m.Rows {
+					onRow(i, r)
+				}
+			}
+			start = k + 1
+			break
+		}
+	}
+	for _, depth := range depths[start:] {
 		if err := phase(depth); err != nil {
 			return m, err
 		}
+		c.putRows(keyAt(depth), m.Rows)
 	}
 	// Ascending roll index, in float64: the order the search sums in.
 	for i, r := range job.rolls {

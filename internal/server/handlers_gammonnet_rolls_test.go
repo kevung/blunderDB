@@ -39,3 +39,27 @@ func TestGammonNetRolls(t *testing.T) {
 		}
 	}
 }
+
+// The daemon's maps are cached per tenant: a tenant asking again is served,
+// another tenant asking the same is searched, and learns nothing from it.
+func TestGammonNetRolls_CachePerTenant(t *testing.T) {
+	ts := newTestServer(t)
+	zero := 0
+	req := rollsReq{XGID: rollsXGID, Ply: &zero, PruneK: 5}
+	ask := func(tenant string) int {
+		t.Helper()
+		r := postAsTenant(t, ts, tenant, "/v1/gammonnet.rolls", req)
+		r.Body.Close()
+		if r.StatusCode != http.StatusOK {
+			t.Fatalf("tenant %s: status %d", tenant, r.StatusCode)
+		}
+		return gammonnet.Maps().Len()
+	}
+	first := ask("1")
+	if again := ask("1"); again != first {
+		t.Fatalf("the same tenant asking again added %d entries", again-first)
+	}
+	if other := ask("2"); other != first+1 {
+		t.Fatalf("another tenant added %d entries, want its own one", other-first)
+	}
+}

@@ -63,6 +63,6 @@ func (s *Server) handleGammonNetScoreMap(w http.ResponseWriter, r *http.Request)
 		writeStorageError(w, err)
 		return
 	}
-	m, err := gammonnet.ComputeScoreMap(r.Context(), pos, met, req.MatchLength, ply, req.PruneK, s.analysisExec(r, scope, ply, req.PruneK), nil)
+	m, err := gammonnet.Maps().ScoreMap(r.Context(), scope, pos, met, req.MatchLength, ply, req.PruneK, s.analysisExec(r, scope, ply, req.PruneK), nil)
 	writeMapResult(w, m, err)
 }
