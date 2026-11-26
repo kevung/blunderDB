@@ -1041,11 +1041,7 @@
         "panelLabel": "Πίνακας Eval",
         "inactive": "Ο πίνακας Eval είναι ανενεργός. Επεξεργαστείτε το ταμπλό για να αξιολογηθεί η θέση.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet αναλύει: {done}/{total}",
-        "batchProgressAt": "gammonNet αναλύει {depth}: {done}/{total}",
-        "batchCancel": "Ακύρωση",
         "batchDone": "gammonNet: {evaluated} αναλύθηκαν, {refused} απορρίφθηκαν, {failed} απέτυχαν",
-        "batchWaiting": "gammonNet σε αναμονή: {job} σε εξέλιξη",
         "batchFailed": "gammonNet: η ανάλυση δεν εκτελέστηκε — {error}",
         "baseline": "Πριν τη ζαριά",
         "baselineTooltip": "Τιμές πριν τη ζαριά, στον άξονα της λίστας — σημείο αναφοράς, όχι υποψήφια κίνηση. Η απόσταση από αυτή τη γραμμή είναι η τύχη της ζαριάς, όχι η αξία μιας κίνησης."
@@ -1482,8 +1478,6 @@
         "durationEstimated": "απόφαση {time}, εκτίμηση: έως την επόμενη ζαριά, μαζί με το μάζεμα των ζαριών"
     },
     "status": {
-        "importChip": "Εισαγωγή σε εξέλιξη: {percent} %",
-        "importChipShow": "Εμφάνιση",
         "boardAnalysisCopied": "Η εικόνα ταμπλό + ανάλυσης αντιγράφηκε στο πρόχειρο",
         "boardSvgNotFound": "Το SVG του ταμπλό δεν βρέθηκε",
         "boardElementNotFound": "Το στοιχείο του ταμπλό δεν βρέθηκε",
@@ -3007,7 +3001,8 @@
             "gv1": "Τιμές gammon, κύβος στο 1",
             "gv2": "Τιμές gammon, κύβος στο 2",
             "gv4": "Τιμές gammon, κύβος στο 4",
-            "clear": "Διαγραφή του ιστορικού εντολών"
+            "clear": "Διαγραφή του ιστορικού εντολών",
+            "jobs": "Υπολογισμοί"
         }
     },
     "assistant": {
@@ -3726,6 +3721,39 @@
         },
         "config": {
             "defaultMatch": "Προεπιλεγμένος αγώνας"
+        }
+    },
+    "calculs": {
+        "title": "Υπολογισμοί",
+        "chip": "Υπολογισμοί · {running} σε εξέλιξη · {waiting} σε αναμονή",
+        "running": "Σε εξέλιξη",
+        "waiting": "Σε αναμονή",
+        "ended": "Ολοκληρωμένοι",
+        "pause": "Παύση",
+        "resume": "Συνέχεια",
+        "cancel": "Ακύρωση",
+        "moveUp": "Πάνω",
+        "moveDown": "Κάτω",
+        "remove": "Αφαίρεση",
+        "pauseAll": "Παύση όλων",
+        "resumeAll": "Συνέχεια όλων",
+        "progress": "Πρόοδος",
+        "empty": "Κανένας υπολογισμός",
+        "show": "Εμφάνιση",
+        "end_done": "Τέλος",
+        "end_cancelled": "Ακυρώθηκε",
+        "end_error": "Σφάλμα",
+        "kind": {
+            "gammonnet": "gammonNet",
+            "rollout": "Rollout",
+            "rolloutBatch": "Rollouts",
+            "maintenance": "Συντήρηση",
+            "import": "Εισαγωγή",
+            "repair": "Επισκευή",
+            "transfer": "Μεταφορά",
+            "bearoff": "Bearoff",
+            "sync": "Συγχρονισμός",
+            "other": "Άλλο"
         }
     }
 }

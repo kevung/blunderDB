@@ -73,6 +73,11 @@
     <Modal visible={$activeModal === MODAL.RESUME_BATCH} onClose={() => closeModal()} />
 {/if}
 
+{#if $loaded.jobs}
+    {@const Modal = $loaded.jobs}
+    <Modal visible={$activeModal === MODAL.JOBS} onClose={() => closeModal()} />
+{/if}
+
 {#if $loaded.tags}
     {@const Modal = $loaded.tags}
     <Modal visible={$activeModal === MODAL.TAGS} onClose={() => closeModal()} />

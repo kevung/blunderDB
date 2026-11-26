@@ -1041,11 +1041,7 @@
         "panelLabel": "Eval-Panel",
         "inactive": "Das Eval-Panel ist inaktiv. Bearbeiten Sie das Brett, um die Position zu bewerten.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet analysiert: {done}/{total}",
-        "batchProgressAt": "gammonNet analysiert {depth}: {done}/{total}",
-        "batchCancel": "Abbrechen",
         "batchDone": "gammonNet: {evaluated} analysiert, {refused} abgelehnt, {failed} fehlgeschlagen",
-        "batchWaiting": "gammonNet wartet: {job} läuft",
         "batchFailed": "gammonNet: Analyse nicht ausgeführt — {error}",
         "baseline": "Vor dem Wurf",
         "baselineTooltip": "Werte vor dem Wurf, in der Achse der Liste — ein Bezugspunkt, kein Zugkandidat. Der Abstand zu dieser Zeile ist das Würfelglück, nicht das Verdienst eines Zuges."
@@ -1482,8 +1478,6 @@
         "durationEstimated": "Entscheidung {time}, geschätzt: bis zum nächsten Wurf, Aufnehmen der Würfel inbegriffen"
     },
     "status": {
-        "importChip": "Import läuft: {percent} %",
-        "importChipShow": "Anzeigen",
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",
         "boardSvgNotFound": "Brett-SVG nicht gefunden",
         "boardElementNotFound": "Brettelement nicht gefunden",
@@ -3007,7 +3001,8 @@
             "gv1": "Gammon-Werte, Würfel auf 1",
             "gv2": "Gammon-Werte, Würfel auf 2",
             "gv4": "Gammon-Werte, Würfel auf 4",
-            "clear": "Befehlsverlauf löschen"
+            "clear": "Befehlsverlauf löschen",
+            "jobs": "Berechnungen"
         }
     },
     "assistant": {
@@ -3726,6 +3721,39 @@
         },
         "config": {
             "defaultMatch": "Standard-Match"
+        }
+    },
+    "calculs": {
+        "title": "Berechnungen",
+        "chip": "Berechnungen · {running} laufen · {waiting} warten",
+        "running": "Laufend",
+        "waiting": "Wartend",
+        "ended": "Beendet",
+        "pause": "Pause",
+        "resume": "Fortsetzen",
+        "cancel": "Abbrechen",
+        "moveUp": "Hoch",
+        "moveDown": "Runter",
+        "remove": "Entfernen",
+        "pauseAll": "Alles anhalten",
+        "resumeAll": "Alles fortsetzen",
+        "progress": "Fortschritt",
+        "empty": "Keine Berechnungen",
+        "show": "Anzeigen",
+        "end_done": "Fertig",
+        "end_cancelled": "Abgebrochen",
+        "end_error": "Fehler",
+        "kind": {
+            "gammonnet": "gammonNet",
+            "rollout": "Rollout",
+            "rolloutBatch": "Rollouts",
+            "maintenance": "Wartung",
+            "import": "Import",
+            "repair": "Reparatur",
+            "transfer": "Übertragung",
+            "bearoff": "Bearoff",
+            "sync": "Sync",
+            "other": "Sonstige"
         }
     }
 }

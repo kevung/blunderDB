@@ -1041,11 +1041,7 @@
         "panelLabel": "Panneau Eval",
         "inactive": "Le panneau Eval est inactif. Modifiez le plateau pour évaluer la position.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet analyse : {done}/{total}",
-        "batchProgressAt": "gammonNet analyse {depth} : {done}/{total}",
-        "batchCancel": "Annuler",
         "batchDone": "gammonNet : {evaluated} analysée(s), {refused} refusée(s), {failed} échouée(s)",
-        "batchWaiting": "gammonNet en attente : {job} en cours",
         "batchFailed": "gammonNet : analyse impossible — {error}",
         "baseline": "Avant le jet",
         "baselineTooltip": "Valeurs avant le jet, dans l'axe de la liste — un repère, pas un coup candidat. L'écart avec cette ligne est la chance du jet, pas le mérite d'un coup."
@@ -1482,8 +1478,6 @@
         "durationEstimated": "décision {time}, estimée : jusqu'au jet suivant, ramassage des dés compris"
     },
     "status": {
-        "importChip": "Import en cours : {percent} %",
-        "importChipShow": "Afficher",
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
         "boardSvgNotFound": "SVG du plateau introuvable",
         "boardElementNotFound": "Élément du plateau introuvable",
@@ -3007,7 +3001,8 @@
             "gv1": "Valeurs de gammon, videau à 1",
             "gv2": "Valeurs de gammon, videau à 2",
             "gv4": "Valeurs de gammon, videau à 4",
-            "clear": "Effacer l'historique des commandes"
+            "clear": "Effacer l'historique des commandes",
+            "jobs": "Calculs"
         }
     },
     "assistant": {
@@ -3726,6 +3721,39 @@
         },
         "config": {
             "defaultMatch": "Match par défaut"
+        }
+    },
+    "calculs": {
+        "title": "Calculs",
+        "chip": "Calculs · {running} en cours · {waiting} en attente",
+        "running": "En cours",
+        "waiting": "En attente",
+        "ended": "Terminés",
+        "pause": "Pause",
+        "resume": "Reprendre",
+        "cancel": "Annuler",
+        "moveUp": "Monter",
+        "moveDown": "Descendre",
+        "remove": "Retirer",
+        "pauseAll": "Tout en pause",
+        "resumeAll": "Tout reprendre",
+        "progress": "Progression",
+        "empty": "Aucun calcul",
+        "show": "Afficher",
+        "end_done": "Fini",
+        "end_cancelled": "Annulé",
+        "end_error": "Erreur",
+        "kind": {
+            "gammonnet": "gammonNet",
+            "rollout": "Rollout",
+            "rolloutBatch": "Rollouts",
+            "maintenance": "Maintenance",
+            "import": "Import",
+            "repair": "Réparation",
+            "transfer": "Transfert",
+            "bearoff": "Bearoff",
+            "sync": "Sync",
+            "other": "Autre"
         }
     }
 }

@@ -119,6 +119,8 @@ export function processCommand(command) {
         callbacks.onToggleHelp?.();
     } else if (command === 'trash') {
         openModal(MODAL.TRASH);
+    } else if (command === 'jobs' || command === 'calculs') {
+        openModal(MODAL.JOBS);
     } else if (command === 'resume') {
         openModal(MODAL.RESUME_BATCH);
     } else if (command === 'e') {

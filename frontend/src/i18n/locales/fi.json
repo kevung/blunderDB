@@ -1041,11 +1041,7 @@
         "panelLabel": "Eval-paneeli",
         "inactive": "Eval-paneeli ei ole käytössä. Muokkaa lautaa arvioidaksesi aseman.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet analysoi: {done}/{total}",
-        "batchProgressAt": "gammonNet analysoi {depth}: {done}/{total}",
-        "batchCancel": "Peruuta",
         "batchDone": "gammonNet: {evaluated} analysoitu, {refused} hylätty, {failed} epäonnistui",
-        "batchWaiting": "gammonNet odottaa: {job} käynnissä",
         "batchFailed": "gammonNet: analyysia ei tehty — {error}",
         "baseline": "Ennen heittoa",
         "baselineTooltip": "Arvot ennen heittoa, listan akselissa — vertailukohta, ei ehdokassiirto. Ero tähän riviin on heiton onni, ei siirron ansio."
@@ -1482,8 +1478,6 @@
         "durationEstimated": "päätös {time}, arvio: seuraavaan heittoon asti, noppien keräys mukaan lukien"
     },
     "status": {
-        "importChip": "Tuonti käynnissä: {percent} %",
-        "importChipShow": "Näytä",
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",
         "boardSvgNotFound": "Laudan SVG:tä ei löytynyt",
         "boardElementNotFound": "Lautaelementtiä ei löytynyt",
@@ -3007,7 +3001,8 @@
             "gv1": "Gammon-arvot, kuutio 1:ssä",
             "gv2": "Gammon-arvot, kuutio 2:ssa",
             "gv4": "Gammon-arvot, kuutio 4:ssä",
-            "clear": "Tyhjennä komentohistoria"
+            "clear": "Tyhjennä komentohistoria",
+            "jobs": "Laskennat"
         }
     },
     "assistant": {
@@ -3726,6 +3721,39 @@
         },
         "config": {
             "defaultMatch": "Oletusottelu"
+        }
+    },
+    "calculs": {
+        "title": "Laskennat",
+        "chip": "Laskennat · {running} käynnissä · {waiting} odottaa",
+        "running": "Käynnissä",
+        "waiting": "Odottaa",
+        "ended": "Valmiit",
+        "pause": "Tauko",
+        "resume": "Jatka",
+        "cancel": "Peruuta",
+        "moveUp": "Ylös",
+        "moveDown": "Alas",
+        "remove": "Poista",
+        "pauseAll": "Pysäytä kaikki",
+        "resumeAll": "Jatka kaikki",
+        "progress": "Edistyminen",
+        "empty": "Ei laskentoja",
+        "show": "Näytä",
+        "end_done": "Valmis",
+        "end_cancelled": "Peruttu",
+        "end_error": "Virhe",
+        "kind": {
+            "gammonnet": "gammonNet",
+            "rollout": "Rollout",
+            "rolloutBatch": "Rollouts",
+            "maintenance": "Ylläpito",
+            "import": "Tuonti",
+            "repair": "Korjaus",
+            "transfer": "Siirto",
+            "bearoff": "Bearoff",
+            "sync": "Sync",
+            "other": "Muu"
         }
     }
 }

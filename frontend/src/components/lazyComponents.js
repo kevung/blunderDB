@@ -90,6 +90,7 @@ export const modals = lazyRegistry({
     config: () => import('./ConfigModal.svelte'),
     trash: () => import('./TrashModal.svelte'),
     resumeBatch: () => import('./ResumeBatchModal.svelte'),
+    jobs: () => import('./JobsModal.svelte'),
     log: () => import('./LogModal.svelte'),
     contactSheet: () => import('./ContactSheetModal.svelte'),
     importProgress: () => import('./ImportProgressModal.svelte'),
