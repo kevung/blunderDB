@@ -21,8 +21,11 @@
 // prints): each diagram is decoded exactly from its glyphs (xgboard.go holds
 // the table) and is sure only when the print's own cross-checks hold —
 // fifteen checkers a side, the printed pip counts of both players — and
-// nothing in it lies beyond what the table was proven on. A PDF without a
-// page drawn with that font is a scanned book: each page is composed from its
+// nothing in it lies beyond what the table was proven on. Diagrams drawn
+// with a Snowie board font are read from the shapes of the glyphs the PDF
+// embeds, not from their codes (snowieboard.go, ttshape.go), and are sure on
+// the same cross-checks; their score is not printed, so their context stays
+// to verify. A PDF without a page drawn with a board font is a scanned book: each page is composed from its
 // images with its text layer (pdf.Scan) and read by package structure; a page
 // that cannot be composed is passed over and named (AnalyzeOptions.Warn), and
 // a PDF with no page made of images is refused (ErrNoGlyphDiagram). Package

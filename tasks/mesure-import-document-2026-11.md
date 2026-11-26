@@ -198,3 +198,42 @@ Formats : #993 (JPEG 2000 : Woolsey, Magriel 1976) et #997 (JBIG2 : Magriel 1976
 - Le sens de jeu supposé (1 422 entrées sans pips imprimés) et le contexte « sous le défaut »
   dépendent d'une confirmation par une personne : sans elle, seules les 1 043 entrées Deep Cube
   sont importables sans option.
+
+## Diagrammes en police Snowie (#1003) — réglage, 2026-11-27
+
+Lecteur `document/snowieboard.go` + `ttshape.go` : diagramme trouvé par ses deux rangées de numéros
+de points, pions lus d'après la **forme** des glyphes TrueType embarqués (anneau d'encre = pion,
+intérieur encré = noir), jamais d'après le code ni le nom de la police ; codes partagés lus en
+texte : numéros, chiffres des pips, pions numérotés, videau et dés à leur place. Pages de réglage
+seulement (`tirage.json`), aucune page de réserve lue.
+
+| PDF | Diagrammes (rangées « 24 » dessinées) | Pions sûrs / à vér. / incert. | Contexte à vér. / incert. |
+|---|---:|---|---|
+| FT *Livre du backgammon* (Snowie 4) | 100 (104) | 97 / 3 / 0 | 97 / 3 |
+| FT *Livre du backgammon* restauré (Snowie 4 puis Atchoum reconstruite) | 173 (175) | 143 / 9 / 21 | 169 / 4 |
+
+- **Sûr** = 15 + 15 pions et pips imprimés égaux aux pips lus (seule hypothèse de couleur du joueur
+  du bas qui les vérifie). Recoupement indépendant : 59 positions sûres identiques dans les deux PDF,
+  dont 25 lues dans le restauré avec l'autre police (pion noir = disque posé sur la flèche) et dans
+  l'original avec Snowie 4.
+- **Contexte** jamais lu en entier : la police n'imprime pas le score (doute nommé) ; le trait n'est
+  lu que si des dés sont dessinés (5 diagrammes). 7 videaux dessinés deux ou trois fois → incertain.
+- **Incertains** (21, restauré) : planches d'illustration sans pips (demi-plateaux, pions isolés),
+  qui ne sont pas des positions légales.
+- **Non trouvés** (4 + 2) : rangée de numéros décalée d'une colonne (original p. 256), demi-rangée
+  ou planche partielle (original p. 25, restauré p. 23, 25, 75, 183).
+- Durée : les deux PDF en 1,2 s.
+
+**Autres livres, avant / après** : sur les pages de réglage des 16 autres PDF, aucune grille Snowie
+n'est trouvée (recensement page par page) ; le lecteur n'agit que sur une grille trouvée, donc leurs
+relevés sont inchangés par construction. Vérifié en relançant l'analyse avant (`main` 3e6b26122) et
+après sur Deep Cube 1-3, Boot Camp et Cube Like a Boss : relevés de réglage identiques.
+
+**Réglages tirés de ce seul livre** (à revoir sur un autre document Snowie) : tolérance
+d'alignement numéros/colonnes portée à 0,4 glyphe (p. 28, numéros décalés de 3 pt) ; écart entre
+rangées de numéros accepté de 11,7 à 13,5 glyphes, les lignes du plateau ancrées sur le plateau
+lui-même (p. 89) ; le pion numéroté décide de la couleur de sa case (Atchoum dessine un pion blanc
+sous le noir numéroté) ; le nombre imprimé à côté du plateau de sortie l'emporte sur ses barres.
+Seuils de forme (anneau couvrant 85 % des rayons, moins de 35 % d'encre juste au-delà ; intérieur
+noir à partir de 60 %, blanc sous 35 %) choisis sur les deux polices du livre et vérifiés sur des
+glyphes synthétiques.

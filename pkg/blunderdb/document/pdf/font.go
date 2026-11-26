@@ -3,6 +3,7 @@ package pdf
 import (
 	"strconv"
 	"strings"
+	"sync"
 	"unicode/utf16"
 )
 
@@ -17,6 +18,19 @@ type Font struct {
 	width    map[uint32]float64 // text-space units per unit of font size
 	dw       float64
 	enc      *[256]rune
+	// program reads the embedded TrueType program once, on demand.
+	program func() []byte
+}
+
+// Program returns the font's embedded TrueType program (FontFile2) of a
+// simple font, decoded, or nil: a font not embedded, of another kind, or
+// whose stream does not decode within the reader's limits. A reader that
+// knows a font by the shapes it draws reads them here.
+func (f *Font) Program() []byte {
+	if f.program == nil {
+		return nil
+	}
+	return f.program()
 }
 
 // Maps reports whether the font's ToUnicode table gives some code each of
@@ -116,6 +130,15 @@ func (r *Reader) font(o Object) *Font {
 	if fd, ok := r.Resolve(d["FontDescriptor"]).(Dict); ok {
 		if mw := r.num(fd["MissingWidth"]); mw > 0 {
 			f.dw = mw * scale
+		}
+		if s, ok := r.Resolve(fd["FontFile2"]).(*Stream); ok && d["Subtype"] == Name("TrueType") {
+			f.program = sync.OnceValue(func() []byte {
+				data, err := r.Decode(s)
+				if err != nil {
+					return nil
+				}
+				return data
+			})
 		}
 	}
 	f.enc = simpleEncoding(r, r.Resolve(d["Encoding"]))
