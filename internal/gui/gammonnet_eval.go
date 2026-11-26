@@ -117,6 +117,7 @@ func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates
 
 	go func() {
 		defer recoverBackground(a.ctx, "gammonNet evaluation at rest")
+		defer end()
 		result, err := a.evaluateGammonNetCtx(ctx, pos, ply, pruneK, candidates)
 		if end() {
 			runtime.EventsEmit(a.ctx, "gammonnet-eval:cancelled", map[string]int{"tag": tag})
@@ -134,8 +135,8 @@ func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates
 // beginEvaluationAtRest cancels the search in flight and registers a new one.
 // end clears the registration only if it is still this search's: a newer
 // search may have replaced it, and erasing its cancel would make it
-// uncancellable and let the batch stop yielding to it. end reports whether
-// the search was cancelled, then releases ctx.
+// uncancellable. end reports whether the search was cancelled, then releases
+// ctx and the search's visible priority.
 func (a *App) beginEvaluationAtRest() (ctx context.Context, end func() (cancelled bool)) {
 	return a.beginInteractiveSearch(nil)
 }
@@ -144,9 +145,16 @@ func (a *App) beginEvaluationAtRest() (ctx context.Context, end func() (cancelle
 // (nil: nowhere), which search it started — under the same lock, so a Cancel
 // racing a Start never reads a search number the slot has not issued yet.
 // Every deep interactive search goes through this one slot — the panel's, the
-// roll and score maps' — so the batch yields to each of them and a new one
-// supersedes the old.
+// roll and score maps' — and a new one supersedes the old.
+//
+// Each search is a visible computation (beginVisibleComputation) from here to
+// end: the registry's background tasks and rollouts hold at their checkpoint
+// until it ends. The caller's goroutine defers end, so a panic releases the
+// priority too; end is idempotent, and its later calls report the first
+// answer. The registry is entered before gnEvalMu is taken, and left after it
+// is released: its lock is never held under ours.
 func (a *App) beginInteractiveSearch(owner *uint64) (ctx context.Context, end func() (cancelled bool)) {
+	exitVisible := a.beginVisibleComputation()
 	a.gnEvalMu.Lock()
 	defer a.gnEvalMu.Unlock()
 	if a.gnEvalCancel != nil {
@@ -159,14 +167,19 @@ func (a *App) beginInteractiveSearch(owner *uint64) (ctx context.Context, end fu
 	if owner != nil {
 		*owner = seq
 	}
+	var once sync.Once
+	var cancelled bool
 	return ctx, func() bool {
-		a.gnEvalMu.Lock()
-		if a.gnEvalSeq == seq {
-			a.gnEvalCancel = nil
-		}
-		a.gnEvalMu.Unlock()
-		cancelled := ctx.Err() != nil
-		cancel()
+		once.Do(func() {
+			a.gnEvalMu.Lock()
+			if a.gnEvalSeq == seq {
+				a.gnEvalCancel = nil
+			}
+			a.gnEvalMu.Unlock()
+			cancelled = ctx.Err() != nil
+			cancel()
+			exitVisible()
+		})
 		return cancelled
 	}
 }

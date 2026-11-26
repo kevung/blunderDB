@@ -47,6 +47,7 @@ func (a *App) startRollMap(pos domain.Position, ply, pruneK, tag int) {
 	ctx, end := a.beginInteractiveSearch(&a.gnRollMapSeq)
 	go func() {
 		defer recoverBackground(a.ctx, "gammonNet roll map")
+		defer end()
 		met, err := a.currentMET()
 		var m gammonnet.RollMap
 		if err == nil {
@@ -115,6 +116,7 @@ func (a *App) StartScoreMap(pos domain.Position, matchLength, ply, pruneK, tag i
 	ctx, end := a.beginInteractiveSearch(&a.gnScoreMapSeq)
 	go func() {
 		defer recoverBackground(a.ctx, "gammonNet score map")
+		defer end()
 		met, err := a.currentMET()
 		var m gammonnet.ScoreMap
 		if err == nil {
