@@ -98,6 +98,17 @@ func roundTrip(t *testing.T, name string, m Match) []byte {
 	if err != nil {
 		t.Fatalf("%s: decode: %v", name, err)
 	}
+	checkDecoded(t, name, m, back)
+	again, err := Encode(back)
+	if err != nil || !bytes.Equal(again, data) {
+		t.Fatalf("%s: re-encoding the decoded match changes it (%v)", name, err)
+	}
+	return data
+}
+
+// checkDecoded fails unless back is m as the archive restores it.
+func checkDecoded(t *testing.T, name string, m, back Match) {
+	t.Helper()
 	want := normalized(m.Doc)
 	if !reflect.DeepEqual(back.Doc, want) {
 		for i := range min(len(back.Doc.Actions), len(want.Actions)) {
@@ -118,11 +129,6 @@ func roundTrip(t *testing.T, name string, m Match) []byte {
 			t.Fatalf("%s: action %d: boards differ", name, i)
 		}
 	}
-	again, err := Encode(back)
-	if err != nil || !bytes.Equal(again, data) {
-		t.Fatalf("%s: re-encoding the decoded match changes it (%v)", name, err)
-	}
-	return data
 }
 
 func TestRoundTripCorpus(t *testing.T) {
@@ -136,6 +142,12 @@ func TestRoundTripCorpus(t *testing.T) {
 // whose play is unknown, impossible dice, a board entered by hand, a
 // declared score, durations and timecodes, notes, and a forfeit.
 func TestRoundTripDegenerate(t *testing.T) {
+	roundTrip(t, "degenerate", degenerateMatch(t))
+	empty := transcript.New(5)
+	roundTrip(t, "empty", Match{Doc: empty})
+}
+
+func degenerateMatch(t *testing.T) Match {
 	doc := loadCorpus(t)[0].doc
 	acts := append([]transcript.Action(nil), doc.Actions...)
 	ms := func(v int64) *int64 { return &v }
@@ -159,10 +171,7 @@ func TestRoundTripDegenerate(t *testing.T) {
 	notes := make([]Note, len(acts))
 	notes[0] = Note{Comments: []string{"première note", "#ouverture"}}
 	notes[20] = Note{Flagged: true}
-	roundTrip(t, "degenerate", Match{Doc: doc, Comment: "Commentaire du match", Notes: notes})
-
-	empty := transcript.New(5)
-	roundTrip(t, "empty", Match{Doc: empty})
+	return Match{Doc: doc, Comment: "Commentaire du match", Notes: notes}
 }
 
 // TestDecodeDamaged feeds the decoder truncated and altered streams: it
