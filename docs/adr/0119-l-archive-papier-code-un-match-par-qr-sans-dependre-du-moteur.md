@@ -44,15 +44,21 @@ ses poids ou son générateur de coups ont changé.
    chaque code. Les trames y sont aussi inscrites, en base64 : la page se réimporte sans
    lecture optique, par `archive import` ou par l'`import` ordinaire d'un fichier.
 7. **Le réimport passe par le chemin d'import des matchs** : le graphe de la transcription
-   (`transcription.MatchGraph`, les hachages de `MatchHashes`), écrit par `writeImportedMatch`,
-   donc dans le lot d'import et avec le dédoublonnage — un match déjà en base, de la même
-   archive ou d'un autre format (hachage canonique), est un doublon.
+   (`ingest.ArchiveGraph` sur `ingest.TranscriptGraph`, les hachages de `TranscriptHashes`),
+   écrit par `ingest.WriteMatch`, donc dans le lot d'import et avec le dédoublonnage — un match
+   déjà en base, de la même archive ou d'un autre format (hachage canonique), est un doublon.
+   L'archive vit sur le contrat de stockage (`ingest/archive.go`) : la base (CLI, interface),
+   le démon (`/v1/exports.archive`, `/v1/imports.archive`) et l'import par lot (une page
+   `.html` dans `mapFile`, donc le glisser-déposer) la lisent et l'écrivent de la même façon.
 8. **Règles d'export et ADR-0007** : la vidéo ne sort que par son URL
    (`issuance.CarriedVideoSource`) ; aucune métadonnée de la bibliothèque n'est copiée : l'archive
    porte des matchs, pas une base, et rien n'y entre par exclusion (la liste
    `issuance.CarriedMetadataKeys` ne concerne que l'export d'une base) ; la ligne d'origine est
    écrite par le producteur à l'export, en pied de feuille. L'import n'écrit rien sur l'archive,
    sa provenance ni son lecteur.
+9. **L'en-tête porte ce qu'un `.mat` perd** : règles Jacoby et Beaver d'une session money, date
+   et heure, classements Elo et expérience, version du moteur, transcripteur. Le tournoi n'est
+   pas porté : l'import le redéduit de l'évènement, comme pour tout format qui le nomme.
 
 ## Conséquences
 

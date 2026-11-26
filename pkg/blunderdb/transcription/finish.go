@@ -2,8 +2,6 @@ package transcription
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"fmt"
 
@@ -331,9 +329,4 @@ func MatchGraph(parts transcript.Parts) *ingest.MatchGraph { return ingest.Trans
 // MatchHashes is [ingest.TranscriptHashes].
 func MatchHashes(parts transcript.Parts) (matchHash, canonicalHash string) {
 	return ingest.TranscriptHashes(parts)
-}
-
-func sha256Hex(s string) string {
-	sum := sha256.Sum256([]byte(s))
-	return hex.EncodeToString(sum[:])
 }
