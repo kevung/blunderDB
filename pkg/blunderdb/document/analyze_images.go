@@ -198,7 +198,7 @@ func structureProfile(p structure.Profile) *Profile {
 		out.Numbering = "point 1 printed at the " + row + " " + side
 	}
 	if !p.DirectionVoted {
-		out.Numbering = strings.TrimSpace(out.Numbering + " (direction of play assumed)")
+		out.Numbering = strings.TrimSpace(out.Numbering + " " + assumedDirectionMark)
 	}
 	return out
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -215,6 +216,19 @@ func TestCLI_DocumentCompleteEndToEnd(t *testing.T) {
 	}
 	if cols, _ := cli.db.GetAllCollections(); len(cols) != 0 {
 		t.Errorf("a refused import wrote a collection: %+v", cols)
+	}
+	// The doubts stripped by hand, the document still says the direction
+	// unconfirmed: check does not call the entries certified, import refuses.
+	for i := range r.Entries {
+		r.Entries[i].Doubts = slices.DeleteFunc(r.Entries[i].Doubts, func(d capture.Doubt) bool { return d == document.AssumedDirectionDoubt })
+	}
+	write()
+	out = captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if strings.Contains(out, "certified context (imported") || !strings.Contains(out, "7 more held back until the direction of play is confirmed") {
+		t.Errorf("check with the doubts stripped, the direction unconfirmed:\n%s", out)
+	}
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path}); !errors.Is(err, document.ErrUnverified) {
+		t.Errorf("import with the doubts stripped, the direction unconfirmed: %v", err)
 	}
 	r.Document.Defaults.Direction.Confirmed = true
 	write()

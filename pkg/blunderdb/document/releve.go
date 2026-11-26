@@ -108,9 +108,9 @@ type Defaults struct {
 }
 
 // Direction is a document's direction of play as a reader assumed it. A
-// wrong guess exchanges the players of every position read under it, so the
-// complete entries carrying AssumedDirectionDoubt are accepted only once a
-// person confirmed it, on its own.
+// wrong guess exchanges the players of every position read under it, so
+// while it stands unconfirmed no complete entry is accepted, whatever doubts
+// it carries; a person confirms it on its own.
 type Direction struct {
 	// Home is the side of the bottom player's home board: "left" or "right".
 	Home        string `json:"home"`
@@ -242,13 +242,25 @@ func (r *Releve) CheckersConfirmed(e Entry) bool {
 }
 
 // DirectionCertified reports whether the entry's direction of play is
-// certain: not assumed, or assumed under a direction a person confirmed.
+// certain. The document says it, not the entry's doubts, which a hand can
+// strip: it is certain when the document's direction was voted by printed
+// pips (no defaults direction), when a person confirmed the defaults
+// direction, or when the entry's own printed pips agreed with its checkers
+// (checkers sure), which a reversed direction would have contradicted.
 func (r *Releve) DirectionCertified(e Entry) bool {
-	if !hasDoubt(e.Doubts, AssumedDirectionDoubt) {
+	d := r.Document.Defaults
+	if d == nil || d.Direction == nil || d.Direction.Confirmed {
 		return true
 	}
-	d := r.Document.Defaults
-	return d != nil && d.Direction != nil && d.Direction.Confirmed
+	return e.Checkers == Sure
+}
+
+// assumedDirectionMark is what a reader appends to the profile's numbering
+// when no printed pips voted for the direction of play.
+const assumedDirectionMark = "(direction of play assumed)"
+
+func profileAssumesDirection(p *Profile) bool {
+	return p != nil && strings.Contains(p.Numbering, assumedDirectionMark)
 }
 
 // CompleteCertified reports an entry that is neither sure nor verified but
@@ -331,7 +343,7 @@ func (r *Releve) Upgrade() *Releve {
 		}
 		u.Entries[i] = e
 	}
-	direction := false
+	direction := profileAssumesDirection(u.Document.Profile)
 	for _, e := range u.Entries {
 		direction = direction || hasDoubt(e.Doubts, AssumedDirectionDoubt)
 	}
@@ -432,6 +444,9 @@ func (r *Releve) Validate() error {
 				return bad("defaults direction home %q, the profile says %q", dir.Home, p.Home)
 			}
 		}
+	}
+	if r.Version >= 2 && profileAssumesDirection(d.Profile) && (d.Defaults == nil || d.Defaults.Direction == nil) {
+		return bad("the profile says the direction of play is assumed, but the document has no defaults direction")
 	}
 	if len(r.Entries) == 0 {
 		return bad("no entry")

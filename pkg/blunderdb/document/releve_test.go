@@ -247,10 +247,30 @@ func TestContextRule(t *testing.T) {
 	if r.CompleteCertified(r.Entries[2]) || !strings.Contains(refusalHint(r, []int{3}, true), "confirm it once") {
 		t.Errorf("an unconfirmed direction certifies a complete entry")
 	}
+	// The document decides, not the entry: without its doubt, a complete
+	// entry is still held back by the unconfirmed direction; an entry whose
+	// printed pips agreed is not.
+	r.Entries[2].Doubts = r.Entries[2].Doubts[:len(r.Entries[2].Doubts)-1]
+	if r.CompleteCertified(r.Entries[2]) || Summarize(r).CompleteDirectionUnconfirmed != 1 {
+		t.Errorf("an unconfirmed direction certifies a complete entry stripped of its doubt")
+	}
+	if !r.DirectionCertified(r.Entries[0]) || r.Importable(r.Entries[2], true) {
+		t.Errorf("unconfirmed direction: checkers sure certified %v, complete importable %v", r.DirectionCertified(r.Entries[0]), r.Importable(r.Entries[2], true))
+	}
 	r.Document.Defaults.Direction.Confirmed = true
 	if !r.CompleteCertified(r.Entries[2]) {
 		t.Errorf("a confirmed direction does not certify a complete entry")
 	}
+	// A profile that says the direction assumed needs the defaults direction.
+	r.Document.Profile = &Profile{Numbering: "point 1 printed at the bottom right " + assumedDirectionMark}
+	if err := r.Validate(); err != nil {
+		t.Errorf("a profile with the defaults direction: %v", err)
+	}
+	r.Document.Defaults.Direction = nil
+	if err := r.Validate(); !errors.Is(err, ErrInvalid) {
+		t.Errorf("a profile that says the direction assumed, no defaults direction: err = %v", err)
+	}
+	r.Document.Profile = nil
 	// Under the defaults, the position carries them.
 	r.Entries[0].Position = "XGID=-b----E-C---eE---c-e----B-:1:1:1:00:0:0:0:0:10"
 	if err := r.Validate(); !errors.Is(err, ErrInvalid) {
