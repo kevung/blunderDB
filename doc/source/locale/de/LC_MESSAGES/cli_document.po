@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-27 00:13+0100\n"
+"POT-Creation-Date: 2026-11-27 00:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -545,7 +545,10 @@ msgid ""
 "est un dé (« 2/0 2/1 », « 8/5(2) 6/3(2) »), cité deux fois si le texte "
 "nomme plusieurs jets ; un mot plus proche d'un autre diagramme est à "
 "celui-ci ; le trait, par la couleur des dés et leur moitié du plateau (la"
-" droite pour le joueur du bas), qui doivent désigner le même joueur ;"
+" droite pour le joueur du bas), qui doivent désigner le même joueur. Sans"
+" dés dessinés, une légende qui les nomme (« Black to play 53 », lue dans "
+"la couche texte ou, sans couche texte, dans l'image) donne le jet et le "
+"joueur au trait, chacun en doute : une seule source ne certifie rien ;"
 msgstr ""
 "die Würfel, auf dem Bild gezählt und durch den benachbarten Text "
 "bestätigt: ein benannter Wurf (\"to play 41\", \"rolls a 65\") oder ein "
@@ -553,18 +556,23 @@ msgstr ""
 "\"8/5(2) 6/3(2)\"), zweimal angeführt, wenn der Text mehrere Würfe nennt;"
 " ein Wort, das einem anderen Diagramm näher steht, gehört zu diesem; das "
 "Zugrecht, über die Farbe der Würfel und ihre Bretthälfte (die rechte für "
-"den unteren Spieler), die denselben Spieler bezeichnen müssen;"
+"den unteren Spieler), die denselben Spieler bezeichnen müssen. Ohne "
+"gezeichnete Würfel liefert eine Legende, die sie nennt (\"Black to play "
+"53\", aus der Textebene oder, ohne Textebene, aus dem Bild gelesen), den "
+"Wurf und den Spieler am Zug, jeweils unter Vorbehalt: Eine einzelne "
+"Quelle beglaubigt nichts;"
 
-#: ../../source/cli_document.rst:245
+#: ../../source/cli_document.rst:248
 msgid ""
 "le score, par le bandeau de la couche texte (``score:``, ``pip:``, ``7 "
-"point match``), chaque score attribué au joueur dont il porte les pips."
+"point match``), chaque score attribué au joueur dont il porte les pips ; "
+"deux scores égaux se passent des pips."
 msgstr ""
 "der Spielstand, über das Banner der Textebene (``score:``, ``pip:``, ``7 "
 "point match``), wobei jeder Spielstand dem Spieler zugeordnet wird, "
-"dessen Pips er trägt."
+"dessen Pips er trägt; zwei gleiche Spielstände kommen ohne die Pips aus."
 
-#: ../../source/cli_document.rst:248
+#: ../../source/cli_document.rst:252
 msgid ""
 "Une entrée dont tout le contexte est lu est ``\"context\": \"read\"``. Un"
 " videau introuvable n'est jamais pris pour centré : ce qui n'est pas lu "
@@ -604,7 +612,7 @@ msgstr ""
 "zählen die Einträge nach Kontext und getrennt jene, deren Steine allein "
 "beglaubigt sind:"
 
-#: ../../source/cli_document.rst:271
+#: ../../source/cli_document.rst:275
 msgid ""
 "Pour une entrée dont le contexte reste à vérifier, on ouvre le livre à la"
 " page de l'entrée, on compare au diagramme le videau (valeur et "
@@ -619,11 +627,11 @@ msgstr ""
 "korrigiert diese Felder der XGID bei Bedarf und markiert dann "
 "``\"verified\": true``."
 
-#: ../../source/cli_document.rst:279
+#: ../../source/cli_document.rst:283
 msgid "Le contexte par défaut"
 msgstr "Der Standardkontext"
 
-#: ../../source/cli_document.rst:281
+#: ../../source/cli_document.rst:285
 msgid ""
 "Le contexte par défaut d'un livre scanné est celui qu'écrit la lecture : "
 "videau centré, pas de dés, joueur du bas au trait, partie libre. Il "
@@ -633,7 +641,7 @@ msgstr ""
 "schreibt: Doppelwürfel in der Mitte, keine Würfel, unterer Spieler am "
 "Zug, freies Spiel (kein Match). Er steht im Kopf des Relevés:"
 
-#: ../../source/cli_document.rst:293
+#: ../../source/cli_document.rst:297
 msgid ""
 "``context`` est la fin du XGID après le plateau ; toute entrée "
 "``default`` la porte. Quand les diagrammes du document suivent ce "
@@ -645,7 +653,8 @@ msgid ""
 " dés dessinés, score de match) et les entrées dont les pions ne sont pas "
 "sûrs. On ne confirme pas un contexte que le document ne suit pas : un "
 "videau que la lecture ne trouve pas, un score imprimé dans l'image sans "
-"couche texte ou un trait donné par la prose ne sont pas vus."
+"couche texte ou un trait donné par la prose hors d'une légende ne sont "
+"pas vus."
 msgstr ""
 "``context`` ist das Ende der XGID nach dem Brett; jeder "
 "``default``-Eintrag trägt es. Folgen die Diagramme des Dokuments diesem "
@@ -657,14 +666,14 @@ msgstr ""
 "Doppelwürfel, gezeichnete Würfel, Matchstand), und die Einträge, deren "
 "Steine nicht sicher sind. Einen Kontext, dem das Dokument nicht folgt, "
 "bestätigt man nicht: Ein Doppelwürfel, den die Lesung nicht findet, ein "
-"im Bild ohne Textebene gedruckter Spielstand oder ein im Text angegebenes"
-" Zugrecht werden nicht gesehen."
+"im Bild ohne Textebene gedruckter Spielstand oder ein im Text außerhalb "
+"einer Legende angegebenes Zugrecht werden nicht gesehen."
 
-#: ../../source/cli_document.rst:307
+#: ../../source/cli_document.rst:312
 msgid "Le défaut appris sur le document"
 msgstr "Der aus dem Dokument gelernte Standard"
 
-#: ../../source/cli_document.rst:309
+#: ../../source/cli_document.rst:314
 msgid ""
 "La lecture apprend sur le document quels champs du contexte il imprime à "
 "côté de ses diagrammes : le videau, les dés (avec le joueur au trait) ou "
@@ -676,7 +685,7 @@ msgstr ""
 " oder den Spielstand, gelesen neben mindestens einem Drittel der "
 "Diagramme. Es nennt sie in ``printed``:"
 
-#: ../../source/cli_document.rst:322
+#: ../../source/cli_document.rst:327
 msgid ""
 "Un champ imprimé est la lecture de chaque entrée, que la lecture a "
 "certifiée ; le contexte par défaut ne couvre que les autres. Dans un "
@@ -701,7 +710,7 @@ msgstr ""
 "not taken as money play``). ``analyze`` und ``check`` zeigen, was gelernt"
 " wurde:"
 
-#: ../../source/cli_document.rst:336
+#: ../../source/cli_document.rst:341
 msgid ""
 "Rien n'est gardé d'un document à l'autre. Un relevé sans ``printed`` "
 "garde la règle stricte : tout champ lu hors du défaut laisse le contexte "
@@ -711,11 +720,11 @@ msgstr ""
 "``printed`` behält die strenge Regel: Jedes außerhalb des Standards "
 "gelesene Feld lässt den Kontext zu prüfen."
 
-#: ../../source/cli_document.rst:342
+#: ../../source/cli_document.rst:347
 msgid "Quinze et quinze sans doute"
 msgstr "Fünfzehn und fünfzehn ohne Zweifel"
 
-#: ../../source/cli_document.rst:344
+#: ../../source/cli_document.rst:349
 msgid ""
 "Un diagramme sans pips imprimés n'a pas de recoupement : ses pions "
 "restent ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils "
@@ -740,7 +749,7 @@ msgstr ""
 " Der Eintrag ist dann nie vollständig. Eine Position, aus der Steine "
 "abgetragen wurden, ist ebenfalls nie vollständig."
 
-#: ../../source/cli_document.rst:355
+#: ../../source/cli_document.rst:360
 msgid ""
 "Le sens de jeu supposé est lui aussi un défaut du document, avec sa "
 "propre confirmation : un sens faux échangerait les joueurs de toutes les "
@@ -752,7 +761,7 @@ msgstr ""
 "unter ihr gelesenen Positionen vertauschen. Sie steht im Standardkontext "
 "unter ``direction``:"
 
-#: ../../source/cli_document.rst:367
+#: ../../source/cli_document.rst:372
 msgid ""
 "Confirmer le contexte ne le confirme pas. On le contrôle sur quelques "
 "diagrammes, puis on écrit ``\"confirmed\": true`` dans ``direction``."
@@ -761,7 +770,7 @@ msgstr ""
 "einigen Diagrammen und schreibt dann ``\"confirmed\": true`` in "
 "``direction``."
 
-#: ../../source/cli_document.rst:370
+#: ../../source/cli_document.rst:375
 msgid ""
 "``import --accept-complete`` accepte en bloc les entrées complètes dont "
 "le contexte est certifié (lu, ou sous le contexte par défaut confirmé) et"
@@ -776,7 +785,7 @@ msgstr ""
 " markieren; ``check`` zählt sie und zählt getrennt diejenigen, die eine "
 "unbestätigte Richtung zurückhält:"
 
-#: ../../source/cli_document.rst:386
+#: ../../source/cli_document.rst:391
 msgid ""
 "L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
 " checkers read with no doubt``). Une entrée complète dont le contexte "
@@ -789,7 +798,7 @@ msgstr ""
 " bestätigt ist, wird weiterhin abgelehnt; die Fehlermeldung sagt, dass "
 "sie zu bestätigen ist."
 
-#: ../../source/cli_document.rst:391
+#: ../../source/cli_document.rst:396
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
@@ -824,7 +833,7 @@ msgstr ""
 "ohne gelesene Pips bleibt ``to-verify`` (``no printed pip count was found"
 " next to the diagram``)."
 
-#: ../../source/cli_document.rst:405
+#: ../../source/cli_document.rst:410
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
@@ -838,7 +847,7 @@ msgstr ""
 "sind, und etwa dreißig mit fünfzehn Steinen pro Seite gelesene Diagramme,"
 " um diese Stelle zu lernen."
 
-#: ../../source/cli_document.rst:410
+#: ../../source/cli_document.rst:415
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -856,7 +865,7 @@ msgstr ""
 "wenigsten Pips vor), per Differenz gezählte abgetragene Steine, ein "
 "außerhalb der Mitte gezeichneter Doppelwürfel, gezeichnete Würfel."
 
-#: ../../source/cli_document.rst:417
+#: ../../source/cli_document.rst:422
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
@@ -869,11 +878,11 @@ msgstr ""
 "Abtragsbrett (eine Seite, die mit weniger als fünfzehn Steinen gezeichnet"
 " ist, hat die übrigen abgetragen)."
 
-#: ../../source/cli_document.rst:423
+#: ../../source/cli_document.rst:428
 msgid "Pourquoi l'import refuse"
 msgstr "Warum der Import ablehnt"
 
-#: ../../source/cli_document.rst:425
+#: ../../source/cli_document.rst:430
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -885,7 +894,7 @@ msgstr ""
 "weitergegeben. Der Import lehnt daher das **gesamte** Relevé ab, bevor er"
 " irgendetwas schreibt, nennt die Ränge und sagt, was zu tun ist:"
 
-#: ../../source/cli_document.rst:433
+#: ../../source/cli_document.rst:438
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -894,7 +903,7 @@ msgstr ""
 "vollständig, aber ohne ``--accept-complete``, sagt die Meldung das "
 "ebenfalls:"
 
-#: ../../source/cli_document.rst:440
+#: ../../source/cli_document.rst:445
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -904,11 +913,11 @@ msgstr ""
 "unverändert zu importieren; der Import nennt dann, wie viele Einträge er "
 "erzwungen hat (``Forced: 3 entries neither sure nor verified``)."
 
-#: ../../source/cli_document.rst:447
+#: ../../source/cli_document.rst:452
 msgid "Le repli"
 msgstr "Der Rückfall"
 
-#: ../../source/cli_document.rst:449
+#: ../../source/cli_document.rst:454
 msgid ""
 "Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
 "``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
@@ -925,7 +934,7 @@ msgstr ""
 "Rest den Standard. ``check`` nennt diese Ränge, und die Fehlermeldung "
 "schlägt den Rückfall vor:"
 
-#: ../../source/cli_document.rst:460
+#: ../../source/cli_document.rst:465
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
@@ -950,11 +959,11 @@ msgstr ""
 "wird ein Eintrag ohne Position abgelehnt: Er muss ausgefüllt oder "
 "entfernt werden."
 
-#: ../../source/cli_document.rst:471
+#: ../../source/cli_document.rst:476
 msgid "Ce qui entre en base"
 msgstr "Was in die Datenbank gelangt"
 
-#: ../../source/cli_document.rst:473
+#: ../../source/cli_document.rst:478
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -969,7 +978,7 @@ msgstr ""
 "hat, wird nicht dupliziert (``new in the library`` zählt die, die ihr "
 "fehlten)."
 
-#: ../../source/cli_document.rst:479
+#: ../../source/cli_document.rst:484
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -983,7 +992,7 @@ msgstr ""
 "Beschreibung, falls sie eine hat; eine dynamische Sammlung (durch eine "
 "Abfrage definiert) wird abgelehnt."
 
-#: ../../source/cli_document.rst:483
+#: ../../source/cli_document.rst:488
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -991,7 +1000,7 @@ msgstr ""
 "Jede Position trägt einen **Kommentar**, der ihre Fundstelle angibt, nach"
 " dem Titel des Dokuments: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:486
+#: ../../source/cli_document.rst:491
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -1001,11 +1010,11 @@ msgstr ""
 " Autors. Ein unterbrochener oder abgelehnter Import schreibt nichts: Es "
 "ist eine einzige Transaktion."
 
-#: ../../source/cli_document.rst:490
+#: ../../source/cli_document.rst:495
 msgid "Une position répétée"
 msgstr "Eine wiederholte Position"
 
-#: ../../source/cli_document.rst:492
+#: ../../source/cli_document.rst:497
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -1017,11 +1026,11 @@ msgstr ""
 "Fundstelle: ``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` zählt "
 "diese Wiederholungen."
 
-#: ../../source/cli_document.rst:498
+#: ../../source/cli_document.rst:503
 msgid "Réimporter"
 msgstr "Erneut importieren"
 
-#: ../../source/cli_document.rst:500
+#: ../../source/cli_document.rst:505
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -1034,11 +1043,11 @@ msgstr ""
 "seine Fundstellen geändert haben, nie verdoppelt. Man kann also einen "
 "Import wieder aufnehmen, nachdem man das Relevé korrigiert hat."
 
-#: ../../source/cli_document.rst:506
+#: ../../source/cli_document.rst:511
 msgid "Le démon"
 msgstr "Der Daemon"
 
-#: ../../source/cli_document.rst:508
+#: ../../source/cli_document.rst:513
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

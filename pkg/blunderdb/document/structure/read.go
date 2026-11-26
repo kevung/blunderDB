@@ -304,6 +304,9 @@ type boardReading struct {
 	// numbers printed around the diagram, kept until the document's
 	// figures are read
 	numbers []printedNumber
+	// captions are the lines printed above and below it on a page without
+	// a text layer, kept until the document's figures are read
+	captions [][]captionWord
 }
 
 type slot struct {

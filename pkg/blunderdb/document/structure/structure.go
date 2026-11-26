@@ -236,6 +236,7 @@ type readPage struct {
 	zs       []zone
 	rejected int
 	numbers  [][]printedNumber
+	captions [][][]captionWord
 	w, h     int
 }
 
@@ -254,6 +255,9 @@ func readPageAt(pages Pages, i int) (*readPage, error) {
 	rp.zs, rp.rejected = diagramsOf(g, pg.DPI)
 	for _, z := range rp.zs {
 		rp.numbers = append(rp.numbers, extractNumbers(g, z.bbox))
+		if len(pg.Words) == 0 {
+			rp.captions = append(rp.captions, extractCaptions(g, z.bbox))
+		}
 	}
 	return rp, nil
 }
@@ -327,6 +331,9 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 			rd.digits, rd.cubes, rd.dice, rd.field = z.digits, z.cubes, z.dice, z.field
 			rd.page, rd.bbox, rd.pageW, rd.pageH = i, z.bbox, rp.w, rp.h
 			rd.numbers = rp.numbers[k]
+			if k < len(rp.captions) {
+				rd.captions = rp.captions[k]
+			}
 			rds = append(rds, &rd)
 			if inspectReading != nil {
 				inspectReading(&rd)
@@ -344,7 +351,7 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 	for i, rd := range rds {
 		all[i] = rd.numbers
 	}
-	readNumbers(all)
+	digits := readNumbers(all)
 	var slots []pipSlot
 	voters := 0
 	for _, h := range corners {
@@ -365,9 +372,26 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 		rd.numbers = nil
 	}
 	ds, prof := releve(rds, words, img, "")
+	// A page without a text layer gives the words read in its captions,
+	// to the context only: the pips are read in the image.
+	captions := map[int][][][]captionWord{}
+	for _, rd := range rds {
+		if rd.captions != nil {
+			captions[rd.page] = append(captions[rd.page], rd.captions)
+			rd.captions = nil
+		}
+	}
+	text := map[int][]Word{}
+	for pg, ls := range captions {
+		text[pg] = captionWords(ls, captionFigures(digits))
+	}
 	envs := contextEnvs(rds)
 	for i := range ds {
-		readContext(rds[i], &ds[i], words[rds[i].page], prof, envs[i])
+		ws := words[rds[i].page]
+		if ws == nil {
+			ws = text[rds[i].page]
+		}
+		readContext(rds[i], &ds[i], ws, prof, envs[i])
 	}
 	missingCubes(rds, ds)
 	if inspectSources != nil {
