@@ -3,3 +3,5 @@ dist/
 node_modules/
 package.json
 package-lock.json
+# Written by the printsheet Go tests (TestPrintFixtures -update-fixtures).
+tests/e2e/fixtures/

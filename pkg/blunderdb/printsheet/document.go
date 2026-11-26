@@ -65,7 +65,7 @@ body { --ink: #111; --soft: #555; --paper: #fff;
 .dl.two { column-count: 2 } .dl.many { column-width: 27em } .dl.ans { column-width: 30em }
 .de { display: flex; gap: .6em; align-items: baseline; break-inside: avoid }
 .de .no { min-width: 1.9em; text-align: right; font-weight: 600; flex: none }
-.de .nt { min-width: 0 } .de .an { min-width: 0 }
+.de .nt { flex: none } .de .an { min-width: 0 }
 .de.cont { display: block; padding-left: 2.5em }
 .pg { position: absolute; bottom: 4mm; right: 8mm; color: var(--soft); font-size: 6pt }
 `
@@ -113,6 +113,19 @@ const fitScript = `(function () {
     if (head) inner.appendChild(head.cloneNode(true));
     doc.insertBefore(n, s.nextSibling);
     return n;
+  }
+  function height(x) { var h = 0, rs = x.getClientRects(); for (var k = 0; k < rs.length; k++) h += rs[k].height; return h; }
+  // long tells whether entry x, just laid on sheet s at the smallest size,
+  // is worth cutting there: comments taller than a third of the page, and
+  // the rest of the entry fitting without them.
+  function long(x, s) {
+    var cms = x.querySelectorAll('.cm'), t = [], ok;
+    if (!cms.length || height(x) <= avail(s) / 3) return false;
+    cms.forEach(function (cm, k) { t[k] = cm.textContent; cm.textContent = ''; });
+    ok = fits(s, MIN);
+    cms.forEach(function (cm, k) { cm.textContent = t[k]; });
+    fits(s, MIN);
+    return ok;
   }
   function entries(pl) { return pl.querySelectorAll(':scope > .pe'); }
   // split cuts entry e, alone on sheet s and taller than it, at the last
@@ -185,9 +198,28 @@ const fitScript = `(function () {
         var e = es[i], a = as && as[i];
         if (e) rp.appendChild(e);
         if (a) bp.appendChild(a);
+        if (!e && a && n === 0 && b) {
+          // An answer going on past its back: the front of this sheet,
+          // empty otherwise, carries it first, then its back.
+          rp.appendChild(a);
+          if (fits(r, MIN)) { i++; n++; continue; }
+          var rest = split(a, r);
+          bp.appendChild(rest);
+          if (fits(b, MIN)) { i++; n++; continue; }
+          as[i] = split(rest, b);
+          if (!as[i]) i++;
+          break;
+        }
         var okR = fits(r, MIN), okB = !b || fits(b, MIN);
         if (okR && okB) { i++; n++; continue; }
-        if (n > 0) { if (e) rp.removeChild(e); if (a) bp.removeChild(a); break; }
+        if (n > 0) {
+          // A long line starts where the page has room rather than leaving
+          // it nearly empty; a short one moves whole to the next page.
+          var c = okB ? (e && long(e, r) ? split(e, r) : null) : (okR && long(a, b) ? split(a, b) : null);
+          if (!c) { if (e) rp.removeChild(e); if (a) bp.removeChild(a); break; }
+          if (okB) { es[i] = c; if (as) as[i] = null; } else { as[i] = c; es[i] = null; }
+          break;
+        }
         var c = okR ? split(a, b) : split(e, r);
         if (!c) i++;
         else if (okR) { as[i] = c; es[i] = null; }
