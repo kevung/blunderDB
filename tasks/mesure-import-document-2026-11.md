@@ -242,3 +242,18 @@ contre l'étirement des pions, seuil de face vierge relatif au contraste du carr
   Vérifié à l'œil : Masterclass p. 26 et p. 183, Endgame p. 17, p. 138 et p. 213.
 - Restent : Cube Like a Boss 53 videaux clair sur foncé hors du cadre cherché, dés non comptés
   (« N dice drawn »), du ressort de la localisation.
+
+### Garde de la face vierge (réglage seulement)
+
+Règle ajoutée : une face vierge n'est lue centrée que si le document n'imprime jamais, à la même
+place (hauteur et côté du champ) sur un autre diagramme, un videau dont la face n'est pas vierge
+et n'est pas lue 64 ; sinon doute nommé (« where N other diagrams print a value »). Même banc
+(`TestMeasureContextOnPages`, `tirage.json`, pages de réglage seulement), lecteur à 56176ce81.
+
+- Les douze livres scannés donnent exactement les comptes de la colonne « après » du tableau
+  ci-dessus (videau lu 678, doutes videau 287, dés lus 49) : aucune lecture perdue, aucune
+  gagnée.
+- La garde ne se déclenche sur aucun diagramme du réglage : là où ces livres dessinent un
+  videau vierge (501 Problems, Magriel et Roberts), aucun autre diagramme n'imprime de valeur à
+  la même place. Elle vaut pour les documents inconnus, où un chiffre perdu au scan ferait
+  sinon lire « centré » à tort.
