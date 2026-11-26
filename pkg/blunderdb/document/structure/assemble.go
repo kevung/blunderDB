@@ -509,10 +509,9 @@ func releve(rds []*boardReading, words map[int][]Word) ([]Diagram, Profile) {
 		}
 	}
 	type feat struct {
-		num   []numWord
-		side  map[byte][]sideNum
-		pips  *[2]int
-		bound bool
+		num  []numWord
+		side map[byte][]sideNum
+		pips *[2]int
 	}
 	fs := make([]feat, len(rds))
 	numVotes := map[string]int{}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 02:33+0100\n"
+"POT-Creation-Date: 2026-11-26 03:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -34,10 +34,10 @@ msgid ""
 msgstr "Erstellt eine neue Datenbankdatei mit optionalen Metadaten."
 
 #: ../../source/cli_import_export.rst:15 ../../source/cli_import_export.rst:42
-#: ../../source/cli_import_export.rst:298
-#: ../../source/cli_import_export.rst:422
-#: ../../source/cli_import_export.rst:490
-#: ../../source/cli_import_export.rst:516
+#: ../../source/cli_import_export.rst:299
+#: ../../source/cli_import_export.rst:423
+#: ../../source/cli_import_export.rst:491
+#: ../../source/cli_import_export.rst:517
 msgid "**Options:**"
 msgstr "**Optionen:**"
 
@@ -461,28 +461,28 @@ msgstr "document — Stellungen eines Dokuments lesen und importieren"
 #: ../../source/cli_import_export.rst:279
 msgid ""
 "Range dans une collection, dans l'ordre du document, les positions d'un "
-"PDF imprimé par eXtreme Gammon, en trois commandes (``analyze``, "
-"``check``, ``import``) autour d'un **relevé** JSON. Voir "
-":ref:`cli_document`."
+"PDF imprimé par eXtreme Gammon ou des pages d'un livre scanné en images, "
+"en trois commandes (``analyze``, ``check``, ``import``) autour d'un "
+"**relevé** JSON. Voir :ref:`cli_document`."
 msgstr ""
-"Legt die Positionen eines von eXtreme Gammon gedruckten PDFs in der "
-"Reihenfolge des Dokuments in einer Sammlung ab, in drei Befehlen "
-"(``analyze``, ``check``, ``import``) rund um ein JSON-**Relevé**. Siehe "
-":ref:`cli_document`."
+"Legt die Positionen eines von eXtreme Gammon gedruckten PDFs oder die "
+"Seiten eines eingescannten Buchs als Bilder in der Reihenfolge des "
+"Dokuments in einer Sammlung ab, in drei Befehlen (``analyze``, ``check``,"
+" ``import``) rund um ein JSON-**Relevé**. Siehe :ref:`cli_document`."
 
-#: ../../source/cli_import_export.rst:290
+#: ../../source/cli_import_export.rst:291
 msgid "export — Exporter des données"
 msgstr "export — Daten exportieren"
 
-#: ../../source/cli_import_export.rst:292
+#: ../../source/cli_import_export.rst:293
 msgid "Exporte le contenu de la base vers des fichiers."
 msgstr "Exportiert den Inhalt der Datenbank in Dateien."
 
-#: ../../source/cli_import_export.rst:300
+#: ../../source/cli_import_export.rst:301
 msgid "``--db`` — Base source (obligatoire)."
 msgstr "``--db`` — Quelldatenbank (erforderlich)."
 
-#: ../../source/cli_import_export.rst:301
+#: ../../source/cli_import_export.rst:302
 msgid ""
 "``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
 "``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
@@ -492,7 +492,7 @@ msgstr ""
 "``mat`` (Export eines oder mehrerer Matches als Jellyfish-Transkription "
 "``.mat``) (erforderlich)."
 
-#: ../../source/cli_import_export.rst:304
+#: ../../source/cli_import_export.rst:305
 msgid ""
 "``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
 "utilisé avec ``--dir``)."
@@ -500,7 +500,7 @@ msgstr ""
 "``--file`` — Ausgabedatei (erforderlich, außer bei ``--type mat`` in "
 "Verbindung mit ``--dir``)."
 
-#: ../../source/cli_import_export.rst:306
+#: ../../source/cli_import_export.rst:307
 msgid ""
 "``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
 "(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
@@ -510,27 +510,27 @@ msgstr ""
 "Matches, eine Datei pro Match; ohne ``--match-ids`` werden alle Matches "
 "exportiert)."
 
-#: ../../source/cli_import_export.rst:309
+#: ../../source/cli_import_export.rst:310
 msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
 msgstr "``--analysis`` — Analysen einbeziehen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:310
+#: ../../source/cli_import_export.rst:311
 msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
 msgstr "``--comments`` — Kommentare einbeziehen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:311
+#: ../../source/cli_import_export.rst:312
 msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
 msgstr "``--filters`` — Filterbibliothek einbeziehen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:312
+#: ../../source/cli_import_export.rst:313
 msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
 msgstr "``--played-moves`` — Gespielte Züge einbeziehen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:313
+#: ../../source/cli_import_export.rst:314
 msgid "``--matches`` — Inclure les matchs (défaut: oui)."
 msgstr "``--matches`` — Matches einbeziehen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:314
+#: ../../source/cli_import_export.rst:315
 msgid ""
 "``--transcriptions`` — Inclure le brouillon de transcription de chaque "
 "match exporté (défaut: oui)."
@@ -538,7 +538,7 @@ msgstr ""
 "``--transcriptions`` — Den Transkriptionsentwurf jedes exportierten "
 "Matches einbeziehen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:316
+#: ../../source/cli_import_export.rst:317
 msgid ""
 "``--aliases`` — Inclure les alias de joueurs et d'événements que les "
 "matchs exportés écrivent, pour que la fusion de joueurs les suive "
@@ -548,19 +548,19 @@ msgstr ""
 "exportierten Matches schreiben, damit die Zusammenführung von Spielern "
 "ihnen folgt (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:318
+#: ../../source/cli_import_export.rst:319
 msgid "``--collections`` — Inclure les collections (défaut: oui)."
 msgstr "``--collections`` — Sammlungen einbeziehen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:319
+#: ../../source/cli_import_export.rst:320
 msgid "``--tournaments`` — Inclure les tournois (défaut: oui)."
 msgstr "``--tournaments`` — Turniere einbeziehen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:320
+#: ../../source/cli_import_export.rst:321
 msgid "``--decks`` — Inclure les paquets Anki (défaut: oui)."
 msgstr "``--decks`` — Die Anki-Stapel einbeziehen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:321
+#: ../../source/cli_import_export.rst:322
 msgid ""
 "``--lessons`` — Inclure les leçons, avec les collections et les positions"
 " que leurs étapes montrent (défaut: oui)."
@@ -568,7 +568,7 @@ msgstr ""
 "``--lessons`` — Lektionen einbeziehen, mit den Sammlungen und Stellungen,"
 " die ihre Schritte zeigen (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:323
+#: ../../source/cli_import_export.rst:324
 msgid ""
 "``--anki-history`` — Emporter l'historique de révision des paquets "
 "exportés : l'état de chaque carte et le journal de ses révisions (défaut:"
@@ -578,7 +578,7 @@ msgstr ""
 "mitnehmen: den Zustand jeder Karte und das Protokoll ihrer Wiederholungen"
 " (Standard: ja)."
 
-#: ../../source/cli_import_export.rst:325
+#: ../../source/cli_import_export.rst:326
 msgid ""
 "``--collection-ids`` — IDs de collections à exporter (séparés par des "
 "virgules, vide = toutes)."
@@ -586,7 +586,7 @@ msgstr ""
 "``--collection-ids`` — IDs der zu exportierenden Sammlungen (durch Kommas"
 " getrennt, leer = alle)."
 
-#: ../../source/cli_import_export.rst:327
+#: ../../source/cli_import_export.rst:328
 msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
@@ -594,7 +594,7 @@ msgstr ""
 "``--match-ids`` — Zu exportierende Match-IDs (durch Kommas getrennt, leer"
 " = alle)."
 
-#: ../../source/cli_import_export.rst:328
+#: ../../source/cli_import_export.rst:329
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules, vide = tous)."
@@ -602,7 +602,7 @@ msgstr ""
 "``--tournament-ids`` — IDs der zu exportierenden Turniere (durch Kommas "
 "getrennt, leer = alle)."
 
-#: ../../source/cli_import_export.rst:330
+#: ../../source/cli_import_export.rst:331
 msgid ""
 "``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions "
 "(séparés par des virgules, vide = tous)."
@@ -610,7 +610,7 @@ msgstr ""
 "``--deck-ids`` — IDs der Anki-Decks, die mit ihren Positionen exportiert "
 "werden (durch Kommas getrennt, leer = alle)."
 
-#: ../../source/cli_import_export.rst:332
+#: ../../source/cli_import_export.rst:333
 msgid ""
 "``--lesson-ids`` — IDs de leçons à exporter (séparés par des virgules, "
 "vide = toutes)."
@@ -618,7 +618,7 @@ msgstr ""
 "``--lesson-ids`` — IDs der zu exportierenden Lektionen (durch Kommas "
 "getrennt, leer = alle)."
 
-#: ../../source/cli_import_export.rst:335
+#: ../../source/cli_import_export.rst:336
 msgid ""
 "``--password`` — Enveloppe le résultat dans un conteneur chiffré "
 "(``.dbx``)."
@@ -626,7 +626,7 @@ msgstr ""
 "``--password`` — Verpackt das Ergebnis in einen verschlüsselten Container"
 " (``.dbx``)."
 
-#: ../../source/cli_import_export.rst:336
+#: ../../source/cli_import_export.rst:337
 msgid ""
 "``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
 "fichier exporté (voir :ref:`diffusion_controlee`)."
@@ -634,7 +634,7 @@ msgstr ""
 "``--watermark`` — Schreibt eine **signierte** Herkunftserklärung in die "
 "exportierte Datei (siehe :ref:`diffusion_controlee`)."
 
-#: ../../source/cli_import_export.rst:338
+#: ../../source/cli_import_export.rst:339
 msgid ""
 "``--watermark-note`` — Texte libre associé au filigrane (conditions "
 "d'usage, contact) ; utilisé avec ``--watermark``."
@@ -642,7 +642,7 @@ msgstr ""
 "``--watermark-note`` — Freier Text zum Wasserzeichen "
 "(Nutzungsbedingungen, Kontakt); zusammen mit ``--watermark`` verwendet."
 
-#: ../../source/cli_import_export.rst:340
+#: ../../source/cli_import_export.rst:341
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document "
 "résumant l'export: chemin, taille en octets, nombres)."
@@ -650,7 +650,7 @@ msgstr ""
 "``--format`` — Ausgabeformat: ``text`` (Standard) oder ``json`` (ein "
 "Dokument, das den Export zusammenfasst: Pfad, Größe in Byte, Anzahlen)."
 
-#: ../../source/cli_import_export.rst:342
+#: ../../source/cli_import_export.rst:343
 msgid ""
 "``--incremental`` — Avec ``--type database`` : n'exporte que ce qui est "
 "entré dans la bibliothèque depuis le dernier export incrémental vers le "
@@ -669,7 +669,7 @@ msgstr ""
 "Dateiname wird abgelehnt: Die vorhandene Datei enthält das vorige Delta, "
 "das der andere Rechner vielleicht noch nicht zusammengeführt hat."
 
-#: ../../source/cli_import_export.rst:349
+#: ../../source/cli_import_export.rst:350
 msgid ""
 "``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, "
 "à la place du dossier de destination."
@@ -677,7 +677,7 @@ msgstr ""
 "``--sync-cursor`` — Mit ``--incremental``: Name der gelesenen und "
 "vorgerückten Markierung, anstelle des Zielordners."
 
-#: ../../source/cli_import_export.rst:351
+#: ../../source/cli_import_export.rst:352
 msgid ""
 "``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille "
 "par famille, ce que l'export écrirait, sans écrire de fichier (``--file``"
@@ -693,7 +693,7 @@ msgstr ""
 "würden, und „recherche“-Stapel, deren Quelle einen Teil verlieren würde, "
 "werden benannt. Mit einem anderen Typ wird die Option abgelehnt."
 
-#: ../../source/cli_import_export.rst:357
+#: ../../source/cli_import_export.rst:358
 msgid ""
 "``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des "
 "identifiants derrière un compte : ``positions``, ``comments`` (les "
@@ -711,7 +711,7 @@ msgstr ""
 " ``lessons``, ``ankiDecks``, ``transcriptions`` oder ``filters``. "
 "``--offset`` und ``--limit`` wählen die Seite (höchstens 1000 Kennungen)."
 
-#: ../../source/cli_import_export.rst:363
+#: ../../source/cli_import_export.rst:364
 msgid ""
 "``--type database`` exporte toute la bibliothèque, comme l'export du "
 "serveur et comme la fenêtre d'export quand la liste affichée est la "
@@ -738,12 +738,12 @@ msgstr ""
 "exportiert werden. ``--type matches`` nimmt ebenfalls den Entwurf jedes "
 "Matches mit."
 
-#: ../../source/cli_import_export.rst:372
-#: ../../source/cli_import_export.rst:457
+#: ../../source/cli_import_export.rst:373
+#: ../../source/cli_import_export.rst:458
 msgid "**Exemples:**"
 msgstr "**Beispiele:**"
 
-#: ../../source/cli_import_export.rst:395
+#: ../../source/cli_import_export.rst:396
 msgid ""
 "Un filigrane est signé avec l'identité d'émetteur locale (voir la "
 "commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
@@ -767,11 +767,11 @@ msgstr ""
 "`ADR-0007 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0007"
 "-watermarks-mark-origin-and-nothing-else.md>`__."
 
-#: ../../source/cli_import_export.rst:407
+#: ../../source/cli_import_export.rst:408
 msgid "transfer — Copier d'une bibliothèque à une autre"
 msgstr "transfer — Von einer Bibliothek in eine andere kopieren"
 
-#: ../../source/cli_import_export.rst:409
+#: ../../source/cli_import_export.rst:410
 msgid ""
 "Copie une partie d'une bibliothèque dans une autre, sans fichier "
 "intermédiaire à manipuler. La sélection est celle de ``export --type "
@@ -792,7 +792,7 @@ msgstr ""
 "nicht dupliziert. Von A nach B und dann von B nach A zu kopieren erzeugt "
 "daher keine Duplikate."
 
-#: ../../source/cli_import_export.rst:424
+#: ../../source/cli_import_export.rst:425
 msgid ""
 "``--from`` — Bibliothèque source (obligatoire ; elle doit exister et être"
 " au schéma de cette version de blunderDB). Une bibliothèque plus ancienne"
@@ -806,7 +806,7 @@ msgstr ""
 " Sie sie einmal in blunderDB. Eine neuere Bibliothek wird ebenfalls "
 "abgelehnt: Aktualisieren Sie blunderDB."
 
-#: ../../source/cli_import_export.rst:429
+#: ../../source/cli_import_export.rst:430
 msgid ""
 "``--to`` — Bibliothèque de destination (obligatoire ; créée si elle "
 "n'existe pas). Elle ne peut pas être la source."
@@ -814,7 +814,7 @@ msgstr ""
 "``--to`` — Zielbibliothek (erforderlich; wird angelegt, falls sie nicht "
 "existiert). Sie darf nicht die Quelle sein."
 
-#: ../../source/cli_import_export.rst:431
+#: ../../source/cli_import_export.rst:432
 msgid ""
 "``--analysis``, ``--comments``, ``--played-moves``, ``--matches``, "
 "``--transcriptions``, ``--aliases``, ``--collections``, "
@@ -826,7 +826,7 @@ msgstr ""
 "``--tournaments``, ``--decks``, ``--lessons`` — Wie bei ``export``: Eine "
 "Option auf ``false`` entfernt ihre Familie (Standard: ja für alle)."
 
-#: ../../source/cli_import_export.rst:435
+#: ../../source/cli_import_export.rst:436
 msgid ""
 "``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
 "ids``, ``--lesson-ids`` — Une liste d'IDs de la source restreint sa "
@@ -838,7 +838,7 @@ msgstr ""
 "Familie auf diese Elemente und schließt sie ein. Eine ID, die die Quelle "
 "nicht enthält, ist ein Fehler, und es wird nichts kopiert."
 
-#: ../../source/cli_import_export.rst:439
+#: ../../source/cli_import_export.rst:440
 msgid ""
 "``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la "
 "source et ce que la destination en a pris)."
@@ -846,7 +846,7 @@ msgstr ""
 "``--format`` — ``text`` (Standard) oder ``json`` (was aus der Quelle "
 "gelesen und was vom Ziel daraus übernommen wurde)."
 
-#: ../../source/cli_import_export.rst:442
+#: ../../source/cli_import_export.rst:443
 msgid ""
 "**Quelles positions partent.** Sans liste d'IDs, toutes les positions de "
 "la source partent, rangées ou non. Dès qu'une liste d'IDs est donnée, "
@@ -869,7 +869,7 @@ msgstr ""
 "anderen Matches dieses Turniers; mit ``--tournaments=false`` kommt es "
 "ohne Turnier an."
 
-#: ../../source/cli_import_export.rst:451
+#: ../../source/cli_import_export.rst:452
 msgid ""
 "Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal "
 "d'import, ni métadonnée de la source ; la destination garde les siennes, "
@@ -884,7 +884,7 @@ msgstr ""
 "Stapel kommt ohne Verlauf an, und ein bereits vorhandener Stapel gleichen"
 " Namens behält seinen eigenen."
 
-#: ../../source/cli_import_export.rst:472
+#: ../../source/cli_import_export.rst:473
 msgid ""
 "Le serveur offre le même transfert entre deux tenants, tiré par le tenant"
 " qui reçoit (voir :ref:`mode_headless_transfert`)."
@@ -892,11 +892,11 @@ msgstr ""
 "Der Server bietet denselben Transfer zwischen zwei Tenants an, vom "
 "empfangenden Tenant gezogen (siehe :ref:`mode_headless_transfert`)."
 
-#: ../../source/cli_import_export.rst:476
+#: ../../source/cli_import_export.rst:477
 msgid "identity — Identité d'émetteur"
 msgstr "identity — Aussteller-Identität"
 
-#: ../../source/cli_import_export.rst:478
+#: ../../source/cli_import_export.rst:479
 msgid ""
 "Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
 "signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
@@ -910,19 +910,19 @@ msgstr ""
 " gehört zu einer Person, nicht zu einer Datenbank: Alles, was Sie "
 "markieren, trägt einen einzigen öffentlichen Fingerabdruck."
 
-#: ../../source/cli_import_export.rst:492
+#: ../../source/cli_import_export.rst:493
 msgid "``--name`` — Change le nom affiché de l'identité."
 msgstr "``--name`` — Ändert den angezeigten Namen der Identität."
 
-#: ../../source/cli_import_export.rst:493
+#: ../../source/cli_import_export.rst:494
 msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
 msgstr "``--export`` — Exportiert die Identität in eine ``.bdbid``-Datei."
 
-#: ../../source/cli_import_export.rst:494
+#: ../../source/cli_import_export.rst:495
 msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
 msgstr "``--import`` — Importiert eine Identität aus einer ``.bdbid``-Datei."
 
-#: ../../source/cli_import_export.rst:495
+#: ../../source/cli_import_export.rst:496
 msgid ""
 "``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
 "exporté/importé (l'identité locale, elle, est volontairement non "
@@ -931,7 +931,7 @@ msgstr ""
 "``--passphrase`` — Optionale Passphrase, die die exportierte/importierte "
 "Datei schützt (die lokale Identität selbst bleibt bewusst ungeschützt)."
 
-#: ../../source/cli_import_export.rst:497
+#: ../../source/cli_import_export.rst:498
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom, "
 "empreinte, chemin de stockage)."
@@ -939,7 +939,7 @@ msgstr ""
 "``--format`` — Ausgabeformat: ``text`` (Standard) oder ``json`` (Name, "
 "Fingerabdruck, Speicherpfad)."
 
-#: ../../source/cli_import_export.rst:500
+#: ../../source/cli_import_export.rst:501
 msgid ""
 "Le fichier exporté permet à quiconque le détient de signer en votre nom —"
 " ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
@@ -951,11 +951,11 @@ msgstr ""
 "Beschriftung: Bereits markierte Dateien behalten den Namen, unter dem sie"
 " versiegelt wurden, und lassen sich weiterhin prüfen."
 
-#: ../../source/cli_import_export.rst:506
+#: ../../source/cli_import_export.rst:507
 msgid "open — Ouvrir un fichier protégé"
 msgstr "open — Eine geschützte Datei öffnen"
 
-#: ../../source/cli_import_export.rst:508
+#: ../../source/cli_import_export.rst:509
 msgid ""
 "Transforme un fichier protégé par mot de passe (``.dbx``) en base "
 "ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
@@ -965,15 +965,15 @@ msgstr ""
 "Datenbank um. Das Passwort wird einmal abgefragt; danach ist es eine "
 "normale Datei."
 
-#: ../../source/cli_import_export.rst:518
+#: ../../source/cli_import_export.rst:519
 msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
 msgstr "``--db`` — Zu öffnende ``.dbx``-Datei (erforderlich)."
 
-#: ../../source/cli_import_export.rst:519
+#: ../../source/cli_import_export.rst:520
 msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
 msgstr "``--password`` — Passwort des Containers (erforderlich)."
 
-#: ../../source/cli_import_export.rst:520
+#: ../../source/cli_import_export.rst:521
 msgid ""
 "``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
 "extension ``.db``)."
@@ -981,7 +981,7 @@ msgstr ""
 "``--file`` — Ausgabepfad für die gewöhnliche Datenbank (Standard: "
 "gleicher Name, Endung ``.db``)."
 
-#: ../../source/cli_import_export.rst:523
+#: ../../source/cli_import_export.rst:524
 msgid ""
 "Ce que le mot de passe protège : le *transport* du fichier — la copie "
 "égarée dans un dossier de téléchargements, la pièce jointe envoyée par "

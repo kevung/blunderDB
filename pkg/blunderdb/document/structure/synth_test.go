@@ -454,11 +454,9 @@ func TestSyntheticUnconfirmed(t *testing.T) {
 func TestSyntheticDeducedStack(t *testing.T) {
 	r := rand.New(rand.NewSource(5))
 	var pages []synthPage
-	var truthPos []synthPos
 	for i := 0; i < 6; i++ {
 		a, b := randomPos(r), randomPos(r)
 		pages = append(pages, synthPage{pos: []synthPos{a, b}, opts: []drawOpts{plainOpts(36), plainOpts(36)}})
-		truthPos = append(truthPos, a, b)
 	}
 	// The last diagram: the bottom player's 6 point holds five; draw only
 	// four, print the pips of five.

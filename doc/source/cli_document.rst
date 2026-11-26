@@ -20,16 +20,23 @@ l'import d'un relevé écrit.
 Ce qui est lu, ce qui est refusé
 --------------------------------
 
-``document analyze`` lit les PDF dont les diagrammes sont dessinés avec la police
-de plateau d'eXtreme Gammon (les PDF imprimés par XG) : chaque diagramme y est du
-texte, que la commande décode exactement, glyphe par glyphe. Tout autre PDF est
-refusé :
+``document analyze`` lit deux sortes de documents :
+
+* un PDF dont les diagrammes sont dessinés avec la police de plateau
+  d'eXtreme Gammon (les PDF imprimés par XG) : chaque diagramme y est du texte,
+  que la commande décode exactement, glyphe par glyphe ;
+* les pages d'un livre scanné, en images : un dossier de fichiers PNG ou JPEG,
+  une page par fichier, lus dans l'ordre de leurs noms, ou une image seule. Les
+  diagrammes y sont lus par leur structure (voir :ref:`cli_document_images`).
+
+Un autre PDF est refusé ; ses pages se donnent alors en images :
 
 .. code-block:: text
 
-   Error: document: no diagram readable by its glyphs (only PDF diagrams drawn with eXtreme Gammon's board font are read)
+   Error: document: no diagram readable by its glyphs (only PDF diagrams drawn with eXtreme Gammon's board font are read); for a scanned book, give its pages as images: a folder of PNG or JPEG files, one a page
 
-Un fichier qui n'est pas un PDF, un PDF chiffré ou plus gros que 512 Mio est
+Un fichier qui n'est ni un PDF ni une image, un PDF chiffré ou plus gros que
+512 Mio, une image de plus de 64 Mio ou de plus de 100 millions de pixels est
 refusé aussi, avec un message qui le dit.
 
 Le parcours en trois commandes
@@ -108,7 +115,8 @@ Les trois états
    Les recoupements du diagramme tiennent : chaque camp compte quinze pions
    (sur les points, sur la barre et dans le plateau de sortie), et les pips
    calculés d'après la position égalent les pips imprimés des deux joueurs. Le
-   score et la longueur du match sont ceux que le PDF imprime à côté.
+   score et la longueur du match sont ceux que le PDF imprime à côté. Pour une
+   page en image, voir :ref:`cli_document_images`.
 
 ``to-verify``
    La lecture tient, mais rien ne la confirme : un pip imprimé diffère du pip
@@ -134,6 +142,43 @@ qu'elle porte disent quoi contrôler, par exemple :
    pips read 167/167, printed 160/167 (bottom/top)
 
 Le dé n'est pas lu : l'analyse écrit toujours « pas de dés » (``00``).
+
+.. _cli_document_images:
+
+Pages en images
+---------------
+
+Une page en image est lue sans style supposé : la commande y cherche deux
+rangées de douze pointes coupées par une barre, et des pions, disques de deux
+classes empilés depuis la base d'une pointe. Elle apprend le style du document
+sur le document lui-même : la forme du pion sur les premiers diagrammes, puis,
+sur tous, les deux classes de pions, la numérotation imprimée et le sens de jeu.
+Rien n'est gardé d'un document à l'autre, et aucune image n'est conservée.
+
+Elle lit les diagrammes au trait et les captures de logiciel imprimées, dans
+l'ordre de lecture : page de gauche puis de droite d'une double page, colonne,
+puis haut en bas. Une page légèrement de biais est redressée, l'ombre de reliure
+effacée. Résolution utile : 150 à 300 dpi, celle que le fichier indique ; à
+défaut, le grand côté de la page est pris pour onze pouces.
+
+Une telle lecture n'est ``sure`` que si les pips imprimés à côté du diagramme
+égalent les pips calculés des deux camps, qu'aucun camp n'a plus de quinze pions
+et qu'aucun doute ne reste. Les pips imprimés ne se lisent que dans la couche
+texte d'un document, qu'une image n'a pas : une entrée lue d'une image est donc
+``to-verify`` et le dit (``no printed pip count was found next to the
+diagram``).
+
+Les doutes nomment ce qui reste à contrôler : une pile qui porte un chiffre, un
+disque d'aucune des deux classes (pion pâli ou taché), une colonne pleine de haut
+en bas, une pile sombre comptée par sa longueur, un demi-plateau (une rangée sans
+pointe), le sens de jeu supposé (les pions avancent vers le côté qui a le moins
+de pips), les pions sortis comptés par différence, un videau dessiné hors du
+centre, des dés dessinés.
+
+Ne sont jamais lus : la valeur et le propriétaire du videau (la position le dit
+centré), les dés (aucun), le score (partie libre), le joueur au trait (celui du
+bas), le plateau de sortie (un camp dessiné avec moins de quinze pions a les
+autres sortis).
 
 Pourquoi l'import refuse
 ------------------------
@@ -190,4 +235,4 @@ Le démon
 --------
 
 Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` avec
-les mêmes règles ; il n'analyse aucun PDF (voir :ref:`headless`).
+les mêmes règles ; il n'analyse aucun document (voir :ref:`headless`).

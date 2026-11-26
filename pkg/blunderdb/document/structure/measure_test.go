@@ -363,7 +363,7 @@ func (p *pdfPages) render(page int) rendered {
 	base := filepath.Join(p.dir, fmt.Sprintf("p%d", page))
 	cmd := exec.Command("pdftoppm", "-f", strconv.Itoa(page), "-l", strconv.Itoa(page), "-r", strconv.Itoa(int(dpi)), "-gray", "-png", "-singlefile", p.pdf, base)
 	if out, err := cmd.CombinedOutput(); err != nil {
-		return rendered{err: fmt.Errorf("pdftoppm page %d: %v %s", page, err, out)}
+		return rendered{err: fmt.Errorf("pdftoppm page %d: %w %s", page, err, out)}
 	}
 	f, err := os.Open(base + ".png")
 	if err != nil {

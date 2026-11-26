@@ -286,18 +286,17 @@ type barDisc struct {
 // boardReading is the raw reading of one diagram, before the document's
 // classes and orientation are known.
 type boardReading struct {
-	cols    []column // top row j=0..11, then bottom row
-	bar     []barDisc
-	n       int    // slots a column can hold
-	rows    [2]int // points attested in the top and bottom rows
-	digits  [2][12]int
-	cubes   []string
-	dice    int
-	page    int
-	bbox    box
-	pageW   int
-	pageH   int
-	readErr bool
+	cols   []column // top row j=0..11, then bottom row
+	bar    []barDisc
+	n      int    // slots a column can hold
+	rows   [2]int // points attested in the top and bottom rows
+	digits [2][12]int
+	cubes  []string
+	dice   int
+	page   int
+	bbox   box
+	pageW  int
+	pageH  int
 }
 
 type slot struct {
