@@ -330,7 +330,8 @@ nommés par leur rang. En mode serveur, ``/v1/exports.archive`` rend la page et
 ``/v1/imports.archive`` prend une page ou une image téléversée.
 
 Dans l'interface, la boîte *Archive papier…* du menu contextuel d'un match
-fait l'export et l'import (:ref:`archive_papier_interface`).
+fait l'export et l'import (:ref:`archive_papier_interface`) ; l'import s'ouvre
+aussi depuis la liste des matchs vide et par la commande ``import_archive``.
 
 sheet — Liste de positions imprimable
 -------------------------------------

@@ -130,6 +130,10 @@ possible ; la barre d'état donne les matchs importés, les doublons et les code
 manquants. Les matchs passent par l'import ordinaire, et les analyses sont
 recalculées ensuite. En ligne de commande : ``archive`` (:doc:`cli_import_export`).
 
+Sans aucun match en base, l'import s'ouvre aussi par le bouton **Importer une
+archive papier…** de la liste des matchs vide et par la commande
+``import_archive`` (:doc:`cmd_mode`).
+
 Un clic sur un match ouvre sa fiche. Une ligne
 d'en-tête donne les joueurs, le score final (le vainqueur en gras, son nom au
 survol), la longueur, la cadence s'il y en a une et la date ; le tournoi, la

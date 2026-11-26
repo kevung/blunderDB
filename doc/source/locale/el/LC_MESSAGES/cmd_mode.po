@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 02:50+0100\n"
+"POT-Creation-Date: 2026-11-26 13:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/cmd_mode.rst:4
 msgid "Liste des commandes"
@@ -87,6 +87,19 @@ msgstr "import_db, idb"
 #: ../../source/cmd_mode.rst:1
 msgid "Importe et fusionne une autre base de données."
 msgstr "Εισάγει και συγχωνεύει μια άλλη βάση δεδομένων."
+
+#: ../../source/cmd_mode.rst:1
+msgid "import_archive, iar"
+msgstr "import_archive, iar"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Importe une archive papier de matchs : la page HTML exportée, ou des "
+"scans et des photos de ses feuilles (voir "
+":ref:`panneau_matchs`)."
+msgstr ""
+"Εισάγει ένα χάρτινο αρχείο ματς: την εξαγόμενη σελίδα HTML ή σαρώσεις και"
+" φωτογραφίες των φύλλων της (βλ. :ref:`panneau_matchs`)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "export_db, edb"
@@ -314,7 +327,7 @@ msgstr ""
 "συγκεντρώνει τους πίνακες των κύβων 1, 2 και 4: αυτές οι τρεις εντολές "
 "ανοίγουν την ίδια καρτέλα."
 
-#: ../../source/cmd_mode.rst:48
+#: ../../source/cmd_mode.rst:49
 msgid "Positions et navigation"
 msgstr "Θέσεις και πλοήγηση"
 
@@ -557,7 +570,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Πλοήγηση στον τελευταίο αγώνα που επισκεφθήκατε."
 
-#: ../../source/cmd_mode.rst:80
+#: ../../source/cmd_mode.rst:81
 msgid "Édition et recherche"
 msgstr "Επεξεργασία και αναζήτηση"
 
@@ -603,11 +616,11 @@ msgstr ""
 "Αναζήτηση ανάμεσα στις εμφανιζόμενες θέσεις: τρέχοντα αποτελέσματα, "
 "ανοιχτή συλλογή ή αγώνας υπό επισκόπηση."
 
-#: ../../source/cmd_mode.rst:96
+#: ../../source/cmd_mode.rst:97
 msgid "Filtres de recherche"
 msgstr "Φίλτρα αναζήτησης"
 
-#: ../../source/cmd_mode.rst:98
+#: ../../source/cmd_mode.rst:99
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -623,7 +636,7 @@ msgstr ""
 "(δείτε :ref:`cli`)· μια παύλα σημαίνει φίλτρο που το εκφράζει μόνο η "
 "γραμματική."
 
-#: ../../source/cmd_mode.rst:105
+#: ../../source/cmd_mode.rst:106
 msgid ""
 "Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -643,7 +656,7 @@ msgstr ""
 "εντολών, όπου δεν υπάρχει ταμπλό, τα διακριτικά αυτά συγκρίνονται με κενό"
 " ταμπλό· εκεί πρέπει να χρησιμοποιούνται οι επιλογές της τρίτης στήλης."
 
-#: ../../source/cmd_mode.rst:114
+#: ../../source/cmd_mode.rst:115
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -653,7 +666,7 @@ msgstr ""
 "ταξινομεί το αποτέλεσμα κατά αύξουσα απόσταση από μια θέση-στόχο, και όλα"
 " τα άλλα διακριτικά περιορίζουν το σύνολο που κατατάσσεται έτσι."
 
-#: ../../source/cmd_mode.rst:118
+#: ../../source/cmd_mode.rst:119
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -664,11 +677,11 @@ msgstr ""
 "κόστισαν τουλάχιστον ένα δέκατο του πόντου, αφού ένας πόντος αξίζει 1000 "
 "χιλιοστά."
 
-#: ../../source/cmd_mode.rst:122
+#: ../../source/cmd_mode.rst:123
 msgid "Deux recherches complètes :"
 msgstr "Δύο πλήρεις αναζητήσεις:"
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -677,7 +690,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — πάνω από 30 pips καθυστέρηση, μεταξύ 40 % και 60 "
 "% πιθανότητες νίκης, κανένα σχόλιο."
 
-#: ../../source/cmd_mode.rst:126
+#: ../../source/cmd_mode.rst:127
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -2036,7 +2049,7 @@ msgstr ""
 " μια αστερισμένη μορφή (``like42*``) που δεν υπάρχει πια. Δείτε "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:251
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -2055,11 +2068,11 @@ msgstr ""
 "και ετικετών: δεν εμφανίζεται σε καμία τιμή, και το ``ma1;2`` δεν είναι "
 "διακριτικό (γράψτε ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:255
+#: ../../source/cmd_mode.rst:256
 msgid "Transcrire depuis un terminal"
 msgstr "Μεταγραφή από τερματικό"
 
-#: ../../source/cmd_mode.rst:257
+#: ../../source/cmd_mode.rst:258
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -2079,7 +2092,7 @@ msgstr ""
 "είναι δική της συνεδρία, χωρίς ``sessionId`` και χωρίς αναίρεση από τη "
 "μία κλήση στην άλλη."
 
-#: ../../source/cmd_mode.rst:268
+#: ../../source/cmd_mode.rst:269
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 

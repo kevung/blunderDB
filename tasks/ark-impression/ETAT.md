@@ -24,11 +24,20 @@ papier par codes QR. Issues #984 à #987.
   parcourue entière), « Imprimer… » d'une collection, « Imprimer les positions » du
   panier ; boîte « Archive papier… » du menu d'un match (export match / liste /
   bibliothèque, import d'un fichier, d'un scan ou d'une photo). Une entrée plus haute
-  qu'une feuille se poursuit sur la suivante, coupée à un mot de son commentaire.
+  qu'une feuille se poursuit sur la suivante, coupée à un mot de son commentaire ; une
+  entrée longue commence sur la page en cours, et la suite d'une réponse au verso occupe le
+  recto suivant plutôt que de le laisser vide. L'ArkID garde sa largeur (`.de .nt`
+  `flex: none`), l'analyse passe à la ligne. Import d'archive papier aussi par la liste des
+  matchs vide et la commande `import_archive` (`iar`).
+- Rendu des feuilles tenu par `frontend/tests/e2e/print-sheet.spec.js` (CI e2e) sur les
+  fixtures que `TestPrintFixtures` écrit (`-update-fixtures` après un changement de rendu).
 
 ## À faire, dans l'ordre
 
-Rien d'ouvert sur ce chantier : voir les écarts ci-dessous.
+1. #987 point 5 : code de réimport des listes de positions (voir l'écart ci-dessous). La
+   pagination se décide dans le navigateur ; le code par page demande soit une pagination
+   côté Go, soit des codes par tranche fixe que le script place sur la page de leur
+   première position. À trancher avant d'écrire le codec.
 
 ## Décisions
 
@@ -45,7 +54,9 @@ Rien d'ouvert sur ce chantier : voir les écarts ci-dessous.
 - Tous les matchs tiennent sur une page A4 ; 251 coups imprimés en médiane, 756 au plus.
 - Corps d'environ 8 pt pour un match en 7 ou 9 points, 6,5 pt en 11 ou 13 ; plancher 5,5 pt.
 - ArkID : 29 caractères en médiane, 34 au plus.
-- Listes : environ 160 positions par face avec analyse, 300 sans.
+- Listes : environ 160 positions par face avec analyse, 300 sans. Mesuré au corps 5,5 pt
+  (Chromium de Playwright, fixtures de `TestPrintFixtures`) : 172 et 171 par face avec
+  l'analyse sur la ligne, 345 sans.
 - Codec d'archive (prototype Python) : 201 octets par match en médiane. Le codec Go n'a pas
   été mesuré sur cette base.
 
@@ -67,4 +78,5 @@ Rien d'ouvert sur ce chantier : voir les écarts ci-dessous.
 - Le titre proposé de la liste parcourue est le nom de la collection active, sinon la
   dernière recherche : il peut se tromper quand les deux existent, et la boîte le laisse
   corriger. La mise en page des listes (paires recto verso, découpe d'une entrée) est
-  faite par le script dans le navigateur, sans test automatisé du rendu.
+  faite par le script dans le navigateur ; le test e2e la contrôle sur des fixtures, pas sur
+  une base réelle.
