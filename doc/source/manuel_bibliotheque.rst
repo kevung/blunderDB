@@ -600,6 +600,15 @@ options de la boîte :
   leur ligne, au verso avec les réponses. Un commentaire plus long qu'une page
   se poursuit sur la suivante.
 - **ArkID développé** (décochée) : la forme développée plutôt que la compacte.
+- **Code de réimport** (décochée) : des codes QR qui portent les positions, un
+  bloc toutes les 145 positions, imprimé sur la page de la première position de
+  son bloc et embarqué dans le fichier. Le fichier enregistré, ou le scan ou la
+  photo d'une seule page, se réimporte par
+  :ref:`Archive papier… <archive_papier_interface>` : chaque bloc se relit seul, et un code
+  illisible est reconstruit par les autres codes de son bloc. Les codes ne
+  portent que les positions (ce que dit l'ArkID), sans analyses ni
+  commentaires ; chacune est enregistrée comme une position apportée seule, et
+  une position déjà en base n'est pas dupliquée.
 
 L'impression n'écrit rien dans la base. En ligne de commande : ``sheet``
 (:doc:`cli_import_export`).

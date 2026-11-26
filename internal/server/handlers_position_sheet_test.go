@@ -56,3 +56,24 @@ func TestPositionSheetRouteRefusals(t *testing.T) {
 		}
 	}
 }
+
+// TestPositionSheetReimportRoute: a list printed with its reimport codes
+// imports into another library through imports.archive, its positions saved
+// on their own, and a second pass finds them all held.
+func TestPositionSheetReimportRoute(t *testing.T) {
+	code, page := positionSheet(t, map[string]any{"query": "s", "options": map[string]any{"reimportCode": true}})
+	if code != http.StatusOK || !strings.Contains(page, `class="qrb" data-from="1"`) {
+		t.Fatalf("status %d, code drawn %v", code, strings.Contains(page, `data-from="1"`))
+	}
+	dst := newTestServer(t)
+	done := uploadImportNamed(t, dst, "/v1/imports.archive", "liste.html", []byte(page))
+	last := done[len(done)-1]
+	n, _ := last["list_positions"].(float64)
+	if last["event"] != "done" || n == 0 {
+		t.Fatalf("list import: %v", last)
+	}
+	again := uploadImportNamed(t, dst, "/v1/imports.archive", "liste.html", []byte(page))
+	if last := again[len(again)-1]; last["event"] != "done" || last["list_positions"].(float64) != 0 || last["list_positions_known"].(float64) != n {
+		t.Fatalf("second list import: %v", last)
+	}
+}

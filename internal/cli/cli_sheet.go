@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/arkqr"
 	"github.com/kevung/blunderdb/pkg/blunderdb/printsheet"
 )
 
@@ -27,6 +28,7 @@ func (cli *CLI) runSheet(args []string) error {
 	verso := fs.Bool("verso", def.Verso, "Print the analyses overleaf, under the same numbers")
 	comments := fs.Bool("comments", def.Comments, "Print the positions' comments, whole (overleaf with --verso)")
 	expanded := fs.Bool("expanded", def.Expanded, "Write the ArkIDs in their developed form")
+	code := fs.Bool("reimport-code", def.ReimportCode, "Draw the positions' reimport QR codes, a block every "+strconv.Itoa(arkqr.Tranche)+" positions, and embed them in the file")
 	fs.Usage = func() {
 		out := cli.stdout()
 		fmt.Fprintln(out, "Usage: blunderdb sheet --db FILE (--query Q | --collection ID | --ids IDS) [options]")
@@ -39,7 +41,10 @@ func (cli *CLI) runSheet(args []string) error {
 		fmt.Fprintln(out, "on as many numbered pages as it takes, header and legend on each; a comment")
 		fmt.Fprintln(out, "longer than a page goes on over the next: nothing is ever cut off. With --verso")
 		fmt.Fprintln(out, "each page of positions is followed by its answers. At most "+strconv.Itoa(printsheet.MaxPositions)+" positions;")
-		fmt.Fprintln(out, "a longer list is refused. Nothing is written to the library.")
+		fmt.Fprintln(out, "a longer list is refused. Nothing is written to the library. With --reimport-code")
+		fmt.Fprintln(out, "the positions are coded "+strconv.Itoa(arkqr.Tranche)+" at a time, each block of QR codes printed on the")
+		fmt.Fprintln(out, "page of its first position and read back alone: `archive import` takes the saved")
+		fmt.Fprintln(out, "file, a scan or a photograph and saves the positions, without analyses or comments.")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Options:")
 		fs.PrintDefaults()
@@ -47,6 +52,7 @@ func (cli *CLI) runSheet(args []string) error {
 		fmt.Fprintln(out, "Examples:")
 		fmt.Fprintln(out, "  blunderdb sheet --db database.db --query 'E>80' --lang fr --output blunders.html")
 		fmt.Fprintln(out, "  blunderdb sheet --db database.db --collection 3 --verso --comments=false")
+		fmt.Fprintln(out, "  blunderdb sheet --db database.db --query 'E>80' --reimport-code --output blunders.html")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -67,7 +73,7 @@ func (cli *CLI) runSheet(args []string) error {
 		return err
 	}
 	page, err := cli.db.PositionSheetHTML(src, printsheet.PositionsOptions{
-		Language: *lang, Title: *title, Analysis: *analysis, Verso: *verso, Comments: *comments, Expanded: *expanded,
+		Language: *lang, Title: *title, Analysis: *analysis, Verso: *verso, Comments: *comments, Expanded: *expanded, ReimportCode: *code,
 	})
 	if err != nil {
 		return fmt.Errorf("sheet: %w", err)

@@ -123,7 +123,9 @@ func (cli *CLI) runArchiveImport(args []string) error {
 		"Import the matches of paper archives: the exported HTML page (its embedded matches, no code\n"+
 			"reading), or scans and photographs of its sheets (PNG, JPEG), several codes an image, any\n"+
 			"number of images in any order. A lost code is rebuilt from its parity code. Matches go\n"+
-			"through the ordinary import: an import batch, and a match already held is a duplicate.",
+			"through the ordinary import: an import batch, and a match already held is a duplicate.\n"+
+			"The reimport codes of a printed position list (sheet --reimport-code) bring their\n"+
+			"positions back, each saved on its own.",
 		"blunderdb archive import --db database.db archive.html",
 		"blunderdb archive import --db database.db page1.jpg page2.jpg")
 	dbPath := fs.String("db", "", "Path to the database file (required)")
@@ -163,6 +165,9 @@ func (cli *CLI) importArchive(paths []string, format string) error {
 	out := cli.stdout()
 	fmt.Fprintf(out, "Read %d archive codes (%d rebuilt from parity)\n", res.Codes, res.Repaired)
 	fmt.Fprintf(out, "Imported %d matches, %d already in the library\n", len(res.Imported), res.Duplicates)
+	if res.Positions+res.KnownPositions > 0 {
+		fmt.Fprintf(out, "Imported %d positions, %d already in the library\n", res.Positions, res.KnownPositions)
+	}
 	if len(res.Missing) > 0 {
 		fmt.Fprintf(out, "Unreadable codes: %s\n", joinRanks(res.Missing))
 	}

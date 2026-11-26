@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/arkqr"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -34,6 +35,11 @@ type PositionsOptions struct {
 	Comments bool `json:"comments"`
 	// Expanded writes the ArkIDs in their developed form.
 	Expanded bool `json:"expanded"`
+	// ReimportCode draws the positions' reimport codes, a block of them
+	// every arkqr.Tranche positions on the page of the tranche's first
+	// position, and embeds them in the file: the saved list imports as a
+	// paper archive does, a scanned page on its own.
+	ReimportCode bool `json:"reimportCode"`
 }
 
 // DefaultPositionsOptions is what the print dialog opens with.
@@ -99,6 +105,19 @@ type PositionList struct {
 	Title   string
 	Printed time.Time
 	Entries []*ListEntry
+	// Codes are the reimport codes, one block a tranche, when asked for.
+	Codes []TrancheCode
+	// CodeErr says why a list asked for its codes prints none.
+	CodeErr string
+}
+
+// TrancheCode is the reimport code of the entries numbered From to To: an
+// archive of its own (arkqr.PositionFrames), its parity included, Size bytes
+// coded.
+type TrancheCode struct {
+	From, To int
+	Frames   []arkqr.Frame
+	Size     int
 }
 
 // ResolvePositions reads the ids src names, in their order. It refuses with
@@ -186,6 +205,17 @@ func ReadPositions(ctx context.Context, s storage.Storage, scope string, ids []i
 		}
 	}
 	l := &PositionList{Printed: time.Now()}
+	if o.ReimportCode {
+		ordered := make([]*domain.Position, 0, len(ids))
+		for _, id := range ids {
+			if p := byID[id]; p != nil {
+				ordered = append(ordered, p)
+			}
+		}
+		if l.Codes, err = trancheCodes(ordered); err != nil {
+			l.Codes, l.CodeErr = nil, err.Error()
+		}
+	}
 	for _, id := range ids {
 		p := byID[id]
 		if p == nil {
@@ -213,6 +243,25 @@ func ReadPositions(ctx context.Context, s storage.Storage, scope string, ids []i
 		l.Entries = append(l.Entries, e)
 	}
 	return l, nil
+}
+
+// trancheCodes codes the list arkqr.Tranche positions at a time, each tranche
+// an archive of its own.
+func trancheCodes(ps []*domain.Position) ([]TrancheCode, error) {
+	var out []TrancheCode
+	for lo := 0; lo < len(ps); lo += arkqr.Tranche {
+		hi := min(len(ps), lo+arkqr.Tranche)
+		data, err := arkqr.EncodePositions(lo+1, ps[lo:hi])
+		if err != nil {
+			return nil, err
+		}
+		frames, err := arkqr.PositionFrames(data)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, TrancheCode{From: lo + 1, To: hi, Frames: frames, Size: len(data)})
+	}
+	return out, nil
 }
 
 // OnRollPips is the pip count of the player on roll, then of the opponent.

@@ -19,7 +19,8 @@ export const DEFAULT_POSITION_SHEET_OPTIONS = Object.freeze({
     analysis: true,
     verso: false,
     comments: true,
-    expanded: false
+    expanded: false,
+    reimportCode: false
 });
 
 /** Le plus de positions qu'un document imprime : printsheet.MaxPositions, que le moteur fait respecter. */

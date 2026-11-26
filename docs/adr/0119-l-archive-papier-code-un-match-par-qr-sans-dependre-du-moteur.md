@@ -72,3 +72,34 @@ ses poids ou son générateur de coups ont changé.
 - L'entrée d'interface suit avec les feuilles imprimables. Le démon expose l'archive sans
   chemin de fichier : `/v1/exports.archive` rend la page, `/v1/imports.archive` prend une page
   ou une image téléversée.
+
+## Amendement — le code de réimport d'une liste de positions
+
+Une liste de positions imprimée (`printsheet.BuildPositions`, option `reimportCode`) porte
+ses propres codes, lus par le même chemin que l'archive.
+
+1. **Un format de trame distinct** : une trame de liste s'ouvre sur l'octet `0xA8` (celles des
+   matchs gardent `0xA7`, et leur identifiant d'archive ne change pas), avec la même
+   disposition, le même découpage en parties, la même parité et le même CRC (`Frame.Kind`,
+   `KindPositions`). Un lecteur de matchs ne prend jamais un code de liste pour le sien ;
+   `Assemble` rend les matchs et les tranches à part.
+2. **Une position, c'est son ArkID** (ADR-0118) : score (money, ou les deux scores Away sur 7
+   bits et la marque Crawford), dés, jeton du videau et son exposant, puis les cases de chaque
+   camp en unaire ; 109 bits au plus, 12,6 octets en moyenne. Le décodage réécrit l'ArkID
+   canonique et le confie à `domain.DecodeArkID` : le code dit exactement ce que la ligne
+   imprimée dit, et l'empreinte de Zobrist est la sienne. Ni analyse, ni commentaire, ni
+   provenance.
+3. **Des tranches fixes, pas de pagination en Go** : la mise en page se décide dans le
+   navigateur, donc Go code la liste par tranches de `arkqr.Tranche` (145) positions, chacune
+   une archive autonome — deux codes de données et leur parité, que la borne de 109 bits
+   garantit. Le rendu marque chaque bloc du numéro de sa première position (`data-from`) ; le
+   script de mise en page le pose sur la page recto qui porte cette ligne, et le retire avec
+   elle quand elle passe à la page suivante. Une page scannée seule se relit donc tranche par
+   tranche, un code perdu rebâti par la parité ; le fichier enregistré embarque toutes les
+   trames, comme une page d'archive.
+4. **Le réimport est celui d'une position apportée seule** : `storage.SaveIndividual` (que
+   `Database.SaveIndividualPosition` et le panier utilisent aussi) lève le drapeau de
+   provenance et dédoublonne sur l'empreinte ; une position déjà en base est comptée, pas
+   réécrite. La base (CLI `archive import`, interface), le démon (`/v1/imports.archive`,
+   champs `list_positions` et `list_positions_known`) suivent le même chemin. L'import par lot
+   (`mapFile`) ne porte que des matchs : une liste y est écartée avec son motif.

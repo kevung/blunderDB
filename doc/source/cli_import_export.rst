@@ -329,6 +329,15 @@ glisser-déposer de l'interface. Les codes illisibles et non reconstruits sont
 nommés par leur rang. En mode serveur, ``/v1/exports.archive`` rend la page et
 ``/v1/imports.archive`` prend une page ou une image téléversée.
 
+``import`` lit aussi les codes de réimport d'une liste de positions
+imprimée (``sheet --reimport-code``) : le fichier enregistré, ou les scans et
+photos de ses pages, même une seule. Ses positions sont enregistrées une à
+une, comme une position apportée seule (sans analyses ni commentaires) ; la
+sortie compte celles qui sont nouvelles et celles que la base avait déjà, et
+``/v1/imports.archive`` les rend dans les champs ``list_positions`` et
+``list_positions_known``. L'import par lot ne prend pas une liste : il
+l'écarte avec son motif.
+
 Dans l'interface, la boîte *Archive papier…* du menu contextuel d'un match
 fait l'export et l'import (:ref:`Archive papier… <archive_papier_interface>`) ; l'import s'ouvre
 aussi depuis la liste des matchs vide et par la commande ``import_archive``.
@@ -359,14 +368,21 @@ base. Le serveur la sert par ``/v1/positions.sheet`` (``ids``, ``query`` ou
 pour les choix qu'un objet ``options`` ne nomme pas, il prend les mêmes défauts
 que la commande.
 
+``--reimport-code`` (désactivé par défaut) code les positions par blocs de 145,
+chacun en deux codes QR et un code de parité imprimés sur la page de la
+première position du bloc, et les embarque dans le fichier : ``archive
+import`` relit le fichier, ou le scan d'une seule page, bloc par bloc. Une
+position y coûte environ 13 octets : son ArkID, sans analyse ni commentaire.
+
 .. code-block:: bash
 
-   ./blunderdb sheet --db <chemin> (--query <requête> | --collection <ID> | --ids <ID>[,<ID>...]) [--output <fichier.html>] [--lang fr] [--title <titre>] [--analysis=false] [--verso] [--comments=false] [--expanded]
+   ./blunderdb sheet --db <chemin> (--query <requête> | --collection <ID> | --ids <ID>[,<ID>...]) [--output <fichier.html>] [--lang fr] [--title <titre>] [--analysis=false] [--verso] [--comments=false] [--expanded] [--reimport-code]
 
 .. code-block:: bash
 
    ./blunderdb sheet --db base.db --query 'E>80' --lang fr --output blunders.html
    ./blunderdb sheet --db base.db --collection 3 --verso --comments=false
+   ./blunderdb sheet --db base.db --query 'E>80' --reimport-code --output blunders.html
 
 export — Exporter des données
 ------------------------------

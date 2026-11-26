@@ -34,10 +34,8 @@ papier par codes QR. Issues #984 à #987.
 
 ## À faire, dans l'ordre
 
-1. #987 point 5 : code de réimport des listes de positions (voir l'écart ci-dessous). La
-   pagination se décide dans le navigateur ; le code par page demande soit une pagination
-   côté Go, soit des codes par tranche fixe que le script place sur la page de leur
-   première position. À trancher avant d'écrire le codec.
+Rien : #987 point 5 est fait (codes de réimport des listes, par tranches de 145 positions
+posées par le script sur la page de leur première position ; amendement de l'ADR-0119).
 
 ## Décisions
 
@@ -70,9 +68,10 @@ papier par codes QR. Issues #984 à #987.
 - Feuille de match : l'ajustement du corps est fait par le navigateur (script) ; il n'est
   pas mesuré par un test, ni sur la base de 298 matchs. L'interface n'a pas de sélection
   multiple : le lot imprime les matchs que la liste affiche.
-- Listes de positions : pas de code de réimport. Le codec d'archive ne porte que des
-  matchs ; chaque ArkID imprimé se réimporte déjà (`positions.fromArkID`, coller dans
-  l'interface). Un code QR de positions demande un nouveau type de trame.
+- Listes de positions : le code de réimport ne porte que les positions (leur ArkID), ni
+  analyses ni commentaires. Il n'a pas été relu d'un vrai scan imprimé ; le test lit les
+  trames embarquées et la parité, le rendu e2e contrôle la place des blocs. L'import par lot
+  (glisser-déposer, dossier surveillé) écarte une liste : elle passe par l'archive papier.
 - Le panier n'imprime que ses positions de la bibliothèque affichée ; celles des autres
   bibliothèques ouvertes sont ignorées.
 - Le titre proposé de la liste parcourue est le nom de la collection active, sinon la

@@ -388,6 +388,8 @@
         "commentsTip": "Los comentarios de las posiciones, completos, al dorso con las respuestas",
         "expanded": "ArkID desarrollado",
         "expandedTip": "Escribe las posiciones en la forma desarrollada del ArkID",
+        "reimportCode": "Código de reimportación",
+        "reimportCodeTip": "Códigos QR que llevan las posiciones, un bloque cada 145 en la página de su primera posición; el archivo, o un escaneo o foto de una sola página, se reimporta por el archivo en papel (sin análisis ni comentarios)",
         "count": "{n} posiciones, impresas completas",
         "heading": "Título",
         "tooMany": "{n} posiciones en la lista: una impresión admite {max} como máximo. Filtre la lista para reducirla.",
@@ -410,7 +412,7 @@
         "exporting": "Escribiendo el archivo en papel…",
         "exported": "Archivo en papel guardado: {path} ({matches} partidas, {codes} códigos, {skipped} descartadas)",
         "importing": "Leyendo el archivo en papel…",
-        "imported": "Archivo en papel: {imported} partidas importadas, {duplicates} duplicadas, {missing} códigos faltantes, {failed} fallidas",
+        "imported": "Archivo en papel: {imported} partidas importadas, {duplicates} duplicadas; {positions} posiciones importadas, {knownPositions} ya presentes, {missing} códigos faltantes, {failed} fallidas",
         "failed": "Error en el archivo en papel: {err}"
     },
     "match": {

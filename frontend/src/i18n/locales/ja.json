@@ -388,6 +388,8 @@
         "commentsTip": "局面のコメントを全文、裏面に解答とともに",
         "expanded": "展開形 ArkID",
         "expandedTip": "局面を ArkID の展開形で書きます",
+        "reimportCode": "再インポート用コード",
+        "reimportCodeTip": "局面を載せた QR コード。145 局面ごとに 1 ブロックを、その最初の局面のページに印刷します。ファイル、または 1 ページだけのスキャンや写真を紙のアーカイブから再インポートできます（分析・コメントは含みません）",
         "count": "{n} 局面、すべて印刷",
         "heading": "タイトル",
         "tooMany": "リストに {n} 局面：1 回の印刷は最大 {max} です。リストを絞り込んでください。",
@@ -410,7 +412,7 @@
         "exporting": "紙のアーカイブを書き込み中…",
         "exported": "紙のアーカイブを保存しました：{path}（{matches} マッチ、{codes} コード、{skipped} 除外）",
         "importing": "紙のアーカイブを読み込み中…",
-        "imported": "紙のアーカイブ：{imported} マッチをインポート、{duplicates} 重複、{missing} コード欠落、{failed} 失敗",
+        "imported": "紙のアーカイブ：{imported} マッチをインポート、{duplicates} 重複、{positions} 局面をインポート、{knownPositions} は既存、{missing} コード欠落、{failed} 失敗",
         "failed": "紙のアーカイブに失敗しました：{err}"
     },
     "match": {

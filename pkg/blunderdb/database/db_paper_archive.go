@@ -45,6 +45,12 @@ type PaperArchiveImport struct {
 	// already held, from this archive or from another format.
 	Imported   []int64 `json:"imported"`
 	Duplicates int     `json:"duplicates"`
+	// Positions counts the positions a printed list's reimport code brought
+	// that the library did not hold, KnownPositions the others: those it
+	// already held, and a position the list prints twice from its second
+	// line on. Each is saved on its own, as a position the user brings.
+	Positions      int `json:"positions"`
+	KnownPositions int `json:"knownPositions"`
 	// Missing lists the ranks (from 1) of the codes neither read nor rebuilt.
 	Missing []int `json:"missing,omitempty"`
 	// Failed lists the matches that could not be read or written, and why.
@@ -55,8 +61,9 @@ type PaperArchiveImport struct {
 // embedded matches need no code reading, or scans and photographs (PNG,
 // JPEG) of its sheets, any number and in any order — and imports their
 // matches through the import path of every format: an import batch when the
-// caller opened one, and the duplicate check. Nothing about the archive or
-// its producer is recorded (ADR-0007).
+// caller opened one, and the duplicate check. The reimport codes of a printed
+// position list, read the same way, bring their positions back one by one.
+// Nothing about the archive or its producer is recorded (ADR-0007).
 func (d *Database) ImportPaperArchive(paths []string) (*PaperArchiveImport, error) {
 	// Reading scans is the long part: it is cancellable like the writes.
 	ctx, done := d.beginCancellableImport()
@@ -81,7 +88,8 @@ func (d *Database) ImportPaperArchive(paths []string) (*PaperArchiveImport, erro
 		return res, fmt.Errorf("no archive code found: %w", storage.ErrInvalid)
 	}
 	graphs, asm, failed := ingest.ArchiveGraphs(frames)
-	res.Repaired, res.Failed = asm.Repaired, failed
+	positions, pfailed := ingest.ArchivePositions(asm)
+	res.Repaired, res.Failed = asm.Repaired, append(failed, pfailed...)
 	for _, ranks := range asm.Missing {
 		for _, r := range ranks {
 			res.Missing = append(res.Missing, r+1)
@@ -90,6 +98,10 @@ func (d *Database) ImportPaperArchive(paths []string) (*PaperArchiveImport, erro
 
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	var err error
+	if res.Positions, res.KnownPositions, err = ingest.SaveArchivePositions(ctx, d.store.Positions(), "", positions); err != nil {
+		return res, err
+	}
 	for i, graph := range graphs {
 		id, enriched, err := d.writeImportedMatchEnriched(ctx, graph)
 		switch {

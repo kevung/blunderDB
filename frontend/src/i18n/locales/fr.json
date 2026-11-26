@@ -388,6 +388,8 @@
         "commentsTip": "Les commentaires des positions, en entier, au verso avec les réponses",
         "expanded": "ArkID développé",
         "expandedTip": "Écrit les positions sous la forme développée de l'ArkID",
+        "reimportCode": "Code de réimport",
+        "reimportCodeTip": "Des codes QR qui portent les positions, un bloc toutes les 145 sur la page de sa première position ; le fichier, un scan ou une photo d'une seule page se réimporte par l'archive papier (sans analyses ni commentaires)",
         "count": "{n} positions, imprimées en entier",
         "heading": "Titre",
         "tooMany": "{n} positions dans la liste : une impression en prend {max} au plus. Filtrez la liste pour la réduire.",
@@ -410,7 +412,7 @@
         "exporting": "Écriture de l'archive papier…",
         "exported": "Archive papier enregistrée : {path} ({matches} matchs, {codes} codes, {skipped} écartés)",
         "importing": "Lecture de l'archive papier…",
-        "imported": "Archive papier : {imported} matchs importés, {duplicates} doublons, {missing} codes manquants, {failed} en échec",
+        "imported": "Archive papier : {imported} matchs importés, {duplicates} doublons ; {positions} positions importées, {knownPositions} déjà présentes, {missing} codes manquants, {failed} en échec",
         "failed": "Échec de l'archive papier : {err}"
     },
     "match": {

@@ -47,6 +47,8 @@ export async function importPaperArchive() {
             tMsg('paperArchive.imported', {
                 imported: res?.imported?.length ?? 0,
                 duplicates: res?.duplicates ?? 0,
+                positions: res?.positions ?? 0,
+                knownPositions: res?.knownPositions ?? 0,
                 missing: res?.missing?.length ?? 0,
                 failed: res?.failed?.length ?? 0
             })

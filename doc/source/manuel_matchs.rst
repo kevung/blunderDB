@@ -130,6 +130,12 @@ possible ; la barre d'état donne les matchs importés, les doublons et les code
 manquants. Les matchs passent par l'import ordinaire, et les analyses sont
 recalculées ensuite. En ligne de commande : ``archive`` (:doc:`cli_import_export`).
 
+**Importer…** lit de la même façon les codes de réimport d'une liste de
+positions imprimée (:ref:`liste_imprimable`) : le fichier enregistré, ou les
+scans et photos de ses pages, même une seule. Les positions sont enregistrées
+une à une, comme une position apportée seule ; la barre d'état donne celles
+qui sont nouvelles et celles que la base avait déjà.
+
 Sans aucun match en base, l'import s'ouvre aussi par le bouton **Importer une
 archive papier…** de la liste des matchs vide et par la commande
 ``import_archive`` (:doc:`cmd_mode`).

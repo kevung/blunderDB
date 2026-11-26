@@ -6,7 +6,8 @@
  *
  * Tenu : l'ArkID garde toute sa largeur et rien ne le chevauche ; aucune feuille ne déborde ;
  * une entrée longue continue sur la page où elle commence au lieu de la laisser presque vide ;
- * au verso, aucun recto ne reste vide quand une réponse se prolonge.
+ * au verso, aucun recto ne reste vide quand une réponse se prolonge ; le code de réimport d'une
+ * tranche est sur la page de sa première position.
  */
 
 import { test, expect } from '@playwright/test';
@@ -49,7 +50,7 @@ async function render(page, name) {
     return page.evaluate(measure);
 }
 
-for (const name of ['list-analysis.html', 'list-plain.html', 'list-long.html', 'list-verso-long.html', 'match.html']) {
+for (const name of ['list-analysis.html', 'list-plain.html', 'list-long.html', 'list-verso-long.html', 'list-codes.html', 'match.html']) {
     test(`${name} : l'ArkID n'est ni comprimé ni chevauché, rien ne déborde`, async ({ page }) => {
         const r = await render(page, name);
         expect(r.overlaps.slice(0, 5)).toEqual([]);
@@ -68,4 +69,17 @@ test('au verso, une réponse qui se prolonge ne laisse aucun recto vide', async 
     expect(r.sheets.length % 2).toBe(0);
     const empty = r.sheets.filter((s) => !s.verso && s.lines === 0);
     expect(empty).toEqual([]);
+});
+
+test("le code de réimport d'une tranche est sur la page de sa première position", async ({ page }) => {
+    await render(page, 'list-codes.html');
+    const placed = await page.evaluate(() =>
+        [...document.querySelectorAll('.qrb[data-from]')].map((q) => {
+            const sheet = q.closest('.sheet');
+            const first = [...sheet.querySelectorAll('.de:not(.cont) .no')].some((n) => n.textContent === q.dataset.from);
+            return { from: q.dataset.from, first };
+        })
+    );
+    expect(placed.map((p) => p.from)).toEqual(['1', '146', '291']);
+    expect(placed.filter((p) => !p.first)).toEqual([]);
 });

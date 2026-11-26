@@ -47,5 +47,9 @@
 // on roll and of the opponent, then the analysis (best choice, another with
 // its loss in thousandths, win and gammon chances), on the line or on the
 // back. The desktop app, the CLI (`sheet`) and the daemon (`positions.sheet`)
-// print the same list, and nothing is written.
+// print the same list, and nothing is written. With ReimportCode, the list
+// is coded arkqr.Tranche positions at a time, each tranche an archive of its
+// own drawn as a .qrb block marked with its first number (data-from), which
+// the script lays on the front page holding that line: a page scanned alone
+// reads back, and the saved file embeds every code.
 package printsheet

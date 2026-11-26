@@ -128,13 +128,23 @@ body { --ink: #111; --soft: #555; --paper: #fff;
   // each, every page holding the lines that fit at the smallest size; with a
   // data-verso block, each front page is followed by the back that carries
   // the same numbers. A line taller than a page goes on over the next one.
-  // Every page is then fitted and numbered.
+  // A reimport code (.qrb, data-from) goes on the front page that holds the
+  // first line of its tranche. Every page is then fitted and numbered.
   function list(doc) {
     var s = doc.querySelector('.sheet'), inner = s.firstElementChild;
     var dl = inner.querySelector(':scope > .dl'), v = inner.querySelector(':scope > [data-verso]');
     if (!dl) return;
-    var es = Array.prototype.slice.call(dl.children), as = null, vframe = null;
+    var es = Array.prototype.slice.call(dl.children), as = null, vframe = null, qs = {};
     es.forEach(function (e) { dl.removeChild(e); });
+    var qrs = inner.querySelector(':scope > .qrs');
+    if (qrs) {
+      Array.prototype.slice.call(qrs.children).forEach(function (q) {
+        var k = parseInt(q.getAttribute('data-from'), 10) - 1;
+        if (k >= 0 && k < es.length) qs[k] = q; else return;
+        qrs.removeChild(q);
+      });
+      inner.removeChild(qrs);
+    }
     if (v) {
       var vdl = v.querySelector('.dl');
       as = Array.prototype.slice.call(vdl.children);
@@ -153,8 +163,9 @@ body { --ink: #111; --soft: #555; --paper: #fff;
       var b = vframe ? page(vframe) : null, rp = r.querySelector('.dl'), bp = b && b.querySelector('[data-verso] .dl'), n = 0;
       pages.push(r); if (b) pages.push(b);
       while (i < es.length) {
-        var e = es[i], a = as && as[i];
+        var e = es[i], a = as && as[i], q = e && qs[i];
         if (e) rp.appendChild(e);
+        if (q) { rp.parentNode.appendChild(q); qs[i] = null; }
         if (a) bp.appendChild(a);
         if (!e && a && n === 0 && b) {
           // An answer going on past its back: the front of this sheet,
@@ -174,7 +185,12 @@ body { --ink: #111; --soft: #555; --paper: #fff;
           // A long line starts where the page has room rather than leaving
           // it nearly empty; a short one moves whole to the next page.
           var c = okB ? (e && long(e, r) ? split(e, r) : null) : (okR && long(a, b) ? split(a, b) : null);
-          if (!c) { if (e) rp.removeChild(e); if (a) bp.removeChild(a); break; }
+          if (!c) {
+            if (e) rp.removeChild(e);
+            if (a) bp.removeChild(a);
+            if (q) { q.parentNode.removeChild(q); qs[i] = q; }
+            break;
+          }
           if (okB) { es[i] = c; if (as) as[i] = null; } else { as[i] = c; es[i] = null; }
           break;
         }
@@ -187,6 +203,9 @@ body { --ink: #111; --soft: #555; --paper: #fff;
       if (i >= es.length) break;
       r = page(rframe);
     }
+    // What is left of the codes (a list that could not be coded says why)
+    // closes the first page.
+    if (qrs && qrs.firstChild) s.firstElementChild.appendChild(qrs);
     pages.forEach(function (x, k) {
       fit(x);
       var p = document.createElement('div'); p.className = 'pg'; p.textContent = (k + 1) + ' / ' + pages.length; x.appendChild(p);

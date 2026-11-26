@@ -295,6 +295,41 @@ func ArchiveGraphs(frames []arkqr.Frame) (graphs []*MatchGraph, asm arkqr.Assemb
 	return graphs, asm, failed
 }
 
+// ArchivePositions decodes the tranches of position lists an assembly holds,
+// in the order read. failed names the tranches that could not be decoded.
+func ArchivePositions(asm arkqr.Assembly) (positions []domain.Position, failed []string) {
+	for i, data := range asm.Tranches {
+		t, err := arkqr.DecodePositions(data)
+		if err != nil {
+			failed = append(failed, fmt.Sprintf("tranche %d: %v", i+1, err))
+			continue
+		}
+		positions = append(positions, t.Positions...)
+	}
+	return positions, failed
+}
+
+// SaveArchivePositions stores the positions a list's reimport code brought,
+// each on its own as the user brought it (storage.SaveIndividual): created
+// counts the new ones, known those the library already held.
+func SaveArchivePositions(ctx context.Context, store storage.PositionStore, scope string, ps []domain.Position) (created, known int, err error) {
+	for i := range ps {
+		if err := ctx.Err(); err != nil {
+			return created, known, err
+		}
+		_, isNew, err := storage.SaveIndividual(ctx, store, scope, &ps[i])
+		if err != nil {
+			return created, known, err
+		}
+		if isNew {
+			created++
+		} else {
+			known++
+		}
+	}
+	return created, known, nil
+}
+
 // mapArchive reads an archive page for the batch pipeline.
 func mapArchive(path string) ([]*MatchGraph, error) {
 	data, err := os.ReadFile(path)
@@ -311,6 +346,11 @@ func mapArchive(path string) ([]*MatchGraph, error) {
 	graphs, asm, failed := ArchiveGraphs(frames)
 	if len(failed) > 0 || len(asm.Missing) > 0 {
 		return nil, fmt.Errorf("archive page: %d matches unreadable, codes missing %v", len(failed), asm.Missing)
+	}
+	// The batch carries matches only: a printed list goes through the
+	// paper archive import, which saves its positions.
+	if len(asm.Tranches) > 0 && len(graphs) == 0 {
+		return nil, fmt.Errorf("%w: a printed position list, imported as a paper archive", errUnsupportedFile)
 	}
 	return graphs, nil
 }
@@ -341,8 +381,10 @@ func (im ArchiveImporter) Import(ctx context.Context, scope string, src Source, 
 		return Summary{}, fmt.Errorf("%w: no archive code found", storage.ErrInvalid)
 	}
 	graphs, asm, failed := ArchiveGraphs(frames)
+	positions, pfailed := ArchivePositions(asm)
+	failed = append(failed, pfailed...)
 	if len(failed) > 0 || len(asm.Missing) > 0 {
-		return Summary{}, fmt.Errorf("%w: %d matches unreadable, codes missing %v", storage.ErrInvalid, len(failed), asm.Missing)
+		return Summary{}, fmt.Errorf("%w: %d matches or tranches unreadable, codes missing %v", storage.ErrInvalid, len(failed), asm.Missing)
 	}
 	tx, err := im.S.BeginTx(ctx)
 	if err != nil {
@@ -376,6 +418,9 @@ func (im ArchiveImporter) Import(ctx context.Context, scope string, src Source, 
 				sum.MatchID = res.MatchID
 			}
 		}
+	}
+	if sum.ListPositions, sum.ListPositionsKnown, err = SaveArchivePositions(ctx, tx.Positions(), scope, positions); err != nil {
+		return Summary{}, err
 	}
 	if err := tx.Commit(); err != nil {
 		return Summary{}, err
