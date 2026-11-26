@@ -155,8 +155,8 @@ func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, p
 	return m, nil
 }
 
-// PositionAfterPlay is pos played with d1-d2 and move (any notation of a
-// legal play, not necessarily the best), handed to the opponent before their
+// PositionAfterPlay is pos played with d1-d2 and move (a legal play, not
+// necessarily the best, its hits starred as blunderDB writes them), handed to the opponent before their
 // roll: the position whose roll map is the opponent's replies. An empty move
 // is accepted only for a roll that dances.
 func PositionAfterPlay(pos domain.Position, d1, d2 int, move string) (domain.Position, error) {
@@ -178,18 +178,15 @@ func PositionAfterPlay(pos domain.Position, d1, d2 int, move string) (domain.Pos
 	case move == "":
 		return domain.Position{}, errors.New("gammonnet: a play is required for this roll")
 	default:
-		want := engine.CanonicalMove(move)
-		found := false
-		for _, p := range legal {
-			if engine.CanonicalMove(p.Notation) == want {
-				next = p.Result
-				found = true
-				break
-			}
+		// The play is read by the board it leaves, never by its shape: "6/5 5/1"
+		// and "6/2* 2/1" share one shape and differ by a hit. The notation is
+		// read in blunderDB's dialect, which writes every hit, so an unstarred
+		// point is not hit; one that still names several boards is refused.
+		p, err := engine.ResolvePlay(&pos, legal, move, true)
+		if err != nil {
+			return domain.Position{}, fmt.Errorf("gammonnet: %w", err)
 		}
-		if !found {
-			return domain.Position{}, fmt.Errorf("gammonnet: %q is not a legal play of %d-%d", move, d1, d2)
-		}
+		next = p.Result
 	}
 	next.PlayerOnRoll = opponent
 	next.Dice = [2]int{0, 0}
