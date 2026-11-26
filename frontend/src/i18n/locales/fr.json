@@ -369,7 +369,8 @@
         "reimportCode": "Code de réimport",
         "reimportCodeTip": "Le code QR du match en fin de transcription, également embarqué dans le fichier",
         "batch": "Les {n} matchs de la liste",
-        "batchTip": "Une feuille par match, dans un seul document"
+        "batchTip": "Une feuille par match, dans un seul document",
+        "tooMany": "{n} matchs dans la liste : une impression en prend {max} au plus. Filtrez la liste pour la réduire."
     },
     "match": {
         "errorExportingMat": "Erreur lors de l'export du match",

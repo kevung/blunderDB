@@ -5528,7 +5528,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/statsReportResp"
+                $ref: "#/components/schemas/matchSheetResp"
   /v1/matches.swapPlayers:
     post:
       operationId: matches.swapPlayers
@@ -10675,6 +10675,12 @@ components:
             format: int64
         options:
           $ref: "#/components/schemas/printsheet_MatchOptions"
+          nullable: true
+    matchSheetResp:
+      type: object
+      properties:
+        html:
+          type: string
     matchTextValuesReq:
       type: object
       properties:

@@ -2,6 +2,7 @@ package printsheet
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math"
@@ -42,6 +43,22 @@ type MatchOptions struct {
 func DefaultMatchOptions() MatchOptions {
 	return MatchOptions{Analysis: true, Comments: true, ReimportCode: true}
 }
+
+// UnmarshalJSON starts from DefaultMatchOptions, so that a request naming only
+// some choices keeps the defaults of the others in every mode.
+func (o *MatchOptions) UnmarshalJSON(b []byte) error {
+	type plain MatchOptions
+	p := plain(DefaultMatchOptions())
+	if err := json.Unmarshal(b, &p); err != nil {
+		return err
+	}
+	*o = MatchOptions(p)
+	return nil
+}
+
+// MaxMatches is the most matches one document prints: a batch is rendered in
+// memory, then laid out by the browser, and beyond this neither stays usable.
+const MaxMatches = 100
 
 // SlowThinkMS is the decision time from which the transcription writes it
 // beside the move: a long thought is worth seeing again.

@@ -768,7 +768,13 @@
     />
 {/if}
 
-<MatchPrintModal open={printMatchId !== null} matchId={printMatchId} listedIds={sortedMatches.map((/** @type {Match} */ m) => m.id)} onclose={() => (printMatchId = null)} />
+<MatchPrintModal
+    open={printMatchId !== null}
+    matchId={printMatchId}
+    listedTotal={matchTotal}
+    listAll={async () => (await matchListStore.allRows()).map((/** @type {Match} */ m) => m.id)}
+    onclose={() => (printMatchId = null)}
+/>
 
 <style>
     .match-panel {

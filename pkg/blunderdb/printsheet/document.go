@@ -2,6 +2,7 @@ package printsheet
 
 import (
 	"html"
+	"strconv"
 	"strings"
 )
 
@@ -52,37 +53,80 @@ body { --ink: #111; --soft: #555; --paper: #fff;
 .ph { font-weight: 600; font-size: 1.15em; border-bottom: .6pt solid var(--ink); margin: .8em 0 .25em; display: flex; justify-content: space-between }
 .ph span { font-weight: 400; font-size: .87em; color: var(--soft) }
 .pl { column-count: 2; column-gap: 1.8em; column-rule: .3pt solid #aaa }
-.pe { break-inside: avoid; padding: .12em 0; display: grid; grid-template-columns: 2.2em 1fr }
+.pe { break-inside: avoid; padding: .12em 0; display: grid; grid-template-columns: 2.2em max-content 1fr; column-gap: .6em }
 .pe > .ref { margin: 0; justify-self: start; align-self: start }
-.nt { font-family: var(--mono); font-size: .93em; font-weight: 600; overflow-wrap: anywhere }
+.nt { font-family: var(--mono); font-size: .93em; font-weight: 600; white-space: nowrap; min-width: 34ch }
 .wh { color: var(--soft) } .cm { font-style: italic; white-space: pre-wrap }
+.pe > .cm { grid-column: 2 / -1 }
 .qrb { break-inside: avoid; display: flex; gap: 1.2em; align-items: flex-end; margin-top: .9em; color: var(--soft) }
 .qrb svg { flex: none; display: block; shape-rendering: crispEdges }
 `
 
-// fitScript sizes each sheet's body to what fits, moves the data-verso block
-// to a second sheet when it cannot, and runs a data-flow transcription as
-// text when its lines still overflow.
+// BodySizes is the scale the fitting script tries, largest first: MaxBodyPt
+// down to MinBodyPt by StepBodyPt. Generated here so that Go tests the scale
+// the browser walks.
+func BodySizes() []float64 {
+	var out []float64
+	for i := 0; ; i++ {
+		fs := MaxBodyPt - float64(i)*StepBodyPt
+		if fs < MinBodyPt-StepBodyPt/2 {
+			return out
+		}
+		out = append(out, fs)
+	}
+}
+
+// bodySizesJS is BodySizes as a JavaScript array literal.
+func bodySizesJS() string {
+	parts := make([]string, 0, 16)
+	for _, fs := range BodySizes() {
+		parts = append(parts, strconv.FormatFloat(fs, 'f', -1, 64))
+	}
+	return "[" + strings.Join(parts, ", ") + "]"
+}
+
+// fitScript sizes each sheet's body to the largest of SIZES that fits, moves
+// the data-verso block to a second sheet when it cannot, runs a data-flow
+// transcription as text when its lines still overflow, and spreads the
+// positions of a verso still too long at the smallest size over further
+// sheets, so that no position is ever hidden by the sheet's edge.
 const fitScript = `(function () {
-  var MAX = 9, MIN = 5.5, STEP = 0.25;
+  var SIZES = /*SIZES*/, MIN = SIZES[SIZES.length - 1];
   function avail(s) { var c = getComputedStyle(s); return s.clientHeight - parseFloat(c.paddingTop) - parseFloat(c.paddingBottom); }
+  function fits(s, fs) { s.style.fontSize = fs + 'pt'; return s.firstElementChild.scrollHeight <= avail(s); }
   function fit(s) {
-    var inner = s.firstElementChild, h = avail(s);
-    for (var fs = MAX; fs >= MIN; fs -= STEP) { s.style.fontSize = fs + 'pt'; if (inner.scrollHeight <= h) { s.dataset.fs = fs; return true; } }
+    for (var i = 0; i < SIZES.length; i++) { if (fits(s, SIZES[i])) { s.dataset.fs = SIZES[i]; delete s.dataset.overflow; return true; } }
     s.dataset.fs = MIN; s.dataset.overflow = '1'; return false;
   }
   function flow(s) { var t = s.querySelector('[data-flow]'); if (!t || t.classList.contains('flow')) return false; t.classList.add('flow'); return true; }
+  function sheetAfter(doc, s, head) {
+    var n = document.createElement('div'); n.className = 'sheet';
+    var inner = document.createElement('div'); n.appendChild(inner);
+    if (head) inner.appendChild(head.cloneNode(true));
+    doc.insertBefore(n, s.nextSibling);
+    return n;
+  }
+  function entries(pl) { return pl.querySelectorAll(':scope > .pe'); }
+  function spill(doc, s, head) {
+    while (!fit(s)) {
+      var pl = s.querySelector('.pl');
+      if (!pl || entries(pl).length < 2) return;
+      var next = sheetAfter(doc, s, head), npl = document.createElement('div');
+      npl.className = 'pl'; next.firstElementChild.appendChild(npl);
+      var es = entries(pl);
+      while (es.length > 1 && !fits(s, MIN)) { npl.insertBefore(es[es.length - 1], npl.firstChild); es = entries(pl); }
+      fit(s); s = next;
+    }
+  }
   document.querySelectorAll('.doc').forEach(function (doc) {
     var s = doc.querySelector('.sheet');
     if (!s || fit(s)) return;
-    var v = s.querySelector('[data-verso]');
+    var v = s.querySelector('[data-verso]'), head = s.querySelector('.mh');
     if (v) {
-      var back = document.createElement('div'); back.className = 'sheet';
-      var inner = document.createElement('div'); back.appendChild(inner);
-      var head = s.querySelector('.mh'); if (head) inner.appendChild(head.cloneNode(true));
-      inner.appendChild(v); doc.appendChild(back);
+      var back = sheetAfter(doc, s, head);
+      back.firstElementChild.appendChild(v);
       if (!fit(s) && flow(s)) fit(s);
-      fit(back);
+      spill(doc, back, head);
     } else if (flow(s)) fit(s);
   });
 })();`
@@ -102,7 +146,7 @@ func Document(lang, title string, docs []string, tail string) []byte {
 		b.WriteString("\n")
 	}
 	b.WriteString(tail)
-	b.WriteString("<script>" + fitScript + "</script>\n</body></html>\n")
+	b.WriteString("<script>" + strings.Replace(fitScript, "/*SIZES*/", bodySizesJS(), 1) + "</script>\n</body></html>\n")
 	return []byte(b.String())
 }
 

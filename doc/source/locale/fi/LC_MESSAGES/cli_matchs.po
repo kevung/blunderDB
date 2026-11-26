@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 12:01+0100\n"
+"POT-Creation-Date: 2026-11-26 12:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -176,7 +176,7 @@ msgstr ""
 "otteluiden yli (sarake ``95 % CI``), ja ``list --type players`` sarakkeen"
 " ``L7``."
 
-#: ../../source/cli_matchs.rst:74 ../../source/cli_matchs.rst:256
+#: ../../source/cli_matchs.rst:74 ../../source/cli_matchs.rst:259
 msgid "**Options:**"
 msgstr "**Valitsimet:**"
 
@@ -200,7 +200,7 @@ msgstr ""
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
 msgstr "``--output`` — Tulostiedosto (oletus: vakiotuloste)."
 
-#: ../../source/cli_matchs.rst:81 ../../source/cli_matchs.rst:217
+#: ../../source/cli_matchs.rst:81 ../../source/cli_matchs.rst:220
 msgid "**Exemples:**"
 msgstr "**Esimerkkejä:**"
 
@@ -257,7 +257,8 @@ msgid ""
 " *Imprimer…* du panneau Match (:ref:`feuille_match`) : une feuille A4 par"
 " match, dans un seul fichier HTML autonome que le navigateur imprime ou "
 "enregistre en PDF. ``--match`` prend un ou plusieurs identifiants séparés"
-" par des virgules ; sans ``--output``, la page sort sur la sortie "
+" par des virgules, 100 au plus (au-delà, la commande refuse et n'écrit "
+"rien, comme le serveur) ; sans ``--output``, la page sort sur la sortie "
 "standard. ``--lang`` choisit la langue de la feuille, ``--player`` le "
 "joueur pour qui elle est imprimée (par défaut le joueur principal s'il a "
 "joué, sinon le joueur 1). ``--opponent-blunders`` numérote et détaille "
@@ -265,27 +266,32 @@ msgid ""
 "``--analysis``, ``--comments`` et ``--reimport-code`` sont actifs par "
 "défaut et se coupent par ``=false`` ; ``--expanded`` écrit les ArkID sous"
 " leur forme développée. Rien n'est écrit dans la base. Le serveur la sert"
-" par ``/v1/matches.sheet``, qui rend la page dans le champ ``html``."
+" par ``/v1/matches.sheet``, qui rend la page dans le champ ``html`` ; "
+"sans ``options``, ou pour les choix qu'un objet ``options`` ne nomme pas,"
+" il prend les mêmes défauts que la commande."
 msgstr ""
 "**match sheet** — Kirjoittaa tulostettavan ottelulehden, saman kuin "
 "Ottelupaneelin toiminto *Tulosta…* (:ref:`feuille_match`): yksi A4-arkki "
 "ottelua kohden, yhtenä itsenäisenä HTML-tiedostona, jonka selain tulostaa"
 " tai tallentaa PDF:ksi. ``--match`` ottaa yhden tai useamman pilkuilla "
-"erotetun tunnisteen; ilman ``--output``-valitsinta sivu menee "
-"vakiotulosteeseen. ``--lang`` valitsee lehden kielen, ``--player`` "
+"erotetun tunnisteen, enintään 100 (sen ylittyessä komento kieltäytyy eikä"
+" kirjoita mitään, kuten palvelin); ilman ``--output``-valitsinta sivu "
+"menee vakiotulosteeseen. ``--lang`` valitsee lehden kielen, ``--player`` "
 "pelaajan, jolle lehti tulostetaan (oletuksena pääpelaaja, jos hän pelasi,"
 " muuten pelaaja 1). ``--opponent-blunders`` numeroi ja erittelee myös "
 "vastustajan mokat (oletuksena pois); ``--analysis``, ``--comments`` ja "
 "``--reimport-code`` ovat oletuksena päällä ja ne kytketään pois muodolla "
 "``=false``; ``--expanded`` kirjoittaa ArkID:t laajennetussa muodossa. "
 "Tietokantaan ei kirjoiteta mitään. Palvelin tarjoaa sen reitillä "
-"``/v1/matches.sheet``, joka palauttaa sivun kentässä ``html``."
+"``/v1/matches.sheet``, joka palauttaa sivun kentässä ``html``; ilman "
+"``options``-oliota tai niille valinnoille, joita ``options``-olio ei "
+"mainitse, se käyttää samoja oletuksia kuin komento."
 
-#: ../../source/cli_matchs.rst:143
+#: ../../source/cli_matchs.rst:146
 msgid "tournament — Lire un tournoi dirigé"
 msgstr "tournament — Johdetun turnauksen lukeminen"
 
-#: ../../source/cli_matchs.rst:145
+#: ../../source/cli_matchs.rst:148
 msgid ""
 "Lit un tournoi dirigé sans interface graphique. Diriger un tournoi de "
 "façon interactive est le rôle de la console du moteur Nicomaque ; ces "
@@ -297,11 +303,11 @@ msgstr ""
 "tehtävä; nämä alikomennot **lukevat**, mikään ei odota syötettä, ja vain "
 "``move`` ja ``confirm`` kirjoittavat."
 
-#: ../../source/cli_matchs.rst:154
+#: ../../source/cli_matchs.rst:157
 msgid "**Sous-commandes:**"
 msgstr "**Alikomennot:**"
 
-#: ../../source/cli_matchs.rst:156
+#: ../../source/cli_matchs.rst:159
 msgid ""
 "``list [--format text|json]`` — Les tournois dirigés de la base, avec "
 "leur état, la version du moteur, l'événement auquel chacun appartient (si"
@@ -311,7 +317,7 @@ msgstr ""
 "tila, moottorin versio, tapahtuma johon kukin kuuluu (tyhjä jos ei "
 "mihinkään) ja viimeisimmän päätöksen päivämäärä."
 
-#: ../../source/cli_matchs.rst:159
+#: ../../source/cli_matchs.rst:162
 msgid ""
 "``verify --id N [--format text|json]`` — Rejoue la direction et signale "
 "tout avertissement résiduel. **Sort en erreur** s'il en reste un : c'est "
@@ -324,7 +330,7 @@ msgstr ""
 "ajaa sen kauden tietokannoille, haluaa paluukoodin eikä suodatettavaa "
 "riviä."
 
-#: ../../source/cli_matchs.rst:163
+#: ../../source/cli_matchs.rst:166
 msgid ""
 "``standings --id N`` — Le classement en CSV, prix compris, dans la langue"
 " de l'interface."
@@ -332,7 +338,7 @@ msgstr ""
 "``standings --id N`` — Sijoitukset CSV-muodossa, palkinnot mukaan lukien,"
 " käyttöliittymän kielellä."
 
-#: ../../source/cli_matchs.rst:165
+#: ../../source/cli_matchs.rst:168
 msgid ""
 "``ranking --season [--rencontre N] [--from AAAA-MM-JJ] [--to AAAA-MM-JJ] "
 "[--points 25,18,15] [--participation P] [--elo] [--format csv|json]`` — "
@@ -361,7 +367,7 @@ msgstr ""
 " turnausta kohti; päättymätön turnaus luetellaan, mutta se ei tuota "
 "mitään."
 
-#: ../../source/cli_matchs.rst:176
+#: ../../source/cli_matchs.rst:179
 msgid ""
 "``page --id N|--rencontre N [--out <dossier>]`` — La page HTML "
 "d'affichage d'une épreuve (``--id``), ou la page murale d'un événement "
@@ -377,7 +383,7 @@ msgstr ""
 "vakiotulosteeseen; sen kanssa se kirjoitetaan kansioon, josta tulee "
 "johtamisen tai tapahtuman kansio."
 
-#: ../../source/cli_matchs.rst:182
+#: ../../source/cli_matchs.rst:185
 msgid ""
 "``export --id N`` — Le journal d'événements brut, rejouable par les "
 "outils du moteur. Le journal est toute la vérité d'une direction : le "
@@ -389,7 +395,7 @@ msgstr ""
 "varoitukset toistetaan siitä. Tätä tulostetta lukeva työkalu ei tarvitse "
 "blunderDB:tä lainkaan."
 
-#: ../../source/cli_matchs.rst:186
+#: ../../source/cli_matchs.rst:189
 msgid ""
 "``move --id N --match M --table T [--format text|json]`` — Change la "
 "table d'un match en cours, comme le glisser-déposer d'une case sur une "
@@ -407,7 +413,7 @@ msgstr ""
 "pöydänvaihto kirjataan kummankin lokiin. Tulostaa jokaisen käynnissä "
 "olevan ottelun pöydän."
 
-#: ../../source/cli_matchs.rst:193
+#: ../../source/cli_matchs.rst:196
 msgid ""
 "``hall --rencontre N [--format text|json]`` — Toutes les tables d'un "
 "événement : une ligne par table, quelle que soit l'épreuve qui l'occupe "
@@ -427,7 +433,7 @@ msgstr ""
 "ryhmitellään saleittain, kun tapahtumalla on saleja, ja nimetään, kun "
 "niillä on nimi."
 
-#: ../../source/cli_matchs.rst:201
+#: ../../source/cli_matchs.rst:204
 msgid ""
 "``proposals --id N [--format text|json]`` — La file des propositions du "
 "moteur, numérotée : matchs, tirages, passage de phase, repêchage d'un "
@@ -437,7 +443,7 @@ msgstr ""
 "ehdotuslista: ottelut, arvonnat, vaiheen vaihto, vetäytyneen ryhmästä "
 "jatkoon päässeen varasija."
 
-#: ../../source/cli_matchs.rst:204
+#: ../../source/cli_matchs.rst:207
 msgid ""
 "``confirm --id N --n K [--format text|json]`` — Confirme la proposition "
 "numéro K de ``proposals``, comme *Lancer* dans le panneau, puis affiche "
@@ -447,7 +453,7 @@ msgstr ""
 "``proposals``-komennon ehdotuksen numero K, kuten *Aloita* paneelissa, ja"
 " näyttää sen jälkeen seuraavan listan."
 
-#: ../../source/cli_matchs.rst:207
+#: ../../source/cli_matchs.rst:210
 msgid ""
 "``tables --rencontre N|--tournament N [--format text|json]`` — Les "
 "propriétés des tables (nom, salle, réservée, attitrée à) et les salles où"
@@ -463,7 +469,7 @@ msgstr ""
 "``call``-komennon kautta (``rencontres.setTables``, "
 "``rencontres.setEventRooms``, ``directions.setTables``)."
 
-#: ../../source/cli_matchs.rst:214
+#: ../../source/cli_matchs.rst:217
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf "
 "pour ``list``, ``ranking``, ``page --rencontre``, ``hall`` et "
@@ -473,11 +479,11 @@ msgstr ""
 "paitsi komennoille ``list``, ``ranking``, ``page --rencontre``, ``hall`` "
 "ja ``tables``), ``--format``."
 
-#: ../../source/cli_matchs.rst:237
+#: ../../source/cli_matchs.rst:240
 msgid "transcribe — Rejouer une transcription"
 msgstr "transcribe — Toista litterointi uudelleen"
 
-#: ../../source/cli_matchs.rst:239
+#: ../../source/cli_matchs.rst:242
 msgid ""
 "Rejoue une transcription et rend compte de ce que la relecture y trouve. "
 "La source est un fichier ``.mat``, un match de la bibliothèque ou un "
@@ -491,37 +497,37 @@ msgstr ""
 "jonka se veisi ulos: toistettavaksi tulee siis se, mitä vienti "
 "sisältäisi."
 
-#: ../../source/cli_matchs.rst:258
+#: ../../source/cli_matchs.rst:261
 msgid "``--mat`` — Fichier ``.mat`` à rejouer."
 msgstr "``--mat`` — Toistettava ``.mat``-tiedosto."
 
-#: ../../source/cli_matchs.rst:259
+#: ../../source/cli_matchs.rst:262
 msgid "``--db`` — Base de données, pour ``--match`` et ``--draft``."
 msgstr "``--db`` — Tietokanta, valitsimia ``--match`` ja ``--draft`` varten."
 
-#: ../../source/cli_matchs.rst:260
+#: ../../source/cli_matchs.rst:263
 msgid "``--match`` — Identifiant du match de la bibliothèque à rejouer."
 msgstr "``--match`` — Toistettavan kirjaston ottelun tunniste."
 
-#: ../../source/cli_matchs.rst:261
+#: ../../source/cli_matchs.rst:264
 msgid "``--draft`` — Identifiant du brouillon de transcription à rejouer."
 msgstr "``--draft`` — Toistettavan litteroinnin luonnoksen tunniste."
 
-#: ../../source/cli_matchs.rst:262
+#: ../../source/cli_matchs.rst:265
 msgid "``--check`` — Liste les incohérences trouvées (comportement par défaut)."
 msgstr "``--check`` — Luettelee löydetyt epäjohdonmukaisuudet (oletustoiminta)."
 
-#: ../../source/cli_matchs.rst:263
+#: ../../source/cli_matchs.rst:266
 msgid "``--render`` — Réécrit la transcription en ``.mat`` à ce chemin."
 msgstr ""
 "``--render`` — Kirjoittaa litteroinnin takaisin ``.mat``-muodossa tähän "
 "polkuun."
 
-#: ../../source/cli_matchs.rst:264
+#: ../../source/cli_matchs.rst:267
 msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json``."
 
-#: ../../source/cli_matchs.rst:265
+#: ../../source/cli_matchs.rst:268
 msgid ""
 "``--edit`` — Ouvre un brouillon sur le ``--match`` (ou rend celui qui y "
 "est déjà ouvert)."
@@ -529,7 +535,7 @@ msgstr ""
 "``--edit`` — Avaa luonnoksen ``--match``-ottelulle (tai palauttaa sille "
 "jo avatun)."
 
-#: ../../source/cli_matchs.rst:267
+#: ../../source/cli_matchs.rst:270
 msgid ""
 "``--accept-losses`` — Avec ``--edit`` sur un match importé : accepte que "
 "ses analyses et commentaires puissent être perdus."
@@ -537,7 +543,7 @@ msgstr ""
 "``--accept-losses`` — ``--edit``-valitsimen kanssa tuodulla ottelulla: "
 "hyväksyy, että sen analyysit ja kommentit voivat hävitä."
 
-#: ../../source/cli_matchs.rst:269
+#: ../../source/cli_matchs.rst:272
 msgid ""
 "``--finish`` — Termine le ``--draft`` : écrit son match, ou remplace "
 "celui dont il a été ouvert, et libère le brouillon."
@@ -545,7 +551,7 @@ msgstr ""
 "``--finish`` — Viimeistelee ``--draft``-luonnoksen: kirjoittaa sen "
 "ottelun tai korvaa sen, josta se avattiin, ja vapauttaa luonnoksen."
 
-#: ../../source/cli_matchs.rst:271
+#: ../../source/cli_matchs.rst:274
 msgid ""
 "``--abandon`` — Abandonne le ``--draft`` : le supprime sans match ; un "
 "match dont il a été ouvert reste tel quel."
@@ -553,7 +559,7 @@ msgstr ""
 "``--abandon`` — Hylkää ``--draft``-luonnoksen: poistaa sen ilman ottelua;"
 " ottelu, josta se avattiin, pysyy ennallaan."
 
-#: ../../source/cli_matchs.rst:273
+#: ../../source/cli_matchs.rst:276
 msgid ""
 "``--yes`` — Avec ``--abandon`` sur un brouillon jamais terminé : confirme"
 " que tout ce qui y est écrit est perdu."
@@ -562,7 +568,7 @@ msgstr ""
 "koskaan syntynyt ottelua: vahvistaa, että kaikki siihen kirjoitettu "
 "menetetään."
 
-#: ../../source/cli_matchs.rst:275
+#: ../../source/cli_matchs.rst:278
 msgid ""
 "``--materialize`` — Document JSON (``header`` et ``actions``, dés "
 "compris) à écrire en match d'un seul coup, ou pas du tout."
@@ -570,7 +576,7 @@ msgstr ""
 "``--materialize`` — JSON-dokumentti (``header`` ja ``actions``, "
 "noppineen), joka kirjoitetaan otteluksi kerralla tai ei lainkaan."
 
-#: ../../source/cli_matchs.rst:277
+#: ../../source/cli_matchs.rst:280
 msgid ""
 "``--import`` — Fichier ``.mat`` ou document de transcription JSON sur "
 "lequel ouvrir un nouveau brouillon."
@@ -578,7 +584,7 @@ msgstr ""
 "``--import`` — ``.mat``-tiedosto tai JSON-transkriptioasiakirja, jonka "
 "päälle avataan uusi luonnos."
 
-#: ../../source/cli_matchs.rst:279
+#: ../../source/cli_matchs.rst:282
 msgid ""
 "``--marks`` — Écrit à ce chemin le manifeste des repères des vidéos "
 "locales, une ligne JSON par coup horodaté (``--match`` le limite à un "
@@ -588,7 +594,7 @@ msgstr ""
 "manifestin, yksi JSON-rivi aikaleimattua siirtoa kohden (``--match`` "
 "rajaa sen yhteen otteluun)."
 
-#: ../../source/cli_matchs.rst:282
+#: ../../source/cli_matchs.rst:285
 msgid ""
 "``--check`` nomme chaque incohérence avec le numéro de l'action et la "
 "partie où elle se trouve : coup illégal, deux tours de suite pour le même"
@@ -611,7 +617,7 @@ msgstr ""
 "ei ole se, jonka aiemmat pelit antavat, ja joka pelataan uudelleen "
 "kirjoitetulla tilanteella."
 
-#: ../../source/cli_matchs.rst:291
+#: ../../source/cli_matchs.rst:294
 msgid ""
 "Une incohérence est **rapportée, jamais opposée** : rien n'est refusé "
 "pour elle et le code de sortie reste 0 quoi que la relecture trouve. Un "
@@ -628,7 +634,7 @@ msgstr ""
 "perusteella, lukee ne muodossa ``--format json``, jossa rikkinäinen "
 "tiedosto ja laittoman siirron sisältävä peli eivät mene sekaisin."
 
-#: ../../source/cli_matchs.rst:298
+#: ../../source/cli_matchs.rst:301
 msgid ""
 "``--render`` réécrit la transcription en ``.mat``, ce qui permet de "
 "vérifier l'aller-retour sur un fichier réel, en dehors des tests."
@@ -637,7 +643,7 @@ msgstr ""
 "sallii edestakaisen muunnoksen tarkistamisen oikealla tiedostolla testien"
 " ulkopuolella."
 
-#: ../../source/cli_matchs.rst:301
+#: ../../source/cli_matchs.rst:304
 msgid ""
 "``--materialize`` écrit, sans brouillon, le match que joue un document "
 "d'actions arrivé d'ailleurs. Les règles sont appliquées strictement : la "
@@ -652,7 +658,7 @@ msgstr ""
 "(alkaen 0:sta) ja syynsä kanssa, eikä mitään kirjoiteta. Dokumentin "
 "päätösajat (``decision_ms``, ``cube_decision_ms``) siirretään siirroille."
 
-#: ../../source/cli_matchs.rst:307
+#: ../../source/cli_matchs.rst:310
 msgid ""
 "``--import`` ouvre un nouveau brouillon sur un fichier ``.mat`` ou sur un"
 " document de transcription JSON (``header``, ``actions``, et "
@@ -674,7 +680,7 @@ msgstr ""
 "laudan ulkopuolella, ``.mat`` ilman peliä — saa komennon epäonnistumaan "
 "eikä avaa luonnosta."
 
-#: ../../source/cli_matchs.rst:316
+#: ../../source/cli_matchs.rst:319
 msgid ""
 "Seules trois autres options écrivent, par les mêmes méthodes que le "
 "panneau Transcription : ``--edit`` ouvre un brouillon sur un match "
@@ -695,7 +701,7 @@ msgstr ""
 "``--edit`` ilmoittaa niiden määrän enintään ja kieltäytyy ilman "
 "``--accept-losses``-valitsinta."
 
-#: ../../source/cli_matchs.rst:324
+#: ../../source/cli_matchs.rst:327
 msgid ""
 "``--marks`` écrit un manifeste, sans toucher à la base : une ligne JSON "
 "par coup qui porte un repère (un instant de la vidéo), pour les seuls "
@@ -721,15 +727,15 @@ msgstr ""
 "kirjoiteta. Komento on olemassa vain komentorivillä: ``serve``-daemon ei "
 "lue yhtään videotiedostoa, eikä työpöytäsovellus tarjoa sitä."
 
-#: ../../source/cli_matchs.rst:336
+#: ../../source/cli_matchs.rst:339
 msgid "**Exemple:**"
 msgstr "**Esimerkki:**"
 
-#: ../../source/cli_matchs.rst:349
+#: ../../source/cli_matchs.rst:352
 msgid "duel — Jouer un Duel"
 msgstr "duel — Pelaa Kaksintaistelu"
 
-#: ../../source/cli_matchs.rst:351
+#: ../../source/cli_matchs.rst:354
 msgid ""
 "Joue un Duel sans interface, une Action par appel. Chaque appel est son "
 "propre processus : il reprend le Duel dans la base, joue une Action et la"
@@ -742,11 +748,11 @@ msgstr ""
 "pelatun Kaksintaistelun siirtojen kestot ovat tuntemattomia, eivät "
 "koskaan nollia."
 
-#: ../../source/cli_matchs.rst:367
+#: ../../source/cli_matchs.rst:370
 msgid "**Sous-commandes :**"
 msgstr "**Alikomennot:**"
 
-#: ../../source/cli_matchs.rst:369
+#: ../../source/cli_matchs.rst:372
 msgid ""
 "``create`` — Démarre un Duel et joue jusqu'à la première décision d'un "
 "Côté externe. ``--length`` (1 à 25 points) ou ``--money`` ; ``--start`` "
@@ -805,7 +811,7 @@ msgstr ""
 "bot:instant``); rahapelisessio kahden Botin välillä hylätään, koska se ei"
 " päättyisi koskaan, paitsi yhden pelin sessiona."
 
-#: ../../source/cli_matchs.rst:395
+#: ../../source/cli_matchs.rst:398
 msgid ""
 "``show`` — Score, ce que le Duel attend et, pour un coup, les jeux "
 "légaux. Le germe des dés n'est jamais affiché avant la fin : l'empreinte "
@@ -815,11 +821,11 @@ msgstr ""
 "lailliset pelit. Noppien siemenlukua ei näytetä koskaan ennen loppua: "
 "sormenjälki edustaa sitä."
 
-#: ../../source/cli_matchs.rst:397
+#: ../../source/cli_matchs.rst:400
 msgid "``list`` — Les Duels en suspens."
 msgstr "``list`` — Keskeneräiset Kaksintaistelut."
 
-#: ../../source/cli_matchs.rst:398
+#: ../../source/cli_matchs.rst:401
 msgid ""
 "``roll``, ``move``, ``double``, ``take``, ``pass``, ``resign`` — Une "
 "Action du Côté que le Duel attend (``--side 1|2`` pour le nommer) ; "
@@ -833,7 +839,7 @@ msgstr ""
 "``--level`` (1–3) luovutuksen arvon; ``--revision`` hylkää Toiminnon, jos"
 " Kaksintaistelu on edennyt."
 
-#: ../../source/cli_matchs.rst:402
+#: ../../source/cli_matchs.rst:405
 msgid ""
 "``contribute`` — L'apport d'un Côté externe au germe combiné (``--side "
 "1|2``, ``--value``, 1 à 64 octets), une seule fois, avant le premier "
@@ -847,7 +853,7 @@ msgstr ""
 "siemenen HMAC-SHA256:sta kunkin Puolen osuuden yli, jota edeltää sen "
 "pituus, ja Ottelun alkuperä kantaa osuudet."
 
-#: ../../source/cli_matchs.rst:407
+#: ../../source/cli_matchs.rst:410
 msgid ""
 "``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie "
 "en cours va à l'autre Côté pour les points qui le portent à la longueur "
@@ -859,7 +865,7 @@ msgstr ""
 "ottelun pituuteen (rahapelissä yksinkertainen kuution arvolla), ja ottelu"
 " tallennetaan sen voittamaksi."
 
-#: ../../source/cli_matchs.rst:411
+#: ../../source/cli_matchs.rst:414
 msgid ""
 "``stop`` — Arrête une session en argent et écrit son Match tel qu'il est,"
 " la partie en cours sans vainqueur. Un match en points est refusé : il ne"
@@ -871,11 +877,11 @@ msgstr ""
 "hylätään: se tallennetaan vain kokonaisena (``forfeit``, ``discard``). "
 "Lopettaminen ei ole luovuttamista."
 
-#: ../../source/cli_matchs.rst:414
+#: ../../source/cli_matchs.rst:417
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."
 msgstr "``discard`` — Hylkää Kaksintaistelun: mitään ei kirjoiteta."
 
-#: ../../source/cli_matchs.rst:416
+#: ../../source/cli_matchs.rst:419
 msgid "Toutes prennent ``--db`` et ``--format`` (``text`` ou ``json``)."
 msgstr ""
 "Kaikki hyväksyvät valitsimet ``--db`` ja ``--format`` (``text`` tai "

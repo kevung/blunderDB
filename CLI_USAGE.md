@@ -4682,7 +4682,9 @@ Write the printable sheet of matches, one A4 sheet a match, as one self-containe
 HTML file a browser prints or saves as PDF: header, transcription with ? and ??
 at the library's thresholds, and apart the positions to review written in ArkID,
 numbered in the transcription. The body shrinks from 9 to 5.5 pt to fit one page;
-the positions go overleaf when they still do not. Nothing is written to the library.
+the positions go overleaf when they still do not, and on further sheets when the
+overleaf is full: no position is ever cut. At most 100 matches a file.
+Nothing is written to the library.
 
 Options:
   -analysis
@@ -4696,7 +4698,7 @@ Options:
   -lang string
     	Sheet language: fr, en, de, el, es, fi, it, ja, ru (default "en")
   -match string
-    	Comma-separated match ids, one sheet each (required)
+    	Comma-separated match ids, one sheet each, at most 100 (required)
   -opponent-blunders
     	Number and detail the opponent's blunders too
   -output string

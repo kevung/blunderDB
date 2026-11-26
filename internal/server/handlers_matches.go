@@ -26,8 +26,13 @@ type matchUpdateReq struct {
 // matchSheetReq is the body of matches.sheet: the matches, one sheet each,
 // and the choices of the print dialog.
 type matchSheetReq struct {
-	MatchIDs []int64                 `json:"matchIds"`
-	Options  printsheet.MatchOptions `json:"options"`
+	MatchIDs []int64 `json:"matchIds"`
+	// Options absent is DefaultMatchOptions, as in the other two modes.
+	Options *printsheet.MatchOptions `json:"options,omitempty"`
+}
+
+type matchSheetResp struct {
+	HTML string `json:"html"`
 }
 
 type matchCommentReq struct {
@@ -141,9 +146,13 @@ func (s *Server) matchRoutes() []route {
 		})},
 		// The printable match sheet, from the generator the desktop app and
 		// `match sheet` use; it writes nothing.
-		{http.MethodPost, "/v1/matches.sheet", rpc(func(ctx context.Context, scope string, req matchSheetReq) (statsReportResp, error) {
-			page, err := printsheet.BuildMatches(ctx, s.opts.Storage, scope, req.MatchIDs, req.Options)
-			return statsReportResp{HTML: string(page)}, err
+		{http.MethodPost, "/v1/matches.sheet", rpc(func(ctx context.Context, scope string, req matchSheetReq) (matchSheetResp, error) {
+			o := printsheet.DefaultMatchOptions()
+			if req.Options != nil {
+				o = *req.Options
+			}
+			page, err := printsheet.BuildMatches(ctx, s.opts.Storage, scope, req.MatchIDs, o)
+			return matchSheetResp{HTML: string(page)}, err
 		})},
 		{http.MethodPost, "/v1/matches.get", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Match, error) {
 			return ms().Get(ctx, scope, req.ID)

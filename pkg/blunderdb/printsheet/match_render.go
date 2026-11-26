@@ -22,6 +22,9 @@ func BuildMatches(ctx context.Context, s storage.Storage, scope string, ids []in
 	if len(ids) == 0 {
 		return nil, fmt.Errorf("no match to print: %w", storage.ErrInvalid)
 	}
+	if len(ids) > MaxMatches {
+		return nil, fmt.Errorf("%d matches to print, at most %d at once: %w", len(ids), MaxMatches, storage.ErrInvalid)
+	}
 	lang, c := catalogue(o.Language)
 	var docs []string
 	var code []arkqr.Frame
@@ -235,7 +238,7 @@ func cubeLabel(action string, c map[string]string) string {
 func entryHTML(ms *MatchSheet, e *Entry, o MatchOptions, c map[string]string) string {
 	esc := html.EscapeString
 	var b strings.Builder
-	b.WriteString(`<div class="pe">` + refHTML(e.Ref, e.Kind) + `<div><span class="nt">` + esc(e.ArkID) + `</span> `)
+	b.WriteString(`<div class="pe">` + refHTML(e.Ref, e.Kind) + `<span class="nt">` + esc(e.ArkID) + `</span><div>`)
 	fmt.Fprintf(&b, `<span class="wh">%s%d·%d %s</span>`, gameInitial(c), e.Game, e.Row, esc(ms.Players[e.Player]))
 	if o.Analysis && e.Played != "" {
 		b.WriteString(`<br>` + label(c, "played") + " ")
@@ -262,12 +265,13 @@ func entryHTML(ms *MatchSheet, e *Entry, o MatchOptions, c map[string]string) st
 			fmt.Fprintf(&b, " · %d. %s %s", e.AltRank, esc(e.Alt), cost(e.AltCostMP))
 		}
 	}
+	b.WriteString(`</div>`)
 	if o.Comments {
 		for _, cm := range e.Comments {
-			b.WriteString(`<br><span class="cm">` + esc(cm) + `</span>`)
+			b.WriteString(`<div class="cm">` + esc(cm) + `</div>`)
 		}
 	}
-	b.WriteString(`</div></div>`)
+	b.WriteString(`</div>`)
 	return b.String()
 }
 

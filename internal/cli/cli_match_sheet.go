@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/printsheet"
@@ -16,7 +17,7 @@ func (cli *CLI) runMatchSheet(args []string) error {
 	def := printsheet.DefaultMatchOptions()
 	fs := flag.NewFlagSet("match sheet", flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
-	ids := fs.String("match", "", "Comma-separated match ids, one sheet each (required)")
+	ids := fs.String("match", "", "Comma-separated match ids, one sheet each, at most "+strconv.Itoa(printsheet.MaxMatches)+" (required)")
 	output := fs.String("output", "", "HTML file to write (default: standard output)")
 	lang := fs.String("lang", "en", "Sheet language: "+strings.Join(printsheet.Languages(), ", "))
 	player := fs.String("player", "", "Player the sheet is printed for (default: the Main player, else player 1)")
@@ -33,7 +34,9 @@ func (cli *CLI) runMatchSheet(args []string) error {
 		fmt.Fprintln(out, "HTML file a browser prints or saves as PDF: header, transcription with ? and ??")
 		fmt.Fprintln(out, "at the library's thresholds, and apart the positions to review written in ArkID,")
 		fmt.Fprintln(out, "numbered in the transcription. The body shrinks from 9 to 5.5 pt to fit one page;")
-		fmt.Fprintln(out, "the positions go overleaf when they still do not. Nothing is written to the library.")
+		fmt.Fprintln(out, "the positions go overleaf when they still do not, and on further sheets when the")
+		fmt.Fprintln(out, "overleaf is full: no position is ever cut. At most "+strconv.Itoa(printsheet.MaxMatches)+" matches a file.")
+		fmt.Fprintln(out, "Nothing is written to the library.")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Options:")
 		fs.PrintDefaults()

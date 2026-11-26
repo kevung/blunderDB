@@ -369,7 +369,8 @@
         "reimportCode": "Uudelleentuontikoodi",
         "reimportCodeTip": "Ottelun QR-koodi kirjauksen lopussa, upotettuna myös tiedostoon",
         "batch": "Listan {n} ottelua",
-        "batchTip": "Yksi lomake ottelua kohden, yhdessä asiakirjassa"
+        "batchTip": "Yksi lomake ottelua kohden, yhdessä asiakirjassa",
+        "tooMany": "Luettelossa on {n} ottelua: yksi tuloste kattaa enintään {max}. Rajaa luetteloa suodattimella."
     },
     "match": {
         "errorExportingMat": "Virhe ottelun viennissä",

@@ -11,7 +11,9 @@
 // sheet from 9 pt down to 5.5 pt by quarter points until its content fits;
 // when it does not, the block marked data-verso moves to a second sheet that
 // repeats the header, and a transcription marked data-flow switches from one
-// move a line to running text. Without the script (a reader that runs none)
+// move a line to running text. A verso still too long at 5.5 pt hands its last
+// .pe entries to a further sheet, header repeated, until every one fits: the
+// sheet's edge never hides a position. Without the script (a reader that runs none)
 // the sheet prints at its default size.
 //
 // The classes of the style sheet are the vocabulary of every document: .mh

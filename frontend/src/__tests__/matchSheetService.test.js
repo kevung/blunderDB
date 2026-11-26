@@ -24,7 +24,7 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
 }));
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
 
-import { DEFAULT_SHEET_OPTIONS, printMatchSheet, sheetFilename } from '../services/matchSheetService.js';
+import { DEFAULT_SHEET_OPTIONS, MAX_SHEET_MATCHES, printMatchSheet, sheetFilename } from '../services/matchSheetService.js';
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -59,5 +59,12 @@ describe('printMatchSheet', () => {
         expect(await printMatchSheet([], DEFAULT_SHEET_OPTIONS)).toBeNull();
         expect(MatchSheetHTML).not.toHaveBeenCalled();
         expect(sheetFilename([7])).toBe('blunderdb-match-7.html');
+    });
+
+    test('au-delà du plafond, rien n’est construit ni imprimé', async () => {
+        const ids = Array.from({ length: MAX_SHEET_MATCHES + 1 }, (_, i) => i + 1);
+        expect(await printMatchSheet(ids, DEFAULT_SHEET_OPTIONS)).toBeNull();
+        expect(MatchSheetHTML).not.toHaveBeenCalled();
+        expect(SaveBoardImageDialog).not.toHaveBeenCalled();
     });
 });

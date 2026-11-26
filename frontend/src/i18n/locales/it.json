@@ -369,7 +369,8 @@
         "reimportCode": "Codice di reimportazione",
         "reimportCodeTip": "Il codice QR della partita alla fine della trascrizione, incorporato anche nel file",
         "batch": "Le {n} partite della lista",
-        "batchTip": "Un foglio per partita, in un unico documento"
+        "batchTip": "Un foglio per partita, in un unico documento",
+        "tooMany": "{n} partite nella lista: una stampa ne prende al massimo {max}. Filtrate la lista per ridurla."
     },
     "match": {
         "errorExportingMat": "Errore durante l'esportazione del match",

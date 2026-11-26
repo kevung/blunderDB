@@ -1,6 +1,7 @@
 package printsheet
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 )
@@ -42,7 +43,8 @@ func TestRenderMatchMarks(t *testing.T) {
 		`Double 2`,
 		`<span class="bl">Prend</span><span class="g">??</span>`,
 		`<div data-verso>`,
-		`<span class="nt">[77]31:(ySQmLhfA)</span>`,
+		// ArkID, then game·row player and analysis in their own aligned cell.
+		`<span class="nt">[77]31:(ySQmLhfA)</span><div><span class="wh">`,
 		`<b>8/5 6/5 −0.213</b> › 13/10 6/5 · 3. 24/21 6/5 −0.040`,
 		`data-flow`,
 	} {
@@ -54,5 +56,40 @@ func TestRenderMatchMarks(t *testing.T) {
 	page := Document("fr", "t", []string{got}, "")
 	if strings.Contains(string(page), "vnd.blunderdb.archive") {
 		t.Error("an archive is embedded without a code")
+	}
+}
+
+// TestBodySizes: the scale the fitting script walks, from the Go constants,
+// is the one the browser receives.
+func TestBodySizes(t *testing.T) {
+	got := BodySizes()
+	if len(got) != 15 || got[0] != MaxBodyPt || got[len(got)-1] != MinBodyPt {
+		t.Fatalf("BodySizes = %v, want 9 down to 5.5 by 0.25", got)
+	}
+	for i := 1; i < len(got); i++ {
+		if d := got[i-1] - got[i]; d != StepBodyPt {
+			t.Fatalf("step %d = %v, want %v", i, d, StepBodyPt)
+		}
+	}
+	page := string(Document("en", "t", nil, ""))
+	if want := "var SIZES = [9, 8.75, 8.5, 8.25, 8, 7.75, 7.5, 7.25, 7, 6.75, 6.5, 6.25, 6, 5.75, 5.5]"; !strings.Contains(page, want) {
+		t.Errorf("script lacks %q", want)
+	}
+	if strings.Contains(page, "/*SIZES*/") {
+		t.Error("placeholder left in the script")
+	}
+}
+
+// TestMatchOptionsJSON: an object naming some choices keeps the defaults of
+// the others.
+func TestMatchOptionsJSON(t *testing.T) {
+	var o MatchOptions
+	if err := json.Unmarshal([]byte(`{"expanded":true,"comments":false}`), &o); err != nil {
+		t.Fatal(err)
+	}
+	want := DefaultMatchOptions()
+	want.Expanded, want.Comments = true, false
+	if o != want {
+		t.Errorf("got %+v, want %+v", o, want)
 	}
 }

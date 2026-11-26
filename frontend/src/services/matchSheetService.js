@@ -19,6 +19,9 @@ export const DEFAULT_SHEET_OPTIONS = Object.freeze({
     reimportCode: true
 });
 
+/** Le plus de matchs qu'un document imprime : printsheet.MaxMatches, que le moteur fait respecter. */
+export const MAX_SHEET_MATCHES = 100;
+
 /**
  * Construit la feuille des matchs, propose de l'enregistrer, puis l'ouvre dans
  * le navigateur, d'où elle s'imprime.
@@ -28,6 +31,10 @@ export const DEFAULT_SHEET_OPTIONS = Object.freeze({
  */
 export async function printMatchSheet(matchIds, options) {
     if (!matchIds.length) return null;
+    if (matchIds.length > MAX_SHEET_MATCHES) {
+        setStatusBarMessage(tMsg('matchSheet.tooMany', { n: matchIds.length, max: MAX_SHEET_MATCHES }));
+        return null;
+    }
     setStatusBarMessage(tMsg('matchSheet.building'));
     let html;
     try {
