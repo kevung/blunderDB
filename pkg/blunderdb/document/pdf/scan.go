@@ -630,11 +630,17 @@ func paint(dst *image.Gray, t matrix, pic picture) int {
 }
 
 // words joins a page's glyphs into words: glyphs drawn one after the other
-// on one baseline, without a space or a gap between them. A word with a
+// on one baseline, upright on the page as composed (a page turned by its
+// Rotate included), without a space or a gap between them. A word with a
 // glyph the font does not map to Unicode is dropped.
 func words(gs []Glyph, dev matrix) []Word {
+	type placed struct {
+		g              Glyph
+		ox, oy, x1, sz float64
+		box            [4]float64
+	}
 	var out []Word
-	var cur []Glyph
+	var cur []placed
 	flush := func() {
 		defer func() { cur = cur[:0] }()
 		if len(cur) == 0 {
@@ -642,15 +648,12 @@ func words(gs []Glyph, dev matrix) []Word {
 		}
 		var b strings.Builder
 		x0, y0, x1, y1 := math.Inf(1), math.Inf(1), math.Inf(-1), math.Inf(-1)
-		for _, g := range cur {
-			if g.Text == "" || strings.ContainsRune(g.Text, unicode.ReplacementChar) {
+		for _, p := range cur {
+			if p.g.Text == "" || strings.ContainsRune(p.g.Text, unicode.ReplacementChar) {
 				return
 			}
-			b.WriteString(g.Text)
-			for _, c := range [4][2]float64{{g.X, g.Y - 0.2*g.Size}, {g.X + g.W, g.Y - 0.2*g.Size}, {g.X, g.Y + 0.8*g.Size}, {g.X + g.W, g.Y + 0.8*g.Size}} {
-				x, y := dev.apply(c[0], c[1])
-				x0, y0, x1, y1 = min(x0, x), min(y0, y), max(x1, x), max(y1, y)
-			}
+			b.WriteString(p.g.Text)
+			x0, y0, x1, y1 = min(x0, p.box[0]), min(y0, p.box[1]), max(x1, p.box[2]), max(y1, p.box[3])
 		}
 		t := strings.TrimSpace(b.String())
 		if t == "" || math.IsNaN(x0+y0+x1+y1) || math.IsInf(x0+y0+x1+y1, 0) {
@@ -659,22 +662,23 @@ func words(gs []Glyph, dev matrix) []Word {
 		out = append(out, Word{x0, y0, x1, y1, t})
 	}
 	for _, g := range gs {
-		if !g.Upright || !(g.Size > 0) {
+		M := g.m.mul(dev)
+		upright := M[0] > 0 && M[3] < 0 && math.Abs(M[1]) < 1e-3*M[0] && math.Abs(M[2]) < -1e-3*M[3]
+		sz := g.size * -M[3]
+		if !upright || !(sz > 0) || (strings.TrimSpace(g.Text) == "" && g.Text != "") {
 			flush()
 			continue
 		}
-		if strings.TrimSpace(g.Text) == "" && g.Text != "" {
-			flush()
-			continue
-		}
+		p := placed{g: g, ox: M[4], oy: M[5], x1: M[4] + g.adv*M[0], sz: sz}
+		p.box = [4]float64{p.ox, p.oy - 0.8*sz, p.x1, p.oy + 0.2*sz}
 		if n := len(cur); n > 0 {
-			p := cur[n-1]
-			gap := g.X - (p.X + p.W)
-			if math.Abs(g.Y-p.Y) > 0.3*p.Size || gap > 0.25*p.Size || gap < -0.5*p.Size {
+			q := cur[n-1]
+			gap := p.ox - q.x1
+			if math.Abs(p.oy-q.oy) > 0.3*q.sz || gap > 0.25*q.sz || gap < -0.5*q.sz {
 				flush()
 			}
 		}
-		cur = append(cur, g)
+		cur = append(cur, p)
 	}
 	flush()
 	return out

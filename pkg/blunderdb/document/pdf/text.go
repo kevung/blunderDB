@@ -21,6 +21,10 @@ type Glyph struct {
 	Font    *Font
 	// Text is the glyph's Unicode text, empty when the font does not say.
 	Text string
+	// m maps the glyph's text space to user space; adv and size are its
+	// advance and font size in that space (Scan places words with them).
+	m         matrix
+	adv, size float64
 }
 
 type matrix [6]float64
@@ -308,7 +312,7 @@ func (in *interp) show(o any) error {
 		}
 		in.out = append(in.out, Glyph{
 			X: m[4], Y: m[5], Size: size, W: adv * m[0], Upright: upright,
-			Font: f, Text: f.text(code),
+			Font: f, Text: f.text(code), m: m, adv: adv, size: in.g.size,
 		})
 		in.tm = matrix{1, 0, 0, 1, adv, 0}.mul(in.tm)
 	}
