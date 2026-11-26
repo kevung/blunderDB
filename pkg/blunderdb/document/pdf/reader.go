@@ -4,11 +4,14 @@ import (
 	"bytes"
 	"compress/flate"
 	"compress/zlib"
+	"context"
 	"errors"
 	"fmt"
 	"io"
 	"regexp"
 	"strconv"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/jpx"
 )
 
 var (
@@ -42,6 +45,13 @@ type Limits struct {
 	MaxObjects int
 	// MaxGlyphs is the most glyphs one page may draw.
 	MaxGlyphs int
+	// MaxJPXPixels is the sum of the pixels of the JPEG 2000 images the
+	// reader decodes, spent before each decode. The costliest coded data
+	// measured, every code-block with all its passes, takes about 1.1 µs a
+	// pixel; a count of zero bit-planes is bounded by the band's, so the
+	// packet headers cannot cost more. The context of ScanContext stops a
+	// decode in progress (see package jpx for where it is read).
+	MaxJPXPixels int64
 }
 
 // DefaultLimits are generous for a book of a thousand pages and stop a
@@ -53,6 +63,10 @@ var DefaultLimits = Limits{
 	MaxPages:      20000,
 	MaxObjects:    4 << 20,
 	MaxGlyphs:     1 << 20,
+	// A scanned book of 140 pages at 10 Mpx with room to spare. At about
+	// 1.1 µs a pixel at worst, the whole budget is some seventy minutes:
+	// the caller's cancellation is the real bound, not this.
+	MaxJPXPixels: 4_000_000_000,
 }
 
 type xrefEntry struct {
@@ -74,6 +88,10 @@ type Reader struct {
 	fonts     map[int]*Font
 	objStm    map[int][]byte
 	pages     []Page
+	jpx       jpx.Budget
+	// ctx is the context of the Scan in progress, which a JPEG 2000
+	// decode checks as it goes.
+	ctx context.Context
 }
 
 // Open reads the cross-reference and the trailer of a PDF file. The data is
@@ -91,7 +109,7 @@ func Open(data []byte, lim Limits) (r *Reader, err error) {
 	if !bytes.Contains(head, []byte("%PDF-")) {
 		return nil, ErrNotPDF
 	}
-	r = &Reader{data: data, lim: lim, cache: map[int]Object{}, resolving: map[int]bool{}, fonts: map[int]*Font{}, objStm: map[int][]byte{}}
+	r = &Reader{data: data, lim: lim, cache: map[int]Object{}, resolving: map[int]bool{}, fonts: map[int]*Font{}, objStm: map[int][]byte{}, jpx: jpx.Budget{Left: lim.MaxJPXPixels}}
 	if err := r.readXref(); err != nil || r.rootDict() == nil {
 		r.xref, r.trailer = nil, nil
 		r.cache = map[int]Object{}

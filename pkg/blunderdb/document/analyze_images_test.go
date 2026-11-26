@@ -2,17 +2,23 @@ package document
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"errors"
 	"hash/crc32"
 	"image"
+	"image/color"
 	"image/png"
+	"io"
 	"os"
 	"path/filepath"
+	"reflect"
 	"slices"
+	"sync/atomic"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/jpx"
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/structure"
 )
 
@@ -373,5 +379,112 @@ func TestDefaultsCoversPrinted(t *testing.T) {
 		if got := d.Covers(c.ctx); got != c.want {
 			t.Errorf("printed %v covers %s = %v, want %v", c.printed, c.ctx, got, c.want)
 		}
+	}
+}
+
+// A JPEG 2000 page file reads as the same document as its PNG.
+func TestAnalyzeFileJPEG2000(t *testing.T) {
+	if !IsPageImage("p1.JP2") || !IsPageImage("p1.j2k") {
+		t.Fatal("a JPEG 2000 file is not a page image")
+	}
+	png, err := os.ReadFile("testdata/sans-pips/p001.png")
+	if err != nil {
+		t.Fatal(err)
+	}
+	jp2, err := os.ReadFile("testdata/jpx/p001.jp2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	read := func(name string, data []byte) *Releve {
+		dir := t.TempDir()
+		if err := os.WriteFile(filepath.Join(dir, name), data, 0o644); err != nil {
+			t.Fatal(err)
+		}
+		r, err := AnalyzeFile(dir, AnalyzeOptions{Title: "x"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return r
+	}
+	a, b := read("p001.png", png), read("p001.jp2", jp2)
+	if len(a.Entries) == 0 {
+		t.Fatal("the PNG page holds no diagram")
+	}
+	if !reflect.DeepEqual(a.Entries, b.Entries) {
+		t.Errorf("the JPEG 2000 page reads differently:\n%+v\n%+v", a.Entries, b.Entries)
+	}
+}
+
+// A JPEG 2000 file the guards refuse is named, not read as another error.
+func TestAnalyzeFileJPEG2000Refused(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "p001.j2k"), []byte("\xff\x4f\xff\x51 garbage"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := AnalyzeFile(dir, AnalyzeOptions{}); !errors.Is(err, jpx.ErrMalformed) {
+		t.Errorf("a broken JPEG 2000 file: %v", err)
+	}
+}
+
+// A page image is decoded only as the PNG or JPEG it claims to be: a JP2
+// file named .png reaches no decoder that another package may register.
+func TestAnalyzeFilePNGNamedJP2(t *testing.T) {
+	sig := "\x00\x00\x00\x0cjP  \r\n\x87\n"
+	var decoded atomic.Bool
+	image.RegisterFormat("jp2", sig, func(io.Reader) (image.Image, error) {
+		decoded.Store(true)
+		return image.NewGray(image.Rect(0, 0, 2000, 2000)), nil
+	}, func(io.Reader) (image.Config, error) {
+		return image.Config{ColorModel: color.GrayModel, Width: 2000, Height: 2000}, nil
+	})
+	jp2, err := os.ReadFile("testdata/jpx/p001.jp2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "p001.png"), jp2, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if r, err := AnalyzeFile(dir, AnalyzeOptions{}); err == nil {
+		t.Errorf("a JP2 file named .png reads %d entries", len(r.Entries))
+	}
+	if decoded.Load() {
+		t.Error("a registered JPEG 2000 decoder is reached")
+	}
+}
+
+// errAfter is a context whose Err reports a cancellation from its n-th
+// call on: a document's decoding is stopped in its course.
+type errAfter struct {
+	context.Context
+	calls, n int
+}
+
+func (c *errAfter) Err() error {
+	if c.calls++; c.calls >= c.n {
+		return context.Canceled
+	}
+	return nil
+}
+
+// A document of JPEG 2000 pages is stopped by its context while a page is
+// decoded, not once the document is read.
+func TestAnalyzeFileCancelledInJPEG2000(t *testing.T) {
+	jp2, err := os.ReadFile("testdata/jpx/p001.jp2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	for _, name := range []string{"p001.jp2", "p002.jp2", "p003.jp2"} {
+		if err := os.WriteFile(filepath.Join(dir, name), jp2, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	ctx := &errAfter{Context: context.Background(), n: 20}
+	if _, err := AnalyzeFile(dir, AnalyzeOptions{Context: ctx}); !errors.Is(err, context.Canceled) {
+		t.Errorf("a cancelled document: %v", err)
+	}
+	if ctx.calls != ctx.n {
+		t.Errorf("%d checks of the context after its cancellation", ctx.calls-ctx.n)
 	}
 }

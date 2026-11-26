@@ -104,9 +104,14 @@ func DecodeBounded(data []byte) (Reading, error) {
 }
 
 func decode(data []byte, limit int) (Reading, error) {
-	cfg, _, err := image.DecodeConfig(bytes.NewReader(data))
+	cfg, format, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil {
 		return Reading{}, fmt.Errorf("decode image: %w", err)
+	}
+	// Any other decoder registered in the process stays out of reach of
+	// an image brought by a request.
+	if format != "png" && format != "jpeg" && format != "gif" {
+		return Reading{}, fmt.Errorf("decode image: %s is not a PNG, JPEG or GIF image", format)
 	}
 	if cfg.Width <= 0 || cfg.Height <= 0 || cfg.Width > limit/cfg.Height {
 		return Reading{}, fmt.Errorf("%w: %dx%d, this reader takes at most %d pixels", ErrTooLarge, cfg.Width, cfg.Height, limit)

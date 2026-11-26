@@ -3,9 +3,11 @@ package pdf_test
 import (
 	"bytes"
 	"compress/zlib"
+	"context"
 	"errors"
 	"image"
 	"image/jpeg"
+	"os"
 	"strings"
 	"testing"
 
@@ -191,5 +193,214 @@ func TestScanRefusals(t *testing.T) {
 	}
 	if at(s, 10, 10) != 0 || s.DPI != 150 {
 		t.Errorf("inline image: %d at %v dpi", at(s, 10, 10), s.DPI)
+	}
+}
+
+// TestScanJPX: a JPEG 2000 image reads as the same page as the lossless
+// grey samples it was made from.
+func TestScanJPX(t *testing.T) {
+	jp2, err := os.ReadFile("testdata/fixture.jp2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	im := pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/JPXDecode", Data: jp2}
+	d := pdftest.Doc{Pages: []pdftest.Page{{Width: 153.6, Height: 19.2, Content: "153.6 0 0 19.2 0 0 cm /Im1 Do", Images: []pdftest.Image{im}}}}
+	s, err := scanOf(t, d, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if g := at(s, 120, 30); g > 5 {
+		t.Errorf("bar: %d", g)
+	}
+	if g := at(s, 10, 30); g < 40 || g > 60 {
+		t.Errorf("gradient start: %d", g)
+	}
+	if g := at(s, 300, 5); g < 200 {
+		t.Errorf("gradient end: %d", g)
+	}
+	bad := im
+	bad.Data = []byte("not a JPEG 2000 stream")
+	d.Pages[0].Images = []pdftest.Image{bad}
+	if s, err := scanOf(t, d, 1); err != nil || len(s.Skipped) != 1 {
+		t.Errorf("a broken JPEG 2000 stream is skipped and named: %v %v", err, s)
+	}
+}
+
+// jpxWant is the grey image the JPEG 2000 fixtures were encoded from by a
+// third-party encoder: a ramp with a black bar.
+func jpxWant(x, y int) int {
+	if x >= 100 && x < 140 && y >= 20 {
+		return 0
+	}
+	return 40 + x*180/320
+}
+
+func jpxPage(t *testing.T, data []byte) (*pdf.Scan, error) {
+	t.Helper()
+	return jpxImage(t, pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/JPXDecode", Data: data}, pdf.DefaultLimits)
+}
+
+func jpxImage(t *testing.T, im pdftest.Image, lim pdf.Limits) (*pdf.Scan, error) {
+	t.Helper()
+	d := pdftest.Doc{Pages: []pdftest.Page{{Width: 153.6, Height: 19.2, Content: "153.6 0 0 19.2 0 0 cm /Im1 Do", Images: []pdftest.Image{im}}}}
+	r, err := pdf.Open(d.Bytes(), lim)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := r.Page(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return r.Scan(p)
+}
+
+func readFile(t *testing.T, name string) []byte {
+	t.Helper()
+	b, err := os.ReadFile("testdata/" + name)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return b
+}
+
+// TestScanJPXOracle: the reversible 5/3 transform returns the encoder's
+// input exactly, the irreversible 9/7 within its quantisation.
+func TestScanJPXOracle(t *testing.T) {
+	for _, c := range []struct {
+		file string
+		tol  float64
+	}{{"fixture.jp2", 0}, {"lossy97.jp2", 8}} {
+		data, err := os.ReadFile("testdata/" + c.file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		s, err := jpxPage(t, data)
+		if err != nil || len(s.Skipped) != 0 {
+			t.Fatalf("%s: %v %v", c.file, err, s)
+		}
+		sum, worst := 0.0, 0
+		for y := 0; y < 40; y++ {
+			for x := 0; x < 320; x++ {
+				e := int(at(s, x, y)) - jpxWant(x, y)
+				if e < 0 {
+					e = -e
+				}
+				sum += float64(e)
+				worst = max(worst, e)
+			}
+		}
+		if c.tol == 0 && worst != 0 {
+			t.Errorf("%s: worst error %d", c.file, worst)
+		}
+		if mean := sum / (320 * 40); mean > c.tol {
+			t.Errorf("%s: mean error %.2f", c.file, mean)
+		}
+	}
+}
+
+// TestScanJPXRefusals: what the codestream cannot say, or the reader does not
+// take, is refused and named; a page left blank by it is unread, not blank.
+func TestScanJPXRefusals(t *testing.T) {
+	gray := readFile(t, "fixture.jp2")
+	ht := append([]byte(nil), gray...)
+	ht[bytes.Index(ht, []byte{0xff, 0x51})+4] |= 0x40 // Rsiz bit 14
+	rgba := readFile(t, "rgba.jp2")
+	im := func(data []byte, extra string) pdftest.Image {
+		return pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/JPXDecode", Data: data, Extra: extra}
+	}
+	for _, c := range []struct {
+		name string
+		im   pdftest.Image
+		lim  pdf.Limits
+		why  string
+	}{
+		{"HTJ2K", im(ht, ""), pdf.DefaultLimits, "high-throughput"},
+		{"alpha in the stream", im(gray, "/SMaskInData 1"), pdf.DefaultLimits, "SMaskInData"},
+		{"indexed", pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "[/Indexed /DeviceRGB 1 <000000ffffff>]", Filter: "/JPXDecode", Data: gray}, pdf.DefaultLimits, "Indexed"},
+		{"four components", im(rgba[bytes.Index(rgba, []byte{0xff, 0x4f, 0xff, 0x51}):], ""), pdf.DefaultLimits, "4 components"},
+		{"a channel definition", im(rgba, ""), pdf.DefaultLimits, "cdef"},
+		{"another size than the dictionary's", pdftest.Image{Width: 321, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/JPXDecode", Data: gray}, pdf.DefaultLimits, "container says"},
+		{"a spent budget", im(gray, ""), func() pdf.Limits { l := pdf.DefaultLimits; l.MaxJPXPixels = 1000; return l }(), "budget"},
+	} {
+		if _, err := jpxImage(t, c.im, c.lim); !errors.Is(err, pdf.ErrImageCodec) || !strings.Contains(err.Error(), c.why) {
+			t.Errorf("%s: %v", c.name, err)
+		}
+	}
+	// Beside an image that paints, the refusal is named in Skipped.
+	back := pdftest.Image{Width: 2, Height: 2, BPC: 8, ColorSpace: "/DeviceGray", Data: []byte{200, 200, 200, 200}}
+	d := pdftest.Doc{Pages: []pdftest.Page{{Width: 153.6, Height: 19.2, Content: "153.6 0 0 19.2 0 0 cm /Im1 Do /Im2 Do", Images: []pdftest.Image{back, im(ht, "")}}}}
+	s, err := scanOf(t, d, 1)
+	if err != nil || len(s.Skipped) != 1 || !strings.Contains(s.Skipped[0], "high-throughput") {
+		t.Errorf("skipped: %v %v", err, s)
+	}
+}
+
+// TestScanJPXDecode: a Decode array of [1 0] inverts, and the colour image
+// reads as its luminance.
+func TestScanJPXDecode(t *testing.T) {
+	gray := readFile(t, "fixture.jp2")
+	s, err := jpxImage(t, pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/JPXDecode", Data: gray, Extra: "/Decode [1 0]"}, pdf.DefaultLimits)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range [][2]int{{10, 5}, {120, 30}, {300, 5}} {
+		if got, want := int(at(s, p[0], p[1])), 255-jpxWant(p[0], p[1]); got != want {
+			t.Errorf("inverted at %v: %d, want %d", p, got, want)
+		}
+	}
+	rgb := pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceRGB", Filter: "/JPXDecode", Data: readFile(t, "rgb.jp2")}
+	if s, err = jpxImage(t, rgb, pdf.DefaultLimits); err != nil {
+		t.Fatal(err)
+	}
+	if got, want := int(at(s, 10, 5)), jpxWant(10, 5); got < want-2 || got > want+2 {
+		t.Errorf("rgb: %d, want %d", got, want)
+	}
+}
+
+// TestScanJPXAsJPEG: the same picture as a JPEG and as a JPEG 2000 image
+// composes into the same page, within the JPEG's own loss.
+func TestScanJPXAsJPEG(t *testing.T) {
+	jp, err := jpxPage(t, readFile(t, "fixture.jp2"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	im := pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/DCTDecode", Data: readFile(t, "ramp.jpg")}
+	jg, err := jpxImage(t, im, pdf.DefaultLimits)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if jp.DPI != jg.DPI || jp.Image.Bounds() != jg.Image.Bounds() {
+		t.Fatalf("pages differ: %v %v", jp.Image.Bounds(), jg.Image.Bounds())
+	}
+	sum := 0
+	for i := range jp.Image.Pix {
+		d := int(jp.Image.Pix[i]) - int(jg.Image.Pix[i])
+		sum += max(d, -d)
+	}
+	if mean := float64(sum) / float64(len(jp.Image.Pix)); mean > 2 {
+		t.Errorf("mean difference %.2f", mean)
+	}
+}
+
+// TestScanContextStopsJPX: a JPEG 2000 decode stops with the context of the
+// scan, and the scan with it, rather than painting a page without the image.
+func TestScanContextStopsJPX(t *testing.T) {
+	im := pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/JPXDecode", Data: readFile(t, "fixture.jp2")}
+	d := pdftest.Doc{Pages: []pdftest.Page{{Width: 153.6, Height: 19.2, Content: "153.6 0 0 19.2 0 0 cm /Im1 Do", Images: []pdftest.Image{im}}}}
+	r, err := pdf.Open(d.Bytes(), pdf.DefaultLimits)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := r.Page(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if _, err := r.ScanContext(ctx, p); !errors.Is(err, context.Canceled) {
+		t.Errorf("a cancelled scan: %v", err)
+	}
+	if _, err := r.ScanContext(context.Background(), p); err != nil {
+		t.Errorf("the scan after it: %v", err)
 	}
 }

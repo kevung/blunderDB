@@ -229,6 +229,35 @@ func diagramsOf(g *raster, dpi float64) ([]zone, int) {
 	return readingOrder(ok, g.w), rejected
 }
 
+// readPage is what reading a page keeps of it: its diagrams' zones, the
+// figures printed in each, and the page's size.
+type readPage struct {
+	pg       Page
+	zs       []zone
+	rejected int
+	numbers  [][]printedNumber
+	w, h     int
+}
+
+// readPageAt loads page i and reads its zones; an unread page is returned
+// with pg.Unread set and no error.
+func readPageAt(pages Pages, i int) (*readPage, error) {
+	g, pg, err := loadPage(pages, i)
+	if errors.Is(err, errUnread) {
+		return &readPage{pg: pg}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	pg.Image = nil
+	rp := &readPage{pg: pg, w: g.w, h: g.h}
+	rp.zs, rp.rejected = diagramsOf(g, pg.DPI)
+	for _, z := range rp.zs {
+		rp.numbers = append(rp.numbers, extractNumbers(g, z.bbox))
+	}
+	return rp, nil
+}
+
 // Read reads every diagram of the pages, in the document's order.
 func Read(ctx context.Context, pages Pages) (*Result, error) {
 	n := pages.Len()
@@ -238,22 +267,26 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 	var samples [][]hole
 	unread, firstUnread := 0, error(nil)
 	var ps []float64
+	// The pages the shape is learned on are kept as read, so that the
+	// second pass decodes no page twice: what it needs of a page is its
+	// zones and the figures printed in them, never the page's raster.
+	memo := map[int]*readPage{}
 	for i := 0; i < n && len(samples) < minLearned; i++ {
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
-		g, pg, err := loadPage(pages, i)
-		if errors.Is(err, errUnread) {
-			if unread++; firstUnread == nil {
-				firstUnread = fmt.Errorf("page %d: %w", i+1, pg.Unread)
-			}
-			continue
-		}
+		rp, err := readPageAt(pages, i)
 		if err != nil {
 			return nil, err
 		}
-		zs, _ := diagramsOf(g, pg.DPI)
-		for _, z := range zs {
+		memo[i] = rp
+		if rp.pg.Unread != nil {
+			if unread++; firstUnread == nil {
+				firstUnread = fmt.Errorf("page %d: %w", i+1, rp.pg.Unread)
+			}
+			continue
+		}
+		for _, z := range rp.zs {
 			samples = append(samples, holes(z.ink, z.frame))
 			ps = append(ps, z.frame.pointWidth())
 		}
@@ -275,21 +308,25 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
-		g, pg, err := loadPage(pages, i)
-		if errors.Is(err, errUnread) {
+		rp := memo[i]
+		delete(memo, i)
+		if rp == nil {
+			var err error
+			if rp, err = readPageAt(pages, i); err != nil {
+				return nil, err
+			}
+		}
+		pg, zs := rp.pg, rp.zs
+		if pg.Unread != nil {
 			res.Unread = append(res.Unread, PageError{i, pg.Unread})
 			continue
 		}
-		if err != nil {
-			return nil, err
-		}
-		zs, rej := diagramsOf(g, pg.DPI)
-		res.Rejected += rej
-		for _, z := range zs {
+		res.Rejected += rp.rejected
+		for k, z := range zs {
 			rd := readBoard(z, geo)
 			rd.digits, rd.cubes, rd.dice, rd.field = z.digits, z.cubes, z.dice, z.field
-			rd.page, rd.bbox, rd.pageW, rd.pageH = i, z.bbox, g.w, g.h
-			rd.numbers = extractNumbers(g, z.bbox)
+			rd.page, rd.bbox, rd.pageW, rd.pageH = i, z.bbox, rp.w, rp.h
+			rd.numbers = rp.numbers[k]
 			rds = append(rds, &rd)
 			if inspectReading != nil {
 				inspectReading(&rd)

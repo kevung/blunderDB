@@ -1,0 +1,15 @@
+This directory is a copy of github.com/d-fuji/jpeg2000, a pure Go JPEG 2000
+decoder, at module version v0.0.0-20260723165233-0971f6693ff9, distributed
+under the Apache License, Version 2.0 (LICENSE in this directory).
+
+Changes made in blunderDB:
+
+- package renamed j2k; the init that registered the "jp2" and "jpc" formats
+  with package image, DecodeConfig and MaxImagePixels removed;
+- Parse and Image.Decode replace Decode: the parser checks, in its single
+  pass over the headers, the bounds the jpx package documents (components,
+  pixels, tiles, tile-parts, precinct and code-block sizes, high-throughput
+  JPEG 2000, JP2 palette and channel boxes, marker order and lengths);
+- decoding checks a context before each tile, packet and code-block, and a
+  count of zero bit-planes is bounded by the band's bit-planes;
+- the tests read the library's reference images through Parse.

@@ -18,6 +18,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/jpx"
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/structure"
 )
 
@@ -25,12 +26,20 @@ import (
 const MaxImageFileSize = 64 << 20
 
 // ErrNoImage refuses a folder holding no page image.
-var ErrNoImage = errors.New("document: no PNG or JPEG page image in the folder")
+var ErrNoImage = errors.New("document: no PNG, JPEG or JPEG 2000 page image in the folder")
 
 // IsPageImage reports whether a file name is a page image the reader takes.
 func IsPageImage(name string) bool {
 	switch strings.ToLower(filepath.Ext(name)) {
-	case ".png", ".jpg", ".jpeg":
+	case ".png", ".jpg", ".jpeg", ".jp2", ".j2k":
+		return true
+	}
+	return false
+}
+
+func isJPEG2000(name string) bool {
+	switch strings.ToLower(filepath.Ext(name)) {
+	case ".jp2", ".j2k":
 		return true
 	}
 	return false
@@ -102,7 +111,7 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 	if title == "" || title == "." {
 		title = "Untitled document"
 	}
-	res, err := structure.Read(context.Background(), imageFiles(paths))
+	res, err := structure.Read(opts.context(), &imageFiles{ctx: opts.context(), paths: paths, jpx: jpx.Budget{Left: MaxJPXPixels}})
 	if errors.Is(err, structure.ErrNoDiagram) {
 		return nil, fmt.Errorf("document: no backgammon diagram found in the page images: %w", err)
 	}
@@ -225,25 +234,48 @@ func structureProfile(p structure.Profile) *Profile {
 }
 
 // imageFiles are page image files decoded on demand, bounded before decoding.
-type imageFiles []string
+type imageFiles struct {
+	ctx   context.Context
+	paths []string
+	jpx   jpx.Budget
+}
 
-func (f imageFiles) Len() int { return len(f) }
+// MaxJPXPixels bounds the pixels a document decodes from JPEG 2000 files.
+// Their costliest coded data measured takes about 1.1 µs a pixel, some
+// seventy minutes for the whole budget: AnalyzeOptions.Context, read
+// within each decode, is the real bound.
+const MaxJPXPixels = 4_000_000_000
 
-func (f imageFiles) Page(i int) (structure.Page, error) {
-	data, err := readBounded(f[i])
+func (f *imageFiles) Len() int { return len(f.paths) }
+
+func (f *imageFiles) Page(i int) (structure.Page, error) {
+	data, err := readBounded(f.paths[i])
 	if err != nil {
 		return structure.Page{}, err
 	}
-	cfg, _, err := image.DecodeConfig(bytes.NewReader(data))
+	if isJPEG2000(f.paths[i]) {
+		img, info, err := jpx.Decode(f.ctx, data, 0, 0, &f.jpx)
+		if err != nil {
+			return structure.Page{}, fmt.Errorf("%s: %w", f.paths[i], err)
+		}
+		return structure.Page{Image: img, DPI: estimatedDPI(info.Width, info.Height)}, nil
+	}
+	cfg, format, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil {
-		return structure.Page{}, fmt.Errorf("%s: %w", f[i], err)
+		return structure.Page{}, fmt.Errorf("%s: %w", f.paths[i], err)
+	}
+	// Whatever the file's name, only the formats this reader means are
+	// decoded here: any other decoder registered in the process stays out
+	// of reach of a page image.
+	if format != "png" && format != "jpeg" {
+		return structure.Page{}, fmt.Errorf("%w: %s is not a PNG or JPEG image (%s)", structure.ErrPage, f.paths[i], format)
 	}
 	if cfg.Width <= 0 || cfg.Height <= 0 || cfg.Width > 40_000 || cfg.Height > 40_000 || cfg.Width*cfg.Height > structure.MaxPixels {
-		return structure.Page{}, fmt.Errorf("%w: %s is %d×%d pixels", structure.ErrPage, f[i], cfg.Width, cfg.Height)
+		return structure.Page{}, fmt.Errorf("%w: %s is %d×%d pixels", structure.ErrPage, f.paths[i], cfg.Width, cfg.Height)
 	}
 	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
-		return structure.Page{}, fmt.Errorf("%s: %w", f[i], err)
+		return structure.Page{}, fmt.Errorf("%s: %w", f.paths[i], err)
 	}
 	dpi := imageDPI(data)
 	if dpi < 50 || dpi > 1200 {
