@@ -630,27 +630,12 @@ func releve(rds []*boardReading, words map[int][]Word, img []*[2]int, home strin
 			pipSide = 0
 		}
 	}
-	// The printed pips come from the text layer and from the image: when
-	// both give a count and they differ, neither is taken.
 	for i := range fs {
-		if pipSide != 0 {
-			c := append([]sideNum(nil), fs[i].side[pipSide]...)
-			sort.SliceStable(c, func(a, b int) bool { return c[a].cy < c[b].cy })
-			if len(c) >= 2 {
-				fs[i].read.text = &[2]int{c[0].v, c[len(c)-1].v}
-			}
-		}
+		var m *[2]int
 		if img != nil {
-			fs[i].read.image = img[i]
+			m = img[i]
 		}
-		t, m := fs[i].read.text, fs[i].read.image
-		switch {
-		case t != nil && m != nil && *t != *m:
-		case t != nil:
-			fs[i].pips = t
-		default:
-			fs[i].pips = m
-		}
+		fs[i].pips, fs[i].read = printedPips(fs[i].side[pipSide], pipSide != 0, m)
 	}
 	// Direction of play: the corner of class 0's home.
 	hyps := corners
@@ -738,6 +723,28 @@ func releve(rds []*boardReading, words map[int][]Word, img []*[2]int, home strin
 		diagrams = append(diagrams, judge(rd, cl, home0, upper, order, assumed, fs[i].pips, fs[i].read))
 	}
 	return diagrams, prof
+}
+
+// printedPips are a diagram's printed pips, from the text layer (the
+// numbers at the document's pip place, top then bottom) and from the image:
+// when both give a count and they differ, neither is taken.
+func printedPips(side []sideNum, placed bool, image *[2]int) (*[2]int, pipsRead) {
+	read := pipsRead{image: image}
+	if placed {
+		c := append([]sideNum(nil), side...)
+		sort.SliceStable(c, func(a, b int) bool { return c[a].cy < c[b].cy })
+		if len(c) >= 2 {
+			read.text = &[2]int{c[0].v, c[len(c)-1].v}
+		}
+	}
+	t, m := read.text, read.image
+	switch {
+	case t != nil && m != nil && *t != *m:
+		return nil, read
+	case t != nil:
+		return t, read
+	}
+	return m, read
 }
 
 // pipsRead are a diagram's printed pips (upper number, lower number) as

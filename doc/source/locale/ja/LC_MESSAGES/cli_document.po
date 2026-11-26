@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 03:54+0100\n"
+"POT-Creation-Date: 2026-11-26 05:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -70,19 +70,25 @@ msgstr ""
 
 #: ../../source/cli_document.rst:28
 msgid ""
-"les pages d'un livre scanné, en images : un dossier de fichiers PNG ou "
+"un livre scanné : un PDF dont les pages sont faites d'images, avec ou "
+"sans couche texte, ou ses pages en images (un dossier de fichiers PNG ou "
 "JPEG, une page par fichier, lus dans l'ordre de leurs noms, ou une image "
-"seule. Les diagrammes y sont lus par leur structure (voir "
+"seule). Les diagrammes y sont lus par leur structure (voir "
 ":ref:`cli_document_images`)."
 msgstr ""
-"スキャンした本のページを画像にしたもの。PNG または JPEG ファイルのフォルダ(1 ファイルにつき 1 "
-"ページ、名前順に読み取ります)か、単一の画像です。図は構造から読み取られます(:ref:`cli_document_images` を参照)。"
+"スキャンした本。ページが画像でできている PDF(テキストレイヤーの有無を問いません)、またはそのページを画像にしたもの(PNG または JPEG"
+" ファイルのフォルダ。1 ファイルにつき 1 "
+"ページで、名前順に読み取ります。または単一の画像)です。図は構造から読み取られます(:ref:`cli_document_images` "
+"を参照)。"
 
-#: ../../source/cli_document.rst:32
-msgid "Un autre PDF est refusé ; ses pages se donnent alors en images :"
-msgstr "それ以外の PDF は拒否されます。その場合、ページを画像として渡します。"
+#: ../../source/cli_document.rst:33
+msgid ""
+"Un PDF dont aucune page n'est faite d'images ni dessinée avec cette "
+"police (un livre dessiné en vecteurs) est refusé ; ses pages se donnent "
+"alors en images :"
+msgstr "どのページも画像でできておらず、このフォントでも描かれていない PDF(ベクターで描かれた本)は拒否されます。その場合はページを画像として渡します。"
 
-#: ../../source/cli_document.rst:38
+#: ../../source/cli_document.rst:40
 msgid ""
 "Un fichier qui n'est ni un PDF ni une image, un PDF chiffré ou plus gros "
 "que 512 Mio, une image de plus de 64 Mio ou de plus de 100 millions de "
@@ -91,11 +97,11 @@ msgstr ""
 "PDF でも画像でもないファイル、暗号化された PDF、512 MiB を超える PDF、64 MiB を超える画像、または 1 "
 "億ピクセルを超える画像も、その旨のメッセージとともに拒否されます。"
 
-#: ../../source/cli_document.rst:43
+#: ../../source/cli_document.rst:45
 msgid "Le parcours en trois commandes"
 msgstr "3 つのコマンドによる流れ"
 
-#: ../../source/cli_document.rst:51
+#: ../../source/cli_document.rst:53
 msgid ""
 "``analyze`` lit le PDF et écrit le relevé (sans ``-o``, il l'écrit sur la"
 " sortie standard). Il résume ce qu'il a trouvé :"
@@ -103,7 +109,7 @@ msgstr ""
 "\\ ``analyze`` \\ は PDF を読み取り、relevé を書き出します(``-o`` "
 "を付けない場合は標準出力に書き出します)。見つけた内容を要約します。"
 
-#: ../../source/cli_document.rst:61
+#: ../../source/cli_document.rst:63
 msgid ""
 "Le titre et l'auteur viennent des métadonnées du PDF, à défaut le titre "
 "est le nom du fichier ; ``--title`` et ``--author`` les remplacent. Le "
@@ -112,7 +118,7 @@ msgstr ""
 "タイトルと著者は PDF のメタデータから取得され、なければタイトルはファイル名になります。\\ ``--title`` \\ と \\ "
 "``--author`` \\ で置き換えられます。各エントリの章は PDF のしおりから取得されます。"
 
-#: ../../source/cli_document.rst:65
+#: ../../source/cli_document.rst:67
 msgid ""
 "``check`` valide le relevé et compte ses entrées, sans lire ni écrire de "
 "base. ``--format json`` donne les mêmes comptes en JSON :"
@@ -120,21 +126,21 @@ msgstr ""
 "\\ ``check`` \\ は relevé を検証してエントリ数を数えます。データベースの読み書きは行いません。\\ ``--format "
 "json`` \\ で同じ集計を JSON で得られます。"
 
-#: ../../source/cli_document.rst:75
+#: ../../source/cli_document.rst:77
 msgid "``import`` écrit les positions dans la collection :"
 msgstr "\\ ``import`` \\ は局面をコレクションに書き込みます。"
 
-#: ../../source/cli_document.rst:82
+#: ../../source/cli_document.rst:84
 msgid ""
 "``--collection`` choisit un autre nom que le titre du document. Si le "
 "fichier de base n'existe pas, il est créé."
 msgstr "\\ ``--collection`` \\ で、ドキュメントのタイトルとは別の名前を選べます。データベースファイルが存在しない場合は作成されます。"
 
-#: ../../source/cli_document.rst:86
+#: ../../source/cli_document.rst:88
 msgid "Le relevé"
 msgstr "relevé"
 
-#: ../../source/cli_document.rst:88
+#: ../../source/cli_document.rst:90
 msgid ""
 "Le relevé est un fichier JSON lisible, que l'on peut ouvrir dans un "
 "éditeur de texte. L'en-tête (``document``) donne le titre, l'auteur, "
@@ -146,11 +152,11 @@ msgstr ""
 "ファイルです。ヘッダ(``document``)には、ドキュメントのタイトル、著者、版またはアドレス、読み取ったファイルの SHA-256 "
 "フィンガープリント、図のプロファイルが入っています。その後、各図がドキュメントの順序でエントリになります。"
 
-#: ../../source/cli_document.rst:93
+#: ../../source/cli_document.rst:95
 msgid "``rank`` — son rang, de 1 sans trou ;"
 msgstr "\\ ``rank`` \\ — 順位。1 から欠番なく振られます。"
 
-#: ../../source/cli_document.rst:94
+#: ../../source/cli_document.rst:96
 msgid ""
 "``page``, ``chapter`` et ``label`` — sa page, le chapitre des signets et "
 "le nom que le document lui donne (« Problem 191 ») quand il est imprimé "
@@ -159,7 +165,7 @@ msgstr ""
 "\\ ``page``\\ 、\\ ``chapter``\\ 、\\ ``label`` \\ — "
 "ページ、しおりの章、および図の上に印刷されている場合にドキュメントが付ける名前(「Problem 191」)。"
 
-#: ../../source/cli_document.rst:96
+#: ../../source/cli_document.rst:98
 msgid ""
 "``position`` — la position, en XGID : pions, videau, trait, dés, score et"
 " longueur du match en une seule chaîne ;"
@@ -167,23 +173,23 @@ msgstr ""
 "\\ ``position`` \\ — 局面を XGID で表したもの。駒、キューブ、手番、サイコロ、スコア、マッチの長さが 1 "
 "つの文字列に収められます。"
 
-#: ../../source/cli_document.rst:98
+#: ../../source/cli_document.rst:100
 msgid "``state`` — son état, avec ``doubts``, les doutes nommés de la lecture ;"
 msgstr "\\ ``state`` \\ — 状態。読み取りの名前付きの疑義である\\ ``doubts``\\ を伴います。"
 
-#: ../../source/cli_document.rst:99
+#: ../../source/cli_document.rst:101
 msgid ""
 "``rect`` — où le diagramme se trouve sur la page, en fraction de sa "
 "taille, pour le retrouver dans le PDF ;"
 msgstr "\\ ``rect`` \\ — 図がページ上のどこにあるかを、ページの大きさに対する割合で表したもの。PDF 内で見つけ直すために使います。"
 
-#: ../../source/cli_document.rst:101
+#: ../../source/cli_document.rst:103
 msgid ""
 "``verified`` — ``true`` quand une personne a comparé la lecture au "
 "diagramme."
 msgstr "\\ ``verified`` \\ — 読み取りを人が図と見比べたとき\\ ``true``\\ になります。"
 
-#: ../../source/cli_document.rst:103
+#: ../../source/cli_document.rst:105
 msgid ""
 "On relit un relevé en ouvrant le PDF à la page de l'entrée. On y corrige "
 "la position (le XGID), on marque ``\"verified\": true`` une entrée "
@@ -200,31 +206,31 @@ msgstr ""
 " relevé、ページが後戻りしている relevé、XGID が合法な局面でない relevé、プログラムより新しい形式の relevé "
 "を拒否します。\\ ``sure`` \\ のエントリに疑義はありません。"
 
-#: ../../source/cli_document.rst:112
+#: ../../source/cli_document.rst:114
 msgid "Les trois états"
 msgstr "3 つの状態"
 
-#: ../../source/cli_document.rst:114
+#: ../../source/cli_document.rst:116
 msgid "``sure``"
 msgstr "``sure``"
 
-#: ../../source/cli_document.rst:115
+#: ../../source/cli_document.rst:117
 msgid ""
 "Les recoupements du diagramme tiennent : chaque camp compte quinze pions "
 "(sur les points, sur la barre et dans le plateau de sortie), et les pips "
 "calculés d'après la position égalent les pips imprimés des deux joueurs. "
 "Le score et la longueur du match sont ceux que le PDF imprime à côté. "
-"Pour une page en image, voir :ref:`cli_document_images`."
+"Pour un livre scanné, voir :ref:`cli_document_images`."
 msgstr ""
 "図の突き合わせが成立しています。各サイドの駒は 15 "
 "個(ポイント上、バー上、ベアオフ用トレイ内)で、局面から計算したピップ数が両プレイヤーの印刷されたピップ数と一致します。スコアとマッチの長さは、PDF"
-" が横に印刷しているものです。画像のページについては :ref:`cli_document_images` を参照。"
+" が横に印刷しているものです。スキャンした本については :ref:`cli_document_images` を参照。"
 
-#: ../../source/cli_document.rst:121
+#: ../../source/cli_document.rst:123
 msgid "``to-verify``"
 msgstr "``to-verify``"
 
-#: ../../source/cli_document.rst:122
+#: ../../source/cli_document.rst:124
 msgid ""
 "La lecture tient, mais rien ne la confirme : un pip imprimé diffère du "
 "pip calculé, ou le diagramme montre ce que les impressions de référence "
@@ -241,11 +247,11 @@ msgstr ""
 "を超える位置のキューブ、上側のプレイヤーの手番、手番の印がない、黒のプレイヤーが下側にある、クロフォードゲーム、勝利まで 1 "
 "ポイントのプレイヤー(クロフォードゲームとそれ以降は区別できません)、表が読み取れないフォントのグリフ、などです。これらのケースは読み取られますが、確実とは宣言されません。"
 
-#: ../../source/cli_document.rst:131
+#: ../../source/cli_document.rst:133
 msgid "``uncertain``"
 msgstr "``uncertain``"
 
-#: ../../source/cli_document.rst:132
+#: ../../source/cli_document.rst:134
 msgid ""
 "La lecture est contredite ou incomplète : un glyphe inconnu, un camp qui "
 "ne compte pas quinze pions et dont les pips ne correspondent pas, un "
@@ -256,7 +262,7 @@ msgstr ""
 "個でなくピップ数も一致しないサイド、損傷した枠などです。合法な局面が得られない図は、局面なし(``\"position\": \"\"``)で "
 "relevé に位置を保ちます。"
 
-#: ../../source/cli_document.rst:137
+#: ../../source/cli_document.rst:139
 msgid ""
 "Une entrée est **importable** quand elle est ``sure`` ou vérifiée. Les "
 "doutes qu'elle porte disent quoi contrôler, par exemple :"
@@ -264,15 +270,15 @@ msgstr ""
 "エントリは、\\ ``sure`` \\ であるか検証済みであるとき、**インポート可能**\\ "
 "です。エントリが持つ疑義は、何を確認すべきかを示します。例:"
 
-#: ../../source/cli_document.rst:144
+#: ../../source/cli_document.rst:146
 msgid "Le dé n'est pas lu : l'analyse écrit toujours « pas de dés » (``00``)."
 msgstr "サイコロは読み取られません。解析は常に「サイコロなし」(``00``)と書き込みます。"
 
-#: ../../source/cli_document.rst:149
-msgid "Pages en images"
-msgstr "画像のページ"
-
 #: ../../source/cli_document.rst:151
+msgid "Livres scannés"
+msgstr "スキャンした本"
+
+#: ../../source/cli_document.rst:153
 msgid ""
 "Une page en image est lue sans style supposé : la commande y cherche deux"
 " rangées de douze pointes coupées par une barre, et des pions, disques de"
@@ -286,7 +292,7 @@ msgstr ""
 "つのクラスの円盤である駒を探します。ドキュメントのスタイルはドキュメント自身から学習します。最初の図では駒の形を、次にすべての図で 2 "
 "つの駒クラス、印刷された番号付け、進行方向を学習します。ドキュメント間では何も保持されず、画像も保存されません。"
 
-#: ../../source/cli_document.rst:158
+#: ../../source/cli_document.rst:160
 msgid ""
 "Elle lit les diagrammes au trait et les captures de logiciel imprimées, "
 "dans l'ordre de lecture : page de gauche puis de droite d'une double "
@@ -298,21 +304,82 @@ msgstr ""
 "線画の図と、印刷されたソフトウェアのスクリーンショットを、読む順序で読み取ります。見開きは左ページ、次に右ページ、列ごとに上から下へ読みます。わずかに傾いたページは補正され、綴じ目の影は消去されます。有効な解像度は"
 " 150〜300 dpi で、ファイルが示す値を使います。示されていない場合は、ページの長辺を 11 インチとみなします。"
 
-#: ../../source/cli_document.rst:164
+#: ../../source/cli_document.rst:166
+msgid ""
+"Un PDF scanné est lu directement, sans outil externe : chaque page est "
+"composée de ses images, placées comme le PDF les place, à la résolution "
+"de la plus fine d'entre elles bornée entre 150 et 300 dpi, puis lue et "
+"oubliée. Sont décodées les images JPEG (``DCTDecode``), fax "
+"(``CCITTFaxDecode``, groupes 3 en une dimension et 4) et brutes "
+"(``FlateDecode``, gris, couleur ou indexées) ; les masques de pochoir et "
+"les masques doux sont appliqués, si bien qu'une page faite d'un fond JPEG"
+" et de masques fax se compose lisiblement. Ne sont pas gérés : un masque "
+"par couleur clé (l'image est peinte entière), les images JBIG2 et JPEG "
+"2000 (la page est passée), une page dessinée en vecteurs (passée aussi). "
+"Les pages passées sont nommées sur la sortie d'erreur, avec leur motif ; "
+"les autres sont lues. La couche texte d'une page, visible ou non (celle "
+"qu'une OCR laisse sous l'image), donne ses mots à leur place sur l'image "
+"; un texte que sa police ne traduit pas en caractères ne donne aucun mot."
+msgstr ""
+"スキャンされた PDF は外部ツールなしで直接読み取られます。各ページは、PDF "
+"が配置するとおりに置かれた画像から合成され、最も細かい画像の解像度(150〜300 dpi "
+"の範囲に制限)で読み取られ、その後破棄されます。デコードされるのは、JPEG "
+"画像(``DCTDecode``)、ファックス画像(``CCITTFaxDecode``、1 次元のグループ 3 とグループ "
+"4)、および生画像(``FlateDecode``、グレー、カラー、インデックス)です。ステンシルマスクとソフトマスクは適用されるため、JPEG "
+"の背景とファックスのマスクでできたページも読める形に合成されます。対応しないのは、キーカラーによるマスク(画像は全体が描かれます)、JBIG2 "
+"および JPEG 2000 "
+"画像(そのページはスキップされます)、ベクターで描かれたページ(これもスキップされます)です。スキップされたページは理由とともに標準エラー出力に示され、それ以外は読み取られます。ページのテキストレイヤーは、見えるかどうかにかかわらず(OCR"
+" が画像の下に残すもの)、その単語に画像上の位置を与えます。フォントが文字に変換できないテキストは、単語を生みません。"
+
+#: ../../source/cli_document.rst:180
 msgid ""
 "Une telle lecture n'est ``sure`` que si les pips imprimés à côté du "
 "diagramme égalent les pips calculés des deux camps, qu'aucun camp n'a "
-"plus de quinze pions et qu'aucun doute ne reste. Les pips imprimés ne se "
-"lisent que dans la couche texte d'un document, qu'une image n'a pas : une"
-" entrée lue d'une image est donc ``to-verify`` et le dit (``no printed "
-"pip count was found next to the diagram``)."
+"plus de quinze pions et qu'aucun doute ne reste."
 msgstr ""
 "このような読み取りが\\ ``sure``\\ になるのは、図の横に印刷されたピップ数が両サイドの計算したピップ数と等しく、15 "
-"個を超える駒を持つサイドがなく、疑いが残らない場合だけです。印刷されたピップ数はドキュメントのテキストレイヤーでしか読み取れず、画像にはそれがありません。そのため、画像から読み取ったエントリは\\"
-" ``to-verify``\\ となり、その旨を示します(``no printed pip count was found next to "
-"the diagram``)。"
+"個を超える駒を持つサイドがなく、疑いが残らない場合だけです。"
 
-#: ../../source/cli_document.rst:171
+#: ../../source/cli_document.rst:184
+msgid ""
+"Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
+" l'image elle-même. Dans l'image, la commande lit les nombres isolés "
+"autour du diagramme, chiffre par chiffre, par comparaison avec la "
+"numérotation des pointes du document, avec huit polices courantes "
+"embarquées, puis avec les chiffres déjà lus dans le document ; un nombre "
+"n'est rendu que si chacun de ses chiffres est reconnu nettement, sinon "
+"elle s'abstient. L'emplacement des pips est appris sur le document : un "
+"nombre lu qui égale les pips d'un diagramme compté à quinze pions par "
+"camp vote pour sa place, et deux places (haut et bas) doivent réunir "
+"assez de votes. Aucun chiffre n'est choisi d'après les pips du diagramme "
+"qu'il accompagne, et rien n'est gardé d'un document à l'autre. Quand le "
+"texte et l'image donnent chacun des pips et qu'ils diffèrent, l'entrée "
+"n'est pas ``sure`` et le doute le dit (``the two disagree``). Une entrée "
+"sans pips lus reste ``to-verify`` (``no printed pip count was found next "
+"to the diagram``)."
+msgstr ""
+"印刷されたピップ数は 2 つの情報源から読み取られます。PDF "
+"のテキストレイヤーと、画像そのものです。画像では、コマンドは図の周囲にある孤立した数を 1 桁ずつ、文書のポイント番号との比較、埋め込まれた 8 "
+"つの一般的なフォント、そして文書内で既に読み取った数字を使って読み取ります。数は、すべての桁がはっきり認識された場合にのみ返され、そうでなければ読み取りを控えます。ピップ数の位置は文書から学習されます。1"
+" サイドあたり 15 個で数えた図のピップ数と等しい読み取り済みの数が、その位置に投票し、2 "
+"か所(上と下)が十分な票を集める必要があります。付随する図のピップ数から数字が選ばれることはなく、文書間で何も保持されません。テキストと画像がそれぞれピップ数を与えて両者が異なる場合、そのエントリは\\"
+" ``sure``\\ ではなく、疑いがそれを示します(``the two disagree``)。ピップ数が読み取れなかったエントリは\\ "
+"``to-verify``\\ のままです(``no printed pip count was found next to the "
+"diagram``)。"
+
+#: ../../source/cli_document.rst:198
+msgid ""
+"La lecture des chiffres suppose des chiffres arabes sombres sur fond "
+"clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
+"résolution de lecture, des pips imprimés à la même place dans tout le "
+"document, et une trentaine de diagrammes lus à quinze pions par camp pour"
+" apprendre cette place."
+msgstr ""
+"数字の読み取りは、明るい背景に暗いアラビア数字が水平に書かれていること、読み取り解像度で高さが 15 "
+"ピクセル以上あること、ピップ数が文書全体で同じ位置に印刷されていること、そしてその位置を学習するために 1 サイドあたり 15 "
+"個で読み取られた図が 30 個ほどあることを前提とします。"
+
+#: ../../source/cli_document.rst:203
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -323,7 +390,7 @@ msgid ""
 "dessinés."
 msgstr "疑いは、まだ確認すべき点を示します。数字が付いた駒の山、どちらのクラスでもない円盤(色あせた、または汚れた駒)、上から下まで埋まった列、長さで数えた暗い色の山、半分のボード(ポイントのない列)、仮定した進行方向(駒はピップ数の少ない側へ進む)、差から数えたベアオフ済みの駒、中央以外に描かれたキューブ、描かれたダイスです。"
 
-#: ../../source/cli_document.rst:178
+#: ../../source/cli_document.rst:210
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (la position "
 "le dit centré), les dés (aucun), le score (partie libre), le joueur au "
@@ -333,11 +400,11 @@ msgstr ""
 "次のものは読み取りません。キューブの値と所有者(局面ではセンターにあるとされます)、ダイス(なし)、スコア(フリーゲーム)、手番のプレイヤー(下側)、ベアオフ用ボード(15"
 " 個未満の駒で描かれたサイドは、残りがベアオフ済みとされます)。"
 
-#: ../../source/cli_document.rst:184
+#: ../../source/cli_document.rst:216
 msgid "Pourquoi l'import refuse"
 msgstr "インポートが拒否する理由"
 
-#: ../../source/cli_document.rst:186
+#: ../../source/cli_document.rst:218
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -347,7 +414,7 @@ msgstr ""
 "でも検証済みでもないエントリは信頼できず、コレクションに入ったものはエクスポート時に共有されます。そのため、インポートは何かを書き込む前に "
 "relevé の\\ **全体**\\ を拒否し、順位を示します。"
 
-#: ../../source/cli_document.rst:194
+#: ../../source/cli_document.rst:226
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -359,11 +426,11 @@ msgstr ""
 " nor verified``)。\\ ``--force`` \\ "
 "を付けても、局面のないエントリは拒否されます。記入するか削除する必要があります。"
 
-#: ../../source/cli_document.rst:200
+#: ../../source/cli_document.rst:232
 msgid "Ce qui entre en base"
 msgstr "データベースに入るもの"
 
-#: ../../source/cli_document.rst:202
+#: ../../source/cli_document.rst:234
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -375,7 +442,7 @@ msgstr ""
 "の名前)のコレクションに入ります。各局面は単独で持ち込まれた局面として入り、ライブラリはその同一性で局面を認識します。すでに持っている局面は重複しません(``new"
 " in the library`` \\ は、足りなかった局面の数です)。"
 
-#: ../../source/cli_document.rst:208
+#: ../../source/cli_document.rst:240
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -386,7 +453,7 @@ msgstr ""
 "コレクションの\\ **説明**\\ には、ドキュメントのタイトル、著者、版、アドレスが 1 行に 1 "
 "つずつ入ります。同名の既存コレクションは足りない局面を受け取り、説明があればそれを保持します。ダイナミックコレクション(クエリで定義されたもの)は拒否されます。"
 
-#: ../../source/cli_document.rst:212
+#: ../../source/cli_document.rst:244
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -394,18 +461,18 @@ msgstr ""
 "各局面には、ドキュメントのタイトルに続けて参照を示す\\ **コメント**\\ が付きます。\\ ``Mon livre — p. 146, "
 "Problem 191``"
 
-#: ../../source/cli_document.rst:215
+#: ../../source/cli_document.rst:247
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
 "transaction."
 msgstr "それ以外のものは決して入りません。画像も、矩形も、著者のテキストも入りません。中断または拒否されたインポートは何も書き込みません。インポートは単一のトランザクションです。"
 
-#: ../../source/cli_document.rst:219
+#: ../../source/cli_document.rst:251
 msgid "Une position répétée"
 msgstr "繰り返される局面"
 
-#: ../../source/cli_document.rst:221
+#: ../../source/cli_document.rst:253
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -415,11 +482,11 @@ msgstr ""
 "ドキュメントが同じ局面を 2 回示す場合、その局面は最初の出現位置でコレクションに 1 回だけ入ります。そのコメントはすべての参照を挙げます。\\"
 " ``Mon livre — p. 2, Problem 1; p. 4``\\ 。\\ ``repeated`` \\ はこの繰り返しの数です。"
 
-#: ../../source/cli_document.rst:227
+#: ../../source/cli_document.rst:259
 msgid "Réimporter"
 msgstr "再インポート"
 
-#: ../../source/cli_document.rst:229
+#: ../../source/cli_document.rst:261
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -430,11 +497,11 @@ msgstr ""
 "collection: 0``)、参照コメントは参照が変わった場合にのみ書き直され、二重にはなりません。したがって、relevé "
 "を修正した後でインポートをやり直せます。"
 
-#: ../../source/cli_document.rst:235
+#: ../../source/cli_document.rst:267
 msgid "Le démon"
 msgstr "デーモン"
 
-#: ../../source/cli_document.rst:237
+#: ../../source/cli_document.rst:269
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "
@@ -442,3 +509,9 @@ msgid ""
 msgstr ""
 "\\ ``serve`` \\ デーモンは、同じ規則で\\ ``/v1/documents.importReleve``\\ の下で relevé"
 " をインポートします。ドキュメントの解析は行いません(:ref:`headless` を参照)。"
+
+#~ msgid "Un autre PDF est refusé ; ses pages se donnent alors en images :"
+#~ msgstr "それ以外の PDF は拒否されます。その場合、ページを画像として渡します。"
+
+#~ msgid "Pages en images"
+#~ msgstr "画像のページ"

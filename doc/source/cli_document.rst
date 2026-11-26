@@ -25,15 +25,17 @@ Ce qui est lu, ce qui est refusé
 * un PDF dont les diagrammes sont dessinés avec la police de plateau
   d'eXtreme Gammon (les PDF imprimés par XG) : chaque diagramme y est du texte,
   que la commande décode exactement, glyphe par glyphe ;
-* les pages d'un livre scanné, en images : un dossier de fichiers PNG ou JPEG,
-  une page par fichier, lus dans l'ordre de leurs noms, ou une image seule. Les
+* un livre scanné : un PDF dont les pages sont faites d'images, avec ou sans
+  couche texte, ou ses pages en images (un dossier de fichiers PNG ou JPEG, une
+  page par fichier, lus dans l'ordre de leurs noms, ou une image seule). Les
   diagrammes y sont lus par leur structure (voir :ref:`cli_document_images`).
 
-Un autre PDF est refusé ; ses pages se donnent alors en images :
+Un PDF dont aucune page n'est faite d'images ni dessinée avec cette police (un
+livre dessiné en vecteurs) est refusé ; ses pages se donnent alors en images :
 
 .. code-block:: text
 
-   Error: document: no diagram readable by its glyphs (only PDF diagrams drawn with eXtreme Gammon's board font are read); for a scanned book, give its pages as images: a folder of PNG or JPEG files, one a page
+   Error: document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page; structure: no page of the document could be read: page 1: pdf: the page draws no image (a page drawn with vectors is not rendered)
 
 Un fichier qui n'est ni un PDF ni une image, un PDF chiffré ou plus gros que
 512 Mio, une image de plus de 64 Mio ou de plus de 100 millions de pixels est
@@ -115,8 +117,8 @@ Les trois états
    Les recoupements du diagramme tiennent : chaque camp compte quinze pions
    (sur les points, sur la barre et dans le plateau de sortie), et les pips
    calculés d'après la position égalent les pips imprimés des deux joueurs. Le
-   score et la longueur du match sont ceux que le PDF imprime à côté. Pour une
-   page en image, voir :ref:`cli_document_images`.
+   score et la longueur du match sont ceux que le PDF imprime à côté. Pour un
+   livre scanné, voir :ref:`cli_document_images`.
 
 ``to-verify``
    La lecture tient, mais rien ne la confirme : un pip imprimé diffère du pip
@@ -145,8 +147,8 @@ Le dé n'est pas lu : l'analyse écrit toujours « pas de dés » (``00``).
 
 .. _cli_document_images:
 
-Pages en images
----------------
+Livres scannés
+--------------
 
 Une page en image est lue sans style supposé : la commande y cherche deux
 rangées de douze pointes coupées par une barre, et des pions, disques de deux
@@ -161,12 +163,42 @@ puis haut en bas. Une page légèrement de biais est redressée, l'ombre de reli
 effacée. Résolution utile : 150 à 300 dpi, celle que le fichier indique ; à
 défaut, le grand côté de la page est pris pour onze pouces.
 
+Un PDF scanné est lu directement, sans outil externe : chaque page est composée
+de ses images, placées comme le PDF les place, à la résolution de la plus fine
+d'entre elles bornée entre 150 et 300 dpi, puis lue et oubliée. Sont décodées
+les images JPEG (``DCTDecode``), fax (``CCITTFaxDecode``, groupes 3 en une
+dimension et 4) et brutes (``FlateDecode``, gris, couleur ou indexées) ; les
+masques de pochoir et les masques doux sont appliqués, si bien qu'une page faite
+d'un fond JPEG et de masques fax se compose lisiblement. Ne sont pas gérés : un
+masque par couleur clé (l'image est peinte entière), les images JBIG2 et
+JPEG 2000 (la page est passée), une page dessinée en vecteurs (passée aussi).
+Les pages passées sont nommées sur la sortie d'erreur, avec leur motif ; les
+autres sont lues. La couche texte d'une page, visible ou non (celle qu'une OCR
+laisse sous l'image), donne ses mots à leur place sur l'image ; un texte que sa
+police ne traduit pas en caractères ne donne aucun mot.
+
 Une telle lecture n'est ``sure`` que si les pips imprimés à côté du diagramme
 égalent les pips calculés des deux camps, qu'aucun camp n'a plus de quinze pions
-et qu'aucun doute ne reste. Les pips imprimés ne se lisent que dans la couche
-texte d'un document, qu'une image n'a pas : une entrée lue d'une image est donc
-``to-verify`` et le dit (``no printed pip count was found next to the
-diagram``).
+et qu'aucun doute ne reste.
+
+Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et
+l'image elle-même. Dans l'image, la commande lit les nombres isolés autour du
+diagramme, chiffre par chiffre, par comparaison avec la numérotation des pointes
+du document, avec huit polices courantes embarquées, puis avec les chiffres déjà
+lus dans le document ; un nombre n'est rendu que si chacun de ses chiffres est
+reconnu nettement, sinon elle s'abstient. L'emplacement des pips est appris sur
+le document : un nombre lu qui égale les pips d'un diagramme compté à quinze
+pions par camp vote pour sa place, et deux places (haut et bas) doivent réunir
+assez de votes. Aucun chiffre n'est choisi d'après les pips du diagramme qu'il
+accompagne, et rien n'est gardé d'un document à l'autre. Quand le texte et
+l'image donnent chacun des pips et qu'ils diffèrent, l'entrée n'est pas ``sure``
+et le doute le dit (``the two disagree``). Une entrée sans pips lus reste
+``to-verify`` (``no printed pip count was found next to the diagram``).
+
+La lecture des chiffres suppose des chiffres arabes sombres sur fond clair,
+écrits à l'horizontale, d'au moins 15 pixels de haut à la résolution de lecture,
+des pips imprimés à la même place dans tout le document, et une trentaine de
+diagrammes lus à quinze pions par camp pour apprendre cette place.
 
 Les doutes nomment ce qui reste à contrôler : une pile qui porte un chiffre, un
 disque d'aucune des deux classes (pion pâli ou taché), une colonne pleine de haut
