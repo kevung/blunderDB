@@ -215,3 +215,79 @@ func probsBenchPosition() (Position, error) {
 	dp.PlayerOnRoll = domain.White
 	return FromDomain(&dp)
 }
+
+// TestShallowQueryOnDeepParallelSearcherIsBitIdentical holds the two root
+// fan-outs to splitDepth. probsAt asked at 1 ply on a searcher built for 2 —
+// the roll map's market check — and a 1-ply Plays, whose root deepens its
+// candidates at 1 ply, must search serially on any worker count: no helper
+// time lent, and the five floats and the ranked plays match the serial
+// searcher's to the bit.
+func TestShallowQueryOnDeepParallelSearcherIsBitIdentical(t *testing.T) {
+	p := openingPosition(t)
+
+	serial2, err := NewSearcher(DefaultConfig(2))
+	if err != nil {
+		t.Fatal(err)
+	}
+	wantProbs, ok := serial2.probsAt(&p, 1, 0, serial2.matchState(), serial2.cfg.CubeOwner)
+	if !ok {
+		t.Fatal("serial probsAt refused")
+	}
+	serial1, err := NewSearcher(DefaultConfig(1))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := make([]Candidate, MaxPlays)
+	pw := p
+	nWant, err := serial1.Plays(&pw, 3, 1, want)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, nw := range []int{2, runtime.NumCPU(), 64} {
+		t.Run(fmt.Sprintf("workers=%d", nw), func(t *testing.T) {
+			par2, err := NewSearcher(DefaultConfig(2))
+			if err != nil {
+				t.Fatal(err)
+			}
+			par2 = par2.WithWorkers(nw)
+			pp := p
+			got, ok := par2.probsAt(&pp, 1, 0, par2.matchState(), par2.cfg.CubeOwner)
+			if !ok {
+				t.Fatal("parallel probsAt refused")
+			}
+			for i := range wantProbs {
+				if math.Float32bits(got[i]) != math.Float32bits(wantProbs[i]) {
+					t.Fatalf("output %d: serial %.17g, parallel %.17g", i, wantProbs[i], got[i])
+				}
+			}
+			if l := par2.lent; l != 0 {
+				t.Fatalf("a 1-ply probsAt lent %v of helper time; it should search serially", l)
+			}
+
+			par1, err := NewSearcher(DefaultConfig(1))
+			if err != nil {
+				t.Fatal(err)
+			}
+			par1 = par1.WithWorkers(nw)
+			out := make([]Candidate, MaxPlays)
+			pg := p
+			n, err := par1.Plays(&pg, 3, 1, out)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if n != nWant {
+				t.Fatalf("%d candidates serial, %d parallel", nWant, n)
+			}
+			for i := 0; i < n; i++ {
+				if out[i].Play.Result != want[i].Play.Result ||
+					math.Float64bits(out[i].Equity) != math.Float64bits(want[i].Equity) {
+					t.Fatalf("candidate %d differs from the serial search", i)
+				}
+			}
+			if l := par1.lent; l != 0 {
+				t.Fatalf("a 1-ply Plays lent %v of helper time; its root should deepen serially", l)
+			}
+		})
+	}
+}

@@ -111,20 +111,11 @@ var mapDeepWidth = 4
 
 // runMapPhase runs the n cells of one map phase through exec, one cell per
 // call, ctx checked before each; exec takes them in index order, the map's
-// order. A shallow cell searches serially.
-func runMapPhase(ctx context.Context, exec CellExec, n, depth int, cell func(i int, s *Searcher)) error {
+// order.
+func runMapPhase(ctx context.Context, exec CellExec, n int, cell func(i int, s *Searcher)) error {
 	return exec(n, func(i int, s *Searcher) {
 		if ctx.Err() != nil {
 			return
-		}
-		// exec's searchers are built for the map's own depth and fork from
-		// 2 ply; a shallow cell searches serially, as a searcher built for
-		// its depth would (CoresFor): its root's parallel passes cost a
-		// 2-ply search for a 1-ply answer.
-		if depth < 2 && s != nil && s.team != nil {
-			t := s.team
-			s.team = nil
-			defer func() { s.team = t }()
 		}
 		cell(i, s)
 	})
