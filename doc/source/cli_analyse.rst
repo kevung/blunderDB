@@ -484,6 +484,10 @@ joueur n'a pas accès au videau (videau adverse, partie Crawford).
 Sortie ``text`` : une ligne par jet (jet, poids sur 36, équité, marché
 ``kept`` / ``lost``, meilleur coup), puis la moyenne.
 
+La commande ne calcule que la carte demandée : le processus s'arrête avec sa
+réponse, et le précalcul en fond des réponses, propre à l'application de
+bureau, n'y aurait rien à servir.
+
 capture — Position depuis une capture d'écran
 ----------------------------------------------
 

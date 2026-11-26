@@ -7,6 +7,8 @@ const handlers = vi.hoisted(() => /** @type {Record<string, (e: any) => void>} *
 const app = vi.hoisted(() => ({
     StartRollMap: vi.fn().mockResolvedValue(undefined),
     CancelRollMap: vi.fn().mockResolvedValue(undefined),
+    PrefetchRollMaps: vi.fn().mockResolvedValue(undefined),
+    CancelRollMapPrefetch: vi.fn().mockResolvedValue(undefined),
     LegalMoves: vi.fn()
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => app);
@@ -117,6 +119,35 @@ describe('RollMapView', () => {
         // climbing back
         await fireEvent.click(container.querySelector('.trail .crumb'));
         expect(get(rollTrailStore).steps).toHaveLength(0);
+    });
+
+    test('a finished map prefetches its replies, follows the row selected, and stops when left', async () => {
+        const { container } = render(RollMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalledTimes(1));
+        const tag = app.StartRollMap.mock.calls[0][3];
+        await feed(tag);
+        expect(app.PrefetchRollMaps).not.toHaveBeenCalled();
+        const rows = ROLLS.map(([die1, die2]) => ({ die1, die2, weight: die1 === die2 ? 1 : 2, move: '24/14', equity: 0, ply: 2 }));
+        handlers['gammonnet-rolls:done']({ tag, map: { ply: 2, rows, average: 0, cubeAccess: false } });
+        await vi.waitFor(() => expect(app.PrefetchRollMaps).toHaveBeenCalledTimes(1));
+        const [, sent, ply, , focus, sentTag] = app.PrefetchRollMaps.mock.calls[0];
+        expect(sent).toHaveLength(21);
+        expect([ply, focus, sentTag]).toEqual([2, -1, tag]);
+
+        // marked only once the replies stand at the map's depth
+        handlers['gammonnet-rolls:prefetched']({ tag, index: 0, ply: 1 });
+        handlers['gammonnet-rolls:prefetched']({ tag, index: 2, ply: 2 });
+        handlers['gammonnet-rolls:prefetched']({ tag: tag + 99, index: 1, ply: 2 });
+        await Promise.resolve();
+        expect(container.querySelectorAll('tbody tr.ready')).toHaveLength(1);
+
+        const row = [...container.querySelectorAll('tbody tr')].find((r) => r.querySelector('.roll').textContent === '4-6');
+        await fireEvent.click(row);
+        await vi.waitFor(() => expect(app.PrefetchRollMaps).toHaveBeenCalledTimes(2));
+        expect(app.PrefetchRollMaps.mock.calls[1][4]).toBe(ROLLS.findIndex(([a, b]) => a === 4 && b === 6));
+
+        positionStore.set({ ...opening(), player_on_roll: 1 });
+        await vi.waitFor(() => expect(app.CancelRollMapPrefetch).toHaveBeenCalled());
     });
 
     test('a view mounted anew takes no answer meant for the one it replaced', async () => {

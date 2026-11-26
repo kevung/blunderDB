@@ -67,6 +67,49 @@ func (a *App) CancelRollMap() {
 	a.cancelInteractiveSearch(&a.gnRollMapSeq)
 }
 
+// RollMapPrefetchEvent is the payload of "gammonnet-rolls:prefetched": the
+// child of row Index is held up to Ply, so descending it answers at once.
+type RollMapPrefetchEvent struct {
+	Tag   int `json:"tag"`
+	Index int `json:"index"`
+	Ply   int `json:"ply"`
+}
+
+// PrefetchRollMaps computes, behind the roll map on screen (pos and its
+// rows, at ply), the maps one roll below it: every child at 0 then 1 ply,
+// the child of row focus (-1: none) at ply. It runs in the background — the
+// computation on screen keeps its cores (ADR-0120) — into gammonnet.Maps(),
+// where the descent finds it. A different request cancels the one running;
+// the same request again is the run in flight. Emits
+// "gammonnet-rolls:prefetched" (RollMapPrefetchEvent) per child and depth.
+func (a *App) PrefetchRollMaps(pos domain.Position, rows []gammonnet.RollMapRow, ply, pruneK, focus, tag int) {
+	if gammonnet.ValidateMapPly(ply) != nil {
+		return
+	}
+	met, err := a.currentMET()
+	if err != nil {
+		return
+	}
+	req := gammonnet.PrefetchRequest{Pos: pos, Rows: rows, MET: met, Ply: ply, PruneK: pruneK, Focus: focus}
+	a.rollMapPrefetcher().Start(a.batchCtx(), req, func(i, depth int) {
+		a.emitBatch("gammonnet-rolls:prefetched", RollMapPrefetchEvent{Tag: tag, Index: i, Ply: depth})
+	})
+}
+
+// CancelRollMapPrefetch stops the prefetch running, if any: the branch it
+// was for is no longer the one on screen.
+func (a *App) CancelRollMapPrefetch() {
+	a.rollMapPrefetcher().Stop()
+}
+
+func (a *App) rollMapPrefetcher() *gammonnet.Prefetcher {
+	a.gnPrefetchOnce.Do(func() {
+		a.gnPrefetch = gammonnet.NewPrefetcher(gammonnet.Maps(), "", gammonnet.BackgroundExec(gammonnet.ProcessCores(), 0),
+			func(r any) { reportPanic(a.ctx, "gammonNet roll map prefetch", r) })
+	})
+	return a.gnPrefetch
+}
+
 // currentMET is the library's table (ADR-0068), nil for the built-in one.
 func (a *App) currentMET() (*engine.MET, error) {
 	if a.db == nil {
