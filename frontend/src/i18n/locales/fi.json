@@ -3851,6 +3851,18 @@
             "sure": "varma",
             "to-verify": "tarkistettava",
             "uncertain": "epävarma"
-        }
+        },
+        "check": "Vertaa kaavioon: {fields}",
+        "field": {
+            "cube": "tuplauskuutio",
+            "dice": "nopat",
+            "score": "pistetilanne",
+            "turn": "vuorossa oleva",
+            "context": "konteksti (kuutio, nopat, vuoro, pistetilanne)",
+            "checkers": "nappulat",
+            "orientation": "pelisuunta",
+            "pips": "pipmäärät"
+        },
+        "importMenu": "Tuo asiakirja…"
     }
 }

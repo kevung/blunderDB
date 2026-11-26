@@ -246,8 +246,8 @@ export function ConfirmAllProposals(arg1) {
   return window['go']['database']['Database']['ConfirmAllProposals'](arg1);
 }
 
-export function ConfirmDocumentReleve(arg1, arg2, arg3) {
-  return window['go']['database']['Database']['ConfirmDocumentReleve'](arg1, arg2, arg3);
+export function ConfirmDocumentReleve(arg1) {
+  return window['go']['database']['Database']['ConfirmDocumentReleve'](arg1);
 }
 
 export function ConfirmProposal(arg1, arg2) {
@@ -1450,8 +1450,8 @@ export function ReviewAnkiCard(arg1, arg2) {
   return window['go']['database']['Database']['ReviewAnkiCard'](arg1, arg2);
 }
 
-export function ReviewDocumentReleve(arg1) {
-  return window['go']['database']['Database']['ReviewDocumentReleve'](arg1);
+export function ReviewDocumentReleve(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ReviewDocumentReleve'](arg1, arg2, arg3);
 }
 
 export function RolloutFiltered(arg1, arg2, arg3, arg4) {

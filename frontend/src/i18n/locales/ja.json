@@ -3851,6 +3851,18 @@
             "sure": "確実",
             "to-verify": "要確認",
             "uncertain": "不確か"
-        }
+        },
+        "check": "図と照合: {fields}",
+        "field": {
+            "cube": "キューブ",
+            "dice": "ダイス",
+            "score": "スコア",
+            "turn": "手番",
+            "context": "文脈(キューブ、ダイス、手番、スコア)",
+            "checkers": "チェッカー",
+            "orientation": "プレイの向き",
+            "pips": "ピップ数"
+        },
+        "importMenu": "文書を読み込む…"
     }
 }

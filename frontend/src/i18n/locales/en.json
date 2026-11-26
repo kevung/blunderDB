@@ -3851,6 +3851,18 @@
             "sure": "sure",
             "to-verify": "to verify",
             "uncertain": "uncertain"
-        }
+        },
+        "check": "Check against the diagram: {fields}",
+        "field": {
+            "cube": "cube",
+            "dice": "dice",
+            "score": "score",
+            "turn": "player on roll",
+            "context": "context (cube, dice, player on roll, score)",
+            "checkers": "checkers",
+            "orientation": "direction of play",
+            "pips": "pip counts"
+        },
+        "importMenu": "Import a document…"
     }
 }

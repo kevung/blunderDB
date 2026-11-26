@@ -3851,6 +3851,18 @@
             "sure": "sûre",
             "to-verify": "à vérifier",
             "uncertain": "incertaine"
-        }
+        },
+        "check": "À comparer au diagramme : {fields}",
+        "field": {
+            "cube": "videau",
+            "dice": "dés",
+            "score": "score",
+            "turn": "trait",
+            "context": "contexte (videau, dés, trait, score)",
+            "checkers": "pions",
+            "orientation": "sens de jeu",
+            "pips": "décomptes"
+        },
+        "importMenu": "Importer un document…"
     }
 }

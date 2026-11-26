@@ -66,7 +66,9 @@ Le parcours en trois commandes
    de chaque entrée vient des signets du PDF.
 
 2. ``check`` valide le relevé et compte ses entrées, sans lire ni écrire de
-   base. ``--format json`` donne les mêmes comptes en JSON :
+   base. Il liste aussi, après le décompte, les entrées à vérifier (rang, page,
+   état et champs à comparer au diagramme) ; ``--format json`` donne les mêmes
+   comptes et la même liste (``review``) en JSON :
 
    .. code-block:: text
 
@@ -75,6 +77,8 @@ Le parcours en trois commandes
       Context:    read 5, default 0, to verify 1
       Positions:  5 distinct, 1 repeated
       Unverified: rank 4, 5, 6 (import refused without --force)
+      Review:
+        rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
 
 3. ``import`` écrit les positions dans la collection :
 
@@ -416,30 +420,6 @@ sans ``--accept-complete``, le message le dit aussi :
 On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé tel quel ;
 l'import dit alors combien d'entrées il a forcées (``Forced: 3 entries neither
 sure nor verified``).
-
-.. _assistant_import_document:
-
-L'assistant d'import de l'interface
------------------------------------
-
-La commande ``import_document`` (``idoc``, :doc:`cmd_mode`) ouvre l'assistant : on
-choisit un PDF, une image de page ou un relevé ``.json`` déjà lu. L'assistant
-appelle les mêmes fonctions que ``document analyze``, ``check`` et ``import`` et
-n'applique aucune règle de plus.
-
-* **Défauts et sens de jeu** : le contexte par défaut du document et le sens de jeu
-  supposé sont décrits. Un seul bouton les confirme pour tout le document, après
-  contrôle sur quelques diagrammes ; rien n'est confirmé sans ce geste.
-* **Entrées à vérifier** : la liste donne, pour chaque entrée que l'import refuserait
-  en l'état, sa page, son étiquette, son état et la note qui nomme les champs à
-  comparer au diagramme. Celles que les choix en cours ne couvrent pas sont en gras.
-* **Entrées complètes** : la case équivaut à ``--accept-complete``.
-* **Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une fois les
-  défauts confirmés.
-* **Collection** : vide, elle prend le titre du document.
-
-Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; l'assistant n'offre
-pas ``--force``. Le bilan donne le nombre de positions ajoutées et répétées.
 
 .. _cli_document_fallback:
 

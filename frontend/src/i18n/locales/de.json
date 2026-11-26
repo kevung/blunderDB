@@ -3851,6 +3851,18 @@
             "sure": "sicher",
             "to-verify": "zu prüfen",
             "uncertain": "unsicher"
-        }
+        },
+        "check": "Mit dem Diagramm vergleichen: {fields}",
+        "field": {
+            "cube": "Doppelwürfel",
+            "dice": "Würfel",
+            "score": "Spielstand",
+            "turn": "Spieler am Zug",
+            "context": "Kontext (Doppelwürfel, Würfel, Spieler am Zug, Spielstand)",
+            "checkers": "Steine",
+            "orientation": "Spielrichtung",
+            "pips": "Pipcounts"
+        },
+        "importMenu": "Dokument importieren…"
     }
 }

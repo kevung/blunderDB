@@ -147,7 +147,7 @@ export function ComputeTrainingStatsCtx(arg1:context.Context,arg2:database.Stats
 
 export function ConfirmAllProposals(arg1:number):Promise<service.DirectionView>;
 
-export function ConfirmDocumentReleve(arg1:string,arg2:boolean,arg3:boolean):Promise<string>;
+export function ConfirmDocumentReleve(arg1:string):Promise<string>;
 
 export function ConfirmProposal(arg1:number,arg2:string):Promise<service.DirectionView>;
 
@@ -749,7 +749,7 @@ export function ResumeImportBatch(arg1:number):Promise<void>;
 
 export function ReviewAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
 
-export function ReviewDocumentReleve(arg1:string):Promise<Array<document.ReviewItem>>;
+export function ReviewDocumentReleve(arg1:string,arg2:boolean,arg3:boolean):Promise<document.ReviewResult>;
 
 export function RolloutFiltered(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
 

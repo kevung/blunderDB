@@ -120,7 +120,7 @@ type Defaults struct {
 // Direction is a document's direction of play as a reader assumed it. A
 // wrong guess exchanges the players of every position read under it, so
 // while it stands unconfirmed no complete entry is accepted, whatever doubts
-// it carries; a person confirms it on its own.
+// it carries; a person confirms it with the defaults, in one gesture.
 type Direction struct {
 	// Home is the side of the bottom player's home board: "left" or "right".
 	Home        string `json:"home"`

@@ -74,7 +74,7 @@ const (
 	whyDirectionGesture  = "a gesture of a Direction or a Rencontre (ADR-0057): the daemon serves it under `serve --direction`, `call` always, both with If-Match; the CLI adds no writing sub-command, `call` is its writing face (ADR-0056 as amended)"
 	whyDirectionRead     = "a read of the Direction the daemon serves (ADR-0057) to a client that draws the view itself; the CLI's `tournament` subcommand prints the sheets a script needs (list, standings, page, export, verify), not this view"
 	whyDocumentAnalysis  = "reading a document is done on the machine that holds the file (ADR-0117 rule 6): the daemon imports a Relevé (/v1/documents.importReleve) and reads no PDF a client would upload"
-	whyDocumentAssistant = "the import assistant of the desktop reads and confirms a Relevé held in memory; the CLI does the same on the file (document check, then \"confirmed\": true), the daemon imports the Relevé a desktop confirmed"
+	whyDocumentAssistant = "the import assistant of the desktop reads, reviews and confirms a Relevé held in memory; the CLI does the same on the file (document check lists the entries to review, text or json; confirming is setting \"confirmed\": true), the daemon imports the Relevé a desktop confirmed"
 	whyTrainingJournal   = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): a session exists only because someone answered it. A client that drills a person records and reads it over /v1/training.*, which `blunderdb call` also serves; a CLI sub-command would have no session of its own to run"
 )
 

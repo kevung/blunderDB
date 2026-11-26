@@ -6,21 +6,48 @@
     import { t } from '../i18n';
     import Modal from './Modal.svelte';
     import { documentImportStore } from '../stores/documentImportStore.js';
-    import { refusedRanks, pendingConfirmations, confirmDocument, setChoice, runDocumentImport, closeDocumentImport } from '../services/documentImportService.js';
+    import { confirmDocument, setChoice, runDocumentImport, closeDocumentImport } from '../services/documentImportService.js';
 
     let { visible = false } = $props();
 
     const s = $derived($documentImportStore);
     const summary = $derived(s.summary);
-    const pending = $derived(pendingConfirmations(summary));
-    const refused = $derived(refusedRanks(summary, s));
     const defaults = $derived(summary?.defaults ?? null);
+    // La liste des refus et l'offre du repli viennent de Go (document.Review) ; ici, l'affichage seul.
+    const refused = $derived(s.review.refused ?? []);
+    const unconfirmed = $derived(!!defaults && (!defaults.confirmed || (!!defaults.direction && !defaults.direction.confirmed)));
     const busy = $derived(s.phase === 'reading' || s.phase === 'importing');
     const canImport = $derived(s.phase === 'review' && refused.length === 0 && (summary?.entries ?? 0) > 0);
-    const fallbackRanks = $derived((s.acceptComplete ? summary?.fallbackComplete : summary?.fallback) ?? []);
+    /** @param {string} f a field code of a doubt, as document.ReviewItem names it */
+    function fieldLabel(f) {
+        switch (f) {
+            case 'context':
+                return $t('documentImport.field.context');
+            case 'cube':
+                return $t('documentImport.field.cube');
+            case 'dice':
+                return $t('documentImport.field.dice');
+            case 'score':
+                return $t('documentImport.field.score');
+            case 'turn':
+                return $t('documentImport.field.turn');
+            case 'point':
+            case 'bar':
+            case 'checkers':
+            case 'position':
+                return $t('documentImport.field.checkers');
+            case 'orientation':
+                return $t('documentImport.field.orientation');
+            case 'pips':
+                return $t('documentImport.field.pips');
+            default:
+                return f;
+        }
+    }
+    const fallbackRanks = $derived(s.review.fallbackRanks ?? []);
 </script>
 
-<Modal open={visible} onclose={closeDocumentImport} size="wide" label={$t('documentImport.title')}>
+<Modal open={visible} onclose={() => !busy && closeDocumentImport()} closeButton={!busy} closeOnEscape={!busy} size="wide" label={$t('documentImport.title')}>
     <h2 class="doc-title">{$t('documentImport.title')}</h2>
     {#if s.phase === 'reading'}
         <p data-testid="document-import-reading">{$t('documentImport.reading')}</p>
@@ -47,8 +74,8 @@
                         {defaults.direction.confirmed ? $t('documentImport.directionConfirmed') : $t('documentImport.directionAsk')}
                     </p>
                 {/if}
-                {#if pending.defaults || pending.direction}
-                    <button type="button" data-testid="document-import-confirm" disabled={busy} onclick={() => confirmDocument(pending)}>{$t('documentImport.confirm')}</button>
+                {#if unconfirmed}
+                    <button type="button" data-testid="document-import-confirm" disabled={busy} onclick={() => confirmDocument()}>{$t('documentImport.confirm')}</button>
                 {/if}
             </section>
         {/if}
@@ -58,7 +85,13 @@
                 {$t('documentImport.acceptComplete', { n: summary.complete })}
             </label>
             <label>
-                <input type="checkbox" data-testid="document-import-fallback" checked={s.fallback} disabled={!defaults?.confirmed} onchange={(e) => setChoice('fallback', e.currentTarget.checked)} />
+                <input
+                    type="checkbox"
+                    data-testid="document-import-fallback"
+                    checked={s.fallback}
+                    disabled={fallbackRanks.length === 0}
+                    onchange={(e) => setChoice('fallback', e.currentTarget.checked)}
+                />
                 {$t('documentImport.fallback', { n: fallbackRanks.length })}
             </label>
             <label class="doc-collection">
@@ -67,13 +100,13 @@
             </label>
         </fieldset>
         <section class="doc-block">
-            <h3>{$t('documentImport.review', { n: s.review.length })}</h3>
-            {#if s.review.length === 0}
+            <h3>{$t('documentImport.review', { n: s.review.items.length })}</h3>
+            {#if s.review.items.length === 0}
                 <p>{$t('documentImport.reviewNone')}</p>
             {:else}
                 <ul class="doc-review" data-testid="document-import-review">
-                    {#each s.review as item (item.rank)}
-                        <li data-rank={item.rank} class:held={refused.includes(item.rank)}>
+                    {#each s.review.items as item (item.rank)}
+                        <li data-rank={item.rank} class:held={item.held}>
                             <strong>{item.reference}</strong>
                             <span
                                 >{item.state === 'sure'
@@ -82,7 +115,7 @@
                                       ? $t('documentImport.state.uncertain')
                                       : $t('documentImport.state.to-verify')}</span
                             >
-                            {#if item.note}<em>{item.note}</em>{/if}
+                            {#if item.fields.length}<em>{$t('documentImport.check', { fields: item.fields.map((/** @type {string} */ f) => fieldLabel(f)).join(', ') })}</em>{/if}
                         </li>
                     {/each}
                 </ul>
@@ -104,7 +137,7 @@
         {#if s.phase === 'done'}
             <button type="button" class="primary" data-testid="document-import-close" onclick={closeDocumentImport}>{$t('common.close')}</button>
         {:else}
-            <button type="button" onclick={closeDocumentImport}>{$t('common.cancel')}</button>
+            <button type="button" data-testid="document-import-cancel" disabled={busy} onclick={closeDocumentImport}>{$t('common.cancel')}</button>
             <button type="button" class="primary" data-testid="document-import-run" disabled={!canImport} onclick={runDocumentImport}>{$t('documentImport.run')}</button>
         {/if}
     {/snippet}

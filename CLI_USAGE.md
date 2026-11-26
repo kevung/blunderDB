@@ -3330,8 +3330,8 @@ Examples:
 Usage: blunderdb document check [options] <releve.json>
 
 Validate a relevé (format, ranks, legal positions; version 1 is still read) and count its
-entries by state and by how their context is known. Nothing is read from or written to a
-database.
+entries by state and by how their context is known, then list the entries to review, each with
+the fields to check against its diagram. Nothing is read from or written to a database.
 
 Options:
   -format string

@@ -71,6 +71,28 @@ func Unverified(r *Releve, acceptComplete bool) []int {
 	return ranks
 }
 
+// Refused returns the ranks an import with these options refuses unless it is
+// forced: those neither sure nor verified, less the complete entries
+// accepted and the ones taken under their fallback context. Import and every
+// reader of the decision (the interface's assistant, `document check`) share
+// this one list.
+func Refused(r *Releve, opts ImportOptions) []int {
+	r = r.Upgrade()
+	fallback := map[int]bool{}
+	if opts.Fallback {
+		for _, k := range FallbackRanks(r, opts.AcceptComplete) {
+			fallback[k] = true
+		}
+	}
+	var refused []int
+	for _, k := range Unverified(r, opts.AcceptComplete) {
+		if !fallback[k] {
+			refused = append(refused, k)
+		}
+	}
+	return refused
+}
+
 // FallbackRanks returns the ranks of the entries an import refuses but
 // accepts under their fallback context (ImportOptions.Fallback).
 func FallbackRanks(r *Releve, acceptComplete bool) []int {
@@ -177,12 +199,7 @@ func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, op
 			fallback[k] = true
 		}
 	}
-	var unverified []int
-	for _, k := range Unverified(r, opts.AcceptComplete) {
-		if !fallback[k] {
-			unverified = append(unverified, k)
-		}
-	}
+	unverified := Refused(r, opts)
 	if len(unverified) > 0 && !opts.Force {
 		return ImportResult{}, fmt.Errorf("%w: rank %s; %s, or force the import", ErrUnverified, joinInts(unverified), refusalHint(r, unverified, opts.AcceptComplete, opts.Fallback))
 	}

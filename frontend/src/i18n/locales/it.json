@@ -3851,6 +3851,18 @@
             "sure": "sicura",
             "to-verify": "da verificare",
             "uncertain": "incerta"
-        }
+        },
+        "check": "Da confrontare con il diagramma: {fields}",
+        "field": {
+            "cube": "cubo",
+            "dice": "dadi",
+            "score": "punteggio",
+            "turn": "giocatore di turno",
+            "context": "contesto (cubo, dadi, turno, punteggio)",
+            "checkers": "pedine",
+            "orientation": "senso di gioco",
+            "pips": "conteggi dei pip"
+        },
+        "importMenu": "Importa un documento…"
     }
 }
