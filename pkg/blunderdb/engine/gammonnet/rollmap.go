@@ -65,11 +65,17 @@ type RollMap struct {
 type RollMapRowFunc func(index int, row RollMapRow)
 
 // LocalExec is the CellExec of a computation that owns its cores: workers
-// goroutines (0: one per core), each reusing one searcher built for
-// ply/pruneK, each holding a core of the process budget while it searches.
+// goroutines, each reusing one searcher built for ply/pruneK, each holding a
+// core of the process budget while it searches, taking cells in index order.
+// workers = 0 is one per core below 2 ply, and mapDeepWidth from 2 ply,
+// where each search forks into the cores left idle: the cells then land one
+// after another rather than all together at the end.
 func LocalExec(workers, ply, pruneK int) CellExec {
 	if workers <= 0 {
 		workers = runtime.NumCPU()
+		if ply >= 2 {
+			workers = mapDeepWidth
+		}
 	}
 	return cubeMatrixGoroutines(workers, ply, pruneK)
 }

@@ -267,9 +267,10 @@ case dit le verdict de videau — *ND* (pas de double), *D/T* (double, prend),
 *D/P* (double, passe), *TG* (trop bon) — avec les mêmes teintes ; la marge
 d'un double est la plus petite de celle entre doubler et ne pas doubler et de
 celle entre prendre et passer. Le score de
-la position est encadré. La grille paraît aussitôt à 0-ply, puis à 1-ply, et
-se raffine ensuite case par case à la profondeur demandée en partant de ce
-score ; une case pas encore à cette profondeur est en pointillé. Une case
+la position est encadré. La grille paraît aussitôt à 0-ply, puis à 1-ply si
+la profondeur réglée est plus grande ; à 2-ply, elle se raffine ensuite case
+par case en partant de ce score. Une case pas encore à la profondeur réglée
+est en pointillé. Une case
 où le videau de la position ne peut pas se trouver porte un tiret. La
 légende à droite a un bouton par coup ou par verdict (lettre ou sigle,
 notation, nombre de scores) : un clic met ses cases en évidence. Avec des dés,
@@ -296,9 +297,9 @@ bon pour être joué ; la ligne et la case portent « D/P » et un cadre, et le
 compte « n/36 » filtre les lignes d'un clic. Il n'existe que si le joueur peut
 doubler. L'en-tête donne aussi le meilleur et le pire jet, et l'écart-type.
 Un jet sans coup légal s'écrit *Danse*. Les 21 jets paraissent aussitôt à
-0-ply, puis à 1-ply, et se raffinent ensuite un à un à la profondeur
-demandée ; une ligne pas encore à cette profondeur est grisée, sa case en
-pointillé.
+0-ply, puis à 1-ply si la profondeur réglée est plus grande ; à 2-ply, ils se
+raffinent ensuite un à un. Une ligne pas encore à la profondeur réglée est
+grisée, sa case en pointillé.
 
 Le fil d'Ariane (« Départ › moi 6-4 24/14 › lui 5-2 13/8 24/22 › Mes jets »)
 dit d'où vient la position évaluée et à qui sont les jets affichés (*Mes jets*

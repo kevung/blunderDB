@@ -101,44 +101,32 @@ func mapDepths(ply int) []int {
 	return depths
 }
 
-// mapDeepWidth is how many cells a deep phase (depth >= 2) searches at once.
-// A depth-2 search forks onto the idle cores of the budget (parallel.go), so
-// a few cells at a time finish one after another, in the phase's order, about
-// as fast in total as every cell at once finishing together at the end.
+// mapDeepWidth is how many cells at once LocalExec runs a deep map on (its
+// workers = 0, ply >= 2). A depth-2 search forks onto the idle cores of the
+// budget (parallel.go), so a few cells at a time finish one after another,
+// in the map's order, about as fast in total as every cell at once finishing
+// together at the end. The width belongs to the executor: a shared one (the
+// daemon's pool) takes one cell per unit and keeps its own turns.
 var mapDeepWidth = 4
 
-// runMapPhase runs the n cells of one map phase through exec, in index order,
-// ctx checked before each cell. A shallow phase hands exec every cell; a deep
-// one hands it mapDeepWidth units, each taking the next cell in order as it
-// frees, so cell i starts no later than cell i+1 and the cores a unit does
-// not use go to its searches' forks.
+// runMapPhase runs the n cells of one map phase through exec, one cell per
+// call, ctx checked before each; exec takes them in index order, the map's
+// order. A shallow cell searches serially.
 func runMapPhase(ctx context.Context, exec CellExec, n, depth int, cell func(i int, s *Searcher)) error {
-	if depth < 2 {
-		return exec(n, func(i int, s *Searcher) {
-			if ctx.Err() != nil {
-				return
-			}
-			// exec's searchers are built for the map's own depth and fork
-			// from 2 ply; a shallow cell searches serially, as a searcher
-			// built for its depth would (CoresFor): its root's parallel
-			// passes cost a 2-ply search for a 1-ply answer.
-			if s != nil && s.team != nil {
-				t := s.team
-				s.team = nil
-				defer func() { s.team = t }()
-			}
-			cell(i, s)
-		})
-	}
-	var next atomic.Int64
-	return exec(min(max(mapDeepWidth, 1), n), func(_ int, s *Searcher) {
-		for ctx.Err() == nil {
-			i := int(next.Add(1) - 1)
-			if i >= n {
-				return
-			}
-			cell(i, s)
+	return exec(n, func(i int, s *Searcher) {
+		if ctx.Err() != nil {
+			return
 		}
+		// exec's searchers are built for the map's own depth and fork from
+		// 2 ply; a shallow cell searches serially, as a searcher built for
+		// its depth would (CoresFor): its root's parallel passes cost a
+		// 2-ply search for a 1-ply answer.
+		if depth < 2 && s != nil && s.team != nil {
+			t := s.team
+			s.team = nil
+			defer func() { s.team = t }()
+		}
+		cell(i, s)
 	})
 }
 

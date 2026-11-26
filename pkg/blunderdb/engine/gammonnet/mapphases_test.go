@@ -40,16 +40,33 @@ func TestRollMap_ThreeTiers(t *testing.T) {
 	}
 }
 
+// oracleCases cover a centred and an owned cube, the filters off and on.
+var oracleCases = []struct {
+	xgid   string
+	pruneK int
+}{
+	{openingXGID, 0},
+	{busyMatchXGID, 0},
+	{ownedCubeMatchXGID, DefaultPruneK},
+	{ownedCubeMoneyXGID, DefaultPruneK},
+}
+
+// ownedCubeMatchXGID: busyMatchXGID with a 2-cube the player on roll owns.
+const ownedCubeMatchXGID = "XGID=---BBaB-BbA-bC-b--BdAca---:1:1:1:00:0:5:0:9:10"
+
+// ownedCubeMoneyXGID: the opening at money, a 2-cube the opponent owns.
+const ownedCubeMoneyXGID = "XGID=-b----E-C---eE---c-e----B-:1:-1:1:00:0:0:0:0:10"
+
 // The provisional phases and the shared searchers leave no trace: every final
 // row is, bit for bit, the row searched alone on a fresh serial searcher.
 func TestRollMap_FinalRowsAreTheRowsSearchedAlone(t *testing.T) {
-	for _, xgid := range []string{openingXGID, busyMatchXGID} {
-		pos := decodeXGIDForTest(t, xgid)
-		m, err := ComputeRollMap(context.Background(), pos, nil, 2, 0, LocalExec(0, 2, 0), nil)
+	for _, c := range oracleCases {
+		pos := decodeXGIDForTest(t, c.xgid)
+		m, err := ComputeRollMap(context.Background(), pos, nil, 2, c.pruneK, LocalExec(0, 2, c.pruneK), nil)
 		if err != nil {
 			t.Fatal(err)
 		}
-		job, err := newRollMapJob(pos, nil, 2, 0)
+		job, err := newRollMapJob(pos, nil, 2, c.pruneK)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -59,19 +76,19 @@ func TestRollMap_FinalRowsAreTheRowsSearchedAlone(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			want, err := job.row(context.Background(), i, s, 0)
+			want, err := job.row(context.Background(), i, s, c.pruneK)
 			if err != nil {
 				t.Fatal(err)
 			}
 			got := m.Rows[i]
 			if math.Float64bits(got.Equity) != math.Float64bits(want.Equity) || got.Move != want.Move ||
 				got.Dance != want.Dance || got.Ply != want.Ply || !equalBoolPtr(got.MarketLost, want.MarketLost) {
-				t.Fatalf("%s row %d = %+v, alone %+v", xgid, i, got, want)
+				t.Fatalf("%s pruneK %d row %d = %+v, alone %+v", c.xgid, c.pruneK, i, got, want)
 			}
 			avg += float64(job.rolls[i].weight * want.Equity)
 		}
 		if math.Float64bits(m.Average) != math.Float64bits(avg) {
-			t.Fatalf("%s average %v, alone %v", xgid, m.Average, avg)
+			t.Fatalf("%s pruneK %d average %v, alone %v", c.xgid, c.pruneK, m.Average, avg)
 		}
 	}
 }
@@ -83,29 +100,41 @@ func equalBoolPtr(a, b *bool) bool {
 	return *a == *b
 }
 
-// The score map's final cells, checker and cube, are the cells searched alone.
+// The score map's final cells, checker and cube, centred and owned, filters
+// off and on, are the cells searched alone.
 func TestScoreMap_FinalCellsAreTheCellsSearchedAlone(t *testing.T) {
-	for _, xgid := range []string{scoreMapCheckerXGID, busyMatchXGID} {
-		pos := decodeXGIDForTest(t, xgid)
+	cases := []struct {
+		xgid   string
+		pruneK int
+	}{
+		{scoreMapCheckerXGID, 0},
+		{busyMatchXGID, 0},
+		{ownedCubeMatchXGID, DefaultPruneK},
+		{"XGID=-b----E-C---eE---c-e----B-:1:1:1:31:6:4:0:9:10", DefaultPruneK},
+	}
+	for _, c := range cases {
+		pos := decodeXGIDForTest(t, c.xgid)
 		const length = 5
-		m, err := ComputeScoreMap(context.Background(), pos, nil, length, 2, 0, LocalExec(0, 2, 0), nil)
+		m, err := ComputeScoreMap(context.Background(), pos, nil, length, 2, c.pruneK, LocalExec(0, 2, c.pruneK), nil)
 		if err != nil {
 			t.Fatal(err)
 		}
-		alone, err := ComputeScoreMap(context.Background(), pos, nil, length, 2, 0, aloneExec, nil)
+		alone, err := ComputeScoreMap(context.Background(), pos, nil, length, 2, c.pruneK, aloneExec, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
 		for i := range m.Cells {
 			got, want := m.Cells[i], alone.Cells[i]
 			if got.Ply != 2 || !sameScoreMapCell(got, want) {
-				t.Fatalf("%s cell %d = %+v, alone %+v", xgid, i, got, want)
+				t.Fatalf("%s pruneK %d cell %d = %+v, alone %+v", c.xgid, c.pruneK, i, got, want)
 			}
 		}
 	}
 }
 
-// aloneExec runs each cell serially on a searcher of its own.
+// aloneExec runs the cells one after another, each on a searcher of its own
+// (nil: the cell builds a NewBatchSearcher, which forks from 2 ply), so no
+// cache and no earlier phase is shared between cells.
 func aloneExec(n int, cell func(int, *Searcher)) error {
 	for i := range n {
 		cell(i, nil)
@@ -173,9 +202,10 @@ func TestMaps_CancelStopsTheDeepPhaseBetweenCells(t *testing.T) {
 	})
 }
 
-// The deep phase runs every cell once, never more than mapDeepWidth at once,
-// so the cores left over go to the cells' own forks.
-func TestRunMapPhase_DeepPhaseIsNarrow(t *testing.T) {
+// LocalExec runs a deep map's phase cell by cell, every cell once and never
+// more than mapDeepWidth at once, so the cores left over go to the cells' own
+// forks.
+func TestLocalExec_DeepMapIsNarrow(t *testing.T) {
 	var mu sync.Mutex
 	calls := map[int]int{}
 	running, peak := 0, 0
