@@ -371,6 +371,39 @@ Limites à lever avant que la lecture d'images serve vraiment :
    une fois par document, détection fiable du videau et des dés, lecture de la légende.
 3. Le drapeau « 15 + 15 sans doute » et les familles n'ont pas de champ dans le Relevé v1.
 
+### Contexte : videau, dés, trait, score (2026-11-30) — banc, `JOURNAL.md` F
+
+Échantillon de 30 diagrammes par livre scanné, tiré et vérifié à l'œil avant développement, un
+passage (consommé) ; Deep Cube sur sa vérité (1 518).
+
+- Chaque livre donne le contexte à sa façon : bandeau texte (Deep Cube, Olsen), dés dessinés dont
+  la couleur donne le trait (Kageyama, Mochizuki), légende imprimée dans l'image sans couche
+  texte (Robertie), prose (Trice), ou rien (Woolsey).
+- **Videau** : une valeur lue n'est jamais fausse (0 sur les sept livres) et aucun videau n'est
+  inventé. Mais un videau dessiné n'est pas vu 26 fois sur 175 (Kageyama 15 sur 25, Robertie 8
+  sur 30). « Pas de videau trouvé » ne vaut donc jamais « centré ».
+- **Dés dessinés** : Mochizuki 11 justes sur 13, 1 faux (4-6 lu 4-1) ; Kageyama 1 sur 6. Aucun dé
+  inventé. Des dés lus sans seconde source restent un doute.
+- **Score** : lu juste quand un bandeau l'écrit (Deep Cube, Olsen 26 sur 30, 0 faux) ; absent
+  ailleurs.
+- Règle proposée : un champ est sûr par deux sources concordantes, ou par une lecture cohérente
+  (videau : valeur lue cohérente avec sa place) ; sinon il relève d'un **défaut du document** que
+  l'utilisateur confirme une fois (« videau au milieu = centré », « joueur du bas, décision de
+  videau », « money »), ou il est à vérifier.
+- Rendement : aucun diagramme n'a son contexte entièrement sûr par lecture seule (3 chez
+  Mochizuki). Sous défauts confirmés : tout Deep Cube, 244 sur 333 chez Olsen, 149 sur 157 chez
+  Woolsey ; rien chez Trice, Robertie, Kageyama, Mochizuki, où le contexte change d'un diagramme
+  à l'autre.
+- Ne s'automatise pas aujourd'hui : la valeur d'un videau possédé dessiné vide (Robertie) ; une
+  légende à lire en lettres ; le trait donné seulement par la prose.
+
+Conséquence de conception : une entrée porte deux certitudes distinctes, **pions** et
+**contexte**. Le contexte se vérifie d'un coup d'œil sur la planche (videau, dés, trait
+redessinés à côté de la vignette) et se prête à la vérification par familles : défauts confirmés
+une fois par document, puis seules les exceptions détectées (videau possédé, dés dessinés) sont
+montrées. L'import refuse une entrée dont le contexte n'est ni lu, ni sous défaut confirmé, ni
+vérifié.
+
 ## Décisions de l'utilisateur (2026-11-25)
 
 - Recommandations suivies : rendu PDF, premier périmètre, ADR neuf.
