@@ -240,6 +240,7 @@ var databaseParity = map[string]parityEntry{
 	"LessonMarkdown":                    {Server: "/v1/lessons.markdown", Why: "Database.LessonMarkdown serves the desktop, whose interface has no gesture for it yet; the CLI has no verb for it yet"},
 	"ExportPaperArchive":                {CLI: "archive export", Server: "/v1/exports.archive"},
 	"MatchSheetHTML":                    {CLI: "match sheet", Server: "/v1/matches.sheet"},
+	"PositionSheetHTML":                 {CLI: "sheet", Server: "/v1/positions.sheet"},
 	"ImportPaperArchive":                {CLI: "archive import", Server: "/v1/imports.archive"},
 	"ImportDocumentReleve":              {CLI: "document import", Server: "/v1/documents.importReleve"},
 	"AnalyzeDocument":                   {CLI: "document analyze", Why: whyDocumentAnalysis},

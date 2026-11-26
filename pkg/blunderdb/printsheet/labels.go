@@ -24,6 +24,7 @@ var labels = map[string]map[string]string{
 		"reimport": "Réimport", "bytes": "{n} octets",
 		"reimportNote": "Transcription, scores, temps, marques, commentaires. Analyses recalculées à l'import.",
 		"noCode":       "Pas de code de réimport : {err}",
+		"listTitle":    "Liste de positions", "nPositions": "{n} positions", "printedOn": "imprimée le {d}", "versoNote": "réponses au verso, même numéro", "answers": "Réponses", "lgPips": "pips trait–adversaire", "lgAnalysis": "<b>meilleur coup</b> · autre choix et sa perte en millièmes · gain/gammon en %",
 	},
 	"en": {
 		"title": "Match sheet", "length": "{n}-point match", "money": "Money session",
@@ -37,6 +38,7 @@ var labels = map[string]map[string]string{
 		"reimport": "Reimport", "bytes": "{n} bytes",
 		"reimportNote": "Transcription, scores, times, marks, comments. Analyses are computed again on import.",
 		"noCode":       "No reimport code: {err}",
+		"listTitle":    "Position list", "nPositions": "{n} positions", "printedOn": "printed {d}", "versoNote": "answers overleaf, same number", "answers": "Answers", "lgPips": "pips on roll–opponent", "lgAnalysis": "<b>best play</b> · other choice and its loss in thousandths · win/gammon in %",
 	},
 	"de": {
 		"title": "Matchblatt", "length": "Match auf {n} Punkte", "money": "Geldspiel",
@@ -50,6 +52,7 @@ var labels = map[string]map[string]string{
 		"reimport": "Wiedereinlesen", "bytes": "{n} Bytes",
 		"reimportNote": "Transkription, Stände, Zeiten, Markierungen, Kommentare. Analysen werden beim Import neu berechnet.",
 		"noCode":       "Kein Code zum Wiedereinlesen: {err}",
+		"listTitle":    "Stellungsliste", "nPositions": "{n} Stellungen", "printedOn": "gedruckt am {d}", "versoNote": "Antworten auf der Rückseite, gleiche Nummer", "answers": "Antworten", "lgPips": "Pips am Zug–Gegner", "lgAnalysis": "<b>bester Zug</b> · andere Wahl und ihr Verlust in Tausendsteln · Sieg/Gammon in %",
 	},
 	"el": {
 		"title": "Φύλλο αγώνα", "length": "Αγώνας {n} πόντων", "money": "Παιχνίδι money",
@@ -63,6 +66,7 @@ var labels = map[string]map[string]string{
 		"reimport": "Επανεισαγωγή", "bytes": "{n} byte",
 		"reimportNote": "Καταγραφή, σκορ, χρόνοι, σημάνσεις, σχόλια. Οι αναλύσεις υπολογίζονται ξανά στην εισαγωγή.",
 		"noCode":       "Χωρίς κωδικό επανεισαγωγής: {err}",
+		"listTitle":    "Λίστα θέσεων", "nPositions": "{n} θέσεις", "printedOn": "τυπώθηκε {d}", "versoNote": "απαντήσεις στο πίσω μέρος, ίδιος αριθμός", "answers": "Απαντήσεις", "lgPips": "pips παίκτη που παίζει–αντιπάλου", "lgAnalysis": "<b>καλύτερη κίνηση</b> · άλλη επιλογή και η απώλειά της σε χιλιοστά · νίκη/γκάμον σε %",
 	},
 	"es": {
 		"title": "Hoja de partido", "length": "Partido a {n} puntos", "money": "Partida libre",
@@ -76,6 +80,7 @@ var labels = map[string]map[string]string{
 		"reimport": "Reimportación", "bytes": "{n} bytes",
 		"reimportNote": "Transcripción, marcadores, tiempos, marcas, comentarios. Los análisis se recalculan al importar.",
 		"noCode":       "Sin código de reimportación: {err}",
+		"listTitle":    "Lista de posiciones", "nPositions": "{n} posiciones", "printedOn": "impresa el {d}", "versoNote": "respuestas al dorso, mismo número", "answers": "Respuestas", "lgPips": "pips en turno–rival", "lgAnalysis": "<b>mejor jugada</b> · otra opción y su pérdida en milésimas · victoria/gammon en %",
 	},
 	"fi": {
 		"title": "Ottelulomake", "length": "{n} pisteen ottelu", "money": "Rahapeli",
@@ -89,6 +94,7 @@ var labels = map[string]map[string]string{
 		"reimport": "Uudelleentuonti", "bytes": "{n} tavua",
 		"reimportNote": "Kirjaus, tilanteet, ajat, merkinnät, kommentit. Analyysit lasketaan uudelleen tuonnissa.",
 		"noCode":       "Ei uudelleentuontikoodia: {err}",
+		"listTitle":    "Asemaluettelo", "nPositions": "{n} asemaa", "printedOn": "tulostettu {d}", "versoNote": "vastaukset kääntöpuolella, sama numero", "answers": "Vastaukset", "lgPips": "pipit vuorossa–vastustaja", "lgAnalysis": "<b>paras siirto</b> · toinen vaihtoehto ja sen menetys tuhannesosina · voitto/gammon %",
 	},
 	"it": {
 		"title": "Foglio di partita", "length": "Partita ai {n} punti", "money": "Partita libera",
@@ -102,6 +108,7 @@ var labels = map[string]map[string]string{
 		"reimport": "Reimportazione", "bytes": "{n} byte",
 		"reimportNote": "Trascrizione, punteggi, tempi, segni, commenti. Le analisi si ricalcolano all'importazione.",
 		"noCode":       "Nessun codice di reimportazione: {err}",
+		"listTitle":    "Elenco di posizioni", "nPositions": "{n} posizioni", "printedOn": "stampato il {d}", "versoNote": "risposte sul retro, stesso numero", "answers": "Risposte", "lgPips": "pip di turno–avversario", "lgAnalysis": "<b>mossa migliore</b> · altra scelta e la sua perdita in millesimi · vittoria/gammon in %",
 	},
 	"ja": {
 		"title": "マッチシート", "length": "{n}ポイントマッチ", "money": "マネーゲーム",
@@ -115,6 +122,7 @@ var labels = map[string]map[string]string{
 		"reimport": "再インポート", "bytes": "{n}バイト",
 		"reimportNote": "棋譜、スコア、時間、マーク、コメント。分析はインポート時に再計算されます。",
 		"noCode":       "再インポート用コードなし：{err}",
+		"listTitle":    "局面リスト", "nPositions": "{n} 局面", "printedOn": "{d} 印刷", "versoNote": "解答は裏面、同じ番号", "answers": "解答", "lgPips": "ピップ 手番側–相手", "lgAnalysis": "<b>最善手</b> · 別の選択とその損失（千分率） · 勝率/ギャモン率 %",
 	},
 	"ru": {
 		"title": "Лист матча", "length": "Матч до {n} очков", "money": "Игра на деньги",
@@ -128,6 +136,7 @@ var labels = map[string]map[string]string{
 		"reimport": "Повторный импорт", "bytes": "{n} байт",
 		"reimportNote": "Запись, счёт, время, отметки, комментарии. Анализ пересчитывается при импорте.",
 		"noCode":       "Нет кода повторного импорта: {err}",
+		"listTitle":    "Список позиций", "nPositions": "{n} позиций", "printedOn": "напечатано {d}", "versoNote": "ответы на обороте, тот же номер", "answers": "Ответы", "lgPips": "пипы на ходу–соперник", "lgAnalysis": "<b>лучший ход</b> · другой выбор и его потеря в тысячных · победа/гаммон в %",
 	},
 }
 

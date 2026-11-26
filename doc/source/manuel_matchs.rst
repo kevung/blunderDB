@@ -94,8 +94,9 @@ tout tienne sur la page ; si le bloc Positions ne tient toujours pas, il passe
 au verso, et des lignes qui débordent encore passent en disposition continue,
 les coups à la suite. Un verso encore trop long à 5,5 pt reporte ses dernières
 positions sur une feuille suivante, en-tête répété, autant de fois qu'il le
-faut : aucune position n'est coupée par le bord de la feuille. Les options de
-la boîte :
+faut ; une entrée plus haute qu'une feuille à elle seule, un très long
+commentaire, se poursuit sur la feuille suivante : rien n'est caché par le bord
+de la feuille. Les options de la boîte :
 
 - **Blunders de l'adversaire** (décochée) : les numérote et les détaille aussi.
   Décochée, ils restent marqués ``??`` dans la transcription, sans plus.
@@ -114,6 +115,20 @@ la boîte :
 
 L'impression n'écrit rien dans la base. En ligne de commande : ``match sheet``
 (:doc:`cli_matchs`).
+
+.. _archive_papier_interface:
+
+**Archive papier…**, dans le menu contextuel d'un match de la liste, ouvre la
+boîte de l'archive papier : des pages A4 de codes QR, sans texte, qui gardent
+les matchs sur papier. **Exporter…** écrit la page d'archive de ce match, des
+N matchs de la liste filtrée ou de toute la bibliothèque, l'enregistre en
+fichier HTML et l'ouvre dans le navigateur, qui l'imprime. **Importer…** lit
+une ou plusieurs pages d'archive : le fichier HTML exporté, ou des scans et des
+photos (PNG, JPEG) de ses feuilles, en nombre quelconque et dans n'importe quel
+ordre. Un code illisible est reconstruit par son code de parité quand c'est
+possible ; la barre d'état donne les matchs importés, les doublons et les codes
+manquants. Les matchs passent par l'import ordinaire, et les analyses sont
+recalculées ensuite. En ligne de commande : ``archive`` (:doc:`cli_import_export`).
 
 Un clic sur un match ouvre sa fiche. Une ligne
 d'en-tête donne les joueurs, le score final (le vainqueur en gras, son nom au

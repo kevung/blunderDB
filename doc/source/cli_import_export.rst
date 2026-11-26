@@ -329,6 +329,44 @@ glisser-déposer de l'interface. Les codes illisibles et non reconstruits sont
 nommés par leur rang. En mode serveur, ``/v1/exports.archive`` rend la page et
 ``/v1/imports.archive`` prend une page ou une image téléversée.
 
+Dans l'interface, la boîte *Archive papier…* du menu contextuel d'un match
+fait l'export et l'import (:ref:`archive_papier_interface`).
+
+sheet — Liste de positions imprimable
+-------------------------------------
+
+Écrit la liste imprimable de l'interface (:ref:`liste_imprimable`) : toute une
+recherche, une collection ou une liste d'identifiants, une ligne par position,
+dans un seul fichier HTML autonome que le navigateur imprime ou enregistre en
+PDF. Il faut une seule source : ``--query`` (une recherche dans la grammaire de
+la barre de commande, voir ``search --query-help``), ``--collection`` (une
+collection vivante est résolue par sa requête) ou ``--ids`` (des identifiants
+séparés par des virgules, dans leur ordre). Chaque ligne donne le numéro,
+l'ArkID, les pips du joueur au trait et de l'adversaire, puis l'analyse : le
+meilleur coup en gras, le deuxième et sa perte en millièmes, les chances de gain
+et de gammon ; pour le videau, la bonne action et la perte des deux autres. Le
+document s'étend sur autant de pages numérotées que nécessaire ; un commentaire
+plus long qu'une page se poursuit sur la suivante. ``--analysis`` et
+``--comments`` sont actifs par défaut et se coupent par ``=false`` ;
+``--verso`` place les analyses (et les commentaires) au verso, sous les mêmes
+numéros ; ``--expanded`` écrit les ArkID sous leur forme développée ;
+``--title`` remplace le titre (par défaut la requête ou le nom de la
+collection) ; ``--lang`` choisit la langue. Au-delà de 3000 positions, la
+commande refuse et n'écrit rien, comme le serveur. Rien n'est écrit dans la
+base. Le serveur la sert par ``/v1/positions.sheet`` (``ids``, ``query`` ou
+``collection``), qui rend la page dans le champ ``html`` ; sans ``options``, ou
+pour les choix qu'un objet ``options`` ne nomme pas, il prend les mêmes défauts
+que la commande.
+
+.. code-block:: bash
+
+   ./blunderdb sheet --db <chemin> (--query <requête> | --collection <ID> | --ids <ID>[,<ID>...]) [--output <fichier.html>] [--lang fr] [--title <titre>] [--analysis=false] [--verso] [--comments=false] [--expanded]
+
+.. code-block:: bash
+
+   ./blunderdb sheet --db base.db --query 'E>80' --lang fr --output blunders.html
+   ./blunderdb sheet --db base.db --collection 3 --verso --comments=false
+
 export — Exporter des données
 ------------------------------
 

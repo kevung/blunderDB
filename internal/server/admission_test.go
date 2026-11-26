@@ -49,7 +49,7 @@ func TestHeavyGate_BoundsAndRefuses(t *testing.T) {
 		t.Errorf("slot free again: status %d, want 200", w.Code)
 	}
 
-	if heavyRoute("/v1/positions.load") || heavyRoute("/v1/search.parse") || !heavyRoute("/v1/stats.compute") || !heavyRoute("/v1/matches.list") || !heavyRoute("/v1/matches.sheet") {
+	if heavyRoute("/v1/positions.load") || heavyRoute("/v1/search.parse") || !heavyRoute("/v1/stats.compute") || !heavyRoute("/v1/matches.list") || !heavyRoute("/v1/matches.sheet") || !heavyRoute("/v1/positions.sheet") {
 		t.Error("heavyRoute classifies a route wrongly")
 	}
 }

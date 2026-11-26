@@ -562,6 +562,48 @@ dit.
 .. tip:: Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste des filtres
    disponibles.
 
+.. _liste_imprimable:
+
+Imprimer une liste de positions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Pour étudier loin de l'ordinateur, sur un vrai plateau, une liste de positions
+s'imprime à une ligne par position, sans diagramme. **Imprimer la liste…**, dans
+le menu contextuel du plateau, imprime la liste parcourue : le résultat de la
+recherche, la collection ouverte ou la bibliothèque. **Imprimer…**, dans le menu
+contextuel d'une collection du panneau Collections, imprime cette collection
+(une collection vivante par sa requête), et **Imprimer les positions**, dans le
+panier du panneau Ailleurs, imprime les positions du panier qui viennent de la
+bibliothèque affichée. C'est toujours la liste entière qui est imprimée, y
+compris les lignes que le défilement n'a pas encore chargées. Une impression en
+prend 3000 au plus : au-delà, la boîte le signale et n'imprime rien ; filtrez la
+liste pour la réduire.
+
+Chaque ligne donne le numéro, l'ArkID dans une police à chasse fixe, puis les
+pips du joueur au trait et de son adversaire, pour vérifier la position une fois
+posée sur le plateau. Vient ensuite l'analyse : le meilleur coup en gras, le
+deuxième et sa perte en millièmes, sans « 0. » (``−45`` pour 0,045, dans l'unité
+de l'analyse : le point en partie libre, le videau courant à un score de match),
+puis les chances de gain et de gammon en pour cent ; pour une décision de
+videau, la bonne action, puis les deux autres et leur perte. Le document
+s'étend sur autant de pages A4 que nécessaire, numérotées, avec sur chacune
+l'en-tête (le titre de la recherche ou de la collection, le nombre de positions,
+la date) et la légende de la notation. Le fichier HTML autonome est enregistré
+puis ouvert dans le navigateur, qui l'imprime ou l'enregistre en PDF. Les
+options de la boîte :
+
+- **Analyse** (cochée) : l'analyse de chaque position, sur sa ligne.
+- **Réponses au verso** (décochée) : chaque page de positions est suivie d'une
+  page d'analyses sous les mêmes numéros ; imprimée en recto verso, la feuille
+  devient un questionnaire.
+- **Commentaires** (cochée) : les commentaires des positions, en entier, sous
+  leur ligne, au verso avec les réponses. Un commentaire plus long qu'une page
+  se poursuit sur la suivante.
+- **ArkID développé** (décochée) : la forme développée plutôt que la compacte.
+
+L'impression n'écrit rien dans la base. En ligne de commande : ``sheet``
+(:doc:`cli_import_export`).
+
 .. _panneau_collections:
 
 Panneau Collections

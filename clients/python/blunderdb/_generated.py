@@ -1202,6 +1202,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.setPublicId — JSON."
         return self._call("/v1/positions.setPublicId", payload)
 
+    def positions_sheet(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.sheet — JSON."
+        return self._call("/v1/positions.sheet", payload)
+
     def positions_similar(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.similar — JSON."
         return self._call("/v1/positions.similar", payload)
