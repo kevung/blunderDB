@@ -53,8 +53,11 @@ type App struct {
 	// gnEvalSeq names the search gnEvalCancel belongs to, so a finishing
 	// search clears only its own.
 	gnEvalSeq uint64
-	// gnRollMapSeq and gnScoreMapSeq name the search each map last started,
-	// so its Cancel stops that one and never the panel's. Guarded by gnEvalMu.
+	// gnRestSeq, gnRollMapSeq and gnScoreMapSeq name the search the panel's
+	// at-rest evaluation and each map last started, so each Cancel stops its
+	// own search and never another that took the slot since. Guarded by
+	// gnEvalMu.
+	gnRestSeq     uint64
 	gnRollMapSeq  uint64
 	gnScoreMapSeq uint64
 	gnLivePool    gammonNetLivePool

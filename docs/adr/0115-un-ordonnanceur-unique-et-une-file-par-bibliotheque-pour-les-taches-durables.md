@@ -1,6 +1,7 @@
 # Un ordonnanceur unique et une file par bibliothèque pour les tâches durables
 
-Statut : acceptée. Amende ADR-0088 §5 au bureau seulement : une opération demandée pendant
+Statut : acceptée ; §2 précisé par ADR-0120 (un calcul visible réquisitionne les cœurs du lot).
+Amende ADR-0088 §5 au bureau seulement : une opération demandée pendant
 qu'une autre tient la bibliothèque y attend son tour ; le refus reste la règle du démon et de la
 CLI.
 Voir aussi : ADR-0013 (règle 2 : écrire est une tâche bornée et visible), ADR-0060 (rollout),
@@ -40,8 +41,9 @@ fermeture d'une bibliothèque énumérait les tâches à la main.
    en cours et non en pause : le lot gammonNet avant chaque position, le rollout entre deux
    paquets de parties. L'attente est réveillée par chaque changement du registre, jamais par un
    sondage. Tant qu'elle cède ainsi, son `Info` porte `yielded` (son état reste *en cours*) : le
-   panneau dit pourquoi elle n'avance pas. La priorité décide qui tourne, pas sur combien de
-   cœurs : le budget reste celui de l'ADR-0093.
+   panneau dit pourquoi elle n'avance pas. Le budget reste celui de l'ADR-0093, mais un calcul
+   visible le réquisitionne (ADR-0120) : le lot gammonNet se gare aussi à l'intérieur de sa
+   recherche, au jet suivant, et lui prête ses cœurs jusqu'à la fin du calcul.
 3. **Une file par bibliothèque, en mémoire.** Une tâche qui écrit sa bibliothèque (lot gammonNet,
    rollout stocké, lot de rollouts, maintenance) y prend son tour (`Job.Turn`) : demandée
    pendant qu'une autre la tient, elle attend au lieu d'être refusée. Elle entre devant les
@@ -90,8 +92,9 @@ fermeture d'une bibliothèque énumérait les tâches à la main.
 - Le démon garde `analyses.queueStatus` et son registre d'imports inchangés ; le registre du
   bureau n'y est pas exposé, faute de contrat commun (un tenant n'est pas un groupe). Suivi
   dans `tasks/BACKLOG.md`.
-- Le lot gammonNet et le rollout cèdent aux calculs visibles par leur seul point de contrôle :
-  plus de sondage de la recherche du panneau, ni de lot réduit en cœurs à son démarrage.
+- Le rollout cède aux calculs visibles par son seul point de contrôle ; le lot gammonNet par
+  le sien et, en cours de position, par la réquisition des cœurs (ADR-0120). Plus de sondage
+  de la recherche du panneau, ni de lot réduit en cœurs à son démarrage.
 - Une tâche en pause qui tient la bibliothèque bloque la file derrière elle, sauf préemption
   (§4) : la reprendre ou l'annuler la libère.
 

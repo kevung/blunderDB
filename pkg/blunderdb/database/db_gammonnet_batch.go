@@ -225,14 +225,13 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 			defer wg.Done()
 
 			// One searcher for this goroutine's whole share. If it cannot be
-			// built, EvaluatePositionWith(nil) builds one per position: the
-			// batch still runs, slower, and the log says why.
-			searcher, err := gammonnet.NewBatchSearcher(ply, pruneK)
+			// built, one is built per position: the batch still runs, slower,
+			// and the log says why.
+			searcher, unbind, err := newYieldingBatchSearcher(ctx, ply, pruneK)
 			if err != nil {
 				slog.Warn("gammonnet batch: building the shared searcher failed; this worker falls back to one searcher per position", "error", err)
-				searcher = nil
 			} else {
-				defer searcher.BindContext(ctx)()
+				defer unbind()
 			}
 
 			for {
@@ -254,9 +253,23 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 
 				// One token of the process budget per position: the batch
 				// lends its searchers only the cores it leaves idle — its
-				// tail, a match shorter than the machine is wide.
-				release := gammonnet.HoldCore()
-				analysis, err := evaluateOnePositionWithGammonNet(positionsByID[id], id, searcher, met, ply, pruneK, candidates)
+				// tail, a match shorter than the machine is wide. A visible
+				// computation's claim parks the search at its next roll and
+				// takes the token over until it ends.
+				release, err := gammonnet.ProcessCores().HoldBackground(ctx)
+				if err != nil {
+					return // cancelled while waiting: picked up on the next run
+				}
+				own, ownUnbind := searcher, func() {}
+				if own == nil {
+					// Built per position, it yields like the shared one; if
+					// it cannot be built either, the evaluation reports why.
+					if s, u, err := newYieldingBatchSearcher(ctx, ply, pruneK); err == nil {
+						own, ownUnbind = s, u
+					}
+				}
+				analysis, err := evaluateOnePositionWithGammonNet(positionsByID[id], id, own, met, ply, pruneK, candidates)
+				ownUnbind()
 				release()
 				if gammonnet.IsCanceled(err) {
 					return // not a failure: the position is picked up on the next run
@@ -316,6 +329,19 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 // does not write. A nil pos (deleted since the snapshot) returns
 // sql.ErrNoRows. A nil analysis with a nil error means "nothing to write, not
 // a failure": a dance or gammonnet.ErrNotEvaluable.
+// newYieldingBatchSearcher is a batch searcher bound to ctx that parks behind
+// a visible computation's claim on the process budget (Cores.Claim); unbind
+// releases the binding.
+func newYieldingBatchSearcher(ctx context.Context, ply, pruneK int) (searcher *gammonnet.Searcher, unbind func(), err error) {
+	searcher, err = gammonnet.NewBatchSearcher(ply, pruneK)
+	if err != nil {
+		return nil, nil, err
+	}
+	unbind = searcher.BindContext(ctx)
+	searcher.YieldsTo(gammonnet.ProcessCores())
+	return searcher, unbind, nil
+}
+
 func evaluateOnePositionWithGammonNet(pos *Position, id int64, searcher *gammonnet.Searcher, met *engine.MET, ply, pruneK, candidates int) (*PositionAnalysis, error) {
 	if pos == nil {
 		return nil, sql.ErrNoRows

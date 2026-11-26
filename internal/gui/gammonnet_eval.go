@@ -138,7 +138,7 @@ func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates
 // uncancellable. end reports whether the search was cancelled, then releases
 // ctx and the search's visible priority.
 func (a *App) beginEvaluationAtRest() (ctx context.Context, end func() (cancelled bool)) {
-	return a.beginInteractiveSearch(nil)
+	return a.beginInteractiveSearch(&a.gnRestSeq)
 }
 
 // beginInteractiveSearch is beginEvaluationAtRest also recording, in *owner
@@ -195,14 +195,11 @@ func (a *App) cancelInteractiveSearch(owner *uint64) {
 	a.gnEvalMu.Unlock()
 }
 
-// CancelEvaluationAtRest aborts an in-flight background evaluation, if any.
+// CancelEvaluationAtRest aborts the at-rest evaluation in flight, if any. A
+// map that took the slot since is left alone: the panel's call can land after
+// the map it makes way for has started.
 func (a *App) CancelEvaluationAtRest() {
-	a.gnEvalMu.Lock()
-	if a.gnEvalCancel != nil {
-		a.gnEvalCancel()
-		a.gnEvalCancel = nil
-	}
-	a.gnEvalMu.Unlock()
+	a.cancelInteractiveSearch(&a.gnRestSeq)
 }
 
 // evaluateGammonNet serves both tiers. The moves-or-cube conversion is

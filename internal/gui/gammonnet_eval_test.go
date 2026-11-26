@@ -295,3 +295,26 @@ func TestEvaluateGammonNetCtxStopsDeepSearch(t *testing.T) {
 		t.Fatalf("cancelled 4-ply evaluation returned after %v", elapsed)
 	}
 }
+
+// The panel's stop can reach the backend after the map it makes way for has
+// taken the slot: it must cancel the panel's own evaluation, never the map.
+func TestCancelEvaluationAtRest_LeavesAMapAlone(t *testing.T) {
+	a := &App{}
+	restCtx, endRest := a.beginEvaluationAtRest()
+	mapCtx, endMap := a.beginInteractiveSearch(&a.gnRollMapSeq)
+	defer endMap()
+	if !endRest() || restCtx.Err() == nil {
+		t.Fatal("the map did not supersede the at-rest evaluation")
+	}
+	a.CancelEvaluationAtRest()
+	if mapCtx.Err() != nil {
+		t.Fatal("CancelEvaluationAtRest cancelled the map that took the slot")
+	}
+
+	restCtx, endRest = a.beginEvaluationAtRest()
+	defer endRest()
+	a.CancelEvaluationAtRest()
+	if restCtx.Err() == nil {
+		t.Fatal("CancelEvaluationAtRest left its own evaluation running")
+	}
+}

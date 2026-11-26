@@ -89,8 +89,16 @@ func (a *App) watchJobCores(ctx context.Context) {
 // beginVisibleComputation marks a computation whose result is on screen —
 // the evaluation, the maps of rolls and of scores — as running until end is
 // called: the durable tasks of lower priority yield to it at their
-// checkpoints, without polling.
-func (a *App) beginVisibleComputation() (end func()) { return a.jobs.EnterVisible() }
+// checkpoints, without polling, and the batch's searches park at their next
+// roll to lend it their cores (Cores.Claim).
+func (a *App) beginVisibleComputation() (end func()) {
+	exit := a.jobs.EnterVisible()
+	release := gammonnet.ProcessCores().Claim()
+	return func() {
+		release()
+		exit()
+	}
+}
 
 // jobCode is the job code of the database's BusyError for a task's kind: the
 // one the frontend already names in gammonnet-batch:waiting.
