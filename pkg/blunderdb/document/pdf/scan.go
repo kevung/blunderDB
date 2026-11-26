@@ -11,6 +11,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/jbig2"
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/jpx"
 
 	"golang.org/x/image/ccitt"
@@ -24,9 +25,9 @@ var (
 	// ErrNoPageImage: the page draws no image. A page of vectors (a diagram
 	// drawn with lines) is not rendered.
 	ErrNoPageImage = errors.New("pdf: the page draws no image (a page drawn with vectors is not rendered)")
-	// ErrImageCodec: an image of the page is compressed with JBIG2, which
-	// this reader does not decode, or in JPEG 2000 beyond what it takes.
-	ErrImageCodec = errors.New("pdf: an image of the page is compressed with JBIG2, which is not decoded, or in a JPEG 2000 this reader refuses; give the pages as images (PNG or JPEG files)")
+	// ErrImageCodec: an image of the page is compressed in JPEG 2000 or
+	// JBIG2 beyond what this reader takes.
+	ErrImageCodec = errors.New("pdf: an image of the page is compressed in a JPEG 2000 or a JBIG2 this reader refuses; give the pages as images (PNG or JPEG files)")
 )
 
 const (
@@ -74,14 +75,15 @@ type imageDraw struct {
 // matrix, at the resolution of the finest image covering a twentieth of the
 // page or more (MinScanDPI to MaxScanDPI); and gives the words of its text,
 // visible or not, in the image's pixels. A text the reader cannot map to
-// Unicode gives no word. A page without any image is ErrNoPageImage; an
-// image compressed with JBIG2 is ErrImageCodec. Images are
-// decoded one at a time and dropped once painted.
+// Unicode gives no word. A page without any image is ErrNoPageImage; a page
+// with an image in a JPEG 2000 or a JBIG2 the decoders refuse is
+// ErrImageCodec, found from the image headers before any image is decoded.
+// Images are decoded one at a time and dropped once painted.
 func (r *Reader) Scan(p Page) (*Scan, error) {
 	return r.ScanContext(context.Background(), p)
 }
 
-// ScanContext is Scan, whose JPEG 2000 decodes stop with ctx.
+// ScanContext is Scan, whose JPEG 2000 and JBIG2 decodes stop with ctx.
 func (r *Reader) ScanContext(ctx context.Context, p Page) (sc *Scan, err error) {
 	r.ctx = ctx
 	defer func() { r.ctx = nil }()
@@ -147,21 +149,25 @@ func (r *Reader) ScanContext(ctx context.Context, p Page) (sc *Scan, err error) 
 	for i := range out.Image.Pix {
 		out.Image.Pix[i] = 255
 	}
+	// A refused image would leave the page wrong (a mask refused paints its
+	// image whole) or blank: the page is unread, and its other images, the
+	// costlier to decode often, are not decoded for nothing.
+	for _, d := range in.draws {
+		if err := r.refusal(d); err != nil {
+			return nil, fmt.Errorf("%w: %w", ErrImageCodec, err)
+		}
+	}
 	budget := maxPainted * W * H
-	var codecErr, refused error
+	var refused error
 	painted := 0
 	for _, d := range in.draws {
 		pic, why, err := r.picture(d)
-		if errors.Is(err, ErrImageCodec) {
-			codecErr = err
-			continue
-		}
 		if err != nil && ctx.Err() != nil {
 			return nil, ctx.Err()
 		}
 		if err != nil {
 			out.Skipped = append(out.Skipped, err.Error())
-			if errors.Is(err, jpx.ErrUnsupported) || errors.Is(err, jpx.ErrBudget) {
+			if errors.Is(err, jpx.ErrUnsupported) || errors.Is(err, jpx.ErrBudget) || errors.Is(err, jbig2.ErrUnsupported) || errors.Is(err, jbig2.ErrBudget) {
 				refused = err
 			}
 			continue
@@ -173,9 +179,6 @@ func (r *Reader) ScanContext(ctx context.Context, p Page) (sc *Scan, err error) 
 		if budget -= paint(out.Image, d.m.mul(dev), pic); budget < 0 {
 			return nil, fmt.Errorf("%w: a page paints more than %d times its pixels", ErrTooLarge, maxPainted)
 		}
-	}
-	if codecErr != nil {
-		return nil, codecErr
 	}
 	if refused != nil && painted == 0 {
 		// A page left blank by a refusal would read as a page without
@@ -328,7 +331,10 @@ func (r *Reader) samples(s *Stream, res Dict, stencil bool) (*plane, error) {
 	}
 	switch codec {
 	case "JBIG2Decode":
-		return nil, fmt.Errorf("%w (%s)", ErrImageCodec, codec)
+		if data, err = r.jbig2Samples(data, parm, w, h); err != nil {
+			return nil, err
+		}
+		dict = Dict{"Width": dict["Width"], "Height": dict["Height"], "BitsPerComponent": int64(1), "ColorSpace": dict["ColorSpace"], "Decode": dict["Decode"]}
 	case "JPXDecode":
 		return r.jpxPlane(data, dict, w, h, stencil)
 	case "DCTDecode", "DCT":
@@ -413,6 +419,110 @@ func jpegPlane(data []byte, most int) (*plane, error) {
 	return greyPlane(img), nil
 }
 
+// jbig2Samples decodes a JBIG2 image to the samples of a one-bit image, 0
+// for black as the filter gives them (JBIG2 itself codes black as 1).
+func (r *Reader) jbig2Samples(data []byte, parm Dict, w, h int) ([]byte, error) {
+	g, err := r.jbig2Globals(parm)
+	if err != nil {
+		return nil, err
+	}
+	p, _, err := jbig2.Decode(r.ctx, data, g, w, h, &r.jbig2)
+	if err != nil {
+		return nil, err
+	}
+	for i := range p.Data {
+		p.Data[i] = ^p.Data[i]
+	}
+	return p.Data, nil
+}
+
+// jbig2Globals is the data of the JBIG2Globals stream of a JBIG2 image's
+// parameters, nil when it has none.
+func (r *Reader) jbig2Globals(parm Dict) ([]byte, error) {
+	gs, ok := r.Resolve(parm["JBIG2Globals"]).(*Stream)
+	if !ok {
+		return nil, nil
+	}
+	g, codec, _, err := r.imageFilters(gs)
+	if err == nil && codec != "" {
+		err = malformed("JBIG2Globals compressed with %s", codec)
+	}
+	return g, err
+}
+
+// refusal reads the headers of the images a draw paints, the image and its
+// mask, compressed in JPEG 2000 or JBIG2, and tells why one is refused. A
+// malformed image is not a refusal here: its decode names it, and the page
+// paints without it.
+func (r *Reader) refusal(d imageDraw) error {
+	streams := []*Stream{d.s}
+	for _, k := range []Name{"SMask", "Mask"} {
+		if m, ok := r.Resolve(d.s.Dict[k]).(*Stream); ok {
+			streams = append(streams, m)
+		}
+	}
+	for _, s := range streams {
+		if !r.codecIs(s, "JPXDecode", "JBIG2Decode") {
+			continue
+		}
+		data, codec, parm, err := r.imageFilters(s)
+		if err != nil {
+			continue
+		}
+		w, h := int(r.num(s.Dict["Width"])), int(r.num(s.Dict["Height"]))
+		switch codec {
+		case "JPXDecode":
+			if err = r.jpxDictRefusal(s.Dict); err == nil {
+				var info jpx.Info
+				if info, err = jpx.Inspect(data); err == nil && (info.Width != w || info.Height != h) {
+					err = fmt.Errorf("%w: the image is %d×%d, its container says %d×%d", jpx.ErrUnsupported, info.Width, info.Height, w, h)
+				}
+			}
+		case "JBIG2Decode":
+			var g []byte
+			if g, err = r.jbig2Globals(parm); err == nil {
+				_, err = jbig2.Inspect(data, g, w, h)
+			}
+		}
+		if errors.Is(err, jpx.ErrUnsupported) || errors.Is(err, jbig2.ErrUnsupported) {
+			return err
+		}
+	}
+	return nil
+}
+
+// codecIs tells whether the last filter of a stream is one of names.
+func (r *Reader) codecIs(s *Stream, names ...Name) bool {
+	var last Object
+	switch f := r.Resolve(s.Dict["Filter"]).(type) {
+	case Name:
+		last = f
+	case Array:
+		if len(f) > 0 {
+			last = r.Resolve(f[len(f)-1])
+		}
+	}
+	n, _ := last.(Name)
+	for _, m := range names {
+		if n == m {
+			return true
+		}
+	}
+	return false
+}
+
+// jpxDictRefusal is what the image dictionary of a JPEG 2000 image asks and
+// the reader cannot honour.
+func (r *Reader) jpxDictRefusal(dict Dict) error {
+	if n := r.num(dict["SMaskInData"]); n != 0 {
+		return fmt.Errorf("%w: JPEG 2000 with an embedded alpha (SMaskInData %d)", jpx.ErrUnsupported, int(n))
+	}
+	if isIndexed(r, dict["ColorSpace"]) {
+		return fmt.Errorf("%w: JPEG 2000 in an Indexed colour space", jpx.ErrUnsupported)
+	}
+	return nil
+}
+
 // jpxPlane decodes a JPEG 2000 image to grey. The image dictionary decides
 // what the codestream cannot: an Indexed colour space, an embedded alpha
 // (SMaskInData) or a Decode array this reader cannot honour is refused, the
@@ -422,11 +532,8 @@ func (r *Reader) jpxPlane(data []byte, dict Dict, w, h int, stencil bool) (*plan
 	if stencil {
 		return nil, malformed("a JPEG 2000 stencil mask")
 	}
-	if n := r.num(dict["SMaskInData"]); n != 0 {
-		return nil, fmt.Errorf("%w: JPEG 2000 with an embedded alpha (SMaskInData %d)", jpx.ErrUnsupported, int(n))
-	}
-	if isIndexed(r, dict["ColorSpace"]) {
-		return nil, fmt.Errorf("%w: JPEG 2000 in an Indexed colour space", jpx.ErrUnsupported)
+	if err := r.jpxDictRefusal(dict); err != nil {
+		return nil, err
 	}
 	img, info, err := jpx.Decode(r.ctx, data, w, h, &r.jpx)
 	if err != nil {

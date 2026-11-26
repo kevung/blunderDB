@@ -52,6 +52,9 @@ type Image struct {
 	Data      []byte
 	// SMask is the image's soft mask, Mask its stencil (explicit) mask.
 	SMask, Mask *Image
+	// Globals is the data of a JBIG2Globals stream, named in a DecodeParms
+	// of its own.
+	Globals []byte
 }
 
 // Bookmark is a top-level outline item opening a page (from 1).
@@ -142,6 +145,9 @@ func (d Doc) Bytes() []byte {
 		}
 		if im.DecodeParms != "" {
 			dict += " /DecodeParms " + im.DecodeParms
+		}
+		if im.Globals != nil {
+			dict += fmt.Sprintf(" /DecodeParms <</JBIG2Globals %d 0 R>>", add(stream("", im.Globals)))
 		}
 		if im.SMask != nil {
 			dict += fmt.Sprintf(" /SMask %d 0 R", image(*im.SMask))

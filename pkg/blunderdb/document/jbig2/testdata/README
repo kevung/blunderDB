@@ -1,0 +1,12 @@
+Oracle fixtures, made outside the CI. Each .pbm is what jbig2dec 0.20 draws
+from the stream beside it (jbig2dec -e -t pbm -o x.pbm [globals] stream).
+
+generic.jb2, tpgd.jb2: jbig2enc (github.com/agl/jbig2enc) on a 480x200
+  image of text, `jbig2 -p a.png`, and with `-d` (typical prediction).
+sym.sym, sym0.jb2, sym1.jb2: jbig2enc in symbol mode on two such images,
+  `jbig2 -s -p -b sym a.png b.png` (globals, then one stream a page).
+annexh-*: segments of the example stream of ITU-T T.88 Annex H (as
+  annex-h.jbig2 in jbig2dec's sources), split into embedded streams:
+  annexh-p3 its page 3 (segment 16 as globals; 15, 17, 18: aggregation and
+  refinement), annexh-mmr segments 1 and 4 (an MMR generic region),
+  annexh-tpgd segments 8 and 11 (typical prediction, adaptive pixels).

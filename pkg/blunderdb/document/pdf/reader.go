@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/jbig2"
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/jpx"
 )
 
@@ -52,6 +53,11 @@ type Limits struct {
 	// packet headers cannot cost more. The context of ScanContext stops a
 	// decode in progress (see package jpx for where it is read).
 	MaxJPXPixels int64
+	// MaxJBIG2Pixels is the sum of the pixels the reader decodes in JBIG2:
+	// each page and region, spent before its decode, then each symbol a
+	// dictionary decodes and each symbol a text region places (see package
+	// jbig2).
+	MaxJBIG2Pixels int64
 }
 
 // DefaultLimits are generous for a book of a thousand pages and stop a
@@ -67,6 +73,9 @@ var DefaultLimits = Limits{
 	// 1.1 µs a pixel at worst, the whole budget is some seventy minutes:
 	// the caller's cancellation is the real bound, not this.
 	MaxJPXPixels: 4_000_000_000,
+	// A mask at 360 dpi is some 8.5 Mpx, decoded in about 0.2 s: two
+	// thousand such pages fit.
+	MaxJBIG2Pixels: 16_000_000_000,
 }
 
 type xrefEntry struct {
@@ -89,6 +98,7 @@ type Reader struct {
 	objStm    map[int][]byte
 	pages     []Page
 	jpx       jpx.Budget
+	jbig2     jbig2.Budget
 	// ctx is the context of the Scan in progress, which a JPEG 2000
 	// decode checks as it goes.
 	ctx context.Context
@@ -109,7 +119,7 @@ func Open(data []byte, lim Limits) (r *Reader, err error) {
 	if !bytes.Contains(head, []byte("%PDF-")) {
 		return nil, ErrNotPDF
 	}
-	r = &Reader{data: data, lim: lim, cache: map[int]Object{}, resolving: map[int]bool{}, fonts: map[int]*Font{}, objStm: map[int][]byte{}, jpx: jpx.Budget{Left: lim.MaxJPXPixels}}
+	r = &Reader{data: data, lim: lim, cache: map[int]Object{}, resolving: map[int]bool{}, fonts: map[int]*Font{}, objStm: map[int][]byte{}, jpx: jpx.Budget{Left: lim.MaxJPXPixels}, jbig2: jbig2.Budget{Left: lim.MaxJBIG2Pixels}}
 	if err := r.readXref(); err != nil || r.rootDict() == nil {
 		r.xref, r.trailer = nil, nil
 		r.cache = map[int]Object{}

@@ -172,9 +172,10 @@ func TestScanMasks(t *testing.T) {
 	}
 }
 
-// TestScanRefusals: a page of vectors, a JBIG2 image, an inline image.
+// TestScanRefusals: a page of vectors, a JBIG2 image refused, an inline
+// image.
 func TestScanRefusals(t *testing.T) {
-	jb2 := pdftest.Image{Width: 8, Height: 8, BPC: 1, ColorSpace: "/DeviceGray", Filter: "/JBIG2Decode", Data: []byte{0, 1, 2}}
+	jb2 := pdftest.Image{Width: 8, Height: 8, BPC: 1, ColorSpace: "/DeviceGray", Filter: "/JBIG2Decode", Data: jbig2Halftone}
 	inline := "q 72 0 0 72 0 0 cm BI /W 2 /H 1 /BPC 8 /CS /G ID \x00\x00 EI Q"
 	d := pdftest.Doc{Pages: []pdftest.Page{
 		{Width: 100, Height: 100, Content: "0 0 m 100 100 l S"},
@@ -184,7 +185,7 @@ func TestScanRefusals(t *testing.T) {
 	if _, err := scanOf(t, d, 1); !errors.Is(err, pdf.ErrNoPageImage) {
 		t.Errorf("vectors: %v", err)
 	}
-	if _, err := scanOf(t, d, 2); !errors.Is(err, pdf.ErrImageCodec) || !strings.Contains(err.Error(), "JBIG2") {
+	if _, err := scanOf(t, d, 2); !errors.Is(err, pdf.ErrImageCodec) || !strings.Contains(err.Error(), "jbig2: unsupported") {
 		t.Errorf("JBIG2: %v", err)
 	}
 	s, err := scanOf(t, d, 3)
@@ -326,11 +327,21 @@ func TestScanJPXRefusals(t *testing.T) {
 			t.Errorf("%s: %v", c.name, err)
 		}
 	}
-	// Beside an image that paints, the refusal is named in Skipped.
+	// Beside an image that paints, the refusal still leaves the page unread.
 	back := pdftest.Image{Width: 2, Height: 2, BPC: 8, ColorSpace: "/DeviceGray", Data: []byte{200, 200, 200, 200}}
 	d := pdftest.Doc{Pages: []pdftest.Page{{Width: 153.6, Height: 19.2, Content: "153.6 0 0 19.2 0 0 cm /Im1 Do /Im2 Do", Images: []pdftest.Image{back, im(ht, "")}}}}
-	s, err := scanOf(t, d, 1)
-	if err != nil || len(s.Skipped) != 1 || !strings.Contains(s.Skipped[0], "high-throughput") {
+	if _, err := scanOf(t, d, 1); !errors.Is(err, pdf.ErrImageCodec) || !strings.Contains(err.Error(), "high-throughput") {
+		t.Errorf("beside an image: %v", err)
+	}
+	// A JPEG 2000 the budget refuses, beside an image, is named in Skipped.
+	lim := pdf.DefaultLimits
+	lim.MaxJPXPixels = 1000
+	r, err := pdf.Open(pdftest.Doc{Pages: []pdftest.Page{{Width: 153.6, Height: 19.2, Content: "153.6 0 0 19.2 0 0 cm /Im1 Do /Im2 Do", Images: []pdftest.Image{back, im(gray, "")}}}}.Bytes(), lim)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, _ := r.Page(1)
+	if s, err := r.Scan(p); err != nil || len(s.Skipped) != 1 || !strings.Contains(s.Skipped[0], "budget") {
 		t.Errorf("skipped: %v %v", err, s)
 	}
 }
