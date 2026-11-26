@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:46+0100\n"
+"POT-Creation-Date: 2026-11-26 15:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -96,11 +96,26 @@ msgstr "import_archive, iar"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Importe une archive papier de matchs : la page HTML exportée, ou des "
-"scans et des photos de ses feuilles (voir "
-":ref:`panneau_matchs`)."
+"scans et des photos de ses feuilles (voir :ref:`panneau_matchs`)."
 msgstr ""
 "Importiert ein Papierarchiv von Matches: die exportierte HTML-Seite oder "
 "Scans und Fotos ihrer Blätter (siehe :ref:`panneau_matchs`)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "import_document, idoc"
+msgstr "import_document, idoc"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre l'assistant d'import de document : un PDF, une image de page ou un "
+"relevé, les défauts et le sens de jeu confirmés une fois, les entrées à "
+"vérifier, puis l'import dans une collection (voir "
+":ref:`assistant_import_document`)."
+msgstr ""
+"Öffnet den Assistenten für den Dokumentimport: ein PDF, ein Seitenbild "
+"oder ein Relevé, die einmal bestätigten Standardwerte und Spielrichtung, "
+"die zu prüfenden Einträge, dann der Import in eine Sammlung (siehe "
+":ref:`assistant_import_document`)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "export_db, edb"
@@ -327,7 +342,7 @@ msgstr ""
 "für den Würfel auf 1, 2 und 4 vereint: Diese drei Befehle öffnen "
 "denselben Reiter."
 
-#: ../../source/cmd_mode.rst:49
+#: ../../source/cmd_mode.rst:50
 msgid "Positions et navigation"
 msgstr "Positionen und Navigation"
 
@@ -570,7 +585,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigiert zum zuletzt besuchten Match."
 
-#: ../../source/cmd_mode.rst:81
+#: ../../source/cmd_mode.rst:82
 msgid "Édition et recherche"
 msgstr "Bearbeitung und Suche"
 
@@ -616,11 +631,11 @@ msgstr ""
 "Unter den angezeigten Stellungen suchen: aktuelle Ergebnisse, geöffnete "
 "Sammlung oder durchgesehenes Match."
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:98
 msgid "Filtres de recherche"
 msgstr "Suchfilter"
 
-#: ../../source/cmd_mode.rst:99
+#: ../../source/cmd_mode.rst:100
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -636,7 +651,7 @@ msgstr ""
 ":ref:`cli`); ein Gedankenstrich zeigt einen Filter an, den nur die "
 "Grammatik ausdrückt."
 
-#: ../../source/cmd_mode.rst:106
+#: ../../source/cmd_mode.rst:107
 msgid ""
 "Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -656,7 +671,7 @@ msgstr ""
 "werden diese Token mit einem leeren Brett verglichen; dort sind die "
 "Optionen der dritten Spalte zu verwenden."
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -666,7 +681,7 @@ msgstr ""
 "das Ergebnis nach aufsteigender Entfernung zu einer Zielstellung, und "
 "alle anderen Token schränken die so geordnete Menge ein."
 
-#: ../../source/cmd_mode.rst:119
+#: ../../source/cmd_mode.rst:120
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -677,11 +692,11 @@ msgstr ""
 "ein Zehntel Punkt gekostet haben, wobei ein Punkt 1000 Tausendsteln "
 "entspricht."
 
-#: ../../source/cmd_mode.rst:123
+#: ../../source/cmd_mode.rst:124
 msgid "Deux recherches complètes :"
 msgstr "Zwei vollständige Suchen:"
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:126
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -690,7 +705,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — mehr als 30 Pips Rückstand, zwischen 40 % und 60 "
 "% Gewinnchance, kein Kommentar."
 
-#: ../../source/cmd_mode.rst:127
+#: ../../source/cmd_mode.rst:128
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -2057,7 +2072,7 @@ msgstr ""
 "Würfen wird die Suche abgelehnt, ebenso eine Sternform (``like42*``), die"
 " nicht mehr existiert. Siehe :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:252
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -2076,11 +2091,11 @@ msgstr ""
 "Listen von Kennungen und Tags: Es kommt in keinem Wert vor, und ``ma1;2``"
 " ist kein Token (``ma1 ma2`` schreiben)."
 
-#: ../../source/cmd_mode.rst:256
+#: ../../source/cmd_mode.rst:257
 msgid "Transcrire depuis un terminal"
 msgstr "Von einem Terminal aus transkribieren"
 
-#: ../../source/cmd_mode.rst:258
+#: ../../source/cmd_mode.rst:259
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -2100,7 +2115,7 @@ msgstr ""
 "eine eigene Sitzung, ohne ``sessionId`` und ohne Rückgängigmachen von "
 "einem Aufruf zum nächsten."
 
-#: ../../source/cmd_mode.rst:269
+#: ../../source/cmd_mode.rst:270
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 

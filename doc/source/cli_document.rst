@@ -9,8 +9,8 @@ Importer les positions d'un document
 Un ouvrage que l'on possède — livre de problèmes, recueil, article — montre des
 positions en diagrammes, dans un ordre qui est celui de l'étude. La commande
 ``document`` les range dans une collection de la base, dans cet ordre, pour les
-réétudier avec le reste de la bibliothèque. Elle ne fonctionne qu'en ligne de
-commande ; il n'y a pas d'écran correspondant.
+réétudier avec le reste de la bibliothèque. L'interface a le même chemin dans un
+assistant (:ref:`assistant_import_document`) ; la ligne de commande est décrite ici.
 
 Le travail passe par un fichier intermédiaire, le **relevé** : un fichier JSON
 qui liste les positions lues dans le document. On le relit, on le corrige si
@@ -416,6 +416,30 @@ sans ``--accept-complete``, le message le dit aussi :
 On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé tel quel ;
 l'import dit alors combien d'entrées il a forcées (``Forced: 3 entries neither
 sure nor verified``).
+
+.. _assistant_import_document:
+
+L'assistant d'import de l'interface
+-----------------------------------
+
+La commande ``import_document`` (``idoc``, :doc:`cmd_mode`) ouvre l'assistant : on
+choisit un PDF, une image de page ou un relevé ``.json`` déjà lu. L'assistant
+appelle les mêmes fonctions que ``document analyze``, ``check`` et ``import`` et
+n'applique aucune règle de plus.
+
+* **Défauts et sens de jeu** : le contexte par défaut du document et le sens de jeu
+  supposé sont décrits. Un seul bouton les confirme pour tout le document, après
+  contrôle sur quelques diagrammes ; rien n'est confirmé sans ce geste.
+* **Entrées à vérifier** : la liste donne, pour chaque entrée que l'import refuserait
+  en l'état, sa page, son étiquette, son état et la note qui nomme les champs à
+  comparer au diagramme. Celles que les choix en cours ne couvrent pas sont en gras.
+* **Entrées complètes** : la case équivaut à ``--accept-complete``.
+* **Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une fois les
+  défauts confirmés.
+* **Collection** : vide, elle prend le titre du document.
+
+Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; l'assistant n'offre
+pas ``--force``. Le bilan donne le nombre de positions ajoutées et répétées.
 
 .. _cli_document_fallback:
 

@@ -1755,6 +1755,61 @@ export namespace direction {
 
 export namespace document {
 	
+	export class Direction {
+	    home: string;
+	    description?: string;
+	    confirmed: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Direction(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.home = source["home"];
+	        this.description = source["description"];
+	        this.confirmed = source["confirmed"];
+	    }
+	}
+	export class Defaults {
+	    context: string;
+	    description?: string;
+	    printed?: string[];
+	    confirmed: boolean;
+	    direction?: Direction;
+	
+	    static createFrom(source: any = {}) {
+	        return new Defaults(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.context = source["context"];
+	        this.description = source["description"];
+	        this.printed = source["printed"];
+	        this.confirmed = source["confirmed"];
+	        this.direction = this.convertValues(source["direction"], Direction);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	export class ImportResult {
 	    collectionId: number;
 	    collection: string;
@@ -1786,6 +1841,96 @@ export namespace document {
 	        this.fallback = source["fallback"];
 	        this.forced = source["forced"];
 	    }
+	}
+	export class ReviewItem {
+	    rank: number;
+	    reference: string;
+	    state: string;
+	    checkers: string;
+	    context: string;
+	    complete: boolean;
+	    note: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ReviewItem(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rank = source["rank"];
+	        this.reference = source["reference"];
+	        this.state = source["state"];
+	        this.checkers = source["checkers"];
+	        this.context = source["context"];
+	        this.complete = source["complete"];
+	        this.note = source["note"];
+	    }
+	}
+	export class Summary {
+	    title: string;
+	    entries: number;
+	    sure: number;
+	    toVerify: number;
+	    uncertain: number;
+	    checkersConfirmed: number;
+	    complete: number;
+	    completeDirectionUnconfirmed: number;
+	    contextRead: number;
+	    contextDefault: number;
+	    contextToVerify: number;
+	    defaults?: Defaults;
+	    verified: number;
+	    unverified: number[];
+	    unverifiedComplete: number[];
+	    fallback: number[];
+	    fallbackComplete: number[];
+	    positions: number;
+	    repeated: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Summary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.title = source["title"];
+	        this.entries = source["entries"];
+	        this.sure = source["sure"];
+	        this.toVerify = source["toVerify"];
+	        this.uncertain = source["uncertain"];
+	        this.checkersConfirmed = source["checkersConfirmed"];
+	        this.complete = source["complete"];
+	        this.completeDirectionUnconfirmed = source["completeDirectionUnconfirmed"];
+	        this.contextRead = source["contextRead"];
+	        this.contextDefault = source["contextDefault"];
+	        this.contextToVerify = source["contextToVerify"];
+	        this.defaults = this.convertValues(source["defaults"], Defaults);
+	        this.verified = source["verified"];
+	        this.unverified = source["unverified"];
+	        this.unverifiedComplete = source["unverifiedComplete"];
+	        this.fallback = source["fallback"];
+	        this.fallbackComplete = source["fallbackComplete"];
+	        this.positions = source["positions"];
+	        this.repeated = source["repeated"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 
 }
@@ -5651,6 +5796,8 @@ export namespace ingest {
 	}
 	export class Summary {
 	    savedPositions: number;
+	    listPositions?: number;
+	    listPositionsKnown?: number;
 	    positionsLeftOut?: number;
 	    matchesLeftOut?: number;
 	    collectionsLeftOut?: number;
@@ -5684,6 +5831,8 @@ export namespace ingest {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.savedPositions = source["savedPositions"];
+	        this.listPositions = source["listPositions"];
+	        this.listPositionsKnown = source["listPositionsKnown"];
 	        this.positionsLeftOut = source["positionsLeftOut"];
 	        this.matchesLeftOut = source["matchesLeftOut"];
 	        this.collectionsLeftOut = source["collectionsLeftOut"];

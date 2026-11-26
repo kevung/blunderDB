@@ -246,6 +246,10 @@ export function ConfirmAllProposals(arg1) {
   return window['go']['database']['Database']['ConfirmAllProposals'](arg1);
 }
 
+export function ConfirmDocumentReleve(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ConfirmDocumentReleve'](arg1, arg2, arg3);
+}
+
 export function ConfirmProposal(arg1, arg2) {
   return window['go']['database']['Database']['ConfirmProposal'](arg1, arg2);
 }
@@ -1446,6 +1450,10 @@ export function ReviewAnkiCard(arg1, arg2) {
   return window['go']['database']['Database']['ReviewAnkiCard'](arg1, arg2);
 }
 
+export function ReviewDocumentReleve(arg1) {
+  return window['go']['database']['Database']['ReviewDocumentReleve'](arg1);
+}
+
 export function RolloutFiltered(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['RolloutFiltered'](arg1, arg2, arg3, arg4);
 }
@@ -1764,6 +1772,10 @@ export function SuggestReferencePositionsCtx(arg1, arg2, arg3, arg4) {
 
 export function SuggestTranscriptionMatFilename(arg1) {
   return window['go']['database']['Database']['SuggestTranscriptionMatFilename'](arg1);
+}
+
+export function SummarizeDocumentReleve(arg1) {
+  return window['go']['database']['Database']['SummarizeDocumentReleve'](arg1);
 }
 
 export function SuspendDuel(arg1) {

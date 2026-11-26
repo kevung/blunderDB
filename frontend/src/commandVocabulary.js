@@ -10,6 +10,7 @@ export const COMMANDS = [
     { name: 'import', aliases: ['i'] },
     { name: 'import_db', aliases: ['idb'] },
     { name: 'import_archive', aliases: ['iar'] },
+    { name: 'import_document', aliases: ['idoc'] },
     { name: 'export_db', aliases: ['edb'] },
     { name: 'write', aliases: ['wr', 'w'] },
     { name: 'write!', aliases: ['wr!', 'w!'] },

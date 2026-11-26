@@ -382,6 +382,7 @@
             onOpenDatabase: openDatabase,
             onImportDatabase: importDatabase,
             onImportPaperArchive: () => import('./services/paperArchiveService.js').then((m) => m.importPaperArchive()),
+            onImportDocument: () => import('./services/documentImportService.js').then((m) => m.startDocumentImport()),
             onExportDatabase: exportDatabase,
             importPosition,
             onImportIdentifier: importIdentifier,

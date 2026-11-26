@@ -3068,7 +3068,8 @@
             "gv2": "Valores de gammon, cubo a 2",
             "gv4": "Valores de gammon, cubo a 4",
             "clear": "Borrar el historial de comandos",
-            "jobs": "Cálculos"
+            "jobs": "Cálculos",
+            "import_document": "Importar un documento"
         }
     },
     "assistant": {
@@ -3823,6 +3824,33 @@
             "bearoff": "Bearoff",
             "sync": "Sync",
             "other": "Otro"
+        }
+    },
+    "documentImport": {
+        "title": "Importar un documento",
+        "reading": "Leyendo el documento…",
+        "failed": "Falló la importación del documento: {err}",
+        "summary": "{title}: {entries} entradas (seguras {sure}, por verificar {toVerify}, inciertas {uncertain})",
+        "defaults": "Valores por defecto del documento",
+        "defaultsConfirmed": "Confirmados.",
+        "defaultsAsk": "Compruebe estos valores en algunos diagramas y confírmelos una vez para todo el documento.",
+        "direction": "Sentido de juego: {description}.",
+        "directionConfirmed": "Confirmado.",
+        "directionAsk": "Por confirmar.",
+        "confirm": "Confirmar los valores y el sentido de juego",
+        "acceptComplete": "Aceptar las entradas de 15 + 15 fichas leídas sin duda ({n})",
+        "fallback": "Importar con el contexto de la posición cuando no se lee ({n}); los campos a verificar figuran en la referencia",
+        "collection": "Colección",
+        "review": "Entradas por verificar ({n})",
+        "reviewNone": "Ninguna entrada por verificar.",
+        "refused": "Se rechaza la importación del rango {ranks}: confirme, acepte o use el recurso.",
+        "run": "Importar",
+        "imported": "Colección {collection}: {added} posiciones añadidas, {repeated} repetidas",
+        "importedDetail": "{entries} entradas, {positions} posiciones distintas ({fresh} nuevas); completas: {complete}, recurso: {fallback}",
+        "state": {
+            "sure": "segura",
+            "to-verify": "por verificar",
+            "uncertain": "incierta"
         }
     }
 }

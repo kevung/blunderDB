@@ -225,6 +225,8 @@ export const REFUSED = [
 ];
 
 export const OUTSIDE = [
+    // The assistant holds one document's Relevé until it is imported or dismissed: a transient dialog, not library state.
+    'documentImportStore',
     // The registry of tasks lists every library's, each row carrying its own library.
     'jobsStore',
     'coresStore',

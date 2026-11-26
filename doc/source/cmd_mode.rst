@@ -25,6 +25,7 @@ Opérations globales
    "open_group, og", "Ouvre une base de données dans un nouveau groupe d'onglets, la base courante restant ouverte dans le sien (voir :ref:`groupes_bibliotheques`)."
    "import_db, idb", "Importe et fusionne une autre base de données."
    "import_archive, iar", "Importe une archive papier de matchs : la page HTML exportée, ou des scans et des photos de ses feuilles (voir :ref:`panneau_matchs`)."
+   "import_document, idoc", "Ouvre l'assistant d'import de document : un PDF, une image de page ou un relevé, les défauts et le sens de jeu confirmés une fois, les entrées à vérifier, puis l'import dans une collection (voir :ref:`assistant_import_document`)."
    "export_db, edb", "Exporte la sélection courante vers une nouvelle base de données."
    "quit, q", "Ferme blunderDB."
    "help, he, h", "Ouvre l'aide de blunderDB."

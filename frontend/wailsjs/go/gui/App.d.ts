@@ -135,6 +135,8 @@ export function OpenDatabaseDialog():Promise<string>;
 
 export function OpenDirectionOutputDialog():Promise<string>;
 
+export function OpenDocumentDialog():Promise<string>;
+
 export function OpenExportApkgDialog(arg1:string):Promise<string>;
 
 export function OpenExportDatabaseDialog():Promise<string>;

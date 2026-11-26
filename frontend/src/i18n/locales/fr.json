@@ -3068,7 +3068,8 @@
             "gv2": "Valeurs de gammon, videau à 2",
             "gv4": "Valeurs de gammon, videau à 4",
             "clear": "Effacer l'historique des commandes",
-            "jobs": "Calculs"
+            "jobs": "Calculs",
+            "import_document": "Importer un document"
         }
     },
     "assistant": {
@@ -3823,6 +3824,33 @@
             "bearoff": "Bearoff",
             "sync": "Sync",
             "other": "Autre"
+        }
+    },
+    "documentImport": {
+        "title": "Importer un document",
+        "reading": "Lecture du document…",
+        "failed": "Import du document échoué : {err}",
+        "summary": "{title} : {entries} entrées (sûres {sure}, à vérifier {toVerify}, incertaines {uncertain})",
+        "defaults": "Défauts du document",
+        "defaultsConfirmed": "Confirmés.",
+        "defaultsAsk": "Vérifiez ces défauts sur quelques diagrammes, puis confirmez-les une fois pour tout le document.",
+        "direction": "Sens de jeu : {description}.",
+        "directionConfirmed": "Confirmé.",
+        "directionAsk": "À confirmer.",
+        "confirm": "Confirmer les défauts et le sens de jeu",
+        "acceptComplete": "Accepter les entrées de 15 + 15 pions lus sans doute ({n})",
+        "fallback": "Importer sous le contexte que porte la position quand il n'est pas lu ({n}), les champs à vérifier nommés dans la référence",
+        "collection": "Collection",
+        "review": "Entrées à vérifier ({n})",
+        "reviewNone": "Aucune entrée à vérifier.",
+        "refused": "L'import est refusé pour le rang {ranks} : confirmez, acceptez ou utilisez le repli.",
+        "run": "Importer",
+        "imported": "Collection {collection} : {added} positions ajoutées, {repeated} répétées",
+        "importedDetail": "{entries} entrées, {positions} positions distinctes ({fresh} nouvelles) ; complètes : {complete}, repli : {fallback}",
+        "state": {
+            "sure": "sûre",
+            "to-verify": "à vérifier",
+            "uncertain": "incertaine"
         }
     }
 }

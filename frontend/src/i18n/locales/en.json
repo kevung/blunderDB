@@ -3068,7 +3068,8 @@
             "gv2": "Gammon values, cube at 2",
             "gv4": "Gammon values, cube at 4",
             "clear": "Clear the command history",
-            "jobs": "Jobs panel"
+            "jobs": "Jobs panel",
+            "import_document": "Import a document"
         }
     },
     "assistant": {
@@ -3823,6 +3824,33 @@
             "bearoff": "Bearoff",
             "sync": "Sync",
             "other": "Other"
+        }
+    },
+    "documentImport": {
+        "title": "Import a document",
+        "reading": "Reading the document…",
+        "failed": "Document import failed: {err}",
+        "summary": "{title}: {entries} entries (sure {sure}, to verify {toVerify}, uncertain {uncertain})",
+        "defaults": "Defaults of the document",
+        "defaultsConfirmed": "Confirmed.",
+        "defaultsAsk": "Check these defaults against a few diagrams, then confirm them once for the whole document.",
+        "direction": "Direction of play: {description}.",
+        "directionConfirmed": "Confirmed.",
+        "directionAsk": "To confirm.",
+        "confirm": "Confirm the defaults and the direction of play",
+        "acceptComplete": "Accept the entries of 15 + 15 checkers read with no doubt ({n})",
+        "fallback": "Import under the context the position carries when it is not read ({n}), the fields to check named in the reference",
+        "collection": "Collection",
+        "review": "Entries to check ({n})",
+        "reviewNone": "No entry to check.",
+        "refused": "The import is refused for rank {ranks}: confirm, accept or use the fallback.",
+        "run": "Import",
+        "imported": "Collection {collection}: {added} positions added, {repeated} repeated",
+        "importedDetail": "{entries} entries, {positions} distinct positions ({fresh} new); complete: {complete}, fallback: {fallback}",
+        "state": {
+            "sure": "sure",
+            "to-verify": "to verify",
+            "uncertain": "uncertain"
         }
     }
 }

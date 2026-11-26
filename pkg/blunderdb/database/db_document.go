@@ -41,3 +41,39 @@ func (d *Database) AnalyzeDocument(path, title, author string) (string, error) {
 	out, err := r.Encode()
 	return string(out), err
 }
+
+// SummarizeDocumentReleve counts the entries of a Relevé by certainty and
+// names the ranks an import refuses or accepts under a fallback, as
+// `document check` does. It reads and writes no database.
+func (d *Database) SummarizeDocumentReleve(releveJSON string) (document.Summary, error) {
+	r, err := document.Decode([]byte(releveJSON))
+	if err != nil {
+		return document.Summary{}, err
+	}
+	return document.Summarize(r), nil
+}
+
+// ReviewDocumentReleve lists the entries of a Relevé an import refuses
+// without a decision, each with the note naming what to check.
+func (d *Database) ReviewDocumentReleve(releveJSON string) ([]document.ReviewItem, error) {
+	r, err := document.Decode([]byte(releveJSON))
+	if err != nil {
+		return nil, err
+	}
+	return document.Review(r), nil
+}
+
+// ConfirmDocumentReleve returns the Relevé with the document's defaults
+// and/or its direction of play marked confirmed: the gesture of setting
+// "confirmed": true by hand in the JSON file.
+func (d *Database) ConfirmDocumentReleve(releveJSON string, defaults, direction bool) (string, error) {
+	r, err := document.Decode([]byte(releveJSON))
+	if err != nil {
+		return "", err
+	}
+	if err := document.ConfirmDefaults(r, defaults, direction); err != nil {
+		return "", err
+	}
+	out, err := r.Encode()
+	return string(out), err
+}

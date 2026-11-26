@@ -60,21 +60,22 @@ const (
 	// whyTranscriptionMAT: the .mat text of a DRAFT, not of a saved Match —
 	// `export --type mat` renders the other object; a script reads it from
 	// `call transcriptions.exportMat`.
-	whyTranscriptionMAT = whyTranscription
-	whyDuelGated        = "the daemon's Duel routes are served only under --duel (ADR-0072 rule 11), outside Paths()"
-	whyDuelClock        = "a Duel driven by the CLI has neither Cadence nor clock: each call is its own process (ADR-0072 rule 11), so suspending, resuming and flagging are the daemon's, whose process holds the open Duel"
-	whyResumeOffer      = "the offer the desktop makes when a library is opened: a transcribed match whose targeted batch was cut short (ADR-0045 §8). Nothing is stored for it, so the fact exists only at the moment someone opens the library, which is a question only an interactive session asks. The other two modes have the DEED without the offer — `analyze --match` finishes exactly that batch, and a client of the daemon reads `toAnalyze` from transcriptions.finish"
-	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
-	whyTransport        = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
-	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
-	whyMatchScoped      = "the daemon serves a library, and the match-scoped sweep exists for the transcription that has just written a match (ADR-0045 §8); a client of the daemon asks for the library sweep it already has"
-	whyCtxVariant       = "context.Context variant of the method above (B.13, #181): the daemon already threads its request's own context through Storage directly and never calls the Database wrapper; this one is for the CLI, whose long-running commands (search, list --type stats, export) now cancel on Ctrl-C the way analyze already did"
-	whySearchIndex      = "a navigation aid of the director's console: it feeds the GUI palette so a director reaches a player, a table or an event in one gesture; the CLI and the daemon have the same data in `tournament` and expose nothing of the console (whyDirection)"
-	whyDirection        = "a Direction is what a tournament DIRECTOR decided while running a tournament (ADR-0047). The daemon serves its reads (/v1/directions.*, /v1/rencontres.*, ADR-0057) and, under `serve --direction` and `call`, its gestures (whyDirectionGesture); this method is neither, a tool of the director's console; the CLI's `tournament` subcommand — list, verify, standings, page, export, move, deliberately non-interactive since Nicomaque ships its own TD console — is the other headless face. This accessor hands out the persistence the direction package runs on; it carries no capability of its own"
-	whyDirectionGesture = "a gesture of a Direction or a Rencontre (ADR-0057): the daemon serves it under `serve --direction`, `call` always, both with If-Match; the CLI adds no writing sub-command, `call` is its writing face (ADR-0056 as amended)"
-	whyDirectionRead    = "a read of the Direction the daemon serves (ADR-0057) to a client that draws the view itself; the CLI's `tournament` subcommand prints the sheets a script needs (list, standings, page, export, verify), not this view"
-	whyDocumentAnalysis = "reading a document is done on the machine that holds the file (ADR-0117 rule 6): the daemon imports a Relevé (/v1/documents.importReleve) and reads no PDF a client would upload"
-	whyTrainingJournal  = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): a session exists only because someone answered it. A client that drills a person records and reads it over /v1/training.*, which `blunderdb call` also serves; a CLI sub-command would have no session of its own to run"
+	whyTranscriptionMAT  = whyTranscription
+	whyDuelGated         = "the daemon's Duel routes are served only under --duel (ADR-0072 rule 11), outside Paths()"
+	whyDuelClock         = "a Duel driven by the CLI has neither Cadence nor clock: each call is its own process (ADR-0072 rule 11), so suspending, resuming and flagging are the daemon's, whose process holds the open Duel"
+	whyResumeOffer       = "the offer the desktop makes when a library is opened: a transcribed match whose targeted batch was cut short (ADR-0045 §8). Nothing is stored for it, so the fact exists only at the moment someone opens the library, which is a question only an interactive session asks. The other two modes have the DEED without the offer — `analyze --match` finishes exactly that batch, and a client of the daemon reads `toAnalyze` from transcriptions.finish"
+	whyPureDomain        = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
+	whyTransport         = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
+	whyPostgresOnly      = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
+	whyMatchScoped       = "the daemon serves a library, and the match-scoped sweep exists for the transcription that has just written a match (ADR-0045 §8); a client of the daemon asks for the library sweep it already has"
+	whyCtxVariant        = "context.Context variant of the method above (B.13, #181): the daemon already threads its request's own context through Storage directly and never calls the Database wrapper; this one is for the CLI, whose long-running commands (search, list --type stats, export) now cancel on Ctrl-C the way analyze already did"
+	whySearchIndex       = "a navigation aid of the director's console: it feeds the GUI palette so a director reaches a player, a table or an event in one gesture; the CLI and the daemon have the same data in `tournament` and expose nothing of the console (whyDirection)"
+	whyDirection         = "a Direction is what a tournament DIRECTOR decided while running a tournament (ADR-0047). The daemon serves its reads (/v1/directions.*, /v1/rencontres.*, ADR-0057) and, under `serve --direction` and `call`, its gestures (whyDirectionGesture); this method is neither, a tool of the director's console; the CLI's `tournament` subcommand — list, verify, standings, page, export, move, deliberately non-interactive since Nicomaque ships its own TD console — is the other headless face. This accessor hands out the persistence the direction package runs on; it carries no capability of its own"
+	whyDirectionGesture  = "a gesture of a Direction or a Rencontre (ADR-0057): the daemon serves it under `serve --direction`, `call` always, both with If-Match; the CLI adds no writing sub-command, `call` is its writing face (ADR-0056 as amended)"
+	whyDirectionRead     = "a read of the Direction the daemon serves (ADR-0057) to a client that draws the view itself; the CLI's `tournament` subcommand prints the sheets a script needs (list, standings, page, export, verify), not this view"
+	whyDocumentAnalysis  = "reading a document is done on the machine that holds the file (ADR-0117 rule 6): the daemon imports a Relevé (/v1/documents.importReleve) and reads no PDF a client would upload"
+	whyDocumentAssistant = "the import assistant of the desktop reads and confirms a Relevé held in memory; the CLI does the same on the file (document check, then \"confirmed\": true), the daemon imports the Relevé a desktop confirmed"
+	whyTrainingJournal   = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): a session exists only because someone answered it. A client that drills a person records and reads it over /v1/training.*, which `blunderdb call` also serves; a CLI sub-command would have no session of its own to run"
 )
 
 // serverOnly is the other direction of the parity check: every /v1 and /ops
@@ -244,6 +245,9 @@ var databaseParity = map[string]parityEntry{
 	"ImportPaperArchive":                {CLI: "archive import", Server: "/v1/imports.archive"},
 	"ImportDocumentReleve":              {CLI: "document import", Server: "/v1/documents.importReleve"},
 	"AnalyzeDocument":                   {CLI: "document analyze", Why: whyDocumentAnalysis},
+	"SummarizeDocumentReleve":           {CLI: "document check", Why: whyDocumentAssistant},
+	"ReviewDocumentReleve":              {CLI: "document check", Why: whyDocumentAssistant},
+	"ConfirmDocumentReleve":             {CLI: "document check", Why: whyDocumentAssistant},
 	"ImportLessonMarkdown":              {Server: "/v1/lessons.importMarkdown", Why: "Database.ImportLessonMarkdown serves the desktop, whose interface has no gesture for it yet; the CLI has no verb for it yet"},
 	"LessonHTMLCtx":                     {Why: whyCtxVariant},
 	"LessonPositionIDs":                 {Why: "lets the desktop draw a Lesson's boards in the palette on screen before asking for the document; the CLI and the daemon draw them with the built-in diagram"},

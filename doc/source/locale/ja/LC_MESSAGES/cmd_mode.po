@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:46+0100\n"
+"POT-Creation-Date: 2026-11-26 15:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -92,11 +92,25 @@ msgstr "import_archive, iar"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Importe une archive papier de matchs : la page HTML exportée, ou des "
-"scans et des photos de ses feuilles (voir "
-":ref:`panneau_matchs`)."
+"scans et des photos de ses feuilles (voir :ref:`panneau_matchs`)."
 msgstr ""
-"マッチの紙のアーカイブを読み込みます。書き出した HTML "
-"ページ、またはその用紙のスキャンや写真です（:ref:`panneau_matchs` を参照）。"
+"マッチの紙のアーカイブを読み込みます。書き出した HTML ページ、またはその用紙のスキャンや写真です（:ref:`panneau_matchs`"
+" を参照）。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "import_document, idoc"
+msgstr "import_document, idoc"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre l'assistant d'import de document : un PDF, une image de page ou un "
+"relevé, les défauts et le sens de jeu confirmés une fois, les entrées à "
+"vérifier, puis l'import dans une collection (voir "
+":ref:`assistant_import_document`)."
+msgstr ""
+"文書取り込みアシスタントを開きます。PDF、ページ画像または "
+"relevé、一度だけ確認する既定値とプレイの向き、確認する項目、そしてコレクションへの取り込みの順に進みます(:ref:`assistant_import_document`"
+" を参照)。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "export_db, edb"
@@ -302,7 +316,7 @@ msgstr ""
 "参照データパネルをギャモン価値タブで開きます。このタブには、キューブ 1、2、4 の表がまとめられています。この 3 "
 "つのコマンドは同じタブを開きます。"
 
-#: ../../source/cmd_mode.rst:49
+#: ../../source/cmd_mode.rst:50
 msgid "Positions et navigation"
 msgstr "局面とナビゲーション"
 
@@ -522,7 +536,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "最後に閲覧したマッチ内を移動します。"
 
-#: ../../source/cmd_mode.rst:81
+#: ../../source/cmd_mode.rst:82
 msgid "Édition et recherche"
 msgstr "編集と検索"
 
@@ -565,11 +579,11 @@ msgid ""
 "ouverte ou match en cours de revue."
 msgstr "表示中のポジションの中を検索：現在の結果、開いているコレクション、またはレビュー中のマッチ。"
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:98
 msgid "Filtres de recherche"
 msgstr "検索フィルタ"
 
-#: ../../source/cmd_mode.rst:99
+#: ../../source/cmd_mode.rst:100
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -583,7 +597,7 @@ msgstr ""
 "のフラグが存在する場合にそれを示します（\\ :ref:`cli`\\ "
 "を参照）。ダッシュは、この文法でしか表現できないフィルターであることを示します。"
 
-#: ../../source/cmd_mode.rst:106
+#: ../../source/cmd_mode.rst:107
 msgid ""
 "Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -600,7 +614,7 @@ msgstr ""
 "は存在せず、数字を持つのは除外の形（\\ ``xD65``\\ "
 "）だけです。盤面のないコマンドラインでは、これらのトークンは空の盤面と比較されます。そこでは第3列のフラグを使ってください。"
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -609,7 +623,7 @@ msgstr ""
 "トークンのうち ``like`` だけは、絞り込むのではなく\\ **並べ替え**\\ "
 "ます。目標局面からの距離の昇順に結果を並べ、ほかのトークンはすべて、そうして並んだ集合を絞り込みます。"
 
-#: ../../source/cmd_mode.rst:119
+#: ../../source/cmd_mode.rst:120
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -618,18 +632,18 @@ msgstr ""
 "エラーとエクイティは\\ **エクイティの千分の1**\\ 単位で数えます——下の表でいう *ミリポイント* です。\\ ``E>100`` "
 "は、少なくとも 0.1 ポイントを失った手を残します。1ポイントは 1000 ミリポイントです。"
 
-#: ../../source/cmd_mode.rst:123
+#: ../../source/cmd_mode.rst:124
 msgid "Deux recherches complètes :"
 msgstr "完全な検索の例を二つ："
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:126
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
 "chances de gain, aucun commentaire."
 msgstr "``s p>30 w40,60 xco`` — 30 ピップ以上遅れており、勝率が 40 % から 60 % の間で、コメントがないもの。"
 
-#: ../../source/cmd_mode.rst:127
+#: ../../source/cmd_mode.rst:128
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1924,7 +1938,7 @@ msgstr ""
 "は目標と上限を組み合わせます。二ロールを超える検索は拒否され、もはや存在しない星付きの形（\\ ``like42*``\\ ）も同様です。\\ "
 ":ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:252
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1940,11 +1954,11 @@ msgstr ""
 "）が、二重引用符は決して含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、\\ ``ma1;2`` "
 "はトークンではありません（\\ ``ma1 ma2`` と書きます）。"
 
-#: ../../source/cmd_mode.rst:256
+#: ../../source/cmd_mode.rst:257
 msgid "Transcrire depuis un terminal"
 msgstr "ターミナルから転記する"
 
-#: ../../source/cmd_mode.rst:258
+#: ../../source/cmd_mode.rst:259
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1962,7 +1976,7 @@ msgstr ""
 "は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、\\ ``sessionId`` "
 "はなく、呼び出しをまたいだ取り消しもできません。"
 
-#: ../../source/cmd_mode.rst:269
+#: ../../source/cmd_mode.rst:270
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 

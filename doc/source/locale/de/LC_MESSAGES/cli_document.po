@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 15:36+0100\n"
+"POT-Creation-Date: 2026-11-26 15:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -33,15 +33,17 @@ msgid ""
 "montre des positions en diagrammes, dans un ordre qui est celui de "
 "l'étude. La commande ``document`` les range dans une collection de la "
 "base, dans cet ordre, pour les réétudier avec le reste de la "
-"bibliothèque. Elle ne fonctionne qu'en ligne de commande ; il n'y a pas "
-"d'écran correspondant."
+"bibliothèque. L'interface a le même chemin dans un assistant "
+"(:ref:`assistant_import_document`) ; la ligne de commande est décrite "
+"ici."
 msgstr ""
-"Ein Werk, das man besitzt — Aufgabenbuch, Sammlung, Artikel —, zeigt "
-"Positionen als Diagramme, in der Reihenfolge des Studiums. Der Befehl "
+"Ein Buch, das Sie besitzen — Aufgabenbuch, Sammlung, Artikel — zeigt "
+"Stellungen als Diagramme, in der Reihenfolge des Studiums. Der Befehl "
 "``document`` legt sie in dieser Reihenfolge in einer Sammlung der "
-"Datenbank ab, damit man sie zusammen mit dem Rest der Bibliothek erneut "
-"studieren kann. Er funktioniert nur auf der Kommandozeile; es gibt keinen"
-" entsprechenden Bildschirm."
+"Datenbank ab, damit Sie sie mit dem Rest der Bibliothek erneut studieren "
+"können. Die Oberfläche folgt demselben Weg in einem Assistenten "
+"(:ref:`assistant_import_document`); die Befehlszeile wird hier "
+"beschrieben."
 
 #: ../../source/cli_document.rst:15
 msgid ""
@@ -845,10 +847,77 @@ msgstr ""
 "erzwungen hat (``Forced: 3 entries neither sure nor verified``)."
 
 #: ../../source/cli_document.rst:423
+msgid "L'assistant d'import de l'interface"
+msgstr "Der Import-Assistent der Oberfläche"
+
+#: ../../source/cli_document.rst:425
+msgid ""
+"La commande ``import_document`` (``idoc``, :doc:`cmd_mode`) ouvre "
+"l'assistant : on choisit un PDF, une image de page ou un relevé ``.json``"
+" déjà lu. L'assistant appelle les mêmes fonctions que ``document "
+"analyze``, ``check`` et ``import`` et n'applique aucune règle de plus."
+msgstr ""
+"Der Befehl ``import_document`` (``idoc``, :doc:`cmd_mode`) öffnet den "
+"Assistenten: Sie wählen ein PDF, ein Seitenbild oder ein bereits "
+"gelesenes ``.json``-Relevé. Der Assistent ruft dieselben Funktionen auf "
+"wie ``document analyze``, ``check`` und ``import`` und wendet keine "
+"weitere Regel an."
+
+#: ../../source/cli_document.rst:430
+msgid ""
+"**Défauts et sens de jeu** : le contexte par défaut du document et le "
+"sens de jeu supposé sont décrits. Un seul bouton les confirme pour tout "
+"le document, après contrôle sur quelques diagrammes ; rien n'est confirmé"
+" sans ce geste."
+msgstr ""
+"**Standardwerte und Spielrichtung**: Der Standardkontext des Dokuments "
+"und die angenommene Spielrichtung werden beschrieben. Eine Schaltfläche "
+"bestätigt sie für das ganze Dokument, nachdem einige Diagramme geprüft "
+"wurden; ohne diese Geste wird nichts bestätigt."
+
+#: ../../source/cli_document.rst:433
+msgid ""
+"**Entrées à vérifier** : la liste donne, pour chaque entrée que l'import "
+"refuserait en l'état, sa page, son étiquette, son état et la note qui "
+"nomme les champs à comparer au diagramme. Celles que les choix en cours "
+"ne couvrent pas sont en gras."
+msgstr ""
+"**Zu prüfende Einträge**: Die Liste nennt für jeden Eintrag, den der "
+"Import so ablehnen würde, Seite, Beschriftung, Zustand und die Notiz mit "
+"den Feldern, die mit dem Diagramm zu vergleichen sind. Was die aktuellen "
+"Auswahlen nicht abdecken, steht fett."
+
+#: ../../source/cli_document.rst:436
+msgid "**Entrées complètes** : la case équivaut à ``--accept-complete``."
+msgstr "**Vollständige Einträge**: Das Kästchen entspricht ``--accept-complete``."
+
+#: ../../source/cli_document.rst:437
+msgid ""
+"**Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une"
+" fois les défauts confirmés."
+msgstr ""
+"**Rückfall**: Das Kästchen entspricht ``--fallback``; es wird erst "
+"angeboten, wenn die Standardwerte bestätigt sind."
+
+#: ../../source/cli_document.rst:439
+msgid "**Collection** : vide, elle prend le titre du document."
+msgstr "**Sammlung**: Leer übernimmt sie den Titel des Dokuments."
+
+#: ../../source/cli_document.rst:441
+msgid ""
+"Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; "
+"l'assistant n'offre pas ``--force``. Le bilan donne le nombre de "
+"positions ajoutées et répétées."
+msgstr ""
+"Die Schaltfläche **Importieren** bleibt grau, solange ein Eintrag "
+"abgelehnt wird; der Assistent bietet ``--force`` nicht an. Die Bilanz "
+"nennt die Zahl der hinzugefügten und wiederholten Stellungen."
+
+#: ../../source/cli_document.rst:447
 msgid "Le repli"
 msgstr "Der Rückfall"
 
-#: ../../source/cli_document.rst:425
+#: ../../source/cli_document.rst:449
 msgid ""
 "Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
 "``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
@@ -865,7 +934,7 @@ msgstr ""
 "Rest den Standard. ``check`` nennt diese Ränge, und die Fehlermeldung "
 "schlägt den Rückfall vor:"
 
-#: ../../source/cli_document.rst:436
+#: ../../source/cli_document.rst:460
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
@@ -890,11 +959,11 @@ msgstr ""
 "wird ein Eintrag ohne Position abgelehnt: Er muss ausgefüllt oder "
 "entfernt werden."
 
-#: ../../source/cli_document.rst:447
+#: ../../source/cli_document.rst:471
 msgid "Ce qui entre en base"
 msgstr "Was in die Datenbank gelangt"
 
-#: ../../source/cli_document.rst:449
+#: ../../source/cli_document.rst:473
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -909,7 +978,7 @@ msgstr ""
 "hat, wird nicht dupliziert (``new in the library`` zählt die, die ihr "
 "fehlten)."
 
-#: ../../source/cli_document.rst:455
+#: ../../source/cli_document.rst:479
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -923,7 +992,7 @@ msgstr ""
 "Beschreibung, falls sie eine hat; eine dynamische Sammlung (durch eine "
 "Abfrage definiert) wird abgelehnt."
 
-#: ../../source/cli_document.rst:459
+#: ../../source/cli_document.rst:483
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -931,7 +1000,7 @@ msgstr ""
 "Jede Position trägt einen **Kommentar**, der ihre Fundstelle angibt, nach"
 " dem Titel des Dokuments: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:462
+#: ../../source/cli_document.rst:486
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -941,11 +1010,11 @@ msgstr ""
 " Autors. Ein unterbrochener oder abgelehnter Import schreibt nichts: Es "
 "ist eine einzige Transaktion."
 
-#: ../../source/cli_document.rst:466
+#: ../../source/cli_document.rst:490
 msgid "Une position répétée"
 msgstr "Eine wiederholte Position"
 
-#: ../../source/cli_document.rst:468
+#: ../../source/cli_document.rst:492
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -957,11 +1026,11 @@ msgstr ""
 "Fundstelle: ``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` zählt "
 "diese Wiederholungen."
 
-#: ../../source/cli_document.rst:474
+#: ../../source/cli_document.rst:498
 msgid "Réimporter"
 msgstr "Erneut importieren"
 
-#: ../../source/cli_document.rst:476
+#: ../../source/cli_document.rst:500
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -974,11 +1043,11 @@ msgstr ""
 "seine Fundstellen geändert haben, nie verdoppelt. Man kann also einen "
 "Import wieder aufnehmen, nachdem man das Relevé korrigiert hat."
 
-#: ../../source/cli_document.rst:482
+#: ../../source/cli_document.rst:506
 msgid "Le démon"
 msgstr "Der Daemon"
 
-#: ../../source/cli_document.rst:484
+#: ../../source/cli_document.rst:508
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 15:36+0100\n"
+"POT-Creation-Date: 2026-11-26 15:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -33,14 +33,16 @@ msgid ""
 "montre des positions en diagrammes, dans un ordre qui est celui de "
 "l'étude. La commande ``document`` les range dans une collection de la "
 "base, dans cet ordre, pour les réétudier avec le reste de la "
-"bibliothèque. Elle ne fonctionne qu'en ligne de commande ; il n'y a pas "
-"d'écran correspondant."
+"bibliothèque. L'interface a le même chemin dans un assistant "
+"(:ref:`assistant_import_document`) ; la ligne de commande est décrite "
+"ici."
 msgstr ""
-"Ένα έργο που κατέχετε — βιβλίο προβλημάτων, συλλογή, άρθρο — δείχνει "
-"θέσεις σε διαγράμματα, με σειρά που είναι αυτή της μελέτης. Η εντολή "
-"``document`` τις τοποθετεί σε μια συλλογή της βάσης, με αυτή τη σειρά, "
-"ώστε να τις μελετήσετε ξανά μαζί με την υπόλοιπη βιβλιοθήκη. Λειτουργεί "
-"μόνο στη γραμμή εντολών· δεν υπάρχει αντίστοιχη οθόνη."
+"Ένα βιβλίο που έχετε — βιβλίο προβλημάτων, συλλογή, άρθρο — δείχνει "
+"θέσεις σε διαγράμματα, με τη σειρά της μελέτης. Η εντολή ``document`` τις"
+" τοποθετεί σε μια συλλογή της βάσης, με αυτή τη σειρά, ώστε να τις "
+"μελετήσετε ξανά μαζί με την υπόλοιπη βιβλιοθήκη. Η διεπαφή ακολουθεί την "
+"ίδια διαδρομή σε έναν βοηθό (:ref:`assistant_import_document`)· εδώ "
+"περιγράφεται η γραμμή εντολών."
 
 #: ../../source/cli_document.rst:15
 msgid ""
@@ -840,10 +842,77 @@ msgstr ""
 "(``Forced: 3 entries neither sure nor verified``)."
 
 #: ../../source/cli_document.rst:423
+msgid "L'assistant d'import de l'interface"
+msgstr "Ο βοηθός εισαγωγής της διεπαφής"
+
+#: ../../source/cli_document.rst:425
+msgid ""
+"La commande ``import_document`` (``idoc``, :doc:`cmd_mode`) ouvre "
+"l'assistant : on choisit un PDF, une image de page ou un relevé ``.json``"
+" déjà lu. L'assistant appelle les mêmes fonctions que ``document "
+"analyze``, ``check`` et ``import`` et n'applique aucune règle de plus."
+msgstr ""
+"Η εντολή ``import_document`` (``idoc``, :doc:`cmd_mode`) ανοίγει τον "
+"βοηθό: επιλέγετε ένα PDF, μια εικόνα σελίδας ή ένα ήδη διαβασμένο relevé "
+"``.json``. Ο βοηθός καλεί τις ίδιες λειτουργίες με τις ``document "
+"analyze``, ``check`` και ``import`` και δεν εφαρμόζει κανέναν επιπλέον "
+"κανόνα."
+
+#: ../../source/cli_document.rst:430
+msgid ""
+"**Défauts et sens de jeu** : le contexte par défaut du document et le "
+"sens de jeu supposé sont décrits. Un seul bouton les confirme pour tout "
+"le document, après contrôle sur quelques diagrammes ; rien n'est confirmé"
+" sans ce geste."
+msgstr ""
+"**Προεπιλογές και φορά παιχνιδιού**: περιγράφονται το προεπιλεγμένο "
+"πλαίσιο του εγγράφου και η υποτιθέμενη φορά παιχνιδιού. Ένα κουμπί τα "
+"επιβεβαιώνει για όλο το έγγραφο, μετά από έλεγχο σε μερικά διαγράμματα· "
+"τίποτα δεν επιβεβαιώνεται χωρίς αυτή την κίνηση."
+
+#: ../../source/cli_document.rst:433
+msgid ""
+"**Entrées à vérifier** : la liste donne, pour chaque entrée que l'import "
+"refuserait en l'état, sa page, son étiquette, son état et la note qui "
+"nomme les champs à comparer au diagramme. Celles que les choix en cours "
+"ne couvrent pas sont en gras."
+msgstr ""
+"**Καταχωρήσεις προς έλεγχο**: η λίστα δίνει, για κάθε καταχώρηση που η "
+"εισαγωγή θα απέρριπτε ως έχει, τη σελίδα, την ετικέτα, την κατάσταση και "
+"τη σημείωση που κατονομάζει τα πεδία προς σύγκριση με το διάγραμμα. Όσες "
+"δεν καλύπτονται από τις τρέχουσες επιλογές είναι με έντονα γράμματα."
+
+#: ../../source/cli_document.rst:436
+msgid "**Entrées complètes** : la case équivaut à ``--accept-complete``."
+msgstr "**Πλήρεις καταχωρήσεις**: το πλαίσιο ισοδυναμεί με ``--accept-complete``."
+
+#: ../../source/cli_document.rst:437
+msgid ""
+"**Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une"
+" fois les défauts confirmés."
+msgstr ""
+"**Εναλλακτική**: το πλαίσιο ισοδυναμεί με ``--fallback``· προσφέρεται "
+"μόνο αφού επιβεβαιωθούν οι προεπιλογές."
+
+#: ../../source/cli_document.rst:439
+msgid "**Collection** : vide, elle prend le titre du document."
+msgstr "**Συλλογή**: όταν είναι κενή, παίρνει τον τίτλο του εγγράφου."
+
+#: ../../source/cli_document.rst:441
+msgid ""
+"Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; "
+"l'assistant n'offre pas ``--force``. Le bilan donne le nombre de "
+"positions ajoutées et répétées."
+msgstr ""
+"Το κουμπί **Εισαγωγή** μένει γκρίζο όσο απορρίπτεται μια καταχώρηση· ο "
+"βοηθός δεν προσφέρει το ``--force``. Ο απολογισμός δίνει τον αριθμό των "
+"θέσεων που προστέθηκαν και επαναλήφθηκαν."
+
+#: ../../source/cli_document.rst:447
 msgid "Le repli"
 msgstr "Η υποχώρηση"
 
-#: ../../source/cli_document.rst:425
+#: ../../source/cli_document.rst:449
 msgid ""
 "Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
 "``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
@@ -860,7 +929,7 @@ msgstr ""
 "και την προεπιλογή για τα υπόλοιπα. Το ``check`` ονομάζει αυτές τις "
 "θέσεις κατάταξης και το μήνυμα σφάλματος προτείνει την υποχώρηση:"
 
-#: ../../source/cli_document.rst:436
+#: ../../source/cli_document.rst:460
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
@@ -885,11 +954,11 @@ msgstr ""
 "``--force``, μια καταχώριση χωρίς θέση απορρίπτεται: πρέπει να "
 "συμπληρωθεί ή να αφαιρεθεί."
 
-#: ../../source/cli_document.rst:447
+#: ../../source/cli_document.rst:471
 msgid "Ce qui entre en base"
 msgstr "Τι μπαίνει στη βάση"
 
-#: ../../source/cli_document.rst:449
+#: ../../source/cli_document.rst:473
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -903,7 +972,7 @@ msgstr ""
 "ταυτότητά της: μια θέση που έχει ήδη δεν διπλογράφεται (το ``new in the "
 "library`` μετρά αυτές που της έλειπαν)."
 
-#: ../../source/cli_document.rst:455
+#: ../../source/cli_document.rst:479
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -916,7 +985,7 @@ msgstr ""
 "το ίδιο όνομα δέχεται τις θέσεις που της λείπουν και κρατά την περιγραφή "
 "της αν έχει· μια δυναμική συλλογή (ορισμένη από ερώτημα) απορρίπτεται."
 
-#: ../../source/cli_document.rst:459
+#: ../../source/cli_document.rst:483
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -924,7 +993,7 @@ msgstr ""
 "Κάθε θέση φέρει ένα **σχόλιο** που δίνει την αναφορά της, μετά τον τίτλο "
 "του εγγράφου: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:462
+#: ../../source/cli_document.rst:486
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -934,11 +1003,11 @@ msgstr ""
 "του συγγραφέα. Μια εισαγωγή που διακόπηκε ή απορρίφθηκε δεν γράφει "
 "τίποτα: είναι μία μόνο συναλλαγή."
 
-#: ../../source/cli_document.rst:466
+#: ../../source/cli_document.rst:490
 msgid "Une position répétée"
 msgstr "Μια θέση που επαναλαμβάνεται"
 
-#: ../../source/cli_document.rst:468
+#: ../../source/cli_document.rst:492
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -950,11 +1019,11 @@ msgstr ""
 "αναφορά: ``Mon livre — p. 2, Problem 1; p. 4``. Το ``repeated`` μετρά "
 "αυτές τις επαναλήψεις."
 
-#: ../../source/cli_document.rst:474
+#: ../../source/cli_document.rst:498
 msgid "Réimporter"
 msgstr "Επανεισαγωγή"
 
-#: ../../source/cli_document.rst:476
+#: ../../source/cli_document.rst:500
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -966,11 +1035,11 @@ msgstr ""
 "αναφοράς ξαναγράφεται μόνο αν οι αναφορές του άλλαξαν, ποτέ διπλό. "
 "Μπορείτε λοιπόν να συνεχίσετε μια εισαγωγή αφού διορθώσετε το relevé."
 
-#: ../../source/cli_document.rst:482
+#: ../../source/cli_document.rst:506
 msgid "Le démon"
 msgstr "Ο δαίμονας"
 
-#: ../../source/cli_document.rst:484
+#: ../../source/cli_document.rst:508
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

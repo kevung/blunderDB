@@ -147,6 +147,8 @@ export function ComputeTrainingStatsCtx(arg1:context.Context,arg2:database.Stats
 
 export function ConfirmAllProposals(arg1:number):Promise<service.DirectionView>;
 
+export function ConfirmDocumentReleve(arg1:string,arg2:boolean,arg3:boolean):Promise<string>;
+
 export function ConfirmProposal(arg1:number,arg2:string):Promise<service.DirectionView>;
 
 export function ConfirmProposals(arg1:number,arg2:string):Promise<service.DirectionView>;
@@ -747,6 +749,8 @@ export function ResumeImportBatch(arg1:number):Promise<void>;
 
 export function ReviewAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
 
+export function ReviewDocumentReleve(arg1:string):Promise<Array<document.ReviewItem>>;
+
 export function RolloutFiltered(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
 
 export function RolloutPosition(arg1:context.Context,arg2:number,arg3:rollout.Settings,arg4:Array<string>,arg5:boolean,arg6:any):Promise<rollout.Result>;
@@ -906,6 +910,8 @@ export function SuggestReferencePositions(arg1:database.StatsFilter,arg2:Array<n
 export function SuggestReferencePositionsCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:Array<number>,arg4:number):Promise<storage.ReferenceSuggestions>;
 
 export function SuggestTranscriptionMatFilename(arg1:number):Promise<string>;
+
+export function SummarizeDocumentReleve(arg1:string):Promise<document.Summary>;
 
 export function SuspendDuel(arg1:number):Promise<void>;
 
