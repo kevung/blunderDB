@@ -17,8 +17,8 @@
 //
 // The coded data is bounded where it is read: a count of zero bit-planes by
 // the band's bit-planes, coding passes by 109, so that the costliest data
-// measured, every code-block with all its passes, takes about 1.1 µs a
-// pixel. Over a document it is bounded by the caller: a Budget of pixels,
+// measured, every code-block with all its passes, takes about 0.2 µs a
+// pixel on one core (code-blocks decode on every core). Over a document it is bounded by the caller: a Budget of pixels,
 // and a context, read before each tile, each packet and each code-block's
 // decoding. The work between two reads is unchecked: one packet header (at
 // most every code-block of a precinct), one code-block, or the structure,

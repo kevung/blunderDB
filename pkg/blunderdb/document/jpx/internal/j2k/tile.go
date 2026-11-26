@@ -5,7 +5,12 @@ package j2k
 // packet parsing, Tier-1 coefficient decoding, dequantization and the
 // inverse wavelet transform.
 
-import "context"
+import (
+	"context"
+	"sync"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/internal/parallel"
+)
 
 type segment struct {
 	data   []byte
@@ -269,21 +274,59 @@ func (d *tileDecoder) decode() error {
 	if err := d.readPackets(); err != nil {
 		return err
 	}
+	type job struct {
+		cb *codeblock
+		b  *band
+		tc *tileComp
+	}
+	var jobs []job
 	for _, tc := range d.comps {
 		for _, res := range tc.res {
 			for bi, b := range res.bands {
 				for _, pbs := range res.prec {
 					for _, cb := range pbs[bi].cbs {
-						if err := d.ctx.Err(); err != nil {
-							return err
-						}
-						if err := decodeCodeblock(cb, b, tc); err != nil {
-							return err
-						}
+						jobs = append(jobs, job{cb, b, tc})
 					}
 				}
 			}
 		}
+	}
+	// Code-blocks are coded independently and each writes its own area of
+	// its band: they decode in parallel. errs keeps the error of the first
+	// code-block in order that fails, whatever the schedule.
+	// The context is read by one worker at a time, and never again once
+	// it has said to stop: a reader sees the checks a sequential decode
+	// would make, up to the one that stops it.
+	errs := make([]error, len(jobs))
+	var mu sync.Mutex
+	var stop error
+	check := func() error {
+		mu.Lock()
+		defer mu.Unlock()
+		if stop == nil {
+			stop = d.ctx.Err()
+		}
+		return stop
+	}
+	parallel.For(len(jobs), 4, func(lo, hi int) {
+		var t t1Decoder
+		for i := lo; i < hi; i++ {
+			if err := check(); err != nil {
+				errs[i] = err
+				return
+			}
+			if err := decodeCodeblock(&t, jobs[i].cb, jobs[i].b, jobs[i].tc); err != nil {
+				errs[i] = err
+				return
+			}
+		}
+	})
+	for _, err := range errs {
+		if err != nil {
+			return err
+		}
+	}
+	for _, tc := range d.comps {
 		inverseDWT(tc)
 	}
 	return nil

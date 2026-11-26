@@ -1,5 +1,7 @@
 package jbig2
 
+import "math/bits"
+
 // The MQ arithmetic decoder of T.88 Annex E (the one JPEG 2000 also uses),
 // and the integer and symbol-ID decoders built on it (Annex A).
 
@@ -118,17 +120,20 @@ func (d *mq) bit(cx contexts, i int) int {
 			idx = st.nmps
 		}
 	}
-	for {
+	// Renormalize: shift until a's bit 15 is set, as many bits at once as
+	// the byte read holds, reading the next byte where the bit-by-bit loop
+	// of E.3.3 reads it.
+	n := bits.LeadingZeros32(a) - 16
+	a <<= uint(n)
+	for n > 0 {
 		if d.ct == 0 {
 			d.byteIn()
 		}
-		a <<= 1
-		d.chigh = (d.chigh<<1)&0xffff | (d.clow>>15)&1
-		d.clow = (d.clow << 1) & 0xffff
-		d.ct--
-		if a&0x8000 != 0 {
-			break
-		}
+		t := uint(min(n, d.ct))
+		d.chigh = (d.chigh<<t)&0xffff | (d.clow>>(16-t))&(1<<t-1)
+		d.clow = (d.clow << t) & 0xffff
+		d.ct -= int(t)
+		n -= int(t)
 	}
 	d.a = a
 	cx[i] = idx<<1 | uint8(mps)

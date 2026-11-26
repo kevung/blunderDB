@@ -24,6 +24,8 @@ type scanCase struct {
 	digest string
 	im     pdftest.Image
 	dpi    float64
+	// cm, when set, places the image on a page of its size at dpi.
+	cm string
 }
 
 func mustRead(name string) []byte {
@@ -60,6 +62,10 @@ func scanCases() []scanCase {
 	}
 	var jb bytes.Buffer
 	_ = jpeg.Encode(&jb, colour, &jpeg.Options{Quality: 90})
+	fax := pdftest.Image{Width: fw, Height: fh, BPC: 1, ColorSpace: "/DeviceGray",
+		Filter: "/CCITTFaxDecode", DecodeParms: fmt.Sprintf("<</K -1 /Columns %d /Rows %d>>", fw, fh), Data: mustRead("testdata/a4.g4")}
+	stencil := fax
+	stencil.ColorSpace, stencil.ImageMask = "", true
 	return []scanCase{
 		{name: "fax A4", digest: "76c62192f7abbde025bb40fd63e1d9652029251eadee7fdec5128410f13cc2d2", dpi: 300, im: pdftest.Image{Width: fw, Height: fh, BPC: 1, ColorSpace: "/DeviceGray",
 			Filter: "/CCITTFaxDecode", DecodeParms: fmt.Sprintf("<</K -1 /Columns %d /Rows %d>>", fw, fh), Data: mustRead("testdata/a4.g4")}},
@@ -81,12 +87,26 @@ func scanCases() []scanCase {
 			ColorSpace: "[/Indexed /DeviceRGB 255 <" + hex.EncodeToString(palette) + ">]", Filter: "/FlateDecode", Data: flate(idx)}},
 		{name: "dct rgb", dpi: 150, im: pdftest.Image{Width: 1240, Height: 1754, BPC: 8, ColorSpace: "/DeviceRGB",
 			Filter: "/DCTDecode", Data: jb.Bytes()}},
+		// Images finer than the page, reduced by 2×2 and 3×3 samples, a
+		// soft mask, a turned stencil and samples of 4 bits decoded.
+		{name: "fax 600 dpi", digest: "e4a5217844de0299caea2f6cceb537b337f6c9ec60cc4a72122a72ddc9b2d411", dpi: 600, im: fax},
+		{name: "jpx 900 dpi", digest: "86eebf1e958fb1a0de5dd0de8bcb864c46f3a9bfbddd818641c5a8776a57ccc1", dpi: 900, im: pdftest.Image{Width: 1024, Height: 1024, BPC: 8, ColorSpace: "/DeviceGray",
+			Filter: "/JPXDecode", Data: mustRead("../jpx/testdata/big97.jp2")}},
+		{name: "soft mask 450 dpi", digest: "c79af293a23161f331e73770abd8e81a88b2d0fc6ed46710630c27ac791a67ec", dpi: 450, im: pdftest.Image{Width: 1240, Height: 1754, BPC: 8, ColorSpace: "/DeviceGray",
+			Filter: "/FlateDecode", Data: flate(idx), SMask: &pdftest.Image{Width: 620, Height: 877, BPC: 8, ColorSpace: "/DeviceGray",
+				Filter: "/FlateDecode", Data: flate(texture(620, 877, 1)[1:])}}},
+		{name: "turned stencil", digest: "5894a220447f4ca7c241d7205cb0a86caa4e1e2d6cba59b9602a3dd0d82ea0eb", dpi: 300, cm: "500 120 -170 700 150 40", im: stencil},
+		{name: "grey 4 bits decoded", digest: "7f3e745cb09137227a553e5b4d40afd7312fbea1e0baf76272cb439b5c3f11ed", dpi: 150, im: pdftest.Image{Width: 1240, Height: 1754, BPC: 4, ColorSpace: "/DeviceGray",
+			Extra: "/Decode [1 0]", Filter: "/FlateDecode", Data: flate(idx[:620*1754])}},
 	}
 }
 
 func (c scanCase) doc() []byte {
 	pw, ph := float64(c.im.Width)*72/c.dpi, float64(c.im.Height)*72/c.dpi
 	content := fmt.Sprintf("q %g 0 0 %g 0 0 cm /Im1 Do Q", pw, ph)
+	if c.cm != "" {
+		content = "q " + c.cm + " cm /Im1 Do Q"
+	}
 	return pdftest.Doc{Pages: []pdftest.Page{{Width: pw, Height: ph, Content: content, Images: []pdftest.Image{c.im}}}}.Bytes()
 }
 

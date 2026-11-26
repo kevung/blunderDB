@@ -241,8 +241,8 @@ type imageFiles struct {
 }
 
 // MaxJPXPixels bounds the pixels a document decodes from JPEG 2000 files.
-// Their costliest coded data measured takes about 1.1 µs a pixel, some
-// seventy minutes for the whole budget: AnalyzeOptions.Context, read
+// Their costliest coded data measured takes about 0.2 µs a pixel, some
+// quarter of an hour for the whole budget: AnalyzeOptions.Context, read
 // within each decode, is the real bound.
 const MaxJPXPixels = 4_000_000_000
 

@@ -91,19 +91,40 @@ func decodeGeneric(d *mq, cx contexts, p genericParams, check func() error) (*bi
 		m2 := uint32(1)<<uint(wn.hi2-wn.lo2+1) - 1
 		m1 := uint32(1)<<uint(wn.hi1-wn.lo1+1) - 1
 		m0 := uint32(1)<<uint(wn.n0) - 1
-		for x := 0; x < p.w; x++ {
-			v := d.bit(cx, int(w2<<uint(wn.s2)|w1<<uint(wn.s1)|w0))
-			if v == 1 {
-				row[x>>3] |= 0x80 >> uint(x&7)
+		// The rows above are read a byte of pixels at a time: l1 and l2
+		// hold the 24 pixels from pixel 8j on, whose bit 23-i is pixel
+		// 8j+i. A row's bits past its width are 0, as past its end.
+		sh1, sh2 := 22-wn.hi1, 22-wn.hi2
+		for j := 0; j < m.stride; j++ {
+			l1, l2 := bits24(r1, j), bits24(r2, j)
+			var out byte
+			n := min(8, p.w-8*j)
+			for i := 0; i < n; i++ {
+				v := d.bit(cx, int(w2<<uint(wn.s2)|w1<<uint(wn.s1)|w0))
+				out |= byte(v) << uint(7-i)
+				w0 = (w0<<1 | uint32(v)) & m0
+				w1 = (w1<<1 | l1>>uint(sh1-i)&1) & m1
+				if p.template != 3 {
+					w2 = (w2<<1 | l2>>uint(sh2-i)&1) & m2
+				}
 			}
-			w0 = (w0<<1 | uint32(v)) & m0
-			w1 = (w1<<1 | px(r1, x+1+wn.hi1, p.w)) & m1
-			if p.template != 3 {
-				w2 = (w2<<1 | px(r2, x+1+wn.hi2, p.w)) & m2
-			}
+			row[j] = out
 		}
 	}
 	return m, nil
+}
+
+// bits24 is the three bytes of row r from byte j on, 0 past its end (and
+// for a nil row).
+func bits24(r []byte, j int) uint32 {
+	var v uint32
+	for k := j; k < j+3; k++ {
+		v <<= 8
+		if k < len(r) {
+			v |= uint32(r[k])
+		}
+	}
+	return v
 }
 
 // contextSlow is the context of pixel (x, y) in the order of 6.2.5.3, for
