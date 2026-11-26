@@ -38,9 +38,12 @@ sens supposé faute de pips est un défaut du document à part (`defaults.direct
 par son propre `confirmed` ; le reste est refusé sans `--force`. Un relevé v1 se lit encore (`Upgrade` : sûre → pions sûrs et contexte lu ; entrée
 de scan → défaut non confirmé ; autre → contexte à vérifier) ; `analyze` écrit la v2.
 
-Suites, dans l'ordre : portage du contexte (videau, dés, bandeau de score ; banc `JOURNAL.md`
-F) — il remplira `context: read` et détectera les exceptions au défaut (videau possédé, score
-de légende), ce dont la confirmation du défaut dépend aujourd'hui de l'œil de l'utilisateur ; repli assisté (encadrer un
+Contexte porté (branche `feat/document-contexte`, voir « Contexte en Go » plus bas) : le lecteur
+de structure lit videau, dés, trait et bandeau de score, ne déclare « lu » que recoupé et nomme
+le reste ; 0 contexte lu faux, mais 0 contexte lu en tout sur les échantillons (aucun livre ne
+recoupe à la fois dés, videau et score). Suites, dans l'ordre : lire le videau inversé (64 blanc
+sur noir, Mochizuki) et le « $ » de partie libre ; un défaut par document appris (score de
+match d'Olsen, Deep Cube) pour que le score lu ne rende plus tout « à vérifier » ; repli assisté (encadrer un
 plateau, montrer où sont les pips) ; assistant graphique (tranche 5, forme validée) ; JPEG 2000
 (Woolsey ne se lit pas directement) ; mesure finale sur la réserve, jamais ouverte, avec deux
 pages web et deux documents choisis par l'utilisateur ; EPUB, DOCX, HTML.
@@ -457,6 +460,32 @@ redessinés à côté de la vignette) et se prête à la vérification par famil
 une fois par document, puis seules les exceptions détectées (videau possédé, dés dessinés) sont
 montrées. L'import refuse une entrée dont le contexte n'est ni lu, ni sous défaut confirmé, ni
 vérifié.
+
+### Contexte en Go (2026-11-30) — branche `feat/document-contexte`
+
+`structure/context.go` (`Diagram.Context`, `readContext`, `missingCubes`). Le banc hors dépôt
+n'était pas sur ce poste : vérité Deep Cube par le lecteur à glyphes, contrôle à l'œil par
+planches (`TestMeasureContext`, sauté sans `BLUNDERDB_CONTEXT_PDF`/`_PAGES`/`_OUT`).
+
+- Règles : videau lu dans son carré ou le texte (sources concordantes), cohérent avec sa place ;
+  aucun videau trouvé dans un document qui en dessine (≥ 1/3 des diagrammes) = doute ; dés lus
+  si le texte confirme, trait si couleur et moitié concordent ; score par le bandeau texte,
+  attribué par les pips. Lu en partie hors du défaut → `to-verify`, XGID pré-rempli.
+
+| Échantillon | Diagrammes | Videau lu | Dés comptés / lus | Trait lu | Score lu | Contexte lu |
+|---|---|---|---|---|---|---|
+| Deep Cube v1 p. 1-200 (vérité) | 195 | 0 | 0 | 0 | 192, 0 faux | 0 |
+| Kageyama p. 20-120 | 172 | 94 (92 possédés) | 33 / 1 | 33 | 0 | 0 |
+| Trice p. 20-100 | 57 | 21 (18 possédés) | 0 | 0 | 0 | 0 |
+| Olsen p. 20-120 | 85 | 31 (centrés) | 0 | 0 | 69 | 0 |
+| Mochizuki p. 20-120 | 68 | 2 | 48 / 1 | 48 | 0 | 0 |
+| Robertie p. 20-80 | 174 | 0 | 0 | 0 | 0 | 0 |
+
+- **Zéro contexte lu faux ; taux de contextes lus : 0 %.** Contrôles à l'œil : 16 videaux de
+  Kageyama et 13 de Trice justes ; dés comptés 12/12 (Kageyama) et 12/12 (Mochizuki).
+- Kageyama : 52 pions sûrs, aucun sous le défaut pur (avant la règle de document : 7, dont 4 au
+  videau 2 possédé non trouvé). Sous défaut pur, vérifiés centrés : Trice 9, Mochizuki 5. Non
+  lus : 64 inversé et « $ » (Mochizuki), videaux vides (Robertie), videau du Deep Cube rasterisé.
 
 ## Décisions de l'utilisateur (2026-11-25)
 

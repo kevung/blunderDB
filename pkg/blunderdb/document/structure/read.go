@@ -291,12 +291,16 @@ type boardReading struct {
 	n      int    // slots a column can hold
 	rows   [2]int // points attested in the top and bottom rows
 	digits [2][12]int
-	cubes  []string
-	dice   int
-	page   int
-	bbox   box
-	pageW  int
-	pageH  int
+	cubes  []square
+	dice   []square
+	field  [6]float64
+	// cubeFigs are the numbers read in a square beside the field, kept
+	// once the document's figures are read.
+	cubeFigs []printedNumber
+	page     int
+	bbox     box
+	pageW    int
+	pageH    int
 	// numbers printed around the diagram, kept until the document's
 	// figures are read
 	numbers []printedNumber

@@ -39,6 +39,7 @@ type printedNumber struct {
 	h              int
 	alone          bool // no letter nor other ink beside it on its line
 	cut            bool // near the edge of the zone searched
+	boxed          bool // centred in a square of a cube's size
 	glyphs         [][glyphSide * glyphSide]uint8
 	val            int // the number read, or -1
 }
@@ -221,6 +222,7 @@ func extractNumbers(g *raster, b box) []printedNumber {
 				}
 			}
 		}
+		n.boxed = boxedBy(ink, gx0, gy0, gx1, gy1, p)
 		n.x0, n.y0, n.x1, n.y1 = gx0+rx0, gy0+ry0, gx1+rx0, gy1+ry0
 		n.h, n.alone = n.y1-n.y0, alone
 		n.rel = [2]float64{round4((n.cx() - X0) / W), round4((n.cy() - Y0) / (Y1 - Y0))}
@@ -229,6 +231,67 @@ func extractNumbers(g *raster, b box) []printedNumber {
 		out = append(out, n)
 	}
 	return out
+}
+
+// boxedBy tells whether the figures in [x0,x1)×[y0,y1) are centred in a
+// square whose side is 0.45 to 1.4 point (p): the first stroke met going out
+// from the figures, left, right, up and down, across their middle half.
+func boxedBy(ink *mask, x0, y0, x1, y1 int, p float64) bool {
+	reach := trunc(0.9 * p)
+	hit := func(x, y, dx, dy int) int {
+		for d := 1; d <= reach; d++ {
+			xx, yy := x+d*dx, y+d*dy
+			if xx < 0 || yy < 0 || xx >= ink.w || yy >= ink.h {
+				return -1
+			}
+			if ink.at(xx, yy) {
+				return d
+			}
+		}
+		return -1
+	}
+	// Each side needs the stroke along most of the band it crosses.
+	side := func(dx, dy int) int {
+		var ds []float64
+		if dx != 0 {
+			x := x0 - 1
+			if dx > 0 {
+				x = x1
+			}
+			for y := y0 + (y1-y0)/4; y < y1-(y1-y0)/4; y++ {
+				if d := hit(x, y, dx, 0); d > 0 {
+					ds = append(ds, float64(d))
+				}
+			}
+			if 3*len(ds) < 2*max(1, (y1-y0)/2) {
+				return -1
+			}
+		} else {
+			y := y0 - 1
+			if dy > 0 {
+				y = y1
+			}
+			for x := x0 + (x1-x0)/4; x < x1-(x1-x0)/4; x++ {
+				if d := hit(x, y, 0, dy); d > 0 {
+					ds = append(ds, float64(d))
+				}
+			}
+			if 3*len(ds) < 2*max(1, (x1-x0)/2) {
+				return -1
+			}
+		}
+		return trunc(median(ds))
+	}
+	l, r, u, d := side(-1, 0), side(1, 0), side(0, -1), side(0, 1)
+	if l < 0 || r < 0 || u < 0 || d < 0 {
+		return false
+	}
+	w, h := float64(x1-x0+l+r), float64(y1-y0+u+d)
+	if w < 0.45*p || w > 1.4*p || h < 0.45*p || h > 1.4*p || w/h < 0.75 || w/h > 1.33 {
+		return false
+	}
+	// Centred: the margins on either side within a third of the side.
+	return math.Abs(float64(l-r)) <= w/3 && math.Abs(float64(u-d)) <= h/3
 }
 
 func round4(x float64) float64 { return math.RoundToEven(x*1e4) / 1e4 }
@@ -740,7 +803,9 @@ func readNumbers(all [][]printedNumber) {
 					read[k] = readFigure(ts, u.u, u.holes, u.holeY)
 					all = all && read[k] >= 0
 				}
-				if !x.alone || x.h < figureMinPx || x.cut || !all || (len(read) > 1 && read[0] == 0) {
+				// A number in a cube's square is not alone, its square
+				// standing round it: it is read, never learned from.
+				if !(x.alone || x.boxed) || x.h < figureMinPx || x.cut || !all || (len(read) > 1 && read[0] == 0) {
 					continue
 				}
 				v := 0
@@ -748,7 +813,7 @@ func readNumbers(all [][]printedNumber) {
 					v = v*10 + d
 				}
 				x.val = v
-				if numbered[x] {
+				if numbered[x] || !x.alone {
 					continue
 				}
 				for k, d := range read {

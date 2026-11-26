@@ -11,6 +11,7 @@ import (
 	"image"
 	_ "image/jpeg" // pages scanned as JPEG
 	_ "image/png"  // pages rendered as PNG
+	"math/bits"
 	"os"
 	"path/filepath"
 	"sort"
@@ -125,12 +126,15 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 }
 
 func structureEntry(d structure.Diagram, rank int) Entry {
-	// The reader certifies the checkers at most: the XGID's cube, dice,
-	// player on roll and score are the document's defaults, which a person
-	// confirms once, and a cube or dice drawn and not read leave the context
-	// to verify. No entry it gives is sure until then.
-	e := Entry{Rank: rank, Page: d.Page + 1, Checkers: ToVerify, Context: ContextDefault,
-		Doubts: []capture.Doubt{ContextDoubt}}
+	// The reader certifies the checkers by the printed pips and the context
+	// field by field (structure.Context): a context read whole is "read";
+	// what it does not read takes the document's defaults, which a person
+	// confirms once; a cube, dice or score printed and not certified leave
+	// the context to verify even then.
+	e := Entry{Rank: rank, Page: d.Page + 1, Checkers: ToVerify, Context: ContextDefault}
+	if !d.Context.Read {
+		e.Doubts = []capture.Doubt{ContextDoubt}
+	}
 	if d.CheckersSure {
 		e.Checkers = Sure
 		// The other doubts of a reading whose checkers the pips confirm are
@@ -143,14 +147,24 @@ func structureEntry(d structure.Diagram, rank int) Entry {
 	} else {
 		e.Doubts = append(e.Doubts, d.Doubts...)
 	}
-	if drawnContext(e.Doubts) {
+	// A context read in part and outside the defaults (an owned cube, a
+	// match score): the position says what was read, which the defaults do
+	// not cover, so it is left to verify.
+	tail := contextXGID(d.Context)
+	if !d.Context.Read && tail != StructureDefaults.Context && !drawnContext(e.Doubts) {
+		e.Doubts = append(e.Doubts, capture.Doubt{Field: "context", Reason: "context read in part (" + tail + "), outside the document's defaults: the rest is not read"})
+	}
+	switch {
+	case d.Context.Read:
+		e.Context = ContextRead
+	case drawnContext(e.Doubts):
 		e.Context = ContextToVerify
 	}
 	if d.State == structure.Uncertain {
 		e.Checkers = Uncertain
 	}
 	if d.Board != "" {
-		xgid := "XGID=" + d.Board + ":" + StructureDefaults.Context
+		xgid := "XGID=" + d.Board + ":" + tail
 		if _, err := ParsePosition(xgid); err == nil {
 			e.Position = xgid
 		} else {
@@ -289,9 +303,32 @@ func imageDPI(data []byte) float64 {
 	return 0
 }
 
-// ContextDoubt is the doubt every entry read by its structure carries: its
-// checkers may be confirmed, its cube, dice, player on roll and score are
-// not read. Its field and reason never change, so a Relevé is searched by
+// contextXGID is the XGID after its board: the context read, the document's
+// defaults (StructureDefaults) for every field not read.
+func contextXGID(c structure.Context) string {
+	cube, owner, turn, dice := 0, c.CubeOwner, 1, "00"
+	if c.Cube > 1 {
+		cube = bits.Len(uint(c.Cube)) - 1
+	}
+	if c.Turn != 0 {
+		turn = c.Turn
+	}
+	if c.Dice[0] > 0 && c.Dice[1] > 0 {
+		dice = fmt.Sprintf("%d%d", c.Dice[0], c.Dice[1])
+	}
+	s1, s2, crawford, length := 0, 0, 0, 0
+	if s := c.Score; s != nil {
+		s1, s2, length = s.Bottom, s.Top, s.Length
+		if s.Crawford {
+			crawford = 1
+		}
+	}
+	return fmt.Sprintf("%d:%d:%d:%s:%d:%d:%d:%d:10", cube, owner, turn, dice, s1, s2, crawford, length)
+}
+
+// ContextDoubt is the doubt every entry read by its structure carries
+// unless its context is read whole: its checkers may be confirmed, its cube,
+// dice, player on roll and score are not all read. Its field and reason never change, so a Relevé is searched by
 // them.
 var ContextDoubt = capture.Doubt{Field: "context", Reason: "context not read: cube, dice, player on roll, score"}
 

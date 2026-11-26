@@ -89,6 +89,47 @@ func TestStructureEntryNeverSure(t *testing.T) {
 	}
 }
 
+// A context read whole makes the entry sure with its checkers, defaults
+// unconfirmed; a centred cube read stays under the defaults; an owned cube
+// read is written in the position, outside the defaults: to verify.
+func TestStructureEntryContext(t *testing.T) {
+	board := "-b----E-C---eE---c-e----B-"
+	read := structure.Context{Cube: 2, CubeOwner: -1, CubeRead: true, Dice: [2]int{4, 1}, DiceRead: true, Turn: 1, TurnRead: true,
+		Score: &structure.Score{Length: 7, Bottom: 1, Top: 3}, Read: true}
+	r := &Releve{Format: Format, Version: Version, Document: Source{Title: "t", Defaults: structureDefaults(structure.Profile{DirectionVoted: true})}}
+	e := structureEntry(structure.Diagram{Board: board, State: structure.Confirmed, CheckersSure: true, Context: read}, 1)
+	if e.Context != ContextRead || len(e.Doubts) != 0 || e.Position != "XGID="+board+":1:-1:1:41:1:3:0:7:10" || r.StateOf(e) != Sure {
+		t.Errorf("context read: %+v", e)
+	}
+	centred := structure.Context{Cube: 1, CubeRead: true}
+	d := structureEntry(structure.Diagram{Board: board, State: structure.Confirmed, CheckersSure: true, Context: centred}, 2)
+	if d.Context != ContextDefault || len(d.Doubts) != 1 || d.Doubts[0] != ContextDoubt || d.Position != "XGID="+board+":0:0:1:00:0:0:0:0:10" {
+		t.Errorf("centred cube read under the defaults: %+v", d)
+	}
+	owned := structureEntry(structure.Diagram{Board: board, State: structure.Confirmed, CheckersSure: true,
+		Context: structure.Context{Cube: 4, CubeOwner: 1, CubeRead: true}}, 4)
+	if owned.Context != ContextToVerify || len(owned.Doubts) != 2 || owned.Position != "XGID="+board+":2:1:1:00:0:0:0:0:10" {
+		t.Errorf("owned cube read: %+v", owned)
+	}
+	turn := capture.Doubt{Field: "turn", Reason: "owned by the top player"}
+	top := structureEntry(structure.Diagram{Board: board, State: structure.ToVerify, CheckersSure: true, Doubts: []capture.Doubt{turn},
+		Context: structure.Context{Cube: 2, CubeOwner: -1, CubeRead: true, Turn: -1}}, 3)
+	if top.Context != ContextToVerify || top.Position != "XGID="+board+":1:-1:-1:00:0:0:0:0:10" {
+		t.Errorf("cube owned by the top player, no dice: %+v", top)
+	}
+	r.Entries = []Entry{e, d, top, owned}
+	for i := range r.Entries {
+		r.Entries[i].Page = 1
+	}
+	if err := r.Validate(); err != nil {
+		t.Error(err)
+	}
+	r.Document.Defaults.Confirmed = true
+	if r.StateOf(d) != Sure || r.StateOf(top) != ToVerify || r.StateOf(owned) != ToVerify {
+		t.Errorf("confirmed defaults: centred cube %v, top's cube %v, owned cube %v", r.StateOf(d), r.StateOf(top), r.StateOf(owned))
+	}
+}
+
 func pngWithDPI(t *testing.T, img image.Image, ppm uint32) []byte {
 	t.Helper()
 	var b bytes.Buffer

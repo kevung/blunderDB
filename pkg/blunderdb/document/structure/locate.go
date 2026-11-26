@@ -321,8 +321,11 @@ type zone struct {
 	crop   *raster // straightened, tightly cropped, neighbours whitened
 	ink    *mask
 	digits [2][12]int
-	cubes  []string // place of each cube drawn: "top", "middle", "bottom"
-	dice   int
+	cubes  []square // the cubes drawn
+	dice   []square // the dice drawn
+	// field is the field's frame (a, b, c, d, y0, y1) in the page's pixels,
+	// the straightening neglected: where a cube's figure or a word lies.
+	field [6]float64
 }
 
 // locate finds the diagrams of a normalised page: large components of ink,
@@ -447,7 +450,9 @@ func locate(g *raster, dpi float64) []zone {
 			} else {
 				rawInk := hysteresis(raw)
 				z.digits = labelDigits(rawInk, r0, c0, fb)
-				z.cubes, z.dice = squares(rawInk, r0, c0, fb)
+				z.cubes, z.dice = squares(raw, rawInk, r0, c0, fb, X0, Y0)
+				z.field = [6]float64{float64(X0 + c0 + fb.a), float64(X0 + c0 + fb.b), float64(X0 + c0 + fb.c),
+					float64(X0 + c0 + fb.d), float64(Y0 + r0 + fb.y0), float64(Y0 + r0 + fb.y1)}
 			}
 		}
 		z.crop, z.ink = rc, ri
@@ -493,17 +498,27 @@ func labelDigits(ink *mask, oy, ox int, f frame) [2][12]int {
 	return out
 }
 
+// square is a square drawn about the board: a cube, with its height, or a
+// die, with its colour and the pips counted on it.
+type square struct {
+	place string // a cube's: "top", "middle", "bottom"
+	dark  bool   // a die filled with ink
+	pips  int    // a die's pips, 0 when they are not counted clearly
+	// the square in the page's pixels, the straightening neglected
+	x0, y0, x1, y1 float64
+}
+
 // squares finds the squares drawn about the board by their shape alone (ink
 // in the four corners of their box, which a round checker has not; a side of
-// 0.45 to 1.4 point): in the field near mid-height, a die; on the bar or
-// beside the field, a cube, with its height. No value is read.
-func squares(ink *mask, oy, ox int, f frame) ([]string, int) {
+// 0.45 to 1.4 point): in the field near mid-height, a die, whose pips are
+// counted; on the bar or beside the field, a cube, with its height. The
+// cube's value is read with the document's figures (cubeFigures).
+func squares(g *raster, ink *mask, oy, ox int, f frame, px, py int) ([]square, []square) {
 	p := f.pointWidth()
 	h := float64(f.y1 - f.y0)
-	_, bs, _ := label(ink)
-	dice := 0
-	var cubes []string
-	for _, b := range bs {
+	lab, bs, _ := label(ink)
+	var cubes, dice []square
+	for i, b := range bs {
 		hh, ww := float64(b.h()), float64(b.w())
 		if hh < 0.45*p || hh > 1.4*p || ww/hh < 0.75 || ww/hh > 1.33 {
 			continue
@@ -527,23 +542,93 @@ func squares(ink *mask, oy, ox int, f frame) ([]string, int) {
 		if cy < float64(f.y0)-0.5*p || cy > float64(f.y1)+0.5*p {
 			continue
 		}
+		sq := square{x0: float64(px + b.x0), y0: float64(py + b.y0), x1: float64(px + b.x1), y1: float64(py + b.y1)}
 		inBar := float64(f.b) <= cx && cx <= float64(f.c)
 		inField := (float64(f.a) < cx && cx < float64(f.b)) || (float64(f.c) < cx && cx < float64(f.d))
 		switch {
 		case inField && float64(f.y0)+0.3*h <= cy && cy <= float64(f.y1)-0.3*h:
-			dice++
+			sq.dark, sq.pips = diePips(g, ink, lab, int32(i+1), b)
+			dice = append(dice, sq)
 		case inBar || cx < float64(f.a) || cx > float64(f.d):
 			switch {
 			case cy < float64(f.y0)+0.3*h:
-				cubes = append(cubes, "top")
+				sq.place = "top"
 			case cy > float64(f.y1)-0.3*h:
-				cubes = append(cubes, "bottom")
+				sq.place = "bottom"
 			default:
-				cubes = append(cubes, "middle")
+				sq.place = "middle"
 			}
+			cubes = append(cubes, sq)
 		}
 	}
 	return cubes, dice
+}
+
+// diePips tells a die's colour (ink over most of its inside) and counts its
+// pips: the spots of the other colour inside it, away from its edge, of one
+// size. It gives 0 pips unless one to six spots of one size are found.
+func diePips(g *raster, ink *mask, lab []int32, l int32, b box) (bool, int) {
+	side := float64(min(b.w(), b.h()))
+	m := max(1, trunc(0.1*side))
+	x0, y0, x1, y1 := b.x0+m, b.y0+m, b.x1-m, b.y1-m
+	if x1-x0 < 4 || y1-y0 < 4 {
+		return false, 0
+	}
+	inked := 0
+	for y := y0; y < y1; y++ {
+		for x := x0; x < x1; x++ {
+			if ink.at(x, y) {
+				inked++
+			}
+		}
+	}
+	dark := 2*inked > (x1-x0)*(y1-y0)
+	// A spot: on a dark die, paper; on a light one, ink of another
+	// component than the die's outline. Spots are taken within a thin
+	// border only, a pip may lie close to the edge; the paper outside a
+	// rounded corner touches the box and is left out.
+	m = max(1, trunc(0.04*side))
+	x0, y0, x1, y1 = b.x0+m, b.y0+m, b.x1-m, b.y1-m
+	spot := newMask(x1-x0, y1-y0)
+	for y := y0; y < y1; y++ {
+		for x := x0; x < x1; x++ {
+			// The grey, not the ink mask: a small pip on a dark die
+			// is closed by the ink's hysteresis.
+			on := g.at(x, y) < 0.5
+			if dark {
+				spot.p[(y-y0)*spot.w+x-x0] = !on
+			} else {
+				spot.p[(y-y0)*spot.w+x-x0] = on && lab[y*ink.w+x] != l
+			}
+		}
+	}
+	_, ss, areas := label(spot)
+
+	var kept []float64
+	for j, s := range ss {
+		if s.x0 == 0 || s.y0 == 0 || s.x1 == spot.w || s.y1 == spot.h {
+			continue
+		}
+		d := float64(max(s.w(), s.h()))
+		if d < 0.06*side {
+			continue
+		}
+		if d > 0.35*side || s.w() > 2*s.h() || s.h() > 2*s.w() {
+			return dark, 0
+		}
+		kept = append(kept, float64(areas[j]))
+	}
+	if len(kept) < 1 || len(kept) > 6 {
+		return dark, 0
+	}
+	lo, hi := kept[0], kept[0]
+	for _, a := range kept {
+		lo, hi = min(lo, a), max(hi, a)
+	}
+	if hi > 2.5*lo {
+		return dark, 0
+	}
+	return dark, len(kept)
 }
 
 // readingOrder sorts a page's diagrams as a reader meets them: the left page

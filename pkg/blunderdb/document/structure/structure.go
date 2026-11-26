@@ -29,12 +29,17 @@
 // both sides of the reading, no side has more than fifteen checkers and
 // nothing is in doubt. The printed pips may also fix the height of one
 // ambiguous stack, and the reading is then sure only if that side reaches
-// fifteen checkers, a second equation the pips did not give. What the reader
-// does not read — the cube's value and owner, the dice, the score, the
-// checkers borne off (taken as fifteen less those drawn), the direction of
-// play when no pips confirm it — is never invented: a drawn cube off the
-// centre, drawn dice, a half board, or a supposition the pips do not lift is
-// a named doubt.
+// fifteen checkers, a second equation the pips did not give. The checkers
+// borne off are taken as fifteen less those drawn, and the direction of play
+// when no pips confirm it is a supposition: both are named doubts.
+//
+// The context — cube, dice, player on roll, score — is read apart
+// (context.go, Diagram.Context), a field certified only by a cross-check: a
+// cube's value read in its square or in the text, coherent with its place;
+// dice counted in the image and confirmed by the text, their colour and their
+// half of the board telling the same player on roll; a score panel whose
+// scores the printed pips assign. A cube not found is not centred, and what is
+// drawn or printed and not certified is a named doubt, never invented.
 //
 // Pages and text come from the caller: an image per page (grey or colour,
 // 150 to 300 dpi) and, when the document has one, its text layer as words
@@ -106,9 +111,8 @@ type Pages interface {
 	Page(i int) (Page, error)
 }
 
-// State is how far a diagram's checkers can be trusted. The reader never
-// reads the cube's value or owner, the dice, the player on roll or the
-// score, so no state says anything of them.
+// State is how far a diagram's checkers can be trusted; the context has its
+// own certainty (Context.Read), and a context doubt holds the state to verify.
 type State int
 
 const (
@@ -143,6 +147,9 @@ type Diagram struct {
 	// CheckersSure is a reading whose checkers would be sure; only a cube
 	// or dice drawn and not read hold it to verify.
 	CheckersSure bool
+	// Context is the cube, dice, player on roll and score as the diagram
+	// prints them, each given only when read (readContext).
+	Context Context
 }
 
 // NoPipsReason is the reason of the "pips" doubt of a diagram next to which
@@ -280,7 +287,7 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 		res.Rejected += rej
 		for _, z := range zs {
 			rd := readBoard(z, geo)
-			rd.digits, rd.cubes, rd.dice = z.digits, z.cubes, z.dice
+			rd.digits, rd.cubes, rd.dice, rd.field = z.digits, z.cubes, z.dice, z.field
 			rd.page, rd.bbox, rd.pageW, rd.pageH = i, z.bbox, g.w, g.h
 			rd.numbers = extractNumbers(g, z.bbox)
 			rds = append(rds, &rd)
@@ -312,9 +319,14 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 	img := make([]*[2]int, len(rds))
 	for i, rd := range rds {
 		img[i] = imagePips(rd.numbers, rd.bbox, slots)
+		rd.cubeFigs = cubeFigures(rd)
 		rd.numbers = nil
 	}
 	ds, prof := releve(rds, words, img, "")
+	for i := range ds {
+		readContext(rds[i], &ds[i], words[rds[i].page], prof)
+	}
+	missingCubes(rds, ds)
 	if inspectSources != nil {
 		text, _ := releve(rds, words, nil, "")
 		image, _ := releve(rds, nil, img, "")

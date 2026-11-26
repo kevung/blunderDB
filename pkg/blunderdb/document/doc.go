@@ -32,13 +32,17 @@
 // by their structure and learns the document's style from the document. The
 // printed pip counts that confirm its entries are read in the text layer
 // when there is one and in the image itself; when the two disagree, the
-// entry's checkers are not confirmed. The dice are never read: a reading's
-// XGID always says "no dice"; from an image the cube is centred, the bottom
-// player on roll and the game a money game: StructureDefaults, the document's
-// default context, unconfirmed. Since none of these is read, an entry read by
-// its structure carries ContextDoubt and is never sure until a person
-// confirms the defaults; a cube drawn off the centre or drawn dice leave its
-// context to verify even then (Releve.CheckersConfirmed,
+// entry's checkers are not confirmed. The context is read field by field
+// (structure.Context): the cube by its value in its square or in the text,
+// coherent with its place; the dice counted in the image and confirmed by the
+// text, the player on roll by their colour and their half of the board; the
+// score by the panel of the text layer, each score assigned by the pips
+// printed beside it. An entry whose context is read whole is "read"; what is
+// not read takes StructureDefaults (cube centred, no dice, the bottom player
+// on roll, money), the document's default context, unconfirmed, and carries
+// ContextDoubt; a cube, dice or score printed and not certified — or a cube
+// the top player owns with no dice drawn — leave its context to verify even
+// once the defaults are confirmed (Releve.CheckersConfirmed,
 // Summary.CheckersConfirmed). A person verifies such an entry's cube, dice,
 // player on roll and score against the diagram and marks it verified.
 //

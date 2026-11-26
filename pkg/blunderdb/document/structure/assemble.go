@@ -860,20 +860,8 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 	}
 	// What is drawn and not read: never invented, named so a sure reading
 	// is not taken for more than its checkers.
-	if rd.dice > 0 {
-		add("dice", 0, "", "%d dice drawn and not read: the position says no dice", rd.dice)
-	}
-	offCentre := map[string]bool{}
-	for _, c := range rd.cubes {
-		if c != "middle" {
-			offCentre[c] = true
-		}
-	}
-	for _, c := range []string{"top", "bottom"} {
-		if offCentre[c] {
-			add("cube", 0, "", "a cube is drawn on the %s side: its value and owner are not read, the position says centred", c)
-		}
-	}
+	// The cube, dice, player on roll and score are read after the
+	// judgement (readContext): what is drawn and not read is named there.
 	if !okPips {
 		if t, m := read.text, read.image; printed == nil && t != nil && m != nil {
 			add("pips", 0, "pips text/image", "printed pips read %d and %d in the text layer, %d and %d in the image: the two disagree", t[0], t[1], m[0], m[1])

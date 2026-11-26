@@ -205,16 +205,35 @@ autres sont lues. La couche texte d'une page, visible ou non (celle qu'une OCR
 laisse sous l'image), donne ses mots à leur place sur l'image ; un texte que sa
 police ne traduit pas en caractères ne donne aucun mot.
 
-Sur un livre scanné, **seuls les pions sont certifiés** par la lecture. Ils sont
-``sure`` quand les pips imprimés à côté du diagramme égalent les pips calculés
-des deux camps, qu'aucun camp n'a plus de quinze pions et qu'aucun doute ne reste
-sur les pions. Le videau, les dés, le trait et le score ne sont pas lus : chaque
-entrée porte le doute ``context not read: cube, dice, player on roll, score``
-(champ ``context``) et son XGID porte le contexte par défaut du document
-(``"context": "default"``), sauf quand un videau hors du centre ou des dés sont
-dessinés (``"context": "to-verify"``, avec ce doute). Une entrée d'un livre
-scanné n'est donc **jamais** ``sure`` tant que le contexte par défaut n'est pas
-confirmé, et celle dont le videau ou les dés sont dessinés ne l'est jamais.
+Sur un livre scanné, les pions et le contexte sont certifiés à part. Les pions
+sont ``sure`` quand les pips imprimés à côté du diagramme égalent les pips
+calculés des deux camps, qu'aucun camp n'a plus de quinze pions et qu'aucun
+doute ne reste sur les pions. Le contexte est lu champ par champ, et un champ
+n'est lu que recoupé :
+
+* le videau, par sa valeur lue dans son carré (chiffres du document) ou dans la
+  couche texte — deux sources présentes doivent concorder — et cohérente avec sa
+  place : 64 au milieu est centré, 2 à 64 en haut ou en bas appartient au joueur
+  de ce côté ;
+* les dés, comptés sur l'image et confirmés par le texte (« to play 41 ») ; le
+  trait, par la couleur des dés et leur moitié du plateau (la droite pour le
+  joueur du bas), qui doivent désigner le même joueur ;
+* le score, par le bandeau de la couche texte (``score:``, ``pip:``,
+  ``7 point match``), chaque score attribué au joueur dont il porte les pips.
+
+Une entrée dont tout le contexte est lu est ``"context": "read"``. Un videau
+introuvable n'est jamais pris pour centré : ce qui n'est pas lu prend le
+contexte par défaut du document (``"context": "default"``, avec le doute
+``context not read: cube, dice, player on roll, score``). Un videau, des dés ou
+un score dessinés ou imprimés et non certifiés, un contexte lu en partie hors du
+défaut (videau possédé, score de match), un videau possédé par le joueur du
+haut sans dés dessinés ou un videau introuvable dans un document qui le dessine
+(trouvé à côté d'au moins un tiers de ses diagrammes) laissent le contexte à
+vérifier
+(``"context": "to-verify"``, avec un doute nommé) ; le XGID porte alors ce qui a
+été lu. Une entrée d'un livre scanné dont le contexte n'est pas lu n'est donc
+**jamais** ``sure`` tant que le contexte par défaut n'est pas confirmé, et celle
+dont le contexte est à vérifier ne l'est jamais.
 ``analyze`` et ``check`` comptent les entrées par contexte, et à part celles dont
 seuls les pions sont certifiés :
 
@@ -252,10 +271,10 @@ problèmes en partie libre, joueur du bas au trait, par exemple — on le
 **confirme une fois** en écrivant ``"confirmed": true`` : toutes les entrées
 ``default`` ont alors leur contexte certifié, et celles dont les pions sont
 sûrs deviennent ``sure``. Seules restent à vérifier une à une les exceptions que
-la lecture a vues (videau hors du centre, dés dessinés) et les entrées dont les
-pions ne sont pas sûrs. On ne confirme pas un contexte que le document ne suit
-pas : un videau possédé dessiné au milieu, un score imprimé dans la légende ou un
-trait donné par la prose ne sont pas vus.
+la lecture a vues (videau possédé, dés dessinés, score de match) et les entrées
+dont les pions ne sont pas sûrs. On ne confirme pas un contexte que le document
+ne suit pas : un videau que la lecture ne trouve pas, un score imprimé dans
+l'image sans couche texte ou un trait donné par la prose ne sont pas vus.
 
 .. _cli_document_complete:
 

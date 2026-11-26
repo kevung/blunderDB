@@ -438,7 +438,8 @@ _Avoid_: half-sure, partially sure
 `structure.Read`):
 A fact the print states on its own that the reading must reproduce to be sure: fifteen checkers
 a side, and the pip counts printed next to the diagram equal to those computed from the
-position. Never the engine's opinion of the position (ADR-0108 rule 4).
+position; for the context, two sources that agree or a reading coherent with its place (a
+cube's value and its side, the dice's colour and their half, a score and the pips beside it). Never the engine's opinion of the position (ADR-0108 rule 4).
 _Avoid_: validation, sanity check, confidence
 
 **Profile** (code: `document.Profile`):

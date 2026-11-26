@@ -156,9 +156,13 @@ flowchart LR
   numbering, an embedded set of eight typefaces and the figures already read, abstaining
   unless every figure is clear; their place learned by a vote over the document); when the two
   sources give different pips, neither is taken and the entry says so. The structure reader
-  certifies checkers only: the cube, dice, player on roll and score are not read, so its entry
-  carries `document.ContextDoubt` and the document's default context (`Source.Defaults`, the
-  XGID's tail), or a context to verify when a cube or dice is drawn; it is never sure until a
+  certifies the checkers by the pips and the context field by field (`structure/context.go`):
+  the cube by its value read in its square or the text, coherent with its place; the dice
+  counted in the image and confirmed by the text, the player on roll by their colour and half;
+  the score by the text panel, assigned by the pips. A context read whole is `read`; otherwise
+  the entry carries `document.ContextDoubt` and the document's default context
+  (`Source.Defaults`, the XGID's tail), or a context to verify when a cube, dice or score is
+  printed and not certified, or read outside the defaults; such an entry is never sure until a
   person confirms the defaults, counted apart as *checkers confirmed* when the pips hold
   (`Releve.CheckersConfirmed`) and as *complete* when fifteen checkers a side were read with no
   doubt and no pips (`Entry.Complete`). A page is decoded, read and dropped; no image is kept. Nothing is
