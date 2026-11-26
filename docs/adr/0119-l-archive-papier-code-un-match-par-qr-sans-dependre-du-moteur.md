@@ -65,5 +65,6 @@ ses poids ou son générateur de coups ont changé.
 - Un match en 7 points coûte de 200 à 300 octets ; une feuille porte une vingtaine de matchs.
 - Les commentaires archivés reviennent d'origine inconnue : l'archive ne dit pas qui les a
   écrits, et ils ne sont pas signés (ADR-0099).
-- L'entrée d'interface suit avec les feuilles imprimables ; le démon n'expose pas l'archive,
-  qui lit et écrit des fichiers locaux.
+- L'entrée d'interface suit avec les feuilles imprimables. Le démon expose l'archive sans
+  chemin de fichier : `/v1/exports.archive` rend la page, `/v1/imports.archive` prend une page
+  ou une image téléversée.
