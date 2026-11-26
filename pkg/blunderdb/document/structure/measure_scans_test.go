@@ -28,6 +28,12 @@ var measuredScans = []string{"trice", "woolsey", "kageyama", "olsen", "mochizuki
 // explainedScans are the readings sure here, from one source, and not in
 // the prototype, checked by eye on the printed diagram.
 var explainedScans = map[string]map[[2]int]struct{ board, why string }{
+	"kageyama": {
+		{13, 1}: {"aDBBBBC------------ccbbbb-", "point 8 is an empty grey point; the prototype sees a light checker on it"},
+	},
+	"mochizuki": {
+		{137, 0}: {"-ABBBCBBA---b----abcbbba--", "checked by eye: fifteen a side as read here; the prototype misses dark checkers on 17 to 23"},
+	},
 	"trice": {
 		{45, 0}:  {"--BBBbD-C---bB---b-bbbc---", "121 and 92 printed, read here at the page's 300 dpi; the prototype, at 150 dpi, did not read the italic 121"},
 		{197, 0}: {"-BbbCCB----------bbcbb----", "156 and 41 printed, read here at 300 dpi; the prototype, at 150 dpi, did not read 41 beside the tray's bars"},
