@@ -1041,10 +1041,7 @@
         "panelLabel": "Панель расчёта",
         "inactive": "Панель расчёта неактивна. Измените доску, чтобы оценить позицию.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet анализирует: {done}/{total}",
-        "batchProgressAt": "gammonNet анализирует {depth}: {done}/{total}",
         "batchDone": "gammonNet: проанализировано {evaluated}, отклонено {refused}, не удалось {failed}",
-        "batchWaiting": "gammonNet ждёт: выполняется {job}",
         "batchFailed": "gammonNet: анализ не выполнен — {error}",
         "baseline": "До броска",
         "baselineTooltip": "Значения до броска, в той же оси, что и список — ориентир, а не кандидат хода. Разница с этой строкой — удача броска, а не заслуга хода."

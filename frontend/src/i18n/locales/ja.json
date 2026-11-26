@@ -1041,10 +1041,7 @@
         "panelLabel": "評価パネル",
         "inactive": "評価パネルは無効です。局面を評価するには盤面を編集してください。",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet 解析中: {done}/{total}",
-        "batchProgressAt": "gammonNet 解析中 {depth}: {done}/{total}",
         "batchDone": "gammonNet: {evaluated} 件解析、{refused} 件却下、{failed} 件失敗",
-        "batchWaiting": "gammonNet 待機中：{job}を実行中",
         "batchFailed": "gammonNet：解析を実行できません — {error}",
         "baseline": "ロール前",
         "baselineTooltip": "ロール前の数値。リストと同じ軸で表示される基準値であり、候補手ではありません。この行との差はロールの運であり、指し手の巧拙ではありません。"

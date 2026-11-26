@@ -1041,10 +1041,7 @@
         "panelLabel": "Panneau Eval",
         "inactive": "Le panneau Eval est inactif. Modifiez le plateau pour évaluer la position.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet analyse : {done}/{total}",
-        "batchProgressAt": "gammonNet analyse {depth} : {done}/{total}",
         "batchDone": "gammonNet : {evaluated} analysée(s), {refused} refusée(s), {failed} échouée(s)",
-        "batchWaiting": "gammonNet en attente : {job} en cours",
         "batchFailed": "gammonNet : analyse impossible — {error}",
         "baseline": "Avant le jet",
         "baselineTooltip": "Valeurs avant le jet, dans l'axe de la liste — un repère, pas un coup candidat. L'écart avec cette ligne est la chance du jet, pas le mérite d'un coup."

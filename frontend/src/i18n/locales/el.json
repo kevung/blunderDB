@@ -1041,10 +1041,7 @@
         "panelLabel": "Πίνακας Eval",
         "inactive": "Ο πίνακας Eval είναι ανενεργός. Επεξεργαστείτε το ταμπλό για να αξιολογηθεί η θέση.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet αναλύει: {done}/{total}",
-        "batchProgressAt": "gammonNet αναλύει {depth}: {done}/{total}",
         "batchDone": "gammonNet: {evaluated} αναλύθηκαν, {refused} απορρίφθηκαν, {failed} απέτυχαν",
-        "batchWaiting": "gammonNet σε αναμονή: {job} σε εξέλιξη",
         "batchFailed": "gammonNet: η ανάλυση δεν εκτελέστηκε — {error}",
         "baseline": "Πριν τη ζαριά",
         "baselineTooltip": "Τιμές πριν τη ζαριά, στον άξονα της λίστας — σημείο αναφοράς, όχι υποψήφια κίνηση. Η απόσταση από αυτή τη γραμμή είναι η τύχη της ζαριάς, όχι η αξία μιας κίνησης."

@@ -1041,10 +1041,7 @@
         "panelLabel": "Eval-Panel",
         "inactive": "Das Eval-Panel ist inaktiv. Bearbeiten Sie das Brett, um die Position zu bewerten.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet analysiert: {done}/{total}",
-        "batchProgressAt": "gammonNet analysiert {depth}: {done}/{total}",
         "batchDone": "gammonNet: {evaluated} analysiert, {refused} abgelehnt, {failed} fehlgeschlagen",
-        "batchWaiting": "gammonNet wartet: {job} läuft",
         "batchFailed": "gammonNet: Analyse nicht ausgeführt — {error}",
         "baseline": "Vor dem Wurf",
         "baselineTooltip": "Werte vor dem Wurf, in der Achse der Liste — ein Bezugspunkt, kein Zugkandidat. Der Abstand zu dieser Zeile ist das Würfelglück, nicht das Verdienst eines Zuges."

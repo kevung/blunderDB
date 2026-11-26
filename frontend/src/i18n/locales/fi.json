@@ -1041,10 +1041,7 @@
         "panelLabel": "Eval-paneeli",
         "inactive": "Eval-paneeli ei ole käytössä. Muokkaa lautaa arvioidaksesi aseman.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet analysoi: {done}/{total}",
-        "batchProgressAt": "gammonNet analysoi {depth}: {done}/{total}",
         "batchDone": "gammonNet: {evaluated} analysoitu, {refused} hylätty, {failed} epäonnistui",
-        "batchWaiting": "gammonNet odottaa: {job} käynnissä",
         "batchFailed": "gammonNet: analyysia ei tehty — {error}",
         "baseline": "Ennen heittoa",
         "baselineTooltip": "Arvot ennen heittoa, listan akselissa — vertailukohta, ei ehdokassiirto. Ero tähän riviin on heiton onni, ei siirron ansio."

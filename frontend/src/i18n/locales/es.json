@@ -1041,10 +1041,7 @@
         "panelLabel": "Panel Eval",
         "inactive": "El panel Eval está inactivo. Edita el tablero para evaluar la posición.",
         "engineTooltip": "gammonNet",
-        "batchProgress": "gammonNet analizando: {done}/{total}",
-        "batchProgressAt": "gammonNet analizando {depth}: {done}/{total}",
         "batchDone": "gammonNet: {evaluated} analizada(s), {refused} rechazada(s), {failed} fallida(s)",
-        "batchWaiting": "gammonNet en espera: {job} en curso",
         "batchFailed": "gammonNet: análisis no realizado — {error}",
         "baseline": "Antes de la tirada",
         "baselineTooltip": "Valores antes de la tirada, en el eje de la lista — una referencia, no una jugada candidata. La diferencia con esta fila es la suerte de la tirada, no el mérito de una jugada."
