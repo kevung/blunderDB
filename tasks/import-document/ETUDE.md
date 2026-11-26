@@ -3,6 +3,45 @@
 Étude du 2026-11-25, sans code de production. Banc hors dépôt : `~/bkgm/bancs/import-document/`
 (`JOURNAL.md` tient la reprise). Corpus : `~/bkgm/bibliotheque/livres` (17 PDF, 1 EPUB, 1 DOC).
 
+## REPRISE (2026-11-30) — à lire en premier
+
+État de `main` (non poussé) : tranches 1, 2, 3 fusionnées (Relevé et import, lecteur à glyphes,
+lecteur de structure en Go sur images de pages), documentation interne et externe à jour pour
+ces tranches.
+
+En attente de fusion : branche `feat/document-scans` (commit `029e60268`, worktree
+`/home/unger/src/blunderDB-document-scans`) — lecture des nombres dans l'image et lecture directe
+des PDF scannés ; ajoute `golang.org/x/image` (ccitt). Verdict de l'ouvrier : vert. **Avant de
+fusionner** : un contrôle à l'œil indépendant des positions « sûres ici seulement » (environ 30
+au plateau différent du prototype) écrit son verdict dans
+`~/bkgm/bancs/import-document/controle/` ; sa notification est perdue après un /clear, lire ce
+dossier. Une seule sûre fausse = ne pas fusionner, diagnostiquer. Si tout est exact : fusionner
+(conflits `.po` : ceux de main, `doc-po-update.sh`, `po-fill.py`), relancer
+`go test -p 2 ./pkg/blunderdb/document/... ./internal/cli/...`, retirer le worktree, consigner.
+
+Décisions attendues de l'utilisateur :
+1. Deux certitudes par entrée (pions, contexte) et défauts de document confirmés une fois —
+   demande un Relevé v2 (voir « Contexte »). Recommandé.
+2. L'état « 15 + 15 sans doute », distinct de sûr, acceptable en bloc. Recommandé.
+
+Suites, dans l'ordre : Relevé v2 et règle de sûreté du contexte (après décision 1) ; portage du
+contexte (videau, dés, bandeau de score ; banc `JOURNAL.md` F) ; repli assisté (encadrer un
+plateau, montrer où sont les pips) ; assistant graphique (tranche 5, forme validée) ; JPEG 2000
+(Woolsey ne se lit pas directement) ; mesure finale sur la réserve, jamais ouverte, avec deux
+pages web et deux documents choisis par l'utilisateur ; EPUB, DOCX, HTML.
+
+Écarts connus, non corrigés : un import refusé crée le fichier de base s'il n'existait pas ;
+l'ADR-0117 promet des vignettes redessinées, pas encore codées ; le GUI ne remonte pas les pages
+passées par `pdf.Scan` ; `pkg/blunderdb/transcript` échoue sur `main` (cycle d'import dans un
+test), hors de ce chantier.
+
+Push : l'utilisateur a demandé de pousser à la fin si tout est propre et concluant. `main` porte
+aussi les commits non poussés d'une autre session (cartes, ordonnanceur) : le lui rappeler.
+
+Banc : `~/bkgm/bancs/import-document/` (git local, `JOURNAL.md` avec sa propre Reprise). Tous les
+échantillons de mesure des sept livres de développement sont consommés. Réserve intacte : Bagai,
+Jacoby, les deux Magriel, Kageyama « Back Checker » et « Opening Concepts », l'EPUB, le livre FT.
+
 ## Synthèse
 
 - But : lire toutes les positions d'un livre, d'un article ou d'une page web que l'utilisateur
