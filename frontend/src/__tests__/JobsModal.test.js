@@ -9,6 +9,7 @@ import { get } from 'svelte/store';
 const mocks = vi.hoisted(() => ({
     handlers: /** @type {Record<string, (p: any) => void>} */ ({}),
     ListJobs: vi.fn(() => Promise.resolve([])),
+    JobCores: vi.fn(() => Promise.resolve({ used: 0, total: 8 })),
     CancelJob: vi.fn(() => Promise.resolve()),
     PauseJob: vi.fn(() => Promise.resolve()),
     ResumeJob: vi.fn(() => Promise.resolve()),
@@ -18,6 +19,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     ListJobs: mocks.ListJobs,
+    JobCores: mocks.JobCores,
     CancelJob: mocks.CancelJob,
     PauseJob: mocks.PauseJob,
     ResumeJob: mocks.ResumeJob,
@@ -31,7 +33,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
     })
 }));
 
-import { jobsStore, startJobsFeed, runningJobs, waitingJobs, endedJobs, jobsProgress } from '../stores/jobsStore.js';
+import { jobsStore, coresStore, yieldedJobs, startJobsFeed, runningJobs, waitingJobs, endedJobs, jobsProgress } from '../stores/jobsStore.js';
 import JobsModal from '../components/JobsModal.svelte';
 
 const job = (over) => ({ id: 1, kind: 'rollout', label: 'Position 3', library: 1, priority: 'requested', state: 'running', done: 2, total: 8, position: 0, pausable: true, cancelable: true, ...over });
@@ -50,6 +52,7 @@ beforeEach(() => {
 afterEach(() => {
     cleanup();
     jobsStore.set([]);
+    coresStore.set(null);
 });
 
 describe('jobsStore', () => {
@@ -88,7 +91,35 @@ describe('jobsStore, courses', () => {
     });
 });
 
+describe('jobsStore, cœurs et cession', () => {
+    test('jobs:cores remplace la lecture initiale, plus ancienne', async () => {
+        let resolve;
+        mocks.JobCores.mockReturnValueOnce(new Promise((r) => (resolve = r)));
+        const stop = startJobsFeed();
+        mocks.handlers['jobs:cores']({ used: 5, total: 8 });
+        resolve({ used: 0, total: 8 });
+        await Promise.resolve();
+        expect(get(coresStore)).toEqual({ used: 5, total: 8 });
+        stop();
+    });
+
+    test('une tâche en cours qui cède est listée à part', () => {
+        jobsStore.set([job({ id: 1, yielded: true }), job({ id: 2, state: 'paused', yielded: false })]);
+        expect(get(yieldedJobs).map((j) => j.id)).toEqual([1]);
+    });
+});
+
 describe('JobsModal', () => {
+    test('cœurs utilisés en tête et marque de la tâche qui cède', async () => {
+        coresStore.set({ used: 3, total: 8 });
+        jobsStore.set([job({ id: 1, yielded: true }), job({ id: 5, yielded: false })]);
+        const { findByTestId, getAllByTestId } = render(JobsModal, { props: { visible: true, onClose: vi.fn() } });
+        expect((await findByTestId('jobs-cores')).textContent).toContain('3 / 8');
+        const marks = getAllByTestId('job-yielded');
+        expect(marks).toHaveLength(1);
+        expect(marks[0].closest('[data-testid="job-row"]').dataset.jobId).toBe('1');
+    });
+
     test('une tâche en attente mise en pause se reprend', async () => {
         jobsStore.set([job({ id: 2, state: 'paused', position: 1, pausable: false })]);
         const { findByTestId } = render(JobsModal, { props: { visible: true, onClose: vi.fn() } });

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 03:10+0100\n"
+"POT-Creation-Date: 2026-11-26 03:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -720,23 +720,24 @@ msgstr "Verdetto"
 #: ../../source/glossaire.rst:188
 msgid ""
 "Laquelle des options d'une décision de videau est la bonne : *pas de "
-"double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*. "
-"Deux cas particuliers ne sont jamais laissés vides : *pas de décision* "
-"(le régime n'y est pas habilité) et *refusé* (le moteur a décliné la "
-"position, typiquement un score hors de portée de sa table)."
+"double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*, "
+"abrégés *ND*, *D/T*, *D/P* et *TG*. Deux cas particuliers ne sont jamais "
+"laissés vides : *pas de décision* (le régime n'y est pas habilité) et "
+"*refusé* (le moteur a décliné la position, typiquement un score hors de "
+"portée de sa table)."
 msgstr ""
 "Quale delle opzioni di una decisione di cubo è quella giusta: *nessun "
-"raddoppio*, *raddoppio/prendi*, *raddoppio/passa* o *troppo buono (per "
-"raddoppiare)*. Due casi speciali non sono mai lasciati vuoti: *nessuna "
-"decisione* (il regime non ne ha diritto) e *rifiutato* (il motore ha "
-"rifiutato la posizione, tipicamente un punteggio fuori dalla portata "
-"della sua tabella)."
+"raddoppio*, *raddoppio/passa*, *raddoppio/accetta* o *troppo buono (per "
+"raddoppiare)*, abbreviati *ND*, *D/T*, *D/P* e *TG*. Due casi speciali "
+"non sono mai lasciati vuoti: *nessuna decisione* (il regime non ne ha "
+"diritto) e *rifiutato* (il motore ha rifiutato la posizione, tipicamente "
+"un punteggio fuori dalla portata della sua tabella)."
 
-#: ../../source/glossaire.rst:194
+#: ../../source/glossaire.rst:195
 msgid "Trop bon (*too good*)"
 msgstr "Troppo buono (*too good*)"
 
-#: ../../source/glossaire.rst:195
+#: ../../source/glossaire.rst:196
 msgid ""
 "Le verdict qui dit que la position est si favorable que doubler "
 "inciterait l'adversaire à passer alors que jouer sans doubler rapporte "
@@ -746,11 +747,101 @@ msgstr ""
 "indurrebbe l'avversario a passare, mentre continuare a giocare senza "
 "raddoppiare rende di più — un cubo che conviene tenere."
 
-#: ../../source/glossaire.rst:199
+#: ../../source/glossaire.rst:200
+msgid "Carte des scores (*score map*)"
+msgstr "Mappa dei punteggi (*score map*)"
+
+#: ../../source/glossaire.rst:201
+msgid ""
+"La meilleure décision d'une même position — coup avec des dés, verdict de"
+" videau sans — à chaque score d'un match, en une grille *away × away*. "
+"Voir :ref:`eval_cartes`."
+msgstr ""
+"La migliore decisione di una stessa posizione — mossa con i dadi, "
+"verdetto di cubo senza — a ogni punteggio di un match, in una griglia "
+"*away × away*. Vedi :ref:`eval_cartes`."
+
+#: ../../source/glossaire.rst:205
+msgid "Carte des jets (*roll map*)"
+msgstr "Mappa dei tiri (*roll map*)"
+
+#: ../../source/glossaire.rst:206
+msgid ""
+"Ce que fait chacun des 21 jets d'une position où le joueur au trait n'a "
+"pas encore lancé : meilleur coup, équité après lui, écart à la moyenne "
+"pondérée par les chances du jet. Voir :ref:`eval_cartes`."
+msgstr ""
+"Ciò che fa ciascuno dei 21 tiri di una posizione in cui il giocatore di "
+"turno non ha ancora tirato: mossa migliore, equity dopo di essa, scarto "
+"dalla media ponderata dalle probabilità del tiro. Vedi "
+":ref:`eval_cartes`."
+
+#: ../../source/glossaire.rst:210
+msgid "Marché perdu (*lost market*)"
+msgstr "Mercato perso (*lost market*)"
+
+#: ../../source/glossaire.rst:211
+msgid ""
+"Un jet après lequel un double du joueur serait refusé : sa décision de "
+"videau, sur la position que l'adversaire va lancer, est double/passe ou "
+"trop bon. Ne se compte que si le joueur a accès au videau."
+msgstr ""
+"Un tiro dopo il quale un raddoppio del giocatore sarebbe rifiutato: la "
+"sua decisione di cubo, sulla posizione che l'avversario sta per tirare, è"
+" raddoppio/passa o troppo buono. Si conta solo se il giocatore ha accesso"
+" al cubo."
+
+#: ../../source/glossaire.rst:215
+msgid "Tâche (*task*)"
+msgstr "Attività (*task*)"
+
+#: ../../source/glossaire.rst:216
+msgid ""
+"Un travail qui dure au-delà d'un clic — analyse gammonNet par lots, "
+"rollout, maintenance, import, tables de bearoff, synchronisation —, "
+"rattaché à sa bibliothèque et listé dans le :ref:`panneau Calculs "
+"<manuel_calculs>`."
+msgstr ""
+"Un lavoro che dura oltre un clic — analisi gammonNet a lotti, rollout, "
+"manutenzione, importazione, tabelle di bearoff, sincronizzazione —, "
+"legato alla sua libreria ed elencato nel :ref:`pannello Calcoli "
+"<manuel_calculs>`."
+
+#: ../../source/glossaire.rst:221
+msgid "File (*queue*)"
+msgstr "Coda (*queue*)"
+
+#: ../../source/glossaire.rst:222
+msgid ""
+"L'ordre d'attente des tâches qui écrivent une même bibliothèque : une "
+"seule tourne à la fois, les autres attendent leur tour au lieu d'être "
+"refusées."
+msgstr ""
+"L'ordine di attesa delle attività che scrivono una stessa libreria: una "
+"sola è in esecuzione alla volta, le altre aspettano il proprio turno "
+"invece di essere rifiutate."
+
+#: ../../source/glossaire.rst:226
+msgid "Priorité visible (*visible priority*)"
+msgstr "Priorità visibile (*visible priority*)"
+
+#: ../../source/glossaire.rst:227
+msgid ""
+"Le rang d'un calcul dont le résultat est à l'écran (l'évaluation, une "
+"carte) : il passe avant un rollout demandé, qui passe lui-même avant une "
+"analyse de fond ; une tâche moins prioritaire *cède* à son point de "
+"contrôle et reprend ensuite."
+msgstr ""
+"Il rango di un calcolo il cui risultato è a schermo (la valutazione, una "
+"mappa): passa prima di un rollout richiesto, che passa a sua volta prima "
+"di un'analisi in background; un'attività meno prioritaria *cede* al suo "
+"punto di controllo e poi riprende."
+
+#: ../../source/glossaire.rst:232
 msgid "Chance (*luck*)"
 msgstr "Fortuna"
 
-#: ../../source/glossaire.rst:200
+#: ../../source/glossaire.rst:233
 msgid ""
 "L'apport du lancer de dés à l'équité d'un coup, lu depuis le fichier "
 "source à l'import (eXtreme Gammon, GNUbg) et jamais recalculé par "
@@ -762,11 +853,11 @@ msgstr ""
 "blunderDB. I formati che non la trasportano (BGF, Jellyfish ``.mat``) non"
 " la forniscono mai, e l'importazione non è retroattiva."
 
-#: ../../source/glossaire.rst:205
+#: ../../source/glossaire.rst:238
 msgid "Blunder"
 msgstr "Blunder"
 
-#: ../../source/glossaire.rst:206
+#: ../../source/glossaire.rst:239
 msgid ""
 "Un coup ou une décision de videau dont l'erreur (l'écart d'équité avec le"
 " meilleur choix) dépasse un seuil ; la commande ``bl`` (ou ``blunders``) "
@@ -778,11 +869,11 @@ msgstr ""
 "carica direttamente gli errori peggiori trattenuti dal filtro delle "
 "statistiche."
 
-#: ../../source/glossaire.rst:211
+#: ../../source/glossaire.rst:244
 msgid "Millipoint (mpt)"
 msgstr "Millesimo di punto (mpt)"
 
-#: ../../source/glossaire.rst:212
+#: ../../source/glossaire.rst:245
 msgid ""
 "Un millième de point d'équité : une erreur de 0,100 d'équité vaut 100 "
 "mpt. C'est l'unité dans laquelle se lisent les grandeurs d'une position —"
@@ -798,11 +889,11 @@ msgstr ""
 "questa scala: il suo fattore è 500 e non 1000, cosicché un PR di 5,0 vale"
 " 10 mpt di errore medio per decisione."
 
-#: ../../source/glossaire.rst:220
+#: ../../source/glossaire.rst:253
 msgid "PR (*Performance Rating*)"
 msgstr "PR (*Performance Rating*)"
 
-#: ../../source/glossaire.rst:221
+#: ../../source/glossaire.rst:254
 msgid ""
 "Le coût moyen des erreurs d'un joueur, coups et videau confondus : "
 "l'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
@@ -816,11 +907,11 @@ msgstr ""
 "a 0,010 di equità persa per decisione. Vedere :ref:`stats_parity` per le "
 "regole esatte di conteggio (parità con eXtreme Gammon e GNUbg)."
 
-#: ../../source/glossaire.rst:227
+#: ../../source/glossaire.rst:260
 msgid "Snowie Error Rate"
 msgstr "Snowie Error Rate"
 
-#: ../../source/glossaire.rst:228
+#: ../../source/glossaire.rst:261
 msgid ""
 "Le même numérateur que le PR (la somme des erreurs), mais rapporté au "
 "nombre de coups joués plutôt qu'au nombre de décisions comptées — plus "
@@ -830,11 +921,11 @@ msgstr ""
 "numero di mosse giocate anziché per il numero di decisioni conteggiate — "
 "più stabile da uno strumento all'altro. Vedere :ref:`stats_parity`."
 
-#: ../../source/glossaire.rst:232
+#: ../../source/glossaire.rst:265
 msgid "Coût MWC (*MWC cost*)"
 msgstr "Costo MWC (*MWC cost*)"
 
-#: ../../source/glossaire.rst:233
+#: ../../source/glossaire.rst:266
 msgid ""
 "Une erreur de videau exprimée en points de pourcentage de chances de "
 "gagner le match (*Match Winning Chance*), plutôt qu'en équité — la "
@@ -845,11 +936,11 @@ msgstr ""
 "anziché in equità — la grandezza naturale per confrontare lo stesso "
 "giocatore a punteggi di match diversi."
 
-#: ../../source/glossaire.rst:238
+#: ../../source/glossaire.rst:271
 msgid "Collection"
 msgstr "Collezione"
 
-#: ../../source/glossaire.rst:239
+#: ../../source/glossaire.rst:272
 msgid ""
 "Un ensemble nommé et ordonné de positions que l'utilisateur assemble à la"
 " main, glisser-déposer compris. L'appartenance à une collection est un "
@@ -861,11 +952,11 @@ msgstr ""
 "esplicito, a differenza di una posizione importata singolarmente (vedere "
 ":ref:`panneau_collections`)."
 
-#: ../../source/glossaire.rst:244
+#: ../../source/glossaire.rst:277
 msgid "Paquet Anki (*Anki deck*)"
 msgstr "Mazzo Anki"
 
-#: ../../source/glossaire.rst:245
+#: ../../source/glossaire.rst:278
 msgid ""
 "Un ensemble de positions transformées en cartes à réviser par répétition "
 "espacée (algorithme FSRS). Voir :ref:`panneau_anki`."
@@ -873,11 +964,11 @@ msgstr ""
 "Un insieme di posizioni trasformate in carte ripassate tramite "
 "ripetizione dilazionata (algoritmo FSRS). Vedere :ref:`panneau_anki`."
 
-#: ../../source/glossaire.rst:248
+#: ../../source/glossaire.rst:281
 msgid "Carte de révision (*review card*)"
 msgstr "Carta di ripasso"
 
-#: ../../source/glossaire.rst:249
+#: ../../source/glossaire.rst:282
 msgid ""
 "Une position d'un paquet Anki, présentée comme une question : le plateau "
 "est la question, l'analyse enregistrée est la réponse, masquée jusqu'au "
@@ -887,11 +978,11 @@ msgstr ""
 " è la domanda, l'analisi memorizzata è la risposta, nascosta finché il "
 "gesto non la rivela."
 
-#: ../../source/glossaire.rst:253
+#: ../../source/glossaire.rst:286
 msgid "Commentaire (*comment*)"
 msgstr "Commento"
 
-#: ../../source/glossaire.rst:254
+#: ../../source/glossaire.rst:287
 msgid ""
 "Un texte libre attaché à une position, tapé par l'utilisateur ou repris "
 "d'un fichier importé. Une position peut en porter plusieurs, chacun signé"
@@ -906,11 +997,11 @@ msgstr ""
 "è un tag, che il filtro ``#parola`` ritrova (vedi "
 ":ref:`panneau_commentaires`)."
 
-#: ../../source/glossaire.rst:260
+#: ../../source/glossaire.rst:293
 msgid "Joueur (*player*)"
 msgstr "Giocatore"
 
-#: ../../source/glossaire.rst:261
+#: ../../source/glossaire.rst:294
 msgid ""
 "Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne "
 "devine pas la personne derrière le nom : la même personne signant sous "
@@ -922,11 +1013,11 @@ msgstr ""
 "grafie sono due giocatori distinti, fino a una fusione esplicita "
 "(«Gestisci giocatori»)."
 
-#: ../../source/glossaire.rst:266
+#: ../../source/glossaire.rst:299
 msgid "Filigrane (*watermark*)"
 msgstr "Filigrana (*watermark*)"
 
-#: ../../source/glossaire.rst:267
+#: ../../source/glossaire.rst:300
 msgid ""
 "La déclaration signée, apposée par qui exporte une base, de ce qu'elle "
 "est et d'où elle vient. Infalsifiable mais pas inamovible, elle ne "
@@ -937,11 +1028,11 @@ msgstr ""
 " e da dove provenga. Non falsificabile ma non inamovibile, non registra "
 "mai nulla dal lato del destinatario. Vedere :ref:`diffusion_controlee`."
 
-#: ../../source/glossaire.rst:272
+#: ../../source/glossaire.rst:305
 msgid "Identité d'émetteur (*issuer identity*)"
 msgstr "Identità di emittente"
 
-#: ../../source/glossaire.rst:273
+#: ../../source/glossaire.rst:306
 msgid ""
 "La clé qui signe les filigranes d'une personne — créée d'elle-même au "
 "premier filigrane apposé, et déplaçable d'une machine à l'autre par un "
@@ -951,11 +1042,11 @@ msgstr ""
 "prima filigrana apposta, e trasferibile da una macchina all'altra come un"
 " unico file."
 
-#: ../../source/glossaire.rst:277
+#: ../../source/glossaire.rst:310
 msgid "Fichier protégé (.dbx)"
 msgstr "File protetto (.dbx)"
 
-#: ../../source/glossaire.rst:278
+#: ../../source/glossaire.rst:311
 msgid ""
 "Une base exportée et chiffrée par mot de passe, ouverte une fois puis "
 "ordinaire. Elle protège le fichier en transit, pas son contenu : qui "
@@ -965,11 +1056,11 @@ msgstr ""
 "ordinario. Protegge il file in transito, non il suo contenuto: chiunque "
 "riceva la password può aprirlo."
 
-#: ../../source/glossaire.rst:282
+#: ../../source/glossaire.rst:315
 msgid "Tenant"
 msgstr "Tenant"
 
-#: ../../source/glossaire.rst:283
+#: ../../source/glossaire.rst:316
 msgid ""
 "En mode serveur, le propriétaire d'un ensemble de positions, matchs et "
 "collections. Rien de ce qu'un tenant stocke n'est jamais visible à un "

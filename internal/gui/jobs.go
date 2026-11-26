@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 )
 
@@ -15,6 +16,7 @@ import (
 //
 //	jobs:changed jobs.Info, when a task is registered or changes
 //	jobs:removed {id}, when a task is no longer listed
+//	jobs:cores   JobCores, when the engine's cores in use change
 //
 // Each task also sends its own events (gammonnet-batch:*, rollout:*,
 // rollout-batch:*, maintenance:*, the import progress, bearoff:*,
@@ -42,6 +44,47 @@ func (a *App) MoveJob(id int64, index int) error { return a.jobs.Move(id, index)
 
 // RemoveJob unlists a finished task, or takes a waiting one off its queue.
 func (a *App) RemoveJob(id int64) error { return a.jobs.Remove(id) }
+
+// jobsCoresEvent carries the JobCores of the engine's process budget.
+const jobsCoresEvent = "jobs:cores"
+
+// JobCores is the engine's core budget (ADR-0093): the tokens taken by the
+// searches running, of the process total.
+type JobCores struct {
+	Used  int `json:"used"`
+	Total int `json:"total"`
+}
+
+func coresOf(c *gammonnet.Cores) JobCores { return JobCores{Used: c.InUse(), Total: c.Cap()} }
+
+// JobCores returns the engine's cores in use now; jobs:cores follows them.
+func (a *App) JobCores() JobCores { return coresOf(gammonnet.ProcessCores()) }
+
+// coresEmitGap bounds the rate of jobs:cores: a search takes and gives back
+// tokens many times a second, and the panel only shows the count.
+const coresEmitGap = 250 * time.Millisecond
+
+// watchCores sends the cores in use after every change of c, at most once
+// per gap, until ctx is done. It waits on the budget's signal, never polls.
+func watchCores(ctx context.Context, c *gammonnet.Cores, gap time.Duration, emit func(JobCores)) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-c.Changed():
+		}
+		emit(coresOf(c))
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(gap):
+		}
+	}
+}
+
+func (a *App) watchJobCores(ctx context.Context) {
+	watchCores(ctx, gammonnet.ProcessCores(), coresEmitGap, func(c JobCores) { a.emitBatch(jobsCoresEvent, c) })
+}
 
 // beginVisibleComputation marks a computation whose result is on screen —
 // the evaluation, the maps of rolls and of scores — as running until end is

@@ -98,7 +98,10 @@ type Info struct {
 	Error    string `json:"error,omitempty"`
 	// Position is the rank (1 first) among its library's waiting tasks, 0
 	// for a task not in the queue.
-	Position   int  `json:"position"`
+	Position int `json:"position"`
+	// Yielded marks a running task held at its checkpoint by a more urgent
+	// computation: it makes no progress until that one ends.
+	Yielded    bool `json:"yielded"`
 	Pausable   bool `json:"pausable"`
 	Cancelable bool `json:"cancelable"`
 }
@@ -159,6 +162,7 @@ type Job struct {
 	paused   bool
 	holding  bool // an exclusive task that has its turn
 	stopping bool // Cancel was asked
+	yielding bool // held at its checkpoint by a more urgent computation
 	drop     bool // Remove was asked: unlisted once finished
 	finished chan struct{}
 }
@@ -330,25 +334,42 @@ func (j *Job) Checkpoint(ctx context.Context) error {
 	for {
 		r.mu.Lock()
 		if j.stopping {
-			r.mu.Unlock()
-			return context.Canceled
+			return r.leaveCheckpointLocked(j, context.Canceled)
 		}
 		if r.preemptedLocked(j) {
-			r.mu.Unlock()
-			return ErrPreempted
+			return r.leaveCheckpointLocked(j, ErrPreempted)
 		}
-		if !j.paused && !r.outrankedLocked(j) {
-			r.mu.Unlock()
-			return nil
+		outranked := r.outrankedLocked(j)
+		if !j.paused && !outranked {
+			return r.leaveCheckpointLocked(j, nil)
+		}
+		// The listing shows why a running task makes no progress.
+		if yielding := !j.paused && outranked; yielding != j.yielding {
+			j.yielding = yielding
+			r.unlockEmit(r.changedLocked(j))
+			continue
 		}
 		w := r.wake
 		r.mu.Unlock()
 		select {
 		case <-ctx.Done():
-			return ctx.Err()
+			r.mu.Lock()
+			return r.leaveCheckpointLocked(j, ctx.Err())
 		case <-w:
 		}
 	}
+}
+
+// leaveCheckpointLocked releases mu and returns err, reporting first that
+// the task no longer yields.
+func (r *Registry) leaveCheckpointLocked(j *Job, err error) error {
+	if !j.yielding {
+		r.mu.Unlock()
+		return err
+	}
+	j.yielding = false
+	r.unlockEmit(r.changedLocked(j))
+	return err
 }
 
 // preemptedLocked reports a preemptible task holding its library while a
@@ -472,6 +493,7 @@ func (r *Registry) infoLocked(j *Job) Info {
 		ID: j.id, Kind: j.spec.Kind, Label: j.spec.Label, Library: j.spec.Library,
 		Priority: j.spec.Priority.String(), State: j.state, Done: j.done, Total: j.total, Error: j.err,
 		Pausable: j.spec.Pausable, Cancelable: j.spec.Cancel != nil,
+		Yielded: j.yielding && j.state == Running && !j.paused,
 	}
 	if j.paused && !j.state.Finished() {
 		in.State = Paused

@@ -102,8 +102,9 @@ et ``blunderdb events alias``.
 
 * **La progression se lit en positions par seconde.** La fenêtre d'import
   donne le pourcentage lu, le débit, le temps restant estimé et les comptes en
-  cours (importés, doublons, en erreur). **Réduire** la range dans la barre de
-  statut, d'où une pastille la rouvre : l'import continue pendant que vous
+  cours (importés, doublons, en erreur). **Réduire** la range : l'import, une
+  tâche du :ref:`panneau Calculs <manuel_calculs>`, s'y rouvre par *Afficher* ;
+  il continue pendant que vous
   travaillez, et la fenêtre revient d'elle-même avec le rapport à la fin. Les
   cent premières erreurs sont listées ; les suivantes sont comptées, et le
   journal de l'application les nomme toutes. En ligne de commande,

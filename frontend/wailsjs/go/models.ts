@@ -4709,6 +4709,20 @@ export namespace gui {
 		    return a;
 		}
 	}
+	export class JobCores {
+	    used: number;
+	    total: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new JobCores(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.used = source["used"];
+	        this.total = source["total"];
+	    }
+	}
 	export class LibraryGroup {
 	    id: number;
 	    path: string;
@@ -5690,6 +5704,7 @@ export namespace jobs {
 	    total: number;
 	    error?: string;
 	    position: number;
+	    yielded: boolean;
 	    pausable: boolean;
 	    cancelable: boolean;
 	
@@ -5709,6 +5724,7 @@ export namespace jobs {
 	        this.total = source["total"];
 	        this.error = source["error"];
 	        this.position = source["position"];
+	        this.yielded = source["yielded"];
 	        this.pausable = source["pausable"];
 	        this.cancelable = source["cancelable"];
 	    }

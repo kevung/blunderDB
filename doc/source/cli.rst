@@ -130,6 +130,7 @@ Chaque commande accepte l'option ``--help`` pour afficher son aide détaillée.
    :maxdepth: 2
 
    cli_import_export
+   cli_document
    cli_bibliotheque
    cli_matchs
    cli_analyse

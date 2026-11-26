@@ -114,6 +114,8 @@ export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.Iss
 
 export function IsDirectory(arg1:string):Promise<boolean>;
 
+export function JobCores():Promise<gui.JobCores>;
+
 export function LegalMoves(arg1:domain.Position):Promise<Array<domain.LegalPlay>>;
 
 export function LibrariesWrittenElsewhere():Promise<Array<number>>;

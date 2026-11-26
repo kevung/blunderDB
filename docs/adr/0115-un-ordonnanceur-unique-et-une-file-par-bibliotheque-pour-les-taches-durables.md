@@ -39,8 +39,9 @@ fermeture d'une bibliothèque énumérait les tâches à la main.
    calcul cède, à ses points de contrôle (`Job.Checkpoint`), à un calcul de priorité supérieure
    en cours et non en pause : le lot gammonNet avant chaque position, le rollout entre deux
    paquets de parties. L'attente est réveillée par chaque changement du registre, jamais par un
-   sondage. La priorité décide qui tourne, pas sur combien de cœurs : le budget reste celui de
-   l'ADR-0093.
+   sondage. Tant qu'elle cède ainsi, son `Info` porte `yielded` (son état reste *en cours*) : le
+   panneau dit pourquoi elle n'avance pas. La priorité décide qui tourne, pas sur combien de
+   cœurs : le budget reste celui de l'ADR-0093.
 3. **Une file par bibliothèque, en mémoire.** Une tâche qui écrit sa bibliothèque (lot gammonNet,
    rollout stocké, lot de rollouts, maintenance) y prend son tour (`Job.Turn`) : demandée
    pendant qu'une autre la tient, elle attend au lieu d'être refusée. Elle entre devant les
@@ -66,11 +67,13 @@ fermeture d'une bibliothèque énumérait les tâches à la main.
    `RunMaintenanceContext`) : elle attend un détenteur hors registre (échange, compaction) au
    lieu d'échouer.
 7. **Un seul flux d'événements** : `jobs:changed` (l'`Info` d'une tâche inscrite ou changée) et
-   `jobs:removed` (`{id}`), dans l'ordre des changements. Méthodes liées : `ListJobs`,
-   `CancelJob`, `PauseJob`, `ResumeJob`, `MoveJob`, `RemoveJob`. Les événements propres à chaque
+   `jobs:removed` (`{id}`), dans l'ordre des changements ; à côté, `jobs:cores` (`{used, total}`)
+   suit les jetons tenus du budget de cœurs du processus, sur le signal du budget et au plus
+   quatre fois par seconde, jamais par sondage (`JobCores` pour la lecture initiale). Méthodes liées : `ListJobs`,
+   `JobCores`, `CancelJob`, `PauseJob`, `ResumeJob`, `MoveJob`, `RemoveJob`. Les événements propres à chaque
    tâche (`gammonnet-batch:*`, `rollout:*`, `rollout-batch:*`, `maintenance:*`,
    `import-files:progress`, `bearoff:*`, `sync:status`) restent émis : les panneaux de ces
-   tâches les lisent. Aucun panneau ne lit encore le flux `jobs:*`.
+   tâches les lisent. Le panneau Calculs et sa puce lisent le flux `jobs:*`.
 8. **L'arrêt passe par le registre.** `stopGroupJobs` (fermeture ou remplacement d'une
    bibliothèque, arrêt de l'application) annule les tâches de la bibliothèque, en cours ou en
    attente, et les attend dans un délai de grâce partagé. Une tâche liée à aucune bibliothèque

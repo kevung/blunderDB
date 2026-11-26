@@ -3738,6 +3738,8 @@
         "moveDown": "Вниз",
         "remove": "Убрать",
         "pauseAll": "Всё на паузу",
+        "cores": "Ядра",
+        "yielded": "Уступает",
         "resumeAll": "Продолжить всё",
         "progress": "Ход",
         "empty": "Нет расчётов",

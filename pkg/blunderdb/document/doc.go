@@ -18,14 +18,24 @@
 // the table) and is sure only when the print's own cross-checks hold —
 // fifteen checkers a side, the printed pip counts of both players — and
 // nothing in it lies beyond what the table was proven on. A PDF without such
-// a diagram is refused (ErrNoGlyphDiagram). Package pdf is the reader.
+// a diagram is refused (ErrNoGlyphDiagram). Package pdf is the reader of the
+// file itself: pure Go, it distrusts the PDF and is bounded (see its doc).
+// The dice are never read: a reading's XGID always says "no dice".
 //
-// Only Import writes,
-// and only what a Relevé allows: positions, each as a position brought in on
-// its own, in one Collection named after the document, with the document's
-// title, author and edition as the Collection's description and each
-// position's reference ("p. 146, Problem 191") as a comment. No image, no
-// rectangle and no text of the author enter the database. An entry neither
-// sure nor verified refuses the whole import unless the caller forces it, and
-// a refused import writes nothing.
+// Only Import writes, and only what a Relevé allows: positions, each as a
+// position brought in on its own, in one Collection named after the document,
+// with the document's title, author and edition as the Collection's
+// description and each position's reference ("p. 146, Problem 191") as a
+// comment. No image, no rectangle and no text of the author enter the
+// database. An entry neither sure nor verified refuses the whole import
+// unless the caller forces it, an entry with no position is refused even
+// then, and a refused import writes nothing (one transaction). The daemon
+// imports a Relevé; it never reads a document.
+//
+// A reader of another kind of document plugs in by returning a Relevé that
+// Validate accepts, and by what it puts in it: ranks in the document's
+// order, a legal XGID or none (then the entry is uncertain), and a state
+// that means what State says. Sure is claimed only on a cross-check the
+// reader did not itself produce — the print's pip counts, never an engine's
+// opinion of the position (ADR-0108 rule 4) — and every doubt is named.
 package document

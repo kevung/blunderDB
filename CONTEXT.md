@@ -380,6 +380,25 @@ place with no position, uncertain, and the import refuses it until a person fill
 _Avoid_: transcript (a Transcription is typed in front of a board), scan, capture (a capture
 is one screen image of a program's board), OCR result, extraction, report
 
+**State of an entry** (code: `document.State`):
+How far the reading of one diagram can be trusted: *sure* (an independent cross-check
+confirmed it), *to verify* (it holds together, nothing confirmed it) or *uncertain* (known
+incomplete or contradicted). An entry is importable when it is sure or a person has verified
+it; any other entry refuses the whole import unless forced.
+_Avoid_: confidence, score, status, flag
+
+**Cross-check** (interface: *recoupement*; code: the checks of `document.AnalyzePDF`):
+A fact the print states on its own that the reading must reproduce to be sure: fifteen checkers
+a side, and the pip counts printed next to the diagram equal to those computed from the
+position. Never the engine's opinion of the position (ADR-0108 rule 4).
+_Avoid_: validation, sanity check, confidence
+
+**Profile** (code: `document.Profile`):
+How a document draws its diagrams — home board side, colour at the bottom, where pips and cube
+are printed, how points are numbered — fixed on the first diagram and valid for all. Carried
+in the Relevé's header.
+_Avoid_: template, layout, style
+
 **Basket** (interface: *panier*):
 The desktop's list of rows — Positions, Matches, Collections, Lessons — gathered from any
 open library to be poured at once into one library group, by the same transfer as a drag

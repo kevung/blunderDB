@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 03:10+0100\n"
+"POT-Creation-Date: 2026-11-26 03:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -652,31 +652,110 @@ msgstr "判定（verdict）"
 #: ../../source/glossaire.rst:188
 msgid ""
 "Laquelle des options d'une décision de videau est la bonne : *pas de "
-"double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*. "
-"Deux cas particuliers ne sont jamais laissés vides : *pas de décision* "
-"(le régime n'y est pas habilité) et *refusé* (le moteur a décliné la "
-"position, typiquement un score hors de portée de sa table)."
+"double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*, "
+"abrégés *ND*, *D/T*, *D/P* et *TG*. Deux cas particuliers ne sont jamais "
+"laissés vides : *pas de décision* (le régime n'y est pas habilité) et "
+"*refusé* (le moteur a décliné la position, typiquement un score hors de "
+"portée de sa table)."
 msgstr ""
 "キューブの決定のどの選択肢が正しいか：\\ *ノーダブル*\\ 、\\ *ダブル／テイク*\\ 、\\ *ダブル／パス*\\ 、または "
-"*トゥーグッド（ダブルするには良すぎる）*\\ 。2つの特別なケースは決して空欄にされません：\\ *決定なし*\\ "
-"（そのレジームには決定を下す資格がない）と *拒否*\\ （エンジンがそのポジションを拒否した。典型的にはそのテーブルの範囲外のスコア）。"
+"*トゥーグッド（ダブルするには良すぎる）*\\ 。それぞれ *ND*\\ 、\\ *D/T*\\ 、\\ *D/P*\\ 、\\ *TG* "
+"と略されます。2つの特別なケースは決して空欄にされません：\\ *決定なし*\\ （そのレジームには決定を下す資格がない）と *拒否*\\ "
+"（エンジンがそのポジションを拒否した。典型的にはそのテーブルの範囲外のスコア）。"
 
-#: ../../source/glossaire.rst:194
+#: ../../source/glossaire.rst:195
 msgid "Trop bon (*too good*)"
 msgstr "トゥーグッド（too good）"
 
-#: ../../source/glossaire.rst:195
+#: ../../source/glossaire.rst:196
 msgid ""
 "Le verdict qui dit que la position est si favorable que doubler "
 "inciterait l'adversaire à passer alors que jouer sans doubler rapporte "
 "davantage — un videau qu'il vaut mieux garder."
 msgstr "そのポジションが非常に有利で、ダブルすれば相手はパスするが、ダブルせずにプレイを続ける方がより多くの利益をもたらすという判定——キューブは手元に残しておくのがよいということです。"
 
-#: ../../source/glossaire.rst:199
+#: ../../source/glossaire.rst:200
+msgid "Carte des scores (*score map*)"
+msgstr "スコアマップ（score map）"
+
+#: ../../source/glossaire.rst:201
+msgid ""
+"La meilleure décision d'une même position — coup avec des dés, verdict de"
+" videau sans — à chaque score d'un match, en une grille *away × away*. "
+"Voir :ref:`eval_cartes`."
+msgstr ""
+"同じポジションの最良の決定（ダイスがあれば手、なければキューブの判定）を、マッチの各スコアについて *away × away* "
+"の格子で示したもの。\\ :ref:`eval_cartes` を参照。"
+
+#: ../../source/glossaire.rst:205
+msgid "Carte des jets (*roll map*)"
+msgstr "ロールマップ（roll map）"
+
+#: ../../source/glossaire.rst:206
+msgid ""
+"Ce que fait chacun des 21 jets d'une position où le joueur au trait n'a "
+"pas encore lancé : meilleur coup, équité après lui, écart à la moyenne "
+"pondérée par les chances du jet. Voir :ref:`eval_cartes`."
+msgstr ""
+"手番のプレイヤーがまだ振っていないポジションの 21 "
+"通りのロールそれぞれについて、最良の手、その後のエクイティ、ロールの確率で重み付けした平均との差を示したもの。\\ "
+":ref:`eval_cartes` を参照。"
+
+#: ../../source/glossaire.rst:210
+msgid "Marché perdu (*lost market*)"
+msgstr "失われたマーケット（lost market）"
+
+#: ../../source/glossaire.rst:211
+msgid ""
+"Un jet après lequel un double du joueur serait refusé : sa décision de "
+"videau, sur la position que l'adversaire va lancer, est double/passe ou "
+"trop bon. Ne se compte que si le joueur a accès au videau."
+msgstr "その後ではプレイヤーのダブルがパスされるロール。相手がこれから振るポジションでのプレイヤーのキューブの決定が、ダブル/パスまたはトゥーグッドになる場合です。プレイヤーがキューブを使える場合にのみ数えます。"
+
+#: ../../source/glossaire.rst:215
+msgid "Tâche (*task*)"
+msgstr "タスク（task）"
+
+#: ../../source/glossaire.rst:216
+msgid ""
+"Un travail qui dure au-delà d'un clic — analyse gammonNet par lots, "
+"rollout, maintenance, import, tables de bearoff, synchronisation —, "
+"rattaché à sa bibliothèque et listé dans le :ref:`panneau Calculs "
+"<manuel_calculs>`."
+msgstr ""
+"クリック一回では終わらない作業 — gammonNet の一括解析、ロールアウト、メンテナンス、インポート、ベアオフテーブル、同期 — "
+"で、そのライブラリに結び付けられ、\\ :ref:`計算パネル <manuel_calculs>` に一覧表示されます。"
+
+#: ../../source/glossaire.rst:221
+msgid "File (*queue*)"
+msgstr "待ち行列（queue）"
+
+#: ../../source/glossaire.rst:222
+msgid ""
+"L'ordre d'attente des tâches qui écrivent une même bibliothèque : une "
+"seule tourne à la fois, les autres attendent leur tour au lieu d'être "
+"refusées."
+msgstr "同じライブラリに書き込むタスクの待ち順。同時に実行されるのは一つだけで、他は拒否されずに順番を待ちます。"
+
+#: ../../source/glossaire.rst:226
+msgid "Priorité visible (*visible priority*)"
+msgstr "可視の優先度（visible priority）"
+
+#: ../../source/glossaire.rst:227
+msgid ""
+"Le rang d'un calcul dont le résultat est à l'écran (l'évaluation, une "
+"carte) : il passe avant un rollout demandé, qui passe lui-même avant une "
+"analyse de fond ; une tâche moins prioritaire *cède* à son point de "
+"contrôle et reprend ensuite."
+msgstr ""
+"結果が画面に表示されている計算（評価、マップ）の順位。要求されたロールアウトより先に処理され、そのロールアウトはバックグラウンド解析より先に処理されます。優先度の低いタスクはチェックポイントで\\"
+" *譲り*\\ 、その後に再開します。"
+
+#: ../../source/glossaire.rst:232
 msgid "Chance (*luck*)"
 msgstr "運（luck）"
 
-#: ../../source/glossaire.rst:200
+#: ../../source/glossaire.rst:233
 msgid ""
 "L'apport du lancer de dés à l'équité d'un coup, lu depuis le fichier "
 "source à l'import (eXtreme Gammon, GNUbg) et jamais recalculé par "
@@ -687,11 +766,11 @@ msgstr ""
 "Gammon、GNUbg）、blunderDB が再計算することは決してありません。これを伝えない形式（BGF、Jellyfish "
 "``.mat``）では決して提供されず、インポートは遡及的ではありません。"
 
-#: ../../source/glossaire.rst:205
+#: ../../source/glossaire.rst:238
 msgid "Blunder"
 msgstr "ブランダー（blunder）"
 
-#: ../../source/glossaire.rst:206
+#: ../../source/glossaire.rst:239
 msgid ""
 "Un coup ou une décision de videau dont l'erreur (l'écart d'équité avec le"
 " meilleur choix) dépasse un seuil ; la commande ``bl`` (ou ``blunders``) "
@@ -701,11 +780,11 @@ msgstr ""
 "エラー（最善の選択とのエクイティ差）が閾値を超える手またはキューブの判断。\\ ``bl``\\ （または ``blunders``\\ "
 "）コマンドは、統計のフィルターで選ばれた最悪のエラーを直接読み込みます。"
 
-#: ../../source/glossaire.rst:211
+#: ../../source/glossaire.rst:244
 msgid "Millipoint (mpt)"
 msgstr "ミリポイント（mpt）"
 
-#: ../../source/glossaire.rst:212
+#: ../../source/glossaire.rst:245
 msgid ""
 "Un millième de point d'équité : une erreur de 0,100 d'équité vaut 100 "
 "mpt. C'est l'unité dans laquelle se lisent les grandeurs d'une position —"
@@ -719,11 +798,11 @@ msgstr ""
 "、エラーの大きさのヒストグラム、1 ロールあたりの平均の運がこれにあたります。PR はこの尺度では読みません。その係数は 1000 ではなく "
 "500 であるため、PR 5.0 は 1 決定あたり平均 10 mpt のエラーに相当します。"
 
-#: ../../source/glossaire.rst:220
+#: ../../source/glossaire.rst:253
 msgid "PR (*Performance Rating*)"
 msgstr "PR（Performance Rating）"
 
-#: ../../source/glossaire.rst:221
+#: ../../source/glossaire.rst:254
 msgid ""
 "Le coût moyen des erreurs d'un joueur, coups et videau confondus : "
 "l'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
@@ -736,11 +815,11 @@ msgstr ""
 "は、1 決定あたり 0.010 のエクイティ損失にあたります。正確な計数ルール（eXtreme Gammon および GNUbg "
 "とのパリティ）については :ref:`stats_parity` を参照してください。"
 
-#: ../../source/glossaire.rst:227
+#: ../../source/glossaire.rst:260
 msgid "Snowie Error Rate"
 msgstr "Snowie Error Rate"
 
-#: ../../source/glossaire.rst:228
+#: ../../source/glossaire.rst:261
 msgid ""
 "Le même numérateur que le PR (la somme des erreurs), mais rapporté au "
 "nombre de coups joués plutôt qu'au nombre de décisions comptées — plus "
@@ -750,11 +829,11 @@ msgstr ""
 "と同じ分子（エラーの合計）ですが、カウントされた決定の数ではなく、指された手の数で割ったもの——ツール間でより安定しています。:ref:`stats_parity`"
 " を参照してください。"
 
-#: ../../source/glossaire.rst:232
+#: ../../source/glossaire.rst:265
 msgid "Coût MWC (*MWC cost*)"
 msgstr "MWC コスト（MWC cost）"
 
-#: ../../source/glossaire.rst:233
+#: ../../source/glossaire.rst:266
 msgid ""
 "Une erreur de videau exprimée en points de pourcentage de chances de "
 "gagner le match (*Match Winning Chance*), plutôt qu'en équité — la "
@@ -764,11 +843,11 @@ msgstr ""
 "エクイティではなく、マッチ勝率（Match Winning "
 "Chance）のパーセントポイントで表したキューブのエラー——同じプレイヤーを異なるマッチスコア間で比較するのに自然な量です。"
 
-#: ../../source/glossaire.rst:238
+#: ../../source/glossaire.rst:271
 msgid "Collection"
 msgstr "コレクション（collection）"
 
-#: ../../source/glossaire.rst:239
+#: ../../source/glossaire.rst:272
 msgid ""
 "Un ensemble nommé et ordonné de positions que l'utilisateur assemble à la"
 " main, glisser-déposer compris. L'appartenance à une collection est un "
@@ -778,21 +857,21 @@ msgstr ""
 "ユーザーがドラッグ＆ドロップを含めて手作業で組み立てる、名前付きの順序付きポジション集合。コレクションへの所属は明示的な操作であり、個別にインポートされたポジションとは異なります（:ref:`panneau_collections`"
 " を参照）。"
 
-#: ../../source/glossaire.rst:244
+#: ../../source/glossaire.rst:277
 msgid "Paquet Anki (*Anki deck*)"
 msgstr "Anki デッキ（Anki deck）"
 
-#: ../../source/glossaire.rst:245
+#: ../../source/glossaire.rst:278
 msgid ""
 "Un ensemble de positions transformées en cartes à réviser par répétition "
 "espacée (algorithme FSRS). Voir :ref:`panneau_anki`."
 msgstr "間隔反復（FSRS アルゴリズム）で復習されるカードに変換されたポジションの集合。:ref:`panneau_anki` を参照してください。"
 
-#: ../../source/glossaire.rst:248
+#: ../../source/glossaire.rst:281
 msgid "Carte de révision (*review card*)"
 msgstr "復習カード（review card）"
 
-#: ../../source/glossaire.rst:249
+#: ../../source/glossaire.rst:282
 msgid ""
 "Une position d'un paquet Anki, présentée comme une question : le plateau "
 "est la question, l'analyse enregistrée est la réponse, masquée jusqu'au "
@@ -801,11 +880,11 @@ msgstr ""
 "Anki "
 "デッキのポジションで、質問として提示されます：盤面が質問であり、保存された分析が答えです。それを明らかにする操作が行われるまで隠されています。"
 
-#: ../../source/glossaire.rst:253
+#: ../../source/glossaire.rst:286
 msgid "Commentaire (*comment*)"
 msgstr "コメント（comment）"
 
-#: ../../source/glossaire.rst:254
+#: ../../source/glossaire.rst:287
 msgid ""
 "Un texte libre attaché à une position, tapé par l'utilisateur ou repris "
 "d'un fichier importé. Une position peut en porter plusieurs, chacun signé"
@@ -817,11 +896,11 @@ msgstr ""
 " ``XG``\\ 、\\ ``GNU BG``\\ 、\\ ``BGF``\\ ）を保ちます。コメント中の ``#語`` はタグで、\\ "
 "``#語`` フィルターで見つけられます（\\ :ref:`panneau_commentaires` を参照）。"
 
-#: ../../source/glossaire.rst:260
+#: ../../source/glossaire.rst:293
 msgid "Joueur (*player*)"
 msgstr "プレイヤー（player）"
 
-#: ../../source/glossaire.rst:261
+#: ../../source/glossaire.rst:294
 msgid ""
 "Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne "
 "devine pas la personne derrière le nom : la même personne signant sous "
@@ -831,11 +910,11 @@ msgstr ""
 "インポートされた対局に現れるとおりの名前。blunderDB "
 "は名前の背後にいる人物を推測しません：同一人物が2通りの綴りで署名していても、明示的な統合（「プレイヤー管理」）を行うまでは2人の別々のプレイヤーとして扱われます。"
 
-#: ../../source/glossaire.rst:266
+#: ../../source/glossaire.rst:299
 msgid "Filigrane (*watermark*)"
 msgstr "透かし（watermark）"
 
-#: ../../source/glossaire.rst:267
+#: ../../source/glossaire.rst:300
 msgid ""
 "La déclaration signée, apposée par qui exporte une base, de ce qu'elle "
 "est et d'où elle vient. Infalsifiable mais pas inamovible, elle ne "
@@ -845,33 +924,33 @@ msgstr ""
 "データベースをエクスポートする者が付す、それが何であり、どこから来たかについての署名済みの宣言。偽造は不可能ですが除去は可能であり、受け取る側に何かを記録することは決してありません。:ref:`diffusion_controlee`"
 " を参照してください。"
 
-#: ../../source/glossaire.rst:272
+#: ../../source/glossaire.rst:305
 msgid "Identité d'émetteur (*issuer identity*)"
 msgstr "発行者アイデンティティ（issuer identity）"
 
-#: ../../source/glossaire.rst:273
+#: ../../source/glossaire.rst:306
 msgid ""
 "La clé qui signe les filigranes d'une personne — créée d'elle-même au "
 "premier filigrane apposé, et déplaçable d'une machine à l'autre par un "
 "seul fichier."
 msgstr "ある人物の透かしに署名する鍵——最初に適用された透かしの時点で自動的に作成され、単一のファイルとしてあるマシンから別のマシンへ移動できます。"
 
-#: ../../source/glossaire.rst:277
+#: ../../source/glossaire.rst:310
 msgid "Fichier protégé (.dbx)"
 msgstr "保護されたファイル（protected file、.dbx）"
 
-#: ../../source/glossaire.rst:278
+#: ../../source/glossaire.rst:311
 msgid ""
 "Une base exportée et chiffrée par mot de passe, ouverte une fois puis "
 "ordinaire. Elle protège le fichier en transit, pas son contenu : qui "
 "reçoit le mot de passe peut l'ouvrir."
 msgstr "エクスポートされ、パスワードで暗号化されたデータベースで、一度開かれると後は通常のものになります。転送中のファイルを保護するものであり、その内容を保護するものではありません。パスワードを受け取った人は誰でもそれを開けます。"
 
-#: ../../source/glossaire.rst:282
+#: ../../source/glossaire.rst:315
 msgid "Tenant"
 msgstr "テナント（tenant）"
 
-#: ../../source/glossaire.rst:283
+#: ../../source/glossaire.rst:316
 msgid ""
 "En mode serveur, le propriétaire d'un ensemble de positions, matchs et "
 "collections. Rien de ce qu'un tenant stocke n'est jamais visible à un "

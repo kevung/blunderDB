@@ -3738,6 +3738,8 @@
         "moveDown": "下へ",
         "remove": "削除",
         "pauseAll": "すべて一時停止",
+        "cores": "コア",
+        "yielded": "譲り中",
         "resumeAll": "すべて再開",
         "progress": "進捗",
         "empty": "計算なし",

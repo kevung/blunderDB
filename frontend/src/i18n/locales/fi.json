@@ -3738,6 +3738,8 @@
         "moveDown": "Alas",
         "remove": "Poista",
         "pauseAll": "Pysäytä kaikki",
+        "cores": "Ytimet",
+        "yielded": "Väistää",
         "resumeAll": "Jatka kaikki",
         "progress": "Edistyminen",
         "empty": "Ei laskentoja",

@@ -55,13 +55,16 @@ import (
 // Cores is a budget of goroutines that searches may run on at once.
 type Cores struct {
 	tokens chan struct{}
+	// changed holds one pending signal once a token was taken or given
+	// back, so a display follows the budget without polling it.
+	changed chan struct{}
 }
 
 // NewCores is a budget of n tokens, for a component that must stay within a
 // core count of its own (the server's AnalysisWorkers); everything else shares
 // ProcessCores.
 func NewCores(n int) *Cores {
-	return &Cores{tokens: make(chan struct{}, max(n, 0))}
+	return &Cores{tokens: make(chan struct{}, max(n, 0)), changed: make(chan struct{}, 1)}
 }
 
 var processCores = sync.OnceValue(func() *Cores { return NewCores(runtime.GOMAXPROCS(0)) })
@@ -74,24 +77,45 @@ func ProcessCores() *Cores { return processCores() }
 // it back; call it once.
 func (c *Cores) Hold() (release func()) {
 	c.tokens <- struct{}{}
+	c.signal()
 	var once sync.Once
-	return func() { once.Do(func() { <-c.tokens }) }
+	return func() { once.Do(c.give) }
 }
 
 // Cap is the number of tokens of the budget, fixed when it was made (for
 // ProcessCores, GOMAXPROCS at first use, whatever it has become since).
 func (c *Cores) Cap() int { return cap(c.tokens) }
 
+// InUse is the number of tokens taken at this instant.
+func (c *Cores) InUse() int { return len(c.tokens) }
+
+// Changed receives once after the tokens taken have changed, however many
+// changes happened since it was last read: a reader that reads InUse after
+// it misses no final state.
+func (c *Cores) Changed() <-chan struct{} { return c.changed }
+
+// signal never waits: a pending signal already covers this change.
+func (c *Cores) signal() {
+	select {
+	case c.changed <- struct{}{}:
+	default:
+	}
+}
+
 func (c *Cores) tryTake() bool {
 	select {
 	case c.tokens <- struct{}{}:
+		c.signal()
 		return true
 	default:
 		return false
 	}
 }
 
-func (c *Cores) give() { <-c.tokens }
+func (c *Cores) give() {
+	<-c.tokens
+	c.signal()
+}
 
 // team is what a searcher and the helpers it lends tasks to share: the
 // budget, the idle helpers, the cache, the cancellation switch. A helper is a

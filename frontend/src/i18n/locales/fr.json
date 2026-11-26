@@ -3738,6 +3738,8 @@
         "moveDown": "Descendre",
         "remove": "Retirer",
         "pauseAll": "Tout en pause",
+        "cores": "Cœurs",
+        "yielded": "Cède",
         "resumeAll": "Tout reprendre",
         "progress": "Progression",
         "empty": "Aucun calcul",
