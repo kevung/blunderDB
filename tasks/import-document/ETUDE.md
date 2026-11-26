@@ -9,15 +9,21 @@
 lecteur de structure en Go sur images de pages), documentation interne et externe à jour pour
 ces tranches.
 
-En attente de fusion : branche `feat/document-scans` (commit `029e60268`, worktree
+En attente de fusion : branche `feat/document-scans` (worktree
 `/home/unger/src/blunderDB-document-scans`) — lecture des nombres dans l'image et lecture directe
-des PDF scannés ; ajoute `golang.org/x/image` (ccitt). Verdict de l'ouvrier : vert. **Avant de
-fusionner** : un contrôle à l'œil indépendant des positions « sûres ici seulement » (environ 30
-au plateau différent du prototype) écrit son verdict dans
-`~/bkgm/bancs/import-document/controle/` ; sa notification est perdue après un /clear, lire ce
-dossier. Une seule sûre fausse = ne pas fusionner, diagnostiquer. Si tout est exact : fusionner
-(conflits `.po` : ceux de main, `doc-po-update.sh`, `po-fill.py`), relancer
-`go test -p 2 ./pkg/blunderdb/document/... ./internal/cli/...`, retirer le worktree, consigner.
+des PDF scannés ; ajoute `golang.org/x/image` (ccitt).
+- Contrôle à l'œil indépendant fait (`~/bkgm/bancs/import-document/controle/verdicts.txt`) : 59
+  positions « sûres ici seulement » vérifiées, dont les 30 au plateau différent du prototype :
+  59 exactes. Les pions tiennent.
+- Mais 13 des 14 positions de Kageyama déclarées sûres sans doute portent un videau 2 possédé non
+  détecté (et une de Trice) : la branche NE SE FUSIONNE PAS en l'état. Un ouvrier pose le
+  garde-fou dans ce worktree (lancé le 2026-11-30) : une entrée lue par le lecteur de structure
+  n'est jamais « sûre » tant que le contexte n'est pas lu ; elle est « à vérifier » avec le doute
+  « contexte non lu », les pions confirmés restant comptés à part. Sa notification est perdue
+  après un /clear : lire `git -C /home/unger/src/blunderDB-document-scans log --oneline -5` et
+  vérifier ce garde-fou par un test avant de fusionner (conflits `.po` : ceux de main,
+  `doc-po-update.sh`, `po-fill.py`), puis `go test -p 2 ./pkg/blunderdb/document/...
+  ./internal/cli/...`, retirer le worktree, consigner.
 
 Décisions attendues de l'utilisateur :
 1. Deux certitudes par entrée (pions, contexte) et défauts de document confirmés une fois —
