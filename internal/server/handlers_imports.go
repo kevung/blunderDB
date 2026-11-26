@@ -179,6 +179,7 @@ func (s *Server) uploadSpool(r *http.Request) int64 {
 var allowedUploadExtensions = map[string]bool{
 	".xg": true, ".xgp": true, ".sgf": true, ".mat": true,
 	".bgf": true, ".ogxm": true, ".txt": true, ".db": true, ".dbx": true,
+	".html": true, ".htm": true, ".png": true, ".jpg": true, ".jpeg": true,
 }
 
 // sanitizeUploadExt returns ext lower-cased when it is on
@@ -209,6 +210,8 @@ func (s *Server) importerFor(f ingest.Format) ingest.Importer {
 		return ingest.DBImporter{S: s.opts.Storage}
 	case ingest.FormatPosition:
 		return ingest.PositionImporter{S: s.opts.Storage}
+	case ingest.FormatArchive:
+		return ingest.ArchiveImporter{S: s.opts.Storage}
 	default:
 		return nil
 	}
@@ -240,6 +243,7 @@ var uploadRoutes = []struct {
 	{"/v1/imports.ogxm", ingest.FormatOGXM},
 	{"/v1/imports.db", ingest.FormatNativeDB},
 	{"/v1/imports.position", ingest.FormatPosition},
+	{"/v1/imports.archive", ingest.FormatArchive},
 }
 
 // uploadPaths is the exact set of routes limitBody leaves to handleImport's
@@ -298,6 +302,7 @@ func (s *Server) ingestRoutes() []route {
 		})},
 		route{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
 		route{http.MethodPost, "/v1/exports.sqlite", s.handleExportSQLite()},
+		route{http.MethodPost, "/v1/exports.archive", s.handleExportArchive},
 		// What exports.sqlite would write for the same body, counted family by family
 		// without writing anything; the watermark fields are ignored.
 		route{http.MethodPost, "/v1/exports.plan", rpc(func(ctx context.Context, scope string, req exportSQLiteReq) (ingest.ExportPlan, error) {

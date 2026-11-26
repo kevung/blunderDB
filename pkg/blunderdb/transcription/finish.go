@@ -318,7 +318,6 @@ func (s *Service) EditMatch(ctx context.Context, scope string, matchID int64) (*
 	return st, losses, err
 }
 
-
 // RestoreTimecodes puts each Move's Repères back on the Action that produced
 // it ([ingest.RestoreTimecodes]).
 func RestoreTimecodes(doc *transcript.Document, games []*domain.Game, moves map[int64][]*domain.Move) {

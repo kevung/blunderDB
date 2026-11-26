@@ -638,6 +638,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/events.alias.suggest — JSON."
         return self._call("/v1/events.alias.suggest", payload)
 
+    def exports_archive(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/exports.archive — hand-written handler — see openapi.yaml."
+        return self._call("/v1/exports.archive", payload)
+
     def exports_json(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/exports.json — hand-written handler — see openapi.yaml."
         return self._call("/v1/exports.json", payload)
@@ -733,6 +737,10 @@ class GeneratedAPI(BaseClient):
     def history_save(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/history.save — JSON."
         return self._call("/v1/history.save", payload)
+
+    def imports_archive(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.archive — hand-written handler — see openapi.yaml."
+        return self._call("/v1/imports.archive", payload)
 
     def imports_batch(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/imports.batch — hand-written handler — see openapi.yaml."

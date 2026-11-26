@@ -25,6 +25,9 @@ const (
 	FormatOGXM     Format = "ogxm"
 	FormatNativeDB Format = "db"
 	FormatPosition Format = "position"
+	// FormatArchive is a paper archive (ADR-0119): its HTML page, or a scan
+	// or photograph of its sheets.
+	FormatArchive Format = "archive"
 	// FormatSQLite serializes a tenant into a fresh, valid blunderDB SQLite file
 	// (a Desktop-openable export / backup). Export-only.
 	FormatSQLite Format = "sqlite"

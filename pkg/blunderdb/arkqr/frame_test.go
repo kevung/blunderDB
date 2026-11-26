@@ -1,8 +1,8 @@
 package arkqr
 
 import (
-	"errors"
 	"bytes"
+	"errors"
 	"image"
 	"image/color"
 	"image/jpeg"

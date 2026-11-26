@@ -4088,6 +4088,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/aliasSuggestResp"
+  /v1/exports.archive:
+    post:
+      operationId: exports.archive
+      tags: [exports]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/exports.json:
     post:
       operationId: exports.json
@@ -4464,6 +4477,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/imports.archive:
+    post:
+      operationId: imports.archive
+      tags: [imports]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/imports.batch:
     post:
       operationId: imports.batch
