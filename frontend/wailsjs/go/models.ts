@@ -6362,6 +6362,35 @@ export namespace parser {
 
 }
 
+export namespace printsheet {
+	
+	export class MatchOptions {
+	    language?: string;
+	    player?: string;
+	    opponentBlunders: boolean;
+	    analysis: boolean;
+	    comments: boolean;
+	    expanded: boolean;
+	    reimportCode: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.language = source["language"];
+	        this.player = source["player"];
+	        this.opponentBlunders = source["opponentBlunders"];
+	        this.analysis = source["analysis"];
+	        this.comments = source["comments"];
+	        this.expanded = source["expanded"];
+	        this.reimportCode = source["reimportCode"];
+	    }
+	}
+
+}
+
 export namespace race {
 	
 	export class Side {

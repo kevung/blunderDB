@@ -351,6 +351,26 @@
         "clearFilters": "Tyhjennä suodattimet",
         "criteriaTab": "Ehdot"
     },
+    "matchSheet": {
+        "title": "Tulosta ottelulomake",
+        "menu": "Tulosta…",
+        "print": "Tulosta",
+        "building": "Valmistellaan ottelulomaketta…",
+        "saved": "Ottelulomake tallennettu: {path}",
+        "failed": "Ottelulomake epäonnistui: {err}",
+        "opponentBlunders": "Vastustajan mokat",
+        "opponentBlundersTip": "Numeroi ja erittelee myös vastustajan mokat; muuten ne jäävät kirjaukseen merkinnällä ??",
+        "analysis": "Lyhyt analyysi",
+        "analysisTip": "Pelattu siirto ja sen menetys, paras siirto, yksi vaihtoehto",
+        "comments": "Kommentit",
+        "commentsTip": "Ottelun ja asemien kommentit, koskaan katkaisematta",
+        "expanded": "Laajennettu ArkID",
+        "expandedTip": "Kirjoittaa asemat ArkID:n laajennetussa muodossa",
+        "reimportCode": "Uudelleentuontikoodi",
+        "reimportCodeTip": "Ottelun QR-koodi kirjauksen lopussa, upotettuna myös tiedostoon",
+        "batch": "Listan {n} ottelua",
+        "batchTip": "Yksi lomake ottelua kohden, yhdessä asiakirjassa"
+    },
     "match": {
         "errorExportingMat": "Virhe ottelun viennissä",
         "exportMat": "Vie .mat",

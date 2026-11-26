@@ -66,7 +66,8 @@
      * `matchId`: the match to show (null shows nothing).
      * `onDeleted(match)`: called once the sheet trashed its match, before the dependent stores are bumped.
      */
-    let { matchId = null, onDeleted = null } = $props();
+    /** `onPrint(match)`: the Match panel's print dialog; the item is absent without it. */
+    let { matchId = null, onDeleted = null, onPrint = null } = $props();
     // DOM ids are per sheet: two sheets (Matches, Tournaments) may be on screen together.
     const uid = $props.id();
 
@@ -823,6 +824,7 @@
             ontogglevideo={toggleVideo}
             onreview={() => enterMatchMode()}
             onexport={() => exportMatchMat(detailMatch)}
+            onprint={onPrint ? () => onPrint(detailMatch) : null}
             onedit={() => editMatchTranscription(detailMatch.id)}
             ondelete={(e) => deleteMatchEntry(detailMatch, e)}
         />

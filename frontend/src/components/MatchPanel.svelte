@@ -16,6 +16,7 @@
     import { GetMatchByID, UpdateMatch, GetMatchMovePositions, SetMatchTournamentByName, SwapMatchPlayers } from '../../wailsjs/go/database/Database.js';
     import ManagePlayersModal from './ManagePlayersModal.svelte';
     import MatchSheet from './MatchSheet.svelte';
+    import MatchPrintModal from './MatchPrintModal.svelte';
     import { clampSheetWidth, rememberedSheetShare, rememberSheetShare } from '../utils/matchSheet.js';
     import { resizable } from '../utils/resizeHandle.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
@@ -61,6 +62,8 @@
     let filterTimer;
     /** @type {any} */
     let selectedMatch = $state(null);
+    /** The match the print dialog was opened on, null while it is closed. @type {number|null} */
+    let printMatchId = $state(null);
     // The « Autres bases » panel speaks of the match the user selected: noted on the gesture, not
     // on selectedMatch, which hiding the tab and restoring the last visited match also move.
     /** @param {any} match */
@@ -590,6 +593,7 @@
                                       ...sendMatch(match).do,
                                       open: () => handleDoubleClick(match),
                                       exportMat: () => exportMatchMat(match),
+                                      print: () => (printMatchId = match.id),
                                       editTranscription: () => editMatchTranscription(match.id),
                                       swapPlayers: () => swapMatchPlayers(match, undefined),
                                       edit: () => startEditMatch(match, undefined),
@@ -748,7 +752,7 @@
                 use:resizable={{ side: true, size: sheetWidth, clamp: (width) => clampSheetWidth(width, contentWidth), onResize: setSheetWidth, onCommit: () => rememberSheetShare(sheetShare) }}
             ></div>
             <div class="sheet-slot" style:flex-basis={contentWidth > 0 ? `${sheetWidth}px` : `${sheetShare * 100}%`}>
-                <MatchSheet bind:this={sheet} matchId={sheetMatchId} onDeleted={onSheetDeleted} />
+                <MatchSheet bind:this={sheet} matchId={sheetMatchId} onDeleted={onSheetDeleted} onPrint={(/** @type {Match} */ m) => (printMatchId = m.id)} />
             </div>
         {/if}
     </div>
@@ -763,6 +767,8 @@
         }}
     />
 {/if}
+
+<MatchPrintModal open={printMatchId !== null} matchId={printMatchId} listedIds={sortedMatches.map((/** @type {Match} */ m) => m.id)} onclose={() => (printMatchId = null)} />
 
 <style>
     .match-panel {

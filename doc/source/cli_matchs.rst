@@ -117,6 +117,28 @@ par ``/v1/matches.repair``, le fichier source envoyé dans la requête.
    ./blunderdb match repair --db base.db --id 42 --dry-run
    ./blunderdb match repair --db base.db --id 42
 
+**match sheet** — Écrit la feuille de match imprimable, celle de l'action
+*Imprimer…* du panneau Match (:ref:`feuille_match`) : une feuille A4 par match,
+dans un seul fichier HTML autonome que le navigateur imprime ou enregistre en
+PDF. ``--match`` prend un ou plusieurs identifiants séparés par des virgules ;
+sans ``--output``, la page sort sur la sortie standard. ``--lang`` choisit la
+langue de la feuille, ``--player`` le joueur pour qui elle est imprimée (par
+défaut le joueur principal s'il a joué, sinon le joueur 1).
+``--opponent-blunders`` numérote et détaille aussi les blunders de l'adversaire
+(désactivé par défaut) ; ``--analysis``, ``--comments`` et ``--reimport-code``
+sont actifs par défaut et se coupent par ``=false`` ; ``--expanded`` écrit les
+ArkID sous leur forme développée. Rien n'est écrit dans la base. Le serveur la
+sert par ``/v1/matches.sheet``, qui rend la page dans le champ ``html``.
+
+.. code-block:: bash
+
+   ./blunderdb match sheet --db <chemin> --match <ID>[,<ID>...] [--output <fichier.html>] [--lang fr] [--player <nom>] [--opponent-blunders] [--analysis=false] [--comments=false] [--expanded] [--reimport-code=false]
+
+.. code-block:: bash
+
+   ./blunderdb match sheet --db base.db --match 12 --lang fr --output feuille.html
+   ./blunderdb match sheet --db base.db --match 12,15 --opponent-blunders --reimport-code=false
+
 tournament — Lire un tournoi dirigé
 ------------------------------------
 

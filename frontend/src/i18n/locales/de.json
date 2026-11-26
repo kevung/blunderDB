@@ -351,6 +351,26 @@
         "clearFilters": "Filter leeren",
         "criteriaTab": "Kriterien"
     },
+    "matchSheet": {
+        "title": "Matchblatt drucken",
+        "menu": "Drucken…",
+        "print": "Drucken",
+        "building": "Matchblatt wird vorbereitet…",
+        "saved": "Matchblatt gespeichert: {path}",
+        "failed": "Matchblatt fehlgeschlagen: {err}",
+        "opponentBlunders": "Patzer des Gegners",
+        "opponentBlundersTip": "Nummeriert und erläutert auch die Patzer des Gegners; sonst bleiben sie in der Transkription mit ?? markiert",
+        "analysis": "Kurzanalyse",
+        "analysisTip": "Gespielter Zug und sein Verlust, bester Zug, eine Alternative",
+        "comments": "Kommentare",
+        "commentsTip": "Kommentar des Matches und der Stellungen, nie gekürzt",
+        "expanded": "Ausführliche ArkID",
+        "expandedTip": "Schreibt die Stellungen in der ausführlichen Form der ArkID",
+        "reimportCode": "Code zum Wiedereinlesen",
+        "reimportCodeTip": "Der QR-Code des Matches am Ende der Transkription, auch in die Datei eingebettet",
+        "batch": "Die {n} Matches der Liste",
+        "batchTip": "Ein Blatt pro Match in einem einzigen Dokument"
+    },
     "match": {
         "errorExportingMat": "Fehler beim Exportieren des Matches",
         "exportMat": "Als .mat exportieren",

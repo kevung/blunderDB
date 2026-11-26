@@ -351,6 +351,26 @@
         "clearFilters": "Clear filters",
         "criteriaTab": "Criteria"
     },
+    "matchSheet": {
+        "title": "Print the match sheet",
+        "menu": "Print…",
+        "print": "Print",
+        "building": "Preparing the match sheet…",
+        "saved": "Match sheet saved: {path}",
+        "failed": "Match sheet failed: {err}",
+        "opponentBlunders": "Opponent's blunders",
+        "opponentBlundersTip": "Also number and detail the opponent's blunders; otherwise they stay marked ?? in the transcription",
+        "analysis": "Short analysis",
+        "analysisTip": "Move played and its loss, best move, one alternative",
+        "comments": "Comments",
+        "commentsTip": "The match's comment and the positions' comments, never cut",
+        "expanded": "Developed ArkID",
+        "expandedTip": "Writes the positions in the developed form of the ArkID",
+        "reimportCode": "Reimport code",
+        "reimportCodeTip": "The match's QR code at the end of the transcription, also embedded in the file",
+        "batch": "The {n} matches of the list",
+        "batchTip": "One sheet per match, in a single document"
+    },
     "match": {
         "errorExportingMat": "Error exporting match",
         "exportMat": "Export .mat",

@@ -351,6 +351,26 @@
         "clearFilters": "Cancella i filtri",
         "criteriaTab": "Criteri"
     },
+    "matchSheet": {
+        "title": "Stampa il foglio di partita",
+        "menu": "Stampa…",
+        "print": "Stampa",
+        "building": "Preparazione del foglio di partita…",
+        "saved": "Foglio di partita salvato: {path}",
+        "failed": "Foglio di partita non riuscito: {err}",
+        "opponentBlunders": "Blunder dell'avversario",
+        "opponentBlundersTip": "Numera e dettaglia anche i blunder dell'avversario; altrimenti restano segnati ?? nella trascrizione",
+        "analysis": "Analisi breve",
+        "analysisTip": "Mossa giocata e la sua perdita, mossa migliore, un'alternativa",
+        "comments": "Commenti",
+        "commentsTip": "Commento della partita e delle posizioni, mai troncati",
+        "expanded": "ArkID esteso",
+        "expandedTip": "Scrive le posizioni nella forma estesa dell'ArkID",
+        "reimportCode": "Codice di reimportazione",
+        "reimportCodeTip": "Il codice QR della partita alla fine della trascrizione, incorporato anche nel file",
+        "batch": "Le {n} partite della lista",
+        "batchTip": "Un foglio per partita, in un unico documento"
+    },
     "match": {
         "errorExportingMat": "Errore durante l'esportazione del match",
         "exportMat": "Esporta .mat",

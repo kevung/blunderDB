@@ -13,10 +13,10 @@
      * @type {{
      *   match: any, games: any[], cadence?: { bank: string, delay: number } | null,
      *   hasVideo?: boolean, videoOpen?: boolean,
-     *   ontogglevideo?: () => void, onreview: () => void, onexport: () => void, onedit: () => void, ondelete: (e: Event) => void
+     *   ontogglevideo?: () => void, onreview: () => void, onexport: () => void, onprint?: (() => void) | null, onedit: () => void, ondelete: (e: Event) => void
      * }}
      */
-    let { match, games, cadence = null, hasVideo = false, videoOpen = false, ontogglevideo = () => {}, onreview, onexport, onedit, ondelete } = $props();
+    let { match, games, cadence = null, hasVideo = false, videoOpen = false, ontogglevideo = () => {}, onreview, onexport, onprint = null, onedit, ondelete } = $props();
 
     let result = $derived(finalScore(games, match.match_length));
     let names = $derived([match.player1_name, match.player2_name]);
@@ -39,6 +39,7 @@
 
     let items = $derived([
         { label: $t('match.exportMat'), onClick: onexport },
+        ...(onprint ? [{ label: $t('matchSheet.menu'), onClick: onprint }] : []),
         { label: $t('match.editTranscription'), onClick: onedit },
         { label: $t('match.deleteMatch'), onClick: () => ondelete(new Event('click')) }
     ]);

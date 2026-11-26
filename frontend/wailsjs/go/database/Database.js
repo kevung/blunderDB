@@ -1130,6 +1130,10 @@ export function MatchMAT(arg1) {
   return window['go']['database']['Database']['MatchMAT'](arg1);
 }
 
+export function MatchSheetHTML(arg1, arg2) {
+  return window['go']['database']['Database']['MatchSheetHTML'](arg1, arg2);
+}
+
 export function MatchTranscriptionLosses(arg1) {
   return window['go']['database']['Database']['MatchTranscriptionLosses'](arg1);
 }

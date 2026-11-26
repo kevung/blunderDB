@@ -18,6 +18,9 @@ func (cli *CLI) runMatch(args []string) error {
 	if len(args) > 0 && strings.EqualFold(args[0], "repair") {
 		return cli.runMatchRepair(args[1:])
 	}
+	if len(args) > 0 && strings.EqualFold(args[0], "sheet") {
+		return cli.runMatchSheet(args[1:])
+	}
 	matchCmd := flag.NewFlagSet("match", flag.ContinueOnError)
 
 	// Define flags

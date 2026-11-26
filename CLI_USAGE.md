@@ -771,6 +771,33 @@ Position 2 [Game 1, Move 2]
   ...
 ```
 
+### Printable match sheet
+
+`match sheet` writes the sheet of the Match panel's Print action: one A4 sheet
+per match, in a single self-contained HTML file that a browser prints or saves
+as PDF. No diagram is drawn: the header (players, score, length, event, round,
+date, games and moves; PR, errors, blunders and time per player), the
+transcription (`?` for an Error, `??` underlined for a Blunder, at the library's
+thresholds), and apart the positions to review written in ArkID, each numbered
+in the transcription. The body shrinks from 9 pt to 5.5 pt to fit one page; the
+positions go overleaf when they still do not fit. Printing writes nothing to the
+library.
+
+```bash
+./blunderDB match sheet --db database.db --match <ids> [--output sheet.html] [options]
+```
+
+- `--lang` - Language of the sheet (default `en`)
+- `--player` - Player the sheet is printed for (default: the Main player, else player 1)
+- `--opponent-blunders` - Number and detail the opponent's blunders too (off by
+  default: they stay marked `??` and nothing more)
+- `--analysis` - Short analysis of each listed position (default on)
+- `--comments` - The match's and the positions' comments, never cut (default on)
+- `--expanded` - ArkIDs in their developed form
+- `--reimport-code` - The match's paper archive QR code at the end of the
+  transcription, embedded in the file too (default on): `archive import` reads
+  the saved sheet back
+
 ## Collection Command
 
 Manage collections — the hand-picked sets of positions of the GUI's
@@ -4629,6 +4656,44 @@ Examples:
   blunderdb match repair --db base.db --list
   blunderdb match repair --db base.db --id 42 --dry-run
   blunderdb match repair --db base.db --id 42
+```
+
+### `blunderdb match sheet`
+
+```
+Usage: blunderdb match sheet --db FILE --match IDS [options]
+
+Write the printable sheet of matches, one A4 sheet a match, as one self-contained
+HTML file a browser prints or saves as PDF: header, transcription with ? and ??
+at the library's thresholds, and apart the positions to review written in ArkID,
+numbered in the transcription. The body shrinks from 9 to 5.5 pt to fit one page;
+the positions go overleaf when they still do not. Nothing is written to the library.
+
+Options:
+  -analysis
+    	Write the short analysis of each listed position (default true)
+  -comments
+    	Print the match's and the positions' comments, whole (default true)
+  -db string
+    	Path to the database file (required)
+  -expanded
+    	Write the ArkIDs in their developed form
+  -lang string
+    	Sheet language: fr, en, de, el, es, fi, it, ja, ru (default "en")
+  -match string
+    	Comma-separated match ids, one sheet each (required)
+  -opponent-blunders
+    	Number and detail the opponent's blunders too
+  -output string
+    	HTML file to write (default: standard output)
+  -player string
+    	Player the sheet is printed for (default: the Main player, else player 1)
+  -reimport-code
+    	Draw the match's reimport QR code and embed it in the file (default true)
+
+Examples:
+  blunderdb match sheet --db database.db --match 12 --lang fr --output feuille.html
+  blunderdb match sheet --db database.db --match 12,15 --opponent-blunders --reimport-code=false
 ```
 
 ### `blunderdb mcp`

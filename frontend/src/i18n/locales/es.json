@@ -351,6 +351,26 @@
         "clearFilters": "Borrar filtros",
         "criteriaTab": "Criterios"
     },
+    "matchSheet": {
+        "title": "Imprimir la hoja de partido",
+        "menu": "Imprimir…",
+        "print": "Imprimir",
+        "building": "Preparando la hoja de partido…",
+        "saved": "Hoja de partido guardada: {path}",
+        "failed": "Error en la hoja de partido: {err}",
+        "opponentBlunders": "Blunders del rival",
+        "opponentBlundersTip": "Numera y detalla también los blunders del rival; si no, quedan marcados ?? en la transcripción",
+        "analysis": "Análisis breve",
+        "analysisTip": "Jugada hecha y su pérdida, mejor jugada, una alternativa",
+        "comments": "Comentarios",
+        "commentsTip": "Comentario del partido y de las posiciones, nunca recortados",
+        "expanded": "ArkID desarrollado",
+        "expandedTip": "Escribe las posiciones en la forma desarrollada del ArkID",
+        "reimportCode": "Código de reimportación",
+        "reimportCodeTip": "El código QR del partido al final de la transcripción, también incrustado en el archivo",
+        "batch": "Los {n} partidos de la lista",
+        "batchTip": "Una hoja por partido, en un solo documento"
+    },
     "match": {
         "errorExportingMat": "Error al exportar el partido",
         "exportMat": "Exportar .mat",

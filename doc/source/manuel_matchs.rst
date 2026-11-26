@@ -62,12 +62,57 @@ Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le
 bouton ⬇ de la liste des matchs ou l'entrée *Exporter en .mat* du menu ⋯ de la
 fiche du match.
 
+.. _feuille_match:
+
+**Imprimer…**, dans le menu contextuel d'un match de la liste ou le menu ⋯ de sa
+fiche, imprime le match sur une feuille A4, sans aucun diagramme. Une boîte
+d'options s'ouvre d'abord ; la feuille est ensuite enregistrée en fichier HTML
+autonome et ouverte dans le navigateur, qui l'imprime ou l'enregistre en PDF.
+L'en-tête donne les joueurs, le score final, la longueur, l'évènement, la ronde,
+la date, le nombre de parties et de coups, puis pour chaque joueur son PR, ses
+erreurs, ses blunders et son temps quand le match en a un. La transcription
+suit, partie par partie (score en away, vainqueur et points, durée) : un numéro
+de coup par ligne, les deux joueurs côte à côte, sur plusieurs colonnes. ``?``
+marque une erreur, ``??`` souligné un blunder, aux seuils de la bibliothèque ;
+une réflexion de 30 secondes ou plus est écrite en italique à côté du coup.
+
+À part, le bloc **Positions** liste les positions à revoir, écrites en ArkID
+dans une police à chasse fixe où ``I`` et ``l`` se distinguent. Un blunder du
+joueur pour qui la feuille est imprimée (le joueur principal s'il a joué le
+match, sinon le joueur 1) porte un numéro sur fond noir, une position qu'il a
+marquée ou commentée un numéro encadré ; le même numéro est reporté dans la
+transcription. Chaque entrée donne la partie et la ligne, le joueur, puis
+l'analyse courte : le coup joué et sa perte, le meilleur coup et un coup
+alternatif avec la sienne ; pour le videau, l'action jouée et la bonne. Les
+pertes sont dans l'unité de l'analyse : le point en partie libre, le videau
+courant à un score de match.
+
+Le corps du texte descend de 9 pt à 5,5 pt par quarts de point jusqu'à ce que
+tout tienne sur la page ; si le bloc Positions ne tient toujours pas, il passe
+au verso, et des lignes qui débordent encore passent en disposition continue,
+les coups à la suite. Les options de la boîte :
+
+- **Blunders de l'adversaire** (décochée) : les numérote et les détaille aussi.
+  Décochée, ils restent marqués ``??`` dans la transcription, sans plus.
+- **Analyse courte** (cochée) : l'analyse de chaque entrée.
+- **Commentaires** (cochée) : le commentaire du match sous l'en-tête, ceux des
+  positions sous leur entrée, jamais tronqués.
+- **ArkID développé** (décochée) : la forme développée plutôt que la compacte.
+- **Code de réimport** (cochée) : le code QR du match, celui de l'archive
+  papier, en fin de transcription ; le même contenu est embarqué dans le
+  fichier, qui se réimporte comme une page d'archive.
+- **Les N matchs de la liste** : imprime d'un coup les matchs que la liste
+  affiche, une feuille par match dans un seul document.
+
+L'impression n'écrit rien dans la base. En ligne de commande : ``match sheet``
+(:doc:`cli_matchs`).
+
 Un clic sur un match ouvre sa fiche. Une ligne
 d'en-tête donne les joueurs, le score final (le vainqueur en gras, son nom au
 survol), la longueur, la cadence s'il y en a une et la date ; le tournoi, la
 ronde et le lieu s'affichent au survol. À droite, l'icône 🎞 d'un match qui a
 une vidéo, le bouton **Revoir** et le menu ⋯, qui porte *Exporter en .mat*,
-*Éditer la transcription* et *Supprimer le match*. Vient ensuite la
+*Imprimer…*, *Éditer la transcription* et *Supprimer le match*. Vient ensuite la
 synthèse du :ref:`bilan du match <bilan_match>`, puis une barre d'onglets :
 **Transcription**, qui liste les coups partie par partie (un clic sur un coup y
 amène la revue), **Graphes**, **À revoir**, **Détails**, **Infos** et **Stats**.
