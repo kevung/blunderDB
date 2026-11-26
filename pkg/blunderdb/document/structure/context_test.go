@@ -222,7 +222,8 @@ func doubtsOn(d Diagram) map[string]string {
 
 // TestSyntheticBareCube: a lone cube with a bare face is the centred cube
 // where the document draws it so beside at least three diagrams at that
-// place; drawn so once, it is a named doubt, never a reading.
+// place; drawn so once, or where another diagram prints a value, it is a
+// named doubt, never a reading.
 func TestSyntheticBareCube(t *testing.T) {
 	bare := ctxOpts{cube: 64, cubePlace: "top", cubeBare: true}
 	ds, _ := contextBook(t, 7, []ctxOpts{bare, {}, bare, {}, bare, {}})
@@ -235,6 +236,12 @@ func TestSyntheticBareCube(t *testing.T) {
 	ds, _ = contextBook(t, 8, []ctxOpts{bare, {}, {}, {}})
 	if x := ds[0].Context; x.CubeRead || !strings.Contains(doubtsOn(ds[0])["cube"], "bare face") {
 		t.Errorf("a bare cube drawn once read as %+v; doubts %v", x, ds[0].Doubts)
+	}
+	ds, _ = contextBook(t, 10, []ctxOpts{bare, {}, bare, {cube: 2, cubePlace: "top"}, bare, {}})
+	for _, i := range []int{0, 2, 4} {
+		if x := ds[i].Context; x.CubeRead || !strings.Contains(doubtsOn(ds[i])["cube"], "print a value") {
+			t.Errorf("diagram %d: a bare cube where another diagram prints 2 read as %+v; doubts %v", i+1, x, ds[i].Doubts)
+		}
 	}
 }
 

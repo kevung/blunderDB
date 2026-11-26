@@ -17,9 +17,10 @@ import (
 //   - the cube: its value read in its square (figures of the document) or
 //     in the text layer, where two sources must agree, and coherent with its
 //     place — 64 in the middle is centred, 2 to 64 at the top or the bottom
-//     is owned by that side's player. A cube drawn alone with a bare face,
-//     wherever it stands, is centred: an owned cube shows its value, and
-//     neither its square nor the text layer prints one. A cube not found is
+//     is owned by that side's player. A cube drawn alone with a bare face
+//     is centred where the document draws it so beside three diagrams and
+//     never prints a value at that place: an owned cube shows its value,
+//     and neither its square nor the text layer prints one. A cube not found is
 //     not centred: the field is then left to the document's defaults.
 //   - the dice: two dice of one colour whose pips are counted in the image,
 //     confirmed by the text layer beside the diagram: a roll named ("to play
@@ -213,6 +214,10 @@ func readCube(rd *boardReading, d *Diagram, words []Word, prof Profile, env cont
 		// beside at least two other diagrams.
 		if len(rd.cubes) == 1 && rd.cubes[0].blank {
 			k := rd.squareKey(rd.cubes[0])
+			if n := env.valued[k]; n > 0 {
+				add("cube", "cube drawn", "a cube with a bare face is drawn on the %s side, where %d other diagrams print a value: its figure may be lost, not read; the position says centred", rd.cubes[0].place, n)
+				return
+			}
 			if env.bare[k] >= 3 {
 				c.Cube, c.CubeOwner, c.CubeRead = 1, 0, true
 				return
@@ -541,11 +546,14 @@ func missingCubes(rds []*boardReading, ds []Diagram) {
 
 // contextEnv is what the context of one diagram is read against: the other
 // diagrams of its page, which claim the words and squares nearer to them,
-// and how many diagrams of the document draw a lone bare cube at each
-// place (squareKey).
+// how many diagrams of the document draw a lone bare cube at each place
+// (squareKey), and how many draw there a cube whose face is not bare and
+// not read 64: a value printed where a bare face would say centred makes
+// that bare face a figure the scan may have lost.
 type contextEnv struct {
 	others []*boardReading
 	bare   map[string]int
+	valued map[string]int
 }
 
 // fieldDistance is the distance from (x, y), in the page's pixels, to the
@@ -604,17 +612,36 @@ func keepSquares(rds []*boardReading, stretch float64) {
 	}
 }
 
+// readsCentred tells whether 64 is read in the diagram's k-th cube.
+func readsCentred(rd *boardReading, k int) bool {
+	for _, n := range rd.cubeFigs {
+		if n.val == 64 && squareOf(rd.cubes, n) == k {
+			return true
+		}
+	}
+	return false
+}
+
 // contextEnvs gives each diagram its contextEnv.
 func contextEnvs(rds []*boardReading) []contextEnv {
-	bare := map[string]int{}
+	bare, valued := map[string]int{}, map[string]int{}
 	for _, rd := range rds {
 		if len(rd.cubes) == 1 && rd.cubes[0].blank {
 			bare[rd.squareKey(rd.cubes[0])]++
 		}
+		seen := map[string]bool{}
+		for i, s := range rd.cubes {
+			k := rd.squareKey(s)
+			if s.blank || seen[k] || readsCentred(rd, i) {
+				continue
+			}
+			seen[k] = true
+			valued[k]++
+		}
 	}
 	out := make([]contextEnv, len(rds))
 	for i, rd := range rds {
-		out[i].bare = bare
+		out[i].bare, out[i].valued = bare, valued
 		for _, o := range rds {
 			if o != rd && o.page == rd.page {
 				out[i].others = append(out[i].others, o)
