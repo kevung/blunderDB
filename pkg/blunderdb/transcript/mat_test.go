@@ -9,7 +9,7 @@ import (
 	"github.com/kevung/gnubgparser"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/matrender"
 )
 
 // matFixtures are the real .mat files of the repository. One is a gnuBG export of
@@ -89,7 +89,7 @@ func scoredResult(before, after [2]int) (winner, points int) {
 }
 
 // TestFromMATRenderRoundTrip is the format gate: FromMAT → MatchParts →
-// ingest.RenderMAT → ParseMAT gives back the graph the file carried. The comparison is
+// matrender.Render → ParseMAT gives back the graph the file carried. The comparison is
 // on the fields of the graph, never on the raw text: the notation of one play has
 // several spellings (token order, "bar/off" against "25/0") and the transcript is the
 // play, not its spelling.
@@ -98,7 +98,7 @@ func TestFromMATRenderRoundTrip(t *testing.T) {
 		t.Run(path, func(t *testing.T) {
 			doc, orig := loadFixture(t, path)
 
-			out := ingest.RenderMAT(MatchParts(doc))
+			out := matrender.Render(MatchParts(doc))
 			rt, err := gnubgparser.ParseMAT(strings.NewReader(out))
 			if err != nil {
 				t.Fatalf("re-parse rendered .mat: %v\n%s", err, out)
@@ -297,7 +297,7 @@ func TestFromMATUnrecordedFixture(t *testing.T) {
 // would write a .mat that claims the player could not move.
 func TestRenderMATGivesBackTheQuestionMarks(t *testing.T) {
 	doc, _ := loadFixture(t, "../../../testdata/test.mat")
-	out := ingest.RenderMAT(MatchParts(doc))
+	out := matrender.Render(MatchParts(doc))
 	if n := strings.Count(out, UnrecordedNotation); n != unrecordedFixtureCount {
 		t.Errorf("%d %q cells rendered, want %d:\n%s", n, UnrecordedNotation, unrecordedFixtureCount, out)
 	}
