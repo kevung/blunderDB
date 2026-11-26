@@ -293,6 +293,7 @@ type boardReading struct {
 	digits [2][12]int
 	cubes  []square
 	dice   []square
+	trays  [2]int // borne off in the top and bottom rows' trays, 0 when not read
 	field  [6]float64
 	// cubeFigs are the numbers read in a square beside the field, kept
 	// once the document's figures are read.

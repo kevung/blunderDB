@@ -159,6 +159,12 @@ type drawOpts struct {
 	hidePipTop bool
 	inkPips    bool // draw the pip counts in the image, figures of inkFont
 	inkFont    int
+	// tray draws a box beside the field for each row, its borne-off
+	// checkers as thin bars; trayExtra bars more than borne off.
+	tray      bool
+	trayExtra int
+	// darkFill is the dark checkers' grey, 0.2 when unset.
+	darkFill float64
 }
 
 // draw puts a diagram on the canvas with its top-left corner at (ox, oy)
@@ -201,6 +207,10 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 	}
 	r := 0.48 * p
 	step := 2 * r
+	df := 0.2
+	if o.darkFill > 0 {
+		df = o.darkFill
+	}
 	stackAt := func(top bool, j, n int, fill float64) {
 		x0, x1 := col(j)
 		cx := float64(x0+x1) / 2
@@ -215,9 +225,9 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 	for q := 1; q <= 24; q++ {
 		if n := s.bottom[q]; n > 0 {
 			if q <= 12 {
-				stackAt(false, 12-q, n, 0.2)
+				stackAt(false, 12-q, n, df)
 			} else {
-				stackAt(true, q-13, n, 0.2)
+				stackAt(true, q-13, n, df)
 			}
 		}
 		if n := s.top[q]; n > 0 {
@@ -228,9 +238,36 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 			}
 		}
 	}
+	if o.tray {
+		x0, x1 := d+t+int(0.4*p), d+t+int(1.2*p)
+		mid := (y0 + y1) / 2
+		for row, off := range []int{15 - s.top[0], 15 - s.bottom[0]} {
+			for q := 1; q <= 24; q++ {
+				if row == 0 {
+					off -= s.top[q]
+				} else {
+					off -= s.bottom[q]
+				}
+			}
+			off += o.trayExtra
+			ya, yb := y0, mid-int(0.5*p)
+			if row == 1 {
+				ya, yb = mid+int(0.5*p), y1
+			}
+			c.rect(x0, ya, x1, yb, 0)
+			c.rect(x0+2, ya+2, x1-2, yb-2, 1)
+			for k := 0; k < off; k++ {
+				y := yb - 6 - k*7
+				if row == 0 {
+					y = ya + 4 + k*7
+				}
+				c.rect(x0+4, y, x1-4, y+3, 0)
+			}
+		}
+	}
 	bx := float64(b+cc) / 2
 	for k := 0; k < s.bottom[0]; k++ {
-		c.disc(bx, float64(y0)+0.3*float64(H)+float64(k)*step, r, 0.2)
+		c.disc(bx, float64(y0)+0.3*float64(H)+float64(k)*step, r, df)
 	}
 	for k := 0; k < s.top[0]; k++ {
 		c.disc(bx, float64(y1)-0.3*float64(H)-float64(k)*step, r, 1)

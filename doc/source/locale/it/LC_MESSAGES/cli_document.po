@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 18:46+0100\n"
+"POT-Creation-Date: 2026-11-26 23:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.19.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cli_document.rst:4
 msgid "Importer les positions d'un document"
@@ -209,12 +209,13 @@ msgstr ""
 #: ../../source/cli_document.rst:110
 msgid ""
 "``complete`` — ``true`` quand les pions ont été lus à quinze par camp "
-"sans aucun doute, sans qu'un recoupement les confirme (voir "
-":ref:`cli_document_complete`) ;"
+"(sur le plateau, ou avec ceux du plateau de sortie lu) sans aucun doute, "
+"sans qu'un recoupement les confirme (voir :ref:`cli_document_complete`) ;"
 msgstr ""
-"``complete`` — ``true`` quando le pedine sono state lette a quindici per "
-"lato senza alcun dubbio, senza che un controllo incrociato le confermi "
-"(vedi :ref:`cli_document_complete`);"
+"``complete`` — ``true`` quando le pedine sono state lette a quindici "
+"per lato (sul tabellone, o insieme a quelle del tabellone di uscita "
+"letto) senza alcun dubbio, senza che un riscontro le confermi (vedi "
+":ref:`cli_document_complete`);"
 
 #: ../../source/cli_document.rst:113
 msgid ""
@@ -673,20 +674,28 @@ msgid ""
 " imprimés, et le sens de jeu supposé quand aucun pip du document ne l'a "
 "confirmé. Des pips imprimés qui diffèrent des pips calculés sont un doute"
 " sur les pions : l'entrée n'est alors jamais complète. Une position dont "
-"des pions sont sortis ne l'est jamais non plus."
+"des pions sont sortis ne l'est que si le document dessine son plateau de "
+"sortie en barres (un pion sorti vu de profil) : les barres comptées dans "
+"le plateau, à côté de la rangée du camp, complètent à quinze ses pions "
+"dessinés. Un plateau dont les barres ne complètent pas quinze est un "
+"doute nommé (``they do not make fifteen``)."
 msgstr ""
-"Un diagramma senza pip stampati non ha controllo incrociato: le sue "
-"pedine restano ``to-verify``. Lette a quindici pedine per lato senza "
-"alcun dubbio, sono segnate ``\"complete\": true``: su tutte le misure "
-"fatte, queste letture erano esatte, ma nulla le conferma diagramma per "
-"diagramma. È uno stato intermedio, distinto da ``sure``. Una voce "
-"completa porta, oltre al contesto, solo due dubbi: l'assenza di pip "
-"stampati e il senso di gioco supposto quando nessun pip del documento lo "
-"ha confermato. Dei pip stampati che differiscono dai pip calcolati sono "
-"un dubbio sulle pedine: la voce non è allora mai completa. Nemmeno una "
-"posizione da cui sono uscite delle pedine è mai completa."
+"Un diagramma senza pip stampati non ha riscontro: le sue pedine "
+"restano ``to-verify``. Lette a quindici pedine per lato senza alcun "
+"dubbio, sono contrassegnate ``\"complete\": true``: in tutte le misure "
+"effettuate queste letture erano esatte, ma nulla le conferma diagramma "
+"per diagramma. È uno stato intermedio, distinto da ``sure``. Oltre al "
+"contesto, una voce completa porta solo due dubbi: l'assenza di pip "
+"stampati e il verso di gioco supposto quando nessun pip del documento "
+"lo ha confermato. Dei pip stampati che differiscono dai pip calcolati "
+"sono un dubbio sulle pedine: la voce non è allora mai completa. Una "
+"posizione con pedine uscite lo è solo se il documento disegna il suo "
+"tabellone di uscita a barre (una pedina uscita vista di profilo): le "
+"barre contate nel tabellone, accanto alla fila del lato, completano a "
+"quindici le sue pedine disegnate. Un tabellone le cui barre non fanno "
+"quindici è un dubbio nominato (``they do not make fifteen``)."
 
-#: ../../source/cli_document.rst:342
+#: ../../source/cli_document.rst:345
 msgid ""
 "Le sens de jeu supposé est lui aussi un défaut du document, avec sa "
 "propre confirmation : un sens faux échangerait les joueurs de toutes les "
@@ -698,7 +707,7 @@ msgstr ""
 "giocatori di tutte le posizioni lette sotto di esso. Compare nel contesto"
 " predefinito, sotto ``direction``:"
 
-#: ../../source/cli_document.rst:354
+#: ../../source/cli_document.rst:357
 msgid ""
 "Confirmer le contexte ne le confirme pas. On le contrôle sur quelques "
 "diagrammes, puis on écrit ``\"confirmed\": true`` dans ``direction``."
@@ -706,7 +715,7 @@ msgstr ""
 "Confermare il contesto non lo conferma. Lo si controlla su alcuni "
 "diagrammi, poi si scrive ``\"confirmed\": true`` in ``direction``."
 
-#: ../../source/cli_document.rst:357
+#: ../../source/cli_document.rst:360
 msgid ""
 "``import --accept-complete`` accepte en bloc les entrées complètes dont "
 "le contexte est certifié (lu, ou sous le contexte par défaut confirmé) et"
@@ -720,7 +729,7 @@ msgstr ""
 "poi confermato), senza segnarle come verificate; ``check`` le conta, e "
 "conta a parte quelle trattenute da un senso non confermato:"
 
-#: ../../source/cli_document.rst:373
+#: ../../source/cli_document.rst:376
 msgid ""
 "L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
 " checkers read with no doubt``). Une entrée complète dont le contexte "
@@ -732,7 +741,7 @@ msgstr ""
 "non è certificato, o il cui senso di gioco supposto non è confermato, "
 "resta rifiutata; il messaggio d'errore dice di confermarlo."
 
-#: ../../source/cli_document.rst:378
+#: ../../source/cli_document.rst:381
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
@@ -765,7 +774,7 @@ msgstr ""
 "il dubbio lo dice (``the two disagree``). Una voce senza pip letti resta "
 "``to-verify`` (``no printed pip count was found next to the diagram``)."
 
-#: ../../source/cli_document.rst:392
+#: ../../source/cli_document.rst:395
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
@@ -778,7 +787,7 @@ msgstr ""
 " pip stampati nello stesso posto in tutto il documento e una trentina di "
 "diagrammi letti a quindici pedine per lato per apprendere quel posto."
 
-#: ../../source/cli_document.rst:397
+#: ../../source/cli_document.rst:400
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -796,23 +805,30 @@ msgstr ""
 "pedine uscite contate per differenza, un cubo disegnato fuori dal centro,"
 " dadi disegnati."
 
-#: ../../source/cli_document.rst:404
+#: ../../source/cli_document.rst:407
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
-"joueur au trait (celui du bas), le plateau de sortie (un camp dessiné "
-"avec moins de quinze pions a les autres sortis)."
+"joueur au trait (celui du bas), le plateau de sortie qui n'est pas "
+"dessiné en barres (un camp dessiné avec moins de quinze pions a alors les"
+" autres sortis), les pions dessinés en lettres (X et O) : un document "
+"dont aucun pion n'est un disque plein n'est pas lu, chaque diagramme est "
+"``uncertain`` avec ce motif (``the document draws no filled checker``)."
 msgstr ""
-"Non sono mai letti: il valore e il proprietario del cubo (il contesto "
-"predefinito lo dice centrato), i dadi (nessuno), il punteggio (partita "
-"libera), il giocatore di turno (quello in basso), la tavola di uscita (un"
-" lato disegnato con meno di quindici pedine ha le altre uscite)."
+"Non vengono mai lette: il valore e il proprietario del videau (il "
+"contesto predefinito lo dice centrato), i dadi (nessuno), il punteggio "
+"(partita libera), il giocatore al tratto (quello in basso), il "
+"tabellone di uscita quando non è disegnato a barre (un lato disegnato "
+"con meno di quindici pedine ha allora le altre uscite) e le pedine "
+"disegnate come lettere (X e O): un documento in cui nessuna pedina è "
+"un disco pieno non viene letto, e ogni diagramma è ``uncertain`` con "
+"questo motivo (``the document draws no filled checker``)."
 
-#: ../../source/cli_document.rst:410
+#: ../../source/cli_document.rst:416
 msgid "Pourquoi l'import refuse"
 msgstr "Perché l'importazione rifiuta"
 
-#: ../../source/cli_document.rst:412
+#: ../../source/cli_document.rst:418
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -824,7 +840,7 @@ msgstr ""
 "quindi **tutto** il relevé, prima di scrivere qualunque cosa, nomina i "
 "ranghi e dice cosa fare:"
 
-#: ../../source/cli_document.rst:420
+#: ../../source/cli_document.rst:426
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -832,7 +848,7 @@ msgstr ""
 "Quando delle voci sono sotto un contesto predefinito non confermato, o "
 "complete senza ``--accept-complete``, il messaggio lo dice anch'esso:"
 
-#: ../../source/cli_document.rst:427
+#: ../../source/cli_document.rst:433
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -842,11 +858,11 @@ msgstr ""
 "relevé così com'è; l'importazione dice allora quante voci ha forzato "
 "(``Forced: 3 entries neither sure nor verified``)."
 
-#: ../../source/cli_document.rst:434
+#: ../../source/cli_document.rst:440
 msgid "Le repli"
 msgstr "Il ripiego"
 
-#: ../../source/cli_document.rst:436
+#: ../../source/cli_document.rst:442
 msgid ""
 "Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
 "``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
@@ -863,7 +879,7 @@ msgstr ""
 "letto e il predefinito per il resto. ``check`` nomina questi ranghi, e il"
 " messaggio di errore propone il ripiego:"
 
-#: ../../source/cli_document.rst:447
+#: ../../source/cli_document.rst:453
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
@@ -887,11 +903,11 @@ msgstr ""
 " non confermato. Anche con ``--force``, una voce senza posizione è "
 "rifiutata: va compilata o rimossa."
 
-#: ../../source/cli_document.rst:458
+#: ../../source/cli_document.rst:464
 msgid "Ce qui entre en base"
 msgstr "Cosa entra nel database"
 
-#: ../../source/cli_document.rst:460
+#: ../../source/cli_document.rst:466
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -905,7 +921,7 @@ msgstr ""
 "sua identità: una posizione che ha già non viene duplicata (``new in the "
 "library`` conta quelle che le mancavano)."
 
-#: ../../source/cli_document.rst:466
+#: ../../source/cli_document.rst:472
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -919,7 +935,7 @@ msgstr ""
 "conserva la sua descrizione se ne ha una; una collezione dinamica "
 "(definita da una query) viene rifiutata."
 
-#: ../../source/cli_document.rst:470
+#: ../../source/cli_document.rst:476
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -927,7 +943,7 @@ msgstr ""
 "Ogni posizione porta un **commento** che ne dà il riferimento, dopo il "
 "titolo del documento: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:473
+#: ../../source/cli_document.rst:479
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -937,11 +953,11 @@ msgstr ""
 "dell'autore. Un'importazione interrotta o rifiutata non scrive nulla: è "
 "una sola transazione."
 
-#: ../../source/cli_document.rst:477
+#: ../../source/cli_document.rst:483
 msgid "Une position répétée"
 msgstr "Una posizione ripetuta"
 
-#: ../../source/cli_document.rst:479
+#: ../../source/cli_document.rst:485
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -953,11 +969,11 @@ msgstr ""
 "cita ogni riferimento: ``Mon livre — p. 2, Problem 1; p. 4``. "
 "``repeated`` conta queste ripetizioni."
 
-#: ../../source/cli_document.rst:485
+#: ../../source/cli_document.rst:491
 msgid "Réimporter"
 msgstr "Reimportare"
 
-#: ../../source/cli_document.rst:487
+#: ../../source/cli_document.rst:493
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -970,11 +986,11 @@ msgstr ""
 "mai raddoppiato. Si può quindi riprendere un'importazione dopo aver "
 "corretto il relevé."
 
-#: ../../source/cli_document.rst:493
+#: ../../source/cli_document.rst:499
 msgid "Le démon"
 msgstr "Il demone"
 
-#: ../../source/cli_document.rst:495
+#: ../../source/cli_document.rst:501
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "
@@ -1163,3 +1179,4 @@ msgstr ""
 #~ "l'assistente non offre ``--force``. Il "
 #~ "bilancio indica il numero di posizioni"
 #~ " aggiunte e ripetute."
+

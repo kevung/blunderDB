@@ -323,6 +323,7 @@ type zone struct {
 	digits [2][12]int
 	cubes  []square // the cubes drawn
 	dice   []square // the dice drawn
+	trays  [2]int   // checkers in the trays of the top and bottom rows, 0 when none is read
 	// field is the field's frame (a, b, c, d, y0, y1) in the page's pixels,
 	// the straightening neglected: where a cube's figure or a word lies.
 	field [6]float64
@@ -451,6 +452,7 @@ func locate(g *raster, dpi float64) []zone {
 				rawInk := hysteresis(raw)
 				z.digits = labelDigits(rawInk, r0, c0, fb)
 				z.cubes, z.dice = squares(raw, rawInk, r0, c0, fb, X0, Y0)
+				z.trays = trays(rawInk, r0, c0, fb)
 				z.field = [6]float64{float64(X0 + c0 + fb.a), float64(X0 + c0 + fb.b), float64(X0 + c0 + fb.c),
 					float64(X0 + c0 + fb.d), float64(Y0 + r0 + fb.y0), float64(Y0 + r0 + fb.y1)}
 			}
@@ -671,6 +673,120 @@ func readingOrder(zs []zone, W int) []zone {
 		for _, col := range cols {
 			sort.SliceStable(col, func(i, j int) bool { return col[i].bbox.y0 < col[j].bbox.y0 })
 			out = append(out, col...)
+		}
+	}
+	return out
+}
+
+// trays counts the checkers drawn borne off, seen edge-on as thin bars
+// stacked in a tray: a band beside the field bounded by two vertical strokes
+// (the field's edge and the board's, or a box of its own), on the side of
+// either row. A bar is a run of rows inked across the band, thinner than 0.4
+// point, away from the band's own ends; a run thicker is a divider or a
+// stack whose bars touch. A row's tray is read only when exactly one band
+// beside it holds bars; 0 is "not read", never "empty".
+func trays(ink *mask, oy, ox int, f frame) [2]int {
+	p := f.pointWidth()
+	var out [2]int
+	mid := (f.y0 + f.y1) / 2
+	minLine := max(4, trunc(1.5*p))
+	for row := 0; row < 2; row++ {
+		ya, yb := oy+f.y0-trunc(0.3*p), oy+mid
+		if row == 1 {
+			ya, yb = oy+mid, oy+f.y1+trunc(0.3*p)
+		}
+		ya, yb = max(ya, 0), min(yb, ink.h)
+		if yb-ya < minLine {
+			continue
+		}
+		found, count := 0, 0
+		for _, side := range []int{-1, 1} {
+			// x from the field's edge outward, 2.2 points at most.
+			edge := ox + f.d
+			if side < 0 {
+				edge = ox + f.a
+			}
+			type vline struct{ lo, hi, y0, y1 int }
+			var lines []vline
+			for k := 0; float64(k) <= 2.2*p; k++ {
+				x := edge + side*k
+				if x < 0 || x >= ink.w {
+					break
+				}
+				best, b0, run, r0 := 0, 0, 0, 0
+				for y := ya; y < yb; y++ {
+					if ink.at(x, y) {
+						if run == 0 {
+							r0 = y
+						}
+						run++
+						if run > best {
+							best, b0 = run, r0
+						}
+					} else {
+						run = 0
+					}
+				}
+				if best < minLine {
+					continue
+				}
+				if n := len(lines); n > 0 && abs(lines[n-1].hi-x) <= 1 || n > 0 && abs(lines[n-1].lo-x) <= 1 {
+					l := &lines[n-1]
+					l.lo, l.hi = min(l.lo, x), max(l.hi, x)
+					l.y0, l.y1 = max(l.y0, b0), min(l.y1, b0+best)
+					continue
+				}
+				lines = append(lines, vline{x, x, b0, b0 + best})
+			}
+			for i := 0; i+1 < len(lines); i++ {
+				l, r := lines[i], lines[i+1]
+				if side < 0 {
+					l, r = r, l
+				}
+				x0, x1 := l.hi+2, r.lo-1
+				if float64(x1-x0) < 0.25*p || float64(x1-x0) > 1.4*p {
+					continue
+				}
+				y0, y1 := max(l.y0, r.y0), min(l.y1, r.y1)
+				if y1-y0 < minLine {
+					continue
+				}
+				// A run at an end of the band holds its border, as thick as
+				// its vertical strokes, and a bar only beyond that.
+				wt := max(l.hi-l.lo, r.hi-r.lo) + 1
+				bars, run := 0, 0
+				end := func(y int) {
+					n := run
+					if y-run <= y0+2 || y >= y1-2 {
+						n -= wt + 1
+					}
+					if n > 0 && float64(n) < 0.4*p {
+						bars++
+					}
+					run = 0
+				}
+				for y := y0; y < y1; y++ {
+					n := 0
+					for x := x0; x < x1; x++ {
+						if ink.at(x, y) {
+							n++
+						}
+					}
+					if float64(n) >= 0.6*float64(x1-x0) {
+						run++
+					} else {
+						end(y)
+					}
+				}
+				end(y1)
+				if bars > 0 {
+					found++
+					count = bars
+				}
+			}
+		}
+		if found == 1 {
+			out[row] = count
 		}
 	}
 	return out

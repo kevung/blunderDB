@@ -198,3 +198,47 @@ Formats : #993 (JPEG 2000 : Woolsey, Magriel 1976) et #997 (JBIG2 : Magriel 1976
 - Le sens de jeu supposé (1 422 entrées sans pips imprimés) et le contexte « sous le défaut »
   dépendent d'une confirmation par une personne : sans elle, seules les 1 043 entrées Deep Cube
   sont importables sans option.
+
+## Pions : #998, #1000, #1004 (réglage seulement)
+
+Mesure par `TestMeasureReglage` (`pkg/blunderdb/document/structure/measure_reglage_test.go`) :
+le lecteur de structure ne décode que les pages de réglage de `tirage.json`, apprend le style du
+livre sur elles seules (d'où des comptes distincts du tableau ci-dessus, qui lisait le livre
+entier). Colonnes : sûrs (état confirmé) / complets (15 + 15, ou 15 avec le plateau lu, sans
+doute) / à vérifier / incertains ; « sortis supposés » = doutes « taken as borne off ». Avant :
+`main` 071775534 ; après : branche `feat/doc-pions`. Les autres livres de réglage (Boot Camp,
+Cube Like a Boss, Classic Revisited, Back Checker, Opening Concepts 2019, 501 Problems,
+Opening Concepts 2017) : aucune entrée changée, ni d'état ni de position.
+
+| Livre | Avant | Après | Sortis supposés avant → après | Plateau ≠ 15 (nommé) |
+|---|---|---|---:|---:|
+| Magriel & Roberts | 0 / 0 / 0 / 441 | 0 / 0 / 0 / 441 | 437 → 0 | — |
+| Endgame Technique | 11 / 80 / 153 / 4 | 11 / 89 / 144 / 4 | 136 → 88 | 39 |
+| Masterclass | 50 / 71 / 36 / 16 | 50 / 71 / 36 / 16 | 52 → 45 | 6 |
+| Backgammon Book (Jacoby) | 0 / 0 / 65 / 0 | 0 / 0 / 65 / 0 | 130 → 129 | 1 |
+
+- **#998** : les 441 diagrammes de Magriel & Roberts restent incertains, mais par un seul doute
+  qui nomme la cause (« the document draws no filled checker ») au lieu de piles sombres
+  comptées sur les flèches grisées. Règle générale : les deux classes de pions apprises sont
+  toutes deux plus claires que le gris moyen (0,5, papier = 1, encre = 0) — ici 0,73 et 0,95,
+  les O sur flèche grisée et les O sur blanc ; les livres à pions pleins ont leur classe
+  sombre entre 0,01 et 0,40. Lire les lettres X/O n'est pas fait.
+- **#1000** : tranché pour la lecture du plateau quand le document le dessine. Les pions sortis
+  vus de profil (barres) sont comptés dans une bande bornée par deux traits verticaux à côté de
+  la rangée du camp ; une entrée n'est complète que si dessinés + plateau font quinze, sinon un
+  doute nommé. Endgame : 9 entrées passent à complètes (positions inchangées, vérifiées à l'œil
+  p. 27) ; 39 plateaux lus ne complètent pas quinze — barres jointives ou contours doubles
+  (p. 113 : dix pions clairs sortis lus douze), doute nommé, jamais une entrée complète.
+  Distinguer un demi-plateau d'une fin de partie n'apporte rien de plus : le demi-plateau est
+  déjà un doute nommé (« half board »).
+- **#1004** (diagnostic) : les classes de couleur de Masterclass sont saines (0,40 / 1). Les
+  pips contraires et les 16 pions d'un camp viennent des diagrammes annotés : flèches de coup
+  et pions fantômes hachurés dessinés sur le plateau (p. 28, p. 52), lus comme pions ou cachant
+  des pions ; un camp « sans pion » est un camp tout sorti (p. 20, plateau de 15 barres serrées
+  non compté). La couche texte imprime, à droite, le nombre de pions sortis sous chaque
+  plateau (p. 91 : 13 et 3) : pris pour des pips, il contredit les pips de l'image — doute
+  « the two disagree », juste. Restent ouverts : reconnaître une flèche de coup et nommer ce
+  doute ; ne pas prendre les comptes de plateau imprimés pour des pips.
+- Essai écarté : n'étendre une pile sombre par sa longueur qu'à partir d'un pion vu un à un.
+  Il retirait les piles fantômes mais faisait tomber Cube Like a Boss de 157 à 78 sûrs et
+  Masterclass de 50 à 23 : des pions sombres jointifs n'ont souvent aucun bord visible.

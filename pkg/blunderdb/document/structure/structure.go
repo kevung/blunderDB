@@ -30,8 +30,13 @@
 // nothing is in doubt. The printed pips may also fix the height of one
 // ambiguous stack, and the reading is then sure only if that side reaches
 // fifteen checkers, a second equation the pips did not give. The checkers
-// borne off are taken as fifteen less those drawn, and the direction of play
-// when no pips confirm it is a supposition: both are named doubts.
+// borne off are counted in the tray when the document draws them there as
+// bars: a side's drawn and tray checkers make fifteen, or the gap is a named
+// doubt. With no tray read they are taken as fifteen less those drawn, and
+// the direction of play when no pips confirm it is a supposition: both are
+// named doubts. A document whose two checker classes are both lighter than
+// mid-grey draws no filled checker (letters X and O): it is not read, each
+// diagram uncertain with that cause.
 //
 // The context — cube, dice, player on roll, score — is read apart
 // (context.go, Diagram.Context), a field certified only by a cross-check: a
@@ -324,7 +329,7 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 		res.Rejected += rp.rejected
 		for k, z := range zs {
 			rd := readBoard(z, geo)
-			rd.digits, rd.cubes, rd.dice, rd.field = z.digits, z.cubes, z.dice, z.field
+			rd.digits, rd.cubes, rd.dice, rd.field, rd.trays = z.digits, z.cubes, z.dice, z.field, z.trays
 			rd.page, rd.bbox, rd.pageW, rd.pageH = i, z.bbox, rp.w, rp.h
 			rd.numbers = rp.numbers[k]
 			rds = append(rds, &rd)

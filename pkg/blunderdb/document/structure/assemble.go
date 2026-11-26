@@ -502,6 +502,10 @@ func releve(rds []*boardReading, words map[int][]Word, img []*[2]int, home strin
 		}
 	}
 	cl := learnClasses(means)
+	// Both classes lighter than mid-grey on a page whose paper is 1 and ink
+	// 0: the document draws no filled checker, its "dark" class is hollow
+	// discs on shaded points, and the other side is drawn otherwise.
+	hollow := cl.ok && cl.c0 > 0.5
 	numbering := map[string]map[[2]int]int{}
 	for _, h := range corners {
 		numbering[h] = map[[2]int]int{}
@@ -720,6 +724,10 @@ func releve(rds []*boardReading, words map[int][]Word, img []*[2]int, home strin
 	}
 	diagrams := make([]Diagram, 0, len(rds))
 	for i, rd := range rds {
+		if hollow {
+			diagrams = append(diagrams, hollowDiagram(rd, cl, fs[i].pips, fs[i].read))
+			continue
+		}
 		diagrams = append(diagrams, judge(rd, cl, home0, upper, order, assumed, fs[i].pips, fs[i].read))
 	}
 	return diagrams, prof
@@ -830,6 +838,12 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 	}
 	n := [2]int{checkersOf(pts, bar, 0), checkersOf(pts, bar, 1)}
 	pc := [2]int{pipsOf(pts, bar, 0), pipsOf(pts, bar, 1)}
+	// A player's borne-off checkers lie in the tray beside their home row.
+	var tray [2]int
+	tray[upper], tray[1-upper] = rd.trays[1], rd.trays[0]
+	// fifteen: the side's checkers drawn, with those its tray shows, make
+	// fifteen — two counts read apart.
+	fifteenOf := func(k int) bool { return n[k] == 15 || tray[k] > 0 && n[k]+tray[k] == 15 }
 	var okPips bool
 	switch {
 	case printed == nil:
@@ -856,7 +870,7 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		Printed:   printed,
 		TextPips:  read.text,
 		ImagePips: read.image,
-		Complete:  n == [2]int{15, 15} && pieceDoubts == 0 && !solved,
+		Complete:  fifteenOf(0) && fifteenOf(1) && pieceDoubts == 0 && !solved,
 	}
 	// What is drawn and not read: never invented, named so a sure reading
 	// is not taken for more than its checkers.
@@ -874,7 +888,9 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 			add("orientation", 0, "", AssumedDirectionReason)
 		}
 		for _, k := range []int{upper, 1 - upper} {
-			if n[k] < 15 {
+			if n[k] < 15 && tray[k] > 0 && !fifteenOf(k) {
+				add("checkers", 0, "", "the %s player (%s) has %d checkers drawn and %d in its tray: they do not make fifteen", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k], tray[k])
+			} else if n[k] < 15 && !fifteenOf(k) {
 				add("checkers", 0, "", "the %s player (%s) has %d checkers drawn: the other %d are taken as borne off, the tray is not read", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k], 15-n[k])
 			} else if n[k] > 15 {
 				add("checkers", 0, "", "the %s player (%s) has %d checkers drawn, more than fifteen", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k])
@@ -906,4 +922,25 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 	d.State, d.Doubts, d.Families = state, doubts, families
 	d.CheckersSure = max(n[0], n[1]) <= 15 && okPips && pieceDoubts == 0 && (!solved || fifteen)
 	return d
+}
+
+// HollowReason is the doubt of every diagram of a document that draws no
+// filled checker (letters X and O, marks): the reader reads discs, and two
+// classes of hollow discs are not two players.
+const HollowReason = "the document draws no filled checker (both checker classes are lighter than mid-grey): one side is drawn otherwise, as letters or marks, and is not read"
+
+// hollowDiagram is a diagram of a document without filled checkers: not a
+// position, its one named cause instead of counts of shaded points.
+func hollowDiagram(rd *boardReading, cl classes, printed *[2]int, read pipsRead) Diagram {
+	return Diagram{
+		Page:      rd.page,
+		Rect:      image2Rect(rd.bbox),
+		PageSize:  [2]int{rd.pageW, rd.pageH},
+		State:     Uncertain,
+		Printed:   printed,
+		TextPips:  read.text,
+		ImagePips: read.image,
+		Doubts:    []capture.Doubt{{Field: "checkers", Reason: HollowReason}},
+		Families:  []string{"hollow classes"},
+	}
 }
