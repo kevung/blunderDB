@@ -844,11 +844,14 @@ L'annulation comme la fermeture interrompent aussi la position en cours de
 calcul, qui reste sans analyse.
 
 Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un rollout
-stocké ou une opération de maintenance. Un lot ou une opération lancés depuis
-l'onglet *Maintenance* sont refusés tant qu'un autre travail est en cours, et la barre de
-statut nomme ce travail ; le lot que lance un import, une transcription ou un
-duel attend au contraire qu'il finisse, et la barre de statut l'annonce
-« en attente » jusqu'à son départ.
+stocké ou une opération de maintenance. Un travail demandé pendant qu'un autre
+est en cours n'est pas refusé : il prend place dans la file de la bibliothèque,
+après les travaux de même priorité, et part dès que son tour vient ; la barre
+de statut annonce « en attente » le lot gammonNet qui attend. Un rollout passe
+avant un lot gammonNet ou une opération de maintenance qui attendent ; un lot
+gammonNet en cours lui rend la bibliothèque entre deux positions et reprend
+après lui ce qui reste à analyser. Un lot gammonNet en cours cède aussi la
+main, entre deux positions, à un rollout qui calcule sans écrire.
 
 .. _rollout_reglage:
 

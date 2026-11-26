@@ -7,6 +7,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 )
 
 // recordingBind stands for the bound *database.Database, recording when it
@@ -35,16 +36,13 @@ func TestShutdownCancelsJobsBeforeClosingTheBinds(t *testing.T) {
 	var cancelledBeforeClose bool
 
 	// A simulated batch in flight, closing its stopped channel after cancel.
-	a.gnBatchMu.Lock()
-	a.gnBatchCancel = func() {
+	fakeTask(a, 1, func() {
 		close(cancelled)
 		go func() {
 			time.Sleep(20 * time.Millisecond) // the position still mid-search
 			close(stopped)
 		}()
-	}
-	a.gnBatchDone = stopped
-	a.gnBatchMu.Unlock()
+	}, stopped)
 
 	bind := &recordingBind{closed: make(chan struct{}), closeAt: func() {
 		select {
@@ -103,10 +101,7 @@ func TestStopBackgroundJobsGivesUpAfterTheGrace(t *testing.T) {
 	a := NewApp(nil)
 	a.ctx = context.Background()
 
-	a.gnBatchMu.Lock()
-	a.gnBatchCancel = func() {}
-	a.gnBatchDone = make(chan struct{}) // never closed: the job never stops
-	a.gnBatchMu.Unlock()
+	fakeTask(a, 1, func() {}, make(chan struct{})) // never closed: the job never stops
 
 	start := time.Now()
 	a.stopBackgroundJobs(50 * time.Millisecond)
@@ -131,7 +126,7 @@ func TestRunGammonNetBatchSignalsItsEnd(t *testing.T) {
 	a := NewApp(d)
 
 	release := make(chan struct{})
-	a.runGammonNetBatch(0, 2, false, func(ctx context.Context, _ *database.Database, _ func(done, total int)) (database.GammonNetBatchSummary, error) {
+	a.runGammonNetBatch(0, 2, jobs.GammonNetMissing, func(ctx context.Context, _ *database.Database, _ func(done, total int)) (database.GammonNetBatchSummary, error) {
 		<-release
 		return database.GammonNetBatchSummary{}, ctx.Err()
 	})
@@ -177,14 +172,8 @@ func TestStopBackgroundJobsGraceCoversEveryJob(t *testing.T) {
 	a := NewApp(nil)
 	a.ctx = context.Background()
 
-	a.gnBatchMu.Lock()
-	a.gnBatchCancel = func() {}
-	a.gnBatchDone = make(chan struct{})
-	a.gnBatchMu.Unlock()
-	a.roMu.Lock()
-	a.roCancel = func() {}
-	a.roDone = make(chan struct{})
-	a.roMu.Unlock()
+	fakeTask(a, 1, func() {}, make(chan struct{}))
+	fakeTask(a, 1, func() {}, make(chan struct{}))
 
 	returned := make(chan time.Duration, 1)
 	go func() {
@@ -242,10 +231,7 @@ func TestShutdownCloseDoesNotWaitTwice(t *testing.T) {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
 	a := NewApp(d)
-	a.gnBatchMu.Lock()
-	a.gnBatchCancel = func() {}
-	a.gnBatchDone = make(chan struct{}) // never closed: the job never stops
-	a.gnBatchMu.Unlock()
+	fakeTask(a, 1, func() {}, make(chan struct{})) // never closed: the job never stops
 
 	a.closing.Store(true)
 	start := time.Now()
@@ -255,4 +241,16 @@ func TestShutdownCloseDoesNotWaitTwice(t *testing.T) {
 	if elapsed := time.Since(start); elapsed > time.Second {
 		t.Fatalf("Close waited %v for jobs shutdown had already waited for", elapsed)
 	}
+}
+
+// fakeTask registers a task of group's library that cancel is asked to stop
+// and that ends once stopped is closed. The registry's events are dropped:
+// a.ctx is no Wails context, and EventsEmit on it ends the process.
+func fakeTask(a *App, group int, cancel func(), stopped <-chan struct{}) {
+	if a.emitHook.Load() == nil {
+		drop := func(string, ...any) {}
+		a.emitHook.Store(&drop)
+	}
+	task := a.jobs.Start(jobs.Spec{Kind: jobs.GammonNetMissing, Library: group, Cancel: cancel})
+	go func() { <-stopped; task.Finish(nil) }()
 }

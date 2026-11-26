@@ -59,11 +59,23 @@ func (d *Database) RunMaintenance(kind string) (maintenance.Run, error) {
 // RunMaintenanceWithProgress is RunMaintenance with progress reported to fn
 // (nil for none); the CLI and the desktop's status bar print it.
 func (d *Database) RunMaintenanceWithProgress(kind string, fn func(done, total int)) (maintenance.Run, error) {
+	return RunMaintenanceContext(d, context.Background(), kind, fn)
+}
+
+// RunMaintenanceContext is RunMaintenanceWithProgress on d under parent:
+// cancelling it ends the pass as CancelMaintenance does, and a context marked
+// by WaitForDatabase waits for the job holding the library instead of being
+// refused. A function, not a method: the Wails binding of *Database cannot
+// carry a context.
+func RunMaintenanceContext(d *Database, parent context.Context, kind string, fn func(done, total int)) (maintenance.Run, error) {
 	st, err := d.openStore("maintenance run")
 	if err != nil {
 		return maintenance.Run{}, err
 	}
-	ctx, cancel := context.WithCancel(context.Background())
+	if err := parent.Err(); err != nil {
+		return maintenance.Run{Kind: maintenance.Kind(kind), Outcome: maintenance.OutcomeCancelled}, err
+	}
+	ctx, cancel := context.WithCancel(parent)
 	defer cancel()
 	release, err := d.acquireJob(ctx, JobMaintenance, cancel)
 	if err != nil {

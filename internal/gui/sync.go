@@ -16,6 +16,7 @@ import (
 	"github.com/zalando/go-keyring"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/syncremote"
 )
@@ -199,9 +200,18 @@ func (a *App) SyncNow() SyncStatus {
 	st := a.statusLocked(server)
 	a.sync.mu.Unlock()
 	a.sync.wg.Add(1)
+	// Listed only: a run is short and cannot be stopped midway.
+	task := a.jobs.Start(jobs.Spec{Kind: jobs.Sync, Label: server, Library: a.shownGroup(), Priority: jobs.Requested})
 	go func() {
 		defer a.sync.wg.Done()
 		a.syncRun(context.Background())
+		a.sync.mu.Lock()
+		var err error
+		if e := a.sync.lastErr; e != nil {
+			err = errors.New(e.Message)
+		}
+		a.sync.mu.Unlock()
+		task.Finish(err)
 		a.emitSync()
 	}()
 	return st

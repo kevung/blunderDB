@@ -21,11 +21,18 @@ type MatchRepair struct {
 // RepairMatch rewrites a match's games, moves, positions and analyses from
 // its source file, keeping everything the user brought to it
 // (ingest.RepairMatch). With dryRun nothing is written and the report says
-// what would change. CancelImport stops it.
+// what would change. CancelImport stops it. The desktop's task tracker lists
+// a repair that writes (TaskTracker).
 func (d *Database) RepairMatch(matchID int64, dryRun bool) (ingest.RepairReport, error) {
-	ctx, done := d.beginCancellableImport()
-	defer done()
-	return d.repairMatch(ctx, matchID, dryRun)
+	run := func() (ingest.RepairReport, error) {
+		ctx, done := d.beginCancellableImport()
+		defer done()
+		return d.repairMatch(ctx, matchID, dryRun)
+	}
+	if dryRun {
+		return run()
+	}
+	return tracked(d, TaskRepair, fmt.Sprintf("%d", matchID), d.CancelImport, run)
 }
 
 func (d *Database) repairMatch(ctx context.Context, matchID int64, dryRun bool) (ingest.RepairReport, error) {
