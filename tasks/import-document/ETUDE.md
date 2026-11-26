@@ -1,11 +1,12 @@
 # Import des positions d'un document — étude de conception
 
 Étude du 2026-11-25, sans code de production. Banc hors dépôt : `~/bkgm/bancs/import-document/`
-(`JOURNAL.md` tient la reprise). Corpus : `~/bkgm/bibliotheque/livres` (17 PDF, 1 EPUB, 1 DOC).
+(`JOURNAL.md` tient la reprise), copie poussée sur le dépôt privé `kevung/import-document-banc`
+(sans `texte/`, la prose extraite des livres, qui ne quitte pas le poste d'origine). Corpus : `~/bkgm/bibliotheque/livres` (17 PDF, 1 EPUB, 1 DOC).
 
 ## REPRISE (2026-11-30) — à lire en premier
 
-État de `main` (non poussé), tout fusionné, aucune branche ni worktree en attente : tranches 1 à
+État de `main` (poussé), tout fusionné, aucune branche ni worktree en attente : tranches 1 à
 4 — Relevé et import en Collection ; lecteur à glyphes (Deep Cube : 1 518 positions exactes,
 contexte lu) ; lecteur de structure en Go sur images de pages et PDF scannés lus directement
 (`pdf.Scan`, dépendance `golang.org/x/image` pour CCITT) ; pips lus dans le texte et dans
