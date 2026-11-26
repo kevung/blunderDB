@@ -29,6 +29,15 @@ const (
 	outFile     = "unsupported_gen.go"
 )
 
+// target is where the stubs are written; GEN_STUBS_OUT redirects it so a test
+// can regenerate without touching the committed file.
+func target() string {
+	if p := os.Getenv("GEN_STUBS_OUT"); p != "" {
+		return p
+	}
+	return outFile
+}
+
 type method struct {
 	iface, name string
 	ft          *ast.FuncType
@@ -38,6 +47,7 @@ func main() {
 	fset := token.NewFileSet()
 	imports := map[string]string{"storage": storagePath}
 	var methods []method
+	required := map[string]bool{} // families the Stores interface exposes
 	for _, f := range parseDir(fset, storageDir) {
 		for _, im := range f.Imports {
 			p, _ := strconv.Unquote(im.Path.Value)
@@ -55,6 +65,15 @@ func main() {
 			for _, sp := range gd.Specs {
 				ts := sp.(*ast.TypeSpec)
 				it, ok := ts.Type.(*ast.InterfaceType)
+				if ok && ts.Name.Name == "Stores" {
+					for _, m := range it.Methods.List {
+						if ft, ok := m.Type.(*ast.FuncType); ok && len(ft.Results.List) == 1 {
+							if id, ok := ft.Results.List[0].Type.(*ast.Ident); ok {
+								required[id.Name] = true
+							}
+						}
+					}
+				}
 				if !ok || !strings.HasSuffix(ts.Name.Name, "Store") || ts.Name.Name == "Stores" {
 					continue
 				}
@@ -92,7 +111,10 @@ func main() {
 	var listed []string
 	for _, m := range methods {
 		recv := lowerFirst(m.iface)
-		if written[recv+"."+m.name] {
+		// Optional capabilities (ChangeJournalStore, AnkiStateStore, ...) are
+		// not part of Stores: a backend may satisfy them, the remote has no
+		// receiver for them.
+		if !required[m.iface] || written[recv+"."+m.name] {
 			continue
 		}
 		qname := m.iface + "." + m.name
@@ -156,10 +178,10 @@ func main() {
 	out.Write(body.Bytes())
 	src, err := format.Source(out.Bytes())
 	if err != nil {
-		os.WriteFile(outFile, out.Bytes(), 0o644)
+		os.WriteFile(target(), out.Bytes(), 0o644)
 		fail("format: %v", err)
 	}
-	if err := os.WriteFile(outFile, src, 0o644); err != nil {
+	if err := os.WriteFile(target(), src, 0o644); err != nil {
 		fail("%v", err)
 	}
 }

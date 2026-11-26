@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/matrender"
 )
 
 // openedAt is a 5-point document whose first game is declared at score, its
@@ -88,7 +88,7 @@ func TestPostCrawfordDeclaration(t *testing.T) {
 // line, and reading it back gives a draft that declares it again.
 func TestPostCrawfordSurvivesTheMAT(t *testing.T) {
 	for _, declared := range []bool{true, false} {
-		text := ingest.RenderMAT(MatchParts(openedAt(t, [2]int{4, 2}, declared)))
+		text := matrender.Render(MatchParts(openedAt(t, [2]int{4, 2}, declared)))
 		if got := strings.Contains(text, domain.MATPostCrawfordHeader); got != declared {
 			t.Fatalf("declared %v: header written = %v\n%s", declared, got, text)
 		}

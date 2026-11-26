@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/matrender"
 )
 
 // The gesture fuzzer drives an Editor the way the session layer does — every
@@ -228,7 +228,7 @@ func (m *gestureModel) check(ann Annotated) {
 
 	// The save and the .mat pane read these; they must not panic on any draft.
 	parts := Build(doc)
-	_ = ingest.RenderMAT(MatchParts(doc))
+	_ = matrender.Render(MatchParts(doc))
 	_ = parts
 	_ = Candidates(doc)
 }
@@ -578,7 +578,7 @@ func checkMATRoundTrip(t *testing.T, doc Document, trace []string) {
 	if ann.Inconsistent() || len(ann.Games) == 0 {
 		return
 	}
-	text := ingest.RenderMAT(MatchParts(doc))
+	text := matrender.Render(MatchParts(doc))
 	back, err := FromMAT(text)
 	if err != nil {
 		t.Fatalf("FromMAT of the rendered draft: %v\n%s\ntrace: %v", err, text, trace)

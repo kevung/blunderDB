@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/matrender"
 )
 
 // pendingDoubleDoc is a 5-point match where White has doubled after Black's first
@@ -67,7 +67,7 @@ func TestMATOfAForfeitFacingADouble(t *testing.T) {
 		t.Fatal(err)
 	}
 	m, games, moves := MatchParts(out)
-	mat := ingest.RenderMAT(m, games, moves)
+	mat := matrender.Render(m, games, moves)
 	if strings.Contains(mat, "Takes") || strings.Contains(mat, "Drops") {
 		t.Errorf("an answer was written:\n%s", mat)
 	}

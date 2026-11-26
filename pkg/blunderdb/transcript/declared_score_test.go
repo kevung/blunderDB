@@ -9,7 +9,7 @@ import (
 	"github.com/kevung/gnubgparser"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/matrender"
 )
 
 // ADR-0053: a game's score can be DECLARED on its first Action, because a score error
@@ -279,7 +279,7 @@ func TestDeclaredScoreMATRoundTrip(t *testing.T) {
 		t.Fatalf("fixture: game 2 = %+v", ann.Games[1])
 	}
 
-	text := ingest.RenderMAT(MatchParts(doc))
+	text := matrender.Render(MatchParts(doc))
 	parsed, err := gnubgparser.ParseMAT(strings.NewReader(text))
 	if err != nil {
 		t.Fatal(err)

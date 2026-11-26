@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/matrender"
 )
 
 // lastGameEnd is how a game of these tests ends: by a resignation of the loser at
@@ -97,7 +97,7 @@ func TestMATLastGameOfUnfinishedMatchKeepsItsWinner(t *testing.T) {
 				t.Fatalf("setup: last game won by %d, want %d", last.Winner, want)
 			}
 
-			text := ingest.RenderMAT(MatchParts(doc))
+			text := matrender.Render(MatchParts(doc))
 			back, err := FromMAT(text)
 			if err != nil {
 				t.Fatal(err)
@@ -113,7 +113,7 @@ func TestMATLastGameOfUnfinishedMatchKeepsItsWinner(t *testing.T) {
 				t.Errorf(".mat round trip:\n got %+v\nwant %+v\n%s", gg, wg, text)
 			}
 			// The file read back renders as the same file.
-			if again := ingest.RenderMAT(MatchParts(back)); again != text {
+			if again := matrender.Render(MatchParts(back)); again != text {
 				t.Errorf(".mat → transcription → .mat differs:\n%s\n---\n%s", text, again)
 			}
 		})
