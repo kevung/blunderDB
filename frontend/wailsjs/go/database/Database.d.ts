@@ -18,6 +18,7 @@ import {apkg} from '../models';
 import {tournoi} from '../models';
 import {document} from '../models';
 import {maintenance} from '../models';
+import {printsheet} from '../models';
 import {parser} from '../models';
 import {rollout} from '../models';
 import {capture} from '../models';
@@ -587,6 +588,8 @@ export function MakeParticipantAvailable(arg1:number,arg2:string):Promise<servic
 export function MatchIDsReachedBy(arg1:Array<number>):Promise<Array<number>>;
 
 export function MatchMAT(arg1:number):Promise<string>;
+
+export function MatchSheetHTML(arg1:Array<number>,arg2:printsheet.MatchOptions):Promise<string>;
 
 export function MatchTranscriptionLosses(arg1:number):Promise<database.TranscriptionLosses>;
 

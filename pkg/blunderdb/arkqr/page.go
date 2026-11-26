@@ -89,12 +89,39 @@ html, body { margin: 0; padding: 0; background: #fff; color: #000; font-family: 
 		}
 		b.WriteString("</section>\n")
 	}
-	b.WriteString(`<script type="application/vnd.blunderdb.archive">` + "\n")
-	for _, c := range codes {
-		b.WriteString(base64.StdEncoding.EncodeToString(c.Frame.Bytes()) + "\n")
+	frames := make([]Frame, len(codes))
+	for i, c := range codes {
+		frames[i] = c.Frame
 	}
-	b.WriteString("</script>\n</body></html>\n")
+	b.WriteString(EmbedFrames(frames))
+	b.WriteString("</body></html>\n")
 	return b.Bytes(), nil
+}
+
+// EmbedFrames is the element that carries frames inside an HTML document,
+// the one ReadPage reads back: any page that holds it imports as an archive,
+// without reading a code.
+func EmbedFrames(frames []Frame) string {
+	var b bytes.Buffer
+	b.WriteString(`<script type="application/vnd.blunderdb.archive">` + "\n")
+	for _, f := range frames {
+		b.WriteString(base64.StdEncoding.EncodeToString(f.Bytes()) + "\n")
+	}
+	b.WriteString("</script>\n")
+	return b.String()
+}
+
+// SVG draws a frame's QR code as an inline SVG element, moduleMM millimetres
+// a module, quiet zone included; side is its width in millimetres.
+func SVG(f Frame, moduleMM float64) (svg string, side float64, err error) {
+	mods, err := Modules(f)
+	if err != nil {
+		return "", 0, err
+	}
+	n := len(mods)
+	side = float64(n) * moduleMM
+	return fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" width="%.2fmm" height="%.2fmm"><rect width="%d" height="%d" fill="#fff"/><path fill="#000" d="%s"/></svg>`,
+		n, n, side, side, n, n, svgPath(mods)), side, nil
 }
 
 // layout places the codes: rows inside a quadrant, quadrants in reading

@@ -81,7 +81,7 @@ Commandes disponibles
    "open", "Transforme un fichier protégé par mot de passe (.dbx) en base ordinaire."
    "search", "Recherche des positions avec filtres."
    "list", "Affiche le contenu de la base."
-   "match", "Affiche les positions et analyses d'un match."
+   "match", "Affiche les positions et analyses d'un match, en répare un ou l'imprime sur une feuille A4."
    "transcribe", "Rejoue une transcription et rend compte de ce que le rejeu trouve."
    "duel", "Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
    "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."

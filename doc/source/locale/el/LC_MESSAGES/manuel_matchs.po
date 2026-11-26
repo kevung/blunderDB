@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 03:02+0100\n"
+"POT-Creation-Date: 2026-11-26 12:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/manuel_matchs.rst:4
 msgid "Matchs et transcription"
@@ -45,10 +45,11 @@ msgid ""
 "l'effacer), ne garde que les matchs dont un joueur, l'événement, le lieu,"
 " le tournoi ou la date contient le texte saisi. Le filtre et le tri des "
 "colonnes sont faits par la base : la liste se charge par pages au fil du "
-"défilement, et le compteur « n / N matchs » indique la part chargée. La "
-"colonne **PR** (celle du joueur 1) se trie aussi par la base, sur toute "
-"la bibliothèque ; un match sans PR vient en dernier dans les deux sens. "
-"La colonne **Résultat** donne le score final, les points du vainqueur en "
+"défilement, et le compteur « n / N matchs » indique la part chargée ; "
+"l'impression par lot porte sur les N matchs, chargés ou non. La colonne "
+"**PR** (celle du joueur 1) se trie aussi par la base, sur toute la "
+"bibliothèque ; un match sans PR vient en dernier dans les deux sens. La "
+"colonne **Résultat** donne le score final, les points du vainqueur en "
 "gras (son nom au survol) ; un match qu'aucun joueur n'a mené à la "
 "longueur prévue s'affiche en gris. Corriger un joueur, une date ou un "
 "tournoi dans la liste ne met à jour que la ligne éditée."
@@ -58,8 +59,9 @@ msgstr ""
 "χώρος, το τουρνουά ή η ημερομηνία περιέχει το κείμενο που "
 "πληκτρολογήθηκε. Το φίλτρο και η ταξινόμηση στηλών γίνονται από τη βάση: "
 "η λίστα φορτώνει ανά σελίδες καθώς κάνετε κύλιση, και ο μετρητής «n / N "
-"αγώνες» δείχνει το μερίδιο που φορτώθηκε. Και η στήλη **PR** (του παίκτη "
-"1) ταξινομείται από τη βάση, σε όλη τη βιβλιοθήκη· ένας αγώνας χωρίς PR "
+"αγώνες» δείχνει το μερίδιο που φορτώθηκε· η μαζική εκτύπωση αφορά και "
+"τους N αγώνες, φορτωμένους ή όχι. Και η στήλη **PR** (του παίκτη 1) "
+"ταξινομείται από τη βάση, σε όλη τη βιβλιοθήκη· ένας αγώνας χωρίς PR "
 "έρχεται τελευταίος και προς τις δύο κατευθύνσεις. Η στήλη **Αποτέλεσμα** "
 "δίνει το τελικό σκορ, με τους πόντους του νικητή με έντονα γράμματα (το "
 "όνομά του στο πέρασμα του δείκτη)· ένας αγώνας που κανένας παίκτης δεν "
@@ -67,7 +69,7 @@ msgstr ""
 " μιας ημερομηνίας ή ενός τουρνουά στη λίστα ενημερώνει μόνο την "
 "επεξεργασμένη γραμμή."
 
-#: ../../source/manuel_matchs.rst:27
+#: ../../source/manuel_matchs.rst:28
 msgid ""
 "Quand la liste est vide, le panneau propose **Importer… (Ctrl+I)** ; sans"
 " base ouverte, il propose **Ouvrir une base…** à la place. Quand c'est le"
@@ -79,11 +81,11 @@ msgstr ""
 "το φίλτρο κειμένου άδειασε τη λίστα, προτείνει **Εκκαθάριση φίλτρου**. Τα"
 " κενά πάνελ Stats, Συλλογές και Anki προσφέρουν τα ίδια κουμπιά."
 
-#: ../../source/manuel_matchs.rst:32
+#: ../../source/manuel_matchs.rst:33
 msgid "L'utilisateur peut:"
 msgstr "Ο χρήστης μπορεί:"
 
-#: ../../source/manuel_matchs.rst:34
+#: ../../source/manuel_matchs.rst:35
 msgid ""
 "parcourir les coups d'un match en utilisant les touches *GAUCHE* et "
 "*DROITE*,"
@@ -91,29 +93,29 @@ msgstr ""
 "να περιηγηθεί στις κινήσεις ενός αγώνα χρησιμοποιώντας τα πλήκτρα "
 "*ΑΡΙΣΤΕΡΑ* και *ΔΕΞΙΑ*,"
 
-#: ../../source/manuel_matchs.rst:36
+#: ../../source/manuel_matchs.rst:37
 msgid "passer d'une partie à l'autre à l'aide des touches *PageUp* et *PageDown*,"
 msgstr ""
 "να μεταβεί από τη μία παρτίδα στην άλλη με τη βοήθεια των πλήκτρων "
 "*PageUp* και *PageDown*,"
 
-#: ../../source/manuel_matchs.rst:38
+#: ../../source/manuel_matchs.rst:39
 msgid "afficher l'analyse des coups (pions et cube) en appuyant sur *CTRL-L*,"
 msgstr ""
 "να εμφανίσει την ανάλυση των κινήσεων (πουλιά και κύβος) πατώντας "
 "*CTRL-L*,"
 
-#: ../../source/manuel_matchs.rst:40
+#: ../../source/manuel_matchs.rst:41
 msgid "basculer entre l'analyse des coups de pions et du cube avec la touche *d*,"
 msgstr ""
 "να εναλλάσσεται μεταξύ της ανάλυσης κινήσεων πουλιών και κύβου με το "
 "πλήκτρο *d*,"
 
-#: ../../source/manuel_matchs.rst:42
+#: ../../source/manuel_matchs.rst:43
 msgid "voir le coup effectivement joué mis en évidence dans l'analyse,"
 msgstr "να δει την κίνηση που παίχτηκε πραγματικά επισημασμένη στην ανάλυση,"
 
-#: ../../source/manuel_matchs.rst:44
+#: ../../source/manuel_matchs.rst:45
 msgid ""
 "chercher parmi les positions du match avec la commande ``ss`` (ex: ``ss "
 "E>80``) ; *Esc* ramène ensuite au coup étudié (voir "
@@ -123,7 +125,7 @@ msgstr ""
 "``ss E>80``)· το *Esc* επιστρέφει έπειτα στην κίνηση που μελετάται (βλ. "
 ":ref:`panneau_recherche`)."
 
-#: ../../source/manuel_matchs.rst:48
+#: ../../source/manuel_matchs.rst:49
 msgid ""
 "La dernière position visitée dans chaque match est mémorisée et restaurée"
 " automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande "
@@ -133,7 +135,7 @@ msgstr ""
 "επαναφέρεται αυτόματα. Πατήστε *CTRL-Tab* ή εκτελέστε την εντολή "
 "``match`` για να εμφανίσετε ή να αποκρύψετε τον πίνακα."
 
-#: ../../source/manuel_matchs.rst:52
+#: ../../source/manuel_matchs.rst:53
 msgid ""
 "Le bouton **⊕** d'une ligne enrichit ce match depuis un fichier. Il n'y a"
 " rien de nouveau derrière : réimporter le même match dans un autre format"
@@ -153,7 +155,7 @@ msgstr ""
 "και εμπλουτισμός. Η αναφορά που ακολουθεί λέει ποιο από τα δύο συνέβη — "
 "«εμπλουτισμένοι: 1» αντί για «εισηγμένοι: 1»."
 
-#: ../../source/manuel_matchs.rst:61
+#: ../../source/manuel_matchs.rst:62
 msgid ""
 "Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le"
 " bouton ⬇ de la liste des matchs ou l'entrée *Exporter en .mat* du menu ⋯"
@@ -163,24 +165,164 @@ msgstr ""
 "κουμπιού ⬇ της λίστας αγώνων ή της επιλογής *Εξαγωγή .mat* του μενού ⋯ "
 "της καρτέλας του αγώνα."
 
-#: ../../source/manuel_matchs.rst:65
+#: ../../source/manuel_matchs.rst:68
+msgid ""
+"**Imprimer…**, dans le menu contextuel d'un match de la liste ou le menu "
+"⋯ de sa fiche, imprime le match sur une feuille A4, sans aucun diagramme."
+" Une boîte d'options s'ouvre d'abord ; la feuille est ensuite enregistrée"
+" en fichier HTML autonome et ouverte dans le navigateur, qui l'imprime ou"
+" l'enregistre en PDF. L'en-tête donne les joueurs, le score final, la "
+"longueur, l'évènement, la ronde, la date, le nombre de parties et de "
+"coups, puis pour chaque joueur son PR, ses erreurs, ses blunders et son "
+"temps quand le match en a un. La transcription suit, partie par partie "
+"(score en away, vainqueur et points, durée) : un numéro de coup par "
+"ligne, les deux joueurs côte à côte, sur plusieurs colonnes. ``?`` marque"
+" une erreur, ``??`` souligné un blunder, aux seuils de la bibliothèque ; "
+"une réflexion de 30 secondes ou plus est écrite en italique à côté du "
+"coup."
+msgstr ""
+"Το **Εκτύπωση…**, στο μενού περιβάλλοντος ενός αγώνα της λίστας ή στο "
+"μενού ⋯ της καρτέλας του, εκτυπώνει τον αγώνα σε φύλλο A4, χωρίς κανένα "
+"διάγραμμα. Ανοίγει πρώτα ένα παράθυρο επιλογών· το φύλλο αποθηκεύεται "
+"κατόπιν ως αυτόνομο αρχείο HTML και ανοίγει στον περιηγητή, που το "
+"εκτυπώνει ή το αποθηκεύει ως PDF. Η κεφαλίδα δίνει τους παίκτες, το "
+"τελικό σκορ, τη διάρκεια του αγώνα, τη διοργάνωση, τον γύρο, την "
+"ημερομηνία, τον αριθμό των παρτίδων και των κινήσεων, και έπειτα για κάθε"
+" παίκτη το PR του, τα λάθη του, τις γκάφες του και τον χρόνο του όταν ο "
+"αγώνας έχει. Ακολουθεί η μεταγραφή, παρτίδα προς παρτίδα (σκορ σε away, "
+"νικητής και πόντοι, διάρκεια): ένας αριθμός κίνησης ανά γραμμή, οι δύο "
+"παίκτες δίπλα-δίπλα, σε πολλές στήλες. Το ``?`` σημαδεύει ένα λάθος, το "
+"υπογραμμισμένο ``??`` μια γκάφα, με τα όρια της βιβλιοθήκης· σκέψη 30 "
+"δευτερολέπτων ή περισσότερο γράφεται με πλάγια γράμματα δίπλα στην "
+"κίνηση."
+
+#: ../../source/manuel_matchs.rst:80
+msgid ""
+"À part, le bloc **Positions** liste les positions à revoir, écrites en "
+"ArkID dans une police à chasse fixe où ``I`` et ``l`` se distinguent. Un "
+"blunder du joueur pour qui la feuille est imprimée (le joueur principal "
+"s'il a joué le match, sinon le joueur 1) porte un numéro sur fond noir, "
+"une position qu'il a marquée ou commentée un numéro encadré ; le même "
+"numéro est reporté dans la transcription. L'ArkID occupe une colonne de "
+"34 caractères, sans retour à la ligne ; à sa droite, alignées d'une "
+"entrée à l'autre, la partie et la ligne, le joueur, puis l'analyse courte"
+" : le coup joué et sa perte, le meilleur coup et un coup alternatif avec "
+"la sienne ; pour le videau, l'action jouée et la bonne. Les pertes sont "
+"dans l'unité de l'analyse : le point en partie libre, le videau courant à"
+" un score de match."
+msgstr ""
+"Χωριστά, το μπλοκ **Θέσεις** απαριθμεί τις θέσεις προς επανεξέταση, "
+"γραμμένες ως ArkID σε γραμματοσειρά σταθερού πλάτους όπου τα ``I`` και "
+"``l`` διακρίνονται. Μια γκάφα του παίκτη για τον οποίο εκτυπώνεται το "
+"φύλλο (ο κύριος παίκτης αν έπαιξε τον αγώνα, αλλιώς ο παίκτης 1) φέρει "
+"αριθμό σε μαύρο φόντο, μια θέση που σημείωσε ή σχολίασε φέρει αριθμό σε "
+"πλαίσιο· ο ίδιος αριθμός επαναλαμβάνεται στη μεταγραφή. Το ArkID "
+"καταλαμβάνει μια στήλη 34 χαρακτήρων, χωρίς αλλαγή γραμμής· στα δεξιά "
+"του, ευθυγραμμισμένα από καταχώριση σε καταχώριση, η παρτίδα και η "
+"γραμμή, ο παίκτης και έπειτα η σύντομη ανάλυση: η κίνηση που παίχτηκε και"
+" η απώλειά της, η καλύτερη κίνηση και μια εναλλακτική κίνηση με την "
+"απώλειά της· για τον κύβο, η ενέργεια που παίχτηκε και η σωστή. Οι "
+"απώλειες είναι στη μονάδα της ανάλυσης: ο πόντος στο money play, ο τρέχων"
+" κύβος σε σκορ αγώνα."
+
+#: ../../source/manuel_matchs.rst:92
+msgid ""
+"Le corps du texte descend de 9 pt à 5,5 pt par quarts de point jusqu'à ce"
+" que tout tienne sur la page ; si le bloc Positions ne tient toujours "
+"pas, il passe au verso, et des lignes qui débordent encore passent en "
+"disposition continue, les coups à la suite. Un verso encore trop long à "
+"5,5 pt reporte ses dernières positions sur une feuille suivante, en-tête "
+"répété, autant de fois qu'il le faut : aucune position n'est coupée par "
+"le bord de la feuille. Les options de la boîte :"
+msgstr ""
+"Το κείμενο μικραίνει από 9 pt σε 5,5 pt ανά τέταρτα του πόντου μέχρι να "
+"χωρέσουν όλα στη σελίδα· αν το μπλοκ Θέσεις δεν χωράει ακόμη, περνά στην "
+"πίσω όψη, και οι γραμμές που εξακολουθούν να ξεχειλίζουν περνούν σε "
+"συνεχή διάταξη, με τις κινήσεις τη μία μετά την άλλη. Μια πίσω όψη που "
+"είναι ακόμη πολύ μεγάλη στα 5,5 pt μεταφέρει τις τελευταίες θέσεις της σε"
+" επόμενο φύλλο, με επαναλαμβανόμενη επικεφαλίδα, όσες φορές χρειαστεί: "
+"καμία θέση δεν κόβεται από το άκρο του φύλλου. Οι επιλογές του παραθύρου:"
+
+#: ../../source/manuel_matchs.rst:100
+msgid ""
+"**Blunders de l'adversaire** (décochée) : les numérote et les détaille "
+"aussi. Décochée, ils restent marqués ``??`` dans la transcription, sans "
+"plus."
+msgstr ""
+"**Γκάφες του αντιπάλου** (χωρίς σημάδι): τις αριθμεί και τις αναλύει "
+"επίσης. Χωρίς σημάδι, παραμένουν σημειωμένες με ``??`` στη μεταγραφή, "
+"τίποτα περισσότερο."
+
+#: ../../source/manuel_matchs.rst:102
+msgid "**Analyse courte** (cochée) : l'analyse de chaque entrée."
+msgstr "**Σύντομη ανάλυση** (με σημάδι): η ανάλυση κάθε καταχώρισης."
+
+#: ../../source/manuel_matchs.rst:103
+msgid ""
+"**Commentaires** (cochée) : le commentaire du match sous l'en-tête, ceux "
+"des positions sous leur entrée, jamais tronqués."
+msgstr ""
+"**Σχόλια** (με σημάδι): το σχόλιο του αγώνα κάτω από την κεφαλίδα, εκείνα"
+" των θέσεων κάτω από την καταχώρισή τους, ποτέ περικομμένα."
+
+#: ../../source/manuel_matchs.rst:105
+msgid ""
+"**ArkID développé** (décochée) : la forme développée plutôt que la "
+"compacte."
+msgstr ""
+"**Αναπτυγμένο ArkID** (χωρίς σημάδι): η αναπτυγμένη μορφή αντί για τη "
+"συμπαγή."
+
+#: ../../source/manuel_matchs.rst:106
+msgid ""
+"**Code de réimport** (cochée) : le code QR du match, celui de l'archive "
+"papier, en fin de transcription ; le même contenu est embarqué dans le "
+"fichier, qui se réimporte comme une page d'archive."
+msgstr ""
+"**Κωδικός επανεισαγωγής** (με σημάδι): ο κωδικός QR του αγώνα, αυτός του "
+"χάρτινου αρχείου, στο τέλος της μεταγραφής· το ίδιο περιεχόμενο "
+"ενσωματώνεται στο αρχείο, που επανεισάγεται όπως μια σελίδα αρχείου."
+
+#: ../../source/manuel_matchs.rst:109
+msgid ""
+"**Les N matchs de la liste** : imprime d'un coup tous les matchs de la "
+"liste filtrée, y compris ceux que le défilement n'a pas encore chargés, "
+"une feuille par match dans un seul document. Une impression en prend 100 "
+"au plus : au-delà, la boîte le signale et n'imprime rien ; filtrez la "
+"liste pour la réduire."
+msgstr ""
+"**Οι N αγώνες της λίστας**: εκτυπώνει με τη μία όλους τους αγώνες της "
+"φιλτραρισμένης λίστας, συμπεριλαμβανομένων όσων η κύλιση δεν έχει "
+"φορτώσει ακόμη, ένα φύλλο ανά αγώνα σε ένα μόνο έγγραφο. Μια εκτύπωση "
+"παίρνει το πολύ 100· πέρα από αυτό, το παράθυρο το επισημαίνει και δεν "
+"εκτυπώνει τίποτα· φιλτράρετε τη λίστα για να τη μειώσετε."
+
+#: ../../source/manuel_matchs.rst:115
+msgid ""
+"L'impression n'écrit rien dans la base. En ligne de commande : ``match "
+"sheet`` (:doc:`cli_matchs`)."
+msgstr ""
+"Η εκτύπωση δεν γράφει τίποτα στη βάση. Στη γραμμή εντολών: ``match "
+"sheet`` (:doc:`cli_matchs`)."
+
+#: ../../source/manuel_matchs.rst:118
 msgid ""
 "Un clic sur un match ouvre sa fiche. Une ligne d'en-tête donne les "
 "joueurs, le score final (le vainqueur en gras, son nom au survol), la "
 "longueur, la cadence s'il y en a une et la date ; le tournoi, la ronde et"
 " le lieu s'affichent au survol. À droite, l'icône 🎞 d'un match qui a une "
 "vidéo, le bouton **Revoir** et le menu ⋯, qui porte *Exporter en .mat*, "
-"*Éditer la transcription* et *Supprimer le match*. Vient ensuite la "
-"synthèse du :ref:`bilan du match <bilan_match>`, puis une barre d'onglets"
-" : **Transcription**, qui liste les coups partie par partie (un clic sur "
-"un coup y amène la revue), **Graphes**, **À revoir**, **Détails**, "
-"**Infos** et **Stats**. L'onglet choisi occupe toute la hauteur restante "
-"du panneau et défile seul, l'en-tête et la synthèse restant en place ; "
-"quand un onglet a le focus, les flèches gauche et droite passent au "
-"précédent ou au suivant. L'onglet laissé ouvert l'est encore au match "
-"suivant. Un onglet sans contenu n'apparaît pas : un match sans analyse "
-"n'a ni **À revoir** ni **Détails**, un match sans perte ni durée connue "
-"n'a pas de **Graphes**."
+"*Imprimer…*, *Éditer la transcription* et *Supprimer le match*. Vient "
+"ensuite la synthèse du :ref:`bilan du match <bilan_match>`, puis une "
+"barre d'onglets : **Transcription**, qui liste les coups partie par "
+"partie (un clic sur un coup y amène la revue), **Graphes**, **À revoir**,"
+" **Détails**, **Infos** et **Stats**. L'onglet choisi occupe toute la "
+"hauteur restante du panneau et défile seul, l'en-tête et la synthèse "
+"restant en place ; quand un onglet a le focus, les flèches gauche et "
+"droite passent au précédent ou au suivant. L'onglet laissé ouvert l'est "
+"encore au match suivant. Un onglet sans contenu n'apparaît pas : un match"
+" sans analyse n'a ni **À revoir** ni **Détails**, un match sans perte ni "
+"durée connue n'a pas de **Graphes**."
 msgstr ""
 "Ένα κλικ σε έναν αγώνα ανοίγει την καρτέλα του. Μια γραμμή κεφαλίδας "
 "δίνει τους παίκτες, το τελικό σκορ (ο νικητής με έντονα γράμματα, το "
@@ -188,21 +330,21 @@ msgstr ""
 "την ημερομηνία· το τουρνουά, ο γύρος και ο τόπος εμφανίζονται κατά την "
 "επισήμανση. Δεξιά βρίσκονται το εικονίδιο 🎞 ενός αγώνα που έχει βίντεο, "
 "το κουμπί **Επανεξέταση** και το μενού ⋯, που περιέχει τα *Εξαγωγή .mat*,"
-" *Επεξεργασία μεταγραφής* και *Διαγραφή του ματς*. Ακολουθεί η περίληψη "
-"του :ref:`απολογισμού του αγώνα <bilan_match>` και έπειτα μια γραμμή "
-"ετικετών: **Μεταγραφή**, που παραθέτει τις κινήσεις παρτίδα προς παρτίδα "
-"(ένα κλικ σε μια κίνηση μεταφέρει εκεί την ανασκόπηση), **Γραφήματα**, "
-"**Προς επανεξέταση**, **Λεπτομέρειες**, **Πληροφορίες** και "
-"**Στατιστικά**. Η επιλεγμένη ετικέτα καταλαμβάνει όλο το υπόλοιπο ύψος "
-"του πάνελ και κυλά μόνη της, ενώ η κεφαλίδα και η περίληψη μένουν στη "
-"θέση τους· όταν μια ετικέτα έχει την εστίαση, τα αριστερά και δεξιά βέλη "
-"περνούν στην προηγούμενη ή στην επόμενη. Η ετικέτα που αφέθηκε ανοιχτή "
-"παραμένει ανοιχτή στον επόμενο αγώνα. Μια ετικέτα χωρίς περιεχόμενο δεν "
-"εμφανίζεται: ένας αγώνας χωρίς ανάλυση δεν έχει ούτε **Προς επανεξέταση**"
-" ούτε **Λεπτομέρειες**, ένας αγώνας χωρίς γνωστή απώλεια ή διάρκεια δεν "
-"έχει **Γραφήματα**."
+" *Εκτύπωση…*, *Επεξεργασία μεταγραφής* και *Διαγραφή του ματς*. Ακολουθεί"
+" η περίληψη του :ref:`απολογισμού του αγώνα <bilan_match>` και έπειτα μια"
+" γραμμή ετικετών: **Μεταγραφή**, που παραθέτει τις κινήσεις παρτίδα προς "
+"παρτίδα (ένα κλικ σε μια κίνηση μεταφέρει εκεί την ανασκόπηση), "
+"**Γραφήματα**, **Προς επανεξέταση**, **Λεπτομέρειες**, **Πληροφορίες** "
+"και **Στατιστικά**. Η επιλεγμένη ετικέτα καταλαμβάνει όλο το υπόλοιπο "
+"ύψος του πάνελ και κυλά μόνη της, ενώ η κεφαλίδα και η περίληψη μένουν "
+"στη θέση τους· όταν μια ετικέτα έχει την εστίαση, τα αριστερά και δεξιά "
+"βέλη περνούν στην προηγούμενη ή στην επόμενη. Η ετικέτα που αφέθηκε "
+"ανοιχτή παραμένει ανοιχτή στον επόμενο αγώνα. Μια ετικέτα χωρίς "
+"περιεχόμενο δεν εμφανίζεται: ένας αγώνας χωρίς ανάλυση δεν έχει ούτε "
+"**Προς επανεξέταση** ούτε **Λεπτομέρειες**, ένας αγώνας χωρίς γνωστή "
+"απώλεια ή διάρκεια δεν έχει **Γραφήματα**."
 
-#: ../../source/manuel_matchs.rst:80
+#: ../../source/manuel_matchs.rst:133
 msgid ""
 "La fiche s'ouvre à côté de la liste ; la poignée qui les sépare règle sa "
 "largeur, retenue d'un lancement à l'autre."
@@ -210,11 +352,11 @@ msgstr ""
 "Η καρτέλα ανοίγει δίπλα στη λίστα· η λαβή που τις χωρίζει ρυθμίζει το "
 "πλάτος της, το οποίο διατηρείται από τη μια εκκίνηση στην επόμενη."
 
-#: ../../source/manuel_matchs.rst:83
+#: ../../source/manuel_matchs.rst:136
 msgid "Fiche d'un match, onglet Graphes"
 msgstr "Καρτέλα αγώνα, ετικέτα Γραφήματα"
 
-#: ../../source/manuel_matchs.rst:87
+#: ../../source/manuel_matchs.rst:140
 msgid ""
 "La fiche d'un match : l'en-tête, la synthèse du bilan par joueur, puis "
 "l'onglet *Graphes*, une décision survolée."
@@ -222,7 +364,7 @@ msgstr ""
 "Η καρτέλα ενός αγώνα: η κεφαλίδα, η περίληψη του απολογισμού ανά παίκτη "
 "και έπειτα η ετικέτα *Γραφήματα*, με μια απόφαση υπό επισήμανση."
 
-#: ../../source/manuel_matchs.rst:90
+#: ../../source/manuel_matchs.rst:143
 msgid ""
 "Chaque coup de la transcription porte sa **gravité** : ``?`` pour une "
 "erreur, ``??`` pour un blunder, un filet de couleur en marge de la ligne,"
@@ -240,7 +382,7 @@ msgstr ""
 "παίχτηκε: η ίδια θέση που παίχτηκε δύο φορές στον αγώνα λαμβάνει δύο "
 "κρίσεις. Μια κίνηση που η ανάλυση δεν βαθμολογεί δεν φέρει καμία σήμανση."
 
-#: ../../source/manuel_matchs.rst:97
+#: ../../source/manuel_matchs.rst:150
 msgid ""
 "L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou "
 "non : on voit sans l'ouvrir dans quelle partie se trouvent les blunders. "
@@ -251,7 +393,7 @@ msgstr ""
 "blunders. Ένα κλικ σε έναν αριθμό φορτώνει αυτές τις θέσεις στον πίνακα "
 "ανάλυσης."
 
-#: ../../source/manuel_matchs.rst:101
+#: ../../source/manuel_matchs.rst:154
 msgid ""
 "Quand le match est analysé, la transcription ajoute la colonne **MWC**, "
 "les chances de gagner le match que la décision a coûtées, en pourcentage "
@@ -321,7 +463,7 @@ msgstr ""
 "``--format text`` μια γραμμή «MWC loss» ανά βαθμολογημένη κίνηση και το "
 "``--format summary`` το σύνολο ανά παίκτη."
 
-#: ../../source/manuel_matchs.rst:131
+#: ../../source/manuel_matchs.rst:184
 msgid ""
 "**Chances de gagner le match.** Sous les graphiques de perte, un "
 "troisième graphique trace les chances de gagner le match du premier "
@@ -345,7 +487,7 @@ msgstr ""
 "συμπεριφέρονται όπως στα άλλα γραφήματα· το tooltip δίνει τις πιθανότητες"
 " πριν και μετά την απόφαση. Ένα παιχνίδι money δεν έχει αυτό το γράφημα."
 
-#: ../../source/manuel_matchs.rst:141
+#: ../../source/manuel_matchs.rst:194
 msgid ""
 "**Difficulté et erreurs évitables.** Une perte dit ce qu'un coup a coûté,"
 " pas s'il était difficile de trouver le bon. La colonne **Diff.**, à côté"
@@ -385,7 +527,7 @@ msgstr ""
 " είναι μια εκ των προτέρων εκτίμηση ισχυρού παίκτη, καθορισμένη πριν από "
 "την εξέταση οποιωνδήποτε αποτελεσμάτων."
 
-#: ../../source/manuel_matchs.rst:158
+#: ../../source/manuel_matchs.rst:211
 msgid ""
 "À lire ainsi : une décision évidente, ou forcée, a une difficulté proche "
 "de ``0`` sans qu'aucun seuil la mette à part ; une décision serrée, où "
@@ -413,7 +555,7 @@ msgstr ""
 "οριζόντια γραμμή σε κάθε ράβδο: μια ράβδος που ανεβαίνει πολύ πάνω από τη"
 " γραμμή της υποδεικνύει αποφεύξιμο λάθος."
 
-#: ../../source/manuel_matchs.rst:170
+#: ../../source/manuel_matchs.rst:223
 msgid ""
 "Le tableau de l'onglet **Détails** donne, pour chaque joueur, sa perte "
 "MWC totale (celle de la liste des matchs), le nombre de décisions notées "
@@ -437,7 +579,7 @@ msgstr ""
 "συνολική δυσκολία είναι κάτω από 0,5 %: σε έναν υπερβολικά εύκολο αγώνα "
 "θα μετρούσε μόνο θόρυβο, η υπέρβαση παραμένει."
 
-#: ../../source/manuel_matchs.rst:180
+#: ../../source/manuel_matchs.rst:233
 msgid ""
 "Pourquoi la regarder : le PR et la perte MWC mêlent deux choses, la "
 "qualité du jeu et la difficulté des positions rencontrées. Un adversaire "
@@ -462,7 +604,7 @@ msgstr ""
 "βασική δουλειά (rollouts, αρχές, θέσεις αναφοράς) και βαραίνουν λιγότερο "
 "στην κρίση ενός αγώνα."
 
-#: ../../source/manuel_matchs.rst:190
+#: ../../source/manuel_matchs.rst:243
 msgid ""
 "Incertitude et limites : la difficulté dépend d'un modèle de joueur et de"
 " τ, fixés une fois ; changer l'un change tous les chiffres. Elle ne "
@@ -496,7 +638,7 @@ msgstr ""
 "«Difficulty» και «Avoidable error», το ``--format summary`` τη δυσκολία, "
 "την υπέρβαση, το λόγο και τον αριθμό των αποφεύξιμων λαθών."
 
-#: ../../source/manuel_matchs.rst:207
+#: ../../source/manuel_matchs.rst:260
 msgid ""
 "**Bilan du match.** Le bilan répond, pour chaque joueur, aux trois "
 "questions qu'on se pose après un match : qu'est-ce que je revois, ai-je "
@@ -510,7 +652,7 @@ msgstr ""
 "βιασύνη ή από κενό γνώσης; Τα όρια καθορίστηκαν πριν εξεταστεί "
 "οποιοδήποτε αποτέλεσμα."
 
-#: ../../source/manuel_matchs.rst:212
+#: ../../source/manuel_matchs.rst:265
 msgid ""
 "En tête de la fiche, au-dessus des onglets, une synthèse place les "
 "joueurs côte à côte (l'un sous l'autre quand le panneau est étroit) : le "
@@ -536,7 +678,7 @@ msgstr ""
 "αποφάσεις προς επανεξέταση και τον διαχωρισμό των λαθών σε βιαστικά και "
 "μελετημένα:"
 
-#: ../../source/manuel_matchs.rst:222
+#: ../../source/manuel_matchs.rst:275
 msgid ""
 "**PR et perte de MWC ramenée à 7 pts, avec leur intervalle à 95 %**, "
 "calculé en rééchantillonnant les parties du match. La perte ramenée à 7 "
@@ -557,7 +699,7 @@ msgstr ""
 " αγώνας δεν αρκεί για να κριθεί ένα επίπεδο: συγκρίνετέ το με τους άλλους"
 " σας αγώνες αντί να καταλήξετε σε μία τιμή."
 
-#: ../../source/manuel_matchs.rst:230
+#: ../../source/manuel_matchs.rst:283
 #, no-python-format
 msgid ""
 "**Résultat ajusté de la chance**, pour un match terminé. Le *résultat* "
@@ -587,7 +729,7 @@ msgstr ""
 "χωρίς καμία μετρημένη ρίψη, ή για παρτίδα με χρήματα, η γραμμή δεν "
 "εμφανίζεται."
 
-#: ../../source/manuel_matchs.rst:241
+#: ../../source/manuel_matchs.rst:294
 msgid ""
 "**Trois décisions à revoir** : parmi vos erreurs (seuil de la base), "
 "celles dont la *part évitable* de la perte, perte − difficulté, est la "
@@ -603,7 +745,7 @@ msgstr ""
 "συνεδρία: ξαναβλέπουμε πρώτα ό,τι ήταν στα χέρια σας. Ένα κλικ στην "
 "απόφαση την εμφανίζει, όπως μια γραμμή του αναλυτικού."
 
-#: ../../source/manuel_matchs.rst:247
+#: ../../source/manuel_matchs.rst:300
 msgid ""
 "**Erreurs précipitées et réfléchies**, quand le match a gardé la durée "
 "des décisions : une erreur jouée plus vite que la médiane de vos "
@@ -623,7 +765,7 @@ msgstr ""
 "πλειοψηφία απαιτεί πειθαρχία (πιο αργά σε αυτές τις θέσεις)· μια "
 "σκεπτόμενη πλειοψηφία, γνώση (μελέτη της οικογένειας θέσεων)."
 
-#: ../../source/manuel_matchs.rst:255
+#: ../../source/manuel_matchs.rst:308
 msgid ""
 "L'onglet **Détails** se termine sur le tableau des pertes et de la "
 "difficulté décrit plus haut. ``match --format summary`` imprime le même "
@@ -634,7 +776,7 @@ msgstr ""
 " τον ίδιο απολογισμό, και ο διακομιστής τον εξυπηρετεί μέσω του "
 "``/v1/stats.matchReview``."
 
-#: ../../source/manuel_matchs.rst:259
+#: ../../source/manuel_matchs.rst:312
 msgid ""
 "Quand le match a gardé la durée de ses décisions (un match joué contre un"
 " bot), la transcription ajoute trois colonnes alignées sur les chiffres :"
@@ -713,7 +855,7 @@ msgstr ""
 "λάθος και το ποσοστό blunders. Μια απόφαση της οποίας το λάθος δεν είναι "
 "καταγεγραμμένο μετράται χωρίς να μπαίνει στον μέσο όρο."
 
-#: ../../source/manuel_matchs.rst:292
+#: ../../source/manuel_matchs.rst:345
 msgid ""
 "La colonne **Positions** compte les positions distinctes de ces décisions"
 " et les ouvre d'un clic. Le tableau et ses liens lisent toutes les "
@@ -723,7 +865,7 @@ msgstr ""
 " ανοίγει με ένα κλικ. Ο πίνακας και οι σύνδεσμοί του διαβάζουν όλες τις "
 "χρονομετρημένες αποφάσεις της βάσης, χωρίς το φίλτρο του πάνελ."
 
-#: ../../source/manuel_matchs.rst:296
+#: ../../source/manuel_matchs.rst:349
 msgid ""
 "Un match joué ici, issu d'un Duel, porte son origine dans l'onglet "
 "**Infos** de sa fiche, sous le titre **Provenance**, sur une ligne, même "
@@ -755,7 +897,7 @@ msgstr ""
 "δεν έχει προέλευση, και η ετικέτα **Πληροφορίες** του δεν έχει αυτόν τον "
 "τίτλο."
 
-#: ../../source/manuel_matchs.rst:308
+#: ../../source/manuel_matchs.rst:361
 msgid ""
 "L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute "
 "ce que le fichier source dit des joueurs et de la session, quand il le "
@@ -788,7 +930,7 @@ msgstr ""
 "η εξαγωγή τον αντιγράφει μαζί του· η επεξεργασία του σχολίου το υπογράφει"
 " με το **Το όνομά σας** (ρυθμίσεις)."
 
-#: ../../source/manuel_matchs.rst:322
+#: ../../source/manuel_matchs.rst:375
 msgid ""
 "La ligne **Fichier source** porte le bouton ⟲ quand le match en nomme un "
 ": il relit ce fichier et réécrit les positions, les analyses et les "
@@ -820,7 +962,7 @@ msgstr ""
 " ``match repair`` κάνει το ίδιο, και το ``match repair --list`` βρίσκει "
 "τους αγώνες που διαφέρουν από το αρχείο τους."
 
-#: ../../source/manuel_matchs.rst:335
+#: ../../source/manuel_matchs.rst:388
 msgid ""
 "Un match transcrit depuis une vidéo en porte la **source** : une URL "
 "http(s) (YouTube, par exemple) ou le chemin d'un fichier. La ligne "
@@ -855,7 +997,7 @@ msgstr ""
 "δεν αναπαράγει αναφέρεται εκεί μαζί με τα πακέτα προς εγκατάσταση (βλέπε "
 ":ref:`telecharge_install`). Ένας αγώνας χωρίς πηγή δεν αλλάζει."
 
-#: ../../source/manuel_matchs.rst:349
+#: ../../source/manuel_matchs.rst:402
 msgid ""
 "Le bouton **Gérer les joueurs** de la barre d'outils du panneau ouvre une"
 " fenêtre listant tous les joueurs de la base, chacun avec son nombre de "
@@ -885,7 +1027,7 @@ msgstr ""
 "το αφαιρεί και αναιρεί τη συγχώνευση, όπως στην καρτέλα **Σώμα αγώνων** "
 "των ρυθμίσεων."
 
-#: ../../source/manuel_matchs.rst:362
+#: ../../source/manuel_matchs.rst:415
 msgid ""
 "L'étoile (☆) d'une ligne désigne le **joueur principal**, celui à qui "
 "appartient la base, mémorisé dans la base et toujours en tête de la "
@@ -914,7 +1056,7 @@ msgstr ""
 "μεταγραφής, ή παιγμένος στο blunderDB, δεν αντιστρέφεται: ο αριθμός τους "
 "αναφέρεται χωριστά."
 
-#: ../../source/manuel_matchs.rst:374
+#: ../../source/manuel_matchs.rst:427
 msgid ""
 "Une fusion qui touche le joueur principal — un alias ajouté à son nom, ou"
 " son nom fusionné dans un autre, qui le désigne — n'inverse rien d'elle-"
@@ -933,7 +1075,7 @@ msgstr ""
 "μπάνερ· διαφορετικά αφαιρεί τον κύριο παίκτη, χωρίς να αντιστρέψει τίποτα"
 " πίσω."
 
-#: ../../source/manuel_matchs.rst:381
+#: ../../source/manuel_matchs.rst:434
 msgid ""
 "Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-"
 "dessus du plateau : elle rappelle les joueurs en présence (*joueur 1* "
@@ -958,7 +1100,7 @@ msgstr ""
 "του δείκτη. Μια θέση που εισήχθη μεμονωμένα, την οποία δεν αναφέρει "
 "κανένας αγώνας, δεν εμφανίζει τίποτα."
 
-#: ../../source/manuel_matchs.rst:391
+#: ../../source/manuel_matchs.rst:444
 msgid ""
 "Les onglets **Recherche** et **Eval** remplacent le plateau par un "
 "plateau de travail : un bandeau en haut du plateau le dit (« Plateau de "
@@ -972,7 +1114,7 @@ msgstr ""
 "όσο θα περιέγραφε μια θέση που δεν εμφανίζεται στην οθόνη. Η επιστροφή "
 "στην ανάλυση επαναφέρει τη θέση που μελετάτε."
 
-#: ../../source/manuel_matchs.rst:397
+#: ../../source/manuel_matchs.rst:450
 msgid ""
 "À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est "
 "affiché d'emblée et la revue débute directement sur la première position,"
@@ -982,7 +1124,7 @@ msgstr ""
 "εμφανίζεται αμέσως και η ανασκόπηση ξεκινά απευθείας από την πρώτη θέση, "
 "ώστε να μπορείτε να ξεκινήσετε αμέσως την πλοήγηση."
 
-#: ../../source/manuel_matchs.rst:401
+#: ../../source/manuel_matchs.rst:454
 msgid ""
 "Une base de données ne peut être ouverte en écriture que par une seule "
 "fenêtre à la fois. Si vous ouvrez une base déjà ouverte dans une autre "
@@ -996,15 +1138,15 @@ msgstr ""
 "παραμένουν δυνατές, αλλά κάθε τροποποίηση είναι απενεργοποιημένη και η "
 "γραμμή τίτλου εμφανίζει «[μόνο για ανάγνωση]»."
 
-#: ../../source/manuel_matchs.rst:407 ../../source/manuel_matchs.rst:975
+#: ../../source/manuel_matchs.rst:460 ../../source/manuel_matchs.rst:1028
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Ανατρέξτε στο :ref:`raccourcis` για τις διαθέσιμες συντομεύσεις."
 
-#: ../../source/manuel_matchs.rst:412
+#: ../../source/manuel_matchs.rst:465
 msgid "Panneau Transcription"
 msgstr "Πίνακας Μεταγραφής"
 
-#: ../../source/manuel_matchs.rst:414
+#: ../../source/manuel_matchs.rst:467
 msgid ""
 "Le panneau **Transcription** (*CTRL-MAJ-T*, commande ``transcribe`` ou "
 "``tr``) sert à taper un match qu'on a sous les yeux — une feuille de "
@@ -1020,7 +1162,7 @@ msgstr ""
 "κλείνει και ανοίγει ξανά, και δεν μπαίνει ούτε στα στατιστικά ούτε στις "
 "αναζητήσεις όσο δεν έχει αποθηκευτεί ως αγώνας."
 
-#: ../../source/manuel_matchs.rst:421
+#: ../../source/manuel_matchs.rst:474
 msgid ""
 "Le panneau s'ouvre sur la **liste des brouillons** de la base : date de "
 "dernière modification, joueurs, longueur, nombre d'actions, et le match "
@@ -1041,7 +1183,7 @@ msgstr ""
 "προσχέδιο, που ανοίγει αμέσως· ένα αρχείο που απορρίπτεται εμφανίζει τον "
 "λόγο και δεν δημιουργεί τίποτα."
 
-#: ../../source/manuel_matchs.rst:430
+#: ../../source/manuel_matchs.rst:483
 msgid ""
 "La liste se parcourt aussi au clavier : *BAS* et *HAUT* (ou *j* et *k*) "
 "déplacent le surlignage, *ENTREE* ouvre le brouillon surligné, *n* déplie"
@@ -1056,7 +1198,7 @@ msgstr ""
 " χθεσινής δουλειάς κοστίζει επομένως δύο πλήκτρα, *CTRL-SHIFT-T* και μετά"
 " *ENTER*."
 
-#: ../../source/manuel_matchs.rst:436
+#: ../../source/manuel_matchs.rst:489
 msgid ""
 "Le formulaire ne demande qu'une chose : la **longueur du match**. La "
 "valeur ``0`` désigne une partie d'argent et fait apparaître les cases "
@@ -1072,7 +1214,7 @@ msgstr ""
 "παικτών δεν ζητούνται: το προσχέδιο ονομάζει τις πλευρές *Παίκτης 1* και "
 "*Παίκτης 2*, και η λίστα δείχνει «Χωρίς όνομα»."
 
-#: ../../source/manuel_matchs.rst:443
+#: ../../source/manuel_matchs.rst:496
 msgid ""
 "Tout ce qui se déduit de ce qui a été tapé — la longueur du match (ou « "
 "Argent »), le score, la mention *Crawford* lorsque la partie en cours "
@@ -1092,7 +1234,7 @@ msgstr ""
 "αναμενόμενη ενέργεια, αντίθετα, γράφεται ολογράφως στη **γραμμή "
 "κατάστασης**: «ζάρια του Kévin», «απάντηση της Alice στο διπλό»."
 
-#: ../../source/manuel_matchs.rst:451
+#: ../../source/manuel_matchs.rst:504
 msgid ""
 "La **barre du brouillon**, en tête du panneau, se lit en trois groupes. À"
 " gauche, **Brouillons** ramène à la liste. Au centre, ce qui sert pendant"
@@ -1108,7 +1250,7 @@ msgstr ""
 "ενέργειες που βγάζουν το πρόχειρο από τον εαυτό του και το μενού **⋯**. "
 "Σε στενό πάνελ, η πληκτρολόγηση περνά σε δεύτερη γραμμή."
 
-#: ../../source/manuel_matchs.rst:457
+#: ../../source/manuel_matchs.rst:510
 msgid ""
 "Le **joueur 1 reste en bas du plateau**, quel que soit le camp au trait. "
 "Un match qui se transcrit est une partie qui se déroule : le trait change"
@@ -1132,7 +1274,7 @@ msgstr ""
 " κλείσιμο. Να μη συγχέεται με το κουμπί *Εναλλαγή παικτών* του πίνακα "
 "Μεταδεδομένων, που εναλλάσσει τους δύο παίκτες μέσα στο ίδιο το έγγραφο."
 
-#: ../../source/manuel_matchs.rst:467
+#: ../../source/manuel_matchs.rst:520
 msgid ""
 "Le bouton **Métadonnées** de la barre déplie l'en-tête du brouillon, à "
 "tout moment : les noms des deux joueurs — autocomplétés depuis les "
@@ -1159,7 +1301,7 @@ msgstr ""
 "ενέργειες στην απέναντι πλευρά και γυρίζει το ταμπλό: είναι ο ίδιος "
 "αγώνας, διαβασμένος από την άλλη πλευρά."
 
-#: ../../source/manuel_matchs.rst:479
+#: ../../source/manuel_matchs.rst:532
 msgid ""
 "L'événement et le lieu proposent ceux des matchs déjà en base, les plus "
 "fréquents d'abord ; le transcripteur propose les noms de joueurs. Choisir"
@@ -1171,7 +1313,7 @@ msgstr ""
 " Η επιλογή μιας πρότασης συμπληρώνει μόνο το δικό της πεδίο και ένα "
 "κείμενο που δεν υπάρχει στη λίστα μένει όπως πληκτρολογήθηκε."
 
-#: ../../source/manuel_matchs.rst:483
+#: ../../source/manuel_matchs.rst:536
 msgid ""
 "Ouvert, le formulaire prend la place de la saisie : les dés, la palette "
 "et les candidats sont masqués, la transcription reste visible, la vidéo "
@@ -1182,7 +1324,7 @@ msgstr ""
 "ορατή και το βίντεο μένει στη θέση του. Το ίδιο κουμπί, ή το *Esc*, "
 "επαναφέρει την εισαγωγή."
 
-#: ../../source/manuel_matchs.rst:487
+#: ../../source/manuel_matchs.rst:540
 msgid ""
 "La **longueur du match** se change dans ce même volet, à tout moment : le"
 " score, la partie Crawford et le référentiel — les parties d'argent "
@@ -1204,7 +1346,7 @@ msgstr ""
 "αποθηκεύοντας ξανά γράφονται ολοκαίνουργιες θέσεις, προς ανάλυση, ενώ οι "
 "παλιές εξαφανίζονται μόλις τίποτα δεν τις κρατά πια."
 
-#: ../../source/manuel_matchs.rst:496
+#: ../../source/manuel_matchs.rst:549
 msgid ""
 "Sous la barre, le brouillon occupe trois régions : la **palette** des "
 "cibles souris, les **coups candidats** et le **transcript**. Elles se "
@@ -1235,7 +1377,7 @@ msgstr ""
 "στα δύο κουτιά της ζαριάς και στην πρώτη γραμμή των υποψήφιων κινήσεων, "
 "και τουλάχιστον πέντε υποψήφιες κινήσεις διαβάζονται χωρίς καμία κύλιση."
 
-#: ../../source/manuel_matchs.rst:509
+#: ../../source/manuel_matchs.rst:562
 msgid ""
 "La palette montre les deux dés au fur et à mesure de leur saisie ; un "
 "clic dessus les efface, comme *RETOUR ARRIERE*. Une partie commence par "
@@ -1264,7 +1406,7 @@ msgstr ""
 "καταχωρίζεται μετά το τέλος μιας παρτίδας φέρει την ίδια σήμανση: μένει "
 "στην ολοκληρωμένη παρτίδα, δεν ανοίγει νέα και διαγράφεται με το χέρι."
 
-#: ../../source/manuel_matchs.rst:521
+#: ../../source/manuel_matchs.rst:574
 msgid ""
 "Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,"
 " classés par le moteur embarqué, le premier présélectionné. Il ne dessine"
@@ -1286,7 +1428,7 @@ msgstr ""
 "γράφεται ποτέ στη βάση. Όταν η μηχανή δεν είναι διαθέσιμη, οι κινήσεις "
 "καταγράφονται χωρίς κατάταξη και η λίστα το λέει στην κορυφή της."
 
-#: ../../source/manuel_matchs.rst:529
+#: ../../source/manuel_matchs.rst:582
 msgid ""
 "Un jet sans aucun coup légal enregistre la **danse** de lui-même : la "
 "main passe à l'adversaire sans coup à taper. Quand le jet dansant importe"
@@ -1303,7 +1445,7 @@ msgstr ""
 "εσωτερικό ταμπλό που αφήνει κάθε ζαριά να μπει, δεν εισάγει τίποτα και η "
 "γραμμή κατάστασης το λέει."
 
-#: ../../source/manuel_matchs.rst:536
+#: ../../source/manuel_matchs.rst:589
 msgid ""
 "La **molette** sélectionne le candidat suivant ou précédent, au-dessus de"
 " la liste comme au-dessus du damier : le regard reste sur le plateau et "
@@ -1317,7 +1459,7 @@ msgstr ""
 "ανάγνωση της σημειογραφίας της. Ένα κλικ σε μια γραμμή την επιλέγει, ένα "
 "διπλό κλικ την επικυρώνει."
 
-#: ../../source/manuel_matchs.rst:541
+#: ../../source/manuel_matchs.rst:594
 msgid ""
 "Un indicateur, à gauche des cases du jet — et sur la barre du mode "
 "théâtre —, dit ce que fait la frappe à l'instant : **Saisie** au bout du "
@@ -1347,7 +1489,7 @@ msgstr ""
 "θέσεις που ακολουθούν υπολογίζονται ξανά. Το End επαναφέρει στο τέλος του"
 " εγγράφου."
 
-#: ../../source/manuel_matchs.rst:553
+#: ../../source/manuel_matchs.rst:606
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -1360,7 +1502,7 @@ msgstr ""
 "καταγράφει με το χέρι στο ποντίκι. Ένα κελί ανά ζαριά, ποτέ δύο: το 3-1 "
 "και το 1-3 είναι η ίδια ζαριά."
 
-#: ../../source/manuel_matchs.rst:558
+#: ../../source/manuel_matchs.rst:611
 msgid ""
 "Tout coup joué au plateau commence par le jet, tapé au clavier ou cliqué "
 "au triangle : sans dés saisis, le damier ne joue rien. Les deux dés "
@@ -1394,7 +1536,7 @@ msgstr ""
 "την κίνηση που παίζεται· επιστρέφουν όταν η κίνηση ακυρώνεται ή "
 "καταγράφεται."
 
-#: ../../source/manuel_matchs.rst:572
+#: ../../source/manuel_matchs.rst:625
 msgid ""
 "Le coup achevé n'est enregistré que par une validation : un clic sur les "
 "dés grisés, ENTREE, ou le jet suivant — un chiffre ou une case du "
@@ -1406,7 +1548,7 @@ msgstr ""
 "του τριγώνου —, που την καταγράφει πρώτα με τα ζάρια όπως "
 "πληκτρολογήθηκαν. Σε μια ξαναδιαβασμένη ενέργεια, την αντικαθιστά."
 
-#: ../../source/manuel_matchs.rst:577
+#: ../../source/manuel_matchs.rst:630
 msgid ""
 "Un coup illégal se transcrit tel qu'il a été joué, sans bouton ni "
 "changement de mode. Un glissé qu'aucun coup légal n'offre pose le pion là"
@@ -1428,7 +1570,7 @@ msgstr ""
 " βήματα και το ταμπλό που προέκυψε. Το Backspace αναιρεί το τελευταίο "
 "βήμα· η αναίρεση του μοναδικού βήματος εκτός κανόνων επαναφέρει τη λίστα."
 
-#: ../../source/manuel_matchs.rst:586
+#: ../../source/manuel_matchs.rst:639
 msgid ""
 "Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur "
 "la cellule d'un coup — ou d'une danse, d'un coup non consigné — la change"
@@ -1458,7 +1600,7 @@ msgstr ""
 " διακεκομμένο κελί της τρέχουσας καταχώρισης ανοίγει με τον ίδιο τρόπο, "
 "μόλις εισαχθούν και τα δύο ζάρια της."
 
-#: ../../source/manuel_matchs.rst:599
+#: ../../source/manuel_matchs.rst:652
 msgid ""
 "Un coup saisi par le glissé libre ou par la notation qui se trouve être "
 "légal reste un coup ordinaire — la comparaison se fait sur le plateau "
@@ -1472,7 +1614,7 @@ msgstr ""
 "αλλιώς σημειώνεται «παράνομη κίνηση» στο μεταγραφικό, και η εξαγωγή "
 "``.mat`` προειδοποιεί πριν γράψει το αρχείο, χωρίς ποτέ να αρνείται."
 
-#: ../../source/manuel_matchs.rst:605
+#: ../../source/manuel_matchs.rst:658
 msgid ""
 "Le plateau obtenu par un coup hors des règles vaut pour la position où il"
 " a été joué. Quand une correction plus haut dans le transcript change "
@@ -1484,7 +1626,7 @@ msgstr ""
 " θέση, τα βήματα της κίνησης ξαναπαίζονται από τη νέα, και όλες οι θέσεις"
 " που ακολουθούν φέρουν τη διόρθωση."
 
-#: ../../source/manuel_matchs.rst:610
+#: ../../source/manuel_matchs.rst:663
 msgid ""
 "Les flèches du plateau sont celles du coup écrit dans la décision sous le"
 " curseur, en gris, rejoué sur la position qu'elle a. Un pas qui ne s'y "
@@ -1512,7 +1654,7 @@ msgstr ""
 "μόνο όταν περνά από πάνω της ο δείκτης ή όταν επιλέγεται με τη ροδέλα, τα"
 " πλήκτρα ή ένα κλικ."
 
-#: ../../source/manuel_matchs.rst:619
+#: ../../source/manuel_matchs.rst:672
 msgid ""
 "Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**, "
 "**Abandonner** reprend à la souris les quatre gestes de videau : ce sont,"
@@ -1554,7 +1696,7 @@ msgstr ""
 " και το πάσο είναι δύο συμμετρικές απαντήσεις και ζουν μαζί στη σειρά, "
 "ένα κλικ η καθεμία."
 
-#: ../../source/manuel_matchs.rst:638
+#: ../../source/manuel_matchs.rst:691
 msgid ""
 "La **barre d'état** dit ce que le brouillon attend, en un mot : la danse "
 "enregistrée d'office, le premier coup d'une partie, la réponse attendue à"
@@ -1575,7 +1717,7 @@ msgstr ""
 "ενέργεια επισημαίνεται, αντίθετα, στην κορυφή του μεταγραφικού, εκεί όπου"
 " βρίσκεται το εσφαλμένο κελί."
 
-#: ../../source/manuel_matchs.rst:646
+#: ../../source/manuel_matchs.rst:699
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -1600,7 +1742,7 @@ msgstr ""
 "εγκαταλελειμμένο Duel. Φέρει τον δείκτη βίντεο και ακυρώνεται όπως μια "
 "παραίτηση."
 
-#: ../../source/manuel_matchs.rst:656
+#: ../../source/manuel_matchs.rst:709
 msgid ""
 "Le score d'une partie est celui que donnent les parties précédentes, sauf"
 " s'il a été annoncé autrement à la table. Un double-clic sur le score de "
@@ -1628,7 +1770,7 @@ msgstr ""
 "παρτίδας φέρει την ασυνέπεια «ασυνεπές δηλωμένο σκορ». Στο παιχνίδι με "
 "χρήματα δεν υπάρχει σκορ να δηλωθεί."
 
-#: ../../source/manuel_matchs.rst:668
+#: ../../source/manuel_matchs.rst:721
 msgid ""
 "Un transcript repris en cours de match peut commencer après la partie "
 "Crawford. Lorsque la première partie s'ouvre avec un joueur à un point du"
@@ -1653,7 +1795,7 @@ msgstr ""
 "ξαναδιαβάζει· το gnubg την αγνοεί και μετρά αυτό το πρώτο παιχνίδι ως "
 "παιχνίδι Crawford."
 
-#: ../../source/manuel_matchs.rst:678
+#: ../../source/manuel_matchs.rst:731
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -1693,7 +1835,7 @@ msgstr ""
 "που λείπει — μια διαγραμμένη απόφαση, για παράδειγμα. Οι παρτίδες "
 "διπλώνονται· αυτή του δρομέα είναι ανοιχτή."
 
-#: ../../source/manuel_matchs.rst:694
+#: ../../source/manuel_matchs.rst:747
 msgid ""
 "**Ce qui est en train d'être tapé se dessine dans le transcript**, en "
 "pointillés, à la place exacte où il sera écrit : les dés au fur et à "
@@ -1713,7 +1855,7 @@ msgstr ""
 "γράφεται στο προσχέδιο πριν από την επικύρωση· αυτό που διαβάζεται και "
 "αυτό που θα πει το έγγραφο δεν αποκλίνουν ποτέ."
 
-#: ../../source/manuel_matchs.rst:703
+#: ../../source/manuel_matchs.rst:756
 msgid ""
 "Corriger, c'est taper sur la cellule où l'on est. Le curseur posé sur une"
 " action, un chiffre en recommence le jet sur place, et les quatre gestes "
@@ -1743,7 +1885,7 @@ msgstr ""
 "άνοιξε μια εισαγωγή: *i* και έπειτα *d* εισάγει έναν διπλασιασμό πριν από"
 " τη στοχευμένη ενέργεια."
 
-#: ../../source/manuel_matchs.rst:715
+#: ../../source/manuel_matchs.rst:768
 msgid ""
 "Revenir sur la **dernière** action, c'est revenir là où la transcription "
 "s'écrit. Un chiffre tapé sur elle en corrige encore le jet, mais une fois"
@@ -1758,7 +1900,7 @@ msgstr ""
 "την επικυρώνει επίσης. Οι επόμενες αποφάσεις προστίθενται τότε στη "
 "συνέχεια, όπως την πρώτη φορά."
 
-#: ../../source/manuel_matchs.rst:721
+#: ../../source/manuel_matchs.rst:774
 msgid ""
 "Taper un **autre jet** sur le **premier coup** d'une partie décide à "
 "nouveau qui commence : le dé du joueur 1 se tape en premier, celui du "
@@ -1783,7 +1925,7 @@ msgstr ""
 "την πλευρά που δεν ορίζει αυτή η σειρά σημειώνεται «ασυνεπή ζάρια». Η "
 "υπόλοιπη παρτίδα κρατά τις πλευρές της."
 
-#: ../../source/manuel_matchs.rst:731
+#: ../../source/manuel_matchs.rst:784
 msgid ""
 "Une **insertion au milieu du document continue d'insérer** : la "
 "validation ouvre une cellule vide à la suite, et l'action suivante "
@@ -1802,7 +1944,7 @@ msgstr ""
 "τερματίζει την εισαγωγή: ο δρομέας τοποθετείται τότε στην πρώτη κίνηση "
 "της επόμενης παρτίδας."
 
-#: ../../source/manuel_matchs.rst:739
+#: ../../source/manuel_matchs.rst:792
 msgid ""
 "**Suppr** (ou *x*) retire la décision en cours d'édition et recule sur la"
 " précédente, prête à être corrigée : sur une cellule écrite, l'action "
@@ -1820,7 +1962,7 @@ msgstr ""
 "ενέργειες που ακολουθούν κρατούν την πλευρά τους, και η διπλή σειρά που "
 "αφήνει μια διαγραφή επισημαίνεται χωρίς ο δρομέας να επιστρέφει εκεί."
 
-#: ../../source/manuel_matchs.rst:746
+#: ../../source/manuel_matchs.rst:799
 msgid ""
 "Un clic droit sur une cellule ouvre les corrections de cette action — "
 "insérer avant, insérer après, supprimer, changer de camp — et amène le "
@@ -1838,7 +1980,7 @@ msgstr ""
 "από τον δρομέα» θα στόχευε ένα κελί που ίσως δεν βλέπει κανείς, ενώ το "
 "δεξί κλικ ονομάζει το δικό του."
 
-#: ../../source/manuel_matchs.rst:753
+#: ../../source/manuel_matchs.rst:806
 msgid ""
 "La barre du brouillon porte ses deux seules sorties, au bout à droite, "
 "après le menu « ⋯ ». « **Terminer** » (CTRL-ENTREE) écrit le match dans "
@@ -1864,7 +2006,7 @@ msgstr ""
 "ίδιου του προσχεδίου: γράφεται στη βάση μετά από κάθε ενέργεια, και η "
 "επιστροφή στη λίστα το αφήνει για να συνεχιστεί αργότερα."
 
-#: ../../source/manuel_matchs.rst:764
+#: ../../source/manuel_matchs.rst:817
 msgid ""
 "Le menu **⋯** de la barre tient « **Texte .mat** », qui ouvre le fichier "
 "Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que "
@@ -1880,7 +2022,7 @@ msgstr ""
 " δύο βέλη **↶** και **↷** αναιρούν και επαναλαμβάνουν, όπως τα *CTRL-Z* "
 "και *CTRL-SHIFT-Z*."
 
-#: ../../source/manuel_matchs.rst:771
+#: ../../source/manuel_matchs.rst:824
 msgid ""
 "Si l'analyse d'un match transcrit a été interrompue — l'application "
 "fermée pendant le lot —, la barre d'état le signale à la prochaine "
@@ -1896,7 +2038,7 @@ msgstr ""
 " προς ανάλυση, και η ανάλυση που ξαναρχίζει αφορά μόνο αυτόν τον αγώνα, "
 "ποτέ ολόκληρη τη βιβλιοθήκη."
 
-#: ../../source/manuel_matchs.rst:777
+#: ../../source/manuel_matchs.rst:830
 msgid ""
 "Un brouillon qui porte des incohérences est terminé tout de même, après "
 "un avertissement : rien n'est refusé. Un coup illégal est exporté tel "
@@ -1908,7 +2050,7 @@ msgstr ""
 "όπως παίχτηκε, με την προειδοποίηση ότι το gnubg και το XG θα την "
 "επισημάνουν («Invalid move») και θα αποκλίνουν στη συνέχεια."
 
-#: ../../source/manuel_matchs.rst:782
+#: ../../source/manuel_matchs.rst:835
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "
 "matchs ou « **Éditer la transcription** » de sa fiche ouvre un brouillon "
@@ -1930,7 +2072,7 @@ msgstr ""
 "``.mat`` δεν φέρει: πριν από το άνοιγμα, ένας διάλογος λέει μέχρι πόσα, "
 "και ότι η ολοκλήρωση του προσχεδίου μπορεί να τα χάσει."
 
-#: ../../source/manuel_matchs.rst:791
+#: ../../source/manuel_matchs.rst:844
 msgid ""
 "Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de "
 "la barre du brouillon ouvre un menu : **Fichier local…** pour choisir une"
@@ -1973,7 +2115,7 @@ msgstr ""
 "μένει στο τέλος της καταγραφής, έτοιμος για πληκτρολόγηση, και ακολουθεί "
 "την αναπαραγωγή μόνο όταν αυτή μπει σε άλλη ενέργεια."
 
-#: ../../source/manuel_matchs.rst:810
+#: ../../source/manuel_matchs.rst:863
 msgid ""
 "Un fichier local est une vidéo que vous détenez légitimement. Une vidéo "
 "YouTube se lit dans le lecteur intégré de YouTube, soumis aux `Conditions"
@@ -1986,7 +2128,7 @@ msgstr ""
 "<https://www.youtube.com/t/terms>`_: το blunderDB δεν εξάγει καμία εικόνα"
 " από αυτό."
 
-#: ../../source/manuel_matchs.rst:814
+#: ../../source/manuel_matchs.rst:867
 msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
@@ -2021,7 +2163,7 @@ msgstr ""
 " / *CTRL-ΔΕΞΙΆ*, που περιστρέφουν το ταμπλό, διατηρούν το αποτέλεσμά "
 "τους."
 
-#: ../../source/manuel_matchs.rst:828
+#: ../../source/manuel_matchs.rst:881
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -2044,7 +2186,7 @@ msgstr ""
 "του βίντεο, από όποια πλευρά κι αν βρίσκεται. Η λαβή και το κουμπί "
 "αφήνουν το πληκτρολόγιο στο πάνελ."
 
-#: ../../source/manuel_matchs.rst:839
+#: ../../source/manuel_matchs.rst:892
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -2104,7 +2246,7 @@ msgstr ""
 " πλήρη οθόνη, ούτε το YouTube: μόνο η λειτουργία θεάτρου αλλάζει την "
 "οθόνη. Η λειτουργία υπάρχει μόνο στη Μεταγραφή, με επισυναπτόμενο βίντεο."
 
-#: ../../source/manuel_matchs.rst:865
+#: ../../source/manuel_matchs.rst:918
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -2148,7 +2290,7 @@ msgstr ""
 "αναπαραγωγής του, έως 2×. Η ταχύτητα εμφανίζεται στη γωνία του βίντεο "
 "όταν δεν είναι 1×, και μια νέα πηγή ξεκινά ξανά από 1×."
 
-#: ../../source/manuel_matchs.rst:883
+#: ../../source/manuel_matchs.rst:936
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -2163,7 +2305,7 @@ msgstr ""
 "βίντεο ενός αρχείου όπως και στο πλαίσιο YouTube. Η γωνία διατηρείται για"
 " το πρόχειρο, μόνο σε αυτόν τον υπολογιστή· δεν γράφεται στη βάση."
 
-#: ../../source/manuel_matchs.rst:889
+#: ../../source/manuel_matchs.rst:942
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -2195,7 +2337,7 @@ msgstr ""
 "την κίνησή της αν η ζαριά δεν έχει στιγμή· ένας παίκτης σε παύση "
 "παραμένει σε παύση."
 
-#: ../../source/manuel_matchs.rst:902
+#: ../../source/manuel_matchs.rst:955
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2248,7 +2390,7 @@ msgstr ""
 "της, και μετά επιστρέφει στο τέλος του transcript: εκεί τα ψηφία ανοίγουν"
 " την επόμενη ρίψη, και η ένδειξη το λέει."
 
-#: ../../source/manuel_matchs.rst:924
+#: ../../source/manuel_matchs.rst:977
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2276,7 +2418,7 @@ msgstr ""
 "(το τελευταίο προέρχεται από το RPM Fusion) — βλ. "
 ":ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:936
+#: ../../source/manuel_matchs.rst:989
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2290,7 +2432,7 @@ msgstr ""
 "αναπαραγωγή ή σε παύση όπως πριν. Μετά από τρεις ανεπιτυχείς "
 "επαναφορτώσεις, το πλαίσιο το επισημαίνει και προτείνει νέα προσπάθεια."
 
-#: ../../source/manuel_matchs.rst:941
+#: ../../source/manuel_matchs.rst:994
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
@@ -2323,7 +2465,7 @@ msgstr ""
 "πρωτότυπο ούτε τροποποιείται ούτε διαγράφεται, και ένα υγιές αντίγραφο "
 "που υπάρχει ήδη χρησιμοποιείται χωρίς νέα επισκευή."
 
-#: ../../source/manuel_matchs.rst:952
+#: ../../source/manuel_matchs.rst:1005
 msgid ""
 "Sans ``ffmpeg``, ou si la réparation échoue, le volet annonce les sauts "
 "fautifs avec la raison et la commande qui répare le fichier, prête à "
@@ -2333,7 +2475,7 @@ msgstr ""
 "προβληματικές μεταβάσεις με την αιτία και την εντολή που επισκευάζει το "
 "αρχείο, έτοιμη προς αντιγραφή:"
 
-#: ../../source/manuel_matchs.rst:959
+#: ../../source/manuel_matchs.rst:1012
 msgid ""
 "La commande écrit la même copie à côté de l'original ; associez-la "
 "ensuite au match ou à la transcription. Le volet propose la même commande"
@@ -2345,7 +2487,7 @@ msgstr ""
 "εγκαταλείπει μετά τις τρεις επαναφορτώσεις του σε ένα ``.webm`` ή ένα "
 "``.mkv``."
 
-#: ../../source/manuel_matchs.rst:963
+#: ../../source/manuel_matchs.rst:1016
 msgid ""
 "Sous Linux, l'application lit les vidéos par GStreamer (WebKitGTK). Avec "
 "``gst-libav`` 1.28.9, le décodeur H.264 ``avdec_h264`` fait échouer tout "
@@ -2364,7 +2506,7 @@ msgstr ""
 "έναν άλλο εγκατεστημένο αποκωδικοποιητή H.264 (για παράδειγμα "
 "``openh264dec`` ή έναν αποκωδικοποιητή υλικού):"
 
-#: ../../source/manuel_matchs.rst:973
+#: ../../source/manuel_matchs.rst:1026
 msgid ""
 "Revenir à ``gst-libav`` 1.28.8 convient aussi. Windows et macOS ne sont "
 "pas concernés."
@@ -2497,3 +2639,14 @@ msgstr ""
 #~ " σχεδιασμένη περιοχή μπορεί να μην "
 #~ "αντιστοιχεί πια στην παρτίδα και "
 #~ "σχεδιάζεται ξανά με το ▭."
+
+#~ msgid ""
+#~ "**Les N matchs de la liste** : "
+#~ "imprime d'un coup les matchs que "
+#~ "la liste affiche, une feuille par "
+#~ "match dans un seul document."
+#~ msgstr ""
+#~ "**Οι N αγώνες της λίστας**: εκτυπώνει"
+#~ " με τη μία τους αγώνες που "
+#~ "εμφανίζει η λίστα, ένα φύλλο ανά "
+#~ "αγώνα σε ένα μόνο έγγραφο."

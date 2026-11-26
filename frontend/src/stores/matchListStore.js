@@ -112,6 +112,13 @@ export function createMatchList({ list = (o) => ListMatches(o), count = (o) => C
         }
     }
 
+    /** Every match the list holds under its filter and order, not only the pages read. */
+    async function allRows() {
+        const state = get(store);
+        const rows = (await list(opts(state, 0, 0))) || [];
+        return sqlSortKey(state.column, state.direction) === null ? sortMatches(rows, state.column, state.direction) : rows;
+    }
+
     function setText(/** @type {string} */ text) {
         if (get(store).text === text) return Promise.resolve();
         update((s) => ({ ...s, text }));
@@ -162,7 +169,7 @@ export function createMatchList({ list = (o) => ListMatches(o), count = (o) => C
         store.set({ ...value, loading: false, loaded: value.loaded && !value.loading });
     }
 
-    return { subscribe, set, reload, loadMore, setText, setIDs, setSort, refreshRow, patchRow, dropIDs };
+    return { subscribe, set, reload, loadMore, allRows, setText, setIDs, setSort, refreshRow, patchRow, dropIDs };
 }
 
 export const matchListStore = createMatchList();

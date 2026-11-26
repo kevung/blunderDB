@@ -10,7 +10,7 @@ import (
 
 // MatchSubcommands lists the sub-commands of `match`, beside its own flags
 // (CLI_USAGE.md is generated from it).
-func (cli *CLI) MatchSubcommands() []string { return []string{"repair"} }
+func (cli *CLI) MatchSubcommands() []string { return []string{"repair", "sheet"} }
 
 // runMatchRepair is `match repair`: the match panel's repair, through the
 // same RepairMatch as the daemon's matches.repair.

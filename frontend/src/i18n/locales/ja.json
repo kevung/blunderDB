@@ -351,6 +351,27 @@
         "clearFilters": "フィルターを消去",
         "criteriaTab": "条件"
     },
+    "matchSheet": {
+        "title": "マッチシートを印刷",
+        "menu": "印刷…",
+        "print": "印刷",
+        "building": "マッチシートを準備中…",
+        "saved": "マッチシートを保存しました：{path}",
+        "failed": "マッチシートに失敗しました：{err}",
+        "opponentBlunders": "相手のブランダー",
+        "opponentBlundersTip": "相手のブランダーにも番号を付けて詳しく示します。オフのときは棋譜で ?? と示すだけです",
+        "analysis": "簡易分析",
+        "analysisTip": "実戦の手とその損失、最善手、別の候補手ひとつ",
+        "comments": "コメント",
+        "commentsTip": "マッチと局面のコメント。省略しません",
+        "expanded": "展開形 ArkID",
+        "expandedTip": "局面を ArkID の展開形で書きます",
+        "reimportCode": "再インポート用コード",
+        "reimportCodeTip": "棋譜の末尾にマッチの QR コードを置き、ファイルにも埋め込みます",
+        "batch": "リストの {n} マッチ",
+        "batchTip": "1 マッチ 1 枚、ひとつの文書にまとめます",
+        "tooMany": "リストに {n} マッチあります。1 回の印刷は最大 {max} マッチです。リストを絞り込んでください。"
+    },
     "match": {
         "errorExportingMat": "マッチのエクスポート中にエラーが発生しました",
         "exportMat": ".mat をエクスポート",

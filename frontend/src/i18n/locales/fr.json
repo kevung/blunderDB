@@ -351,6 +351,27 @@
         "clearFilters": "Effacer les filtres",
         "criteriaTab": "Critères"
     },
+    "matchSheet": {
+        "title": "Imprimer la feuille de match",
+        "menu": "Imprimer…",
+        "print": "Imprimer",
+        "building": "Préparation de la feuille de match…",
+        "saved": "Feuille de match enregistrée : {path}",
+        "failed": "Échec de la feuille de match : {err}",
+        "opponentBlunders": "Blunders de l'adversaire",
+        "opponentBlundersTip": "Numérote et détaille aussi les blunders de l'adversaire ; sinon ils restent marqués ?? dans la transcription",
+        "analysis": "Analyse courte",
+        "analysisTip": "Coup joué et sa perte, meilleur coup, un coup alternatif",
+        "comments": "Commentaires",
+        "commentsTip": "Commentaire du match et commentaires des positions, jamais tronqués",
+        "expanded": "ArkID développé",
+        "expandedTip": "Écrit les positions sous la forme développée de l'ArkID",
+        "reimportCode": "Code de réimport",
+        "reimportCodeTip": "Le code QR du match en fin de transcription, également embarqué dans le fichier",
+        "batch": "Les {n} matchs de la liste",
+        "batchTip": "Une feuille par match, dans un seul document",
+        "tooMany": "{n} matchs dans la liste : une impression en prend {max} au plus. Filtrez la liste pour la réduire."
+    },
     "match": {
         "errorExportingMat": "Erreur lors de l'export du match",
         "exportMat": "Exporter en .mat",
