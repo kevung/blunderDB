@@ -33,17 +33,24 @@ func openExistingSQLite(path string) (*sql.DB, error) {
 // ingest layer reports it as a silent skip), while a cross-format canonical duplicate is enriched in place and
 // returns the existing match id without error. Callers must hold d.mu.
 func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGraph) (int64, error) {
+	id, _, err := d.writeImportedMatchEnriched(ctx, graph)
+	return id, err
+}
+
+// writeImportedMatchEnriched is writeImportedMatch, saying whether the match
+// was a cross-format duplicate enriched in place rather than a new one.
+func (d *Database) writeImportedMatchEnriched(ctx context.Context, graph *ingest.MatchGraph) (int64, bool, error) {
 	// Stamp the import batch here, the one point every format passes through.
 	graph.ImportBatchID = d.importBatchID
 	graph.SkipDuplicates = d.skipDuplicates.Load()
 	tx, err := d.store.BeginTx(ctx)
 	if err != nil {
-		return 0, err
+		return 0, false, err
 	}
 	res, err := ingest.WriteMatch(ctx, tx, "", graph, nil)
 	if err != nil {
 		_ = tx.Rollback()
-		return 0, err
+		return 0, false, err
 	}
 	d.importBatchCounts.AnalysesDropped += res.DroppedAnalyses
 	if res.Skipped {
@@ -53,7 +60,7 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 		// written.
 		if res.FlagsApplied > 0 || res.Deepened > 0 {
 			if err := tx.Commit(); err != nil {
-				return 0, err
+				return 0, false, err
 			}
 		} else {
 			_ = tx.Rollback()
@@ -63,10 +70,10 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 			d.importBatchCounts.MatchesDeepened++
 			d.importBatchCounts.AnalysesDeepened += res.Deepened
 		}
-		return 0, &DuplicateMatchError{MatchID: res.MatchID, FlagsApplied: res.FlagsApplied, Deepened: res.Deepened}
+		return 0, false, &DuplicateMatchError{MatchID: res.MatchID, FlagsApplied: res.FlagsApplied, Deepened: res.Deepened}
 	}
 	if err := tx.Commit(); err != nil {
-		return 0, err
+		return 0, false, err
 	}
 	if res.ProbableDuplicate != nil {
 		d.importBatchCounts.ProbableDuplicates = append(d.importBatchCounts.ProbableDuplicates, *res.ProbableDuplicate)
@@ -79,7 +86,7 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 	}
 	d.importBatchCounts.PositionsSaved += res.SavedPositions
 	d.positionsSinceStats += res.SavedPositions
-	return res.MatchID, nil
+	return res.MatchID, res.Enriched, nil
 }
 
 // writeImportedPosition persists the positions of a single-position import

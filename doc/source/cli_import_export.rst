@@ -287,6 +287,48 @@ commandes (``analyze``, ``check``, ``import``) autour d'un **relevé** JSON. Voi
    ./blunderdb document check releve.json
    ./blunderdb document import --db base.db releve.json
 
+archive — Archive papier des matchs
+-----------------------------------
+
+Imprime des matchs en codes QR sur des feuilles A4, pour garder une
+bibliothèque sur papier en peu de place, et les réimporte depuis la page ou
+depuis un scan ou une photo de la feuille.
+
+.. code-block:: bash
+
+   ./blunderdb archive export --db base.db --output archive.html
+   ./blunderdb archive export --db base.db --match 12,15 --output archive.html --origin "Club de Lyon"
+   ./blunderdb archive import --db autre.db archive.html
+   ./blunderdb archive import --db autre.db feuille1.jpg feuille2.png
+
+``export`` écrit une page HTML autonome, à imprimer : chaque match tient en
+général dans un seul code (environ 200 octets pour un match en 7 points), un
+code plus long est coupé en plusieurs. Chaque code porte l'identifiant de
+l'archive, son rang et une somme de contrôle, avec une correction d'erreur de
+niveau M ; un code de parité suit chaque groupe de cinq et reconstruit l'un
+d'eux devenu illisible. Les codes remplissent les quatre quarts de la feuille,
+avec une gouttière blanche sur les deux lignes de pliure, et une ligne sous
+chacun donne son rang, les joueurs, la date et la longueur. Sans ``--match``,
+toute la bibliothèque est archivée. ``--origin`` imprime une ligne d'origine
+en pied de feuille. L'archive garde les métadonnées du match (joueurs, date et
+heure, évènement, classements Elo et expérience, règles Jacoby et Beaver d'une
+session money, version du moteur, transcripteur), ses coups, le videau, les
+résultats, le commentaire du match, les commentaires et marques des positions
+jouées, et les temps de décision et repères vidéo quand ils existent (une
+vidéo seulement par son URL). Les analyses ne sont pas gardées : elles se
+recalculent après l'import. Le tournoi n'est pas gardé : il se redéduit de
+l'évènement à l'import.
+
+``import`` lit la page exportée (les matchs y sont aussi inscrits en clair,
+sans lecture optique) ou des images PNG et JPEG portant plusieurs codes, en
+nombre et dans un ordre quelconques. Les matchs passent par l'import
+ordinaire : un lot d'import, et un match déjà en base, de l'archive ou d'un
+autre format, est compté comme doublon. ``import --type match --file
+archive.html`` lit la page de la même façon, comme l'import par lot et le
+glisser-déposer de l'interface. Les codes illisibles et non reconstruits sont
+nommés par leur rang. En mode serveur, ``/v1/exports.archive`` rend la page et
+``/v1/imports.archive`` prend une page ou une image téléversée.
+
 export — Exporter des données
 ------------------------------
 

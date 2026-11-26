@@ -1,9 +1,12 @@
 package ingest
 
 import (
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/arkqr"
 )
 
 // The file extensions blunderDB knows how to import, in ONE place: drag-and-drop,
@@ -18,6 +21,8 @@ var importableExtensions = map[string]bool{
 	".mat":  true, // Jellyfish match
 	".bgf":  true, // BGBlitz match
 	".ogxm": true, // HedgeHog / OpenGammon match
+	".html": true, // blunderDB paper archive page (ADR-0119)
+	".htm":  true,
 }
 
 // IsImportable reports whether path's extension is one blunderDB can read.
@@ -26,6 +31,38 @@ var importableExtensions = map[string]bool{
 // filtering one.
 func IsImportable(path string) bool {
 	return importableExtensions[strings.ToLower(filepath.Ext(path))]
+}
+
+// IsImportableFile is IsImportable for a file on disk, which also looks into
+// an HTML file: only an archive page is one blunderDB reads, and a folder of
+// saved web pages or of a program's HTML reports beside its matches is not a
+// list of refused files. Every collection — a folder, a drop, an unpacked
+// upload, the watched folder — filters through it.
+func IsImportableFile(path string) bool {
+	if !IsImportable(path) {
+		return false
+	}
+	if !isHTML(path) {
+		return true
+	}
+	data, err := os.ReadFile(path)
+	return err == nil && arkqr.IsPage(data)
+}
+
+// KeepImportable is paths without the files IsImportableFile turns away.
+func KeepImportable(paths []string) []string {
+	out := paths[:0:0]
+	for _, p := range paths {
+		if IsImportableFile(p) {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+func isHTML(path string) bool {
+	ext := strings.ToLower(filepath.Ext(path))
+	return ext == ".html" || ext == ".htm"
 }
 
 // ImportableExtensions lists the extensions, sorted, for a message that has to

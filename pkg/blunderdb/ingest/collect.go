@@ -29,7 +29,7 @@ func CollectFiles(root string, recursive bool) ([]string, error) {
 			}
 			return nil
 		}
-		if d.Type().IsRegular() && IsImportable(path) {
+		if d.Type().IsRegular() && IsImportableFile(path) {
 			files = append(files, path)
 		}
 		return nil
@@ -170,6 +170,10 @@ func (u *unpacker) put(name string, r io.Reader) error {
 		return ErrArchiveTooLarge
 	}
 	u.left -= n
+	if !IsImportableFile(dst) {
+		// An HTML entry that is not an archive page: not a file to import.
+		return os.Remove(dst)
+	}
 	u.count++
 	return nil
 }

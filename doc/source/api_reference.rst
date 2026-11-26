@@ -177,6 +177,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/events.alias.set                     JSON
      POST /v1/events.alias.suggest                 JSON
    exports
+     POST /v1/exports.archive                      custom
      POST /v1/exports.json                         custom
      POST /v1/exports.plan                         JSON
      POST /v1/exports.planIds                      JSON
@@ -205,6 +206,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/history.load                         JSON
      POST /v1/history.save                         JSON
    imports
+     POST /v1/imports.archive                      custom
      POST /v1/imports.batch                        custom
      POST /v1/imports.batch.cancel                 JSON
      POST /v1/imports.batch.status                 JSON

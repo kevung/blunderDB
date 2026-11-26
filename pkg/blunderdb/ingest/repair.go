@@ -73,7 +73,7 @@ func (r RepairReport) Differs() bool {
 // MapMatchFile reads a match file through the mapper its extension names,
 // as an import does. A position file is refused.
 func MapMatchFile(path string) (*MatchGraph, error) {
-	g, _, err := mapFile(path)
+	g, _, err := mapOne(path, strings.ToLower(filepath.Ext(path)))
 	if err != nil {
 		return nil, err
 	}

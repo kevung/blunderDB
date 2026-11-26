@@ -87,6 +87,7 @@ Commandes disponibles
    "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
    "study", "La file d'étude : les blunders non traités du joueur de référence, et la marque « vu »."
    "lesson", "Gère les leçons (étapes ordonnées montrant collections et positions) et les exporte."
+   "archive", "Imprime des matchs en codes QR sur des feuilles A4, ou les réimporte depuis la page ou un scan."
    "document", "Lit les diagrammes d'un PDF dans un relevé, vérifie un relevé ou importe ses positions dans une collection."
    "anki", "Paquets de répétition espacée (liste, statistiques, prévision, synchronisation)."
    "stats", "Statistiques calculées à part de ``list --type stats`` (erreurs récurrentes, classement, rapport…)."

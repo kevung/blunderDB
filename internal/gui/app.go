@@ -379,7 +379,7 @@ func (a *App) CollectImportableFiles(dirPath string) ([]string, error) {
 		if info.IsDir() {
 			return nil
 		}
-		if ingest.IsImportable(path) {
+		if ingest.IsImportableFile(path) {
 			files = append(files, path)
 		}
 		return nil

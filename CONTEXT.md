@@ -366,6 +366,16 @@ once, and it stays on the Pile whatever becomes of the Duel.
 _Avoid_: bookmark, stack, to-study list, study queue (computed from the error threshold),
 flag (a Flagged Position is a fact of the source file)
 
+**Paper archive** (code: `arkqr`; interface: *archive papier*):
+Matches printed as QR codes on A4 sheets to be kept on paper and imported back: one match a
+code when it fits, coded as its Transcription document by a codec that does not depend on
+the engine, a parity code every five, and the codes laid out in the four quadrants of a sheet
+folded in four. It keeps what cannot be computed again — header, plays, cube, results,
+comments, study marks, durations and timecodes —, never an analysis. It is read back from the
+exported page or from a scan or a photograph, through the ordinary import (ADR-0119).
+_Avoid_: backup (a backup is a copy of the database file), printable sheet (a sheet shows a
+match to read; the archive's codes are for a machine), export (an export is a file)
+
 **Relevé** (code: `document.Releve`):
 The reading of one document — a book, an article, a web page the user brought — as a JSON
 file a person can read: the document's title, author, edition or URL, the fingerprint of
