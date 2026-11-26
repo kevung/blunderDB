@@ -60,6 +60,16 @@ var ErrNoCheckerShape = errors.New("structure: too few light checkers to learn h
 // ErrPage is the refusal of a page the reader does not take.
 var ErrPage = errors.New("structure: page refused")
 
+// ErrNoPage is the refusal of a document none of whose pages could be read.
+var ErrNoPage = errors.New("structure: no page of the document could be read")
+
+// errUnread marks a page passed over (Page.Unread).
+var errUnread = errors.New("structure: page passed over")
+
+// inspectSources, set by the measure only, sees the diagrams judged with the
+// text layer's pips alone and with the image's alone, beside the reading.
+var inspectSources func(text, image, both []Diagram)
+
 // Word is a word of a page's text layer, its box in the page image's pixels.
 type Word struct {
 	X0, Y0, X1, Y1 float64
@@ -72,6 +82,9 @@ type Page struct {
 	// DPI is the image's resolution; a diagram is at least 0.8 inch wide.
 	DPI   float64
 	Words []Word
+	// Unread, when set, says why the page has no image to read: the reader
+	// passes over it and reads the others.
+	Unread error
 }
 
 // Pages are a document's pages, in order. Page may be called more than once
@@ -105,6 +118,9 @@ type Diagram struct {
 	Checkers [2]int   // checkers drawn, bottom player then top player
 	Pips     [2]int   // pips read, bottom then top
 	Printed  *[2]int  // pips printed, the upper number then the lower one
+	// TextPips and ImagePips are the printed pips as the text layer and the
+	// image give them; Printed is the one taken, nil when they disagree.
+	TextPips, ImagePips *[2]int
 	// Complete is fifteen checkers a side read with no doubt: not a state,
 	// kept as information.
 	Complete bool
@@ -123,6 +139,9 @@ type Profile struct {
 	DirectionVoted bool   // false: assumed from the fewer pips
 	Numbering      string // corner of point 1 per the printed numbering ("BL"…), or ""
 	PipPlace       byte   // 'G' left, 'D' right, 'L' tagged "pips", 'B' at the bar, or 0
+	// PipsInImage: the two places where the document prints its pip counts
+	// were learned on its images, and the pips are read there.
+	PipsInImage bool
 }
 
 // Result is the reading of a document.
@@ -130,6 +149,14 @@ type Result struct {
 	Profile  Profile
 	Diagrams []Diagram
 	Rejected int // components shaped or framed unlike a diagram
+	// Unread are the pages passed over, each with its reason (Page.Unread).
+	Unread []PageError
+}
+
+// PageError is a page the reader passed over.
+type PageError struct {
+	Page int // from 0
+	Err  error
 }
 
 // inspectReading, set by the measure only, sees each raw reading.
@@ -141,6 +168,9 @@ func loadPage(pages Pages, i int) (*raster, Page, error) {
 	pg, err := pages.Page(i)
 	if err != nil {
 		return nil, pg, err
+	}
+	if pg.Unread != nil {
+		return nil, pg, errUnread
 	}
 	if pg.Image == nil {
 		return nil, pg, fmt.Errorf("%w: page %d has no image", ErrPage, i+1)
@@ -175,12 +205,19 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 		return nil, fmt.Errorf("%w: %d pages, at most %d", ErrPage, n, MaxPages)
 	}
 	var samples [][]hole
+	unread, firstUnread := 0, error(nil)
 	var ps []float64
 	for i := 0; i < n && len(samples) < minLearned; i++ {
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
 		g, pg, err := loadPage(pages, i)
+		if errors.Is(err, errUnread) {
+			if unread++; firstUnread == nil {
+				firstUnread = fmt.Errorf("page %d: %w", i+1, pg.Unread)
+			}
+			continue
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -191,6 +228,9 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 		}
 	}
 	if len(samples) == 0 {
+		if n > 0 && unread == n {
+			return nil, fmt.Errorf("%w: %w", ErrNoPage, firstUnread)
+		}
 		return nil, ErrNoDiagram
 	}
 	geo, ok := estimateGeometry(samples, ps)
@@ -205,6 +245,10 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 			return nil, err
 		}
 		g, pg, err := loadPage(pages, i)
+		if errors.Is(err, errUnread) {
+			res.Unread = append(res.Unread, PageError{i, pg.Unread})
+			continue
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -214,6 +258,7 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 			rd := readBoard(z, geo)
 			rd.digits, rd.cubes, rd.dice = z.digits, z.cubes, z.dice
 			rd.page, rd.bbox, rd.pageW, rd.pageH = i, z.bbox, g.w, g.h
+			rd.numbers = extractNumbers(g, z.bbox)
 			rds = append(rds, &rd)
 			if inspectReading != nil {
 				inspectReading(&rd)
@@ -223,7 +268,28 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 			words[i] = pg.Words
 		}
 	}
-	ds, prof := releve(rds, words)
+	// The pips printed in the image: the document's figures read, then the
+	// two places of its pip counts learned on the readings judged without
+	// any printed pips, then read beside each diagram.
+	all := make([][]printedNumber, len(rds))
+	for i, rd := range rds {
+		all[i] = rd.numbers
+	}
+	readNumbers(all)
+	bare, _ := releve(rds, nil, nil)
+	slots := learnPipSlots(all, bare)
+	img := make([]*[2]int, len(rds))
+	for i, rd := range rds {
+		img[i] = imagePips(rd.numbers, rd.bbox, slots)
+		rd.numbers = nil
+	}
+	ds, prof := releve(rds, words, img)
+	if inspectSources != nil {
+		text, _ := releve(rds, words, nil)
+		image, _ := releve(rds, nil, img)
+		inspectSources(text, image, ds)
+	}
+	prof.PipsInImage = slots != nil
 	prof.Rx, prof.Ry, prof.Step, prof.LearnedOn = geo.rx, geo.ry, geo.step, geo.learnedOn
 	res.Profile, res.Diagrams = prof, ds
 	return res, nil

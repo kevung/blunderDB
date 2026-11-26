@@ -486,7 +486,7 @@ func boardString(pts [2]map[int]int, bar [2]int, upper int) (string, bool) {
 
 // relevé learns what the whole document shares (classes, numbering, pip
 // place, direction of play) and turns each raw reading into a diagram.
-func releve(rds []*boardReading, words map[int][]Word) ([]Diagram, Profile) {
+func releve(rds []*boardReading, words map[int][]Word, img []*[2]int) ([]Diagram, Profile) {
 	var means []float64
 	for _, rd := range rds {
 		for _, c := range rd.cols {
@@ -512,6 +512,7 @@ func releve(rds []*boardReading, words map[int][]Word) ([]Diagram, Profile) {
 		num  []numWord
 		side map[byte][]sideNum
 		pips *[2]int
+		read pipsRead
 	}
 	fs := make([]feat, len(rds))
 	numVotes := map[string]int{}
@@ -626,14 +627,26 @@ func releve(rds []*boardReading, words map[int][]Word) ([]Diagram, Profile) {
 			pipSide = 0
 		}
 	}
+	// The printed pips come from the text layer and from the image: when
+	// both give a count and they differ, neither is taken.
 	for i := range fs {
-		if pipSide == 0 {
-			continue
+		if pipSide != 0 {
+			c := append([]sideNum(nil), fs[i].side[pipSide]...)
+			sort.SliceStable(c, func(a, b int) bool { return c[a].cy < c[b].cy })
+			if len(c) >= 2 {
+				fs[i].read.text = &[2]int{c[0].v, c[len(c)-1].v}
+			}
 		}
-		c := append([]sideNum(nil), fs[i].side[pipSide]...)
-		sort.SliceStable(c, func(a, b int) bool { return c[a].cy < c[b].cy })
-		if len(c) >= 2 {
-			fs[i].pips = &[2]int{c[0].v, c[len(c)-1].v}
+		if img != nil {
+			fs[i].read.image = img[i]
+		}
+		t, m := fs[i].read.text, fs[i].read.image
+		switch {
+		case t != nil && m != nil && *t != *m:
+		case t != nil:
+			fs[i].pips = t
+		default:
+			fs[i].pips = m
 		}
 	}
 	// Direction of play: the corner of class 0's home.
@@ -716,10 +729,14 @@ func releve(rds []*boardReading, words map[int][]Word) ([]Diagram, Profile) {
 	}
 	diagrams := make([]Diagram, 0, len(rds))
 	for i, rd := range rds {
-		diagrams = append(diagrams, judge(rd, cl, home0, upper, order, assumed, fs[i].pips))
+		diagrams = append(diagrams, judge(rd, cl, home0, upper, order, assumed, fs[i].pips, fs[i].read))
 	}
 	return diagrams, prof
 }
+
+// pipsRead are a diagram's printed pips (upper number, lower number) as
+// the text layer and the image give them, nil where one gives none.
+type pipsRead struct{ text, image *[2]int }
 
 func colourName(k int) string {
 	if k == 0 {
@@ -732,7 +749,7 @@ func colourName(k int) string {
 // the printed pips agree on both sides, no side has more than fifteen
 // checkers and nothing is in doubt; a stack deduced from the pips is sure
 // only when its side then has fifteen checkers.
-func judge(rd *boardReading, cl classes, home0 string, upper int, order string, assumed bool, printed *[2]int) Diagram {
+func judge(rd *boardReading, cl classes, home0 string, upper int, order string, assumed bool, printed *[2]int, read pipsRead) Diagram {
 	a := assemble(rd, cl, home0)
 	homeUpper := "B" + home0[1:]
 	idx := func(top bool, j int) int { return pointNumber(top, j, homeUpper) }
@@ -818,13 +835,15 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		state = Sure
 	}
 	d := Diagram{
-		Page:     rd.page,
-		Rect:     image2Rect(rd.bbox),
-		PageSize: [2]int{rd.pageW, rd.pageH},
-		Checkers: [2]int{n[upper], n[1-upper]},
-		Pips:     [2]int{pc[upper], pc[1-upper]},
-		Printed:  printed,
-		Complete: n == [2]int{15, 15} && pieceDoubts == 0 && !solved,
+		Page:      rd.page,
+		Rect:      image2Rect(rd.bbox),
+		PageSize:  [2]int{rd.pageW, rd.pageH},
+		Checkers:  [2]int{n[upper], n[1-upper]},
+		Pips:      [2]int{pc[upper], pc[1-upper]},
+		Printed:   printed,
+		TextPips:  read.text,
+		ImagePips: read.image,
+		Complete:  n == [2]int{15, 15} && pieceDoubts == 0 && !solved,
 	}
 	// What is drawn and not read: never invented, named so a sure reading
 	// is not taken for more than its checkers.
@@ -843,7 +862,9 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		}
 	}
 	if !okPips {
-		if printed == nil {
+		if t, m := read.text, read.image; printed == nil && t != nil && m != nil {
+			add("pips", 0, "pips text/image", "printed pips read %d and %d in the text layer, %d and %d in the image: the two disagree", t[0], t[1], m[0], m[1])
+		} else if printed == nil {
 			add("pips", 0, "", "no printed pip count was found next to the diagram")
 		} else {
 			add("pips", 0, "", "pips read %d (bottom) and %d (top), printed %d and %d", pc[upper], pc[1-upper], printed[0], printed[1])

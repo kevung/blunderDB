@@ -297,6 +297,9 @@ type boardReading struct {
 	bbox   box
 	pageW  int
 	pageH  int
+	// numbers printed around the diagram, kept until the document's
+	// figures are read
+	numbers []printedNumber
 }
 
 type slot struct {
