@@ -161,6 +161,45 @@ Suites : le lecteur à glyphes est la voie de Deep Cube (tranche 2) ; le lecteur
 généralise d'abord sur les livres de développement scannés (tranche 3), la réserve restant
 fermée.
 
+### Tranches 1 et 2 (2026-11-26) — fusionnées
+
+- Tranche 1 : paquet `pkg/blunderdb/document`, Relevé (position en XGID), import en Collection
+  dans l'ordre du document, `document check|import`, route `/v1/documents.importReleve`,
+  ADR-0117. Origine sans changement de schéma : description de la Collection, et un commentaire
+  par position (« Titre — p. 3, Problème 1 »), réécrit et jamais doublé.
+- Tranche 2 : `document analyze` pour les PDF en police de plateau XG ; lecteur PDF minimal en
+  bibliothèque standard (`document/pdf`, borné, fuzzé), aucune dépendance. `TestMeasureDeepCube`
+  relancé sur `main` : 1 518 diagrammes, 1 518 sûrs, 1 518 identiques à la vérité, environ 1 s par
+  volume. Deep Cube n'a ni signets ni libellés : chapitre et libellé y restent vides.
+
+### Lecteur de structure sur scans (2026-11-26) — banc, `JOURNAL.md` D0-D6
+
+Un seul code, aucune valeur par livre, sur Trice, Woolsey et Robertie 501. Échantillon de mesure
+tiré avant le développement, passé une fois, vérifié à l'œil diagramme par diagramme (consommé).
+
+| Livre | Présents | Trouvés | Sûres | Sûres fausses | À vérifier exactes / fausses |
+|---|---|---|---|---|---|
+| Trice | 43 | 43 | 27 | 0 | 10 / 5 (+ 1 incertaine fausse) |
+| Woolsey | 41 | 40 | 16 | 0 | 18 / 6 |
+| Robertie (sans pips) | 36 | 33 | — | — | 26 / 7 |
+| Deep Cube (non-régression) | 1 518 | 1 518 | 1 420 | 0 | 0 / 97 (+ 1 incertaine) |
+
+- Sûreté : aucune sûre fausse. C'est la concordance des pips qui protège, pas la lecture.
+- Rendement insuffisant : environ la moitié de sûres sur un scan propre. Causes des 18 lectures
+  fausses : pile noire jointive comptée trop courte (7), pile chiffrée (4), pion pâli ou collé au
+  cadre (3), pile de plus de 6 plafonnée (2), piles haut et bas qui se touchent (2), barre (1).
+- Sans pips imprimés (Robertie), rien n'est sûr : 79 % d'exactes. Les lectures à 15 + 15 pions
+  sans doute sont toutes exactes (84 sur 84, trois livres) : confiance intermédiaire plausible,
+  à confirmer sur une mesure neuve avant d'en faire un état.
+- Localisation : 116 trouvés sur 120, aucun faux positif, ordre de lecture correct.
+- Chiffres par gabarits appris sur la numérotation : échec sur Trice (hachures lues comme « 1 »).
+- Non lus : pions sortis, videau, chiffre d'une pile. Le sens de jeu sans pips est une
+  supposition à faire confirmer. Un cadre sans traits continus serait rejeté en bloc : le repli
+  assisté (§2 bis.4) reste nécessaire.
+
+Suite : le compte des piles (jointives, chiffrées, hautes) avant tout portage en Go ; nouvel
+échantillon de mesure ; la réserve reste fermée.
+
 ## Décisions de l'utilisateur (2026-11-25)
 
 - Recommandations suivies : rendu PDF, premier périmètre, ADR neuf.
