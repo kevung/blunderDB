@@ -184,6 +184,8 @@ func TestCLI_DocumentLearnedDefaultsAndFallback(t *testing.T) {
 			{Rank: 1, Page: 1, Position: "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:2:4:0:7:10", Checkers: document.Sure, Context: document.ContextDefault, Doubts: []capture.Doubt{document.ContextDoubt}},
 			{Rank: 2, Page: 2, Position: "XGID=-b---BD-B---eE---c-e----B-:" + document.StructureDefaults.Context, Checkers: document.Sure,
 				Context: document.ContextToVerify, Doubts: []capture.Doubt{document.ContextDoubt, document.MissingScoreDoubt}},
+			{Rank: 3, Page: 3, Position: "XGID=-b---BC-C---eE---c-e----B-:" + document.StructureDefaults.Context, Checkers: document.ToVerify, Complete: true,
+				Context: document.ContextToVerify, Doubts: []capture.Doubt{document.ContextDoubt, document.NoPipsDoubt, document.MissingScoreDoubt}},
 		}}
 	path := filepath.Join(t.TempDir(), "match.json")
 	write := func() {
@@ -198,18 +200,19 @@ func TestCLI_DocumentLearnedDefaultsAndFallback(t *testing.T) {
 	d.Confirmed = true
 	write()
 	out := captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
-	if !strings.Contains(out, "sure 1, to verify 1") || !strings.Contains(out, "Printed:    score") || !strings.Contains(out, "Fallback:   rank 2 imported with --fallback") {
+	if !strings.Contains(out, "sure 1, to verify 2") || !strings.Contains(out, "Printed:    score") ||
+		!strings.Contains(out, "Fallback:   rank 2 imported with --fallback under the context its position carries (rank 2, 3 with --fallback --accept-complete)") {
 		t.Errorf("check:\n%s", out)
 	}
 	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "(fallback)") {
 		t.Errorf("import without --fallback: %v", err)
 	}
 	out = captureOut(t, cli, func() {
-		if err := cli.Run([]string{"document", "import", "--db", dbPath, "--fallback", path}); err != nil {
-			t.Errorf("import with --fallback: %v", err)
+		if err := cli.Run([]string{"document", "import", "--db", dbPath, "--fallback", "--accept-complete", path}); err != nil {
+			t.Errorf("import with --fallback --accept-complete: %v", err)
 		}
 	})
-	if !strings.Contains(out, "Fallback: 1 entries") {
+	if !strings.Contains(out, "Fallback: 2 entries") {
 		t.Errorf("import with --fallback:\n%s", out)
 	}
 }

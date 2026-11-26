@@ -292,10 +292,11 @@ func (r *Releve) Importable(e Entry, acceptComplete bool) bool {
 // FallbackCertified reports an entry an import accepts under its fallback
 // context (ImportOptions.Fallback) rather than refuse it: its checkers
 // certified — sure, or complete with the direction of play certified when
-// acceptComplete — and its context to verify, neither read in full nor
-// contradicted, in a document whose defaults a person confirmed. Its
-// position carries what was read and the defaults for the rest; its
-// reference says which fields to check against the diagram (FallbackNote).
+// acceptComplete — and its context to verify (not uncertain), in a document
+// whose defaults a person confirmed. Its position carries what was read and
+// the defaults for the rest. A context field the print contradicts (dice
+// the text names otherwise) passes too, never silently: its reference
+// quotes every doubt on the context (FallbackNote).
 func (r *Releve) FallbackCertified(e Entry, acceptComplete bool) bool {
 	d := r.Document.Defaults
 	if r.Version < 2 || d == nil || !d.Confirmed || e.Verified || e.Position == "" || e.Context != ContextToVerify || r.Importable(e, acceptComplete) {
@@ -305,18 +306,19 @@ func (r *Releve) FallbackCertified(e Entry, acceptComplete bool) bool {
 }
 
 // FallbackNote names the context fields of an entry imported under its
-// fallback context that a person checks against the diagram.
+// fallback context that a person checks against the diagram, each with the
+// doubt the reading left on it, a contradiction included.
 func (e Entry) FallbackNote() string {
-	var fields []string
+	var items []string
 	for _, d := range e.Doubts {
-		if contextField[d.Field] && d != ContextDoubt && !slices.Contains(fields, d.Field) {
-			fields = append(fields, d.Field)
+		if contextField[d.Field] && d != ContextDoubt {
+			items = append(items, d.Field+" ("+d.Reason+")")
 		}
 	}
-	if len(fields) == 0 {
-		fields = []string{"context"}
+	if len(items) == 0 {
+		items = []string{"context"}
 	}
-	return "context not read, to check against the diagram: " + strings.Join(fields, ", ")
+	return "context not read, to check against the diagram: " + strings.Join(items, "; ")
 }
 
 // Reference is the entry's place in the document as a person cites it:

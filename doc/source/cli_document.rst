@@ -435,8 +435,9 @@ d'erreur propose le repli :
 
 ``import --fallback`` importe ces entrées sans les marquer vérifiées ; la
 référence de chacune, dans son commentaire, nomme les champs à contrôler sur le
-diagramme (``p. 12, Problem 31 (context not read, to check against the diagram:
-cube)``), et l'import les compte (``Fallback: 1 entries under the context their
+diagramme avec le doute que la lecture y a laissé, contradiction comprise
+(``p. 12, Problem 31 (context not read, to check against the diagram: cube
+(cube drawn, value not read))``), et l'import les compte (``Fallback: 1 entries under the context their
 position carries``). Le repli ne couvre ni une entrée dont les pions sont à
 vérifier, ni un contexte contradictoire, ni un contexte par défaut non
 confirmé. Même avec ``--force``, une entrée sans position est

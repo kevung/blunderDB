@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 15:18+0100\n"
+"POT-Creation-Date: 2026-11-26 15:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -864,29 +864,32 @@ msgstr ""
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
-" sur le diagramme (``p. 12, Problem 31 (context not read, to check "
-"against the diagram: cube)``), et l'import les compte (``Fallback: 1 "
-"entries under the context their position carries``). Le repli ne couvre "
-"ni une entrée dont les pions sont à vérifier, ni un contexte "
-"contradictoire, ni un contexte par défaut non confirmé. Même avec "
-"``--force``, une entrée sans position est refusée : il faut la renseigner"
-" ou la retirer."
+" sur le diagramme avec le doute que la lecture y a laissé, contradiction "
+"comprise (``p. 12, Problem 31 (context not read, to check against the "
+"diagram: cube (cube drawn, value not read))``), et l'import les compte "
+"(``Fallback: 1 entries under the context their position carries``). Le "
+"repli ne couvre ni une entrée dont les pions sont à vérifier, ni un "
+"contexte contradictoire, ni un contexte par défaut non confirmé. Même "
+"avec ``--force``, une entrée sans position est refusée : il faut la "
+"renseigner ou la retirer."
 msgstr ""
 "Το ``import --fallback`` εισάγει αυτές τις καταχωρίσεις χωρίς να τις "
 "επισημαίνει ως επαληθευμένες· η αναφορά καθεμίας, στο σχόλιό της, "
-"ονομάζει τα πεδία που πρέπει να ελεγχθούν στο διάγραμμα (``p. 12, Problem"
-" 31 (context not read, to check against the diagram: cube)``), και η "
-"εισαγωγή τις μετρά (``Fallback: 1 entries under the context their "
-"position carries``). Η υποχώρηση δεν καλύπτει ούτε καταχώριση της οποίας "
-"τα πούλια είναι προς έλεγχο, ούτε αντιφατικό πλαίσιο, ούτε μη "
-"επιβεβαιωμένο προεπιλεγμένο πλαίσιο. Ακόμη και με ``--force``, μια "
-"καταχώριση χωρίς θέση απορρίπτεται: πρέπει να συμπληρωθεί ή να αφαιρεθεί."
+"ονομάζει τα πεδία που πρέπει να ελεγχθούν στο διάγραμμα με την αμφιβολία "
+"που άφησε εκεί η ανάγνωση, αντίφαση συμπεριλαμβανομένης (``p. 12, Problem"
+" 31 (context not read, to check against the diagram: cube (cube drawn, "
+"value not read))``), και η εισαγωγή τις μετρά (``Fallback: 1 entries "
+"under the context their position carries``). Η υποχώρηση δεν καλύπτει "
+"ούτε καταχώριση της οποίας τα πούλια είναι προς έλεγχο, ούτε αντιφατικό "
+"πλαίσιο, ούτε μη επιβεβαιωμένο προεπιλεγμένο πλαίσιο. Ακόμη και με "
+"``--force``, μια καταχώριση χωρίς θέση απορρίπτεται: πρέπει να "
+"συμπληρωθεί ή να αφαιρεθεί."
 
-#: ../../source/cli_document.rst:446
+#: ../../source/cli_document.rst:447
 msgid "Ce qui entre en base"
 msgstr "Τι μπαίνει στη βάση"
 
-#: ../../source/cli_document.rst:448
+#: ../../source/cli_document.rst:449
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -900,7 +903,7 @@ msgstr ""
 "ταυτότητά της: μια θέση που έχει ήδη δεν διπλογράφεται (το ``new in the "
 "library`` μετρά αυτές που της έλειπαν)."
 
-#: ../../source/cli_document.rst:454
+#: ../../source/cli_document.rst:455
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -913,7 +916,7 @@ msgstr ""
 "το ίδιο όνομα δέχεται τις θέσεις που της λείπουν και κρατά την περιγραφή "
 "της αν έχει· μια δυναμική συλλογή (ορισμένη από ερώτημα) απορρίπτεται."
 
-#: ../../source/cli_document.rst:458
+#: ../../source/cli_document.rst:459
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -921,7 +924,7 @@ msgstr ""
 "Κάθε θέση φέρει ένα **σχόλιο** που δίνει την αναφορά της, μετά τον τίτλο "
 "του εγγράφου: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:461
+#: ../../source/cli_document.rst:462
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -931,11 +934,11 @@ msgstr ""
 "του συγγραφέα. Μια εισαγωγή που διακόπηκε ή απορρίφθηκε δεν γράφει "
 "τίποτα: είναι μία μόνο συναλλαγή."
 
-#: ../../source/cli_document.rst:465
+#: ../../source/cli_document.rst:466
 msgid "Une position répétée"
 msgstr "Μια θέση που επαναλαμβάνεται"
 
-#: ../../source/cli_document.rst:467
+#: ../../source/cli_document.rst:468
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -947,11 +950,11 @@ msgstr ""
 "αναφορά: ``Mon livre — p. 2, Problem 1; p. 4``. Το ``repeated`` μετρά "
 "αυτές τις επαναλήψεις."
 
-#: ../../source/cli_document.rst:473
+#: ../../source/cli_document.rst:474
 msgid "Réimporter"
 msgstr "Επανεισαγωγή"
 
-#: ../../source/cli_document.rst:475
+#: ../../source/cli_document.rst:476
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -963,11 +966,11 @@ msgstr ""
 "αναφοράς ξαναγράφεται μόνο αν οι αναφορές του άλλαξαν, ποτέ διπλό. "
 "Μπορείτε λοιπόν να συνεχίσετε μια εισαγωγή αφού διορθώσετε το relevé."
 
-#: ../../source/cli_document.rst:481
+#: ../../source/cli_document.rst:482
 msgid "Le démon"
 msgstr "Ο δαίμονας"
 
-#: ../../source/cli_document.rst:483
+#: ../../source/cli_document.rst:484
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

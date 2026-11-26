@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 15:18+0100\n"
+"POT-Creation-Date: 2026-11-26 15:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -844,28 +844,31 @@ msgstr ""
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
-" sur le diagramme (``p. 12, Problem 31 (context not read, to check "
-"against the diagram: cube)``), et l'import les compte (``Fallback: 1 "
-"entries under the context their position carries``). Le repli ne couvre "
-"ni une entrée dont les pions sont à vérifier, ni un contexte "
-"contradictoire, ni un contexte par défaut non confirmé. Même avec "
-"``--force``, une entrée sans position est refusée : il faut la renseigner"
-" ou la retirer."
+" sur le diagramme avec le doute que la lecture y a laissé, contradiction "
+"comprise (``p. 12, Problem 31 (context not read, to check against the "
+"diagram: cube (cube drawn, value not read))``), et l'import les compte "
+"(``Fallback: 1 entries under the context their position carries``). Le "
+"repli ne couvre ni une entrée dont les pions sont à vérifier, ni un "
+"contexte contradictoire, ni un contexte par défaut non confirmé. Même "
+"avec ``--force``, une entrée sans position est refusée : il faut la "
+"renseigner ou la retirer."
 msgstr ""
 "``import --fallback`` tuo nämä merkinnät merkitsemättä niitä "
 "tarkistetuiksi; kunkin viite kommentissaan nimeää kentät, jotka on "
-"tarkistettava kaaviosta (``p. 12, Problem 31 (context not read, to check "
-"against the diagram: cube)``), ja tuonti laskee ne (``Fallback: 1 entries"
-" under the context their position carries``). Paluu ei kata merkintää, "
-"jonka nappulat on tarkistettava, ei ristiriitaista kontekstia eikä "
-"vahvistamatonta oletuskontekstia. Myös valinnalla ``--force`` merkintä "
-"ilman asemaa hylätään: se on täytettävä tai poistettava."
+"tarkistettava kaaviosta, sekä epäilyn, jonka lukeminen niihin jätti, "
+"ristiriita mukaan lukien (``p. 12, Problem 31 (context not read, to check"
+" against the diagram: cube (cube drawn, value not read))``), ja tuonti "
+"laskee ne (``Fallback: 1 entries under the context their position "
+"carries``). Paluu ei kata merkintää, jonka nappulat on tarkistettava, ei "
+"ristiriitaista kontekstia eikä vahvistamatonta oletuskontekstia. Myös "
+"valinnalla ``--force`` merkintä ilman asemaa hylätään: se on täytettävä "
+"tai poistettava."
 
-#: ../../source/cli_document.rst:446
+#: ../../source/cli_document.rst:447
 msgid "Ce qui entre en base"
 msgstr "Mitä tietokantaan päätyy"
 
-#: ../../source/cli_document.rst:448
+#: ../../source/cli_document.rst:449
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -879,7 +882,7 @@ msgstr ""
 "identiteetistään: asemaa, joka sillä jo on, ei kahdenneta (``new in the "
 "library`` laskee ne, joita siltä puuttui)."
 
-#: ../../source/cli_document.rst:454
+#: ../../source/cli_document.rst:455
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -892,7 +895,7 @@ msgstr ""
 "puuttuvat asemat ja säilyttää kuvauksensa, jos sillä on sellainen; "
 "dynaaminen kokoelma (kyselyllä määritelty) hylätään."
 
-#: ../../source/cli_document.rst:458
+#: ../../source/cli_document.rst:459
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -900,7 +903,7 @@ msgstr ""
 "Jokaisella asemalla on **kommentti**, joka antaa sen viitteen asiakirjan "
 "otsikon jälkeen: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:461
+#: ../../source/cli_document.rst:462
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -910,11 +913,11 @@ msgstr ""
 "tekstiä. Keskeytetty tai hylätty tuonti ei kirjoita mitään: se on yksi "
 "transaktio."
 
-#: ../../source/cli_document.rst:465
+#: ../../source/cli_document.rst:466
 msgid "Une position répétée"
 msgstr "Toistuva asema"
 
-#: ../../source/cli_document.rst:467
+#: ../../source/cli_document.rst:468
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -926,11 +929,11 @@ msgstr ""
 "jokaisen viitteen: ``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` "
 "laskee nämä toistot."
 
-#: ../../source/cli_document.rst:473
+#: ../../source/cli_document.rst:474
 msgid "Réimporter"
 msgstr "Uudelleentuonti"
 
-#: ../../source/cli_document.rst:475
+#: ../../source/cli_document.rst:476
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -942,11 +945,11 @@ msgstr ""
 "kirjoitetaan uudelleen vain, jos sen viitteet ovat muuttuneet, ei koskaan"
 " kahdennettuna. Tuonnin voi siis jatkaa relevén korjaamisen jälkeen."
 
-#: ../../source/cli_document.rst:481
+#: ../../source/cli_document.rst:482
 msgid "Le démon"
 msgstr "Daemon"
 
-#: ../../source/cli_document.rst:483
+#: ../../source/cli_document.rst:484
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"sort"
 	"strings"
 
@@ -238,6 +239,8 @@ func (cli *CLI) runDocumentCheck(args []string) error {
 		fmt.Fprintf(out, "Unverified: rank %s (import refused without --force)\n", joinRanks(s.Unverified))
 	}
 	switch {
+	case len(s.Fallback) > 0 && !slices.Equal(s.Fallback, s.FallbackComplete):
+		fmt.Fprintf(out, "Fallback:   rank %s imported with --fallback under the context its position carries (rank %s with --fallback --accept-complete), the fields to check named in its reference\n", joinRanks(s.Fallback), joinRanks(s.FallbackComplete))
 	case len(s.Fallback) > 0:
 		fmt.Fprintf(out, "Fallback:   rank %s imported with --fallback under the context its position carries, the fields to check named in its reference\n", joinRanks(s.Fallback))
 	case len(s.FallbackComplete) > 0:

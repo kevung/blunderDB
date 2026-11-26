@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 15:18+0100\n"
+"POT-Creation-Date: 2026-11-26 15:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -461,8 +461,8 @@ msgstr ""
 "を参照)、サイコロが描かれていない上側のプレイヤー所有のキューブ、キューブを描くドキュメントで見つからないキューブ、スコアを印刷するドキュメントで見つからないスコア(図の少なくとも"
 " 3 分の 1 の横で見つかったもの)は、コンテキストを要確認にします(\\ ``\"context\": \"to-verify\"``\\ "
 "、名前の付いた疑義付き)。その場合 XGID "
-"は読み取れたものを持ちます。したがって、スキャンした本のエントリでコンテキストが読み取られていないものは、デフォルトコンテキストが確認されるまで\\ **決して**\\"
-" ``sure``\\ になりません。コンテキストが要確認のエントリも決して\\ ``sure``\\ になりません。\\ "
+"は読み取れたものを持ちます。したがって、スキャンした本のエントリでコンテキストが読み取られていないものは、デフォルトコンテキストが確認されるまで\\"
+" **決して**\\ ``sure``\\ になりません。コンテキストが要確認のエントリも決して\\ ``sure``\\ になりません。\\ "
 "``analyze``\\ と\\ ``check``\\ はエントリをコンテキスト別に数え、駒だけが保証されたものは別に数えます。"
 
 #: ../../source/cli_document.rst:247
@@ -724,34 +724,35 @@ msgid ""
 msgstr ""
 "駒が保証されており(\\ ``sure``\\ 、または\\ ``--accept-complete``\\ "
 "を付けた完全なエントリで、プレイの向きが確実なもの)、コンテキストだけが要確認のエントリは、必ずしも拒否されるとは限りません。デフォルトコンテキストが確認されると、インポートはそのエントリを、XGID"
-" が持つコンテキスト、つまり読み取れたものと、残りはデフォルトに\\ **フォールバック**\\ させることを提案します。\\ ``check``\\ "
-"はこれらの順位を示し、エラーメッセージがフォールバックを提案します。"
+" が持つコンテキスト、つまり読み取れたものと、残りはデフォルトに\\ **フォールバック**\\ させることを提案します。\\ "
+"``check``\\ はこれらの順位を示し、エラーメッセージがフォールバックを提案します。"
 
 #: ../../source/cli_document.rst:436
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
-" sur le diagramme (``p. 12, Problem 31 (context not read, to check "
-"against the diagram: cube)``), et l'import les compte (``Fallback: 1 "
-"entries under the context their position carries``). Le repli ne couvre "
-"ni une entrée dont les pions sont à vérifier, ni un contexte "
-"contradictoire, ni un contexte par défaut non confirmé. Même avec "
-"``--force``, une entrée sans position est refusée : il faut la renseigner"
-" ou la retirer."
+" sur le diagramme avec le doute que la lecture y a laissé, contradiction "
+"comprise (``p. 12, Problem 31 (context not read, to check against the "
+"diagram: cube (cube drawn, value not read))``), et l'import les compte "
+"(``Fallback: 1 entries under the context their position carries``). Le "
+"repli ne couvre ni une entrée dont les pions sont à vérifier, ni un "
+"contexte contradictoire, ni un contexte par défaut non confirmé. Même "
+"avec ``--force``, une entrée sans position est refusée : il faut la "
+"renseigner ou la retirer."
 msgstr ""
 "\\ ``import --fallback``\\ "
-"は、これらのエントリを確認済みとせずにインポートします。それぞれの参照は、コメント内で図と照合すべきフィールドを示し(\\ ``p. 12, "
-"Problem 31 (context not read, to check against the diagram: cube)``\\ "
-")、インポートはその件数を数えます(\\ ``Fallback: 1 entries under the context their "
-"position carries``\\ "
-")。フォールバックの対象外となるのは、駒が要確認のエントリ、矛盾したコンテキスト、確認されていないデフォルトコンテキストです。\\ "
+"は、これらのエントリを確認済みとせずにインポートします。それぞれの参照は、コメント内で図と照合すべきフィールドを、読み取りがそこに残した疑い（矛盾を含む）とともに示し（\\"
+" ``p. 12, Problem 31 (context not read, to check against the diagram: "
+"cube (cube drawn, value not read))``\\ ）、インポートはその件数を数えます（\\ ``Fallback: 1"
+" entries under the context their position carries``\\ "
+"）。フォールバックの対象外となるのは、駒が要確認のエントリ、矛盾したコンテキスト、確認されていないデフォルトコンテキストです。\\ "
 "``--force``\\ を付けても、局面のないエントリは拒否されます。入力するか削除してください。"
 
-#: ../../source/cli_document.rst:446
+#: ../../source/cli_document.rst:447
 msgid "Ce qui entre en base"
 msgstr "データベースに入るもの"
 
-#: ../../source/cli_document.rst:448
+#: ../../source/cli_document.rst:449
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -763,7 +764,7 @@ msgstr ""
 "の名前)のコレクションに入ります。各局面は単独で持ち込まれた局面として入り、ライブラリはその同一性で局面を認識します。すでに持っている局面は重複しません(``new"
 " in the library`` \\ は、足りなかった局面の数です)。"
 
-#: ../../source/cli_document.rst:454
+#: ../../source/cli_document.rst:455
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -774,7 +775,7 @@ msgstr ""
 "コレクションの\\ **説明**\\ には、ドキュメントのタイトル、著者、版、アドレスが 1 行に 1 "
 "つずつ入ります。同名の既存コレクションは足りない局面を受け取り、説明があればそれを保持します。ダイナミックコレクション(クエリで定義されたもの)は拒否されます。"
 
-#: ../../source/cli_document.rst:458
+#: ../../source/cli_document.rst:459
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -782,18 +783,18 @@ msgstr ""
 "各局面には、ドキュメントのタイトルに続けて参照を示す\\ **コメント**\\ が付きます。\\ ``Mon livre — p. 146, "
 "Problem 191``"
 
-#: ../../source/cli_document.rst:461
+#: ../../source/cli_document.rst:462
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
 "transaction."
 msgstr "それ以外のものは決して入りません。画像も、矩形も、著者のテキストも入りません。中断または拒否されたインポートは何も書き込みません。インポートは単一のトランザクションです。"
 
-#: ../../source/cli_document.rst:465
+#: ../../source/cli_document.rst:466
 msgid "Une position répétée"
 msgstr "繰り返される局面"
 
-#: ../../source/cli_document.rst:467
+#: ../../source/cli_document.rst:468
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -803,11 +804,11 @@ msgstr ""
 "ドキュメントが同じ局面を 2 回示す場合、その局面は最初の出現位置でコレクションに 1 回だけ入ります。そのコメントはすべての参照を挙げます。\\"
 " ``Mon livre — p. 2, Problem 1; p. 4``\\ 。\\ ``repeated`` \\ はこの繰り返しの数です。"
 
-#: ../../source/cli_document.rst:473
+#: ../../source/cli_document.rst:474
 msgid "Réimporter"
 msgstr "再インポート"
 
-#: ../../source/cli_document.rst:475
+#: ../../source/cli_document.rst:476
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -818,11 +819,11 @@ msgstr ""
 "collection: 0``)、参照コメントは参照が変わった場合にのみ書き直され、二重にはなりません。したがって、relevé "
 "を修正した後でインポートをやり直せます。"
 
-#: ../../source/cli_document.rst:481
+#: ../../source/cli_document.rst:482
 msgid "Le démon"
 msgstr "デーモン"
 
-#: ../../source/cli_document.rst:483
+#: ../../source/cli_document.rst:484
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

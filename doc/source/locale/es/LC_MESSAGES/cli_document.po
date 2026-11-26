@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 15:18+0100\n"
+"POT-Creation-Date: 2026-11-26 15:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -847,29 +847,31 @@ msgstr ""
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
-" sur le diagramme (``p. 12, Problem 31 (context not read, to check "
-"against the diagram: cube)``), et l'import les compte (``Fallback: 1 "
-"entries under the context their position carries``). Le repli ne couvre "
-"ni une entrée dont les pions sont à vérifier, ni un contexte "
-"contradictoire, ni un contexte par défaut non confirmé. Même avec "
-"``--force``, une entrée sans position est refusée : il faut la renseigner"
-" ou la retirer."
+" sur le diagramme avec le doute que la lecture y a laissé, contradiction "
+"comprise (``p. 12, Problem 31 (context not read, to check against the "
+"diagram: cube (cube drawn, value not read))``), et l'import les compte "
+"(``Fallback: 1 entries under the context their position carries``). Le "
+"repli ne couvre ni une entrée dont les pions sont à vérifier, ni un "
+"contexte contradictoire, ni un contexte par défaut non confirmé. Même "
+"avec ``--force``, une entrée sans position est refusée : il faut la "
+"renseigner ou la retirer."
 msgstr ""
 "``import --fallback`` importa estas entradas sin marcarlas como "
 "verificadas; la referencia de cada una, en su comentario, nombra los "
-"campos que hay que comprobar en el diagrama (``p. 12, Problem 31 (context"
-" not read, to check against the diagram: cube)``), y la importación las "
-"cuenta (``Fallback: 1 entries under the context their position "
-"carries``). El repliegue no cubre ni una entrada cuyas fichas están por "
-"verificar, ni un contexto contradictorio, ni un contexto por defecto sin "
-"confirmar. Incluso con ``--force``, una entrada sin posición se rechaza: "
-"hay que rellenarla o retirarla."
+"campos que hay que comprobar en el diagrama con la duda que la lectura "
+"dejó en ellos, contradicción incluida (``p. 12, Problem 31 (context not "
+"read, to check against the diagram: cube (cube drawn, value not "
+"read))``), y la importación las cuenta (``Fallback: 1 entries under the "
+"context their position carries``). El repliegue no cubre ni una entrada "
+"cuyas fichas están por verificar, ni un contexto contradictorio, ni un "
+"contexto por defecto sin confirmar. Incluso con ``--force``, una entrada "
+"sin posición se rechaza: hay que rellenarla o retirarla."
 
-#: ../../source/cli_document.rst:446
+#: ../../source/cli_document.rst:447
 msgid "Ce qui entre en base"
 msgstr "Qué entra en la base"
 
-#: ../../source/cli_document.rst:448
+#: ../../source/cli_document.rst:449
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -883,7 +885,7 @@ msgstr ""
 "su identidad: una posición que ya tiene no se duplica (``new in the "
 "library`` cuenta las que le faltaban)."
 
-#: ../../source/cli_document.rst:454
+#: ../../source/cli_document.rst:455
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -897,7 +899,7 @@ msgstr ""
 "descripción si la tiene; una colección dinámica (definida por una "
 "consulta) se rechaza."
 
-#: ../../source/cli_document.rst:458
+#: ../../source/cli_document.rst:459
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -905,7 +907,7 @@ msgstr ""
 "Cada posición lleva un **comentario** que da su referencia, tras el "
 "título del documento: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:461
+#: ../../source/cli_document.rst:462
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -915,11 +917,11 @@ msgstr ""
 "importación interrumpida o rechazada no escribe nada: es una sola "
 "transacción."
 
-#: ../../source/cli_document.rst:465
+#: ../../source/cli_document.rst:466
 msgid "Une position répétée"
 msgstr "Una posición repetida"
 
-#: ../../source/cli_document.rst:467
+#: ../../source/cli_document.rst:468
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -931,11 +933,11 @@ msgstr ""
 "referencia: ``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` cuenta "
 "estas repeticiones."
 
-#: ../../source/cli_document.rst:473
+#: ../../source/cli_document.rst:474
 msgid "Réimporter"
 msgstr "Reimportar"
 
-#: ../../source/cli_document.rst:475
+#: ../../source/cli_document.rst:476
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -947,11 +949,11 @@ msgstr ""
 "referencia se reescribe solo si sus referencias han cambiado, nunca se "
 "duplica. Se puede, pues, retomar una importación tras corregir el relevé."
 
-#: ../../source/cli_document.rst:481
+#: ../../source/cli_document.rst:482
 msgid "Le démon"
 msgstr "El demonio"
 
-#: ../../source/cli_document.rst:483
+#: ../../source/cli_document.rst:484
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

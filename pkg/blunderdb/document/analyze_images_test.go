@@ -302,7 +302,7 @@ func TestLearnedDefaultsMatchScore(t *testing.T) {
 	if got := Unverified(r, false); !slices.Equal(got, []int{4}) || !slices.Equal(FallbackRanks(r, false), []int{4}) {
 		t.Errorf("confirmed defaults: unverified %v, fallback %v", got, FallbackRanks(r, false))
 	}
-	if n := missed.FallbackNote(); n != "context not read, to check against the diagram: score" {
+	if n := missed.FallbackNote(); n != "context not read, to check against the diagram: score ("+MissingScoreDoubt.Reason+")" {
 		t.Errorf("fallback note %q", n)
 	}
 	// Without the score learned as printed, a score read stays outside the
@@ -310,6 +310,16 @@ func TestLearnedDefaultsMatchScore(t *testing.T) {
 	alone := structureEntry(ds[0], 1, plainDefaults)
 	if alone.Context != ContextToVerify {
 		t.Errorf("score read, defaults printing nothing: %+v", alone)
+	}
+	// A score not read beside dice the text contradicts: both fields are
+	// named in the fallback note, the contradiction quoted.
+	dice := capture.Doubt{Field: "dice", Reason: "dice 4-1 counted in the image, the text says otherwise"}
+	both := structureEntry(structure.Diagram{Board: board, State: structure.ToVerify, CheckersSure: true, Doubts: []capture.Doubt{dice}}, 5, d)
+	if both.Context != ContextToVerify || !hasDoubt(both.Doubts, MissingScoreDoubt) || !r.FallbackCertified(both, false) {
+		t.Errorf("score and dice not read: %+v", both)
+	}
+	if n := both.FallbackNote(); n != "context not read, to check against the diagram: dice ("+dice.Reason+"); score ("+MissingScoreDoubt.Reason+")" {
+		t.Errorf("fallback note %q", n)
 	}
 	r.Document.Defaults.Printed = []string{"score", "score"}
 	if err := r.Validate(); !errors.Is(err, ErrInvalid) {
@@ -338,5 +348,30 @@ func TestAnalyzeFallbackWithoutPips(t *testing.T) {
 	}
 	if s := Summarize(r); !slices.Equal(s.FallbackComplete, []int{2}) || len(s.Fallback) != 0 {
 		t.Errorf("summary fallback %v / %v", s.Fallback, s.FallbackComplete)
+	}
+}
+
+// Each printed field frees its own places in the context, and only them.
+func TestDefaultsCoversPrinted(t *testing.T) {
+	for _, c := range []struct {
+		printed []string
+		ctx     string
+		want    bool
+	}{
+		{nil, "0:0:1:00:0:0:0:0:10", true},
+		{nil, "2:1:1:00:0:0:0:0:10", false},
+		{[]string{"cube"}, "2:1:1:00:0:0:0:0:10", true},
+		{[]string{"cube"}, "2:-1:1:41:0:0:0:0:10", false},
+		{[]string{"dice"}, "0:0:-1:41:0:0:0:0:10", true},
+		{[]string{"dice"}, "1:1:1:41:0:0:0:0:10", false},
+		{[]string{"dice"}, "0:0:1:00:2:4:0:7:10", false},
+		{[]string{"cube", "dice"}, "2:-1:-1:63:0:0:0:0:10", true},
+		{[]string{"score"}, "0:0:1:00:2:4:0:7:10", true},
+		{[]string{"score"}, "0:0:1:00:2:4:0:7:8", false},
+	} {
+		d := Defaults{Context: StructureDefaults.Context, Printed: c.printed}
+		if got := d.Covers(c.ctx); got != c.want {
+			t.Errorf("printed %v covers %s = %v, want %v", c.printed, c.ctx, got, c.want)
+		}
 	}
 }

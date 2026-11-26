@@ -154,7 +154,7 @@ func CheckDocumentImport(t *testing.T, s storage.Storage, ctx context.Context, s
 	if err != nil || len(fids) != 1 {
 		t.Fatalf("fallback members = %v, %v", fids, err)
 	}
-	if text, _ := s.Comments().Text(ctx, scope, fids[0]); !strings.Contains(text, "p. 2 (context not read, to check against the diagram: cube)") {
+	if text, _ := s.Comments().Text(ctx, scope, fids[0]); !strings.Contains(text, "p. 2 (context not read, to check against the diagram: cube (cube drawn, value not read))") {
 		t.Errorf("fallback comment = %q", text)
 	}
 }

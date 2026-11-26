@@ -90,7 +90,7 @@ func refusalHint(r *Releve, ranks []int, acceptComplete, fallback bool) string {
 	for _, k := range ranks {
 		want[k] = true
 	}
-	var defaults, direction, complete, context, repli bool
+	var defaults, direction, complete, context, fallbackHint bool
 	for _, e := range r.Entries {
 		if !want[e.Rank] {
 			continue
@@ -108,7 +108,7 @@ func refusalHint(r *Releve, ranks []int, acceptComplete, fallback bool) string {
 			context = true
 		}
 		if !fallback && r.FallbackCertified(e, acceptComplete) {
-			repli = true
+			fallbackHint = true
 		}
 	}
 	var hints []string
@@ -124,7 +124,7 @@ func refusalHint(r *Releve, ranks []int, acceptComplete, fallback bool) string {
 	if context {
 		hints = append(hints, "check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram")
 	}
-	if repli {
+	if fallbackHint {
 		hints = append(hints, "or import the entries whose checkers are certified under the context their position carries, each reference naming the fields to check (fallback)")
 	}
 	hints = append(hints, "verify the others (\"verified\": true)")

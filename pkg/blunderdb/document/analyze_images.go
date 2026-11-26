@@ -148,8 +148,9 @@ func structureEntry(d structure.Diagram, rank int, defaults *Defaults) Entry {
 		e.Doubts = append(e.Doubts, d.Doubts...)
 	}
 	// A score the document prints beside its diagrams and not read here is
-	// not money play: the context is left to verify.
-	if defaults.Prints("score") && d.Context.Score == nil && !drawnContext(e.Doubts) {
+	// not money play: the context is left to verify, and the score is named
+	// beside any other field not read so a fallback note lists it.
+	if defaults.Prints("score") && d.Context.Score == nil {
 		e.Doubts = append(e.Doubts, MissingScoreDoubt)
 	}
 	// A context read in part and outside the defaults (an owned cube in a
