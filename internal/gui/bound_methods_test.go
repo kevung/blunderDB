@@ -133,7 +133,6 @@ var boundAppMethods = []string{
 	"SuggestWatchFolder",
 	"StartEvaluationAtRest",
 	"StartRollMap",
-	"StartRollMapAfterPlay",
 	"StartScoreMap",
 	"QueueGammonNetBatch",
 	"QueueGammonNetBatchIn",

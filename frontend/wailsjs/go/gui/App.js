@@ -442,10 +442,6 @@ export function StartRollMap(arg1, arg2, arg3, arg4) {
   return window['go']['gui']['App']['StartRollMap'](arg1, arg2, arg3, arg4);
 }
 
-export function StartRollMapAfterPlay(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
-  return window['go']['gui']['App']['StartRollMapAfterPlay'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-}
-
 export function StartRollout(arg1) {
   return window['go']['gui']['App']['StartRollout'](arg1);
 }

@@ -24,11 +24,12 @@ export function trailPosition(trail) {
 /** The roll map of what follows a play: the plays the other side may answer with.
  * @param {any} position with its dice
  * @param {string} move
+ * @param {boolean} [marks] whether the notation's dialect writes its hits
  * @returns {boolean} false when the play leaves no single board
  */
-export function openRollReplies(position, move) {
+export function openRollReplies(position, move, marks = true) {
     const [die1, die2] = position?.dice ?? [0, 0];
-    const after = positionAfterPlay(position, die1, die2, move);
+    const after = positionAfterPlay(position, die1, die2, move, marks);
     if (!after) return false;
     const root = JSON.parse(JSON.stringify(position));
     rollTrailStore.set({ root, steps: [{ die1, die2, move, before: root, after }] });

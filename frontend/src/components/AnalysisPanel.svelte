@@ -151,7 +151,7 @@
     /** @param {MouseEvent} event @param {string[]} moves */
     function openPanelMenu(event, moves) {
         event.preventDefault();
-        panelMenu = { x: event.clientX, y: event.clientY, items: analysisMenuItems(moves) };
+        panelMenu = { x: event.clientX, y: event.clientY, items: analysisMenuItems(moves, {}, analysisData?.checkerAnalysis?.moves ?? []) };
     }
 
     /** Right-click on a row: a row outside the selection becomes the selection. */

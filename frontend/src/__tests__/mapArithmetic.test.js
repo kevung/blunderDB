@@ -121,4 +121,23 @@ describe('score map arithmetic', () => {
         // DMP is never the Crawford game
         expect(positionCell({ ...pos, score: [0, 0] }, 9)).toEqual({ mine: 1, theirs: 1, crawford: false });
     });
+
+    test('an engine notation is read with its hits marked, as Go reads it', () => {
+        const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
+        points[6] = { checkers: 2, color: 0 };
+        points[2] = { checkers: 1, color: 1 };
+        points[20] = { checkers: 2, color: 1 };
+        const pos = { id: 0, board: { points, bearoff: [13, 12] }, cube: { owner: -1, value: 0 }, dice: [4, 1], score: [-1, -1], player_on_roll: 0 };
+        // 6/1 at 4-1 goes by 5 or, hitting, by 2: two boards when hits are not written
+        expect(positionAfterPlay(pos, 4, 1, '6/1', false)).toBeNull();
+        // unstarred in a dialect that marks its hits, it hits nothing
+        const quiet = positionAfterPlay(pos, 4, 1, '6/1');
+        expect(quiet.board.points[2]).toEqual({ checkers: 1, color: 1 });
+        // the hit, marked, is resolved to the board it leaves
+        const hit = positionAfterPlay(pos, 4, 1, '6/2* 2/1');
+        expect(hit.board.points[2]).toEqual({ checkers: 0, color: -1 });
+        expect(hit.board.points[0]).toEqual({ checkers: 1, color: 1 });
+        expect(hit.board.points[1]).toEqual({ checkers: 1, color: 0 });
+        expect(hit.player_on_roll).toBe(1);
+    });
 });

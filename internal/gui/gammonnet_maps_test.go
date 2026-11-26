@@ -83,17 +83,6 @@ func TestStartRollMap_SupersededIsCancelled(t *testing.T) {
 	}
 }
 
-func TestStartRollMapAfterPlay_RefusesAnIllegalPlay(t *testing.T) {
-	a := &App{}
-	ch := mapEvents(a)
-	pos, _ := domain.DecodeXGID(mapsOpeningXGID)
-	a.StartRollMapAfterPlay(pos, 3, 1, "24/18", 0, 0, 3)
-	last, _ := waitMapEnd(t, ch, "gammonnet-rolls:done", "gammonnet-rolls:error", "gammonnet-rolls:cancelled")
-	if last.name != "gammonnet-rolls:error" {
-		t.Fatalf("ended with %s", last.name)
-	}
-}
-
 func TestStartScoreMap_EmitsCellsThenDone(t *testing.T) {
 	a := &App{}
 	ch := mapEvents(a)

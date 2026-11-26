@@ -319,21 +319,24 @@ export function resolveBoard(position, notation, marks) {
 /**
  * The position position reaches once played with d1-d2 and move, the other side on roll before
  * their dice: gammonnet.PositionAfterPlay in Go. An empty move is a dance. Null when the
- * notation names no play, or may leave several boards.
+ * notation names no play, or may leave several boards. marks says whether the notation's dialect
+ * writes its hits (engineMarksHits): true, as Go reads it, for blunderDB's and the engine's own
+ * notations; false only for an imported one that leaves them out.
  *
  * @param {any} position
  * @param {number} d1
  * @param {number} d2
  * @param {string} move
+ * @param {boolean} [marks]
  * @returns {any | null}
  */
-export function positionAfterPlay(position, d1, d2, move) {
+export function positionAfterPlay(position, d1, d2, move, marks = true) {
     if (!position?.board) return null;
     const rolled = { ...position, dice: [d1, d2] };
     const opponent = position.player_on_roll === WHITE ? BLACK : WHITE;
     const next = JSON.parse(JSON.stringify(position));
     if (move) {
-        const key = resolveBoard(rolled, move, false);
+        const key = resolveBoard(rolled, move, marks);
         if (key === null) return null;
         const [pointsPart, bearoffPart] = key.split('|');
         next.board = {

@@ -232,7 +232,6 @@ export function StartMaintenance(arg1:string):Promise<void>;
 
 export function StartRollMap(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<void>;
 
-export function StartRollMapAfterPlay(arg1:domain.Position,arg2:number,arg3:number,arg4:string,arg5:number,arg6:number,arg7:number):Promise<void>;
 
 export function StartRollout(arg1:gui.RolloutRequest):Promise<number>;
 
