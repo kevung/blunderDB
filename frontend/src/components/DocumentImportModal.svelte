@@ -31,11 +31,10 @@
                 return $t('documentImport.field.score');
             case 'turn':
                 return $t('documentImport.field.turn');
-            case 'point':
-            case 'bar':
             case 'checkers':
-            case 'position':
                 return $t('documentImport.field.checkers');
+            case 'diagram':
+                return $t('documentImport.field.diagram');
             case 'orientation':
                 return $t('documentImport.field.orientation');
             case 'pips':

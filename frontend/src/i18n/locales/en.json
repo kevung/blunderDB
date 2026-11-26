@@ -3861,7 +3861,8 @@
             "context": "context (cube, dice, player on roll, score)",
             "checkers": "checkers",
             "orientation": "direction of play",
-            "pips": "pip counts"
+            "pips": "pip counts",
+            "diagram": "diagram reading"
         },
         "importMenu": "Import a document…"
     }

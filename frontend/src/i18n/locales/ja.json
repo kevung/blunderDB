@@ -3861,7 +3861,8 @@
             "context": "文脈(キューブ、ダイス、手番、スコア)",
             "checkers": "チェッカー",
             "orientation": "プレイの向き",
-            "pips": "ピップ数"
+            "pips": "ピップ数",
+            "diagram": "図の読み取り"
         },
         "importMenu": "文書を読み込む…"
     }

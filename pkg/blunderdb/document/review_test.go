@@ -1,6 +1,9 @@
 package document
 
 import (
+	"os"
+	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"testing"
@@ -81,5 +84,40 @@ func TestConfirmDefaultsConfirmsDirectionToo(t *testing.T) {
 	r.Document.Defaults = nil
 	if err := ConfirmDefaults(r); err == nil {
 		t.Errorf("confirming absent defaults: no error")
+	}
+}
+
+// Every field a reader gives a doubt is in doubtCategory: an interface
+// translates the categories, so a new field must be placed in one.
+func TestDoubtFieldsAreClosed(t *testing.T) {
+	files, _ := filepath.Glob("*.go")
+	more, _ := filepath.Glob("structure/*.go")
+	re := regexp.MustCompile(`(?:Field: |doubt\((?:true|false), |add\()"([a-z]+)"`)
+	seen := 0
+	for _, f := range append(files, more...) {
+		if strings.HasSuffix(f, "_test.go") {
+			continue
+		}
+		src, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, m := range re.FindAllStringSubmatch(string(src), -1) {
+			seen++
+			if _, ok := doubtCategory[m[1]]; !ok {
+				t.Errorf("%s emits the doubt field %q, absent from doubtCategory", f, m[1])
+			}
+		}
+	}
+	if seen < 40 {
+		t.Errorf("only %d doubt fields found: the scan no longer reads the readers", seen)
+	}
+}
+
+func TestReviewFieldsAreCategoriesWithoutRepeats(t *testing.T) {
+	e := Entry{Doubts: []capture.Doubt{{Field: "point", Reason: "a"}, {Field: "bar", Reason: "b"}, {Field: "checkers", Reason: "c"}, {Field: "frame", Reason: "d"}, {Field: "board", Reason: "e"}, {Field: "cube", Reason: "f"}}}
+	fields, _ := reviewFields(e)
+	if !slices.Equal(fields, []string{"checkers", "diagram", "cube"}) {
+		t.Errorf("fields = %v", fields)
 	}
 }

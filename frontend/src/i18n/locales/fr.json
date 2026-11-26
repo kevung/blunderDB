@@ -3861,7 +3861,8 @@
             "context": "contexte (videau, dés, trait, score)",
             "checkers": "pions",
             "orientation": "sens de jeu",
-            "pips": "décomptes"
+            "pips": "décomptes",
+            "diagram": "lecture du diagramme"
         },
         "importMenu": "Importer un document…"
     }

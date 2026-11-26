@@ -33,9 +33,26 @@ function patch(p) {
 
 // Ce que l'import refuse, et ce que le repli offrirait, vient de Go
 // (document.Refused) : l'assistant n'en refait pas le calcul.
+// Jeton de la dernière demande de revue : une réponse arrivée après un choix plus récent
+// (cases cochées, Relevé reconfirmé) ne correspond plus à l'écran et est ignorée.
+let reviewToken = 0;
+
+/**
+ * @param {string} releve
+ * @param {boolean} acceptComplete
+ * @param {boolean} fallback
+ * @returns {Promise<any|null>} null quand une demande plus récente a pris le relais
+ */
+async function requestReview(releve, acceptComplete, fallback) {
+    const token = ++reviewToken;
+    const review = await ReviewDocumentReleve(releve, acceptComplete, fallback);
+    return token === reviewToken ? review : null;
+}
+
 /** @param {string} releve */
 async function load(releve, choices = get(documentImportStore)) {
-    const [summary, review] = await Promise.all([SummarizeDocumentReleve(releve), ReviewDocumentReleve(releve, !!choices.acceptComplete, !!choices.fallback)]);
+    const [summary, review] = await Promise.all([SummarizeDocumentReleve(releve), requestReview(releve, !!choices.acceptComplete, !!choices.fallback)]);
+    if (!review) return;
     patch({ releve, summary, review, phase: 'review', error: '' });
 }
 
@@ -83,8 +100,8 @@ export async function setChoice(name, value) {
     patch({ [name]: value });
     if (name === 'collection') return;
     try {
-        const review = await ReviewDocumentReleve(s.releve, name === 'acceptComplete' ? value === true : s.acceptComplete, name === 'fallback' ? value === true : s.fallback);
-        patch({ review });
+        const review = await requestReview(s.releve, name === 'acceptComplete' ? value === true : s.acceptComplete, name === 'fallback' ? value === true : s.fallback);
+        if (review) patch({ review });
     } catch (err) {
         patch({ error: messageOf(err) });
     }

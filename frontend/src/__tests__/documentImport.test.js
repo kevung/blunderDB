@@ -37,7 +37,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 vi.mock('../../wailsjs/go/gui/App.js', () => ({ OpenDocumentDialog: vi.fn(async () => '/tmp/livre.pdf'), ReadFileContent: vi.fn() }));
 
 import * as db from '../../wailsjs/go/database/Database.js';
-import { startDocumentImport } from '../services/documentImportService.js';
+import { startDocumentImport, setChoice } from '../services/documentImportService.js';
 import { documentImportStore, initialDocumentImport } from '../stores/documentImportStore.js';
 import { activeModal, MODAL } from '../stores/uiStore.js';
 import { importForegroundStore } from '../stores/groupActivityStore.js';
@@ -95,5 +95,22 @@ describe('the assistant, mounted', () => {
         await started;
         await waitFor(() => expect(getByTestId('document-import-run')).toBeTruthy());
         expect(get(importForegroundStore)).toBe(false);
+    });
+
+    test('a review answered after a newer choice is ignored', async () => {
+        const { getByTestId } = render(DocumentImportModal, { visible: true });
+        await startDocumentImport();
+        await waitFor(() => expect(getByTestId('document-import-review')).toBeTruthy());
+        /** @type {(v: any) => void} */
+        let slow = () => {};
+        db.ReviewDocumentReleve.mockReset();
+        db.ReviewDocumentReleve.mockImplementationOnce(() => new Promise((r) => (slow = r))).mockResolvedValueOnce(review({ refused: [], items: [] }));
+        const first = setChoice('acceptComplete', true);
+        const second = setChoice('fallback', true);
+        await second;
+        expect(get(documentImportStore).review.refused).toEqual([]);
+        slow(review({ refused: [2, 99] }));
+        await first;
+        expect(get(documentImportStore).review.refused).toEqual([]);
     });
 });

@@ -3861,7 +3861,8 @@
             "context": "contexto (cubo, dados, turno, marcador)",
             "checkers": "fichas",
             "orientation": "sentido de juego",
-            "pips": "recuentos de pips"
+            "pips": "recuentos de pips",
+            "diagram": "lectura del diagrama"
         },
         "importMenu": "Importar un documento…"
     }

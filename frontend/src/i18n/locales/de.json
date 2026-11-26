@@ -3861,7 +3861,8 @@
             "context": "Kontext (Doppelwürfel, Würfel, Spieler am Zug, Spielstand)",
             "checkers": "Steine",
             "orientation": "Spielrichtung",
-            "pips": "Pipcounts"
+            "pips": "Pipcounts",
+            "diagram": "Lesen des Diagramms"
         },
         "importMenu": "Dokument importieren…"
     }

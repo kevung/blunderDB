@@ -3861,7 +3861,8 @@
             "context": "konteksti (kuutio, nopat, vuoro, pistetilanne)",
             "checkers": "nappulat",
             "orientation": "pelisuunta",
-            "pips": "pipmäärät"
+            "pips": "pipmäärät",
+            "diagram": "kaavion luku"
         },
         "importMenu": "Tuo asiakirja…"
     }

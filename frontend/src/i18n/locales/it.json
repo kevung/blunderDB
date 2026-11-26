@@ -3861,7 +3861,8 @@
             "context": "contesto (cubo, dadi, turno, punteggio)",
             "checkers": "pedine",
             "orientation": "senso di gioco",
-            "pips": "conteggi dei pip"
+            "pips": "conteggi dei pip",
+            "diagram": "lettura del diagramma"
         },
         "importMenu": "Importa un documento…"
     }

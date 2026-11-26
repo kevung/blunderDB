@@ -2,6 +2,7 @@ package document
 
 import (
 	"errors"
+	"slices"
 	"strings"
 )
 
@@ -70,6 +71,32 @@ func Review(r *Releve, opts ImportOptions) ReviewResult {
 	return res
 }
 
+// doubtCategory is the closed list of the fields a reader gives a doubt
+// (Entry.Doubts), each with the category an interface names it by: what to
+// check against the diagram. A reader that emits another field fails
+// TestDoubtFieldsAreClosed.
+var doubtCategory = map[string]string{
+	"point": "checkers", "bar": "checkers", "checkers": "checkers",
+	"frame": "diagram", "board": "diagram", "position": "diagram",
+	"orientation": "orientation", "pips": "pips", "context": "context",
+	"cube": "cube", "dice": "dice", "score": "score", "turn": "turn",
+}
+
+// categories maps doubt fields to their categories, once each, in order.
+func categories(fields []string) []string {
+	out := []string{}
+	for _, f := range fields {
+		c, ok := doubtCategory[f]
+		if !ok {
+			c = f
+		}
+		if !slices.Contains(out, c) {
+			out = append(out, c)
+		}
+	}
+	return out
+}
+
 func reviewFields(e Entry) ([]string, string) {
 	if e.Context == ContextToVerify {
 		var fields []string
@@ -81,7 +108,7 @@ func reviewFields(e Entry) ([]string, string) {
 		if len(fields) == 0 {
 			fields = []string{"context"}
 		}
-		return fields, e.FallbackNote()
+		return categories(fields), e.FallbackNote()
 	}
 	fields := []string{}
 	parts := make([]string, 0, len(e.Doubts))
@@ -89,7 +116,7 @@ func reviewFields(e Entry) ([]string, string) {
 		fields = append(fields, d.Field)
 		parts = append(parts, d.Field+" ("+d.Reason+")")
 	}
-	return fields, strings.Join(parts, "; ")
+	return categories(fields), strings.Join(parts, "; ")
 }
 
 // ConfirmDefaults marks the document's defaults, and the direction of play
