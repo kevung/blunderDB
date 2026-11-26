@@ -66,7 +66,8 @@ ses poids ou son générateur de coups ont changé.
 
 ## Conséquences
 
-- Un match en 7 points coûte de 200 à 300 octets ; une feuille porte une vingtaine de matchs.
+- Un match en 7 points coûte de 200 à 300 octets ; une feuille en porte une dizaine, parité
+  comprise (voir l'amendement sur le module imprimé).
 - Les commentaires archivés reviennent d'origine inconnue : l'archive ne dit pas qui les a
   écrits, et ils ne sont pas signés (ADR-0099).
 - L'entrée d'interface suit avec les feuilles imprimables. Le démon expose l'archive sans
@@ -103,3 +104,45 @@ ses propres codes, lus par le même chemin que l'archive.
    réécrite. La base (CLI `archive import`, interface), le démon (`/v1/imports.archive`,
    champs `list_positions` et `list_positions_known`) suivent le même chemin. L'import par lot
    (`mapFile`) ne porte que des matchs : une liste y est écartée avec son motif.
+
+## Amendement — le module imprimé passe de 0,5 à 0,6 mm
+
+L'essai simulé (`arkqr/essai_test.go` : la feuille rastérisée à la résolution d'un scanner,
+abîmée défaut par défaut, relue par le décodeur de l'import) montre qu'à 0,5 mm un module fait
+quatre pixels à 200 dpi : une rotation d'un demi-degré ou un bruit de σ 0,05 y perdent des
+codes, et à 150 dpi aucune feuille dense n'est relue. Le module de la page d'archive
+(`moduleMM`) passe à **0,6 mm**.
+
+1. **Lecture** (dernier niveau relu, archive entière) :
+
+   | Défaut | 0,5 mm · 200 dpi | 0,6 mm · 150 dpi | 0,6 mm · 200 dpi | 0,6 mm · 300 dpi |
+   |---|---|---|---|---|
+   | rotation | aucune | 8° | 8° | 8° |
+   | bruit σ | aucun | aucun | 0,1 | 0,1 |
+   | perspective (k) | 0,08 | 0,02 | 0,04 | 0,08 |
+   | flou | 0,15 mm | 0,15 mm | 0,2 mm | 0,2 mm |
+   | scan plausible (k) | 1 | 1 | 2 | 1,5 |
+
+   À 200 dpi, la feuille de 0,6 mm tient la rotation, le bruit et le scan plausible qu'une
+   feuille de 0,5 mm ne tenait qu'à 300 dpi, mais la perspective recule : 0,04 au lieu de
+   0,08, et 0,02 à 150 dpi. Un code plus grand couvre plus de feuille, donc plus de
+   déformation en trapèze. Le compromis est voulu : la rotation, le bruit et le flou sont les
+   défauts d'un scanner à plat, qui n'a pas de perspective ; la perspective est celle d'une
+   photo prise de biais, que l'on évite en photographiant la feuille bien de face, alors
+   qu'on ne choisit pas le bruit de son scanner. La documentation le conseille.
+   Les seuils de `TestEssaiArchiveSeuilsDeReference` en sont un cran en dessous.
+2. **Densité** : la surface d'un code croît comme le carré du module, soit 1/1,44 de densité
+   (−31 %) sans l'effet de grille. Mesurée par `layout` sur des archives de matchs de taille
+   fixe, une feuille porte, pour un match de 160 à 320 octets (le 7 points), 12,2 matchs en
+   moyenne à 0,5 mm et 8,7 à 0,6 mm (−29 %) ; 0,62 mm perd 33 %, 0,65 mm 44 %. 0,6 mm est la
+   plus grande taille sous le tiers de densité perdue. Une trame pleine (plus de 820 octets,
+   121 modules) tient seule dans un quart aux deux tailles : un match long et une tranche de
+   liste (`Tranche`, 145 positions en trois codes, quatre codes par feuille) ne coûtent pas
+   une feuille de plus.
+3. **Les feuilles déjà imprimées restent lisibles** : le lecteur ne suppose aucune taille de
+   module, et le format des trames ne change pas. L'essai relit une feuille de 0,5 mm à 200 et
+   300 dpi avec ses seuils d'origine. Seule la consigne change pour elles : les numériser à
+   300 dpi.
+4. Le code de réimport d'une liste imprimée (`printsheet`, module de 0,33 mm, lu à 300 dpi)
+   n'est pas concerné.
+

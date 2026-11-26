@@ -9,6 +9,7 @@ import (
 	"math/rand/v2"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -35,9 +36,9 @@ import (
 
 // archiveSheets lays out what a small archive prints: the matches of the
 // corpus and two tranches of position lists, each with its parity. A
-// tranche's three codes are 60 mm wide each: the archive spreads over
+// tranche's three codes are 72.6 mm wide each: the archive spreads over
 // several sheets, scanned one by one.
-func archiveSheets(t *testing.T) (sheets [][4][]placed, matches [][]byte, tranches map[int][]domain.Position) {
+func archiveSheets(t *testing.T, mod float64) (sheets [][4][]placed, matches [][]byte, tranches map[int][]domain.Position) {
 	t.Helper()
 	tranches = map[int][]domain.Position{}
 	ps := randomPositions(t, 2*Tranche)
@@ -63,7 +64,7 @@ func archiveSheets(t *testing.T) (sheets [][4][]placed, matches [][]byte, tranch
 	for i, f := range frames {
 		codes[i] = Code{Frame: f}
 	}
-	if sheets, err = layout(codes); err != nil {
+	if sheets, err = layout(codes, mod); err != nil {
 		t.Fatal(err)
 	}
 	return sheets, matches, tranches
@@ -397,47 +398,69 @@ func readBack(imgs []image.Image, matches [][]byte, tranches map[int][]domain.Po
 	return true, len(read), ""
 }
 
-// TestEssaiArchiveSansDefaut: a clean print, at 200 and 300 dpi, is
-// read back whole.
+// legacyModuleMM is the module the first archives were printed with: a sheet
+// already printed at that size must still be read.
+const legacyModuleMM = 0.5
+
+// TestEssaiArchiveSansDefaut: a clean print is read back whole, at 150, 200
+// and 300 dpi at today's module, and at 200 and 300 dpi at the legacy one.
 func TestEssaiArchiveSansDefaut(t *testing.T) {
 	skipUnlessFull(t)
-	sheets, matches, tranches := archiveSheets(t)
-	for _, dpi := range []float64{200, 300} {
-		g := rasteriseAll(sheets, dpi)
-		if ok, n, why := readBack(g.images(), matches, tranches); !ok {
-			t.Errorf("%.0f dpi: %d codes read, %s", dpi, n, why)
+	for mod, dpis := range map[float64][]float64{moduleMM: {150, 200, 300}, legacyModuleMM: {200, 300}} {
+		sheets, matches, tranches := archiveSheets(t, mod)
+		for _, dpi := range dpis {
+			g := rasteriseAll(sheets, dpi)
+			if ok, n, why := readBack(g.images(), matches, tranches); !ok {
+				t.Errorf("module %g mm, %.0f dpi: %d codes read, %s", mod, dpi, n, why)
+			}
 		}
 	}
 }
 
-// reference is, per scanner resolution, the strength of each defect the
-// archive must still be read through, as the grid measured it (one notch
-// below the last one read). At 200 dpi a module is four pixels: the sheet
-// survives soft defects, and is lost to a noise of 0.05 or to a rotation of
-// half a degree. At 150 dpi (three pixels) no sheet of this density is read.
-var reference = map[float64]map[string]float64{
-	200: {"pli": 0.3, "perspective": 0.04, "flou": 0.1, "contraste": 0.6, "jpeg": 15, "scan plausible": 0.5},
-	300: {"pli": 0.3, "rotation": 5, "perspective": 0.04, "flou": 0.1, "bruit": 0.05, "contraste": 0.4, "jpeg": 15, "scan plausible": 1},
+// printing is a sheet as it was printed and scanned: its module, in
+// millimetres, and the scanner's resolution.
+type printing struct{ module, dpi float64 }
+
+// reference is, per module and scanner resolution, the strength of each
+// defect the archive must still be read through, as the grid measured it
+// (one notch below the last one read).
+//
+// At 0.6 mm a module is 4.7 pixels at 200 dpi: the sheet takes a rotation of
+// 8°, a noise of 0.1 and a household scan up to k = 2, as at 300 dpi, but a
+// keystone of 0.04 only where the legacy sheet took 0.08: a larger code spans
+// more of the distortion. A flatbed scan has no keystone; a photograph taken
+// straight on avoids it. At 150 dpi (3.5 pixels) the sheet is still read,
+// but neither noise nor more than a slight keystone.
+//
+// At the legacy 0.5 mm a module is four pixels at 200 dpi: the sheet survives
+// soft defects and is lost to a noise of 0.05 or to a rotation of half a
+// degree; at 150 dpi no sheet of this density is read.
+var reference = map[printing]map[string]float64{
+	{moduleMM, 150}:       {"pli": 0.3, "rotation": 5, "perspective": 0.01, "flou": 0.1, "contraste": 0.6, "jpeg": 15, "scan plausible": 0.5},
+	{moduleMM, 200}:       {"pli": 0.3, "rotation": 5, "perspective": 0.02, "flou": 0.15, "bruit": 0.05, "contraste": 0.6, "jpeg": 15, "scan plausible": 1.5},
+	{moduleMM, 300}:       {"pli": 0.3, "rotation": 5, "perspective": 0.04, "flou": 0.15, "bruit": 0.05, "contraste": 0.4, "jpeg": 15, "scan plausible": 1},
+	{legacyModuleMM, 200}: {"pli": 0.3, "perspective": 0.04, "flou": 0.1, "contraste": 0.6, "jpeg": 15, "scan plausible": 0.5},
+	{legacyModuleMM, 300}: {"pli": 0.3, "rotation": 5, "perspective": 0.04, "flou": 0.1, "bruit": 0.05, "contraste": 0.4, "jpeg": 15, "scan plausible": 1},
 }
 
-// TestEssaiArchiveSeuilsDeReference fixes the reading threshold: at each
-// resolution, every defect at its reference strength still reads the whole
-// archive. The thresholds are one notch below the first loss the grid measured,
-// so that a different rounding of floating point (fused multiply-add on arm64)
-// does not turn them red. A rotation of 12° is lost to the frame, which
-// crops the corners where the outer codes sit, not to the decoder.
+// TestEssaiArchiveSeuilsDeReference fixes the reading threshold: for each
+// printing, every defect at its reference strength still reads the whole
+// archive. The thresholds sit one notch below the last level the grid read,
+// so that a different rounding of floating point (fused multiply-add on
+// arm64) does not turn them red. A rotation of 12° is lost to the frame,
+// which crops the corners where the outer codes sit, not to the decoder.
 func TestEssaiArchiveSeuilsDeReference(t *testing.T) {
 	skipUnlessFull(t)
-	sheets, matches, tranches := archiveSheets(t)
-	for dpi, levels := range reference {
-		base := rasteriseAll(sheets, dpi)
+	for pr, levels := range reference {
+		sheets, matches, tranches := archiveSheets(t, pr.module)
+		base := rasteriseAll(sheets, pr.dpi)
 		for _, d := range defects {
 			lv, ok := levels[d.name]
 			if !ok {
 				continue
 			}
-			if ok, n, why := readBack(base.damage(d, lv, dpi), matches, tranches); !ok {
-				t.Errorf("%.0f dpi, %s %g %s: %d codes read, %s", dpi, d.name, lv, d.unit, n, why)
+			if ok, n, why := readBack(base.damage(d, lv, pr.dpi), matches, tranches); !ok {
+				t.Errorf("module %g mm, %.0f dpi, %s %g %s: %d codes read, %s", pr.module, pr.dpi, d.name, lv, d.unit, n, why)
 			}
 		}
 	}
@@ -446,13 +469,21 @@ func TestEssaiArchiveSeuilsDeReference(t *testing.T) {
 // TestEssaiArchiveGrille measures, for every resolution and every defect, the
 // strongest level still read whole, and prints the table. It takes minutes:
 // BLUNDERDB_ESSAI_GRILLE=1 go test ./pkg/blunderdb/arkqr -run Grille -v -timeout 1h
+// BLUNDERDB_ESSAI_MODULE sets the module in millimetres (today's by default).
 func TestEssaiArchiveGrille(t *testing.T) {
 	if os.Getenv("BLUNDERDB_ESSAI_GRILLE") == "" {
 		t.Skip("grille complète : BLUNDERDB_ESSAI_GRILLE=1")
 	}
-	sheets, matches, tranches := archiveSheets(t)
+	mod := moduleMM
+	if v := os.Getenv("BLUNDERDB_ESSAI_MODULE"); v != "" {
+		var err error
+		if mod, err = strconv.ParseFloat(v, 64); err != nil {
+			t.Fatal(err)
+		}
+	}
+	sheets, matches, tranches := archiveSheets(t, mod)
 	var tab strings.Builder
-	fmt.Fprintf(&tab, "%d feuilles\n%-12s", len(sheets), "défaut")
+	fmt.Fprintf(&tab, "module %g mm, %d feuilles\n%-12s", mod, len(sheets), "défaut")
 	dpis := []float64{150, 200, 300}
 	for _, dpi := range dpis {
 		fmt.Fprintf(&tab, " | %-34s", fmt.Sprintf("%.0f dpi (dernier lu / premier perdu)", dpi))

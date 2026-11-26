@@ -169,7 +169,7 @@ func TestPageEmbedsFramesAndKeepsFoldsClear(t *testing.T) {
 	if err != nil || !reflect.DeepEqual(read, frames) {
 		t.Fatalf("embedded frames: %v", err)
 	}
-	sheets, err := layout(codes)
+	sheets, err := layout(codes, moduleMM)
 	if err != nil {
 		t.Fatal(err)
 	}
