@@ -93,6 +93,13 @@ propre issue le jour où il est lancé.
   de bureau. Le prendre rendrait le bureau lecture seule tant que le démon tourne. Décision de
   l'utilisateur (lot 2026-10-25b) : pas de verrou mono-écrivain pour `serve` SQLite ; l'entrée
   reste ouverte.
+- **document : un videau lu par une seule source suffit** — exiger deux sources, ou une source
+  encadrée. La règle du videau manquant fait perdre `complete` dans un document qui ne dessine le
+  videau que possédé.
+- **printsheet : `cubeChoices`** (`printsheet/positions.go:270-277`) — `Best` et `Others` peuvent
+  diverger si le libellé stocké n'est pas l'une des trois actions.
+- **Archive papier : l'import n'est pas au catalogue d'actions** — le catalogue n'a pas d'entrée
+  sans objet.
 
 ## Ouvert — Moteur
 
@@ -124,6 +131,11 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   différée) : friction pour tout déploiement légitime pour attraper une erreur que la doc,
   `--help` et le Dockerfile signalent déjà. À revisiter si un déploiement nu survient
   réellement.
+- **`parallel.go` : un chercheur garé puis annulé repart avec son jeton prêté** — le budget est
+  dépassé d'un cœur le temps du déroulement, ce qui contredit ADR-0120 §3. Le parent d'une
+  fourche en `wg.Wait` ne prête pas son jeton.
+- **ADR-0120 §4 : la reprise attend tout détenteur hors fond**, y compris `HoldCore` de
+  `db_gammonnet_compare.go`.
 
 ## Ouvert — Frontend
 
@@ -144,6 +156,10 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   gammonNet en `purego` ~40 min, au-delà des délais locaux usuels. Pour exécuter le noyau arm64
   sans machine dédiée, un `qemu-aarch64` statique (tiré de l'image `tonistiigi/binfmt`) suffit,
   en passant le binaire deux fois (`qemu-aarch64 BIN BIN -test.run …`, argv0 en premier).
+- **`TestImportStoredRowsAreStable` dans `test-postgres`** (déjà proposé) — environ 35 s ; aurait
+  signalé dès la PR les deux rouges du nightly.
+- **Test de tenant manquant sur `/v1/positions.sheet`.**
+- **Liaisons wailsjs à régénérer en entier** — dérive antérieure.
 
 ## Ouvert — Produit / docs
 

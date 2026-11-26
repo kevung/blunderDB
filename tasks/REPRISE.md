@@ -1,47 +1,35 @@
-# Reprise — 2026-11-21
+# Reprise — 2026-11-26
 
-État de main au 21 novembre, pour reprendre depuis GitHub sur un autre poste.
+État de main au 26 novembre, pour reprendre depuis GitHub sur un autre poste.
 
 ## État
 
-- Release **0.57.0** coupée le 2026-11-16. Depuis la reprise du 10 nov. (détail :
-  `doc/source/historique.rst`) :
-  - **0.53.1** à **0.54.0** : gestes de nicomaque 0.9 servis par `directions.*`,
-    `directions.simulate`, export sans provenance, Go 1.27.4.
-  - **0.55.0** : recherche lue page à page au curseur ; import rapide d'un nouveau tenant dans une
-    grande base PostgreSQL.
-  - **0.56.0** : la relation « proche » compte des jets légaux (`like<n>`, `like*` retiré) ;
-    `directions.confirmProposals` ; sonde bornée structure × filtre, index des coups chronométrés
-    (migration 068) ; les statistiques de match survivent à un import.
-  - **0.57.0** : collage d'un identifiant GNU Backgammon ; blot en SQL (migration 069), erreur par
-    deux branches bornées, joueur / adversaire / tournoi / longueur par marche bornée.
-  - **0.58.0** (2026-11-21, schéma **2.60.0**) : évaluations de pions par source (ADR-0113),
-    résultat de match stocké (ADR-0114), origine des tournois, trace des chances de gagner le
-    match, tri des matchs par PR, critères de provenance des collections vivantes, histogramme
-    des durées de décision, champs de liste, recherche PostgreSQL plus rapide (#952, #959, #965 :
-    migrations 071 à 074), nicomaque v0.10.0. #952, #961 et #965 fermées.
-- #965 mesurée sur une base PostgreSQL locale pleine (BMAB, `~/src/bench-scale/pg965`, port
-  55965, arrêtée ; relance : `pg_ctl -D ~/src/bench-scale/pg965/data -l ~/src/bench-scale/pg965/log
-  start`) : tri pips ASC 5+8 76 → 20 ms, ancre 880 → 24 ms ; au-dessus de la borne 1,8 s → 0,14 s.
-  Reste lent : `ml:17 aw:12` (652 ms) et DESC sur « ancre » (880 ms), hors périmètre. Recette pour
-  mochy en commentaire de #965.
-- Issues ouvertes : #846 (poste Windows), #858 et #870 (vision).
+- Dernière release : **0.59.0** (non publiée). Depuis, sur main (détail des commits :
+  `git log --oneline 0.59.0..main`) :
+  - **Cartes des jets et des scores** en trois paliers 0 → 1 → 2 plis : le palier 1 s'achève en
+    50-150 ms, la première case à 2 plis en 0,2-0,8 s au lieu de 0,3-3,6 s, valeurs finales
+    identiques.
+  - **Priorité aux calculs affichés** (ADR-0120) : un calcul visible réquisitionne les cœurs des
+    lots de fond ; 44 ms en médiane au lieu de 0,8-4,6 s.
+  - **ArkID** (#984), notation textuelle d'une position ; **archive papier** en codes QR (#985)
+    avec ses entrées d'interface, y compris l'import depuis la liste vide et `import_archive` ;
+    **feuille de match imprimable** (#986, fermée) ; **listes de positions imprimables** (#987,
+    ouverte : reste le code de réimport des listes, choix de conception consigné en commentaire de
+    l'issue).
+  - **Import de document** : Relevé v2 (deux certitudes par entrée, pions et contexte ; défauts du
+    document et sens de jeu confirmés une fois ; `--accept-complete`) ; lecture du contexte par le
+    lecteur de structure (videau, dés, trait, score). Aucun contexte n'est entièrement « lu » sur
+    751 diagrammes ; mesure faite sans le banc `~/bkgm/bancs/import-document/`, absent du poste.
+  - Décision du 2026-11-26 : notation du videau proposé `X?` / `X2?` confirmée ; Relevé v2 et état
+    « 15 + 15 sans doute » acceptés.
+- Issues ouvertes : #987, #988 (garde `splitDepth`), #846 (poste Windows), #858 et #870 (vision).
 
 ## CI
 
-- **main vert** (run de 48013308e, le 19) après quatre corrections du jour : `EquityToMWC`
-  fusionnait un produit en FMA sur arm64 et amd64-v3 ; `TestDirectionSimulate_ThirdAtOnceIsBusy`
-  attendait sans fin un chevauchement ; les gardes d'horloge de la simulation (#962, #963) ;
-  réimporter une source de pions déjà tenue réécrivait ses analyses (ci-dessous).
-- **Nightly (#935)**, rouge du 13 au 18, deux causes sur `TestImportStoredRowsAreStable` : des
-  statistiques de match en plus, voulues, empreinte déjà ré-épinglée ; puis, depuis les sources de
-  pions, un réimport de `.xg` ou `.sgf` qui réécrivait `analysis_data` et annonçait des analyses
-  « approfondies ». `MergeCheckerSources` garde la source tenue quand l'évaluation est la même
-  (`TestReimportOfAStoredSourceWritesNothing`, hors nightly). Nightly vert le 19 au soir, **#935
-  fermée**. Le lien gnu.org du linkcheck est une panne passagère (job consultatif).
+- Cycle d'import de transcript cassé (paquet `matrender`) ; #973 et #976 fermées.
+- `document/structure` tourne dans son propre lot, sans `-race`.
 - Proposé, non fait : `TestImportStoredRowsAreStable` dans le job `test-postgres` de `build.yml`
-  (≈ 35 s), qui aurait signalé les deux rouges dès la PR. Vu, laissé : le tri de la vue fusionnée
-  est instable (`sort.Slice` dans `rankCheckerMoves`).
+  (≈ 35 s). Autres suivis : `tasks/BACKLOG.md`.
 
 ## #959 — fusionnée le 20
 
@@ -72,13 +60,22 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. Vérifier la CI du tag 0.58.0, AUR et Homebrew.
-2. Facultatif : rejouer la recette de #965 sur mochy.
-3. Vision : campagne matériels, voir son `ETAT.md`.
-4. #846 (LNA WebView2) : attend un poste Windows.
-5. Travail de fond : voir `tasks/BACKLOG.md`.
+1. **Cartes** : cache des cartes (clé position + profondeur + PruneK + MET), puis séquences de
+   plusieurs jets successifs : précalcul en fond des cartes suivantes à 0 puis 1 pli pour que
+   descendre d'un jet soit instantané, 2 plis sur la seule branche regardée. Coûts mesurés : deux
+   jets 0,2 s à 0 pli, 1,3 s à 1 pli, 100-150 s à 2 plis ; trois jets 5 s, 30 s, 35-50 min.
+   Exigence : analyse quasi instantanée et mise à jour progressive.
+2. **#987** : code de réimport des listes, après décision de conception.
+3. **Import de document** : défaut de contexte appris par document (un score de match lu rend
+   aujourd'hui tout Deep Cube et Olsen « à vérifier »), repli assisté, assistant graphique
+   (tranche 5), JPEG 2000, mesure finale sur la réserve.
+4. **#988** : garde `splitDepth`, puis retrait du contournement de `runMapPhase`.
+5. Essai réel imprimer-plier-scanner de l'archive papier.
+6. Vision et #846 inchangés.
 
 ## Pièges
 
 - Conflits `.po` de `mode_headless` : prendre l'union des msgid, puis `doc-po-update`.
 - e2e : port libre, `--workers=1`, `--timeout=40000`.
+- `npm run check:types` local compte environ 4 erreurs de plus que la CI ; `fake-indexeddb`
+  manquant dans `node_modules` fait échouer deux tests vision : `npm install`.
