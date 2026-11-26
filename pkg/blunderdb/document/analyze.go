@@ -36,10 +36,12 @@ type AnalyzeOptions struct {
 	// title; its extension is dropped.
 	FileName string `json:"fileName"`
 	// Warn, when set, receives what the analysis passed over and why (the
-	// pages of a scanned PDF that could not be composed).
+	// pages of a scanned PDF that could not be composed, the board fonts
+	// whose diagrams are not read while others are).
 	Warn func(string) `json:"-"`
-	// Context stops the reading of page images: a scanned document's
-	// decoding is checked against it between packets and code-blocks.
+	// Context stops the reading: checked before each page and each
+	// diagram drawn in a Snowie board font, and, in a scanned document,
+	// between packets and code-blocks.
 	// Every caller gives one (CancelImport, Ctrl-C); nil, for a test, is
 	// context.Background.
 	Context context.Context `json:"-"`
@@ -112,9 +114,12 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 	outline := rd.Outline()
 	sort.SliceStable(outline, func(a, b int) bool { return outline[a].Page < outline[b].Page })
 	boardFont := false
-	sr := &snowieRead{shapes: map[*pdf.Font]*fontShapes{}}
+	sr := newSnowieRead(opts.context())
 	unreadFonts := map[string]bool{}
 	for n := 1; n <= rd.NumPages(); n++ {
+		if err := opts.context().Err(); err != nil {
+			return nil, fmt.Errorf("document: %w", err)
+		}
 		page, err := rd.Page(n)
 		if err != nil {
 			return nil, fmt.Errorf("document: %w", err)
@@ -136,7 +141,10 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 		entries, profile := readPage(gs, page)
 		if len(entries) == 0 {
 			var unread []string
-			entries, profile, unread = readSnowiePage(gs, page, sr)
+			entries, profile, unread, err = readSnowiePage(gs, page, sr)
+			if err != nil {
+				return nil, fmt.Errorf("document: %w", err)
+			}
 			if len(entries) > 0 || len(unread) > 0 {
 				boardFont = true
 			}
@@ -157,12 +165,15 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 	if len(r.Entries) == 0 && !boardFont {
 		return analyzeScans(rd, r, opts, outline)
 	}
-	if len(r.Entries) == 0 && len(unreadFonts) > 0 {
-		names := make([]string, 0, len(unreadFonts))
-		for f := range unreadFonts {
-			names = append(names, strconv.Quote(f))
-		}
-		sort.Strings(names)
+	names := make([]string, 0, len(unreadFonts))
+	for f := range unreadFonts {
+		names = append(names, strconv.Quote(f))
+	}
+	sort.Strings(names)
+	if len(r.Entries) > 0 && len(names) > 0 && opts.Warn != nil {
+		opts.Warn(fmt.Sprintf("diagrams drawn with the board font %s are not read: its glyph shapes are not embedded in a form this reader knows (a TrueType program)", strings.Join(names, ", ")))
+	}
+	if len(r.Entries) == 0 && len(names) > 0 {
 		return nil, fmt.Errorf("%w: the diagrams are drawn with the board font %s, whose glyph shapes are not embedded in a form this reader knows (a TrueType program)", ErrUnknownBoardFont, strings.Join(names, ", "))
 	}
 	if len(r.Entries) == 0 {

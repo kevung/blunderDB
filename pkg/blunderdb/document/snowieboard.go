@@ -1,6 +1,7 @@
 package document
 
 import (
+	"context"
 	"fmt"
 	"math"
 	"sort"
@@ -262,9 +263,16 @@ func (g *snowieGrid) drawn(gs []pdf.Glyph) bool {
 	return len(filled) >= 108
 }
 
-// snowieRead is what the shape reader needs per font, built once a page.
+// snowieRead is what the shape reader keeps for one document: each font's
+// shapes, the budget they share, and the caller's context.
 type snowieRead struct {
+	ctx    context.Context
 	shapes map[*pdf.Font]*fontShapes
+	cost   shapeCost
+}
+
+func newSnowieRead(ctx context.Context) *snowieRead {
+	return &snowieRead{ctx: ctx, shapes: map[*pdf.Font]*fontShapes{}, cost: shapeCost{left: shapeBudget}}
 }
 
 func (s *snowieRead) of(f *pdf.Font) *fontShapes {
@@ -273,7 +281,7 @@ func (s *snowieRead) of(f *pdf.Font) *fontShapes {
 	}
 	var fs *fontShapes
 	if p := f.Program(); p != nil {
-		fs = newFontShapes(p)
+		fs = newFontShapes(p, &s.cost)
 	}
 	s.shapes[f] = fs
 	return fs
@@ -402,7 +410,9 @@ func (g *snowieGrid) decode(gs []pdf.Glyph, sr *snowieRead) *snowieBoard {
 	for _, cl := range cells {
 		cl.resolve()
 	}
-	if unreadable > 0 {
+	if unreadable > 0 && fs.cost.exhausted {
+		b.doubt(true, "frame", 0, "%d glyphs of the board font %q left unread: the document's glyphs exceed the shape reader's budget", unreadable, g.font.BaseFont)
+	} else if unreadable > 0 {
 		b.doubt(true, "frame", 0, "%d glyphs of the board font %q whose shapes the embedded program does not give", unreadable, g.font.BaseFont)
 	}
 	g.placeCheckers(b, cells)
@@ -671,17 +681,21 @@ func (g *snowieGrid) pipAfter(gs []pdf.Glyph, at pdf.Glyph) (int, bool) {
 
 // readSnowiePage returns the entries of the page's Snowie diagrams, the
 // profile of the first, and the names of the board fonts whose diagrams were
-// found but whose shapes could not be read.
-func readSnowiePage(gs []pdf.Glyph, page pdf.Page, sr *snowieRead) ([]Entry, *Profile, []string) {
+// found but whose shapes could not be read. The context is checked before
+// each diagram, each costing a bounded part of the shape budget.
+func readSnowiePage(gs []pdf.Glyph, page pdf.Page, sr *snowieRead) ([]Entry, *Profile, []string, error) {
 	grids := findSnowieGrids(gs)
 	if len(grids) == 0 {
-		return nil, nil, nil
+		return nil, nil, nil, nil
 	}
 	lines := textLines(gs)
 	var entries []Entry
 	var profile *Profile
 	var unread []string
 	for _, g := range grids {
+		if err := sr.ctx.Err(); err != nil {
+			return nil, nil, nil, err
+		}
 		sb := g.decode(gs, sr)
 		if sb == nil {
 			unread = append(unread, g.font.BaseFont)
@@ -695,7 +709,7 @@ func readSnowiePage(gs []pdf.Glyph, page pdf.Page, sr *snowieRead) ([]Entry, *Pr
 			profile = sb.profile
 		}
 	}
-	return entries, profile, unread
+	return entries, profile, unread, nil
 }
 
 func snowieLabelAbove(lines []textLine, g *snowieGrid) string {

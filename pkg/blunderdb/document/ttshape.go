@@ -28,7 +28,9 @@ type ttCmap struct {
 }
 
 const (
-	maxTTPoints     = 4096
+	// maxTTPoints bounds one glyph's points, its components included: a
+	// Snowie board glyph has at most 209.
+	maxTTPoints     = 512
 	maxTTComponents = 32
 	maxTTDepth      = 4
 )
@@ -153,7 +155,10 @@ type ttPt struct{ x, y float64 }
 
 // outline returns the glyph's contours flattened to polygons, and its box.
 func (t *ttFont) outline(g, depth int, budget *int) ([][]ttPt, error) {
-	if g < 0 || g >= t.numGlyphs || depth > maxTTDepth {
+	// Every glyph read costs, an empty component too: nesting cannot
+	// multiply the calls past the budget.
+	*budget--
+	if g < 0 || g >= t.numGlyphs || depth > maxTTDepth || *budget < 0 {
 		return nil, errTT
 	}
 	off := func(i int) (int, bool) {
@@ -561,19 +566,35 @@ func shapeOf(cs [][]ttPt) glyphShape {
 	return sh
 }
 
+// shapeSamples is the number of points shapeOf tests a glyph's outline
+// at; each test crosses every edge of the outline.
+const shapeSamples = ringRays*56 + ringRays + 13*13 + 400
+
+// shapeBudget is what one document may spend reading glyph shapes, in
+// point-edge tests: the two board fonts of a 300-page book cost some 2·10⁸,
+// and a glyph at most maxTTPoints·4 edges times shapeSamples.
+var shapeBudget int64 = 2_000_000_000
+
+// shapeCost is the document's spending, shared by all its fonts.
+type shapeCost struct {
+	left      int64
+	exhausted bool
+}
+
 // fontShapes reads and caches the shapes of one embedded font's glyphs.
 type fontShapes struct {
 	tt    *ttFont
+	cost  *shapeCost
 	cache map[uint32]glyphShape
 	bad   map[uint32]bool
 }
 
-func newFontShapes(program []byte) *fontShapes {
+func newFontShapes(program []byte, cost *shapeCost) *fontShapes {
 	tt, err := parseTrueType(program)
 	if err != nil {
 		return nil
 	}
-	return &fontShapes{tt: tt, cache: map[uint32]glyphShape{}, bad: map[uint32]bool{}}
+	return &fontShapes{tt: tt, cost: cost, cache: map[uint32]glyphShape{}, bad: map[uint32]bool{}}
 }
 
 // shape returns the shape of the glyph a code draws; false when the program
@@ -596,6 +617,17 @@ func (f *fontShapes) shape(code uint32) (glyphShape, bool) {
 		f.bad[code] = true
 		return glyphShape{}, false
 	}
+	edges := int64(0)
+	for _, c := range cs {
+		edges += int64(len(c))
+	}
+	c := edges * shapeSamples
+	if c > f.cost.left {
+		f.cost.exhausted = true
+		f.bad[code] = true
+		return glyphShape{}, false
+	}
+	f.cost.left -= c
 	sh := shapeOf(cs)
 	f.cache[code] = sh
 	return sh, true

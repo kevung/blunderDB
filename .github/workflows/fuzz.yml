@@ -76,6 +76,7 @@ jobs:
           - { pkg: ./internal/server, target: FuzzRunCall }
           - { pkg: ./pkg/blunderdb/document/pdf, target: FuzzOpen }
           - { pkg: ./pkg/blunderdb/document/jbig2, target: FuzzDecode }
+          - { pkg: ./pkg/blunderdb/document, target: FuzzParseTrueType }
           - { pkg: ./pkg/blunderdb/transcript, target: FuzzTranscriptGestures }
           - { pkg: ./pkg/blunderdb/database, target: FuzzTranscriptionSession }
     name: ${{ matrix.target }}

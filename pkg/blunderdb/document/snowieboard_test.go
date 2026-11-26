@@ -2,12 +2,14 @@ package document
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"math"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/pdf/pdftest"
 )
@@ -185,13 +187,19 @@ type snowieDiagram struct {
 	brokenProgram  bool
 	fontName       string
 	extraLeftCount bool
+	// fontRes is the resource the content draws with, F1 by default.
+	fontRes string
 }
 
 func (d snowieDiagram) content() string {
 	const u = 12.0
 	var s strings.Builder
 	put := func(x, y float64, c byte) {
-		fmt.Fprintf(&s, "BT /F1 12 Tf %g %g Td <%02X> Tj ET\n", x, y, c)
+		res := d.fontRes
+		if res == "" {
+			res = "F1"
+		}
+		fmt.Fprintf(&s, "BT /%s 12 Tf %g %g Td <%02X> Tj ET\n", res, x, y, c)
 	}
 	colX := func(i int) float64 {
 		x := d.x0 + u*float64(i)
@@ -450,7 +458,7 @@ func TestSnowieUnreadableFontIsNamed(t *testing.T) {
 }
 
 func TestShapeOfFixtureGlyphs(t *testing.T) {
-	fs := newFontShapes(buildTrueType(snowieFontGlyphs()))
+	fs := newFontShapes(buildTrueType(snowieFontGlyphs()), &shapeCost{left: shapeBudget})
 	for code, want := range map[byte]glyphShape{
 		'A': {}, 'K': {disc: whiteDisc}, 'S': {disc: blackDisc}, 'f': {disc: blackDisc},
 		0xEB: {disc: blackDisc}, 0xF5: {disc: whiteDisc},
@@ -471,12 +479,119 @@ func TestShapeOfFixtureGlyphs(t *testing.T) {
 func FuzzParseTrueType(f *testing.F) {
 	f.Add(buildTrueType(snowieFontGlyphs()))
 	f.Fuzz(func(t *testing.T, data []byte) {
-		fs := newFontShapes(data)
+		cost := &shapeCost{left: fuzzShapeBudget}
+		fs := newFontShapes(data, cost)
 		if fs == nil {
 			return
 		}
+		calls := 0
 		for c := uint32(0); c < 256; c++ {
 			fs.shape(c)
+			calls++
+		}
+		// The work is the budget's: what it allows, and no more.
+		if cost.left < 0 || cost.left > fuzzShapeBudget || calls != 256 {
+			t.Fatalf("shape budget %d of %d", cost.left, fuzzShapeBudget)
 		}
 	})
+}
+
+// fuzzShapeBudget keeps a fuzzed font to a few milliseconds of shapes.
+const fuzzShapeBudget = 50_000_000
+
+func (d snowieDiagram) font() pdftest.Font {
+	prog := buildTrueType(snowieFontGlyphs())
+	if d.dropProgram {
+		prog = nil
+	}
+	name := d.fontName
+	if name == "" {
+		name = "ABCDEF+BoardGlyphs"
+	}
+	return pdftest.Font{BaseFont: name, First: 0x21, Last: 0xFE, Program: prog}
+}
+
+// The context is checked before each diagram: a cancelled reading stops
+// between two diagrams of one page, not once the document is read.
+func TestSnowieCancelledBetweenDiagrams(t *testing.T) {
+	a := snowieDiagram{board: snowieMidgame, bottomBlack: true, homeLeft: true, x0: 155, y0: 800}
+	b := a
+	b.y0 = 500
+	data := pdftest.Doc{Title: "Fixture", Fonts: []pdftest.Font{a.font()},
+		Pages: []pdftest.Page{{Width: 595, Height: 842, Content: a.content() + b.content()}}}.Bytes()
+	if r, err := AnalyzePDF(data, AnalyzeOptions{}); err != nil || len(r.Entries) != 2 {
+		t.Fatalf("uncancelled: %v", err)
+	}
+	// The page's check, the first diagram's, then the second's.
+	ctx := &errAfter{Context: context.Background(), n: 3}
+	if _, err := AnalyzePDF(data, AnalyzeOptions{Context: ctx}); !errors.Is(err, context.Canceled) {
+		t.Fatalf("a cancelled document: %v", err)
+	}
+	if ctx.calls != ctx.n {
+		t.Errorf("%d checks of the context after its cancellation", ctx.calls-ctx.n)
+	}
+}
+
+// A document whose glyphs exceed the shape budget leaves its diagrams
+// uncertain, the budget named, in bounded time.
+func TestSnowieShapeBudgetExhausted(t *testing.T) {
+	saved := shapeBudget
+	shapeBudget = 50 * shapeSamples // a point and its frame, not a checker
+	defer func() { shapeBudget = saved }()
+	d := snowieDiagram{board: snowieMidgame, bottomBlack: true, homeLeft: true, x0: 155, y0: 700}
+	e := analyzeOne(t, d)
+	if e.Checkers == Sure || !strings.Contains(fmt.Sprint(e.Doubts), "budget") {
+		t.Fatalf("checkers %s, doubts %v", e.Checkers, e.Doubts)
+	}
+}
+
+// Nested composites of empty glyphs each cost: 32 components four deep
+// are refused at the budget, not walked 32⁴ times.
+func TestCompositeBombIsBounded(t *testing.T) {
+	prog := buildTrueType(map[byte][]poly{'A': small})
+	tt, err := parseTrueType(prog)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Glyph 1 becomes 32 references to itself: every level the same.
+	var g bytes.Buffer
+	_ = binary.Write(&g, binary.BigEndian, []int16{-1, 0, 0, 1000, 1000})
+	for k := range 32 {
+		flags := uint16(1 | 2)
+		if k < 31 {
+			flags |= 0x20
+		}
+		_ = binary.Write(&g, binary.BigEndian, []uint16{flags, 1, 0, 0})
+	}
+	tt.glyf = g.Bytes()
+	tt.loca = make([]byte, 12)
+	binary.BigEndian.PutUint32(tt.loca[8:], uint32(len(tt.glyf)))
+	binary.BigEndian.PutUint32(tt.loca[4:], 0)
+	tt.longLoca = true
+	fs := &fontShapes{tt: tt, cost: &shapeCost{left: shapeBudget}, cache: map[uint32]glyphShape{}, bad: map[uint32]bool{}}
+	start := time.Now()
+	if _, ok := fs.shape('A'); ok {
+		t.Fatal("a composite bomb read as a glyph")
+	}
+	if d := time.Since(start); d > time.Second {
+		t.Fatalf("refused in %v", d)
+	}
+}
+
+// A diagram in a font the reader cannot read is named even when others of
+// the document are read.
+func TestSnowieUnreadFontWarnedBesideReadDiagrams(t *testing.T) {
+	a := snowieDiagram{board: snowieMidgame, bottomBlack: true, homeLeft: true, x0: 155, y0: 700}
+	b := a
+	b.fontRes, b.fontName, b.dropProgram = "F2", "ABCDEF+OtherBoardFont", true
+	data := pdftest.Doc{Title: "Fixture", Fonts: []pdftest.Font{a.font(), b.font()},
+		Pages: []pdftest.Page{{Width: 595, Height: 842, Content: a.content()}, {Width: 595, Height: 842, Content: b.content()}}}.Bytes()
+	var warned []string
+	r, err := AnalyzePDF(data, AnalyzeOptions{Warn: func(s string) { warned = append(warned, s) }})
+	if err != nil || len(r.Entries) != 1 {
+		t.Fatalf("%v", err)
+	}
+	if !strings.Contains(strings.Join(warned, "\n"), "OtherBoardFont") {
+		t.Fatalf("warnings %q", warned)
+	}
 }
