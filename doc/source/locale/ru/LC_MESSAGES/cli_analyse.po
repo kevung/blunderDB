@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 00:25+0100\n"
+"POT-Creation-Date: 2026-11-26 02:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -58,9 +58,9 @@ msgstr ""
 
 #: ../../source/cli_analyse.rst:23 ../../source/cli_analyse.rst:197
 #: ../../source/cli_analyse.rst:253 ../../source/cli_analyse.rst:294
-#: ../../source/cli_analyse.rst:319 ../../source/cli_analyse.rst:369
-#: ../../source/cli_analyse.rst:416 ../../source/cli_analyse.rst:471
-#: ../../source/cli_analyse.rst:598
+#: ../../source/cli_analyse.rst:320 ../../source/cli_analyse.rst:351
+#: ../../source/cli_analyse.rst:401 ../../source/cli_analyse.rst:448
+#: ../../source/cli_analyse.rst:503 ../../source/cli_analyse.rst:630
 msgid "**Options:**"
 msgstr "**Параметры:**"
 
@@ -460,8 +460,8 @@ msgstr ""
 "``--jobs`` — Партии, играемые параллельно (по умолчанию: по одной на "
 "ядро); меняется только время."
 
-#: ../../source/cli_analyse.rst:213 ../../source/cli_analyse.rst:321
-#: ../../source/cli_analyse.rst:371 ../../source/cli_analyse.rst:418
+#: ../../source/cli_analyse.rst:213 ../../source/cli_analyse.rst:353
+#: ../../source/cli_analyse.rst:403 ../../source/cli_analyse.rst:450
 msgid ""
 "``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : "
 "``text``)."
@@ -520,10 +520,10 @@ msgstr ""
 " завершённые партии."
 
 #: ../../source/cli_analyse.rst:233 ../../source/cli_analyse.rst:268
-#: ../../source/cli_analyse.rst:298 ../../source/cli_analyse.rst:339
-#: ../../source/cli_analyse.rst:388 ../../source/cli_analyse.rst:442
-#: ../../source/cli_analyse.rst:486 ../../source/cli_analyse.rst:555
-#: ../../source/cli_analyse.rst:619
+#: ../../source/cli_analyse.rst:298 ../../source/cli_analyse.rst:326
+#: ../../source/cli_analyse.rst:371 ../../source/cli_analyse.rst:420
+#: ../../source/cli_analyse.rst:474 ../../source/cli_analyse.rst:518
+#: ../../source/cli_analyse.rst:587 ../../source/cli_analyse.rst:651
 msgid "**Exemples:**"
 msgstr "**Примеры:**"
 
@@ -543,6 +543,7 @@ msgstr ""
 " Чистое вычисление: никакой файл базы не задействован."
 
 #: ../../source/cli_analyse.rst:255 ../../source/cli_analyse.rst:296
+#: ../../source/cli_analyse.rst:324
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr ""
 "``--format`` — Формат вывода: ``text`` или ``json`` (по умолчанию: "
@@ -602,10 +603,48 @@ msgstr ""
 "которые несёт позиция, как это делает XGID."
 
 #: ../../source/cli_analyse.rst:308
+msgid "arkid — ArkID"
+msgstr "arkid — ArkID"
+
+#: ../../source/cli_analyse.rst:310
+msgid ""
+"Écrit l'**ArkID** d'une position donnée par XGID, par OGID ou par ArkID :"
+" la notation textuelle de blunderDB, lisible et prononçable "
+"(``[34]65:x2(ySQmLhfA)S3Qm3L3hf3``, voir le :ref:`glossaire "
+"<glossaire>`). Un ArkID passé en argument, sous l'une ou l'autre forme, "
+"revient sous sa forme canonique. Calcul pur : aucun fichier de base de "
+"données n'est impliqué."
+msgstr ""
+"Записывает **ArkID** позиции, заданной через XGID, OGID или ArkID: "
+"текстовую нотацию blunderDB, читаемую и произносимую "
+"(``[34]65:x2(ySQmLhfA)S3Qm3L3hf3``, см. :ref:`глоссарий <glossaire>`). "
+"ArkID, переданный в аргументе в любой из двух форм, возвращается в "
+"канонической форме. Чистое вычисление: файл базы данных не задействуется."
+
+#: ../../source/cli_analyse.rst:322
+msgid ""
+"``--expanded`` — Écrit la forme développée : tous les pions du joueur au "
+"trait, puis tous ceux de l'adversaire."
+msgstr ""
+"``--expanded`` — Записывает развёрнутую форму: сначала все шашки игрока, "
+"чей ход, затем все шашки соперника."
+
+#: ../../source/cli_analyse.rst:333
+msgid ""
+"Les commandes qui prennent une position en argument (``epc``, ``rolls``, "
+"``scoremap``, ``cubematrix``, ``rollout``, ``gnubgid``) acceptent aussi "
+"un ArkID, et ``capture`` et ``search`` l'écrivent avec ``--format "
+"arkid``."
+msgstr ""
+"Команды, принимающие позицию в аргументе (``epc``, ``rolls``, "
+"``scoremap``, ``cubematrix``, ``rollout``, ``gnubgid``), принимают также "
+"ArkID, а ``capture`` и ``search`` записывают его с ``--format arkid``."
+
+#: ../../source/cli_analyse.rst:340
 msgid "cubematrix — Matrice du videau"
 msgstr "cubematrix — Матрица куба"
 
-#: ../../source/cli_analyse.rst:310
+#: ../../source/cli_analyse.rst:342
 msgid ""
 "Donne le verdict de videau d'une position à **tous les scores** d'un "
 "match : pour chaque case *away × away*, si la position se double et si "
@@ -617,7 +656,7 @@ msgstr ""
 "никакая база данных не открывается, позиция передаётся через XGID или "
 "OGID (OpenGammon)."
 
-#: ../../source/cli_analyse.rst:322
+#: ../../source/cli_analyse.rst:354
 msgid ""
 "``--match-length`` — Longueur du match que la grille couvre, de 1 à 25 "
 "(défaut : 7)."
@@ -625,7 +664,7 @@ msgstr ""
 "``--match-length`` — Длина матча, которую покрывает сетка, от 1 до 25 (по"
 " умолчанию: 7)."
 
-#: ../../source/cli_analyse.rst:324
+#: ../../source/cli_analyse.rst:356
 msgid ""
 "``--ply`` — Profondeur de recherche de chaque case, ``0`` ou ``2`` "
 "(défaut : 2)."
@@ -633,8 +672,8 @@ msgstr ""
 "``--ply`` — Глубина поиска для каждой клетки, ``0`` или ``2`` (по "
 "умолчанию: 2)."
 
-#: ../../source/cli_analyse.rst:326 ../../source/cli_analyse.rst:375
-#: ../../source/cli_analyse.rst:420
+#: ../../source/cli_analyse.rst:358 ../../source/cli_analyse.rst:407
+#: ../../source/cli_analyse.rst:452
 msgid ""
 "``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage"
 " (défaut : 12)."
@@ -642,7 +681,7 @@ msgstr ""
 "``--prune-k`` — Число ходов-кандидатов, оставляемых сетью отсечения (по "
 "умолчанию: 12)."
 
-#: ../../source/cli_analyse.rst:328
+#: ../../source/cli_analyse.rst:360
 msgid ""
 "``--jobs`` — Recherches menées en parallèle (défaut : une par cœur). La "
 "grille est identique quelle que soit la valeur ; seul le temps change."
@@ -650,7 +689,7 @@ msgstr ""
 "``--jobs`` — Число параллельных поисков (по умолчанию: по одному на "
 "ядро). Сетка одинакова при любом значении; меняется только время."
 
-#: ../../source/cli_analyse.rst:331
+#: ../../source/cli_analyse.rst:363
 msgid ""
 "Le score propre à la position est ignoré — la grille le remplace — mais "
 "son **videau** est conservé : la question posée est « à quel score "
@@ -661,7 +700,7 @@ msgstr ""
 "**куб** сохраняется: вопрос в том, при каком счёте стоит повернуть *этот*"
 " куб. Сетка всюду построена для положения после Кроуфорда."
 
-#: ../../source/cli_analyse.rst:335
+#: ../../source/cli_analyse.rst:367
 msgid ""
 "Chaque case est une recherche à part entière, parce que le moteur tient "
 "compte du score : une seule recherche relue à travers des équités de "
@@ -671,7 +710,7 @@ msgstr ""
 "единственный поиск, прочитанный через разные матчевые эквити, был бы "
 "неверен именно там, где счёт важен."
 
-#: ../../source/cli_analyse.rst:349
+#: ../../source/cli_analyse.rst:381
 msgid ""
 "Sortie ``text`` : une grille dont les lignes sont les points restant à "
 "faire au joueur au trait, les colonnes ceux de l'adversaire, puis la "
@@ -683,11 +722,11 @@ msgstr ""
 "``ND`` / ``DT`` / ``DP`` / ``TG`` и причина для каждой отклонённой "
 "клетки."
 
-#: ../../source/cli_analyse.rst:356
+#: ../../source/cli_analyse.rst:388
 msgid "scoremap — Carte des scores"
 msgstr "scoremap — Карта счетов"
 
-#: ../../source/cli_analyse.rst:358
+#: ../../source/cli_analyse.rst:390
 msgid ""
 "Généralise la :ref:`matrice du videau <cli_cubematrix>` : donne la "
 "**meilleure décision** d'une position à tous les scores d'un match. Avec "
@@ -702,7 +741,7 @@ msgstr ""
 "при каких счетах ход меняется. Без костей клетка содержит решение по "
 "кубу, как ``cubematrix``. Чистое вычисление: база данных не открывается."
 
-#: ../../source/cli_analyse.rst:372
+#: ../../source/cli_analyse.rst:404
 msgid ""
 "``--match-length`` — Longueur du match, toute valeur impaire de 3 à 15 "
 "(défaut : 9)."
@@ -710,15 +749,15 @@ msgstr ""
 "``--match-length`` — Длина матча, любое нечётное значение от 3 до 15 (по "
 "умолчанию: 9)."
 
-#: ../../source/cli_analyse.rst:374
+#: ../../source/cli_analyse.rst:406
 msgid "``--ply`` — Profondeur de recherche de chaque case, de 0 à 2 (défaut : 2)."
 msgstr "``--ply`` — Глубина поиска для каждой клетки, от 0 до 2 (по умолчанию: 2)."
 
-#: ../../source/cli_analyse.rst:377 ../../source/cli_analyse.rst:422
+#: ../../source/cli_analyse.rst:409 ../../source/cli_analyse.rst:454
 msgid "``--jobs`` — Recherches menées en parallèle (défaut : une par cœur)."
 msgstr "``--jobs`` — Число параллельных поисков (по умолчанию: по одному на ядро)."
 
-#: ../../source/cli_analyse.rst:379
+#: ../../source/cli_analyse.rst:411
 msgid ""
 "Le score de la position est remplacé par la grille ; son **videau** est "
 "conservé. Une case où ce videau ne peut pas se trouver — il supposerait "
@@ -738,7 +777,7 @@ msgstr ""
 "остаётся после Кроуфорда, как в ``cubematrix``, поскольку во время партии"
 " Кроуфорда куб мёртв. Эквити нормированы."
 
-#: ../../source/cli_analyse.rst:398
+#: ../../source/cli_analyse.rst:430
 msgid ""
 "Sortie ``text`` : avec dés, une ligne par case (score, équité, meilleur "
 "coup, écart, deuxième coup) ; sans dés, la grille de ``cubematrix``."
@@ -746,11 +785,11 @@ msgstr ""
 "Вывод ``text``: с костями — одна строка на клетку (счёт, эквити, лучший "
 "ход, разрыв, второй ход); без костей — сетка ``cubematrix``."
 
-#: ../../source/cli_analyse.rst:404
+#: ../../source/cli_analyse.rst:436
 msgid "rolls — Carte des jets"
 msgstr "rolls — Карта бросков"
 
-#: ../../source/cli_analyse.rst:406
+#: ../../source/cli_analyse.rst:438
 msgid ""
 "Donne, pour une position où le joueur au trait n'a pas encore lancé, ce "
 "que fait **chacun des 21 jets** : le meilleur coup, l'équité du joueur "
@@ -765,13 +804,13 @@ msgstr ""
 "Чистое вычисление: база данных не открывается, позиция приходит через "
 "XGID или OGID. Кости позиции игнорируются."
 
-#: ../../source/cli_analyse.rst:419
+#: ../../source/cli_analyse.rst:451
 msgid "``--ply`` — Profondeur de recherche de chaque jet, de 0 à 2 (défaut : 2)."
 msgstr ""
 "``--ply`` — Глубина поиска для каждого броска, от 0 до 2 (по умолчанию: "
 "2)."
 
-#: ../../source/cli_analyse.rst:423
+#: ../../source/cli_analyse.rst:455
 msgid ""
 "``--roll`` — Joue d'abord ce jet (par exemple ``31``) : la carte est "
 "alors celle des réponses de l'adversaire."
@@ -779,7 +818,7 @@ msgstr ""
 "``--roll`` — Сначала играет этот бросок (например, ``31``): тогда карта "
 "показывает ответы соперника."
 
-#: ../../source/cli_analyse.rst:425
+#: ../../source/cli_analyse.rst:457
 msgid ""
 "``--move`` — Avec ``--roll`` : le coup joué, n'importe quel coup légal, "
 "pas forcément le meilleur ; vide pour un jet qui danse."
@@ -787,7 +826,7 @@ msgstr ""
 "``--move`` — С ``--roll``: сыгранный ход, любой допустимый ход, не "
 "обязательно лучший; пусто для броска, после которого ходов нет."
 
-#: ../../source/cli_analyse.rst:428
+#: ../../source/cli_analyse.rst:460
 msgid ""
 "L'équité suit l'échelle des autres évaluations : points de money en "
 "money, équité normalisée à un score de match. Le poids d'un jet est 1 sur"
@@ -806,7 +845,7 @@ msgstr ""
 " броскам; при ``--ply 2`` — поиск на 3 ply с фильтрами 2 ply, который не "
 "является опубликованным 3-ply уровнем движка."
 
-#: ../../source/cli_analyse.rst:436
+#: ../../source/cli_analyse.rst:468
 msgid ""
 "Un jet **perd le marché** quand, après ce jet et le meilleur coup, un "
 "double du joueur serait refusé : la décision de videau du joueur, lue sur"
@@ -822,7 +861,7 @@ msgstr ""
 "Столбец пуст, когда у игрока нет доступа к кубу (куб у соперника, партия "
 "Кроуфорда)."
 
-#: ../../source/cli_analyse.rst:452
+#: ../../source/cli_analyse.rst:484
 msgid ""
 "Sortie ``text`` : une ligne par jet (jet, poids sur 36, équité, marché "
 "``kept`` / ``lost``, meilleur coup), puis la moyenne."
@@ -830,11 +869,11 @@ msgstr ""
 "Вывод ``text``: одна строка на бросок (бросок, вес из 36, эквити, рынок "
 "``kept`` / ``lost``, лучший ход), затем среднее."
 
-#: ../../source/cli_analyse.rst:456
+#: ../../source/cli_analyse.rst:488
 msgid "capture — Position depuis une capture d'écran"
 msgstr "capture — Позиция по скриншоту"
 
-#: ../../source/cli_analyse.rst:458
+#: ../../source/cli_analyse.rst:490
 msgid ""
 "Lit la position que montre une capture d'écran d'un plateau eXtreme "
 "Gammon (thème par défaut) : pions, barre, pions sortis (ce qui manque à "
@@ -854,21 +893,21 @@ msgstr ""
 "угадывается: скрытая стрелка, стопка выше пяти шашек, которые XG рисует "
 "рядом, нечитаемые кости."
 
-#: ../../source/cli_analyse.rst:473
+#: ../../source/cli_analyse.rst:505
 msgid ""
-"``--format`` — Format de sortie : ``text``, ``json`` ou ``xgid`` (défaut "
-": ``text``)."
+"``--format`` — Format de sortie : ``text``, ``json``, ``xgid`` ou "
+"``arkid`` (défaut : ``text``)."
 msgstr ""
-"``--format`` — Формат вывода: ``text``, ``json`` или ``xgid`` (по "
-"умолчанию: ``text``)."
+"``--format`` — Формат вывода: ``text``, ``json``, ``xgid`` или ``arkid`` "
+"(по умолчанию: ``text``)."
 
-#: ../../source/cli_analyse.rst:474
+#: ../../source/cli_analyse.rst:506
 msgid ""
 "``--db`` et ``--save`` — Enregistre la position dans la base comme "
 "position individuelle."
 msgstr "``--db`` и ``--save`` — Сохраняет позицию в базе как отдельную позицию."
 
-#: ../../source/cli_analyse.rst:476
+#: ../../source/cli_analyse.rst:508
 msgid ""
 "``--score`` — Le score, que la capture ne montre pas : ``money``, ou les "
 "scores Away des deux joueurs, celui du joueur 1 (en bas) d'abord, par "
@@ -877,7 +916,7 @@ msgstr ""
 "``--score`` — Счёт, которого снимок не показывает: ``money`` или счета "
 "Away обоих игроков, сначала игрока 1 (внизу), например ``2a/5a``."
 
-#: ../../source/cli_analyse.rst:479
+#: ../../source/cli_analyse.rst:511
 msgid ""
 "``--turn`` — Le camp au trait, ``1`` (en bas) ou ``2`` (en haut), quand "
 "aucun dé ne le montre."
@@ -885,7 +924,7 @@ msgstr ""
 "``--turn`` — Игрок на ходу, ``1`` (внизу) или ``2`` (вверху), когда кости"
 " его не показывают."
 
-#: ../../source/cli_analyse.rst:481
+#: ../../source/cli_analyse.rst:513
 msgid ""
 "``--force`` — Enregistre malgré les doutes de la lecture, une fois le "
 "plateau vérifié. Il ne remplace ni ``--score`` ni ``--turn`` : ``--save``"
@@ -897,7 +936,7 @@ msgstr ""
 "отказывает, пока не задан счёт или очередь хода без костей, и называет "
 "недостающую опцию."
 
-#: ../../source/cli_analyse.rst:495
+#: ../../source/cli_analyse.rst:527
 #, no-python-brace-format
 msgid ""
 "Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec "
@@ -910,11 +949,11 @@ msgstr ""
 "больше экрана 4K, а не уменьшает его, и считывает не более двух "
 "изображений одновременно."
 
-#: ../../source/cli_analyse.rst:500
+#: ../../source/cli_analyse.rst:532
 msgid "bearoff — Bases de sortie"
 msgstr "bearoff — Базы бироффа"
 
-#: ../../source/cli_analyse.rst:502
+#: ../../source/cli_analyse.rst:534
 msgid ""
 "Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien "
 "n'est embarqué : une table est calculée ici et vérifiée contre "
@@ -929,7 +968,7 @@ msgstr ""
 "данных — таблица бироффа есть арифметика об игре, а не о чьих-либо "
 "позициях, — поэтому ни одна не принимает ``--db``."
 
-#: ../../source/cli_analyse.rst:515
+#: ../../source/cli_analyse.rst:547
 msgid ""
 "Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
 "two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
@@ -939,7 +978,7 @@ msgstr ""
 "таблицы с девятью шашками у игрока, ``os8`` для односторонней таблицы на "
 "восемь пунктов (одно ``os`` означает ``os6``)."
 
-#: ../../source/cli_analyse.rst:519
+#: ../../source/cli_analyse.rst:551
 msgid ""
 "Les deux familles ne répondent pas à la même question. Une table **deux "
 "faces** élargit le domaine où la probabilité de gain et le verdict de "
@@ -952,7 +991,7 @@ msgstr ""
 "**односторонняя** расширяет расстояние, на котором может стоять шашка без"
 " того, чтобы EPC умолк (до десяти пунктов)."
 
-#: ../../source/cli_analyse.rst:524
+#: ../../source/cli_analyse.rst:556
 msgid ""
 "**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
 "commencer, puis affiche le pourcentage et le temps restant mesuré."
@@ -960,11 +999,11 @@ msgstr ""
 "**generate.** Называет размер, память и оценку времени до начала, затем "
 "показывает процент и измеренное оставшееся время."
 
-#: ../../source/cli_analyse.rst:527
+#: ../../source/cli_analyse.rst:559
 msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
 msgstr "``--ts`` — Вычисляемая двусторонняя область, например ``6x9``."
 
-#: ../../source/cli_analyse.rst:528
+#: ../../source/cli_analyse.rst:560
 msgid ""
 "``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
 "et un seul des deux est requis."
@@ -972,21 +1011,21 @@ msgstr ""
 "``--os`` — Вычисляемая односторонняя область, числом пунктов: от 6 до 12."
 " Требуется ровно одно из двух."
 
-#: ../../source/cli_analyse.rst:530
+#: ../../source/cli_analyse.rst:562
 msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
 msgstr "``--cores`` — Используемые ядра (по умолчанию: все, кроме одного)."
 
-#: ../../source/cli_analyse.rst:531
+#: ../../source/cli_analyse.rst:563
 msgid ""
 "``--data-dir`` — Où écrire (défaut : le dossier de données de "
 "l'application)."
 msgstr "``--data-dir`` — Куда писать (по умолчанию: каталог данных приложения)."
 
-#: ../../source/cli_analyse.rst:532
+#: ../../source/cli_analyse.rst:564
 msgid "``--quiet`` — Pas de ligne de progression."
 msgstr "``--quiet`` — Без строки прогресса."
 
-#: ../../source/cli_analyse.rst:534
+#: ../../source/cli_analyse.rst:566
 msgid ""
 "**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
 " la table et la même commande relancée reprend là où elle s'était "
@@ -1002,7 +1041,7 @@ msgstr ""
 " паузу встаёт только двусторонний проход; односторонний последователен, и"
 " ``--cores`` ему ничего не даёт."
 
-#: ../../source/cli_analyse.rst:541
+#: ../../source/cli_analyse.rst:573
 msgid ""
 "**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
 "machine — et dit lesquels sont déjà présents, avec leur verdict, et "
@@ -1014,7 +1053,7 @@ msgstr ""
 "приостановленный проход. ``--format json`` для сценария, ``--cores`` "
 "чтобы изменить допущение оценки."
 
-#: ../../source/cli_analyse.rst:546
+#: ../../source/cli_analyse.rst:578
 msgid ""
 "**verify.** Répond ``verified`` (les mêmes octets que la référence), "
 "``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
@@ -1026,7 +1065,7 @@ msgstr ""
 " ``corrupt`` (файл противоречит сам себе). В последнем случае завершается"
 " с ошибкой: эта команда сделана для сценария."
 
-#: ../../source/cli_analyse.rst:551
+#: ../../source/cli_analyse.rst:583
 msgid ""
 "**delete.** Retire la table, la reprise en attente et les débris d'un "
 "calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
@@ -1036,11 +1075,11 @@ msgstr ""
 "прохода. Область по умолчанию пересчитывается при следующем запуске "
 "приложения; более широкая — нет."
 
-#: ../../source/cli_analyse.rst:575
+#: ../../source/cli_analyse.rst:607
 msgid "openingbook — Quel coup à ce score ?"
 msgstr "openingbook — Какой ход при этом счёте?"
 
-#: ../../source/cli_analyse.rst:577
+#: ../../source/cli_analyse.rst:609
 msgid ""
 "L'exercice *Ouverture* du panneau Entraînement (voir "
 ":ref:`panneau_entrainement`) en ligne de commande : le coup d'ouverture "
@@ -1055,11 +1094,11 @@ msgstr ""
 " по ней. Любой ход на равных (tied) с лучшим считается верным (см. "
 ":ref:`metrique_livre_ouverture`). База не читается и не записывается."
 
-#: ../../source/cli_analyse.rst:583
+#: ../../source/cli_analyse.rst:615
 msgid "**openingbook status** — Le nombre de lignes du livre et ses scores."
 msgstr "**openingbook status** — Число строк книги и её счета."
 
-#: ../../source/cli_analyse.rst:589
+#: ../../source/cli_analyse.rst:621
 msgid ""
 "**openingbook question** — Tire une question : le jet d'ouverture et le "
 "score, avec le XGID de la position d'ouverture ; avec ``--roll second``, "
@@ -1072,7 +1111,7 @@ msgstr ""
 "которую оставляет дебютный ход, равный лучшему при этом счёте, с этим "
 "ходом и XGID позиции ответа."
 
-#: ../../source/cli_analyse.rst:600
+#: ../../source/cli_analyse.rst:632
 msgid ""
 "``--roll first|second`` — Le jet posé : ``first`` (l'ouverture, par "
 "défaut) ou ``second`` (la réponse)."
@@ -1080,7 +1119,7 @@ msgstr ""
 "``--roll first|second`` — Бросок, который нужно сыграть: ``first`` "
 "(дебют, по умолчанию) или ``second`` (ответ)."
 
-#: ../../source/cli_analyse.rst:601
+#: ../../source/cli_analyse.rst:633
 msgid ""
 "``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2`` "
 "(le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), "
@@ -1090,7 +1129,7 @@ msgstr ""
 "(отвечающий на 4 очках, открывающий на 2), ``1-2`` (игра Кроуфорда), "
 "``1-1`` (DMP, двойное матч-очко), ``money``."
 
-#: ../../source/cli_analyse.rst:603
+#: ../../source/cli_analyse.rst:635
 msgid ""
 "``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de "
 "réponse à tirer (``31,65``) ; ``--reply`` avec ``--roll second`` "
@@ -1100,11 +1139,11 @@ msgstr ""
 " для розыгрыша (``31,65``); ``--reply`` только вместе с ``--roll "
 "second``."
 
-#: ../../source/cli_analyse.rst:604
+#: ../../source/cli_analyse.rst:636
 msgid "``--seed <n>`` — Tirage reproductible (0 = au hasard)."
 msgstr "``--seed <n>`` — Воспроизводимый розыгрыш (0 = случайный)."
 
-#: ../../source/cli_analyse.rst:605
+#: ../../source/cli_analyse.rst:637
 msgid ""
 "``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du"
 " livre embarqué."
@@ -1112,11 +1151,11 @@ msgstr ""
 "``--book <fichier>`` — Книга ``.jsonl`` или ``.jsonl.gz`` вместо "
 "встроенной."
 
-#: ../../source/cli_analyse.rst:606
+#: ../../source/cli_analyse.rst:638
 msgid "``--format text|json`` — Format de sortie."
 msgstr "``--format text|json`` — Формат вывода."
 
-#: ../../source/cli_analyse.rst:608
+#: ../../source/cli_analyse.rst:640
 #, no-python-format
 msgid ""
 "**openingbook answer** — Juge un coup et affiche chaque candidat contre "

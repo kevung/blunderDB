@@ -28,7 +28,7 @@ func (cli *CLI) runElsewhere(args []string) error {
 	var others moveList
 	fs.Var(&others, "other", "Another database file to look in (repeatable, at least one)")
 	position := fs.Int64("position", 0, "The board, as a position id of --db")
-	xgid := fs.String("xgid", "", "The board, as an XGID")
+	xgid := fs.String("xgid", "", "The board, as an XGID, OGID or ArkID")
 	zobrist := fs.String("zobrist", "", "The board, as its Zobrist hash (decimal); neighbours are then ranked only where it is held")
 	match := fs.Int64("match", 0, "Instead of a board: a match id of --db, found elsewhere by its fingerprint")
 	tournament := fs.Int64("tournament", 0, "Instead of a board: a tournament id of --db, found elsewhere by its name")
@@ -127,7 +127,7 @@ func (cli *CLI) runElsewhere(args []string) error {
 		}
 		q.Target = p
 	case *xgid != "":
-		p, err := domain.DecodeXGID(*xgid)
+		p, err := domain.DecodePositionID(*xgid)
 		if err != nil {
 			return fmt.Errorf("--xgid: %w", err)
 		}

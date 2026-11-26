@@ -52,7 +52,7 @@ Positions et navigation
    :widths: 10, 20
    :align: center
 
-   "import, i", "Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf). Avec un argument — ``import XGID=…`` ou ``import OGID=…`` — lit l'identifiant plutôt que d'ouvrir un sélecteur de fichiers, pour le cas où il arrive d'un message, d'un forum ou d'un script."
+   "import, i", "Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf). Avec un argument — ``import XGID=…``, ``import OGID=…`` ou ``import ArkID=…`` — lit l'identifiant plutôt que d'ouvrir un sélecteur de fichiers, pour le cas où il arrive d'un message, d'un forum ou d'un script."
    "delete, del, d", "Supprime la position courante (confirmation demandée) ; la suppression passe par la corbeille et reste annulable trente jours."
    "jobs, calculs", "Ouvre le panneau Calculs : les tâches de fond en cours, en attente et terminées de toutes les bibliothèques."
    "trash", "Ouvre la corbeille : ce qui a été supprimé, avec de quoi le restaurer."

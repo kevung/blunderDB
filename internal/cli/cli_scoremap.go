@@ -26,7 +26,7 @@ func (cli *CLI) runScoreMap(args []string) error {
 	jobs := cmd.Int("jobs", 0, "Parallel searches (0 = one per core)")
 
 	cmd.Usage = func() {
-		fmt.Fprintln(cli.stdout(), "Usage: blunderdb scoremap [options] <XGID|OGID>")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb scoremap [options] <XGID|OGID|ArkID>")
 		fmt.Fprintln(cli.stdout())
 		fmt.Fprintln(cli.stdout(), "Show the best decision of one position at every score of a match. With")
 		fmt.Fprintln(cli.stdout(), "dice, each away × away cell gives the best play, its equity, the second")
@@ -49,7 +49,7 @@ func (cli *CLI) runScoreMap(args []string) error {
 	}
 	if cmd.NArg() != 1 {
 		cmd.Usage()
-		return fmt.Errorf("expected exactly one XGID or OGID argument")
+		return fmt.Errorf("expected exactly one XGID, OGID or ArkID argument")
 	}
 	if err := gammonnet.ValidateMapMatchLength(*length); err != nil {
 		return err
@@ -60,7 +60,7 @@ func (cli *CLI) runScoreMap(args []string) error {
 
 	pos, err := domain.DecodePositionID(cmd.Arg(0))
 	if err != nil {
-		return fmt.Errorf("invalid XGID or OGID: %w", err)
+		return fmt.Errorf("invalid XGID, OGID or ArkID: %w", err)
 	}
 
 	m, err := gammonnet.ComputeScoreMap(context.Background(), pos, nil, *length, *ply, *pruneK,

@@ -1070,6 +1070,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/players.matchIds — JSON."
         return self._call("/v1/players.matchIds", payload)
 
+    def positions_ark_id(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.arkId — JSON."
+        return self._call("/v1/positions.arkId", payload)
+
     def positions_count(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.count — JSON."
         return self._call("/v1/positions.count", payload)
@@ -1097,6 +1101,10 @@ class GeneratedAPI(BaseClient):
     def positions_explain(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.explain — JSON."
         return self._call("/v1/positions.explain", payload)
+
+    def positions_from_ark_id(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.fromArkID — JSON."
+        return self._call("/v1/positions.fromArkID", payload)
 
     def positions_from_image(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.fromImage — hand-written handler — see openapi.yaml."

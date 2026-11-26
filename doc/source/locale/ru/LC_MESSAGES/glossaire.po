@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 00:01+0200\n"
+"POT-Creation-Date: 2026-11-26 02:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -51,10 +51,398 @@ msgstr ""
 "которого она пришла."
 
 #: ../../source/glossaire.rst:16
+msgid "ArkID"
+msgstr "ArkID"
+
+#: ../../source/glossaire.rst:17
+msgid ""
+"La notation textuelle d'une position propre à blunderDB, lisible et "
+"prononçable : ``[34]65:x2(ySQmLhfA)S3Qm3L3hf3`` est la position de "
+"départ, à 3 points et 4 points du but, 6-5 à jouer, le videau à 4 chez le"
+" joueur au trait. Elle s'écrit, se lit, s'affiche, se copie et se colle "
+"partout où l'on sait le faire d'un XGID, d'un OGID ou d'un ID GNUbg, et "
+"une position collée en ArkID retombe sur la même ligne que l'original."
+msgstr ""
+"Текстовая нотация позиции, свойственная blunderDB, читаемая и "
+"произносимая: ``[34]65:x2(ySQmLhfA)S3Qm3L3hf3`` — это начальная позиция "
+"при счёте 3 и 4 очка до победы, с выпавшими 6-5 и кубом на 4 у игрока, "
+"чей ход. Её можно записывать, читать, отображать, копировать и вставлять "
+"везде, где это возможно для XGID, OGID или ID GNUbg, и позиция, "
+"вставленная как ArkID, попадает в ту же строку, что и оригинал."
+
+#: ../../source/glossaire.rst:24
+msgid ""
+"La forme est ``[score]dés:videau(portes)reste``. Le **score** donne les "
+"scores « à combien » (*Away score*) du joueur au trait puis de "
+"l'adversaire, ``[$]`` en partie d'argent, un ``c`` marquant la partie "
+"Crawford (``[14c]``). Les **dés** sont absents pour une décision de "
+"videau. Le **videau** est ``x`` s'il appartient au joueur au trait, ``X``"
+" à l'adversaire, suivi de son exposant s'il dépasse 1 (``x`` : à 2, "
+"``x2`` : à 4), et n'est pas écrit au centre. Les **portes** sont les "
+"points tenus par deux pions ou plus ; le **reste** donne, pour chaque "
+"case, le nombre de pions au-delà de deux (1 pour un pion seul, le nombre "
+"de pions pour la barre), omis quand il vaut 1. Les pions sortis se "
+"déduisent."
+msgstr ""
+"Форма записи: ``[счёт]кости:куб(ворота)остаток``. **Счёт** задаёт счета "
+"«сколько осталось» (*Away score*) игрока, чей ход, а затем соперника; "
+"``[$]`` — в игре на деньги, буква ``c`` отмечает партию Кроуфорда "
+"(``[14c]``). **Кости** отсутствуют при решении о кубе. **Куб** — это "
+"``x``, если он принадлежит игроку, чей ход, и ``X``, если сопернику; "
+"затем идёт его показатель степени, если он больше 1 (``x`` : на 2, ``x2``"
+" : на 4); в центре куб не записывается. **Ворота** — это пункты, занятые "
+"двумя или более шашками; **остаток** задаёт для каждой позиции число "
+"шашек сверх двух (1 для одиночной шашки, число шашек для бара), "
+"опускаясь, если оно равно 1. Выбывшие шашки определяются по остальным "
+"данным."
+
+#: ../../source/glossaire.rst:35
+msgid ""
+"Les lettres sont vues du côté du joueur au trait : les minuscules sont "
+"ses pions, les majuscules ceux de l'adversaire, tous deux numérotés comme"
+" le joueur au trait numérote son plateau. ``A`` à ``W`` sont les points 1"
+" à 23, ``Y`` le point 24, ``Z`` la barre ; ``X`` est réservé au videau. "
+"Chaque lettre est l'initiale d'un animal, qui aide à retenir le point :"
+msgstr ""
+"Буквы даны со стороны игрока, чей ход: строчные — его шашки, прописные — "
+"шашки соперника, и те и другие пронумерованы так, как игрок, чей ход, "
+"нумерует свою доску. ``A``–``W`` — пункты 1–23, ``Y`` — пункт 24, ``Z`` —"
+" бар; ``X`` зарезервирована для куба. Каждая буква — первая буква "
+"названия животного, которое помогает запомнить пункт:"
+
+#: ../../source/glossaire.rst:41
+msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
+msgstr ":header: \"Буква\", \"Пункт\", \"Животное\"  :widths: 8, 10, 60"
+
+#: ../../source/glossaire.rst:1
+msgid "A"
+msgstr "A"
+
+#: ../../source/glossaire.rst:1
+msgid "1"
+msgstr "1"
+
+#: ../../source/glossaire.rst:1
+msgid "Araignée — tapie dans un coin"
+msgstr "Броненосец (Armadillo) — свернулся в углу"
+
+#: ../../source/glossaire.rst:1
+msgid "B"
+msgstr "B"
+
+#: ../../source/glossaire.rst:1
+msgid "2"
+msgstr "2"
+
+#: ../../source/glossaire.rst:1
+msgid "Bernard-l'ermite — dans sa coquille, point mort"
+msgstr "Летучая мышь (Bat) — спит в глубине пещеры, мёртвый пункт"
+
+#: ../../source/glossaire.rst:1
+msgid "C"
+msgstr "C"
+
+#: ../../source/glossaire.rst:1
+msgid "3"
+msgstr "3"
+
+#: ../../source/glossaire.rst:1
+msgid "Crocodile — en eau basse, happe les pions"
+msgstr "Крокодил (Crocodile) — затаился на мелководье, хватает шашки"
+
+#: ../../source/glossaire.rst:1
+msgid "D"
+msgstr "D"
+
+#: ../../source/glossaire.rst:1
+msgid "4"
+msgstr "4"
+
+#: ../../source/glossaire.rst:1
+msgid "Dauphin — deuxième meilleur point"
+msgstr "Дельфин (Dolphin) — второй по ценности пункт"
+
+#: ../../source/glossaire.rst:1
+msgid "E"
+msgstr "E"
+
+#: ../../source/glossaire.rst:1
+msgid "5"
+msgstr "5"
+
+#: ../../source/glossaire.rst:1
+msgid "Éléphant — très puissant, indéplaçable"
+msgstr "Слон (Elephant) — очень мощный, несдвигаемый"
+
+#: ../../source/glossaire.rst:1
+msgid "F"
+msgstr "F"
+
+#: ../../source/glossaire.rst:1
+msgid "6"
+msgstr "6"
+
+#: ../../source/glossaire.rst:1
+msgid "Fourmi — gros tas, réservoir"
+msgstr "Фламинго (Flamingo) — целая стая, большая куча, резерв"
+
+#: ../../source/glossaire.rst:1
+msgid "G"
+msgstr "G"
+
+#: ../../source/glossaire.rst:1
+msgid "7"
+msgstr "7"
+
+#: ../../source/glossaire.rst:1
+msgid "Gorille — le gros bras qui bloque la sortie"
+msgstr "Горилла (Gorilla) — здоровяк, перекрывающий выход"
+
+#: ../../source/glossaire.rst:1
+msgid "H"
+msgstr "H"
+
+#: ../../source/glossaire.rst:1
+msgid "8"
+msgstr "8"
+
+#: ../../source/glossaire.rst:1
+msgid "Hérisson — piquant et solide"
+msgstr "Ёж (Hedgehog) — колючий и крепкий"
+
+#: ../../source/glossaire.rst:1
+msgid "I"
+msgstr "I"
+
+#: ../../source/glossaire.rst:1
+msgid "9"
+msgstr "9"
+
+#: ../../source/glossaire.rst:1
+msgid "Ibis — sur une patte, bâtisseur isolé"
+msgstr "Ибис (Ibis) — на одной ноге, одинокий строитель"
+
+#: ../../source/glossaire.rst:1
+msgid "J"
+msgstr "J"
+
+#: ../../source/glossaire.rst:1
+msgid "10"
+msgstr "10"
+
+#: ../../source/glossaire.rst:1
+msgid "Jaguar — prêt à bondir"
+msgstr "Ягуар (Jaguar) — готов к прыжку"
+
+#: ../../source/glossaire.rst:1
+msgid "K"
+msgstr "K"
+
+#: ../../source/glossaire.rst:1
+msgid "11"
+msgstr "11"
+
+#: ../../source/glossaire.rst:1
+msgid "Kangourou — traverse l'outfield d'un bond"
+msgstr "Кенгуру (Kangaroo) — пересекает внешнюю часть доски прыжком"
+
+#: ../../source/glossaire.rst:1
+msgid "L"
+msgstr "L"
+
+#: ../../source/glossaire.rst:1
+msgid "12"
+msgstr "12"
+
+#: ../../source/glossaire.rst:1
+msgid "Loup — dans la bergerie adverse"
+msgstr "Лев (Lion) — бродит во владениях соперника"
+
+#: ../../source/glossaire.rst:1
+msgid "M"
+msgstr "M"
+
+#: ../../source/glossaire.rst:1
+msgid "13"
+msgstr "13"
+
+#: ../../source/glossaire.rst:1
+msgid "Mouton — le troupeau du milieu"
+msgstr "Муфлон (Mouflon) — стадо в середине"
+
+#: ../../source/glossaire.rst:1
+msgid "N"
+msgstr "N"
+
+#: ../../source/glossaire.rst:1
+msgid "14"
+msgstr "14"
+
+#: ../../source/glossaire.rst:1
+msgid "Nasique — met le nez dehors"
+msgstr "Нарвал (Narwhal) — выставляет бивень наружу"
+
+#: ../../source/glossaire.rst:1
+msgid "O"
+msgstr "O"
+
+#: ../../source/glossaire.rst:1
+msgid "15"
+msgstr "15"
+
+#: ../../source/glossaire.rst:1
+msgid "Oie — en pleine migration pour rentrer"
+msgstr "Скопа (Osprey) — в пути домой"
+
+#: ../../source/glossaire.rst:1
+msgid "P"
+msgstr "P"
+
+#: ../../source/glossaire.rst:1
+msgid "16"
+msgstr "16"
+
+#: ../../source/glossaire.rst:1
+msgid "Papillon — fragile, éphémère"
+msgstr "Пингвин (Penguin) — уязвим, ненадолго на открытом месте"
+
+#: ../../source/glossaire.rst:1
+msgid "Q"
+msgstr "Q"
+
+#: ../../source/glossaire.rst:1
+msgid "17"
+msgstr "17"
+
+#: ../../source/glossaire.rst:1
+msgid "Quetzal — oiseau rare, on y est rarement"
+msgstr "Кетцаль (Quetzal) — редкая птица, здесь бывают редко"
+
+#: ../../source/glossaire.rst:1
+msgid "R"
+msgstr "R"
+
+#: ../../source/glossaire.rst:1
+msgid "18"
+msgstr "18"
+
+#: ../../source/glossaire.rst:1
+msgid "Rhinocéros — du très solide"
+msgstr "Носорог (Rhino) — очень прочный"
+
+#: ../../source/glossaire.rst:1
+msgid "S"
+msgstr "S"
+
+#: ../../source/glossaire.rst:1
+msgid "19"
+msgstr "19"
+
+#: ../../source/glossaire.rst:1
+msgid "Souris — dure à attraper"
+msgstr "Белка (Squirrel) — трудно поймать"
+
+#: ../../source/glossaire.rst:1
+msgid "T"
+msgstr "T"
+
+#: ../../source/glossaire.rst:1
+msgid "20"
+msgstr "20"
+
+#: ../../source/glossaire.rst:1
+msgid "Tortue — carapace indestructible"
+msgstr "Черепаха (Tortoise) — несокрушимый панцирь"
+
+#: ../../source/glossaire.rst:1
+msgid "U"
+msgstr "U"
+
+#: ../../source/glossaire.rst:1
+msgid "21"
+msgstr "21"
+
+#: ../../source/glossaire.rst:1
+msgid "Urubu — vautour qui attend la frappe"
+msgstr "Урубу (Urubu) — гриф, ждущий удара"
+
+#: ../../source/glossaire.rst:1
+msgid "V"
+msgstr "V"
+
+#: ../../source/glossaire.rst:1
+msgid "22"
+msgstr "22"
+
+#: ../../source/glossaire.rst:1
+msgid "Vipère — tapie dans l'herbe basse"
+msgstr "Гадюка (Viper) — затаилась в низкой траве"
+
+#: ../../source/glossaire.rst:1
+msgid "W"
+msgstr "W"
+
+#: ../../source/glossaire.rst:1
+msgid "23"
+msgstr "23"
+
+#: ../../source/glossaire.rst:1
+msgid "Wombat — terrier profond"
+msgstr "Вомбат (Wombat) — глубокая нора"
+
+#: ../../source/glossaire.rst:1
+msgid "Y"
+msgstr "Y"
+
+#: ../../source/glossaire.rst:1
+msgid "24"
+msgstr "24"
+
+#: ../../source/glossaire.rst:1
+msgid "Yack — loin en altitude, lent à redescendre"
+msgstr "Як (Yak) — далеко в вышине, медленно спускается"
+
+#: ../../source/glossaire.rst:1
+msgid "Z"
+msgstr "Z"
+
+#: ../../source/glossaire.rst:1
+msgid "barre"
+msgstr "бар"
+
+#: ../../source/glossaire.rst:1
+msgid "Zèbre — derrière les barreaux"
+msgstr "Зебра (Zebra) — за решёткой"
+
+#: ../../source/glossaire.rst:71
+msgid ""
+"À la lecture, blunderDB accepte la forme compacte et la forme développée "
+"(``[34]65:x2(ymhf)m3hf3(SQLA)S3QL3`` : d'abord tous les pions du joueur "
+"au trait, puis ceux de l'adversaire), un ordre libre et plusieurs groupes"
+" de parenthèses ; à l'écriture, il produit toujours la forme compacte "
+"canonique, la développée sur demande. Deux écritures de la même position "
+"par blunderDB sont donc identiques au caractère près. Un ArkID ne dit ni "
+"les règles de la session (Jacoby, castor), ni le plafond du videau : "
+"comme l'OGID, il ne les porte pas et ne les suppose pas. Il est refusé, "
+"en le disant, s'il compte plus de quinze pions par camp, une case tenue "
+"par les deux camps, une lettre inconnue, un score ou des dés invalides."
+msgstr ""
+"При чтении blunderDB принимает компактную и развёрнутую формы "
+"(``[34]65:x2(ymhf)m3hf3(SQLA)S3QL3``: сначала все шашки игрока, чей ход, "
+"затем шашки соперника), произвольный порядок и несколько групп скобок; "
+"при записи он всегда выдаёт каноническую компактную форму, а развёрнутую "
+"— по запросу. Две записи одной и той же позиции, сделанные blunderDB, "
+"поэтому совпадают до символа. ArkID не сообщает ни правил сессии "
+"(Джейкоби, бобёр), ни предела куба: как и OGID, он их не несёт и не "
+"предполагает. Он отклоняется, с указанием причины, если у одной стороны "
+"больше пятнадцати шашек, если пункт занят обеими сторонами, если "
+"встречается неизвестная буква, недопустимый счёт или недопустимые кости."
+
+#: ../../source/glossaire.rst:82
 msgid "Position importée individuellement (*individually imported position*)"
 msgstr "Индивидуально импортированная позиция (*individually imported position*)"
 
-#: ../../source/glossaire.rst:17
+#: ../../source/glossaire.rst:83
 msgid ""
 "Une position entrée seule dans la base — écrite depuis le plateau, ou lue"
 " depuis un fichier de position — plutôt qu'apportée par un match. Cette "
@@ -66,11 +454,11 @@ msgstr ""
 "позиция, импортированная таким образом, остаётся такой, даже если позже "
 "импортируется матч, который её содержит."
 
-#: ../../source/glossaire.rst:22
+#: ../../source/glossaire.rst:88
 msgid "Position marquée (*flagged position*)"
 msgstr "Помеченная позиция (*flagged position*)"
 
-#: ../../source/glossaire.rst:23
+#: ../../source/glossaire.rst:89
 msgid ""
 "Une position que l'utilisateur a signalée comme digne d'étude *dans le "
 "logiciel dont provient le match* — aujourd'hui seul eXtreme Gammon "
@@ -82,11 +470,11 @@ msgstr ""
 "фиксирует эту отметку по каждому ходу. Помеченное решение по кубу "
 "отмечает обе получившиеся из него позиции: удвоение и принятие/отказ."
 
-#: ../../source/glossaire.rst:29
+#: ../../source/glossaire.rst:95
 msgid "Analyse (*analysis*)"
 msgstr "Анализ (*analysis*)"
 
-#: ../../source/glossaire.rst:30
+#: ../../source/glossaire.rst:96
 msgid ""
 "Ce qu'un moteur (eXtreme Gammon, GNUbg, BGBlitz ou l'évaluateur gammonNet"
 " embarqué) a conclu sur une position, enregistré et relu plus tard. Une "
@@ -100,11 +488,11 @@ msgstr ""
 "анализ другого движка, как и уже присутствующий анализ (см. "
 ":ref:`import_regles`)."
 
-#: ../../source/glossaire.rst:36
+#: ../../source/glossaire.rst:102
 msgid "Évaluation (*evaluation*)"
 msgstr "Оценка (*evaluation*)"
 
-#: ../../source/glossaire.rst:37
+#: ../../source/glossaire.rst:103
 msgid ""
 "Le résultat d'un calcul que l'évaluateur embarqué effectue sur la "
 "position actuellement au plateau, enregistrée ou non. Une évaluation "
@@ -116,11 +504,11 @@ msgstr ""
 "лишь до тех пор, пока позиция не меняется; если она сохранена, она "
 "становится Анализом."
 
-#: ../../source/glossaire.rst:42
+#: ../../source/glossaire.rst:108
 msgid "Référentiel (*referential*)"
 msgstr "Референциал (*referential*)"
 
-#: ../../source/glossaire.rst:43
+#: ../../source/glossaire.rst:109
 msgid ""
 "L'échelle dans laquelle un chiffre à propos d'une position s'exprime. "
 "*Money* répond à « combien de points cela vaut-il », un gammon valant "
@@ -138,11 +526,11 @@ msgstr ""
 "1-away. Референциал — это свойство позиции, а не настройка отображения: "
 "его задаёт счёт away."
 
-#: ../../source/glossaire.rst:51
+#: ../../source/glossaire.rst:117
 msgid "Équité normalisée (*normalised equity*)"
 msgstr "Нормализованное эквити (*normalised equity*)"
 
-#: ../../source/glossaire.rst:52
+#: ../../source/glossaire.rst:118
 msgid ""
 "L'équité de match, exprimée sur l'échelle ``2 × MWC − 1`` où ±1 "
 "représente le videau courant gagné ou perdu. C'est l'échelle que "
@@ -153,11 +541,11 @@ msgstr ""
 "выигрыш или проигрыш текущего куба. Это шкала, которую blunderDB "
 "отображает и сохраняет при матчевом счёте, а не сырые вероятности победы."
 
-#: ../../source/glossaire.rst:57
+#: ../../source/glossaire.rst:123
 msgid "EMG"
 msgstr "EMG"
 
-#: ../../source/glossaire.rst:58
+#: ../../source/glossaire.rst:124
 msgid ""
 "Le sigle sous lequel eXtreme Gammon et GNUbg désignent l'équité "
 "normalisée ci-dessus, et sous lequel les statistiques de blunderDB "
@@ -169,11 +557,11 @@ msgstr ""
 "«ошибка в 0,100 EMG» — это ошибка в 0,100 по этой шкале. Оба термина "
 "называют одну и ту же величину."
 
-#: ../../source/glossaire.rst:63
+#: ../../source/glossaire.rst:129
 msgid "Erreur / blunder (*error*, *blunder*)"
 msgstr "Ошибка / бландер (*error*, *blunder*)"
 
-#: ../../source/glossaire.rst:64
+#: ../../source/glossaire.rst:130
 msgid ""
 "Une décision dont le coût atteint le **seuil d'erreur** de la "
 "bibliothèque est une *erreur* ; une erreur dont le coût atteint son "
@@ -189,11 +577,11 @@ msgstr ""
 "0,100 EMG и следуют за файлом, а не за машиной — они не путешествуют в "
 "экспорте."
 
-#: ../../source/glossaire.rst:71
+#: ../../source/glossaire.rst:137
 msgid "Score away (*away score*)"
 msgstr "Счёт away (*away score*)"
 
-#: ../../source/glossaire.rst:72
+#: ../../source/glossaire.rst:138
 msgid ""
 "Le nombre de points qu'il reste à un joueur pour gagner le match, de son "
 "propre point de vue. Deux valeurs sont des sentinelles plutôt que des "
@@ -207,11 +595,11 @@ msgstr ""
 "Кроуфорда (``0``) и саму игру Кроуфорда (``1``) при одинаковом расстоянии"
 " до победы."
 
-#: ../../source/glossaire.rst:78
+#: ../../source/glossaire.rst:144
 msgid "Régime (*regime*)"
 msgstr "Режим (*regime*)"
 
-#: ../../source/glossaire.rst:79
+#: ../../source/glossaire.rst:145
 msgid ""
 "Quel type de réponse le panneau donne sur une course, toujours annoncé à "
 "l'écran plutôt que laissé à deviner :"
@@ -219,17 +607,17 @@ msgstr ""
 "Какой тип ответа даёт панель о гонке — всегда указано на экране, а не "
 "оставлено читателю угадывать:"
 
-#: ../../source/glossaire.rst:82
+#: ../../source/glossaire.rst:148
 msgid "*exact* — lu dans une base de bearoff two-sided, jamais estimé ;"
 msgstr "*точный* — считан из двусторонней базы bearoff, никогда не оценивается;"
 
-#: ../../source/glossaire.rst:83
+#: ../../source/glossaire.rst:149
 msgid "*évalué* — calculé par l'évaluateur embarqué, qui rejoue la trajectoire ;"
 msgstr ""
 "*вычисленный* — рассчитанный встроенным оценщиком, который проигрывает "
 "траекторию до конца;"
 
-#: ../../source/glossaire.rst:85
+#: ../../source/glossaire.rst:151
 msgid ""
 "*estimé* — un résumé calibré d'une trajectoire, valable pour une "
 "probabilité de gain, jamais pour un verdict de videau."
@@ -237,11 +625,11 @@ msgstr ""
 "*оценённый* — калиброванная сводка траектории, годная для вероятности "
 "выигрыша, но никогда для вердикта по кубу."
 
-#: ../../source/glossaire.rst:88
+#: ../../source/glossaire.rst:154
 msgid "Base bearoff (*bearoff database*)"
 msgstr "База bearoff (*bearoff database*)"
 
-#: ../../source/glossaire.rst:89
+#: ../../source/glossaire.rst:155
 msgid ""
 "Une table de réponses de course two-sided (le verdict de videau) ou one-"
 "sided (l'EPC). blunderDB en génère elle-même une partie au premier "
@@ -256,11 +644,11 @@ msgstr ""
 "настроек или из CLI. Сгенерированная база называется *проверенной*, когда"
 " её отпечаток точно совпадает с тем, что производит GNUbg."
 
-#: ../../source/glossaire.rst:96
+#: ../../source/glossaire.rst:162
 msgid "EPC (Effective Pip Count)"
 msgstr "EPC (Effective Pip Count)"
 
-#: ../../source/glossaire.rst:97
+#: ../../source/glossaire.rst:163
 msgid ""
 "Une estimation classique, un-côté, du nombre de coups nécessaires pour "
 "sortir tous les pions d'un joueur — corrigée du gaspillage (*wastage*) "
@@ -270,11 +658,11 @@ msgstr ""
 "всех шашек игрока — скорректированная на потери (*wastage*) относительно "
 "простого подсчёта пипсов."
 
-#: ../../source/glossaire.rst:101
+#: ../../source/glossaire.rst:167
 msgid "Fait de position (*position fact*)"
 msgstr "Факт позиции (*position fact*)"
 
-#: ../../source/glossaire.rst:102
+#: ../../source/glossaire.rst:168
 msgid ""
 "Une grandeur qui appartient au plateau lui-même, indépendante de tout "
 "choix d'un joueur : compte de pions, EPC, chances de "
@@ -284,11 +672,11 @@ msgstr ""
 "подсчёт пипсов, EPC, шансы на выигрыш/гаммон/бэкгаммон, безкубовое "
 "эквити. Истинна до броска."
 
-#: ../../source/glossaire.rst:106
+#: ../../source/glossaire.rst:172
 msgid "Ligne avant le jet (*pre-roll baseline*)"
 msgstr "Строка до броска (*pre-roll baseline*)"
 
-#: ../../source/glossaire.rst:107
+#: ../../source/glossaire.rst:173
 msgid ""
 "Le vecteur des chances de gain/gammon/backgammon et de l'équité cubeless,"
 " affiché en tête de la liste des coups candidats une fois les dés jetés. "
@@ -300,11 +688,11 @@ msgstr ""
 "между этой строкой и ходом измеряет удачу броска, а не заслугу сыгранного"
 " хода."
 
-#: ../../source/glossaire.rst:112
+#: ../../source/glossaire.rst:178
 msgid "Décision (*decision*)"
 msgstr "Решение (*decision*)"
 
-#: ../../source/glossaire.rst:113
+#: ../../source/glossaire.rst:179
 msgid ""
 "La réponse à la question que le plateau pose : le classement des coups "
 "candidats quand des dés sont jetés, ou les trois options de videau (pas "
@@ -315,11 +703,11 @@ msgstr ""
 " брошенных костях, либо, в противном случае, три варианта куба и их "
 "вердикт. Позиция никогда не задаёт оба вопроса одновременно."
 
-#: ../../source/glossaire.rst:118
+#: ../../source/glossaire.rst:184
 msgid "Verdict"
 msgstr "Вердикт"
 
-#: ../../source/glossaire.rst:119
+#: ../../source/glossaire.rst:185
 msgid ""
 "Laquelle des options d'une décision de videau est la bonne : *pas de "
 "double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*. "
@@ -333,11 +721,11 @@ msgstr ""
 "решения* (режим не вправе его дать) и *отказано* (движок отклонил "
 "позицию, как правило, счёт вне досягаемости его таблицы)."
 
-#: ../../source/glossaire.rst:125
+#: ../../source/glossaire.rst:191
 msgid "Trop bon (*too good*)"
 msgstr "Слишком хорошо (*too good*)"
 
-#: ../../source/glossaire.rst:126
+#: ../../source/glossaire.rst:192
 msgid ""
 "Le verdict qui dit que la position est si favorable que doubler "
 "inciterait l'adversaire à passer alors que jouer sans doubler rapporte "
@@ -347,11 +735,11 @@ msgstr ""
 " бы соперника отказаться, тогда как продолжение игры без удвоения "
 "приносит больше — куб лучше сохранить."
 
-#: ../../source/glossaire.rst:130
+#: ../../source/glossaire.rst:196
 msgid "Chance (*luck*)"
 msgstr "Удача (*luck*)"
 
-#: ../../source/glossaire.rst:131
+#: ../../source/glossaire.rst:197
 msgid ""
 "L'apport du lancer de dés à l'équité d'un coup, lu depuis le fichier "
 "source à l'import (eXtreme Gammon, GNUbg) et jamais recalculé par "
@@ -363,11 +751,11 @@ msgstr ""
 "заново. Форматы, которые его не переносят (BGF, Jellyfish ``.mat``), "
 "никогда его не предоставляют, а импорт не является ретроактивным."
 
-#: ../../source/glossaire.rst:136
+#: ../../source/glossaire.rst:202
 msgid "Blunder"
 msgstr "Бландер"
 
-#: ../../source/glossaire.rst:137
+#: ../../source/glossaire.rst:203
 msgid ""
 "Un coup ou une décision de videau dont l'erreur (l'écart d'équité avec le"
 " meilleur choix) dépasse un seuil ; la commande ``bl`` (ou ``blunders``) "
@@ -378,11 +766,11 @@ msgstr ""
 " превышает порог; команда ``bl`` (или ``blunders``) напрямую загружает "
 "худшие ошибки, отобранные фильтром статистики."
 
-#: ../../source/glossaire.rst:142
+#: ../../source/glossaire.rst:208
 msgid "Millipoint (mpt)"
 msgstr "Миллипункт (mpt)"
 
-#: ../../source/glossaire.rst:143
+#: ../../source/glossaire.rst:209
 msgid ""
 "Un millième de point d'équité : une erreur de 0,100 d'équité vaut 100 "
 "mpt. C'est l'unité dans laquelle se lisent les grandeurs d'une position —"
@@ -398,11 +786,11 @@ msgstr ""
 "1000, так что PR, равный 5,0, соответствует средней ошибке в 10 mpt на "
 "решение."
 
-#: ../../source/glossaire.rst:151
+#: ../../source/glossaire.rst:217
 msgid "PR (*Performance Rating*)"
 msgstr "PR (*Performance Rating*)"
 
-#: ../../source/glossaire.rst:152
+#: ../../source/glossaire.rst:218
 msgid ""
 "Le coût moyen des erreurs d'un joueur, coups et videau confondus : "
 "l'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
@@ -416,11 +804,11 @@ msgstr ""
 "0,010 эквити на решение. См. :ref:`stats_parity` для точных правил "
 "подсчёта (паритет с eXtreme Gammon и GNUbg)."
 
-#: ../../source/glossaire.rst:158
+#: ../../source/glossaire.rst:224
 msgid "Snowie Error Rate"
 msgstr "Snowie Error Rate"
 
-#: ../../source/glossaire.rst:159
+#: ../../source/glossaire.rst:225
 msgid ""
 "Le même numérateur que le PR (la somme des erreurs), mais rapporté au "
 "nombre de coups joués plutôt qu'au nombre de décisions comptées — plus "
@@ -430,11 +818,11 @@ msgstr ""
 "сыгранных ходов, а не на число учтённых решений — более стабильный от "
 "инструмента к инструменту. См. :ref:`stats_parity`."
 
-#: ../../source/glossaire.rst:163
+#: ../../source/glossaire.rst:229
 msgid "Coût MWC (*MWC cost*)"
 msgstr "Стоимость MWC (*MWC cost*)"
 
-#: ../../source/glossaire.rst:164
+#: ../../source/glossaire.rst:230
 msgid ""
 "Une erreur de videau exprimée en points de pourcentage de chances de "
 "gagner le match (*Match Winning Chance*), plutôt qu'en équité — la "
@@ -445,11 +833,11 @@ msgstr ""
 "не в эквити — естественная величина для сравнения одного и того же игрока"
 " при разных матчевых счётах."
 
-#: ../../source/glossaire.rst:169
+#: ../../source/glossaire.rst:235
 msgid "Collection"
 msgstr "Коллекция"
 
-#: ../../source/glossaire.rst:170
+#: ../../source/glossaire.rst:236
 msgid ""
 "Un ensemble nommé et ordonné de positions que l'utilisateur assemble à la"
 " main, glisser-déposer compris. L'appartenance à une collection est un "
@@ -461,11 +849,11 @@ msgstr ""
 "действие, в отличие от индивидуально импортированной позиции (см. "
 ":ref:`panneau_collections`)."
 
-#: ../../source/glossaire.rst:175
+#: ../../source/glossaire.rst:241
 msgid "Paquet Anki (*Anki deck*)"
 msgstr "Колода Anki (*Anki deck*)"
 
-#: ../../source/glossaire.rst:176
+#: ../../source/glossaire.rst:242
 msgid ""
 "Un ensemble de positions transformées en cartes à réviser par répétition "
 "espacée (algorithme FSRS). Voir :ref:`panneau_anki`."
@@ -473,11 +861,11 @@ msgstr ""
 "Набор позиций, превращённых в карточки для повторения по методу "
 "интервального повторения (алгоритм FSRS). См. :ref:`panneau_anki`."
 
-#: ../../source/glossaire.rst:179
+#: ../../source/glossaire.rst:245
 msgid "Carte de révision (*review card*)"
 msgstr "Карточка повторения (*review card*)"
 
-#: ../../source/glossaire.rst:180
+#: ../../source/glossaire.rst:246
 msgid ""
 "Une position d'un paquet Anki, présentée comme une question : le plateau "
 "est la question, l'analyse enregistrée est la réponse, masquée jusqu'au "
@@ -486,11 +874,11 @@ msgstr ""
 "Позиция из колоды Anki, представленная как вопрос: доска — это вопрос, "
 "сохранённый анализ — ответ, скрытый до жеста, который его раскрывает."
 
-#: ../../source/glossaire.rst:184
+#: ../../source/glossaire.rst:250
 msgid "Commentaire (*comment*)"
 msgstr "Комментарий (*comment*)"
 
-#: ../../source/glossaire.rst:185
+#: ../../source/glossaire.rst:251
 msgid ""
 "Un texte libre attaché à une position, tapé par l'utilisateur ou repris "
 "d'un fichier importé. Une position peut en porter plusieurs, chacun signé"
@@ -505,11 +893,11 @@ msgstr ""
 "комментарии — это тег, который находит фильтр ``#слово`` (см. "
 ":ref:`panneau_commentaires`)."
 
-#: ../../source/glossaire.rst:191
+#: ../../source/glossaire.rst:257
 msgid "Joueur (*player*)"
 msgstr "Игрок (*player*)"
 
-#: ../../source/glossaire.rst:192
+#: ../../source/glossaire.rst:258
 msgid ""
 "Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne "
 "devine pas la personne derrière le nom : la même personne signant sous "
@@ -521,11 +909,11 @@ msgstr ""
 "подписывающийся двумя разными написаниями, — это два разных игрока, пока "
 "не выполнено явное слияние («Управление игроками»)."
 
-#: ../../source/glossaire.rst:197
+#: ../../source/glossaire.rst:263
 msgid "Filigrane (*watermark*)"
 msgstr "Водяной знак (*watermark*)"
 
-#: ../../source/glossaire.rst:198
+#: ../../source/glossaire.rst:264
 msgid ""
 "La déclaration signée, apposée par qui exporte une base, de ce qu'elle "
 "est et d'où elle vient. Infalsifiable mais pas inamovible, elle ne "
@@ -537,11 +925,11 @@ msgstr ""
 "никогда ничего не записывает на стороне получателя. См. "
 ":ref:`diffusion_controlee`."
 
-#: ../../source/glossaire.rst:203
+#: ../../source/glossaire.rst:269
 msgid "Identité d'émetteur (*issuer identity*)"
 msgstr "Идентичность издателя (*issuer identity*)"
 
-#: ../../source/glossaire.rst:204
+#: ../../source/glossaire.rst:270
 msgid ""
 "La clé qui signe les filigranes d'une personne — créée d'elle-même au "
 "premier filigrane apposé, et déplaçable d'une machine à l'autre par un "
@@ -551,11 +939,11 @@ msgstr ""
 " при первом наложенном водяном знаке и переносится с одной машины на "
 "другую в виде одного файла."
 
-#: ../../source/glossaire.rst:208
+#: ../../source/glossaire.rst:274
 msgid "Fichier protégé (.dbx)"
 msgstr "Защищённый файл (.dbx)"
 
-#: ../../source/glossaire.rst:209
+#: ../../source/glossaire.rst:275
 msgid ""
 "Une base exportée et chiffrée par mot de passe, ouverte une fois puis "
 "ordinaire. Elle protège le fichier en transit, pas son contenu : qui "
@@ -565,11 +953,11 @@ msgstr ""
 "затем обычная. Она защищает файл в пути, а не его содержимое: кто получит"
 " пароль, тот сможет её открыть."
 
-#: ../../source/glossaire.rst:213
+#: ../../source/glossaire.rst:279
 msgid "Tenant"
 msgstr "Тенант"
 
-#: ../../source/glossaire.rst:214
+#: ../../source/glossaire.rst:280
 msgid ""
 "En mode serveur, le propriétaire d'un ensemble de positions, matchs et "
 "collections. Rien de ce qu'un tenant stocke n'est jamais visible à un "

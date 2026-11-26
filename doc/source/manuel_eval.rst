@@ -362,10 +362,11 @@ le plus souvent d'une position déjà en main. Quatre gestes l'y amènent :
 * **CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse,
   puis la coller une fois dans le panneau Eval. Le collage accepte aussi un
   identifiant venu d'ailleurs — un XGID (eXtreme Gammon, GNU Backgammon, une
-  autre instance de blunderDB), un OGID (OpenGammon) ou un ID GNUbg (GNU
+  autre instance de blunderDB), un OGID (OpenGammon), un ArkID (la notation
+  de blunderDB, voir le :ref:`glossaire <glossaire>`) ou un ID GNUbg (GNU
   Backgammon) : il suffit qu'il soit dans le presse-papier.
 
-* **La commande** ``import XGID=…`` (ou ``import OGID=…``) pour le cas où
+* **La commande** ``import XGID=…`` (ou ``import OGID=…``, ``import ArkID=…``) pour le cas où
   l'identifiant n'est pas dans le presse-papier mais dans un message, sur un
   forum lu dans un terminal, ou produit par un script. C'est le même verbe
   qu'``import`` tout court : sans argument il ouvre un sélecteur de fichiers,
@@ -373,7 +374,7 @@ le plus souvent d'une position déjà en main. Quatre gestes l'y amènent :
   celui du collage — même lecture, même déduplication, même ouverture de la
   position importée.
 
-Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La position
+Un OGID ou un ArkID ne porte qu'une position : ni évaluation, ni commentaire. La position
 arrive donc sans analyse, exactement comme un XGID nu, et l'évaluateur intégré
 peut la combler ensuite.
 
@@ -384,7 +385,13 @@ joueur au trait, ni les dés, ni le score : la position arrive alors au trait du
 joueur du bas, sans dés, en partie d'argent, videau au centre.
 
 Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du match
-(``7C``) : sans lui, un joueur à un point du but est après la Crawford.
+(``7C``) : sans lui, un joueur à un point du but est après la Crawford. Dans un
+ArkID, c'est le ``c`` qui suit les scores (``[14c]``), avec le même effet.
+
+Un ArkID s'obtient par *Copier l'ArkID* dans le menu d'une position (voir
+:ref:`menu_contextuel_actions`), par la commande ``arkid`` (voir :ref:`cli_arkid`) ou, pour
+un serveur, par la route ``positions.arkId``. La position collée retombe sur la
+même ligne de la base que l'original.
 
 **Une capture d'écran du plateau** (eXtreme Gammon, thème par défaut) se lit de
 trois façons : coller l'image (*CTRL-V*), la glisser sur la fenêtre, ou l'ouvrir
@@ -499,7 +506,7 @@ s'édite et reçoit un collage sans base, et l'on passe de l'un à l'autre sans
 rien perdre ; lancer la recherche, elle, demande une base. Seuls *Ajouter à la
 base* et *CTRL-S* exigent une base dans le panneau, et la barre d'état le dit.
 Aucune base n'est créée en coulisse. Dans le panneau Eval comme dans l'onglet
-Recherche, la commande ``import XGID=…`` (ou ``import OGID=…``) pose la position
+Recherche, la commande ``import XGID=…`` (ou ``import OGID=…``, ``import ArkID=…``) pose la position
 sur le plateau brouillon, sans base. L'onglet **Entraînement** s'ouvre lui
 aussi sans base : *Scores*, *Pions*, *Bearoff* et *Évaluation* sont
 disponibles, *Décision* est désactivé avec la raison affichée, et la session

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 00:25+0100\n"
+"POT-Creation-Date: 2026-11-26 02:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -58,9 +58,9 @@ msgstr ""
 
 #: ../../source/cli_analyse.rst:23 ../../source/cli_analyse.rst:197
 #: ../../source/cli_analyse.rst:253 ../../source/cli_analyse.rst:294
-#: ../../source/cli_analyse.rst:319 ../../source/cli_analyse.rst:369
-#: ../../source/cli_analyse.rst:416 ../../source/cli_analyse.rst:471
-#: ../../source/cli_analyse.rst:598
+#: ../../source/cli_analyse.rst:320 ../../source/cli_analyse.rst:351
+#: ../../source/cli_analyse.rst:401 ../../source/cli_analyse.rst:448
+#: ../../source/cli_analyse.rst:503 ../../source/cli_analyse.rst:630
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
@@ -468,8 +468,8 @@ msgstr ""
 "``--jobs`` — Παρτίδες που παίζονται παράλληλα (προεπιλογή: μία ανά "
 "πυρήνα)· αλλάζει μόνο ο χρόνος."
 
-#: ../../source/cli_analyse.rst:213 ../../source/cli_analyse.rst:321
-#: ../../source/cli_analyse.rst:371 ../../source/cli_analyse.rst:418
+#: ../../source/cli_analyse.rst:213 ../../source/cli_analyse.rst:353
+#: ../../source/cli_analyse.rst:403 ../../source/cli_analyse.rst:450
 msgid ""
 "``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : "
 "``text``)."
@@ -526,10 +526,10 @@ msgstr ""
 "Ctrl-C εμφανίζει όσα έχουν καθιερώσει οι ολοκληρωμένες παρτίδες."
 
 #: ../../source/cli_analyse.rst:233 ../../source/cli_analyse.rst:268
-#: ../../source/cli_analyse.rst:298 ../../source/cli_analyse.rst:339
-#: ../../source/cli_analyse.rst:388 ../../source/cli_analyse.rst:442
-#: ../../source/cli_analyse.rst:486 ../../source/cli_analyse.rst:555
-#: ../../source/cli_analyse.rst:619
+#: ../../source/cli_analyse.rst:298 ../../source/cli_analyse.rst:326
+#: ../../source/cli_analyse.rst:371 ../../source/cli_analyse.rst:420
+#: ../../source/cli_analyse.rst:474 ../../source/cli_analyse.rst:518
+#: ../../source/cli_analyse.rst:587 ../../source/cli_analyse.rst:651
 msgid "**Exemples:**"
 msgstr "**Παραδείγματα:**"
 
@@ -550,6 +550,7 @@ msgstr ""
 "δεδομένων."
 
 #: ../../source/cli_analyse.rst:255 ../../source/cli_analyse.rst:296
+#: ../../source/cli_analyse.rst:324
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr "``--format`` — Μορφή εξόδου: ``text`` ή ``json`` (προεπιλογή: ``text``)."
 
@@ -608,10 +609,50 @@ msgstr ""
 "από τη νίκη που φέρει η θέση, όπως κάνει το XGID."
 
 #: ../../source/cli_analyse.rst:308
+msgid "arkid — ArkID"
+msgstr "arkid — ArkID"
+
+#: ../../source/cli_analyse.rst:310
+msgid ""
+"Écrit l'**ArkID** d'une position donnée par XGID, par OGID ou par ArkID :"
+" la notation textuelle de blunderDB, lisible et prononçable "
+"(``[34]65:x2(ySQmLhfA)S3Qm3L3hf3``, voir le :ref:`glossaire "
+"<glossaire>`). Un ArkID passé en argument, sous l'une ou l'autre forme, "
+"revient sous sa forme canonique. Calcul pur : aucun fichier de base de "
+"données n'est impliqué."
+msgstr ""
+"Γράφει το **ArkID** μιας θέσης που δίνεται με XGID, με OGID ή με ArkID: "
+"την κειμενική σημειογραφία του blunderDB, ευανάγνωστη και εκφωνήσιμη "
+"(``[34]65:x2(ySQmLhfA)S3Qm3L3hf3``, βλ. το :ref:`γλωσσάριο <glossaire>`)."
+" Ένα ArkID που δίνεται ως όρισμα, με όποια από τις δύο μορφές, επιστρέφει"
+" στην κανονική του μορφή. Καθαρός υπολογισμός: δεν εμπλέκεται κανένα "
+"αρχείο βάσης δεδομένων."
+
+#: ../../source/cli_analyse.rst:322
+msgid ""
+"``--expanded`` — Écrit la forme développée : tous les pions du joueur au "
+"trait, puis tous ceux de l'adversaire."
+msgstr ""
+"``--expanded`` — Γράφει την αναπτυγμένη μορφή: όλα τα πούλια του παίκτη "
+"που έχει τη σειρά, και μετά όλα του αντιπάλου."
+
+#: ../../source/cli_analyse.rst:333
+msgid ""
+"Les commandes qui prennent une position en argument (``epc``, ``rolls``, "
+"``scoremap``, ``cubematrix``, ``rollout``, ``gnubgid``) acceptent aussi "
+"un ArkID, et ``capture`` et ``search`` l'écrivent avec ``--format "
+"arkid``."
+msgstr ""
+"Οι εντολές που δέχονται μια θέση ως όρισμα (``epc``, ``rolls``, "
+"``scoremap``, ``cubematrix``, ``rollout``, ``gnubgid``) δέχονται επίσης "
+"ένα ArkID, ενώ οι ``capture`` και ``search`` το γράφουν με ``--format "
+"arkid``."
+
+#: ../../source/cli_analyse.rst:340
 msgid "cubematrix — Matrice du videau"
 msgstr "cubematrix — Μήτρα του κύβου"
 
-#: ../../source/cli_analyse.rst:310
+#: ../../source/cli_analyse.rst:342
 msgid ""
 "Donne le verdict de videau d'une position à **tous les scores** d'un "
 "match : pour chaque case *away × away*, si la position se double et si "
@@ -623,7 +664,7 @@ msgstr ""
 "αποδεκτή. Καθαρός υπολογισμός: καμία βάση δεδομένων δεν ανοίγει, η θέση "
 "δίνεται ως XGID ή ως OGID (OpenGammon)."
 
-#: ../../source/cli_analyse.rst:322
+#: ../../source/cli_analyse.rst:354
 msgid ""
 "``--match-length`` — Longueur du match que la grille couvre, de 1 à 25 "
 "(défaut : 7)."
@@ -631,14 +672,14 @@ msgstr ""
 "``--match-length`` — Μήκος αγώνα που καλύπτει το πλέγμα, από 1 έως 25 "
 "(προεπιλογή: 7)."
 
-#: ../../source/cli_analyse.rst:324
+#: ../../source/cli_analyse.rst:356
 msgid ""
 "``--ply`` — Profondeur de recherche de chaque case, ``0`` ou ``2`` "
 "(défaut : 2)."
 msgstr "``--ply`` — Βάθος αναζήτησης κάθε κελιού, ``0`` ή ``2`` (προεπιλογή: 2)."
 
-#: ../../source/cli_analyse.rst:326 ../../source/cli_analyse.rst:375
-#: ../../source/cli_analyse.rst:420
+#: ../../source/cli_analyse.rst:358 ../../source/cli_analyse.rst:407
+#: ../../source/cli_analyse.rst:452
 msgid ""
 "``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage"
 " (défaut : 12)."
@@ -646,7 +687,7 @@ msgstr ""
 "``--prune-k`` — Πλήθος υποψήφιων κινήσεων που κρατά το δίκτυο κλαδέματος "
 "(προεπιλογή: 12)."
 
-#: ../../source/cli_analyse.rst:328
+#: ../../source/cli_analyse.rst:360
 msgid ""
 "``--jobs`` — Recherches menées en parallèle (défaut : une par cœur). La "
 "grille est identique quelle que soit la valeur ; seul le temps change."
@@ -655,7 +696,7 @@ msgstr ""
 "πυρήνα). Το πλέγμα είναι το ίδιο όποια κι αν είναι η τιμή· αλλάζει μόνο ο"
 " χρόνος."
 
-#: ../../source/cli_analyse.rst:331
+#: ../../source/cli_analyse.rst:363
 msgid ""
 "Le score propre à la position est ignoré — la grille le remplace — mais "
 "son **videau** est conservé : la question posée est « à quel score "
@@ -666,7 +707,7 @@ msgstr ""
 "**κύβος** της διατηρείται: το ερώτημα είναι σε ποιο σκορ θα γύριζα "
 "*αυτόν* τον κύβο. Το πλέγμα είναι μετά το Crawford από άκρη σε άκρη."
 
-#: ../../source/cli_analyse.rst:335
+#: ../../source/cli_analyse.rst:367
 msgid ""
 "Chaque case est une recherche à part entière, parce que le moteur tient "
 "compte du score : une seule recherche relue à travers des équités de "
@@ -676,7 +717,7 @@ msgstr ""
 "σκορ: μία μόνο αναζήτηση διαβασμένη μέσα από διαφορετικές ισοδυναμίες "
 "αγώνα θα ήταν λάθος ακριβώς εκεί που μετράει το σκορ."
 
-#: ../../source/cli_analyse.rst:349
+#: ../../source/cli_analyse.rst:381
 msgid ""
 "Sortie ``text`` : une grille dont les lignes sont les points restant à "
 "faire au joueur au trait, les colonnes ceux de l'adversaire, puis la "
@@ -688,11 +729,11 @@ msgstr ""
 " έπειτα το υπόμνημα των συντομογραφιών ``ND`` / ``DT`` / ``DP`` / ``TG`` "
 "και ο λόγος κάθε κελιού που απορρίφθηκε."
 
-#: ../../source/cli_analyse.rst:356
+#: ../../source/cli_analyse.rst:388
 msgid "scoremap — Carte des scores"
 msgstr "scoremap — Χάρτης σκορ"
 
-#: ../../source/cli_analyse.rst:358
+#: ../../source/cli_analyse.rst:390
 msgid ""
 "Généralise la :ref:`matrice du videau <cli_cubematrix>` : donne la "
 "**meilleure décision** d'une position à tous les scores d'un match. Avec "
@@ -709,7 +750,7 @@ msgstr ""
 " το ``cubematrix``. Καθαρός υπολογισμός: δεν ανοίγει καμία βάση "
 "δεδομένων."
 
-#: ../../source/cli_analyse.rst:372
+#: ../../source/cli_analyse.rst:404
 msgid ""
 "``--match-length`` — Longueur du match, toute valeur impaire de 3 à 15 "
 "(défaut : 9)."
@@ -717,17 +758,17 @@ msgstr ""
 "``--match-length`` — Μήκος του αγώνα, οποιαδήποτε περιττή τιμή από 3 έως "
 "15 (προεπιλογή: 9)."
 
-#: ../../source/cli_analyse.rst:374
+#: ../../source/cli_analyse.rst:406
 msgid "``--ply`` — Profondeur de recherche de chaque case, de 0 à 2 (défaut : 2)."
 msgstr "``--ply`` — Βάθος αναζήτησης κάθε κελιού, από 0 έως 2 (προεπιλογή: 2)."
 
-#: ../../source/cli_analyse.rst:377 ../../source/cli_analyse.rst:422
+#: ../../source/cli_analyse.rst:409 ../../source/cli_analyse.rst:454
 msgid "``--jobs`` — Recherches menées en parallèle (défaut : une par cœur)."
 msgstr ""
 "``--jobs`` — Αναζητήσεις που τρέχουν παράλληλα (προεπιλογή: μία ανά "
 "πυρήνα)."
 
-#: ../../source/cli_analyse.rst:379
+#: ../../source/cli_analyse.rst:411
 msgid ""
 "Le score de la position est remplacé par la grille ; son **videau** est "
 "conservé. Une case où ce videau ne peut pas se trouver — il supposerait "
@@ -748,7 +789,7 @@ msgstr ""
 "παραμένει μετά το Crawford, όπως στο ``cubematrix``, αφού ο κύβος είναι "
 "νεκρός κατά την παρτίδα Crawford. Οι ισοδυναμίες είναι κανονικοποιημένες."
 
-#: ../../source/cli_analyse.rst:398
+#: ../../source/cli_analyse.rst:430
 msgid ""
 "Sortie ``text`` : avec dés, une ligne par case (score, équité, meilleur "
 "coup, écart, deuxième coup) ; sans dés, la grille de ``cubematrix``."
@@ -757,11 +798,11 @@ msgstr ""
 "καλύτερη κίνηση, διαφορά, δεύτερη κίνηση)· χωρίς ζάρια, το πλέγμα του "
 "``cubematrix``."
 
-#: ../../source/cli_analyse.rst:404
+#: ../../source/cli_analyse.rst:436
 msgid "rolls — Carte des jets"
 msgstr "rolls — Χάρτης ζαριών"
 
-#: ../../source/cli_analyse.rst:406
+#: ../../source/cli_analyse.rst:438
 msgid ""
 "Donne, pour une position où le joueur au trait n'a pas encore lancé, ce "
 "que fait **chacun des 21 jets** : le meilleur coup, l'équité du joueur "
@@ -777,11 +818,11 @@ msgstr ""
 "υπολογισμός: δεν ανοίγει καμία βάση δεδομένων, η θέση έρχεται με το XGID "
 "ή το OGID της. Τα ζάρια της θέσης αγνοούνται."
 
-#: ../../source/cli_analyse.rst:419
+#: ../../source/cli_analyse.rst:451
 msgid "``--ply`` — Profondeur de recherche de chaque jet, de 0 à 2 (défaut : 2)."
 msgstr "``--ply`` — Βάθος αναζήτησης κάθε ζαριάς, από 0 έως 2 (προεπιλογή: 2)."
 
-#: ../../source/cli_analyse.rst:423
+#: ../../source/cli_analyse.rst:455
 msgid ""
 "``--roll`` — Joue d'abord ce jet (par exemple ``31``) : la carte est "
 "alors celle des réponses de l'adversaire."
@@ -789,7 +830,7 @@ msgstr ""
 "``--roll`` — Παίζει πρώτα αυτή τη ζαριά (για παράδειγμα ``31``): ο χάρτης"
 " είναι τότε αυτός των απαντήσεων του αντιπάλου."
 
-#: ../../source/cli_analyse.rst:425
+#: ../../source/cli_analyse.rst:457
 msgid ""
 "``--move`` — Avec ``--roll`` : le coup joué, n'importe quel coup légal, "
 "pas forcément le meilleur ; vide pour un jet qui danse."
@@ -797,7 +838,7 @@ msgstr ""
 "``--move`` — Με το ``--roll``: η κίνηση που παίζεται, οποιαδήποτε νόμιμη "
 "κίνηση, όχι αναγκαστικά η καλύτερη· κενό για ζαριά που χορεύει."
 
-#: ../../source/cli_analyse.rst:428
+#: ../../source/cli_analyse.rst:460
 msgid ""
 "L'équité suit l'échelle des autres évaluations : points de money en "
 "money, équité normalisée à un score de match. Le poids d'un jet est 1 sur"
@@ -817,7 +858,7 @@ msgstr ""
 "ζαριά· στο ``--ply 2``, μια αναζήτηση 3 ply με τα φίλτρα των 2 ply, που "
 "δεν είναι το δημοσιευμένο επίπεδο 3 ply της μηχανής."
 
-#: ../../source/cli_analyse.rst:436
+#: ../../source/cli_analyse.rst:468
 msgid ""
 "Un jet **perd le marché** quand, après ce jet et le meilleur coup, un "
 "double du joueur serait refusé : la décision de videau du joueur, lue sur"
@@ -834,7 +875,7 @@ msgstr ""
 "ο παίκτης δεν έχει πρόσβαση στον κύβο (κύβος του αντιπάλου, παρτίδα "
 "Crawford)."
 
-#: ../../source/cli_analyse.rst:452
+#: ../../source/cli_analyse.rst:484
 msgid ""
 "Sortie ``text`` : une ligne par jet (jet, poids sur 36, équité, marché "
 "``kept`` / ``lost``, meilleur coup), puis la moyenne."
@@ -842,11 +883,11 @@ msgstr ""
 "Έξοδος ``text``: μία γραμμή ανά ζαριά (ζαριά, βάρος επί 36, ισοδυναμία, "
 "αγορά ``kept`` / ``lost``, καλύτερη κίνηση), και μετά ο μέσος όρος."
 
-#: ../../source/cli_analyse.rst:456
+#: ../../source/cli_analyse.rst:488
 msgid "capture — Position depuis une capture d'écran"
 msgstr "capture — Θέση από στιγμιότυπο οθόνης"
 
-#: ../../source/cli_analyse.rst:458
+#: ../../source/cli_analyse.rst:490
 msgid ""
 "Lit la position que montre une capture d'écran d'un plateau eXtreme "
 "Gammon (thème par défaut) : pions, barre, pions sortis (ce qui manque à "
@@ -867,21 +908,21 @@ msgstr ""
 " στοίβα ψηλότερη από τα πέντε πούλια που το XG ζωγραφίζει δίπλα-δίπλα, μη"
 " αναγνώσιμα ζάρια."
 
-#: ../../source/cli_analyse.rst:473
+#: ../../source/cli_analyse.rst:505
 msgid ""
-"``--format`` — Format de sortie : ``text``, ``json`` ou ``xgid`` (défaut "
-": ``text``)."
+"``--format`` — Format de sortie : ``text``, ``json``, ``xgid`` ou "
+"``arkid`` (défaut : ``text``)."
 msgstr ""
-"``--format`` — Μορφή εξόδου: ``text``, ``json`` ή ``xgid`` (προεπιλογή: "
-"``text``)."
+"``--format`` — Μορφή εξόδου: ``text``, ``json``, ``xgid`` ή ``arkid`` "
+"(προεπιλογή: ``text``)."
 
-#: ../../source/cli_analyse.rst:474
+#: ../../source/cli_analyse.rst:506
 msgid ""
 "``--db`` et ``--save`` — Enregistre la position dans la base comme "
 "position individuelle."
 msgstr "``--db`` και ``--save`` — Αποθηκεύει τη θέση στη βάση ως μεμονωμένη θέση."
 
-#: ../../source/cli_analyse.rst:476
+#: ../../source/cli_analyse.rst:508
 msgid ""
 "``--score`` — Le score, que la capture ne montre pas : ``money``, ou les "
 "scores Away des deux joueurs, celui du joueur 1 (en bas) d'abord, par "
@@ -891,7 +932,7 @@ msgstr ""
 "σκορ Away των δύο παικτών, πρώτα του παίκτη 1 (κάτω), για παράδειγμα "
 "``2a/5a``."
 
-#: ../../source/cli_analyse.rst:479
+#: ../../source/cli_analyse.rst:511
 msgid ""
 "``--turn`` — Le camp au trait, ``1`` (en bas) ou ``2`` (en haut), quand "
 "aucun dé ne le montre."
@@ -899,7 +940,7 @@ msgstr ""
 "``--turn`` — Ο παίκτης που παίζει, ``1`` (κάτω) ή ``2`` (πάνω), όταν δεν "
 "τον δείχνουν ζάρια."
 
-#: ../../source/cli_analyse.rst:481
+#: ../../source/cli_analyse.rst:513
 msgid ""
 "``--force`` — Enregistre malgré les doutes de la lecture, une fois le "
 "plateau vérifié. Il ne remplace ni ``--score`` ni ``--turn`` : ``--save``"
@@ -911,7 +952,7 @@ msgstr ""
 "``--save`` αρνείται όσο δεν δίνεται το σκορ, ή η σειρά χωρίς ζάρια, και "
 "κατονομάζει την επιλογή που λείπει."
 
-#: ../../source/cli_analyse.rst:495
+#: ../../source/cli_analyse.rst:527
 #, no-python-brace-format
 msgid ""
 "Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec "
@@ -924,11 +965,11 @@ msgstr ""
 "μεγαλύτερη από οθόνη 4K αντί να τη σμικρύνει, και διαβάζει μόνο δύο "
 "εικόνες ταυτόχρονα."
 
-#: ../../source/cli_analyse.rst:500
+#: ../../source/cli_analyse.rst:532
 msgid "bearoff — Bases de sortie"
 msgstr "bearoff — Βάσεις bearoff"
 
-#: ../../source/cli_analyse.rst:502
+#: ../../source/cli_analyse.rst:534
 msgid ""
 "Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien "
 "n'est embarqué : une table est calculée ici et vérifiée contre "
@@ -944,7 +985,7 @@ msgstr ""
 "αριθμητική για το παιχνίδι, όχι για τις θέσεις κάποιου — οπότε καμία δεν "
 "παίρνει ``--db``."
 
-#: ../../source/cli_analyse.rst:515
+#: ../../source/cli_analyse.rst:547
 msgid ""
 "Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
 "two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
@@ -954,7 +995,7 @@ msgstr ""
 "πίνακα με εννέα πούλια ανά παίκτη, ``os8`` για τον μονόπλευρο πίνακα οκτώ"
 " σημείων (το σκέτο ``os`` ισοδυναμεί με ``os6``)."
 
-#: ../../source/cli_analyse.rst:519
+#: ../../source/cli_analyse.rst:551
 msgid ""
 "Les deux familles ne répondent pas à la même question. Une table **deux "
 "faces** élargit le domaine où la probabilité de gain et le verdict de "
@@ -968,7 +1009,7 @@ msgstr ""
 "οποία μπορεί να βρίσκεται ένα πούλι χωρίς να σωπάσει το EPC (έως δέκα "
 "σημεία)."
 
-#: ../../source/cli_analyse.rst:524
+#: ../../source/cli_analyse.rst:556
 msgid ""
 "**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
 "commencer, puis affiche le pourcentage et le temps restant mesuré."
@@ -977,11 +1018,11 @@ msgstr ""
 "ξεκινήσει, και μετά δείχνει το ποσοστό και τον μετρημένο υπολειπόμενο "
 "χρόνο."
 
-#: ../../source/cli_analyse.rst:527
+#: ../../source/cli_analyse.rst:559
 msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
 msgstr "``--ts`` — Αμφίπλευρος τομέας προς υπολογισμό, για παράδειγμα ``6x9``."
 
-#: ../../source/cli_analyse.rst:528
+#: ../../source/cli_analyse.rst:560
 msgid ""
 "``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
 "et un seul des deux est requis."
@@ -989,11 +1030,11 @@ msgstr ""
 "``--os`` — Μονόπλευρος τομέας προς υπολογισμό, σε αριθμό σημείων: 6 έως "
 "12. Απαιτείται ακριβώς ένα από τα δύο."
 
-#: ../../source/cli_analyse.rst:530
+#: ../../source/cli_analyse.rst:562
 msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
 msgstr "``--cores`` — Πυρήνες προς χρήση (προεπιλογή: όλοι εκτός από έναν)."
 
-#: ../../source/cli_analyse.rst:531
+#: ../../source/cli_analyse.rst:563
 msgid ""
 "``--data-dir`` — Où écrire (défaut : le dossier de données de "
 "l'application)."
@@ -1001,11 +1042,11 @@ msgstr ""
 "``--data-dir`` — Πού γράφεται (προεπιλογή: ο φάκελος δεδομένων της "
 "εφαρμογής)."
 
-#: ../../source/cli_analyse.rst:532
+#: ../../source/cli_analyse.rst:564
 msgid "``--quiet`` — Pas de ligne de progression."
 msgstr "``--quiet`` — Χωρίς γραμμή προόδου."
 
-#: ../../source/cli_analyse.rst:534
+#: ../../source/cli_analyse.rst:566
 msgid ""
 "**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
 " la table et la même commande relancée reprend là où elle s'était "
@@ -1021,7 +1062,7 @@ msgstr ""
 "αμφίπλευρη σάρωση κάνει παύση· η μονόπλευρη είναι σειριακή και το "
 "``--cores`` δεν της χρησιμεύει."
 
-#: ../../source/cli_analyse.rst:541
+#: ../../source/cli_analyse.rst:573
 msgid ""
 "**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
 "machine — et dit lesquels sont déjà présents, avec leur verdict, et "
@@ -1033,7 +1074,7 @@ msgstr ""
 " έχουν υπολογισμό σε παύση. ``--format json`` για σενάριο, ``--cores`` "
 "για αλλαγή της υπόθεσης της εκτίμησης."
 
-#: ../../source/cli_analyse.rst:546
+#: ../../source/cli_analyse.rst:578
 msgid ""
 "**verify.** Répond ``verified`` (les mêmes octets que la référence), "
 "``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
@@ -1046,7 +1087,7 @@ msgstr ""
 " εαυτό του). Τερματίζει με σφάλμα στην τελευταία περίπτωση: αυτή η εντολή"
 " φτιάχτηκε για να μπει σε σενάριο."
 
-#: ../../source/cli_analyse.rst:551
+#: ../../source/cli_analyse.rst:583
 msgid ""
 "**delete.** Retire la table, la reprise en attente et les débris d'un "
 "calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
@@ -1056,11 +1097,11 @@ msgstr ""
 "ενός νεκρού υπολογισμού. Ένας προεπιλεγμένος τομέας ξαναϋπολογίζεται στην"
 " επόμενη εκκίνηση της εφαρμογής· ένας ευρύτερος όχι."
 
-#: ../../source/cli_analyse.rst:575
+#: ../../source/cli_analyse.rst:607
 msgid "openingbook — Quel coup à ce score ?"
 msgstr "openingbook — Ποια κίνηση σε αυτό το σκορ;"
 
-#: ../../source/cli_analyse.rst:577
+#: ../../source/cli_analyse.rst:609
 msgid ""
 "L'exercice *Ouverture* du panneau Entraînement (voir "
 ":ref:`panneau_entrainement`) en ligne de commande : le coup d'ouverture "
@@ -1076,13 +1117,13 @@ msgstr ""
 " με την καλύτερη είναι σωστή (βλ. :ref:`metrique_livre_ouverture`). Καμία"
 " βάση δεν διαβάζεται ούτε γράφεται."
 
-#: ../../source/cli_analyse.rst:583
+#: ../../source/cli_analyse.rst:615
 msgid "**openingbook status** — Le nombre de lignes du livre et ses scores."
 msgstr ""
 "**openingbook status** — Ο αριθμός των γραμμών του βιβλίου και τα σκορ "
 "του."
 
-#: ../../source/cli_analyse.rst:589
+#: ../../source/cli_analyse.rst:621
 msgid ""
 "**openingbook question** — Tire une question : le jet d'ouverture et le "
 "score, avec le XGID de la position d'ouverture ; avec ``--roll second``, "
@@ -1096,7 +1137,7 @@ msgstr ""
 "καλύτερη σε αυτό το σκορ, με αυτή την κίνηση και το XGID της θέσης "
 "απάντησης."
 
-#: ../../source/cli_analyse.rst:600
+#: ../../source/cli_analyse.rst:632
 msgid ""
 "``--roll first|second`` — Le jet posé : ``first`` (l'ouverture, par "
 "défaut) ou ``second`` (la réponse)."
@@ -1104,7 +1145,7 @@ msgstr ""
 "``--roll first|second`` — Η ζαριά που παίζεται: ``first`` (το άνοιγμα, "
 "από προεπιλογή) ή ``second`` (η απάντηση)."
 
-#: ../../source/cli_analyse.rst:601
+#: ../../source/cli_analyse.rst:633
 msgid ""
 "``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2`` "
 "(le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), "
@@ -1114,7 +1155,7 @@ msgstr ""
 " απαντών στους 4 πόντους, ο ανοίγων στους 2), ``1-2`` (παιχνίδι "
 "Crawford), ``1-1`` (το DMP, διπλός πόντος αγώνα), ``money``."
 
-#: ../../source/cli_analyse.rst:603
+#: ../../source/cli_analyse.rst:635
 msgid ""
 "``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de "
 "réponse à tirer (``31,65``) ; ``--reply`` avec ``--roll second`` "
@@ -1124,11 +1165,11 @@ msgstr ""
 "απάντησης προς κλήρωση (``31,65``)· το ``--reply`` μόνο με ``--roll "
 "second``."
 
-#: ../../source/cli_analyse.rst:604
+#: ../../source/cli_analyse.rst:636
 msgid "``--seed <n>`` — Tirage reproductible (0 = au hasard)."
 msgstr "``--seed <n>`` — Αναπαραγώγιμη κλήρωση (0 = τυχαία)."
 
-#: ../../source/cli_analyse.rst:605
+#: ../../source/cli_analyse.rst:637
 msgid ""
 "``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du"
 " livre embarqué."
@@ -1136,11 +1177,11 @@ msgstr ""
 "``--book <fichier>`` — Ένα βιβλίο ``.jsonl`` ή ``.jsonl.gz`` αντί για το "
 "ενσωματωμένο βιβλίο."
 
-#: ../../source/cli_analyse.rst:606
+#: ../../source/cli_analyse.rst:638
 msgid "``--format text|json`` — Format de sortie."
 msgstr "``--format text|json`` — Μορφή εξόδου."
 
-#: ../../source/cli_analyse.rst:608
+#: ../../source/cli_analyse.rst:640
 #, no-python-format
 msgid ""
 "**openingbook answer** — Juge un coup et affiche chaque candidat contre "

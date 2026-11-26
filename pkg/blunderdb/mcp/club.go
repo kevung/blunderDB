@@ -27,7 +27,7 @@ func registerClub(tb *Toolbox) {
 
 func registerEvaluate(tb *Toolbox) {
 	type evalIn struct {
-		Text       string `json:"text" jsonschema:"the position as text: XGID, OGID or GNU ID"`
+		Text       string `json:"text" jsonschema:"the position as text: XGID, OGID, ArkID or GNU ID"`
 		Ply        *int   `json:"ply,omitempty" jsonschema:"search depth, 0 to 2 (default 2)"`
 		Candidates int    `json:"candidates,omitempty" jsonschema:"checker plays kept, 1 to 20 (default 5)"`
 	}
@@ -36,7 +36,7 @@ func registerEvaluate(tb *Toolbox) {
 			"Equities are money points in a money game, normalised equity (±1 = the current cube) at a match score."},
 		func(ctx context.Context, req *sdk.CallToolRequest, a evalIn) (any, error) {
 			if strings.TrimSpace(a.Text) == "" {
-				return nil, errors.New("give text: an XGID, OGID or GNU ID")
+				return nil, errors.New("give text: an XGID, OGID, ArkID or GNU ID")
 			}
 			p, err := tb.position(ctx, req, positionRef{Text: a.Text})
 			if err != nil {

@@ -13,7 +13,7 @@ import { ankiDecksStore } from '../stores/ankiStore.js';
 import { analysisChallengeStore, toggleAnalysisChallenge } from '../stores/analysisChallengeStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { sendPositionToEval, evaluateInNewView, loadPositionsByFilters, saveCurrentPosition, deletePosition } from './positionService.js';
-import { copyBoardImage, copyBoardWithAnalysisImage, copyPosition, copyXGID, copyGnubgID, exportBoardImage } from './clipboardService.js';
+import { copyBoardImage, copyBoardWithAnalysisImage, copyPosition, copyXGID, copyGnubgID, copyArkID, exportBoardImage } from './clipboardService.js';
 import { openMatchAtPosition } from './positionLoader.js';
 import { rankNeighboursOfCurrentPosition } from './rankService.js';
 import { runRolloutCommand } from './rolloutService.js';
@@ -83,6 +83,7 @@ export function positionContext({ displayPosition = () => get(positionStore), po
             copyImage: () => copyBoardImage(),
             copyXGID: () => copyXGID(),
             copyGnubgID: () => copyGnubgID(),
+            copyArkID: () => copyArkID(),
             copyPositionText: () => copyPosition(),
             copyImageWithAnalysis: () => copyBoardWithAnalysisImage(),
             saveImageSVG: () => exportBoardImage('svg'),

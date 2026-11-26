@@ -3,7 +3,7 @@
 // GUI (over Wails), the server and the CLI all call it; testdata/
 // parse_corpus.json holds it.
 //
-// It handles: a bare XGID line; an OGID line (OpenGammon); a GNUbg
+// It handles: a bare XGID line; an OGID line (OpenGammon); an ArkID line; a GNUbg
 // identifier (Position ID, alone or with its Match ID); the XG
 // human-readable export with either a doubling-cube or a checker-move analysis
 // block (French / English / Japanese / German); blunderDB's own internal export
@@ -42,6 +42,7 @@ const (
 	FormatXGID    = "xgid"
 	FormatOGID    = "ogid"
 	FormatGNUbgID = "gnubgid"
+	FormatArkID   = "arkid"
 )
 
 // ErrNoXGID / ErrEmpty mirror the JS throws so callers can map them to 4xx.
@@ -98,6 +99,10 @@ func ParsePosition(text string) (Result, error) {
 		// length to write one from).
 		if pos, ok := parseOGIDLine(lines); ok {
 			return Result{Position: pos, Analysis: &domain.PositionAnalysis{}, Format: FormatOGID}, nil
+		}
+		// An ArkID, like an OGID, carries a position and no analysis.
+		if pos, ok := parseArkIDLine(lines); ok {
+			return Result{Position: pos, Analysis: &domain.PositionAnalysis{}, Format: FormatArkID}, nil
 		}
 		// A GNUbg identifier, like an OGID, carries a position and no analysis.
 		if id, ok := domain.FindGNUbgID(raw); ok {
@@ -161,6 +166,20 @@ func parseOGIDLine(lines []string) (domain.Position, bool) {
 			continue
 		}
 		return pos, true
+	}
+	return domain.Position{}, false
+}
+
+// parseArkIDLine finds and decodes the first ArkID of the text, line by line
+// like parseOGIDLine: domain.LooksLikeArkID routes, domain.DecodeArkID judges.
+func parseArkIDLine(lines []string) (domain.Position, bool) {
+	for _, l := range lines {
+		if !domain.LooksLikeArkID(l) {
+			continue
+		}
+		if pos, err := domain.DecodeArkID(l); err == nil {
+			return pos, true
+		}
 	}
 	return domain.Position{}, false
 }

@@ -100,6 +100,8 @@ export function GetMCPHostStatus():Promise<gui.MCPHostStatus>;
 
 export function GetTournamentDisplayStatus():Promise<gui.TournamentDisplayStatus>;
 
+export function ArkID(arg1:domain.Position,arg2:boolean):Promise<string>;
+
 export function GnubgID(arg1:domain.Position):Promise<string>;
 
 export function HelpBundle(arg1:string):Promise<string>;

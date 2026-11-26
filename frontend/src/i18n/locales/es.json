@@ -1616,6 +1616,7 @@
         "pileError": "Pila: error",
         "xgidCopied": "XGID copiado al portapapeles",
         "gnubgIdCopied": "ID GNUbg copiado al portapapeles",
+        "arkIdCopied": "ArkID copiado al portapapeles",
         "noMatchForPosition": "Ningún match ha jugado esta posición",
         "moveGone": "Esa jugada ya no está en la partida: abierta donde la dejó"
     },
@@ -3635,6 +3636,7 @@
         "copyImage": "Copiar la imagen",
         "copyXGID": "Copiar el XGID",
         "copyGnubgID": "Copiar el ID GNUbg",
+        "copyArkID": "Copiar el ArkID",
         "copyPositionText": "Copiar la posición como texto",
         "comment": "Comentar",
         "addTag": "Añadir una etiqueta #…",

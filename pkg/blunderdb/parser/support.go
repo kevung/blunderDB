@@ -10,8 +10,8 @@ import (
 // server) can map them to a 4xx response.
 var (
 	errEmpty = errors.New("parser: empty or invalid input")
-	// ErrNoPosition: the text holds no XGID, OGID or GNUbg identifier.
-	ErrNoPosition = errors.New("parser: no XGID, OGID or GNUbg ID in the content")
+	// ErrNoPosition: the text holds no XGID, OGID, ArkID or GNUbg identifier.
+	ErrNoPosition = errors.New("parser: no XGID, OGID, ArkID or GNUbg ID in the content")
 
 	// ErrUnrecognisedAnalysis is returned when the text plainly carries an
 	// analysis block (a numbered move list, win-chance breakdowns) that none

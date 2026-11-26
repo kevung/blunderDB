@@ -20,7 +20,7 @@ import (
 // with doubts unless --force says the user has checked the board.
 func (cli *CLI) runCapture(args []string) error {
 	fs := flag.NewFlagSet("capture", flag.ContinueOnError)
-	format := fs.String("format", "text", "Output format: text, json, xgid")
+	format := fs.String("format", "text", "Output format: text, json, xgid, arkid")
 	dbPath := fs.String("db", "", "Database to save the position into (with --save)")
 	save := fs.Bool("save", false, "Save the position into --db as an individual position")
 	score := fs.String("score", "", "The score the capture does not show: \"money\", or two Away scores \"<player 1>a/<player 2>a\" (e.g. 2a/5a); player 1 plays from the bottom")
@@ -87,6 +87,8 @@ func (cli *CLI) runCapture(args []string) error {
 		}
 	case "xgid":
 		fmt.Fprintln(cli.stdout(), "XGID="+domain.EncodeXGID(&rd.Position))
+	case "arkid":
+		fmt.Fprintln(cli.stdout(), arkIDOf(&rd.Position))
 	default:
 		fmt.Fprintf(cli.stdout(), "Software: %s (fit %.2f)\n", rd.Software, rd.Fit)
 		fmt.Fprintf(cli.stdout(), "XGID=%s\n", domain.EncodeXGID(&rd.Position))

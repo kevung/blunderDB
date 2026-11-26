@@ -369,11 +369,14 @@ func ogidPointChar(point int) byte {
 	return byte('a' + point - 10)
 }
 
-// DecodePositionID reads a position identifier of either kind: an OGID when
-// LooksLikeOGID says so, an XGID otherwise. It is for the places that take an
+// DecodePositionID reads a position identifier of any kind: an ArkID when
+// LooksLikeArkID says so, an OGID when LooksLikeOGID says so, an XGID otherwise. It is for the places that take an
 // identifier ALONE as an argument (the CLI's `epc` and `cubematrix`); pasted
 // text, which may also be an analysis, goes through parser.ParsePosition.
 func DecodePositionID(id string) (Position, error) {
+	if LooksLikeArkID(id) {
+		return DecodeArkID(id)
+	}
 	if LooksLikeOGID(id) {
 		return DecodeOGID(id)
 	}

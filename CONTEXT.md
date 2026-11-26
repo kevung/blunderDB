@@ -12,6 +12,15 @@ A backgammon decision point: board, cube, dice, score and match flags. Identifie
 Zobrist hash, so the same position imported twice is one row, never two.
 _Avoid_: board, node, entry
 
+**ArkID**:
+The readable, pronounceable text spelling of a Position, `[score]dice:cube(gates)rest`,
+written from the side of the player on roll (`[34]65:x2(ySQmLhfA)S3Qm3L3hf3` is the opening at
+3-away/4-away, 6-5 to play, cube at 4 held by the roller). Lowercase letters are the roller's
+checkers, uppercase the opponent's; each letter is the initial of an animal (the bestiary of
+the glossary). Read leniently, written in one canonical compact form; a pasted ArkID lands on the
+same Zobrist hash as the original (ADR-0118). Like the OGID, it carries no session rules.
+_Avoid_: position ID, notation
+
 **Session rules (Jacoby, beaver)**:
 Which optional rules the *session* was played under. They are columns of the Position and
 are shown on the board, but they are not part of its identity (ADR-0028): only an XGID

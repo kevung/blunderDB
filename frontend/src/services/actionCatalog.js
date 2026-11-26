@@ -85,6 +85,7 @@ export const CATALOG = {
 
         { id: 'copyXGID', label: 'actions.copyXGID', group: 'copy' },
         { id: 'copyGnubgID', label: 'actions.copyGnubgID', group: 'copy' },
+        { id: 'copyArkID', label: 'actions.copyArkID', group: 'copy' },
         { id: 'copyPositionText', label: 'actions.copyPositionText', group: 'copy', shortcut: 'Ctrl+C' },
         { id: 'copyImageWithAnalysis', label: 'board.menu.copyImageWithAnalysis', group: 'copy', when: notSearch },
         { id: 'saveImageSVG', label: 'board.menu.saveImageSVG', group: 'copy' },

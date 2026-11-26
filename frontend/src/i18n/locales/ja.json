@@ -1616,6 +1616,7 @@
         "pileError": "パイル：エラー",
         "xgidCopied": "XGID をクリップボードにコピーしました",
         "gnubgIdCopied": "GNUbg ID をクリップボードにコピーしました",
+        "arkIdCopied": "ArkID をクリップボードにコピーしました",
         "noMatchForPosition": "この局面を指したマッチはありません",
         "moveGone": "この手はもうマッチにありません。前回の位置で開きました"
     },
@@ -3635,6 +3636,7 @@
         "copyImage": "画像をコピー",
         "copyXGID": "XGID をコピー",
         "copyGnubgID": "GNUbg ID をコピー",
+        "copyArkID": "ArkID をコピー",
         "copyPositionText": "局面をテキストでコピー",
         "comment": "コメント",
         "addTag": "#タグを追加…",

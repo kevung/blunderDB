@@ -1616,6 +1616,7 @@
         "pileError": "Pila: errore",
         "xgidCopied": "XGID copiato negli appunti",
         "gnubgIdCopied": "ID GNUbg copiato negli appunti",
+        "arkIdCopied": "ArkID copiato negli appunti",
         "noMatchForPosition": "Nessun match ha giocato questa posizione",
         "moveGone": "Questa mossa non è più nel match: aperto dove lo avevi lasciato"
     },
@@ -3635,6 +3636,7 @@
         "copyImage": "Copia l'immagine",
         "copyXGID": "Copia l'XGID",
         "copyGnubgID": "Copia l'ID GNUbg",
+        "copyArkID": "Copia l'ArkID",
         "copyPositionText": "Copia la posizione come testo",
         "comment": "Commenta",
         "addTag": "Aggiungi un'etichetta #…",

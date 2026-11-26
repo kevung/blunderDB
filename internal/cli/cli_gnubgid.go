@@ -17,7 +17,7 @@ func (cli *CLI) runGnubgID(args []string) error {
 	format := cmd.String("format", "text", "Output format: text, json")
 
 	cmd.Usage = func() {
-		fmt.Fprintln(cli.stdout(), "Usage: blunderdb gnubgid [options] <XGID|OGID>")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb gnubgid [options] <XGID|OGID|ArkID>")
 		fmt.Fprintln(cli.stdout())
 		fmt.Fprintln(cli.stdout(), "Print the GNUbg identifier of a position: the Position ID (the board,")
 		fmt.Fprintln(cli.stdout(), "from the side of the player on roll) and the Match ID (cube, score,")
@@ -38,14 +38,14 @@ func (cli *CLI) runGnubgID(args []string) error {
 	}
 	if cmd.NArg() != 1 {
 		cmd.Usage()
-		return fmt.Errorf("expected exactly one XGID or OGID argument")
+		return fmt.Errorf("expected exactly one XGID, OGID or ArkID argument")
 	}
 	if *format != "text" && *format != "json" {
 		return fmt.Errorf("unknown --format %q: use text or json", *format)
 	}
 	pos, err := domain.DecodePositionID(cmd.Arg(0))
 	if err != nil {
-		return fmt.Errorf("invalid XGID or OGID: %w", err)
+		return fmt.Errorf("invalid XGID, OGID or ArkID: %w", err)
 	}
 	positionID, err := domain.EncodeGNUbgPositionID(&pos)
 	if err != nil {

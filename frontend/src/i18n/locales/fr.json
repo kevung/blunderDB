@@ -1616,6 +1616,7 @@
         "pileError": "Pile : erreur",
         "xgidCopied": "XGID copié dans le presse-papiers",
         "gnubgIdCopied": "ID GNUbg copié dans le presse-papiers",
+        "arkIdCopied": "ArkID copié dans le presse-papiers",
         "noMatchForPosition": "Aucun match n'a joué cette position",
         "moveGone": "Ce coup n'est plus dans le match : ouvert là où vous l'aviez laissé"
     },
@@ -3635,6 +3636,7 @@
         "copyImage": "Copier l'image",
         "copyXGID": "Copier l'XGID",
         "copyGnubgID": "Copier l'ID GNUbg",
+        "copyArkID": "Copier l'ArkID",
         "copyPositionText": "Copier la position en texte",
         "comment": "Commenter",
         "addTag": "Ajouter une étiquette #…",

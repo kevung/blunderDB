@@ -1616,6 +1616,7 @@
         "pileError": "Стопка: ошибка",
         "xgidCopied": "XGID скопирован в буфер обмена",
         "gnubgIdCopied": "ID GNUbg скопирован в буфер обмена",
+        "arkIdCopied": "ArkID скопирован в буфер обмена",
         "noMatchForPosition": "Ни один матч не играл эту позицию",
         "moveGone": "Этого хода больше нет в матче: открыт там, где вы остановились"
     },
@@ -3635,6 +3636,7 @@
         "copyImage": "Копировать изображение",
         "copyXGID": "Копировать XGID",
         "copyGnubgID": "Копировать ID GNUbg",
+        "copyArkID": "Копировать ArkID",
         "copyPositionText": "Копировать позицию текстом",
         "comment": "Комментировать",
         "addTag": "Добавить #метку…",

@@ -27,6 +27,7 @@ var boundAppMethods = []string{
 	"ViewerCatalogOf",
 	"ViewerShow",
 	"ViewerSteps",
+	"ArkID",
 	"AssistantAsk",
 	"AssistantCancel",
 	"AssistantConfirm",

@@ -24,7 +24,7 @@ func (cli *CLI) runEpc(args []string) error {
 		"Optional two-sided bearoff database (.bd) widening the TS-06-06 computed on this machine")
 
 	epcCmd.Usage = func() {
-		fmt.Fprintln(cli.stdout(), "Usage: blunderdb epc [options] <XGID|OGID>")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb epc [options] <XGID|OGID|ArkID>")
 		fmt.Fprintln(cli.stdout())
 		fmt.Fprintln(cli.stdout(), "Compute EPC, win probability and money cube verdict for a position.")
 		fmt.Fprintln(cli.stdout(), "Win probability is exact inside the two-sided database domain and")
@@ -50,12 +50,12 @@ func (cli *CLI) runEpc(args []string) error {
 	}
 	if epcCmd.NArg() != 1 {
 		epcCmd.Usage()
-		return fmt.Errorf("expected exactly one XGID or OGID argument")
+		return fmt.Errorf("expected exactly one XGID, OGID or ArkID argument")
 	}
 
 	pos, err := domain.DecodePositionID(epcCmd.Arg(0))
 	if err != nil {
-		return fmt.Errorf("invalid XGID or OGID: %w", err)
+		return fmt.Errorf("invalid XGID, OGID or ArkID: %w", err)
 	}
 	if *tsPath != "" {
 		race.SetExternalPath(*tsPath)

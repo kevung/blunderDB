@@ -178,6 +178,10 @@ export function GetTournamentDisplayStatus() {
   return window['go']['gui']['App']['GetTournamentDisplayStatus']();
 }
 
+export function ArkID(arg1, arg2) {
+  return window['go']['gui']['App']['ArkID'](arg1, arg2);
+}
+
 export function GnubgID(arg1) {
   return window['go']['gui']['App']['GnubgID'](arg1);
 }

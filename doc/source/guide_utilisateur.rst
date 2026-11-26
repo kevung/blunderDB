@@ -517,7 +517,7 @@ Pour importer une position directement depuis XG,
 
 .. note::
    Le collage automatique détecte le format de la source (XG, GNUbg, BGBlitz),
-   ainsi que l'identifiant OGID d'OpenGammon.
+   ainsi que l'identifiant OGID d'OpenGammon et l'ArkID de blunderDB.
 
 Importer un match
 -----------------

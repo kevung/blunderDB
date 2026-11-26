@@ -150,7 +150,7 @@ func (cli *CLI) runSearchPage(params *searchParams) error {
 		return fmt.Errorf("failed to search positions: %w", err)
 	}
 	status := io.Writer(cli.stdout())
-	if params.format == "json" || params.format == "xgid" {
+	if params.format == "json" || params.format == "xgid" || params.format == "arkid" {
 		status = os.Stderr
 	}
 	fmt.Fprintf(status, "Found %d position(s)\nNext cursor: %s\n\n", len(positions), next)
@@ -378,7 +378,7 @@ func (cli *CLI) runSearch(args []string) error {
 	// Machine formats own stdout: the count goes to stderr so the stream
 	// stays parseable.
 	status := io.Writer(cli.stdout())
-	if params.format == "json" || params.format == "xgid" {
+	if params.format == "json" || params.format == "xgid" || params.format == "arkid" {
 		status = os.Stderr
 	}
 	fmt.Fprintf(status, "Found %d position(s)\n\n", len(filteredPositions))
@@ -508,6 +508,16 @@ func renderResults(w io.Writer, positions []Position, analyses map[int64]*Positi
 		for i := range positions {
 			// A write error sticks to bw and comes back from Flush.
 			_, _ = bw.WriteString("XGID=" + xgidWith(&positions[i], analyses[positions[i].ID]) + "\n")
+		}
+		if err := bw.Flush(); err != nil {
+			return err
+		}
+
+	case "arkid":
+		bw := bufio.NewWriter(w)
+		for i := range positions {
+			// A position no ArkID can spell (money for one player only) leaves its line blank.
+			_, _ = bw.WriteString(arkIDOf(&positions[i]) + "\n")
 		}
 		if err := bw.Flush(); err != nil {
 			return err

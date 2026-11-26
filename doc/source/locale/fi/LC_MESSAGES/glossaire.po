@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-13 00:01+0200\n"
+"POT-Creation-Date: 2026-11-26 02:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -50,10 +50,399 @@ msgstr ""
 " josta se on peräisin."
 
 #: ../../source/glossaire.rst:16
+msgid "ArkID"
+msgstr "ArkID"
+
+#: ../../source/glossaire.rst:17
+msgid ""
+"La notation textuelle d'une position propre à blunderDB, lisible et "
+"prononçable : ``[34]65:x2(ySQmLhfA)S3Qm3L3hf3`` est la position de "
+"départ, à 3 points et 4 points du but, 6-5 à jouer, le videau à 4 chez le"
+" joueur au trait. Elle s'écrit, se lit, s'affiche, se copie et se colle "
+"partout où l'on sait le faire d'un XGID, d'un OGID ou d'un ID GNUbg, et "
+"une position collée en ArkID retombe sur la même ligne que l'original."
+msgstr ""
+"Position blunderDB:lle ominainen tekstimuotoinen merkintätapa, joka on "
+"luettava ja lausuttava: ``[34]65:x2(ySQmLhfA)S3Qm3L3hf3`` on "
+"aloitusasema, 3 pisteen ja 4 pisteen päässä maalista, heitettävänä 6-5, "
+"kuutio 4:ssä vuorossa olevalla pelaajalla. Se kirjoitetaan, luetaan, "
+"näytetään, kopioidaan ja liitetään kaikkialla, missä sen voi tehdä "
+"XGID:llä, OGID:llä tai GNUbg-tunnisteella, ja ArkID:nä liitetty positio "
+"päätyy samalle riville kuin alkuperäinen."
+
+#: ../../source/glossaire.rst:24
+msgid ""
+"La forme est ``[score]dés:videau(portes)reste``. Le **score** donne les "
+"scores « à combien » (*Away score*) du joueur au trait puis de "
+"l'adversaire, ``[$]`` en partie d'argent, un ``c`` marquant la partie "
+"Crawford (``[14c]``). Les **dés** sont absents pour une décision de "
+"videau. Le **videau** est ``x`` s'il appartient au joueur au trait, ``X``"
+" à l'adversaire, suivi de son exposant s'il dépasse 1 (``x`` : à 2, "
+"``x2`` : à 4), et n'est pas écrit au centre. Les **portes** sont les "
+"points tenus par deux pions ou plus ; le **reste** donne, pour chaque "
+"case, le nombre de pions au-delà de deux (1 pour un pion seul, le nombre "
+"de pions pour la barre), omis quand il vaut 1. Les pions sortis se "
+"déduisent."
+msgstr ""
+"Muoto on ``[tilanne]nopat:kuutio(portit)loput``. **Tilanne** antaa "
+"vuorossa olevan pelaajan ja sitten vastustajan « kuinka monta vailla » "
+"-tilanteet (*Away score*), ``[$]`` rahapelissä, ja ``c`` merkitsee "
+"Crawford-pelin (``[14c]``). **Nopat** puuttuvat kuutiopäätöksestä. "
+"**Kuutio** on ``x``, jos se kuuluu vuorossa olevalle pelaajalle, ``X`` "
+"vastustajalle, perässään eksponentti, jos se on yli 1 (``x``: 2:ssa, "
+"``x2``: 4:ssä), eikä sitä kirjoiteta keskellä. **Portit** ovat pisteet, "
+"joita pitää kaksi nappulaa tai useampi; **loput** antaa kullekin ruudulle"
+" kahden ylittävien nappuloiden määrän (1 yksittäiselle nappulalle, "
+"nappuloiden määrä laidalle), jätetään pois, kun se on 1. Pois otetut "
+"nappulat päätellään."
+
+#: ../../source/glossaire.rst:35
+msgid ""
+"Les lettres sont vues du côté du joueur au trait : les minuscules sont "
+"ses pions, les majuscules ceux de l'adversaire, tous deux numérotés comme"
+" le joueur au trait numérote son plateau. ``A`` à ``W`` sont les points 1"
+" à 23, ``Y`` le point 24, ``Z`` la barre ; ``X`` est réservé au videau. "
+"Chaque lettre est l'initiale d'un animal, qui aide à retenir le point :"
+msgstr ""
+"Kirjaimet nähdään vuorossa olevan pelaajan puolelta: pienet kirjaimet "
+"ovat hänen nappulansa, isot vastustajan, molemmat numeroituina niin kuin "
+"vuorossa oleva pelaaja numeroi lautansa. ``A``–``W`` ovat pisteet 1–23, "
+"``Y`` piste 24, ``Z`` laita; ``X`` on varattu kuutiolle. Jokainen kirjain"
+" on jonkin eläimen alkukirjain, mikä auttaa muistamaan pisteen:"
+
+#: ../../source/glossaire.rst:41
+msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
+msgstr ":header: \"Kirjain\", \"Piste\", \"Eläin\"  :widths: 8, 10, 60"
+
+#: ../../source/glossaire.rst:1
+msgid "A"
+msgstr "A"
+
+#: ../../source/glossaire.rst:1
+msgid "1"
+msgstr "1"
+
+#: ../../source/glossaire.rst:1
+msgid "Araignée — tapie dans un coin"
+msgstr "Ahma — kyyristyneenä nurkassa"
+
+#: ../../source/glossaire.rst:1
+msgid "B"
+msgstr "B"
+
+#: ../../source/glossaire.rst:1
+msgid "2"
+msgstr "2"
+
+#: ../../source/glossaire.rst:1
+msgid "Bernard-l'ermite — dans sa coquille, point mort"
+msgstr "Boa — kiertyneenä kuoreensa, kuollut piste"
+
+#: ../../source/glossaire.rst:1
+msgid "C"
+msgstr "C"
+
+#: ../../source/glossaire.rst:1
+msgid "3"
+msgstr "3"
+
+#: ../../source/glossaire.rst:1
+msgid "Crocodile — en eau basse, happe les pions"
+msgstr "Caiman — väijyy matalassa vedessä, nappaa nappulat"
+
+#: ../../source/glossaire.rst:1
+msgid "D"
+msgstr "D"
+
+#: ../../source/glossaire.rst:1
+msgid "4"
+msgstr "4"
+
+#: ../../source/glossaire.rst:1
+msgid "Dauphin — deuxième meilleur point"
+msgstr "Delfiini — toiseksi paras piste"
+
+#: ../../source/glossaire.rst:1
+msgid "E"
+msgstr "E"
+
+#: ../../source/glossaire.rst:1
+msgid "5"
+msgstr "5"
+
+#: ../../source/glossaire.rst:1
+msgid "Éléphant — très puissant, indéplaçable"
+msgstr "Elefantti — erittäin voimakas, liikkumaton"
+
+#: ../../source/glossaire.rst:1
+msgid "F"
+msgstr "F"
+
+#: ../../source/glossaire.rst:1
+msgid "6"
+msgstr "6"
+
+#: ../../source/glossaire.rst:1
+msgid "Fourmi — gros tas, réservoir"
+msgstr "Flamingo — koko parvi, suuri pino"
+
+#: ../../source/glossaire.rst:1
+msgid "G"
+msgstr "G"
+
+#: ../../source/glossaire.rst:1
+msgid "7"
+msgstr "7"
+
+#: ../../source/glossaire.rst:1
+msgid "Gorille — le gros bras qui bloque la sortie"
+msgstr "Gorilla — möhkö, joka tukkii uloskäynnin"
+
+#: ../../source/glossaire.rst:1
+msgid "H"
+msgstr "H"
+
+#: ../../source/glossaire.rst:1
+msgid "8"
+msgstr "8"
+
+#: ../../source/glossaire.rst:1
+msgid "Hérisson — piquant et solide"
+msgstr "Hirvi — vankka ja piikikäs"
+
+#: ../../source/glossaire.rst:1
+msgid "I"
+msgstr "I"
+
+#: ../../source/glossaire.rst:1
+msgid "9"
+msgstr "9"
+
+#: ../../source/glossaire.rst:1
+msgid "Ibis — sur une patte, bâtisseur isolé"
+msgstr "Ibis — yhdellä jalalla, yksinäinen rakentaja"
+
+#: ../../source/glossaire.rst:1
+msgid "J"
+msgstr "J"
+
+#: ../../source/glossaire.rst:1
+msgid "10"
+msgstr "10"
+
+#: ../../source/glossaire.rst:1
+msgid "Jaguar — prêt à bondir"
+msgstr "Jaguaari — valmiina syöksyyn"
+
+#: ../../source/glossaire.rst:1
+msgid "K"
+msgstr "K"
+
+#: ../../source/glossaire.rst:1
+msgid "11"
+msgstr "11"
+
+#: ../../source/glossaire.rst:1
+msgid "Kangourou — traverse l'outfield d'un bond"
+msgstr "Kenguru — ylittää ulkokentän yhdellä hypyllä"
+
+#: ../../source/glossaire.rst:1
+msgid "L"
+msgstr "L"
+
+#: ../../source/glossaire.rst:1
+msgid "12"
+msgstr "12"
+
+#: ../../source/glossaire.rst:1
+msgid "Loup — dans la bergerie adverse"
+msgstr "Leijona — vastustajan reviirillä"
+
+#: ../../source/glossaire.rst:1
+msgid "M"
+msgstr "M"
+
+#: ../../source/glossaire.rst:1
+msgid "13"
+msgstr "13"
+
+#: ../../source/glossaire.rst:1
+msgid "Mouton — le troupeau du milieu"
+msgstr "Muuli — puolimatkassa, täyteen lastattuna"
+
+#: ../../source/glossaire.rst:1
+msgid "N"
+msgstr "N"
+
+#: ../../source/glossaire.rst:1
+msgid "14"
+msgstr "14"
+
+#: ../../source/glossaire.rst:1
+msgid "Nasique — met le nez dehors"
+msgstr "Naali — työntää nenänsä esiin"
+
+#: ../../source/glossaire.rst:1
+msgid "O"
+msgstr "O"
+
+#: ../../source/glossaire.rst:1
+msgid "15"
+msgstr "15"
+
+#: ../../source/glossaire.rst:1
+msgid "Oie — en pleine migration pour rentrer"
+msgstr "Orava — kiiruhtaa kotiin"
+
+#: ../../source/glossaire.rst:1
+msgid "P"
+msgstr "P"
+
+#: ../../source/glossaire.rst:1
+msgid "16"
+msgstr "16"
+
+#: ../../source/glossaire.rst:1
+msgid "Papillon — fragile, éphémère"
+msgstr "Perhonen — hauras, ohikiitävä"
+
+#: ../../source/glossaire.rst:1
+msgid "Q"
+msgstr "Q"
+
+#: ../../source/glossaire.rst:1
+msgid "17"
+msgstr "17"
+
+#: ../../source/glossaire.rst:1
+msgid "Quetzal — oiseau rare, on y est rarement"
+msgstr "Quokka — harvoin nähty"
+
+#: ../../source/glossaire.rst:1
+msgid "R"
+msgstr "R"
+
+#: ../../source/glossaire.rst:1
+msgid "18"
+msgstr "18"
+
+#: ../../source/glossaire.rst:1
+msgid "Rhinocéros — du très solide"
+msgstr "Ruskokarhu — erittäin vankka"
+
+#: ../../source/glossaire.rst:1
+msgid "S"
+msgstr "S"
+
+#: ../../source/glossaire.rst:1
+msgid "19"
+msgstr "19"
+
+#: ../../source/glossaire.rst:1
+msgid "Souris — dure à attraper"
+msgstr "Salamanteri — vaikea saada kiinni"
+
+#: ../../source/glossaire.rst:1
+msgid "T"
+msgstr "T"
+
+#: ../../source/glossaire.rst:1
+msgid "20"
+msgstr "20"
+
+#: ../../source/glossaire.rst:1
+msgid "Tortue — carapace indestructible"
+msgstr "Tatu — rikkoutumaton panssari"
+
+#: ../../source/glossaire.rst:1
+msgid "U"
+msgstr "U"
+
+#: ../../source/glossaire.rst:1
+msgid "21"
+msgstr "21"
+
+#: ../../source/glossaire.rst:1
+msgid "Urubu — vautour qui attend la frappe"
+msgstr "Uuhi — odottaa iskua"
+
+#: ../../source/glossaire.rst:1
+msgid "V"
+msgstr "V"
+
+#: ../../source/glossaire.rst:1
+msgid "22"
+msgstr "22"
+
+#: ../../source/glossaire.rst:1
+msgid "Vipère — tapie dans l'herbe basse"
+msgstr "Vipera — piilossa matalassa heinikossa"
+
+#: ../../source/glossaire.rst:1
+msgid "W"
+msgstr "W"
+
+#: ../../source/glossaire.rst:1
+msgid "23"
+msgstr "23"
+
+#: ../../source/glossaire.rst:1
+msgid "Wombat — terrier profond"
+msgstr "Wombat — syvä pesäkolo"
+
+#: ../../source/glossaire.rst:1
+msgid "Y"
+msgstr "Y"
+
+#: ../../source/glossaire.rst:1
+msgid "24"
+msgstr "24"
+
+#: ../../source/glossaire.rst:1
+msgid "Yack — loin en altitude, lent à redescendre"
+msgstr "Yak — kaukana korkealla, hidas laskeutumaan"
+
+#: ../../source/glossaire.rst:1
+msgid "Z"
+msgstr "Z"
+
+#: ../../source/glossaire.rst:1
+msgid "barre"
+msgstr "laita"
+
+#: ../../source/glossaire.rst:1
+msgid "Zèbre — derrière les barreaux"
+msgstr "Zebra — kalterien takana"
+
+#: ../../source/glossaire.rst:71
+msgid ""
+"À la lecture, blunderDB accepte la forme compacte et la forme développée "
+"(``[34]65:x2(ymhf)m3hf3(SQLA)S3QL3`` : d'abord tous les pions du joueur "
+"au trait, puis ceux de l'adversaire), un ordre libre et plusieurs groupes"
+" de parenthèses ; à l'écriture, il produit toujours la forme compacte "
+"canonique, la développée sur demande. Deux écritures de la même position "
+"par blunderDB sont donc identiques au caractère près. Un ArkID ne dit ni "
+"les règles de la session (Jacoby, castor), ni le plafond du videau : "
+"comme l'OGID, il ne les porte pas et ne les suppose pas. Il est refusé, "
+"en le disant, s'il compte plus de quinze pions par camp, une case tenue "
+"par les deux camps, une lettre inconnue, un score ou des dés invalides."
+msgstr ""
+"Luettaessa blunderDB hyväksyy tiiviin ja laajennetun muodon "
+"(``[34]65:x2(ymhf)m3hf3(SQLA)S3QL3``: ensin kaikki vuorossa olevan "
+"pelaajan nappulat, sitten vastustajan), vapaan järjestyksen ja useita "
+"sulkuryhmiä; kirjoittaessaan se tuottaa aina kanonisen tiiviin muodon, "
+"laajennetun pyydettäessä. Kaksi blunderDB:n tekemää saman position "
+"kirjoitusta ovat siis merkki merkiltä identtiset. ArkID ei kerro istunnon"
+" sääntöjä (Jacoby, majava) eikä kuution kattoa: OGID:n tavoin se ei kanna"
+" niitä eikä oleta niitä. Se hylätään, syy mainiten, jos siinä on yli "
+"viisitoista nappulaa puolta kohti, ruutu, jota kumpikin puoli pitää, "
+"tuntematon kirjain, virheellinen tilanne tai virheelliset nopat."
+
+#: ../../source/glossaire.rst:82
 msgid "Position importée individuellement (*individually imported position*)"
 msgstr "Yksittäin tuotu asema (*individually imported position*)"
 
-#: ../../source/glossaire.rst:17
+#: ../../source/glossaire.rst:83
 msgid ""
 "Une position entrée seule dans la base — écrite depuis le plateau, ou lue"
 " depuis un fichier de position — plutôt qu'apportée par un match. Cette "
@@ -65,11 +454,11 @@ msgstr ""
 " näin tuotu asema pysyy sellaisena, vaikka sen sisältävä ottelu "
 "tuotaisiin myöhemmin."
 
-#: ../../source/glossaire.rst:22
+#: ../../source/glossaire.rst:88
 msgid "Position marquée (*flagged position*)"
 msgstr "Merkitty asema (*flagged position*)"
 
-#: ../../source/glossaire.rst:23
+#: ../../source/glossaire.rst:89
 msgid ""
 "Une position que l'utilisateur a signalée comme digne d'étude *dans le "
 "logiciel dont provient le match* — aujourd'hui seul eXtreme Gammon "
@@ -81,11 +470,11 @@ msgstr ""
 "merkinnän siirroittain. Merkitty kuutiopäätös merkitsee molemmat siitä "
 "syntyvät asemat: tuplauksen ja oton/hylkäyksen."
 
-#: ../../source/glossaire.rst:29
+#: ../../source/glossaire.rst:95
 msgid "Analyse (*analysis*)"
 msgstr "Analyysi (*analysis*)"
 
-#: ../../source/glossaire.rst:30
+#: ../../source/glossaire.rst:96
 msgid ""
 "Ce qu'un moteur (eXtreme Gammon, GNUbg, BGBlitz ou l'évaluateur gammonNet"
 " embarqué) a conclu sur une position, enregistré et relu plus tard. Une "
@@ -99,11 +488,11 @@ msgstr ""
 "koskaan korvaa toisen moottorin analyysiä eikä jo olemassa olevaa "
 "analyysiä (katso :ref:`import_regles`)."
 
-#: ../../source/glossaire.rst:36
+#: ../../source/glossaire.rst:102
 msgid "Évaluation (*evaluation*)"
 msgstr "Arviointi (*evaluation*)"
 
-#: ../../source/glossaire.rst:37
+#: ../../source/glossaire.rst:103
 msgid ""
 "Le résultat d'un calcul que l'évaluateur embarqué effectue sur la "
 "position actuellement au plateau, enregistrée ou non. Une évaluation "
@@ -115,11 +504,11 @@ msgstr ""
 "niin kauan kuin asema ei muutu; jos se tallennetaan, siitä tulee "
 "Analyysi."
 
-#: ../../source/glossaire.rst:42
+#: ../../source/glossaire.rst:108
 msgid "Référentiel (*referential*)"
 msgstr "Viitejärjestelmä (*referential*)"
 
-#: ../../source/glossaire.rst:43
+#: ../../source/glossaire.rst:109
 msgid ""
 "L'échelle dans laquelle un chiffre à propos d'une position s'exprime. "
 "*Money* répond à « combien de points cela vaut-il », un gammon valant "
@@ -137,11 +526,11 @@ msgstr ""
 "tilanteessa, ei mitään johtajalle 1-away-tilanteessa. Viitejärjestelmä on"
 " aseman ominaisuus, ei koskaan näyttöasetus: away-tulos määrää sen."
 
-#: ../../source/glossaire.rst:51
+#: ../../source/glossaire.rst:117
 msgid "Équité normalisée (*normalised equity*)"
 msgstr "Normalisoitu ekviteetti (*normalised equity*)"
 
-#: ../../source/glossaire.rst:52
+#: ../../source/glossaire.rst:118
 msgid ""
 "L'équité de match, exprimée sur l'échelle ``2 × MWC − 1`` où ±1 "
 "représente le videau courant gagné ou perdu. C'est l'échelle que "
@@ -153,11 +542,11 @@ msgstr ""
 "blunderDB näyttää ja tallentaa ottelun tuloksessa, ei koskaan raakoja "
 "voittotodennäköisyyksiä."
 
-#: ../../source/glossaire.rst:57
+#: ../../source/glossaire.rst:123
 msgid "EMG"
 msgstr "EMG"
 
-#: ../../source/glossaire.rst:58
+#: ../../source/glossaire.rst:124
 msgid ""
 "Le sigle sous lequel eXtreme Gammon et GNUbg désignent l'équité "
 "normalisée ci-dessus, et sous lequel les statistiques de blunderDB "
@@ -169,11 +558,11 @@ msgstr ""
 " ”0,100 EMG:n virhe” on 0,100:n suuruinen virhe tällä asteikolla. "
 "Molemmat termit nimeävät saman suureen."
 
-#: ../../source/glossaire.rst:63
+#: ../../source/glossaire.rst:129
 msgid "Erreur / blunder (*error*, *blunder*)"
 msgstr "Virhe / blunder (*error*, *blunder*)"
 
-#: ../../source/glossaire.rst:64
+#: ../../source/glossaire.rst:130
 msgid ""
 "Une décision dont le coût atteint le **seuil d'erreur** de la "
 "bibliothèque est une *erreur* ; une erreur dont le coût atteint son "
@@ -188,11 +577,11 @@ msgstr ""
 "*Kirjasto*-välilehdellä, ne ovat oletuksena 0,050 ja 0,100 EMG, ja ne "
 "seuraavat tiedostoa eivätkä konetta — ne eivät kulje mukana viennissä."
 
-#: ../../source/glossaire.rst:71
+#: ../../source/glossaire.rst:137
 msgid "Score away (*away score*)"
 msgstr "Away-tulos (*away score*)"
 
-#: ../../source/glossaire.rst:72
+#: ../../source/glossaire.rst:138
 msgid ""
 "Le nombre de points qu'il reste à un joueur pour gagner le match, de son "
 "propre point de vue. Deux valeurs sont des sentinelles plutôt que des "
@@ -206,11 +595,11 @@ msgstr ""
 "*money* — ja ``0``/``1`` erottavat Crawfordin jälkeisen pelin (``0``) "
 "itse Crawford-pelistä (``1``), samalla etäisyydellä voitosta."
 
-#: ../../source/glossaire.rst:78
+#: ../../source/glossaire.rst:144
 msgid "Régime (*regime*)"
 msgstr "Tila (*regime*)"
 
-#: ../../source/glossaire.rst:79
+#: ../../source/glossaire.rst:145
 msgid ""
 "Quel type de réponse le panneau donne sur une course, toujours annoncé à "
 "l'écran plutôt que laissé à deviner :"
@@ -218,19 +607,19 @@ msgstr ""
 "Millaisen vastauksen paneeli antaa juoksusta, aina näytöllä ilmoitettuna "
 "sen sijaan, että lukijan pitäisi arvata:"
 
-#: ../../source/glossaire.rst:82
+#: ../../source/glossaire.rst:148
 msgid "*exact* — lu dans une base de bearoff two-sided, jamais estimé ;"
 msgstr ""
 "*tarkka* — luettu kaksipuolisesta bearoff-tietokannasta, ei koskaan "
 "arvioitu;"
 
-#: ../../source/glossaire.rst:83
+#: ../../source/glossaire.rst:149
 msgid "*évalué* — calculé par l'évaluateur embarqué, qui rejoue la trajectoire ;"
 msgstr ""
 "*arvioitu* — sisäänrakennetun evaluaattorin laskema, joka pelaa kulun "
 "loppuun;"
 
-#: ../../source/glossaire.rst:85
+#: ../../source/glossaire.rst:151
 msgid ""
 "*estimé* — un résumé calibré d'une trajectoire, valable pour une "
 "probabilité de gain, jamais pour un verdict de videau."
@@ -238,11 +627,11 @@ msgstr ""
 "*arvioitu (estimoitu)* — kalibroitu yhteenveto kulusta, pätevä "
 "voittotodennäköisyydelle, ei koskaan kuutiotuomiolle."
 
-#: ../../source/glossaire.rst:88
+#: ../../source/glossaire.rst:154
 msgid "Base bearoff (*bearoff database*)"
 msgstr "Bearoff-tietokanta (*bearoff database*)"
 
-#: ../../source/glossaire.rst:89
+#: ../../source/glossaire.rst:155
 msgid ""
 "Une table de réponses de course two-sided (le verdict de videau) ou one-"
 "sided (l'EPC). blunderDB en génère elle-même une partie au premier "
@@ -257,11 +646,11 @@ msgstr ""
 "*Bearoff*-välilehdeltä tai CLI:stä. Luodun tietokannan sanotaan olevan "
 "*vahvistettu*, kun sen sormenjälki täsmää tarkalleen GNUbg:n tuottamaan."
 
-#: ../../source/glossaire.rst:96
+#: ../../source/glossaire.rst:162
 msgid "EPC (Effective Pip Count)"
 msgstr "EPC (Effective Pip Count)"
 
-#: ../../source/glossaire.rst:97
+#: ../../source/glossaire.rst:163
 msgid ""
 "Une estimation classique, un-côté, du nombre de coups nécessaires pour "
 "sortir tous les pions d'un joueur — corrigée du gaspillage (*wastage*) "
@@ -271,11 +660,11 @@ msgstr ""
 " kaikkien tammojen ulos ajamiseen — korjattu hukan (*wastage*) osalta "
 "pelkkään pip countiin verrattuna."
 
-#: ../../source/glossaire.rst:101
+#: ../../source/glossaire.rst:167
 msgid "Fait de position (*position fact*)"
 msgstr "Aseman tosiseikka (*position fact*)"
 
-#: ../../source/glossaire.rst:102
+#: ../../source/glossaire.rst:168
 msgid ""
 "Une grandeur qui appartient au plateau lui-même, indépendante de tout "
 "choix d'un joueur : compte de pions, EPC, chances de "
@@ -285,11 +674,11 @@ msgstr ""
 "valinnasta: pip count, EPC, voitto-/gammon-/backgammon-mahdollisuudet, "
 "cubeless-ekviteetti. Tosi ennen heittoa."
 
-#: ../../source/glossaire.rst:106
+#: ../../source/glossaire.rst:172
 msgid "Ligne avant le jet (*pre-roll baseline*)"
 msgstr "Rivi ennen heittoa (*pre-roll baseline*)"
 
-#: ../../source/glossaire.rst:107
+#: ../../source/glossaire.rst:173
 msgid ""
 "Le vecteur des chances de gain/gammon/backgammon et de l'équité cubeless,"
 " affiché en tête de la liste des coups candidats une fois les dés jetés. "
@@ -301,11 +690,11 @@ msgstr ""
 " heitetty. Tämän rivin ja siirron välinen ero mittaa heiton onnea, ei "
 "koskaan pelatun siirron ansiota."
 
-#: ../../source/glossaire.rst:112
+#: ../../source/glossaire.rst:178
 msgid "Décision (*decision*)"
 msgstr "Päätös (*decision*)"
 
-#: ../../source/glossaire.rst:113
+#: ../../source/glossaire.rst:179
 msgid ""
 "La réponse à la question que le plateau pose : le classement des coups "
 "candidats quand des dés sont jetés, ou les trois options de videau (pas "
@@ -316,11 +705,11 @@ msgstr ""
 " nopat on heitetty, tai muuten kolme kuutiovaihtoehtoa ja niiden tuomio. "
 "Asema ei koskaan esitä molempia kysymyksiä yhtä aikaa."
 
-#: ../../source/glossaire.rst:118
+#: ../../source/glossaire.rst:184
 msgid "Verdict"
 msgstr "Tuomio"
 
-#: ../../source/glossaire.rst:119
+#: ../../source/glossaire.rst:185
 msgid ""
 "Laquelle des options d'une décision de videau est la bonne : *pas de "
 "double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*. "
@@ -334,11 +723,11 @@ msgstr ""
 "oikeutettu sellaiseen) ja *hylätty* (moottori kieltäytyi asemasta, "
 "tyypillisesti tulos sen taulukon ulottumattomissa)."
 
-#: ../../source/glossaire.rst:125
+#: ../../source/glossaire.rst:191
 msgid "Trop bon (*too good*)"
 msgstr "Liian hyvä (*too good*)"
 
-#: ../../source/glossaire.rst:126
+#: ../../source/glossaire.rst:192
 msgid ""
 "Le verdict qui dit que la position est si favorable que doubler "
 "inciterait l'adversaire à passer alors que jouer sans doubler rapporte "
@@ -348,11 +737,11 @@ msgstr ""
 "vastustajan hylkäämään, kun taas jatkaminen ilman tuplausta tuottaa "
 "enemmän — kuutio, joka kannattaa pitää."
 
-#: ../../source/glossaire.rst:130
+#: ../../source/glossaire.rst:196
 msgid "Chance (*luck*)"
 msgstr "Tuuri (*luck*)"
 
-#: ../../source/glossaire.rst:131
+#: ../../source/glossaire.rst:197
 msgid ""
 "L'apport du lancer de dés à l'équité d'un coup, lu depuis le fichier "
 "source à l'import (eXtreme Gammon, GNUbg) et jamais recalculé par "
@@ -364,11 +753,11 @@ msgstr ""
 "uudelleenlaskemana. Muodot, jotka eivät kuljeta sitä (BGF, Jellyfish "
 "``.mat``), eivät koskaan tarjoa sitä, eikä tuonti ole takautuva."
 
-#: ../../source/glossaire.rst:136
+#: ../../source/glossaire.rst:202
 msgid "Blunder"
 msgstr "Blunderi"
 
-#: ../../source/glossaire.rst:137
+#: ../../source/glossaire.rst:203
 msgid ""
 "Un coup ou une décision de videau dont l'erreur (l'écart d'équité avec le"
 " meilleur choix) dépasse un seuil ; la commande ``bl`` (ou ``blunders``) "
@@ -379,11 +768,11 @@ msgstr ""
 " ylittää kynnysarvon; komento ``bl`` (tai ``blunders``) lataa suoraan "
 "tilastosuodattimen säilyttämät pahimmat virheet."
 
-#: ../../source/glossaire.rst:142
+#: ../../source/glossaire.rst:208
 msgid "Millipoint (mpt)"
 msgstr "Millipiste (mpt)"
 
-#: ../../source/glossaire.rst:143
+#: ../../source/glossaire.rst:209
 msgid ""
 "Un millième de point d'équité : une erreur de 0,100 d'équité vaut 100 "
 "mpt. C'est l'unité dans laquelle se lisent les grandeurs d'une position —"
@@ -399,11 +788,11 @@ msgstr ""
 "kerroin on 500 eikä 1000, joten PR 5,0 vastaa keskimäärin 10 mpt:n "
 "virhettä päätöstä kohti."
 
-#: ../../source/glossaire.rst:151
+#: ../../source/glossaire.rst:217
 msgid "PR (*Performance Rating*)"
 msgstr "PR (*Performance Rating*)"
 
-#: ../../source/glossaire.rst:152
+#: ../../source/glossaire.rst:218
 msgid ""
 "Le coût moyen des erreurs d'un joueur, coups et videau confondus : "
 "l'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
@@ -417,11 +806,11 @@ msgstr ""
 " ekviteettitappiota päätöstä kohti. Katso :ref:`stats_parity` tarkoista "
 "laskentasäännöistä (yhdenmukaisuus eXtreme Gammonin ja GNUbg:n kanssa)."
 
-#: ../../source/glossaire.rst:158
+#: ../../source/glossaire.rst:224
 msgid "Snowie Error Rate"
 msgstr "Snowie Error Rate"
 
-#: ../../source/glossaire.rst:159
+#: ../../source/glossaire.rst:225
 msgid ""
 "Le même numérateur que le PR (la somme des erreurs), mais rapporté au "
 "nombre de coups joués plutôt qu'au nombre de décisions comptées — plus "
@@ -431,11 +820,11 @@ msgstr ""
 "siirtojen määrällä laskettujen päätösten määrän sijaan — vakaampi "
 "työkalusta toiseen. Katso :ref:`stats_parity`."
 
-#: ../../source/glossaire.rst:163
+#: ../../source/glossaire.rst:229
 msgid "Coût MWC (*MWC cost*)"
 msgstr "MWC-kustannus (*MWC cost*)"
 
-#: ../../source/glossaire.rst:164
+#: ../../source/glossaire.rst:230
 msgid ""
 "Une erreur de videau exprimée en points de pourcentage de chances de "
 "gagner le match (*Match Winning Chance*), plutôt qu'en équité — la "
@@ -446,11 +835,11 @@ msgstr ""
 "ekviteettinä — luonnollinen suure saman pelaajan vertailuun eri "
 "ottelutuloksissa."
 
-#: ../../source/glossaire.rst:169
+#: ../../source/glossaire.rst:235
 msgid "Collection"
 msgstr "Kokoelma"
 
-#: ../../source/glossaire.rst:170
+#: ../../source/glossaire.rst:236
 msgid ""
 "Un ensemble nommé et ordonné de positions que l'utilisateur assemble à la"
 " main, glisser-déposer compris. L'appartenance à une collection est un "
@@ -461,11 +850,11 @@ msgstr ""
 "mukaan lukien. Kokoelmaan kuuluminen on nimenomainen ele, toisin kuin "
 "yksittäin tuodulla asemalla (katso :ref:`panneau_collections`)."
 
-#: ../../source/glossaire.rst:175
+#: ../../source/glossaire.rst:241
 msgid "Paquet Anki (*Anki deck*)"
 msgstr "Anki-pakka (*Anki deck*)"
 
-#: ../../source/glossaire.rst:176
+#: ../../source/glossaire.rst:242
 msgid ""
 "Un ensemble de positions transformées en cartes à réviser par répétition "
 "espacée (algorithme FSRS). Voir :ref:`panneau_anki`."
@@ -473,11 +862,11 @@ msgstr ""
 "Joukko asemia, jotka on muutettu kertauskorteiksi, joita kerrataan "
 "hajautetulla toistolla (FSRS-algoritmi). Katso :ref:`panneau_anki`."
 
-#: ../../source/glossaire.rst:179
+#: ../../source/glossaire.rst:245
 msgid "Carte de révision (*review card*)"
 msgstr "Kertauskortti (*review card*)"
 
-#: ../../source/glossaire.rst:180
+#: ../../source/glossaire.rst:246
 msgid ""
 "Une position d'un paquet Anki, présentée comme une question : le plateau "
 "est la question, l'analyse enregistrée est la réponse, masquée jusqu'au "
@@ -486,11 +875,11 @@ msgstr ""
 "Asema Anki-pakasta, esitettynä kysymyksenä: lauta on kysymys, tallennettu"
 " analyysi on vastaus, piilotettuna kunnes ele paljastaa sen."
 
-#: ../../source/glossaire.rst:184
+#: ../../source/glossaire.rst:250
 msgid "Commentaire (*comment*)"
 msgstr "Kommentti (*comment*)"
 
-#: ../../source/glossaire.rst:185
+#: ../../source/glossaire.rst:251
 msgid ""
 "Un texte libre attaché à une position, tapé par l'utilisateur ou repris "
 "d'un fichier importé. Une position peut en porter plusieurs, chacun signé"
@@ -504,11 +893,11 @@ msgstr ""
 "BG``, ``BGF``). Kommentin ``#sana`` on tunniste, jonka suodatin ``#sana``"
 " löytää (katso :ref:`panneau_commentaires`)."
 
-#: ../../source/glossaire.rst:191
+#: ../../source/glossaire.rst:257
 msgid "Joueur (*player*)"
 msgstr "Pelaaja (*player*)"
 
-#: ../../source/glossaire.rst:192
+#: ../../source/glossaire.rst:258
 msgid ""
 "Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne "
 "devine pas la personne derrière le nom : la même personne signant sous "
@@ -520,11 +909,11 @@ msgstr ""
 " kahdella kirjoitusasulla, on kaksi eri pelaajaa, kunnes tehdään "
 "nimenomainen yhdistäminen (”Hallitse pelaajia”)."
 
-#: ../../source/glossaire.rst:197
+#: ../../source/glossaire.rst:263
 msgid "Filigrane (*watermark*)"
 msgstr "Vesileima (*watermark*)"
 
-#: ../../source/glossaire.rst:198
+#: ../../source/glossaire.rst:264
 msgid ""
 "La déclaration signée, apposée par qui exporte une base, de ce qu'elle "
 "est et d'où elle vient. Infalsifiable mais pas inamovible, elle ne "
@@ -536,11 +925,11 @@ msgstr ""
 "koskaan tallenna mitään vastaanottajan puolelle. Katso "
 ":ref:`diffusion_controlee`."
 
-#: ../../source/glossaire.rst:203
+#: ../../source/glossaire.rst:269
 msgid "Identité d'émetteur (*issuer identity*)"
 msgstr "Liikkeeseenlaskijan identiteetti (*issuer identity*)"
 
-#: ../../source/glossaire.rst:204
+#: ../../source/glossaire.rst:270
 msgid ""
 "La clé qui signe les filigranes d'une personne — créée d'elle-même au "
 "premier filigrane apposé, et déplaçable d'une machine à l'autre par un "
@@ -550,11 +939,11 @@ msgstr ""
 "ensimmäisessä lisätyssä vesileimassa, ja siirrettävissä koneesta toiseen "
 "yhtenä tiedostona."
 
-#: ../../source/glossaire.rst:208
+#: ../../source/glossaire.rst:274
 msgid "Fichier protégé (.dbx)"
 msgstr "Suojattu tiedosto (.dbx)"
 
-#: ../../source/glossaire.rst:209
+#: ../../source/glossaire.rst:275
 msgid ""
 "Une base exportée et chiffrée par mot de passe, ouverte une fois puis "
 "ordinaire. Elle protège le fichier en transit, pas son contenu : qui "
@@ -564,11 +953,11 @@ msgstr ""
 "jälkeen tavallinen. Se suojaa tiedostoa kuljetuksen aikana, ei sen "
 "sisältöä: kuka tahansa salasanan saanut voi avata sen."
 
-#: ../../source/glossaire.rst:213
+#: ../../source/glossaire.rst:279
 msgid "Tenant"
 msgstr "Tenant"
 
-#: ../../source/glossaire.rst:214
+#: ../../source/glossaire.rst:280
 msgid ""
 "En mode serveur, le propriétaire d'un ensemble de positions, matchs et "
 "collections. Rien de ce qu'un tenant stocke n'est jamais visible à un "
