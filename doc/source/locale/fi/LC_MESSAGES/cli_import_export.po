@@ -547,12 +547,12 @@ msgstr ""
 #: ../../source/cli_import_export.rst:332
 msgid ""
 "Dans l'interface, la boîte *Archive papier…* du menu contextuel d'un "
-"match fait l'export et l'import (:ref:`archive_papier_interface`) ; "
+"match fait l'export et l'import (:ref:`Archive papier… <archive_papier_interface>`) ; "
 "l'import s'ouvre aussi depuis la liste des matchs vide et par la commande"
 " ``import_archive``."
 msgstr ""
 "Käyttöliittymässä ottelun pikavalikon *Paperiarkisto…*-ikkuna hoitaa "
-"viennin ja tuonnin (:ref:`archive_papier_interface`); tuonti avautuu myös"
+"viennin ja tuonnin (:ref:`Paperiarkisto… <archive_papier_interface>`); tuonti avautuu myös"
 " tyhjästä otteluluettelosta ja komennolla ``import_archive``."
 
 #: ../../source/cli_import_export.rst:337

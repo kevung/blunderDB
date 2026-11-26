@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 03:14+0100\n"
+"POT-Creation-Date: 2026-11-26 15:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -18,7 +18,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/glossaire.rst:4
 msgid "Glossaire"
@@ -115,9 +115,17 @@ msgstr ""
 " бар; ``X`` зарезервирована для куба. Каждая буква — первая буква "
 "названия животного, которое помогает запомнить пункт:"
 
-#: ../../source/glossaire.rst:44
-msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
-msgstr ":header: \"Буква\", \"Пункт\", \"Животное\"  :widths: 8, 10, 60"
+#: ../../source/glossaire.rst:1
+msgid "Lettre"
+msgstr "Буква"
+
+#: ../../source/glossaire.rst:1
+msgid "Point"
+msgstr "Пункт"
+
+#: ../../source/glossaire.rst:1
+msgid "Animal"
+msgstr "Животное"
 
 #: ../../source/glossaire.rst:1
 msgid "A"
@@ -1078,3 +1086,6 @@ msgstr ""
 #~ "— оба неразличимы. ``#ключевое-слово`` внутри"
 #~ " комментария — это тег, доступный для"
 #~ " поиска, как любой другой текст."
+
+#~ msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
+#~ msgstr ":header: \"Буква\", \"Пункт\", \"Животное\"  :widths: 8, 10, 60"

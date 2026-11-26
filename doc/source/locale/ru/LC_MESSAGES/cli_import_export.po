@@ -543,12 +543,12 @@ msgstr ""
 #: ../../source/cli_import_export.rst:332
 msgid ""
 "Dans l'interface, la boîte *Archive papier…* du menu contextuel d'un "
-"match fait l'export et l'import (:ref:`archive_papier_interface`) ; "
+"match fait l'export et l'import (:ref:`Archive papier… <archive_papier_interface>`) ; "
 "l'import s'ouvre aussi depuis la liste des matchs vide et par la commande"
 " ``import_archive``."
 msgstr ""
 "В интерфейсе окно *Бумажный архив…* контекстного меню матча выполняет "
-"экспорт и импорт (:ref:`archive_papier_interface`); импорт открывается "
+"экспорт и импорт (:ref:`Бумажный архив… <archive_papier_interface>`); импорт открывается "
 "также из пустого списка матчей и командой ``import_archive``."
 
 #: ../../source/cli_import_export.rst:337

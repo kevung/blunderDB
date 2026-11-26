@@ -485,12 +485,12 @@ msgstr ""
 #: ../../source/cli_import_export.rst:332
 msgid ""
 "Dans l'interface, la boîte *Archive papier…* du menu contextuel d'un "
-"match fait l'export et l'import (:ref:`archive_papier_interface`) ; "
+"match fait l'export et l'import (:ref:`Archive papier… <archive_papier_interface>`) ; "
 "l'import s'ouvre aussi depuis la liste des matchs vide et par la commande"
 " ``import_archive``."
 msgstr ""
 "インターフェースでは、マッチのコンテキストメニューの *紙のアーカイブ…* "
-"ダイアログが書き出しと読み込みを行います（:ref:`archive_papier_interface`）。読み込みは空のマッチ一覧と "
+"ダイアログが書き出しと読み込みを行います（:ref:`紙のアーカイブ… <archive_papier_interface>`）。読み込みは空のマッチ一覧と "
 "``import_archive`` コマンドからも開けます。"
 
 #: ../../source/cli_import_export.rst:337

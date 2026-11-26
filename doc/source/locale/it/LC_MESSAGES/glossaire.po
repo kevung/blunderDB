@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 03:14+0100\n"
+"POT-Creation-Date: 2026-11-26 15:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/glossaire.rst:4
 msgid "Glossaire"
@@ -115,9 +115,17 @@ msgstr ""
 "cubo. Ogni lettera è l'iniziale di un animale, che aiuta a ricordare il "
 "punto:"
 
-#: ../../source/glossaire.rst:44
-msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
-msgstr ":header: \"Lettera\", \"Punto\", \"Animale\"  :widths: 8, 10, 60"
+#: ../../source/glossaire.rst:1
+msgid "Lettre"
+msgstr "Lettera"
+
+#: ../../source/glossaire.rst:1
+msgid "Point"
+msgstr "Punto"
+
+#: ../../source/glossaire.rst:1
+msgid "Animal"
+msgstr "Animale"
 
 #: ../../source/glossaire.rst:1
 msgid "A"
@@ -1088,3 +1096,6 @@ msgstr ""
 #~ " Una ``#parola-chiave`` all'interno di "
 #~ "un commento è un tag, ricercabile "
 #~ "come qualunque altro testo."
+
+#~ msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
+#~ msgstr ":header: \"Lettera\", \"Punto\", \"Animale\"  :widths: 8, 10, 60"

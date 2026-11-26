@@ -118,7 +118,7 @@ par ``/v1/matches.repair``, le fichier source envoyé dans la requête.
    ./blunderdb match repair --db base.db --id 42
 
 **match sheet** — Écrit la feuille de match imprimable, celle de l'action
-*Imprimer…* du panneau Match (:ref:`feuille_match`) : une feuille A4 par match,
+*Imprimer…* du panneau Match (:ref:`Imprimer… <feuille_match>`) : une feuille A4 par match,
 dans un seul fichier HTML autonome que le navigateur imprime ou enregistre en
 PDF. ``--match`` prend un ou plusieurs identifiants séparés par des virgules,
 100 au plus (au-delà, la commande refuse et n'écrit rien, comme le serveur) ;

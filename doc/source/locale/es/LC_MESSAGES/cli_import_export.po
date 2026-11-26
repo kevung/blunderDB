@@ -547,13 +547,13 @@ msgstr ""
 #: ../../source/cli_import_export.rst:332
 msgid ""
 "Dans l'interface, la boîte *Archive papier…* du menu contextuel d'un "
-"match fait l'export et l'import (:ref:`archive_papier_interface`) ; "
+"match fait l'export et l'import (:ref:`Archive papier… <archive_papier_interface>`) ; "
 "l'import s'ouvre aussi depuis la liste des matchs vide et par la commande"
 " ``import_archive``."
 msgstr ""
 "En la interfaz, el cuadro *Archivo en papel…* del menú contextual de un "
 "partido hace la exportación y la importación "
-"(:ref:`archive_papier_interface`); la importación se abre también desde "
+"(:ref:`Archivo en papel… <archive_papier_interface>`); la importación se abre también desde "
 "la lista de partidos vacía y con el comando ``import_archive``."
 
 #: ../../source/cli_import_export.rst:337

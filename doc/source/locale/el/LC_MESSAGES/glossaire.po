@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 03:14+0100\n"
+"POT-Creation-Date: 2026-11-26 15:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/glossaire.rst:4
 msgid "Glossaire"
@@ -117,9 +117,17 @@ msgstr ""
 "``Z`` η μπάρα· το ``X`` είναι δεσμευμένο για τον κύβο. Κάθε γράμμα είναι "
 "το αρχικό ενός ζώου, που βοηθά να θυμάται κανείς το σημείο:"
 
-#: ../../source/glossaire.rst:44
-msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
-msgstr ":header: \"Γράμμα\", \"Σημείο\", \"Ζώο\"  :widths: 8, 10, 60"
+#: ../../source/glossaire.rst:1
+msgid "Lettre"
+msgstr "Γράμμα"
+
+#: ../../source/glossaire.rst:1
+msgid "Point"
+msgstr "Σημείο"
+
+#: ../../source/glossaire.rst:1
+msgid "Animal"
+msgstr "Ζώο"
 
 #: ../../source/glossaire.rst:1
 msgid "A"
@@ -1093,3 +1101,6 @@ msgstr ""
 #~ "μη διακρίσιμα. Ένα ``#λέξη-κλειδί`` μέσα "
 #~ "σε ένα σχόλιο είναι μια ετικέτα, "
 #~ "αναζητήσιμη όπως κάθε άλλο κείμενο."
+
+#~ msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
+#~ msgstr ":header: \"Γράμμα\", \"Σημείο\", \"Ζώο\"  :widths: 8, 10, 60"

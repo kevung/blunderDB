@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 03:14+0100\n"
+"POT-Creation-Date: 2026-11-26 15:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/glossaire.rst:4
 msgid "Glossaire"
@@ -100,9 +100,17 @@ msgstr ""
 "``A``\\ から\\ ``W``\\ はポイント 1 から 23、\\ ``Y``\\ はポイント 24、\\ ``Z``\\ はバーで、\\"
 " ``X``\\ はキューブ用に予約されています。各文字は動物の頭文字で、ポイントを覚える助けになります。"
 
-#: ../../source/glossaire.rst:44
-msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
-msgstr ":header: \"文字\", \"ポイント\", \"動物\"  :widths: 8, 10, 60"
+#: ../../source/glossaire.rst:1
+msgid "Lettre"
+msgstr "文字"
+
+#: ../../source/glossaire.rst:1
+msgid "Point"
+msgstr "ポイント"
+
+#: ../../source/glossaire.rst:1
+msgid "Animal"
+msgstr "動物"
 
 #: ../../source/glossaire.rst:1
 msgid "A"
@@ -971,3 +979,6 @@ msgstr ""
 #~ msgstr ""
 #~ "ポジションに付けられた自由テキストで、ユーザーが入力したものであれ、インポートされたファイルからそのまま取り込まれたものであれ、両者は区別できません。コメント内の"
 #~ " ``#キーワード`` はタグであり、他のテキストと同様に検索可能です。"
+
+#~ msgid ":header: \"Lettre\", \"Point\", \"Animal\"  :widths: 8, 10, 60"
+#~ msgstr ":header: \"文字\", \"ポイント\", \"動物\"  :widths: 8, 10, 60"
