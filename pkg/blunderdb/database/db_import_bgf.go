@@ -14,7 +14,13 @@ import (
 // ImportBGFMatch imports a match from a BGBlitz BGF file, delegating to the
 // shared ingest pipeline (ingest.MapBGF -> ingest.WriteMatch) — the same path
 // the headless server uses.
+// The desktop's task tracker lists it (TaskTracker).
 func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
+	return tracked(d, TaskImport, filePath, d.CancelImport, func() (int64, error) { return d.importBGFMatch(filePath) })
+}
+
+// importBGFMatch is ImportBGFMatch without the tracker.
+func (d *Database) importBGFMatch(filePath string) (int64, error) {
 	ctx, done := d.beginCancellableImport()
 	defer done()
 
@@ -34,7 +40,13 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 }
 
 // ImportBGFPosition imports a single BGBlitz position from a TXT file
+// The desktop's task tracker lists it (TaskTracker).
 func (d *Database) ImportBGFPosition(filePath string) (int64, error) {
+	return tracked(d, TaskImport, filePath, d.CancelImport, func() (int64, error) { return d.importBGFPosition(filePath) })
+}
+
+// importBGFPosition is ImportBGFPosition without the tracker.
+func (d *Database) importBGFPosition(filePath string) (int64, error) {
 	ctx, done := d.beginCancellableImport()
 	defer done()
 
@@ -49,7 +61,13 @@ func (d *Database) ImportBGFPosition(filePath string) (int64, error) {
 }
 
 // ImportBGFPositionFromText imports a BGBlitz position from text content (clipboard/string)
+// The desktop's task tracker lists it (TaskTracker).
 func (d *Database) ImportBGFPositionFromText(content string) (int64, error) {
+	return tracked(d, TaskImport, "", d.CancelImport, func() (int64, error) { return d.importBGFPositionFromText(content) })
+}
+
+// importBGFPositionFromText is ImportBGFPositionFromText without the tracker.
+func (d *Database) importBGFPositionFromText(content string) (int64, error) {
 	ctx, done := d.beginCancellableImport()
 	defer done()
 

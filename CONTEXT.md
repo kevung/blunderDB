@@ -357,6 +357,19 @@ once, and it stays on the Pile whatever becomes of the Duel.
 _Avoid_: bookmark, stack, to-study list, study queue (computed from the error threshold),
 flag (a Flagged Position is a fact of the source file)
 
+**Relevé** (code: `document.Releve`):
+The reading of one document — a book, an article, a web page the user brought — as a JSON
+file a person can read: the document's title, author, edition or URL, the fingerprint of
+its file and the profile its diagrams are drawn with, then one entry per diagram in the
+document's order (rank, page, chapter, label, position as an XGID, state *sure*, *to
+verify* or *uncertain*, doubts, the diagram's rectangle, verified or not). Reading a
+document writes nothing; only importing a Relevé does, into one Collection named after the
+document, and only its positions and their references: no image, no text of the author
+(ADR-0117). A Relevé carries the progress of its verification, so a book is checked over
+several sittings.
+_Avoid_: transcript (a Transcription is typed in front of a board), scan, capture (a capture
+is one screen image of a program's board), OCR result, extraction, report
+
 **Basket** (interface: *panier*):
 The desktop's list of rows — Positions, Matches, Collections, Lessons — gathered from any
 open library to be poured at once into one library group, by the same transfer as a drag

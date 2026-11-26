@@ -116,7 +116,7 @@ de structure est un second lecteur, qui rend le même `capture.Reading`.
   WebKitGTK reste à vérifier.
 - Pas d'OCR généraliste : la couche texte quand elle existe ; sinon lecture de chiffres seulement
   (pips, videau, dés de la légende).
-- ADR neuf (0115 si libre) : la lecture d'un document est une reconnaissance absolue vérifiée par
+- ADR-0117 : la lecture d'un document est une reconnaissance absolue vérifiée par
   recoupement, en écart à ADR-0108 règles 2 et 3. Accepté dans son principe par l'utilisateur.
 
 ## 7. Tranches

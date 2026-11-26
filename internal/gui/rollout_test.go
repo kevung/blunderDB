@@ -1,20 +1,23 @@
 package gui
 
 import (
+	"context"
 	"errors"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 )
 
 // StartRollout refuses before starting anything: a request it cannot honour
 // must not surface later as an error event.
 func TestStartRollout_RefusesUpFront(t *testing.T) {
-	a := &App{}
+	a := NewApp(nil)
 	pos := domain.InitializePosition()
 	bad := rollout.Fast()
 	bad.MaxGames = 100 // not a multiple of 36
@@ -73,8 +76,9 @@ func TestStartRolloutFiltered_RefusesUpFront(t *testing.T) {
 }
 
 // The rollout batch and the gammonNet batch exclude each other, as on the
-// daemon: each takes every core.
-func TestRolloutBatchAndGammonNetBatchExcludeEachOther(t *testing.T) {
+// daemon: each takes every core. The one asked second waits its turn in the
+// library's queue instead of being refused, and runs once the first ends.
+func TestRolloutBatchWaitsBehindTheGammonNetBatch(t *testing.T) {
 	d := database.NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatal(err)
@@ -82,31 +86,30 @@ func TestRolloutBatchAndGammonNetBatchExcludeEachOther(t *testing.T) {
 	t.Cleanup(func() { _ = d.Close() })
 	a := NewApp(d)
 
-	gnStopped := make(chan struct{})
-	a.gnBatchMu.Lock()
-	a.gnBatchCancel, a.gnBatchDone = func() {}, gnStopped
-	a.gnBatchMu.Unlock()
-	if _, err := a.StartRolloutFiltered("", rollout.Fast()); err == nil {
-		t.Error("a rollout batch started beside a gammonNet batch")
+	hold := a.jobs.Start(jobs.Spec{Kind: jobs.GammonNetMissing, Library: a.shownGroup(), Exclusive: true})
+	if err := hold.Turn(context.Background()); err != nil {
+		t.Fatal(err)
 	}
-	a.gnBatchMu.Lock()
-	a.gnBatchCancel, a.gnBatchDone = nil, nil
-	a.gnBatchMu.Unlock()
-
-	_, roStopped, _ := a.beginRollout(RolloutStatus{Running: true, Kind: "batch"})
-	a.StartGammonNetBatch(0, 0, 0)
-	a.gnBatchMu.Lock()
-	started := a.gnBatchDone != nil
-	a.gnBatchMu.Unlock()
-	if started {
-		t.Error("a gammonNet batch started beside a rollout batch")
+	if _, err := a.StartRolloutFiltered("", rollout.Fast()); err != nil {
+		t.Fatalf("a rollout batch asked beside a gammonNet batch: %v, want it queued", err)
 	}
 	if st := a.RolloutStatus(); !st.Running || st.Kind != "batch" {
-		t.Errorf("RolloutStatus during a batch: %+v", st)
+		t.Errorf("RolloutStatus of the waiting batch: %+v", st)
 	}
-	a.endRollout(roStopped)
-	if st := a.RolloutStatus(); st.Running {
-		t.Errorf("RolloutStatus after the batch: %+v", st)
+	list := a.ListJobs()
+	if len(list) != 2 || list[1].Kind != jobs.RolloutBatch || list[1].State != jobs.Waiting {
+		t.Fatalf("tasks %+v, want the rollout batch waiting", list)
+	}
+	hold.Finish(nil)
+	deadline := time.Now().Add(10 * time.Second)
+	for a.RolloutStatus().Running {
+		if time.Now().After(deadline) {
+			t.Fatal("the rollout batch never ran once the gammonNet batch ended")
+		}
+		time.Sleep(time.Millisecond)
+	}
+	if got := a.ListJobs()[1].State; got != jobs.Done {
+		t.Errorf("rollout batch ended %s, want done (nothing to roll out)", got)
 	}
 }
 

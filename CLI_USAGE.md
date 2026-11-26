@@ -44,6 +44,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `lesson` - Manage lessons (ordered steps showing collections and positions; export them)
 - `study` - The study backlog: your unhandled blunders across every import, and the "studied" mark
 - `collection` - Manage collections (list, show, create, rename, delete, export)
+- `document` - Check a document's relevé, or import its positions into a collection
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `stats` - Statistics computed apart from list --type stats (recurring)
 - `training` - The Training journal (sessions, missed positions)
@@ -890,6 +891,43 @@ nothing. Reading a lesson records nothing on the reader's side.
 ./blunderDB lesson export --db database.db --id 1 --out lesson.dbx \
     --password secret --watermark "Course of 12 March"
 ./blunderDB lesson export --db database.db --id 1 --html --out lesson.html
+```
+
+## Document Command
+
+Import the positions a document shows — a book, an article, a web page — from
+its *relevé*: a JSON file that lists them in the document's order, each with its
+page, label, position (an XGID: checkers, cube, player on roll, dice, score and
+match length) and state (`sure`, `to-verify` or `uncertain`), and whether a
+person has verified it. Only positions enter the database: no image and no text
+of the author.
+
+```bash
+./blunderDB document <sub-command> [options] <releve.json>
+```
+
+**Sub-commands:**
+- `check <releve.json>` - Validate the relevé (format, ranks from 1 with no gap,
+  legal positions, unknown fields refused) and count its entries by state;
+  nothing is written. `--format json` prints the counts as JSON
+- `import <releve.json> --db <file> [--collection <name>] [--force]` - Import the
+  positions into a collection named after the document (or `--collection`), in
+  the document's order
+
+The collection's description holds the document's title, author and edition
+(or URL); each position carries its reference (`p. 146, Problem 191`) in a
+comment, so it stays readable outside the collection. Each position is saved as
+a position brought in on its own. A position the document shows twice belongs to
+the collection once, at its first appearance, and its comment lists every
+reference. An entry neither `sure` nor verified refuses the whole import unless
+`--force`; a refused import writes nothing. Importing the same relevé again adds
+nothing. The daemon serves the import as `/v1/documents.importReleve`.
+
+**Examples:**
+```bash
+./blunderDB document check releve.json
+./blunderDB document import --db database.db releve.json
+./blunderDB document import --db database.db releve.json --collection "My book" --force
 ```
 
 ## Stats Command
@@ -3064,6 +3102,48 @@ Options:
 Examples:
   # Delete match with ID 1
   blunderdb delete --db database.db --type match --id 1 --confirm
+```
+
+### `blunderdb document check`
+
+```
+Usage: blunderdb document check [options] <releve.json>
+
+Validate a relevé (format, ranks, legal positions) and count its entries by state.
+Nothing is read from or written to a database.
+
+Options:
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb document check releve.json
+  blunderdb document check releve.json --format json
+```
+
+### `blunderdb document import`
+
+```
+Usage: blunderdb document import [options] <releve.json>
+
+Import the positions of a relevé, in the document's order, into a collection named after
+the document (its title, author and edition as description; each position's page and
+label as a comment). An entry neither sure nor verified refuses the import unless --force;
+a refused import writes nothing. Importing the same relevé again adds nothing.
+
+Options:
+  -collection string
+    	Name of the collection (default: the document's title)
+  -db string
+    	Path to the database file (required)
+  -force
+    	Import entries neither sure nor verified
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb document import --db database.db releve.json
+  blunderdb document import --db database.db releve.json --collection "My book" --force
 ```
 
 ### `blunderdb duel contribute`

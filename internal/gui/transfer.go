@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 )
 
 // TransferBatch is what one library group gives to a transfer: rows named by
@@ -125,6 +127,8 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 	}
 	defer ends.release()
 	dst, to, ctx := ends.dst, ends.to, ends.ctx
+	sum := TransferSummary{Group: dst, Errors: []string{}}
+	defer ends.finish(&sum)
 	type source struct {
 		batch TransferBatch
 		from  *database.Database
@@ -138,7 +142,6 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 		}
 	}
 
-	sum := TransferSummary{Group: dst, Errors: []string{}}
 	// The import counts every position it merged, held or not: the account
 	// tells what dst did not hold before, by difference. Another import
 	// running into dst meanwhile is counted with it; without a first count
@@ -192,6 +195,21 @@ type transferEnds struct {
 	from    map[int]*database.Database
 	ctx     context.Context
 	release func()
+	// task is the transfer's one entry in the registry, whatever the number
+	// of libraries it reads.
+	task *jobs.Job
+}
+
+// finish ends the transfer's task from its summary.
+func (e transferEnds) finish(sum *TransferSummary) {
+	switch {
+	case sum.Cancelled:
+		e.task.Finish(context.Canceled)
+	case len(sum.Errors) > 0:
+		e.task.Finish(errors.New(strings.Join(sum.Errors, "; ")))
+	default:
+		e.task.Finish(nil)
+	}
 }
 
 // borrowTransferEnds borrows dst's library (0: the active group) for writing
@@ -230,6 +248,9 @@ func (a *App) borrowTransferEnds(dst int, srcs []int) (transferEnds, error) {
 	}
 	ends.to = to
 	release = append(release, a.imports.addCancel(dst, to, cancel))
+	ends.task = a.jobs.Start(jobs.Spec{Kind: jobs.Transfer, Library: dst, Priority: jobs.Requested, Cancel: cancel})
+	// After a panic, release still ends the task; a second Finish is a no-op.
+	release = append(release, func() { ends.task.Finish(errTaskPanicked) })
 	for _, g := range srcs {
 		if g == dst || ends.from[g] != nil {
 			continue
@@ -298,6 +319,7 @@ func (a *App) CopyPositionToGroup(src int, id int64, dst int) (TransferSummary, 
 	}
 	defer ends.release()
 	sum := TransferSummary{Group: ends.dst, Errors: []string{}}
+	defer ends.finish(&sum)
 	from := ends.from[src]
 	if from == nil {
 		return sum, nil

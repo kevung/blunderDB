@@ -7,6 +7,7 @@ import {gammonnet} from '../models';
 import {rollout} from '../models';
 import {race} from '../models';
 import {training} from '../models';
+import {jobs} from '../models';
 import {openingbook} from '../models';
 
 export function ActivateLibraryGroup(arg1:number):Promise<void>;
@@ -35,6 +36,8 @@ export function CancelBearoffGeneration():Promise<void>;
 export function CancelEvaluationAtRest():Promise<void>;
 
 export function CancelGammonNetBatch():Promise<void>;
+
+export function CancelJob(arg1:number):Promise<void>;
 
 export function CancelLibraryImport(arg1:number):Promise<void>;
 
@@ -115,11 +118,15 @@ export function LibrariesWrittenElsewhere():Promise<Array<number>>;
 
 export function LibraryGroupHolding(arg1:string):Promise<number>;
 
+export function ListJobs():Promise<Array<jobs.Info>>;
+
 export function ListLibraryGroups():Promise<Array<gui.LibraryGroup>>;
 
 export function LooksLikePositionID(arg1:string):Promise<boolean>;
 
 export function MediaURL(arg1:string):Promise<string>;
+
+export function MoveJob(arg1:number,arg2:number):Promise<void>;
 
 export function OpenBearoffFileDialog():Promise<string>;
 
@@ -163,6 +170,8 @@ export function PathExists(arg1:string):Promise<boolean>;
 
 export function PauseBearoffGeneration():Promise<void>;
 
+export function PauseJob(arg1:number):Promise<void>;
+
 export function PickIdentityFile():Promise<domain.IdentityFilePick>;
 
 export function PickTranscriptionFile():Promise<string>;
@@ -181,7 +190,11 @@ export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdent
 
 export function ReleaseMedia(arg1:string):Promise<void>;
 
+export function RemoveJob(arg1:number):Promise<void>;
+
 export function RepairVideoMux(arg1:string):Promise<gui.VideoRepair>;
+
+export function ResumeJob(arg1:number):Promise<void>;
 
 export function RolloutPresets():Promise<Array<gui.RolloutPreset>>;
 

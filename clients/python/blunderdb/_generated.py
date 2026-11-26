@@ -574,6 +574,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.withdraw — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.withdraw", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def documents_import_releve(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/documents.importReleve — JSON."
+        return self._call("/v1/documents.importReleve", payload)
+
     def duels_act(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/duels.act — hand-written handler — see openapi.yaml."
         return self._call("/v1/duels.act", payload)

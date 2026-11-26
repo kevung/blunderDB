@@ -1727,6 +1727,39 @@ export namespace direction {
 
 }
 
+export namespace document {
+	
+	export class ImportResult {
+	    collectionId: number;
+	    collection: string;
+	    createdCollection: boolean;
+	    entries: number;
+	    positions: number;
+	    newPositions: number;
+	    added: number;
+	    repeated: number;
+	    forced: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.collectionId = source["collectionId"];
+	        this.collection = source["collection"];
+	        this.createdCollection = source["createdCollection"];
+	        this.entries = source["entries"];
+	        this.positions = source["positions"];
+	        this.newPositions = source["newPositions"];
+	        this.added = source["added"];
+	        this.repeated = source["repeated"];
+	        this.forced = source["forced"];
+	    }
+	}
+
+}
+
 export namespace domain {
 	
 	export class PlayerAlias {
@@ -5640,6 +5673,45 @@ export namespace ingest {
 		    }
 		    return a;
 		}
+	}
+
+}
+
+export namespace jobs {
+	
+	export class Info {
+	    id: number;
+	    kind: string;
+	    label: string;
+	    library: number;
+	    priority: string;
+	    state: string;
+	    done: number;
+	    total: number;
+	    error?: string;
+	    position: number;
+	    pausable: boolean;
+	    cancelable: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Info(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.kind = source["kind"];
+	        this.label = source["label"];
+	        this.library = source["library"];
+	        this.priority = source["priority"];
+	        this.state = source["state"];
+	        this.done = source["done"];
+	        this.total = source["total"];
+	        this.error = source["error"];
+	        this.position = source["position"];
+	        this.pausable = source["pausable"];
+	        this.cancelable = source["cancelable"];
+	    }
 	}
 
 }

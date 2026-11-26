@@ -125,6 +125,9 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		"recount": true,
 		// The handle's report stays with it; a running fill is cancelled by the bump.
 		"statsFill": true,
+		// The desktop's tracker lists what the frontend calls on this handle,
+		// whichever library it carries.
+		"tracker": true,
 		// A test seam of the handle's own vacuum.
 		"beforeSwapRename": true,
 	}

@@ -14,6 +14,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/filelock"
 	_ "modernc.org/sqlite"
@@ -193,7 +194,7 @@ func TestLibraryGroups_BatchKeepsItsGroupAcrossASwitch(t *testing.T) {
 	a, _ := twoGroups(t)
 	release := make(chan struct{})
 	wrote := make(chan error, 1)
-	a.runGammonNetBatch(0, 2, false, func(ctx context.Context, db *database.Database, _ func(done, total int)) (database.GammonNetBatchSummary, error) {
+	a.runGammonNetBatch(0, 2, jobs.GammonNetMissing, func(ctx context.Context, db *database.Database, _ func(done, total int)) (database.GammonNetBatchSummary, error) {
 		<-release
 		p := database.Position{Board: database.Board{Points: [26]database.Point{{Checkers: 9, Color: 0}}}, Cube: database.Cube{Value: 0, Owner: -1}}
 		_, err := db.SavePosition(&p)

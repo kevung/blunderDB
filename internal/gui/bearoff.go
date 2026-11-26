@@ -16,6 +16,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 )
 
 // Bearoff tables are generated on this machine, verified against gnubg's
@@ -143,19 +144,26 @@ func (a *App) EnsureBearoffTables() {
 	ctx, cancel := context.WithCancel(context.Background())
 	bearoffCancel = cancel
 	bearoffMu.Unlock()
+	task := a.jobs.Start(jobs.Spec{Kind: jobs.BearoffTables, Priority: jobs.Background, Cancel: cancel})
 
 	go func() {
+		var err error
 		defer func() {
 			bearoffMu.Lock()
 			bearoffCancel, bearoffActive = nil, ""
 			bearoffMu.Unlock()
+			if ctx.Err() != nil {
+				err = context.Canceled
+			}
+			task.Finish(err)
 			cancel()
 		}()
-		for _, d := range missing {
+		for i, d := range missing {
 			if ctx.Err() != nil {
 				return
 			}
-			if err := a.generateOne(ctx, dir, d, DefaultBearoffCores(0)); err != nil {
+			task.Progress(i, len(missing))
+			if err = a.generateOne(ctx, dir, d, DefaultBearoffCores(0)); err != nil {
 				if ctx.Err() == nil { // a real failure, not a cancellation
 					a.emitBearoff("bearoff:error", map[string]string{"message": err.Error()})
 				}
@@ -270,16 +278,22 @@ func (a *App) GenerateBearoffTable(kind string, points, checkers, cores int) err
 	ctx, cancel := context.WithCancel(context.Background())
 	bearoffCancel, bearoffPause = cancel, false
 	bearoffMu.Unlock()
+	task := a.jobs.Start(jobs.Spec{Kind: jobs.BearoffTables, Label: d.String(), Priority: jobs.Requested, Cancel: cancel})
 
 	go func() {
+		var err error
 		defer func() {
 			bearoffMu.Lock()
 			bearoffCancel, bearoffActive = nil, ""
 			bearoffMu.Unlock()
+			if ctx.Err() != nil {
+				err = context.Canceled
+			}
+			task.Finish(err)
 			cancel()
 		}()
 		dir := race.DataDir()
-		if err := a.generateOne(ctx, dir, d, DefaultBearoffCores(cores)); err != nil && ctx.Err() == nil {
+		if err = a.generateOne(ctx, dir, d, DefaultBearoffCores(cores)); err != nil && ctx.Err() == nil {
 			a.emitBearoff("bearoff:error", map[string]string{"message": err.Error()})
 		}
 	}()

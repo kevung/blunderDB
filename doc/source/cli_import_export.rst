@@ -273,6 +273,33 @@ seul un lot où rien n'a été reconnu sort en erreur.
      "positions_imported": 341
    }
 
+document — Importer les positions d'un document
+-----------------------------------------------
+
+Range dans une collection les positions d'un livre, d'un article ou d'une page
+web, dans l'ordre du document, à partir de son **relevé** : un fichier JSON qui
+les liste, chacune avec sa page, son libellé, sa position (un XGID : pions,
+videau, trait, dés, score et longueur du match), son état (``sure``,
+``to-verify`` ou ``uncertain``) et le fait qu'une personne l'a vérifiée ou non.
+Seules les positions entrent en base : ni image, ni texte de l'auteur.
+
+.. code-block:: bash
+
+   ./blunderdb document check releve.json
+   ./blunderdb document import --db base.db releve.json
+   ./blunderdb document import --db base.db releve.json --collection "Mon livre" --force
+
+``check`` valide le relevé (format, rangs continus depuis 1, positions légales,
+champs inconnus refusés) et compte ses entrées par état, sans rien écrire.
+``import`` crée la collection au nom du document (ou ``--collection``) ; sa
+description porte le titre, l'auteur et l'édition (ou l'URL), et chaque
+position porte sa référence (« p. 146, Problem 191 ») en commentaire, lisible
+hors de la collection. Une position que le document montre deux fois n'y entre
+qu'une fois, à sa première apparition, et son commentaire cite chaque
+référence. Une entrée ni ``sure`` ni vérifiée fait refuser tout l'import, sauf
+``--force`` ; un import refusé n'écrit rien. Réimporter le même relevé n'ajoute
+rien. Le démon sert l'import sous ``/v1/documents.importReleve``.
+
 export — Exporter des données
 ------------------------------
 
