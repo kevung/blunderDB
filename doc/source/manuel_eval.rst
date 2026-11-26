@@ -240,9 +240,12 @@ Un sélecteur à trois segments en tête du panneau choisit sa vue : **Décision
 calcule : les cartes et l'évaluation au repos partagent un seul créneau de
 calcul, lancer l'une annule l'autre, et chaque changement de vue relance le
 calcul de la vue qui apparaît. Dans les deux cartes, un résultat d'abord
-affiché en 0-ply est affiné à la profondeur d'affichage configurée ; la
-progression s'écrit « 2-ply : n / N ». Changer de position dans l'application
-annule le calcul en cours.
+affiché en 0-ply est affiné à la profondeur d'affichage configurée, 2-ply au
+plus ; la progression s'écrit « 2-ply : n / N ». Changer de position dans
+l'application annule le calcul en cours. Un calcul affiché passe avant les
+tâches de fond : pendant qu'il tourne, une analyse gammonNet par lots ou un
+rollout en cours *cède* à son prochain point de contrôle, puis reprend (voir
+:ref:`le panneau Calculs <manuel_calculs>`).
 
 **Carte des scores.** Une décision de videau n'est pas une propriété du
 damier : les mêmes pions, le même compte de pips, se doublent à 2-away/4-away
@@ -264,13 +267,17 @@ case dit le verdict de videau — *ND* (pas de double), *D/T* (double, prend),
 *D/P* (double, passe), *TG* (trop bon) — avec les mêmes teintes ; la marge
 d'un double est la plus petite de celle entre doubler et ne pas doubler et de
 celle entre prendre et passer. Le score de
-la position est encadré ; une case encore à 0-ply est en pointillé. La
-légende à droite a un bouton par coup (lettre, notation, nombre de scores) :
-un clic met ses cases en évidence. Le survol d'une case montre son coup sur
-le plateau. Un clic sur une case ouvre un volet avec le score, les deux
-meilleurs coups et leurs équités, et **Évaluer**, qui bascule la vue Décision
-à ce score ; une case où la position est impossible n'a pas **Évaluer**. Le sélecteur *Match en N* choisit la longueur ; sa valeur par
-défaut se règle dans la configuration, onglet gammonNet.
+la position est encadré ; une case encore à 0-ply est en pointillé. Une case
+où le videau de la position ne peut pas se trouver porte un tiret. La
+légende à droite a un bouton par coup ou par verdict (lettre ou sigle,
+notation, nombre de scores) : un clic met ses cases en évidence. Avec des dés,
+le survol d'une case montre son coup sur le plateau. Un clic sur une case
+ouvre un volet avec le score, puis les deux meilleurs coups et leurs équités,
+ou les équités de pas de double, double/prise et double/passe et le verdict, et
+**Évaluer**, qui bascule la vue Décision à ce score ; le volet d'une case au
+tiret dit *Refusé* et n'a pas **Évaluer**. Le sélecteur *Match en N* choisit
+la longueur ; sa valeur par défaut (9) se règle dans la configuration, onglet
+gammonNet, ligne *Match par défaut*.
 
 Les commandes ``sm`` et ``cm`` ouvrent cette vue. Elle remplace l'ancienne
 matrice du videau, dont la grille se calcule toujours hors de l'interface avec
@@ -286,12 +293,14 @@ compte les jets après lesquels un double serait refusé : double/passe, ou trop
 bon pour être joué ; la ligne et la case portent « D/P » et un cadre, et le
 compte « n/36 » filtre les lignes d'un clic. Il n'existe que si le joueur peut
 doubler. L'en-tête donne aussi le meilleur et le pire jet, et l'écart-type.
+Un jet sans coup légal s'écrit *Danse*.
 
 Le fil d'Ariane (« Départ › moi 6-4 24/14 › lui 5-2 13/8 24/22 › Mes jets »)
-dit d'où vient la position évaluée, et le plateau le suit ; chaque maillon
-remonte. Sur un jet sélectionné, **Réponses** joue son meilleur coup et affiche
-les 21 réponses suivantes, **Autre coup…** fait choisir un autre coup légal
-de ce jet. La profondeur est sans limite. Changer la position d'une autre
+dit d'où vient la position évaluée et à qui sont les jets affichés (*Mes jets*
+ou *Ses jets*), et le plateau le suit ; chaque maillon remonte. Sur un jet
+sélectionné, **Réponses** joue son meilleur coup et affiche les 21 réponses
+suivantes, **Autre coup…** fait choisir un autre coup légal de ce jet (pas sur
+une danse). La profondeur est sans limite. Changer la position d'une autre
 façon remet le fil à zéro. Le menu contextuel d'un coup candidat (Analyse ou
 Évaluation) offre *Réponses adverses*, qui ouvre cette vue sur la position
 après ce coup (grisé quand la notation du coup peut mener à plusieurs

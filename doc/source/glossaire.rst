@@ -117,7 +117,8 @@ Décision (*decision*)
 
 Verdict
     Laquelle des options d'une décision de videau est la bonne : *pas de
-    double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*.
+    double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*,
+    abrégés *ND*, *D/T*, *D/P* et *TG*.
     Deux cas particuliers ne sont jamais laissés vides : *pas de décision*
     (le régime n'y est pas habilité) et *refusé* (le moteur a décliné la
     position, typiquement un score hors de portée de sa table).
@@ -126,6 +127,38 @@ Trop bon (*too good*)
     Le verdict qui dit que la position est si favorable que doubler
     inciterait l'adversaire à passer alors que jouer sans doubler rapporte
     davantage — un videau qu'il vaut mieux garder.
+
+Carte des scores (*score map*)
+    La meilleure décision d'une même position — coup avec des dés, verdict
+    de videau sans — à chaque score d'un match, en une grille *away × away*.
+    Voir :ref:`eval_cartes`.
+
+Carte des jets (*roll map*)
+    Ce que fait chacun des 21 jets d'une position où le joueur au trait n'a
+    pas encore lancé : meilleur coup, équité après lui, écart à la moyenne
+    pondérée par les chances du jet. Voir :ref:`eval_cartes`.
+
+Marché perdu (*lost market*)
+    Un jet après lequel un double du joueur serait refusé : sa décision de
+    videau, sur la position que l'adversaire va lancer, est double/passe ou
+    trop bon. Ne se compte que si le joueur a accès au videau.
+
+Tâche (*task*)
+    Un travail qui dure au-delà d'un clic — analyse gammonNet par lots,
+    rollout, maintenance, import, tables de bearoff, synchronisation —,
+    rattaché à sa bibliothèque et listé dans le :ref:`panneau Calculs
+    <manuel_calculs>`.
+
+File (*queue*)
+    L'ordre d'attente des tâches qui écrivent une même bibliothèque : une
+    seule tourne à la fois, les autres attendent leur tour au lieu d'être
+    refusées.
+
+Priorité visible (*visible priority*)
+    Le rang d'un calcul dont le résultat est à l'écran (l'évaluation, une
+    carte) : il passe avant un rollout demandé, qui passe lui-même avant une
+    analyse de fond ; une tâche moins prioritaire *cède* à son point de
+    contrôle et reprend ensuite.
 
 Chance (*luck*)
     L'apport du lancer de dés à l'équité d'un coup, lu depuis le fichier

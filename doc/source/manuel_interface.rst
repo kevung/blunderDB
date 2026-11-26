@@ -210,17 +210,21 @@ groupes : *En cours*, *En attente*, *Terminés*. Chaque ligne donne le genre de
 la tâche, son objet, la bibliothèque qui la porte (pastille de la couleur de son
 groupe), une barre de progression et le compteur « fait / total », qui ouvre la
 bibliothèque de la tâche. Une tâche en cours se met en *Pause* (et se
-*Reprend*) ou s'*Annule* ; une tâche d'import réduite se rouvre par *Afficher*.
-Une tâche en attente *Monte*, *Descend* dans la file de sa bibliothèque ou se
-*Retire* ; une tâche terminée se *Retire* de la liste. *Tout en pause* arrête
-les tâches en cours et en attente qui peuvent l'être (certaines ne se mettent
-pas en pause), puis les reprend toutes. ÉCHAP ferme le
-panneau.
+*Reprend*) quand elle le permet — une analyse gammonNet, un rollout —, et
+s'*Annule* quand elle peut s'arrêter ; une tâche d'import réduite se rouvre par
+*Afficher*. Une tâche en attente *Monte*, *Descend* dans la file de sa
+bibliothèque ou se *Retire* ; mise en pause, elle reste dans *En attente*,
+marquée *Pause*, avec *Reprendre*. Une tâche terminée dit son issue (*Fini*,
+*Annulé*, *Erreur*) et se *Retire* de la liste. *Tout en pause* met en pause
+les tâches en attente et celles des tâches en cours qui le permettent ; le
+bouton devient alors *Tout reprendre*. La liste vit le temps de la session.
+ÉCHAP ferme le panneau.
 
 En tête du panneau, « Cœurs 3 / 8 » compte les cœurs que les calculs du moteur
 occupent sur ceux de la machine. Une tâche en cours marquée *Cède* attend à son
-point de contrôle qu'un calcul plus prioritaire finisse — l'évaluation à
-l'écran, ou un rollout demandé devant une analyse de fond — puis reprend
+point de contrôle qu'un calcul plus prioritaire finisse — l'évaluation ou la
+:ref:`carte <eval_cartes>` à l'écran, ou un rollout demandé devant une analyse
+de fond — puis reprend
 d'elle-même ; la puce Calculs porte la même marque.
 
 L'onglet **Anki** porte un **badge** quand des cartes sont à réviser, tous
@@ -390,8 +394,10 @@ retour.
 Les tâches de fond restent attachées à leur bibliothèque : un import de
 fichiers de matchs, le dossier surveillé et l'analyse GammonNet par lots
 continuent dans le groupe où ils ont commencé quand on en affiche un autre, et
-n'écrivent jamais dans la bibliothèque affichée. Leur progression et leur
-compte rendu restent dans leur groupe : tant qu'il n'est pas affiché, son
+n'écrivent jamais dans la bibliothèque affichée. Leur progression se suit de
+partout dans le :ref:`panneau Calculs <manuel_calculs>`, qui nomme la
+bibliothèque de chaque tâche ; leur compte rendu reste dans leur groupe : tant
+qu'il n'est pas affiché, son
 en-tête porte une pastille, qui clignote pendant que la tâche travaille et
 devient fixe quand elle est terminée. Au retour sur le groupe, la pastille
 s'efface, la barre d'état dit ce que la tâche a fait et la liste des matchs
@@ -783,8 +789,8 @@ statistiques se lance tout seul, à l'ouverture.
 * **Analyses gammonNet périmées** — décrites plus bas.
 * **Matchs sans statistiques** — les matchs dont les statistiques ne sont pas
   encore calculées ; l'action les calcule tous. Une base ouverte en écriture
-  qui en compte les calcule d'elle-même en arrière-plan, par lots : la barre
-  d'état montre la progression de cette ligne et son bouton d'annulation, les
+  qui en compte les calcule d'elle-même en arrière-plan, par lots : le panneau
+  Calculs montre la progression de cette tâche et son bouton d'annulation, les
   badges des tournois et l'onglet Joueurs du panneau Statistiques attendent la
   fin du calcul, et le reste de l'application reste utilisable. Ouvrir une
   autre base l'arrête. En lecture seule, ou en ligne de commande, la première
@@ -804,10 +810,10 @@ Un compte coûteux (il lit une table entière) attend le bouton **Compter**.
 Un compte de positions ouvre ces positions dans la liste ; celui des matchs
 sans statistiques ouvre ces matchs dans le panneau des matchs. Une opération
 tourne en arrière-plan : sa progression et un bouton d'annulation s'affichent
-dans la barre d'état, et une seule opération qui écrit dans la base tourne à
-la fois — une analyse gammonNet, un rollout ou une autre opération de
-maintenance en cours fait refuser la suivante, avec le nom de celle qui
-occupe la base. Sur une base ouverte en lecture seule, les actions sont
+dans le :ref:`panneau Calculs <manuel_calculs>`. Une seule opération écrit la
+base à la fois : pendant qu'une opération ou une analyse gammonNet par lots
+tourne, les boutons de l'onglet sont grisés, et un travail demandé d'ailleurs
+attend son tour dans la file de la bibliothèque (voir plus bas). Sur une base ouverte en lecture seule, les actions sont
 désactivées. Les mêmes opérations existent en ligne de commande
 (``blunderdb maintenance``).
 
@@ -855,11 +861,10 @@ gammonNet de la base : il attend le bouton **Compter**. Le lot recalcule sa
 propre liste au moment de démarrer.
 
 Les deux lots sont **bornés, visibles et annulables, jamais un démon
-silencieux** : leur profondeur, leur progression (``positions analysées / total``,
-dès ``0`` au lancement) et un
-bouton d'annulation apparaissent dans la barre de statut pendant toute leur
-durée, et disparaissent une fois terminés au profit d'un message résumant le
-résultat — combien de positions ont été **analysées**, combien ont été
+silencieux** : leur progression (``positions analysées / total``, dès ``0`` au
+lancement), leur pause et leur annulation se trouvent dans le panneau Calculs
+pendant toute leur durée ; une fois terminés, un message de la barre d'état
+résume le résultat — combien de positions ont été **analysées**, combien ont été
 **refusées** (une position que gammonNet décline d'évaluer, comme un score de
 match hors de portée de sa table de match, ce qui n'est jamais une panne) et
 combien ont **échoué** (retentées, inchangées, au prochain lancement).
@@ -872,8 +877,8 @@ calcul, qui reste sans analyse.
 Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un rollout
 stocké ou une opération de maintenance. Un travail demandé pendant qu'un autre
 est en cours n'est pas refusé : il prend place dans la file de la bibliothèque,
-après les travaux de même priorité, et part dès que son tour vient ; la barre
-de statut annonce « en attente » le lot gammonNet qui attend. Un rollout passe
+après les travaux de même priorité, et part dès que son tour vient ; le panneau
+Calculs le range dans *En attente*. Un rollout passe
 avant un lot gammonNet ou une opération de maintenance qui attendent ; un lot
 gammonNet en cours lui rend la bibliothèque entre deux positions et reprend
 après lui ce qui reste à analyser. Un lot gammonNet en cours cède aussi la

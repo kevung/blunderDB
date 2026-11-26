@@ -754,7 +754,7 @@ La barre du brouillon porte ses deux seules sorties, au bout à droite, après l
 menu « ⋯ ». « **Terminer** »
 (CTRL-ENTREE) écrit le match dans la bibliothèque et libère le brouillon ;
 l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression
-et son annulation dans la barre d'état. « **Abandonner** » supprime le
+et son annulation dans le panneau :ref:`Calculs <manuel_calculs>`. « **Abandonner** » supprime le
 brouillon sans match ; la confirmation n'est demandée que pour un brouillon qui
 n'a jamais été terminé, puisqu'il emporte tout ce qui y est écrit. À côté, la
 barre dit ce que Terminer fera — un nouveau match, ou le remplacement du match

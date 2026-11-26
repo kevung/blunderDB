@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"POT-Creation-Date: 2026-11-26 03:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -258,28 +258,28 @@ msgstr ""
 msgid ""
 "**La progression se lit en positions par seconde.** La fenêtre d'import "
 "donne le pourcentage lu, le débit, le temps restant estimé et les comptes"
-" en cours (importés, doublons, en erreur). **Réduire** la range dans la "
-"barre de statut, d'où une pastille la rouvre : l'import continue pendant "
-"que vous travaillez, et la fenêtre revient d'elle-même avec le rapport à "
-"la fin. Les cent premières erreurs sont listées ; les suivantes sont "
-"comptées, et le journal de l'application les nomme toutes. En ligne de "
-"commande, ``blunderdb import --type batch`` affiche la même progression "
-"sur la sortie d'erreur, et ``--format json`` la rend dans l'objet final "
-"(``progress``)."
+" en cours (importés, doublons, en erreur). **Réduire** la range : "
+"l'import, une tâche du :ref:`panneau Calculs <manuel_calculs>`, s'y "
+"rouvre par *Afficher* ; il continue pendant que vous travaillez, et la "
+"fenêtre revient d'elle-même avec le rapport à la fin. Les cent premières "
+"erreurs sont listées ; les suivantes sont comptées, et le journal de "
+"l'application les nomme toutes. En ligne de commande, ``blunderdb import "
+"--type batch`` affiche la même progression sur la sortie d'erreur, et "
+"``--format json`` la rend dans l'objet final (``progress``)."
 msgstr ""
 "**Η πρόοδος μετριέται σε θέσεις ανά δευτερόλεπτο.** Το παράθυρο εισαγωγής"
 " δείχνει το ποσοστό που έχει διαβαστεί, τον ρυθμό, τον εκτιμώμενο χρόνο "
 "που απομένει και τις τρέχουσες μετρήσεις (εισηγμένα, διπλότυπα, με "
-"σφάλμα). Η **Ελαχιστοποίηση** το τοποθετεί στη γραμμή κατάστασης, από "
-"όπου ένα σήμα το ανοίγει ξανά: η εισαγωγή συνεχίζεται ενώ εργάζεστε, και "
-"το παράθυρο επιστρέφει μόνο του με την αναφορά στο τέλος. Τα πρώτα εκατό "
-"σφάλματα παρατίθενται· τα υπόλοιπα μετρώνται, και το αρχείο καταγραφής "
-"της εφαρμογής τα κατονομάζει όλα. Στη γραμμή εντολών, το ``blunderdb "
-"import --type batch`` εμφανίζει την ίδια πρόοδο στην έξοδο σφαλμάτων, και"
-" το ``--format json`` την επιστρέφει στο τελικό αντικείμενο "
-"(``progress``)."
+"σφάλμα). Η **Ελαχιστοποίηση** το βάζει στην άκρη: η εισαγωγή, μια εργασία"
+" του :ref:`πίνακα Υπολογισμοί <manuel_calculs>`, ανοίγει ξανά εκεί με "
+"*Εμφάνιση*· συνεχίζεται ενώ εργάζεστε, και το παράθυρο επιστρέφει μόνο "
+"του με την αναφορά στο τέλος. Τα πρώτα εκατό σφάλματα παρατίθενται· τα "
+"υπόλοιπα μετρώνται, και το αρχείο καταγραφής της εφαρμογής τα κατονομάζει"
+" όλα. Στη γραμμή εντολών, το ``blunderdb import --type batch`` εμφανίζει "
+"την ίδια πρόοδο στην έξοδο σφαλμάτων, και το ``--format json`` την "
+"επιστρέφει στο τελικό αντικείμενο (``progress``)."
 
-#: ../../source/manuel_partage.rst:113
+#: ../../source/manuel_partage.rst:114
 msgid ""
 "**Chaque fichier d'un import est journalisé, et un import interrompu se "
 "reprend.** Pour chaque fichier, le journal du lot garde le chemin, la "
@@ -324,7 +324,7 @@ msgstr ""
 "``imports.files``. Το ημερολόγιο είναι δεδομένο της εισαγωγής: το άνοιγμα"
 " ή η ανάγνωση μιας βάσης δεν γράφει τίποτα σε αυτό."
 
-#: ../../source/manuel_partage.rst:131
+#: ../../source/manuel_partage.rst:132
 msgid ""
 "**Un import coupé par l'arrêt de l'application se reprend depuis la "
 "fenêtre.** La commande ``:resume`` liste les imports que rien n'a terminé"
@@ -338,7 +338,7 @@ msgstr ""
 " ξανά τον φάκελο ή τα αρχεία, όπως το ``--dir`` στη γραμμή εντολών. Το "
 "ημερολόγιο της δέσμης αποφασίζει τι δεν διαβάζεται ξανά."
 
-#: ../../source/manuel_partage.rst:137
+#: ../../source/manuel_partage.rst:138
 msgid ""
 "**Un gros dossier s'importe en mode masse.** À partir de 200 fichiers, "
 "blunderDB écrit avec un cache plus grand et moins de points de contrôle. "
@@ -360,7 +360,7 @@ msgstr ""
 "τα οποία ξαναχτίζει το επόμενο άνοιγμα (το αρχείο καταγραφής το "
 "αναφέρει)."
 
-#: ../../source/manuel_partage.rst:146
+#: ../../source/manuel_partage.rst:147
 msgid ""
 "**Ce que blunderDB n'écrit jamais** : une chance recalculée — elle est "
 "lue dans le fichier source, ou reste inconnue — et un rollout qu'il n'a "
@@ -374,11 +374,11 @@ msgstr ""
 "ανοίγονται. Αποθηκεύονται μόνο τα rollout που παράγει το blunderDB "
 "(:ref:`rollouts`), δίπλα στην ανάλυση."
 
-#: ../../source/manuel_partage.rst:155
+#: ../../source/manuel_partage.rst:156
 msgid "Panneau Métadonnées"
 msgstr "Πίνακας Μεταδεδομένων"
 
-#: ../../source/manuel_partage.rst:157
+#: ../../source/manuel_partage.rst:158
 msgid ""
 "Le panneau **Métadonnées** (*CTRL-M*) affiche les informations générales "
 "de la base de données courante : *Utilisateur*, date de création "
@@ -394,7 +394,7 @@ msgstr ""
 " φεύγετε από το πεδίο· η έκδοση είναι μόνο για ανάγνωση. Προσβάσιμο και "
 "μέσω της εντολής ``meta``."
 
-#: ../../source/manuel_partage.rst:163
+#: ../../source/manuel_partage.rst:164
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -404,11 +404,11 @@ msgstr ""
 ":ref:`diffusion_controlee`. Μια συνηθισμένη βάση δεν εμφανίζει αυτή την "
 "ενότητα."
 
-#: ../../source/manuel_partage.rst:169
+#: ../../source/manuel_partage.rst:170
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης"
 
-#: ../../source/manuel_partage.rst:171
+#: ../../source/manuel_partage.rst:172
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -420,7 +420,7 @@ msgstr ""
 " την εξαγωγή**: να σημάνει το αρχείο με την προέλευσή του και να το "
 "προστατεύσει με κωδικό πρόσβασης."
 
-#: ../../source/manuel_partage.rst:178
+#: ../../source/manuel_partage.rst:179
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -433,11 +433,11 @@ msgstr ""
 "άλλης, και πουθενά δεν καταγράφεται ποιος την άνοιξε, πότε, ούτε από πού "
 "προέρχεται το περιεχόμενό της."
 
-#: ../../source/manuel_partage.rst:184
+#: ../../source/manuel_partage.rst:185
 msgid "Marquer une base de son origine"
 msgstr "Σήμανση μιας βάσης με την προέλευσή της"
 
-#: ../../source/manuel_partage.rst:186
+#: ../../source/manuel_partage.rst:187
 msgid ""
 "La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
 "nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
@@ -461,11 +461,11 @@ msgstr ""
 " ένδειξη προόδου για όσο διαρκεί η εγγραφή, το παράθυρο κλείνει από μόνο "
 "του και το αποτέλεσμα εμφανίζεται στη γραμμή κατάστασης."
 
-#: ../../source/manuel_partage.rst:198
+#: ../../source/manuel_partage.rst:199
 msgid "Neuf points méritent l'attention :"
 msgstr "Εννέα σημεία αξίζουν προσοχή:"
 
-#: ../../source/manuel_partage.rst:200
+#: ../../source/manuel_partage.rst:201
 msgid ""
 "**La portée** : depuis une liste — une recherche, une collection —, la "
 "ligne *Portée* choisit entre la *Liste courante* et *Toute la "
@@ -481,7 +481,7 @@ msgstr ""
 " κάθε αγώνας που είναι τσεκαρισμένος φεύγει με όλες τις θέσεις του. Από "
 "τη βιβλιοθήκη, το εύρος είναι η βιβλιοθήκη."
 
-#: ../../source/manuel_partage.rst:205
+#: ../../source/manuel_partage.rst:206
 msgid ""
 "**Toute la bibliothèque** est l'export du serveur et de ``export --type "
 "database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
@@ -493,7 +493,7 @@ msgstr ""
 "τράπουλες Anki με το ιστορικό επανάληψής τους, και οι μεταγραφές που "
 "βρίσκονται σε εξέλιξη φεύγουν μαζί με τα υπόλοιπα."
 
-#: ../../source/manuel_partage.rst:209
+#: ../../source/manuel_partage.rst:210
 msgid ""
 "**La synchronisation** : avec *Toute la bibliothèque*, la ligne "
 "*Synchronisation* propose *Seulement ce qui est nouveau depuis le dernier"
@@ -509,7 +509,7 @@ msgstr ""
 "είναι εκείνα του νέου υλικού (βλ. :ref:`Συγχρονισμός δύο υπολογιστών "
 "<synchroniser_deux_machines>`)."
 
-#: ../../source/manuel_partage.rst:215
+#: ../../source/manuel_partage.rst:216
 msgid ""
 "**Un match part avec son brouillon de transcription**, sous la case "
 "*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
@@ -529,7 +529,7 @@ msgstr ""
 "ένας σύνδεσμος ιστού φεύγει ως έχει. Το αρχείο από το οποίο εισήχθη ένας "
 "αγώνας φεύγει επίσης μόνο με το όνομά του."
 
-#: ../../source/manuel_partage.rst:222
+#: ../../source/manuel_partage.rst:223
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
 "case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
@@ -542,7 +542,7 @@ msgstr ""
 "ως έναν. Ένα ψευδώνυμο που δεν ονομάζει κανέναν από τους εξαγόμενους "
 "αγώνες μένει σε εσάς."
 
-#: ../../source/manuel_partage.rst:226
+#: ../../source/manuel_partage.rst:227
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la liste "
 "arrive tronquée.** La liste des collections affiche, pour chacune, la "
@@ -566,7 +566,7 @@ msgstr ""
 "λίστα την επισημαίνει με κόκκινο «παγωμένη» μαζί με μια σημείωση· αν "
 "τσεκάρετε *+ οι θέσεις τους*, μένει ζωντανή."
 
-#: ../../source/manuel_partage.rst:235
+#: ../../source/manuel_partage.rst:236
 msgid ""
 "**Un tournoi part toujours avec ses matchs** : sans eux, le lien "
 "tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un "
@@ -586,7 +586,7 @@ msgstr ""
 "τουρνουά της· ο φάκελος εξόδου της Διεύθυνσης μένει σε εσάς. Η Διεύθυνση "
 "βρίσκεται ανοίγοντας το αρχείο ή εισάγοντάς το σε άλλη βάση."
 
-#: ../../source/manuel_partage.rst:243
+#: ../../source/manuel_partage.rst:244
 msgid ""
 "**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
 "case *avec mon historique* emporte en plus l'état de chaque carte et le "
@@ -600,7 +600,7 @@ msgstr ""
 "ασφαλείας, ή οι τράπουλές σας μεταφερμένες σε άλλο μηχάνημα. Είναι "
 "ξετσεκαρισμένο για μια λίστα, τσεκαρισμένο για τη βιβλιοθήκη."
 
-#: ../../source/manuel_partage.rst:247
+#: ../../source/manuel_partage.rst:248
 msgid ""
 "**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
 "recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
@@ -614,7 +614,7 @@ msgstr ""
 "αγώνα ή ένα τουρνουά με τον αριθμό του αριθμείται εκ νέου για το αρχείο· "
 "αν υποδεικνύει κάτι που δεν φεύγει, μένει σε εσάς."
 
-#: ../../source/manuel_partage.rst:253
+#: ../../source/manuel_partage.rst:254
 msgid ""
 "Les collections, leçons, transcriptions, paquets Anki, alias et tournois "
 "partent avec les dates de création et d'ajout qu'ils portent chez vous, "
@@ -624,7 +624,7 @@ msgstr ""
 "και τα τουρνουά φεύγουν με τις ημερομηνίες δημιουργίας και προσθήκης που "
 "φέρουν σε εσάς, όχι με την ημερομηνία της εξαγωγής."
 
-#: ../../source/manuel_partage.rst:257
+#: ../../source/manuel_partage.rst:258
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
 "le **fichier produit** ; ils sont préremplis depuis la base source."
@@ -632,11 +632,11 @@ msgstr ""
 "Τα πεδία *Χρήστης*, *Περιγραφή* και *Ημερομηνία δημιουργίας* περιγράφουν "
 "το **παραγόμενο αρχείο**· είναι προσυμπληρωμένα από τη βάση προέλευσης."
 
-#: ../../source/manuel_partage.rst:260
+#: ../../source/manuel_partage.rst:261
 msgid "Cocher **Filigrane** fait apparaître deux champs :"
 msgstr "Η επιλογή **Υδατογράφημα** εμφανίζει δύο πεδία:"
 
-#: ../../source/manuel_partage.rst:262
+#: ../../source/manuel_partage.rst:263
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -648,7 +648,7 @@ msgstr ""
 "είναι **υποχρεωτικό**: όσο είναι κενό, περιβάλλεται από κόκκινο "
 "περίγραμμα και το κουμπί εξαγωγής παραμένει ανενεργό."
 
-#: ../../source/manuel_partage.rst:265
+#: ../../source/manuel_partage.rst:266
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -656,7 +656,7 @@ msgstr ""
 "**Σημείωση**, προαιρετική — όροι χρήσης, διεύθυνση επικοινωνίας, ένα "
 "αίτημα να μην αναδιανεμηθεί."
 
-#: ../../source/manuel_partage.rst:268
+#: ../../source/manuel_partage.rst:269
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -671,7 +671,7 @@ msgstr ""
 "SQLite και το blunderDB είναι ελεύθερο λογισμικό. Δεν εμποδίζει τίποτε: "
 "λέει από πού προέρχεται το αρχείο."
 
-#: ../../source/manuel_partage.rst:274
+#: ../../source/manuel_partage.rst:275
 msgid ""
 "Les commentaires que vous avez écrits sont signés avec la même identité :"
 " le destinataire voit qu'ils viennent de vous, et s'ils ont été altérés "
@@ -687,11 +687,11 @@ msgstr ""
 "εξαγωγής, πόσα από τα σχόλιά σας υπογράφηκαν· μια εξαγωγή χωρίς σήμανση "
 "δεν υπογράφει κανένα."
 
-#: ../../source/manuel_partage.rst:281
+#: ../../source/manuel_partage.rst:282
 msgid "Identité d'émetteur"
 msgstr "Ταυτότητα εκδότη"
 
-#: ../../source/manuel_partage.rst:283
+#: ../../source/manuel_partage.rst:284
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -705,7 +705,7 @@ msgstr ""
 "σας τα αρχεία φέρουν το ίδιο δημόσιο αποτύπωμα, της μορφής "
 "``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel_partage.rst:288
+#: ../../source/manuel_partage.rst:289
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -720,7 +720,7 @@ msgstr ""
 "**Το αρχείο αυτό επιτρέπει την υπογραφή στο όνομά σας: μην το "
 "μοιράζεστε.**"
 
-#: ../../source/manuel_partage.rst:294
+#: ../../source/manuel_partage.rst:295
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -730,7 +730,7 @@ msgstr ""
 "*Ταυτότητα εκδότη* εμφανίζει το όνομα και το αποτύπωμά σας και προσφέρει "
 "*Αποθήκευση ταυτότητας…*, *Φόρτωση ταυτότητας…* και *Αναδημιουργία…*."
 
-#: ../../source/manuel_partage.rst:300
+#: ../../source/manuel_partage.rst:301
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -743,7 +743,7 @@ msgstr ""
 "μπορεί να συνεχίσει να υπογράφει με το παλιό σας αποτύπωμα, και οι "
 "σημάνσεις αυτές θα παραμένουν έγκυρες."
 
-#: ../../source/manuel_partage.rst:305
+#: ../../source/manuel_partage.rst:306
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -753,7 +753,7 @@ msgstr ""
 "να δημοσιοποιήσετε το νέο σας αποτύπωμα και να αποκηρύξετε το παλιό "
 "απέναντι στους παραλήπτες σας."
 
-#: ../../source/manuel_partage.rst:309
+#: ../../source/manuel_partage.rst:310
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -761,11 +761,11 @@ msgstr ""
 "Η αναδημιουργία αντικαθιστά το τρέχον κλειδί· το blunderDB προτείνει να "
 "το αποθηκεύσετε πριν το αντικαταστήσει."
 
-#: ../../source/manuel_partage.rst:313
+#: ../../source/manuel_partage.rst:314
 msgid "Protéger une base par un mot de passe"
 msgstr "Προστασία μιας βάσης με κωδικό πρόσβασης"
 
-#: ../../source/manuel_partage.rst:315
+#: ../../source/manuel_partage.rst:316
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -775,7 +775,7 @@ msgstr ""
 "προστατευμένου αρχείου· το εικονίδιο σε σχήμα ματιού τον εμφανίζει **όσο "
 "το κρατάτε πατημένο** και τον κρύβει ξανά μόλις το αφήσετε."
 
-#: ../../source/manuel_partage.rst:319
+#: ../../source/manuel_partage.rst:320
 msgid ""
 "Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
 "compris si le nom choisi dans la fenêtre d'enregistrement finit en "
@@ -791,7 +791,7 @@ msgstr ""
 "τότε τον κωδικό και εγκαθιστά δίπλα μια συνηθισμένη βάση· μετά δεν "
 "ζητείται τίποτε άλλο."
 
-#: ../../source/manuel_partage.rst:326
+#: ../../source/manuel_partage.rst:327
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -805,7 +805,7 @@ msgstr ""
 "παραμένει δικό σας αν σκοπεύετε να το διαβιβάσετε — και η διαγραφή "
 "γίνεται μόνο μετά από επιτυχές άνοιγμα."
 
-#: ../../source/manuel_partage.rst:333
+#: ../../source/manuel_partage.rst:334
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -817,7 +817,7 @@ msgstr ""
 "συνημμένο που προωθήθηκε κατά λάθος. Δεν προστατεύει από εκείνον στον "
 "οποίο δώσατε τον κωδικό."
 
-#: ../../source/manuel_partage.rst:338
+#: ../../source/manuel_partage.rst:339
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -825,7 +825,7 @@ msgstr ""
 "Ο κωδικός επαληθεύεται σε **κάθε** άνοιγμα, ακόμη και όταν το αρχείο έχει"
 " ήδη ανοιχτεί προηγουμένως σε αυτόν τον υπολογιστή."
 
-#: ../../source/manuel_partage.rst:341
+#: ../../source/manuel_partage.rst:342
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -841,7 +841,7 @@ msgstr ""
 " ως τέτοιος, όπως και κάθε αλλοίωση του κρυπτογραφημένου αρχείου — ποτέ "
 "δεν καταλήγει κανείς σιωπηλά με κατεστραμμένη βάση."
 
-#: ../../source/manuel_partage.rst:348
+#: ../../source/manuel_partage.rst:349
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -849,11 +849,11 @@ msgstr ""
 "Η κεφαλίδα του προστατευμένου αρχείου παραμένει **μη κρυπτογραφημένη**: η"
 " προέλευσή του παραμένει αναγνώσιμη χωρίς τον κωδικό."
 
-#: ../../source/manuel_partage.rst:352
+#: ../../source/manuel_partage.rst:353
 msgid "Lire l'origine d'un fichier"
 msgstr "Ανάγνωση της προέλευσης ενός αρχείου"
 
-#: ../../source/manuel_partage.rst:354
+#: ../../source/manuel_partage.rst:355
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -865,11 +865,11 @@ msgstr ""
 "μια ενότητα **Προέλευση**, μόνο για ανάγνωση, που δείχνει τι "
 "καταχωρήθηκε, από ποιον, πότε, και την κατάσταση της υπογραφής:"
 
-#: ../../source/manuel_partage.rst:359
+#: ../../source/manuel_partage.rst:360
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "«✓ σημάνθηκε από εσάς»: το αρχείο φέρει τη δική σας σήμανση, ανέπαφη·"
 
-#: ../../source/manuel_partage.rst:361
+#: ../../source/manuel_partage.rst:362
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -878,15 +878,15 @@ msgstr ""
 "άλλο κλειδί — συγκρίνετε το αποτύπωμά της με εκείνο που σας γνωστοποίησε "
 "ο δημιουργός·"
 
-#: ../../source/manuel_partage.rst:363
+#: ../../source/manuel_partage.rst:364
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ μη έγκυρη υπογραφή»: το έγγραφο τροποποιήθηκε ή πλαστογραφήθηκε."
 
-#: ../../source/manuel_partage.rst:365
+#: ../../source/manuel_partage.rst:366
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Η ενότητα αυτή δεν εμφανίζεται σε μια συνηθισμένη βάση."
 
-#: ../../source/manuel_partage.rst:367
+#: ../../source/manuel_partage.rst:368
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -901,11 +901,11 @@ msgstr ""
 "``--password`` της ``export``, καθώς και για τις ``identity`` και "
 "``open``."
 
-#: ../../source/manuel_partage.rst:376
+#: ../../source/manuel_partage.rst:377
 msgid "Publier une base pour d'autres"
 msgstr "Δημοσίευση μιας βάσης για άλλους"
 
-#: ../../source/manuel_partage.rst:378
+#: ../../source/manuel_partage.rst:379
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -922,7 +922,7 @@ msgstr ""
 " θα υπήρχε λοιπόν τίποτα να αναφερθεί σε μια υπηρεσία, ακόμη κι αν "
 "υπήρχε."
 
-#: ../../source/manuel_partage.rst:384
+#: ../../source/manuel_partage.rst:385
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -930,13 +930,13 @@ msgstr ""
 "Αυτό που κάνει μια δημοσιευμένη βάση χρήσιμη σε κάποιον άλλο περιορίζεται"
 " σε τέσσερα πεδία, όλα ήδη παρόντα:"
 
-#: ../../source/manuel_partage.rst:387
+#: ../../source/manuel_partage.rst:388
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Χρήστης** — ποιος τη συγκρότησε, με το όνομα που θέλετε να αναφέρεται."
 
-#: ../../source/manuel_partage.rst:388
+#: ../../source/manuel_partage.rst:389
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -945,7 +945,7 @@ msgstr ""
 "**Περιγραφή** — τι περιέχει η βάση, σε μία φράση που χωράει σε μια λίστα:"
 " «240 αποφάσεις κύβου στο σκορ, σχολιασμένες, ενδιάμεσο επίπεδο»."
 
-#: ../../source/manuel_partage.rst:390
+#: ../../source/manuel_partage.rst:391
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -955,7 +955,7 @@ msgstr ""
 "ποιον παρήχθη. Είναι το πρώτο που διαβάζει ο παραλήπτης στον πίνακα "
 "*Μεταδεδομένα*."
 
-#: ../../source/manuel_partage.rst:393
+#: ../../source/manuel_partage.rst:394
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -965,7 +965,7 @@ msgstr ""
 "συγκρίνοντάς το ο παραλήπτης επαληθεύει ότι το αρχείο προέρχεται από εσάς"
 " και όχι από κάποιον που πήρε το όνομά σας."
 
-#: ../../source/manuel_partage.rst:397
+#: ../../source/manuel_partage.rst:398
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -975,7 +975,7 @@ msgstr ""
 "είναι απλώς ανώνυμη, και ο πίνακας *Μεταδεδομένα* δεν εμφανίζει τότε "
 "καμία ενότητα *Προέλευση*."
 
-#: ../../source/manuel_partage.rst:401
+#: ../../source/manuel_partage.rst:402
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
@@ -988,4 +988,3 @@ msgstr ""
 "χρησιμεύει ως ευρετήριο: είναι μια λίστα που τηρούν όσοι δημοσιεύουν, όχι"
 " μια υπηρεσία που παρέχει το blunderDB. Η ανακοίνωση μιας βάσης εκεί "
 "απαιτεί τον σύνδεσμο, τα τέσσερα παραπάνω πεδία και το αποτύπωμα."
-
