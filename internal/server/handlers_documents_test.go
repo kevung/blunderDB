@@ -6,6 +6,9 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
+	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 )
 
 // A Relevé is imported into its Collection, a second import adds nothing, and
@@ -50,5 +53,31 @@ func TestDocumentsImportReleve(t *testing.T) {
 	out = serveAcross(t, srv, "1", "", "/v1/collections.list", `{}`).Body.String()
 	if strings.Count(out, `"name":`) != 2 {
 		t.Errorf("collections after the refusals: %s; want 2", out)
+	}
+}
+
+// The daemon imports, under the context its position carries, an entry
+// whose checkers are certified and whose context is to verify when the
+// caller asks for the fallback, and refuses it otherwise.
+func TestDocumentsImportReleveFallback(t *testing.T) {
+	srv, _ := newRecordingServer(t, false)
+	d := document.StructureDefaults
+	d.Confirmed = true
+	r := &document.Releve{Format: document.Format, Version: document.Version, Document: document.Source{Title: "Repli", Defaults: &d},
+		Entries: []document.Entry{{Rank: 1, Page: 1, Position: "XGID=-b----E-C---eE---c-e----B-:" + document.StructureDefaults.Context, Checkers: document.Sure,
+			Context: document.ContextToVerify, Doubts: []capture.Doubt{document.ContextDoubt, {Field: "dice", Reason: "dice drawn, not counted"}}}}}
+	data, err := r.Encode()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rec := serveAcross(t, srv, "1", "", "/v1/documents.importReleve", `{"releve":`+string(data)+`}`); rec.Code != http.StatusBadRequest {
+		t.Errorf("without fallback: %d %s; want 400", rec.Code, rec.Body.String())
+	}
+	rec := serveAcross(t, srv, "1", "", "/v1/documents.importReleve", `{"releve":`+string(data)+`,"fallback":true}`)
+	var res struct {
+		Fallback int `json:"fallback"`
+	}
+	if rec.Code != http.StatusOK || json.Unmarshal(rec.Body.Bytes(), &res) != nil || res.Fallback != 1 {
+		t.Errorf("with fallback: %d %s", rec.Code, rec.Body.String())
 	}
 }

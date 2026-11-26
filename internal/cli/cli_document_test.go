@@ -171,6 +171,52 @@ func TestCLI_DocumentDefaultsAndComplete(t *testing.T) {
 	}
 }
 
+// A match book's defaults learned its score as printed: an entry under
+// them carries its own score and one confirmation certifies it; an entry
+// whose score is not read is proposed the fallback, imported with
+// --fallback.
+func TestCLI_DocumentLearnedDefaultsAndFallback(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	d := document.StructureDefaults
+	d.Printed = []string{"score"}
+	r := &document.Releve{Format: document.Format, Version: document.Version, Document: document.Source{Title: "Match book", Defaults: &d},
+		Entries: []document.Entry{
+			{Rank: 1, Page: 1, Position: "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:2:4:0:7:10", Checkers: document.Sure, Context: document.ContextDefault, Doubts: []capture.Doubt{document.ContextDoubt}},
+			{Rank: 2, Page: 2, Position: "XGID=-b---BD-B---eE---c-e----B-:" + document.StructureDefaults.Context, Checkers: document.Sure,
+				Context: document.ContextToVerify, Doubts: []capture.Doubt{document.ContextDoubt, document.MissingScoreDoubt}},
+			{Rank: 3, Page: 3, Position: "XGID=-b---BC-C---eE---c-e----B-:" + document.StructureDefaults.Context, Checkers: document.ToVerify, Complete: true,
+				Context: document.ContextToVerify, Doubts: []capture.Doubt{document.ContextDoubt, document.NoPipsDoubt, document.MissingScoreDoubt}},
+		}}
+	path := filepath.Join(t.TempDir(), "match.json")
+	write := func() {
+		data, err := r.Encode()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, data, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	d.Confirmed = true
+	write()
+	out := captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if !strings.Contains(out, "sure 1, to verify 2") || !strings.Contains(out, "Printed:    score") ||
+		!strings.Contains(out, "Fallback:   rank 2 imported with --fallback under the context its position carries (rank 2, 3 with --fallback --accept-complete)") {
+		t.Errorf("check:\n%s", out)
+	}
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "(fallback)") {
+		t.Errorf("import without --fallback: %v", err)
+	}
+	out = captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "import", "--db", dbPath, "--fallback", "--accept-complete", path}); err != nil {
+			t.Errorf("import with --fallback --accept-complete: %v", err)
+		}
+	})
+	if !strings.Contains(out, "Fallback: 2 entries") {
+		t.Errorf("import with --fallback:\n%s", out)
+	}
+}
+
 // From the page images of a book without printed pips to the database:
 // analyze writes complete entries under unconfirmed defaults; once the
 // person confirms them and verifies the diagram whose cube is drawn,

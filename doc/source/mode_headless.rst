@@ -420,11 +420,12 @@ rend leurs ``ids``. Le Markdown ne porte que le texte : une étape importée ne
 montre ni plateau ni collection. Un bloc de code qu'aucune clôture ne ferme est
 refusé.
 
-``documents.importReleve`` (``{"releve": {…}, "collection": "…", "acceptComplete": false, "force": false}``)
+``documents.importReleve`` (``{"releve": {…}, "collection": "…", "acceptComplete": false, "fallback": false, "force": false}``)
 importe le relevé d'un document dans une collection, comme
 ``blunderdb document import`` : mêmes règles, même transaction, une entrée ni
-sûre ni vérifiée répond 400 sans rien écrire. Le démon reçoit un relevé ; il ne
-lit aucun document.
+sûre ni vérifiée répond 400 sans rien écrire. Avec ``"fallback": true``, la
+réponse compte dans ``fallback`` les entrées importées sous le contexte que porte
+leur position. Le démon reçoit un relevé ; il ne lit aucun document.
 
 .. _headless_transcription:
 

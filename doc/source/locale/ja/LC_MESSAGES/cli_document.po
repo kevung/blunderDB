@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:42+0100\n"
+"POT-Creation-Date: 2026-11-26 15:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/cli_document.rst:4
 msgid "Importer les positions d'un document"
@@ -439,29 +439,33 @@ msgid ""
 "prend le contexte par défaut du document (``\"context\": \"default\"``, "
 "avec le doute ``context not read: cube, dice, player on roll, score``). "
 "Un videau, des dés ou un score dessinés ou imprimés et non certifiés, un "
-"contexte lu en partie hors du défaut (videau possédé, score de match), un"
-" videau possédé par le joueur du haut sans dés dessinés ou un videau "
-"introuvable dans un document qui le dessine (trouvé à côté d'au moins un "
-"tiers de ses diagrammes) laissent le contexte à vérifier (``\"context\": "
-"\"to-verify\"``, avec un doute nommé) ; le XGID porte alors ce qui a été "
-"lu. Une entrée d'un livre scanné dont le contexte n'est pas lu n'est donc"
-" **jamais** ``sure`` tant que le contexte par défaut n'est pas confirmé, "
-"et celle dont le contexte est à vérifier ne l'est jamais. ``analyze`` et "
-"``check`` comptent les entrées par contexte, et à part celles dont seuls "
-"les pions sont certifiés :"
+"contexte lu en partie hors du défaut sur un champ que le document "
+"n'imprime pas (voir :ref:`cli_document_learned`), un videau possédé par "
+"le joueur du haut sans dés dessinés, un videau introuvable dans un "
+"document qui le dessine ou un score introuvable dans un document qui "
+"l'imprime (trouvés à côté d'au moins un tiers de ses diagrammes) laissent"
+" le contexte à vérifier (``\"context\": \"to-verify\"``, avec un doute "
+"nommé) ; le XGID porte alors ce qui a été lu. Une entrée d'un livre "
+"scanné dont le contexte n'est pas lu n'est donc **jamais** ``sure`` tant "
+"que le contexte par défaut n'est pas confirmé, et celle dont le contexte "
+"est à vérifier ne l'est jamais. ``analyze`` et ``check`` comptent les "
+"entrées par contexte, et à part celles dont seuls les pions sont "
+"certifiés :"
 msgstr ""
-"コンテキストがすべて読み取られたエントリは\\ ``\"context\": \"read\"``\\ "
-"になります。見つからないキューブがセンターとみなされることはありません。読み取られなかったものはドキュメントのデフォルトコンテキストになります(\\"
-" ``\"context\": \"default\"``\\ 、疑義\\ ``context not read: cube, dice, "
+"コンテキストがすべて読み取れたエントリは\\ ``\"context\": \"read\"``\\ "
+"です。見つからないキューブがセンターと見なされることはありません。読み取れなかったものは、ドキュメントのデフォルトコンテキスト(\\ "
+"``\"context\": \"default\"``\\ 、疑義は\\ ``context not read: cube, dice, "
 "player on roll, score``\\ "
-"付き)。描かれた、または印刷されたものの保証されていないキューブ・サイコロ・スコア、一部がデフォルトから外れて読み取られたコンテキスト(所有されたキューブ、マッチスコア)、サイコロが描かれていない上側のプレイヤー所有のキューブ、またはキューブを描いているドキュメントで見つからないキューブ(図の少なくとも"
-" 3 分の 1 でその横に見つかったもの)がある場合、コンテキストは要確認のままになります(\\ ``\"context\": \"to-"
-"verify\"``\\ 、名前付きの疑義付き)。その場合、XGID "
-"には読み取られた内容が入ります。したがって、スキャンされた本のエントリは、コンテキストが読み取られていない間はデフォルトコンテキストが確認されるまで\\"
+")になります。描かれているか印刷されているが保証されていないキューブ、サイコロ、スコア、ドキュメントが印刷しないフィールドでデフォルトから外れて部分的に読み取られたコンテキスト(\\"
+" :ref:`cli_document_learned`\\ "
+"を参照)、サイコロが描かれていない上側のプレイヤー所有のキューブ、キューブを描くドキュメントで見つからないキューブ、スコアを印刷するドキュメントで見つからないスコア(図の少なくとも"
+" 3 分の 1 の横で見つかったもの)は、コンテキストを要確認にします(\\ ``\"context\": \"to-verify\"``\\ "
+"、名前の付いた疑義付き)。その場合 XGID "
+"は読み取れたものを持ちます。したがって、スキャンした本のエントリでコンテキストが読み取られていないものは、デフォルトコンテキストが確認されるまで\\"
 " **決して**\\ ``sure``\\ になりません。コンテキストが要確認のエントリも決して\\ ``sure``\\ になりません。\\ "
-"``analyze``\\ と\\ ``check``\\ は、エントリをコンテキストごとに数え、駒だけが保証されているものを別に数えます。"
+"``analyze``\\ と\\ ``check``\\ はエントリをコンテキスト別に数え、駒だけが保証されたものは別に数えます。"
 
-#: ../../source/cli_document.rst:246
+#: ../../source/cli_document.rst:247
 msgid ""
 "Pour une entrée dont le contexte reste à vérifier, on ouvre le livre à la"
 " page de l'entrée, on compare au diagramme le videau (valeur et "
@@ -472,11 +476,11 @@ msgstr ""
 "コンテキストが要確認のエントリについては、エントリのページで本を開き、キューブ(値と所有者。中央に描かれたキューブも所有されている場合があります)、サイコロ、手番のプレイヤー、スコアを図と照らし合わせ、必要なら"
 " XGID のこれらのフィールドを修正して、\\ ``\"verified\": true``\\ を付けます。"
 
-#: ../../source/cli_document.rst:254
+#: ../../source/cli_document.rst:255
 msgid "Le contexte par défaut"
 msgstr "デフォルトコンテキスト"
 
-#: ../../source/cli_document.rst:256
+#: ../../source/cli_document.rst:257
 msgid ""
 "Le contexte par défaut d'un livre scanné est celui qu'écrit la lecture : "
 "videau centré, pas de dés, joueur du bas au trait, partie libre. Il "
@@ -485,7 +489,7 @@ msgstr ""
 "スキャンした本のデフォルトコンテキストは、読み取りが書き込むものです。キューブは中央、サイコロなし、下側のプレイヤーの手番、フリーゲーム(マッチではない)です。これは"
 " relevé のヘッダーに入ります。"
 
-#: ../../source/cli_document.rst:268
+#: ../../source/cli_document.rst:269
 msgid ""
 "``context`` est la fin du XGID après le plateau ; toute entrée "
 "``default`` la porte. Quand les diagrammes du document suivent ce "
@@ -505,11 +509,54 @@ msgstr ""
 "のエントリはすべてコンテキストが保証され、駒が確実なものは\\ ``sure``\\ になります。1 "
 "件ずつ確認が必要なまま残るのは、読み取りが見つけた例外(所有されたキューブ、描かれたサイコロ、マッチスコア)と、駒が確実でないエントリだけです。ドキュメントが従っていないコンテキストは確認してはいけません。読み取りで見つからないキューブ、テキストレイヤーのない画像に印刷されたスコア、本文で示された手番は、読み取りでは検出されません。"
 
-#: ../../source/cli_document.rst:282
+#: ../../source/cli_document.rst:283
+msgid "Le défaut appris sur le document"
+msgstr "ドキュメントから学習したデフォルト"
+
+#: ../../source/cli_document.rst:285
+msgid ""
+"La lecture apprend sur le document quels champs du contexte il imprime à "
+"côté de ses diagrammes : le videau, les dés (avec le joueur au trait) ou "
+"le score, lus à côté d'au moins un tiers des diagrammes. Elle les nomme "
+"dans ``printed`` :"
+msgstr ""
+"読み取りは、ドキュメントが図の横に印刷するコンテキストのフィールドを学習します。キューブ、サイコロ(手番のプレイヤーを含む)、スコアのうち、図の少なくとも"
+" 3 分の 1 の横で読み取れたものです。それらは\\ ``printed``\\ に記載されます。"
+
+#: ../../source/cli_document.rst:298
+msgid ""
+"Un champ imprimé est la lecture de chaque entrée, que la lecture a "
+"certifiée ; le contexte par défaut ne couvre que les autres. Dans un "
+"livre de problèmes en match, chaque diagramme porte son score : ses "
+"entrées restent ``default``, chacune avec son score dans le XGID, et la "
+"confirmation unique du contexte par défaut certifie le videau centré, "
+"l'absence de dés et le joueur au trait de toutes. Un diagramme dont le "
+"score n'est pas lu dans un tel document n'est pas pris en partie libre : "
+"son contexte reste à vérifier (``the document prints its score beside its"
+" diagrams, none is read here: it is not taken as money play``). "
+"``analyze`` et ``check`` affichent ce qui a été appris :"
+msgstr ""
+"印刷されたフィールドは、各エントリの読み取り結果であり、読み取りが保証したものです。デフォルトコンテキストが対象とするのは、それ以外のエントリだけです。マッチ形式の問題集では、各図がスコアを持っています。そのエントリは\\"
+" ``default``\\ のままで、それぞれのスコアは XGID "
+"に入り、デフォルトコンテキストを一度確認すれば、すべてのエントリについてセンターのキューブ、サイコロなし、手番のプレイヤーが保証されます。このようなドキュメントでスコアが読み取れない図は、マネーゲームとは見なされません。そのコンテキストは要確認のままです(\\"
+" ``the document prints its score beside its diagrams, none is read here: "
+"it is not taken as money play``\\ )。\\ ``analyze``\\ と\\ ``check``\\ "
+"は学習した内容を表示します。"
+
+#: ../../source/cli_document.rst:312
+msgid ""
+"Rien n'est gardé d'un document à l'autre. Un relevé sans ``printed`` "
+"garde la règle stricte : tout champ lu hors du défaut laisse le contexte "
+"à vérifier."
+msgstr ""
+"ドキュメントをまたいで保持されるものはありません。\\ ``printed``\\ のない relevé "
+"は厳格な規則を保ちます。デフォルト以外で読み取られたフィールドがあれば、コンテキストは要確認のままです。"
+
+#: ../../source/cli_document.rst:318
 msgid "Quinze et quinze sans doute"
 msgstr "15 個ずつ、疑いなし"
 
-#: ../../source/cli_document.rst:284
+#: ../../source/cli_document.rst:320
 msgid ""
 "Un diagramme sans pips imprimés n'a pas de recoupement : ses pions "
 "restent ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils "
@@ -528,7 +575,7 @@ msgstr ""
 "とは別の中間状態です。完全なエントリが、コンテキストのほかに持つ疑いは 2 "
 "つだけです。ピップ数が印刷されていないこと、そして、ドキュメントのどのピップ数も確認していないときに仮定された進行方向です。印刷されたピップ数が計算したピップ数と異なる場合は駒への疑いとなり、そのエントリは決して完全になりません。駒がベアオフされた局面も、決して完全になりません。"
 
-#: ../../source/cli_document.rst:295
+#: ../../source/cli_document.rst:331
 msgid ""
 "Le sens de jeu supposé est lui aussi un défaut du document, avec sa "
 "propre confirmation : un sens faux échangerait les joueurs de toutes les "
@@ -538,7 +585,7 @@ msgstr ""
 "仮定された進行方向もドキュメントのデフォルトの一つで、独自の確認を持ちます。方向が誤っていると、その下で読み取ったすべての局面でプレイヤーが入れ替わってしまいます。進行方向はデフォルトコンテキストの\\"
 " ``direction``\\ に入っています。"
 
-#: ../../source/cli_document.rst:307
+#: ../../source/cli_document.rst:343
 msgid ""
 "Confirmer le contexte ne le confirme pas. On le contrôle sur quelques "
 "diagrammes, puis on écrit ``\"confirmed\": true`` dans ``direction``."
@@ -546,7 +593,7 @@ msgstr ""
 "コンテキストを確認しても、進行方向は確認されません。いくつかの図で確認してから、\\ ``direction``\\ に\\ "
 "``\"confirmed\": true``\\ と書きます。"
 
-#: ../../source/cli_document.rst:310
+#: ../../source/cli_document.rst:346
 msgid ""
 "``import --accept-complete`` accepte en bloc les entrées complètes dont "
 "le contexte est certifié (lu, ou sous le contexte par défaut confirmé) et"
@@ -558,7 +605,7 @@ msgstr ""
 "は、コンテキストが保証され(読み取り済み、または確認済みのデフォルトコンテキストの下にある)、かつ進行方向が確実な(ピップ数による投票で決まった、または仮定されて確認された)完全なエントリを、検証済みの印を付けずに一括して受け入れます。\\"
 " ``check``\\ はそれらを数え、未確認の進行方向のために保留されるものは別に数えます。"
 
-#: ../../source/cli_document.rst:326
+#: ../../source/cli_document.rst:362
 msgid ""
 "L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
 " checkers read with no doubt``). Une entrée complète dont le contexte "
@@ -569,7 +616,7 @@ msgstr ""
 "with no doubt``\\ "
 ")。コンテキストが保証されていない、または仮定された進行方向が確認されていない完全なエントリは、引き続き拒否されます。エラーメッセージは、それを確認するよう伝えます。"
 
-#: ../../source/cli_document.rst:331
+#: ../../source/cli_document.rst:367
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
@@ -595,7 +642,7 @@ msgstr ""
 " two disagree``)。ピップ数が読み取れなかったエントリは\\ ``to-verify``\\ のままです(``no printed "
 "pip count was found next to the diagram``)。"
 
-#: ../../source/cli_document.rst:345
+#: ../../source/cli_document.rst:381
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
@@ -607,7 +654,7 @@ msgstr ""
 "ピクセル以上あること、ピップ数が文書全体で同じ位置に印刷されていること、そしてその位置を学習するために 1 サイドあたり 15 "
 "個で読み取られた図が 30 個ほどあることを前提とします。"
 
-#: ../../source/cli_document.rst:350
+#: ../../source/cli_document.rst:386
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -618,7 +665,7 @@ msgid ""
 "dessinés."
 msgstr "疑いは、まだ確認すべき点を示します。数字が付いた駒の山、どちらのクラスでもない円盤(色あせた、または汚れた駒)、上から下まで埋まった列、長さで数えた暗い色の山、半分のボード(ポイントのない列)、仮定した進行方向(駒はピップ数の少ない側へ進む)、差から数えたベアオフ済みの駒、中央以外に描かれたキューブ、描かれたダイスです。"
 
-#: ../../source/cli_document.rst:357
+#: ../../source/cli_document.rst:393
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
@@ -629,11 +676,11 @@ msgstr ""
 "キューブの値と所有者(デフォルトコンテキストでは中央とされます)、サイコロ(なし)、スコア(フリーゲーム)、手番のプレイヤー(下側)、ベアオフの盤面(駒が"
 " 15 個未満で描かれたサイドは、残りがベアオフ済みとされます)。"
 
-#: ../../source/cli_document.rst:363
+#: ../../source/cli_document.rst:399
 msgid "Pourquoi l'import refuse"
 msgstr "インポートが拒否する理由"
 
-#: ../../source/cli_document.rst:365
+#: ../../source/cli_document.rst:401
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -644,7 +691,7 @@ msgstr ""
 "でも検証済みでもないエントリは信頼できず、コレクションに入ったものはエクスポート時に共有されます。そのためインポートは、何も書き込む前に "
 "relevé\\ **全体**\\ を拒否し、ランクを示して、対処を伝えます。"
 
-#: ../../source/cli_document.rst:373
+#: ../../source/cli_document.rst:409
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -652,23 +699,60 @@ msgstr ""
 "未確認のデフォルトコンテキストの下にあるエントリや、\\ ``--accept-complete``\\ "
 "なしの完全なエントリがある場合は、メッセージがそれも伝えます。"
 
-#: ../../source/cli_document.rst:380
+#: ../../source/cli_document.rst:416
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
-" entries neither sure nor verified``). Même avec ``--force``, une entrée "
-"sans position est refusée : il faut la renseigner ou la retirer."
+" entries neither sure nor verified``)."
 msgstr ""
-"これらのエントリを検証するか、\\ ``--force`` \\ を付けて relevé "
-"をそのままインポートします。その場合、インポートは強制したエントリ数を表示します(``Forced: 3 entries neither sure"
-" nor verified``)。\\ ``--force`` \\ "
-"を付けても、局面のないエントリは拒否されます。記入するか削除する必要があります。"
+"これらのエントリを確認するか、\\ ``--force``\\ を渡して relevé "
+"をそのままインポートします。その場合、インポートは強制したエントリの数を示します(\\ ``Forced: 3 entries neither "
+"sure nor verified``\\ )。"
 
-#: ../../source/cli_document.rst:386
+#: ../../source/cli_document.rst:423
+msgid "Le repli"
+msgstr "フォールバック"
+
+#: ../../source/cli_document.rst:425
+msgid ""
+"Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
+"``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
+" reste à vérifier n'est pas forcément rejetée : une fois le contexte par "
+"défaut confirmé, l'import propose de la **replier** sur le contexte que "
+"porte son XGID, ce qui a été lu et le défaut pour le reste. ``check`` "
+"nomme ces rangs, et le message d'erreur propose le repli :"
+msgstr ""
+"駒が保証されており(\\ ``sure``\\ 、または\\ ``--accept-complete``\\ "
+"を付けた完全なエントリで、プレイの向きが確実なもの)、コンテキストだけが要確認のエントリは、必ずしも拒否されるとは限りません。デフォルトコンテキストが確認されると、インポートはそのエントリを、XGID"
+" が持つコンテキスト、つまり読み取れたものと、残りはデフォルトに\\ **フォールバック**\\ させることを提案します。\\ "
+"``check``\\ はこれらの順位を示し、エラーメッセージがフォールバックを提案します。"
+
+#: ../../source/cli_document.rst:436
+msgid ""
+"``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
+" référence de chacune, dans son commentaire, nomme les champs à contrôler"
+" sur le diagramme avec le doute que la lecture y a laissé, contradiction "
+"comprise (``p. 12, Problem 31 (context not read, to check against the "
+"diagram: cube (cube drawn, value not read))``), et l'import les compte "
+"(``Fallback: 1 entries under the context their position carries``). Le "
+"repli ne couvre ni une entrée dont les pions sont à vérifier, ni un "
+"contexte contradictoire, ni un contexte par défaut non confirmé. Même "
+"avec ``--force``, une entrée sans position est refusée : il faut la "
+"renseigner ou la retirer."
+msgstr ""
+"\\ ``import --fallback``\\ "
+"は、これらのエントリを確認済みとせずにインポートします。それぞれの参照は、コメント内で図と照合すべきフィールドを、読み取りがそこに残した疑い（矛盾を含む）とともに示し（\\"
+" ``p. 12, Problem 31 (context not read, to check against the diagram: "
+"cube (cube drawn, value not read))``\\ ）、インポートはその件数を数えます（\\ ``Fallback: 1"
+" entries under the context their position carries``\\ "
+"）。フォールバックの対象外となるのは、駒が要確認のエントリ、矛盾したコンテキスト、確認されていないデフォルトコンテキストです。\\ "
+"``--force``\\ を付けても、局面のないエントリは拒否されます。入力するか削除してください。"
+
+#: ../../source/cli_document.rst:447
 msgid "Ce qui entre en base"
 msgstr "データベースに入るもの"
 
-#: ../../source/cli_document.rst:388
+#: ../../source/cli_document.rst:449
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -680,7 +764,7 @@ msgstr ""
 "の名前)のコレクションに入ります。各局面は単独で持ち込まれた局面として入り、ライブラリはその同一性で局面を認識します。すでに持っている局面は重複しません(``new"
 " in the library`` \\ は、足りなかった局面の数です)。"
 
-#: ../../source/cli_document.rst:394
+#: ../../source/cli_document.rst:455
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -691,7 +775,7 @@ msgstr ""
 "コレクションの\\ **説明**\\ には、ドキュメントのタイトル、著者、版、アドレスが 1 行に 1 "
 "つずつ入ります。同名の既存コレクションは足りない局面を受け取り、説明があればそれを保持します。ダイナミックコレクション(クエリで定義されたもの)は拒否されます。"
 
-#: ../../source/cli_document.rst:398
+#: ../../source/cli_document.rst:459
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -699,18 +783,18 @@ msgstr ""
 "各局面には、ドキュメントのタイトルに続けて参照を示す\\ **コメント**\\ が付きます。\\ ``Mon livre — p. 146, "
 "Problem 191``"
 
-#: ../../source/cli_document.rst:401
+#: ../../source/cli_document.rst:462
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
 "transaction."
 msgstr "それ以外のものは決して入りません。画像も、矩形も、著者のテキストも入りません。中断または拒否されたインポートは何も書き込みません。インポートは単一のトランザクションです。"
 
-#: ../../source/cli_document.rst:405
+#: ../../source/cli_document.rst:466
 msgid "Une position répétée"
 msgstr "繰り返される局面"
 
-#: ../../source/cli_document.rst:407
+#: ../../source/cli_document.rst:468
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -720,11 +804,11 @@ msgstr ""
 "ドキュメントが同じ局面を 2 回示す場合、その局面は最初の出現位置でコレクションに 1 回だけ入ります。そのコメントはすべての参照を挙げます。\\"
 " ``Mon livre — p. 2, Problem 1; p. 4``\\ 。\\ ``repeated`` \\ はこの繰り返しの数です。"
 
-#: ../../source/cli_document.rst:413
+#: ../../source/cli_document.rst:474
 msgid "Réimporter"
 msgstr "再インポート"
 
-#: ../../source/cli_document.rst:415
+#: ../../source/cli_document.rst:476
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -735,11 +819,11 @@ msgstr ""
 "collection: 0``)、参照コメントは参照が変わった場合にのみ書き直され、二重にはなりません。したがって、relevé "
 "を修正した後でインポートをやり直せます。"
 
-#: ../../source/cli_document.rst:421
+#: ../../source/cli_document.rst:482
 msgid "Le démon"
 msgstr "デーモン"
 
-#: ../../source/cli_document.rst:423
+#: ../../source/cli_document.rst:484
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

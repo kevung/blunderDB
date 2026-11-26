@@ -32,6 +32,11 @@ type Summary struct {
 	// accepted.
 	Unverified         []int `json:"unverified"`
 	UnverifiedComplete []int `json:"unverifiedComplete"`
+	// Fallback lists the ranks an import accepts under their fallback
+	// context rather than refuse (ImportOptions.Fallback); FallbackComplete
+	// those it accepts so with complete entries accepted as well.
+	Fallback         []int `json:"fallback"`
+	FallbackComplete []int `json:"fallbackComplete"`
 	// Positions counts the distinct positions, by the Zobrist hash the
 	// library identifies them with; Repeated the entries showing one again.
 	Positions int `json:"positions"`
@@ -42,7 +47,8 @@ type Summary struct {
 func Summarize(r *Releve) Summary {
 	r = r.Upgrade()
 	s := Summary{Title: r.Document.Title, Entries: len(r.Entries), Defaults: r.Document.Defaults,
-		Unverified: Unverified(r, false), UnverifiedComplete: Unverified(r, true)}
+		Unverified: Unverified(r, false), UnverifiedComplete: Unverified(r, true),
+		Fallback: FallbackRanks(r, false), FallbackComplete: FallbackRanks(r, true)}
 	seen := map[uint64]bool{}
 	for _, e := range r.Entries {
 		switch r.StateOf(e) {

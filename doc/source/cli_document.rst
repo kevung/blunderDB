@@ -226,10 +226,11 @@ introuvable n'est jamais pris pour centré : ce qui n'est pas lu prend le
 contexte par défaut du document (``"context": "default"``, avec le doute
 ``context not read: cube, dice, player on roll, score``). Un videau, des dés ou
 un score dessinés ou imprimés et non certifiés, un contexte lu en partie hors du
-défaut (videau possédé, score de match), un videau possédé par le joueur du
-haut sans dés dessinés ou un videau introuvable dans un document qui le dessine
-(trouvé à côté d'au moins un tiers de ses diagrammes) laissent le contexte à
-vérifier
+défaut sur un champ que le document n'imprime pas (voir
+:ref:`cli_document_learned`), un videau possédé par le joueur du haut sans dés
+dessinés, un videau introuvable dans un document qui le dessine ou un score
+introuvable dans un document qui l'imprime (trouvés à côté d'au moins un tiers
+de ses diagrammes) laissent le contexte à vérifier
 (``"context": "to-verify"``, avec un doute nommé) ; le XGID porte alors ce qui a
 été lu. Une entrée d'un livre scanné dont le contexte n'est pas lu n'est donc
 **jamais** ``sure`` tant que le contexte par défaut n'est pas confirmé, et celle
@@ -275,6 +276,41 @@ la lecture a vues (videau possédé, dés dessinés, score de match) et les entr
 dont les pions ne sont pas sûrs. On ne confirme pas un contexte que le document
 ne suit pas : un videau que la lecture ne trouve pas, un score imprimé dans
 l'image sans couche texte ou un trait donné par la prose ne sont pas vus.
+
+.. _cli_document_learned:
+
+Le défaut appris sur le document
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+La lecture apprend sur le document quels champs du contexte il imprime à côté
+de ses diagrammes : le videau, les dés (avec le joueur au trait) ou le score, lus
+à côté d'au moins un tiers des diagrammes. Elle les nomme dans ``printed`` :
+
+.. code-block:: json
+
+   "defaults": {
+     "context": "0:0:1:00:0:0:0:0:10",
+     "description": "for what a diagram does not print: centred cube, no dice, the bottom player on roll, money play; the document prints its score, read beside each diagram",
+     "printed": ["score"],
+     "confirmed": false
+   }
+
+Un champ imprimé est la lecture de chaque entrée, que la lecture a certifiée ;
+le contexte par défaut ne couvre que les autres. Dans un livre de problèmes en
+match, chaque diagramme porte son score : ses entrées restent ``default``, chacune
+avec son score dans le XGID, et la confirmation unique du contexte par défaut
+certifie le videau centré, l'absence de dés et le joueur au trait de toutes. Un
+diagramme dont le score n'est pas lu dans un tel document n'est pas pris en
+partie libre : son contexte reste à vérifier (``the document prints its score
+beside its diagrams, none is read here: it is not taken as money play``).
+``analyze`` et ``check`` affichent ce qui a été appris :
+
+.. code-block:: text
+
+   Printed:    score, read beside each diagram (learned from the document)
+
+Rien n'est gardé d'un document à l'autre. Un relevé sans ``printed`` garde la
+règle stricte : tout champ lu hors du défaut laisse le contexte à vérifier.
 
 .. _cli_document_complete:
 
@@ -379,7 +415,32 @@ sans ``--accept-complete``, le message le dit aussi :
 
 On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé tel quel ;
 l'import dit alors combien d'entrées il a forcées (``Forced: 3 entries neither
-sure nor verified``). Même avec ``--force``, une entrée sans position est
+sure nor verified``).
+
+.. _cli_document_fallback:
+
+Le repli
+~~~~~~~~
+
+Une entrée dont les pions sont certifiés (``sure``, ou complète avec
+``--accept-complete`` et un sens de jeu certain) et dont seul le contexte reste à
+vérifier n'est pas forcément rejetée : une fois le contexte par défaut confirmé,
+l'import propose de la **replier** sur le contexte que porte son XGID, ce qui a
+été lu et le défaut pour le reste. ``check`` nomme ces rangs, et le message
+d'erreur propose le repli :
+
+.. code-block:: text
+
+   Fallback:   rank 4 imported with --fallback under the context its position carries, the fields to check named in its reference
+
+``import --fallback`` importe ces entrées sans les marquer vérifiées ; la
+référence de chacune, dans son commentaire, nomme les champs à contrôler sur le
+diagramme avec le doute que la lecture y a laissé, contradiction comprise
+(``p. 12, Problem 31 (context not read, to check against the diagram: cube
+(cube drawn, value not read))``), et l'import les compte (``Fallback: 1 entries under the context their
+position carries``). Le repli ne couvre ni une entrée dont les pions sont à
+vérifier, ni un contexte contradictoire, ni un contexte par défaut non
+confirmé. Même avec ``--force``, une entrée sans position est
 refusée : il faut la renseigner ou la retirer.
 
 Ce qui entre en base

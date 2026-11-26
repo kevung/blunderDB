@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -99,6 +100,15 @@ type Defaults struct {
 	Context string `json:"context"`
 	// Description says it in words, for the person who confirms it.
 	Description string `json:"description,omitempty"`
+	// Printed names the context fields the document prints beside its
+	// diagrams, learned from the document by its reader: "cube", "dice"
+	// (with the player on roll) and "score". An entry under the defaults
+	// carries its own reading of a printed field, which the reader
+	// certified, and Context covers its other fields only; an entry where a
+	// printed field is not read is not under the defaults. A match book
+	// prints its score: its defaults are the cube, dice and player on roll
+	// of the diagrams, never one score for all.
+	Printed []string `json:"printed,omitempty"`
 	// Confirmed is set by a person who checked that the document's diagrams
 	// follow the defaults. It covers the context only, never Direction.
 	Confirmed bool `json:"confirmed"`
@@ -279,6 +289,38 @@ func (r *Releve) Importable(e Entry, acceptComplete bool) bool {
 	return e.Verified || r.StateOf(e) == Sure || (acceptComplete && r.CompleteCertified(e))
 }
 
+// FallbackCertified reports an entry an import accepts under its fallback
+// context (ImportOptions.Fallback) rather than refuse it: its checkers
+// certified — sure, or complete with the direction of play certified when
+// acceptComplete — and its context to verify (not uncertain), in a document
+// whose defaults a person confirmed. Its position carries what was read and
+// the defaults for the rest. A context field the print contradicts (dice
+// the text names otherwise) passes too, never silently: its reference
+// quotes every doubt on the context (FallbackNote).
+func (r *Releve) FallbackCertified(e Entry, acceptComplete bool) bool {
+	d := r.Document.Defaults
+	if r.Version < 2 || d == nil || !d.Confirmed || e.Verified || e.Position == "" || e.Context != ContextToVerify || r.Importable(e, acceptComplete) {
+		return false
+	}
+	return e.Checkers == Sure || (acceptComplete && e.Complete && e.Checkers == ToVerify && r.DirectionCertified(e))
+}
+
+// FallbackNote names the context fields of an entry imported under its
+// fallback context that a person checks against the diagram, each with the
+// doubt the reading left on it, a contradiction included.
+func (e Entry) FallbackNote() string {
+	var items []string
+	for _, d := range e.Doubts {
+		if contextField[d.Field] && d != ContextDoubt {
+			items = append(items, d.Field+" ("+d.Reason+")")
+		}
+	}
+	if len(items) == 0 {
+		items = []string{"context"}
+	}
+	return "context not read, to check against the diagram: " + strings.Join(items, "; ")
+}
+
 // Reference is the entry's place in the document as a person cites it:
 // "p. 146, Problem 191", or "p. 146" when the diagram has no label.
 func (e Entry) Reference() string {
@@ -380,6 +422,41 @@ func drawnContext(ds []capture.Doubt) bool {
 	return false
 }
 
+// printedFields maps a field a document prints to the places it fills in
+// the XGID after its board (cube, owner, turn, dice, scores, Crawford,
+// length, limit).
+var printedFields = map[string][]int{"cube": {0, 1}, "dice": {2, 3}, "score": {4, 5, 6, 7}}
+
+// Prints reports whether the defaults learned that the document prints
+// field beside its diagrams.
+func (d *Defaults) Prints(field string) bool {
+	return d != nil && slices.Contains(d.Printed, field)
+}
+
+// Covers reports whether the context ctx (an XGID after its board) is under
+// the defaults: every field but the printed ones as Context says.
+func (d *Defaults) Covers(ctx string) bool {
+	if d == nil {
+		return false
+	}
+	got, want := strings.Split(ctx, ":"), strings.Split(d.Context, ":")
+	if len(got) != len(want) {
+		return false
+	}
+	free := map[int]bool{}
+	for _, f := range d.Printed {
+		for _, i := range printedFields[f] {
+			free[i] = true
+		}
+	}
+	for i := range got {
+		if !free[i] && got[i] != want[i] {
+			return false
+		}
+	}
+	return true
+}
+
 // positionContext is the XGID after its board, "" when there is none.
 func positionContext(xgid string) string {
 	s := strings.TrimPrefix(strings.TrimSpace(xgid), "XGID=")
@@ -435,6 +512,11 @@ func (r *Releve) Validate() error {
 		}
 		if _, err := ParsePosition("XGID=" + startingBoard + ":" + df.Context); err != nil {
 			return bad("defaults context %q is not the end of an XGID after its board", df.Context)
+		}
+		for i, f := range df.Printed {
+			if printedFields[f] == nil || slices.Contains(df.Printed[:i], f) {
+				return bad("defaults printed %q, want cube, dice or score, each once", f)
+			}
 		}
 		if dir := df.Direction; dir != nil {
 			if dir.Home != "left" && dir.Home != "right" {
@@ -543,7 +625,7 @@ func (r *Releve) validateCertainties(e Entry) error {
 		if r.Document.Defaults == nil {
 			return fmt.Errorf("context default, but the document has no defaults")
 		}
-		if got := positionContext(e.Position); got != r.Document.Defaults.Context {
+		if got := positionContext(e.Position); !r.Document.Defaults.Covers(got) {
 			return fmt.Errorf("context default, but the position ends %q, not the defaults %q", got, r.Document.Defaults.Context)
 		}
 	}

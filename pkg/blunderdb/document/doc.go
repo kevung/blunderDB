@@ -43,7 +43,11 @@
 // ContextDoubt; a cube, dice or score printed and not certified — or a cube
 // the top player owns with no dice drawn — leave its context to verify even
 // once the defaults are confirmed (Releve.CheckersConfirmed,
-// Summary.CheckersConfirmed). A person verifies such an entry's cube, dice,
+// Summary.CheckersConfirmed). The defaults are learned on the document: the
+// fields it prints beside at least a third of its diagrams (Defaults.Printed)
+// are each entry's own reading, the defaults covering the others, so a match
+// book's scores stay under its defaults, and a printed field not read on a
+// diagram leaves that one to verify. A person verifies such an entry's cube, dice,
 // player on roll and score against the diagram and marks it verified.
 //
 // Only Import writes, and only what a Relevé allows: positions, each as a
@@ -54,7 +58,10 @@
 // database. An entry neither sure nor verified refuses the whole import
 // unless the caller forces it, or accepts complete entries whose context is
 // certified and whose direction of play is not an unconfirmed supposition
-// (Defaults.Direction, ImportOptions.AcceptComplete); an entry with no position is
+// (Defaults.Direction, ImportOptions.AcceptComplete), or takes the fallback
+// for entries whose checkers are certified and whose context is to verify
+// (ImportOptions.Fallback: imported under the context their position
+// carries, each reference naming the fields to check); an entry with no position is
 // refused even then, and a refused import writes nothing (one transaction). The daemon
 // imports a Relevé; it never reads a document.
 //

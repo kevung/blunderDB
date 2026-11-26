@@ -3352,8 +3352,11 @@ the document (its title, author and edition as description; each position's page
 label as a comment). An entry is sure when its checkers are and its context is certified:
 read, or under the document's defaults once "confirmed" is set on them. An entry neither
 sure nor verified refuses the import unless --force; --accept-complete accepts as a whole
-the entries of 15 + 15 checkers read with no doubt whose context is certified. A refused
-import writes nothing. Importing the same relevé again adds nothing.
+the entries of 15 + 15 checkers read with no doubt whose context is certified; --fallback
+imports, rather than refuse, the entries whose checkers are certified and whose context is
+to verify, under the context their position carries, each reference naming the fields to
+check against the diagram (the document's defaults confirmed). A refused import writes
+nothing. Importing the same relevé again adds nothing.
 
 Options:
   -accept-complete
@@ -3362,6 +3365,8 @@ Options:
     	Name of the collection (default: the document's title)
   -db string
     	Path to the database file (required)
+  -fallback
+    	Import the entries whose checkers are certified and whose context is to verify, under the context their position carries
   -force
     	Import entries neither sure nor verified
   -format string
@@ -3370,6 +3375,7 @@ Options:
 Examples:
   blunderdb document import --db database.db releve.json
   blunderdb document import --db database.db releve.json --accept-complete
+  blunderdb document import --db database.db releve.json --fallback
   blunderdb document import --db database.db releve.json --collection "My book" --force
 ```
 
