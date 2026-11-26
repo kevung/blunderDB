@@ -32,6 +32,26 @@ type Page struct {
 	Content       string
 	// Compress stores the content with the Flate filter.
 	Compress bool
+	// Images are the page's image XObjects, named /Im1, /Im2… in order.
+	Images []Image
+	// Rotate is the page's /Rotate, in degrees.
+	Rotate int
+}
+
+// Image is an image XObject: its dictionary entries and its data, stored as
+// given (already encoded by the filter it names).
+type Image struct {
+	Width, Height, BPC int
+	// ColorSpace is a PDF object ("/DeviceGray"); none for a stencil mask.
+	ColorSpace string
+	// Filter and DecodeParms are PDF objects, or empty.
+	Filter, DecodeParms string
+	// ImageMask makes a stencil mask; Extra is added to the dictionary.
+	ImageMask bool
+	Extra     string
+	Data      []byte
+	// SMask is the image's soft mask, Mask its stencil (explicit) mask.
+	SMask, Mask *Image
 }
 
 // Bookmark is a top-level outline item opening a page (from 1).
@@ -108,8 +128,35 @@ func (d Doc) Bytes() []byte {
 	for i, r := range fontRefs {
 		fmt.Fprintf(&fonts, " /F%d %d 0 R", i+1, r)
 	}
+	var image func(im Image) int
+	image = func(im Image) int {
+		dict := fmt.Sprintf(" /Type /XObject /Subtype /Image /Width %d /Height %d /BitsPerComponent %d", im.Width, im.Height, im.BPC)
+		if im.ColorSpace != "" {
+			dict += " /ColorSpace " + im.ColorSpace
+		}
+		if im.ImageMask {
+			dict += " /ImageMask true"
+		}
+		if im.Filter != "" {
+			dict += " /Filter " + im.Filter
+		}
+		if im.DecodeParms != "" {
+			dict += " /DecodeParms " + im.DecodeParms
+		}
+		if im.SMask != nil {
+			dict += fmt.Sprintf(" /SMask %d 0 R", image(*im.SMask))
+		}
+		if im.Mask != nil {
+			dict += fmt.Sprintf(" /Mask %d 0 R", image(*im.Mask))
+		}
+		return add(stream(dict+" "+im.Extra, im.Data))
+	}
 	var kids []int
 	for _, p := range d.Pages {
+		var xo strings.Builder
+		for i, im := range p.Images {
+			fmt.Fprintf(&xo, " /Im%d %d 0 R", i+1, image(im))
+		}
 		var content int
 		if p.Compress {
 			var z bytes.Buffer
@@ -120,7 +167,7 @@ func (d Doc) Bytes() []byte {
 		} else {
 			content = add(stream("", []byte(p.Content)))
 		}
-		kids = append(kids, add(fmt.Sprintf("<</Type /Page /Parent %d 0 R /MediaBox [0 0 %g %g] /Resources <</Font <<%s>>>> /Contents %d 0 R>>", pages, p.Width, p.Height, fonts.String(), content)))
+		kids = append(kids, add(fmt.Sprintf("<</Type /Page /Parent %d 0 R /MediaBox [0 0 %g %g] /Rotate %d /Resources <</Font <<%s>> /XObject <<%s>>>> /Contents %d 0 R>>", pages, p.Width, p.Height, p.Rotate, fonts.String(), xo.String(), content)))
 	}
 	var kidList strings.Builder
 	for _, k := range kids {

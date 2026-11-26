@@ -40,6 +40,7 @@ type gstate struct {
 	font             *Font
 	size, tc, tw, tz float64
 	leading          float64
+	fill             uint8 // the grey a stencil mask paints with
 }
 
 type interp struct {
@@ -51,6 +52,9 @@ type interp struct {
 	tlm    matrix
 	depth  int
 	inForm map[*Stream]bool
+	// collect records the images drawn (Scan).
+	collect bool
+	draws   []imageDraw
 }
 
 const (
@@ -97,7 +101,11 @@ func (in *interp) run(data []byte, res Dict) error {
 				ops = append(ops, o)
 			}
 		case keyword:
-			if v == "BI" {
+			if v == "BI" && in.collect {
+				if s := inlineImage(l); s != nil {
+					in.record(s, res)
+				}
+			} else if v == "BI" {
 				skipInlineImage(l)
 			} else if err := in.op(string(v), ops, res); err != nil {
 				return err
@@ -238,7 +246,26 @@ func (in *interp) op(op string, ops []any, res Dict) error {
 	case "Do":
 		if a := last(1); a != nil {
 			name, _ := a[0].(Name)
-			return in.form(name, res)
+			return in.xobject(name, res)
+		}
+	case "g":
+		in.setFill(ops, 1)
+	case "rg":
+		in.setFill(ops, 3)
+	case "k":
+		in.setFill(ops, 4)
+	case "cs":
+		in.g.fill = 0
+	case "sc", "scn":
+		k := 0
+		for _, o := range ops {
+			switch o.(type) {
+			case int64, float64:
+				k++
+			}
+		}
+		if k == 1 || k == 3 || k == 4 {
+			in.setFill(ops[:k], k)
 		}
 	}
 	return nil

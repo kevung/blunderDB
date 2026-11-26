@@ -563,53 +563,21 @@ func (r *Reader) fromObjStream(snum, idx, num int) Object {
 	}
 }
 
-// Decode returns a stream's data with its filters undone.
+// Decode returns a stream's data with its filters undone. An image codec
+// (DCT, CCITT fax, JBIG2, JPEG 2000) is ErrUnsupported here: only Scan
+// decodes images.
 func (r *Reader) Decode(s *Stream) (out []byte, err error) {
 	defer func() {
 		if p := recover(); p != nil {
 			out, err = nil, malformed("%v", p)
 		}
 	}()
-	var filters Array
-	switch f := r.Resolve(s.Dict["Filter"]).(type) {
-	case Name:
-		filters = Array{f}
-	case Array:
-		filters = f
+	data, codec, _, err := r.imageFilters(s)
+	if err != nil {
+		return nil, err
 	}
-	var parms Array
-	switch p := r.Resolve(s.Dict["DecodeParms"]).(type) {
-	case Dict:
-		parms = Array{p}
-	case Array:
-		parms = p
-	}
-	data := s.Raw
-	for i, f := range filters {
-		var p Dict
-		if i < len(parms) {
-			p, _ = r.Resolve(parms[i]).(Dict)
-		}
-		name, _ := r.Resolve(f).(Name)
-		switch name {
-		case "FlateDecode", "Fl":
-			data, err = r.inflate(data)
-			if err == nil {
-				data, err = predict(data, p)
-			}
-		case "ASCIIHexDecode", "AHx":
-			data = asciiHex(data)
-		case "ASCII85Decode", "A85":
-			data = ascii85(data)
-		default:
-			return nil, fmt.Errorf("%w: %s", ErrUnsupported, name)
-		}
-		if err != nil {
-			return nil, err
-		}
-		if len(data) > r.lim.MaxStreamSize {
-			return nil, fmt.Errorf("%w: a stream decodes to more than %d bytes", ErrTooLarge, r.lim.MaxStreamSize)
-		}
+	if codec != "" {
+		return nil, fmt.Errorf("%w: %s", ErrUnsupported, codec)
 	}
 	r.decoded += int64(len(data))
 	if r.decoded > r.lim.MaxDecoded {
