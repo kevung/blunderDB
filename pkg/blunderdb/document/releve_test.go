@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/structure"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -184,7 +185,7 @@ func TestUpgradeStructureEntry(t *testing.T) {
 func TestContextRule(t *testing.T) {
 	pos := "XGID=-b----E-C---eE---c-e----B-:" + StructureDefaults.Context
 	cube := capture.Doubt{Field: "cube", Reason: "drawn"}
-	r := &Releve{Format: Format, Version: Version, Document: Source{Title: "T", Defaults: structureDefaults()}, Entries: []Entry{
+	r := &Releve{Format: Format, Version: Version, Document: Source{Title: "T", Defaults: structureDefaults(structure.Profile{DirectionVoted: true})}, Entries: []Entry{
 		{Rank: 1, Page: 1, Position: pos, Checkers: Sure, Context: ContextDefault, Doubts: []capture.Doubt{ContextDoubt}},
 		{Rank: 2, Page: 1, Position: pos, Checkers: Sure, Context: ContextToVerify, Doubts: []capture.Doubt{ContextDoubt, cube}},
 		{Rank: 3, Page: 1, Position: pos, Checkers: ToVerify, Complete: true, Context: ContextDefault, Doubts: []capture.Doubt{ContextDoubt}},
@@ -232,6 +233,23 @@ func TestContextRule(t *testing.T) {
 	r.Document.Defaults.Confirmed = true
 	if h := refusalHint(r, []int{3}, false); !strings.Contains(h, "accept complete") {
 		t.Errorf("confirmed defaults: hint %q", h)
+	}
+	// A complete entry under an assumed direction waits for its own
+	// confirmation, which the context's does not give.
+	r.Entries[2].Doubts = append(r.Entries[2].Doubts, AssumedDirectionDoubt)
+	if err := r.Validate(); !errors.Is(err, ErrInvalid) {
+		t.Errorf("an assumed direction without a defaults direction: err = %v", err)
+	}
+	r.Document.Defaults.Direction = assumedDirection("right")
+	if err := r.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	if r.CompleteCertified(r.Entries[2]) || !strings.Contains(refusalHint(r, []int{3}, true), "confirm it once") {
+		t.Errorf("an unconfirmed direction certifies a complete entry")
+	}
+	r.Document.Defaults.Direction.Confirmed = true
+	if !r.CompleteCertified(r.Entries[2]) {
+		t.Errorf("a confirmed direction does not certify a complete entry")
 	}
 	// Under the defaults, the position carries them.
 	r.Entries[0].Position = "XGID=-b----E-C---eE---c-e----B-:1:1:1:00:0:0:0:0:10"

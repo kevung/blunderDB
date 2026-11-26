@@ -13,12 +13,12 @@ type Summary struct {
 	// printed pips confirmed, their context alone left to verify.
 	CheckersConfirmed int `json:"checkersConfirmed"`
 	// Complete counts the entries an import accepts as a whole on request:
-	// fifteen checkers a side read with no doubt, the context certified.
+	// fifteen checkers a side read with no doubt, the context and the
+	// direction of play certified.
 	Complete int `json:"complete"`
-	// CompleteDirectionAssumed counts the complete entries whose direction
-	// of play the reader assumed for want of printed pips: a wrong guess
-	// exchanges the players of every one of them.
-	CompleteDirectionAssumed int `json:"completeDirectionAssumed"`
+	// CompleteDirectionUnconfirmed counts the complete entries, context
+	// certified, held back by a direction of play assumed and not confirmed.
+	CompleteDirectionUnconfirmed int `json:"completeDirectionUnconfirmed"`
 	// ContextRead, ContextDefault and ContextToVerify count the entries by
 	// how their context is known (uncertain ones apart).
 	ContextRead     int `json:"contextRead"`
@@ -55,9 +55,8 @@ func Summarize(r *Releve) Summary {
 			}
 			if r.CompleteCertified(e) {
 				s.Complete++
-				if hasDoubt(e.Doubts, AssumedDirectionDoubt) {
-					s.CompleteDirectionAssumed++
-				}
+			} else if e.Complete && !e.Verified && r.ContextCertified(e) && !r.DirectionCertified(e) {
+				s.CompleteDirectionUnconfirmed++
 			}
 		case Uncertain:
 			s.Uncertain++

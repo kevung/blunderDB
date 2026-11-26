@@ -100,7 +100,23 @@ type Defaults struct {
 	// Description says it in words, for the person who confirms it.
 	Description string `json:"description,omitempty"`
 	// Confirmed is set by a person who checked that the document's diagrams
-	// follow the defaults.
+	// follow the defaults. It covers the context only, never Direction.
+	Confirmed bool `json:"confirmed"`
+	// Direction is the direction of play a reader assumed for want of
+	// printed pips to vote for one; nil when the pips decided it.
+	Direction *Direction `json:"direction,omitempty"`
+}
+
+// Direction is a document's direction of play as a reader assumed it. A
+// wrong guess exchanges the players of every position read under it, so the
+// complete entries carrying AssumedDirectionDoubt are accepted only once a
+// person confirmed it, on its own.
+type Direction struct {
+	// Home is the side of the bottom player's home board: "left" or "right".
+	Home        string `json:"home"`
+	Description string `json:"description,omitempty"`
+	// Confirmed is set by a person who checked the direction on the
+	// document's diagrams.
 	Confirmed bool `json:"confirmed"`
 }
 
@@ -225,12 +241,23 @@ func (r *Releve) CheckersConfirmed(e Entry) bool {
 	return e.Position != "" && e.Checkers == Sure && r.StateOf(e) == ToVerify
 }
 
+// DirectionCertified reports whether the entry's direction of play is
+// certain: not assumed, or assumed under a direction a person confirmed.
+func (r *Releve) DirectionCertified(e Entry) bool {
+	if !hasDoubt(e.Doubts, AssumedDirectionDoubt) {
+		return true
+	}
+	d := r.Document.Defaults
+	return d != nil && d.Direction != nil && d.Direction.Confirmed
+}
+
 // CompleteCertified reports an entry that is neither sure nor verified but
-// whose fifteen checkers a side were read with no doubt, its context
-// certified: what ImportOptions.AcceptComplete accepts as a whole.
+// whose fifteen checkers a side were read with no doubt, its context and its
+// direction of play certified: what ImportOptions.AcceptComplete accepts as
+// a whole.
 func (r *Releve) CompleteCertified(e Entry) bool {
 	return r.Version >= 2 && e.Complete && !e.Verified && r.StateOf(e) == ToVerify &&
-		e.Checkers == ToVerify && r.ContextCertified(e)
+		e.Checkers == ToVerify && r.ContextCertified(e) && r.DirectionCertified(e)
 }
 
 // Importable reports whether the entry may be imported without forcing:
@@ -304,9 +331,20 @@ func (r *Releve) Upgrade() *Releve {
 		}
 		u.Entries[i] = e
 	}
-	if defaults && u.Document.Defaults == nil {
+	direction := false
+	for _, e := range u.Entries {
+		direction = direction || hasDoubt(e.Doubts, AssumedDirectionDoubt)
+	}
+	if (defaults || direction) && u.Document.Defaults == nil {
 		d := StructureDefaults
 		u.Document.Defaults = &d
+	}
+	if direction {
+		home := "right"
+		if p := u.Document.Profile; p != nil && p.Home != "" {
+			home = p.Home
+		}
+		u.Document.Defaults.Direction = assumedDirection(home)
 	}
 	return &u
 }
@@ -385,6 +423,14 @@ func (r *Releve) Validate() error {
 		}
 		if _, err := ParsePosition("XGID=" + startingBoard + ":" + df.Context); err != nil {
 			return bad("defaults context %q is not the end of an XGID after its board", df.Context)
+		}
+		if dir := df.Direction; dir != nil {
+			if dir.Home != "left" && dir.Home != "right" {
+				return bad("defaults direction home %q, want left or right", dir.Home)
+			}
+			if p := d.Profile; p != nil && p.Home != "" && p.Home != dir.Home {
+				return bad("defaults direction home %q, the profile says %q", dir.Home, p.Home)
+			}
 		}
 	}
 	if len(r.Entries) == 0 {
@@ -474,6 +520,9 @@ func (r *Releve) validateCertainties(e Entry) error {
 	}
 	if e.Complete && e.Checkers != ToVerify {
 		return fmt.Errorf("checkers %s are not complete: complete is a state of checkers to verify", e.Checkers)
+	}
+	if hasDoubt(e.Doubts, AssumedDirectionDoubt) && (r.Document.Defaults == nil || r.Document.Defaults.Direction == nil) {
+		return fmt.Errorf("the direction of play is assumed, but the document has no defaults direction")
 	}
 	if e.Context == ContextDefault && e.Position != "" {
 		if r.Document.Defaults == nil {

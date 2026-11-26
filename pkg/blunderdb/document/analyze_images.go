@@ -110,7 +110,7 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 	}
 	r := &Releve{Format: Format, Version: Version, Document: Source{
 		Title: title, Author: strings.TrimSpace(opts.Author), SHA256: hex.EncodeToString(h.Sum(nil)),
-		Profile: structureProfile(res.Profile), Defaults: structureDefaults(),
+		Profile: structureProfile(res.Profile), Defaults: structureDefaults(res.Profile),
 	}}
 	for _, d := range res.Diagrams {
 		r.Entries = append(r.Entries, structureEntry(d, len(r.Entries)+1))
@@ -314,10 +314,21 @@ func completeLead(d capture.Doubt) bool {
 // contextField names the doubts about what surrounds the checkers.
 var contextField = map[string]bool{"context": true, "cube": true, "dice": true, "score": true, "turn": true}
 
-// structureDefaults is a fresh, unconfirmed copy of StructureDefaults.
-func structureDefaults() *Defaults {
+// structureDefaults is a fresh, unconfirmed copy of StructureDefaults, with
+// the direction of play the reader assumed when no printed pips voted for
+// one.
+func structureDefaults(p structure.Profile) *Defaults {
 	d := StructureDefaults
+	if !p.DirectionVoted {
+		d.Direction = assumedDirection(structureProfile(p).Home)
+	}
 	return &d
+}
+
+// assumedDirection is the unconfirmed default of a direction of play taken
+// from the fewer pips, the bottom player's home on the side home.
+func assumedDirection(home string) *Direction {
+	return &Direction{Home: home, Description: "direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the " + home}
 }
 
 func onlyCompleteLeads(ds []capture.Doubt) bool {

@@ -49,7 +49,8 @@
 // comment. No image, no rectangle and no text of the author enter the
 // database. An entry neither sure nor verified refuses the whole import
 // unless the caller forces it, or accepts complete entries whose context is
-// certified (ImportOptions.AcceptComplete); an entry with no position is
+// certified and whose direction of play is not an unconfirmed supposition
+// (Defaults.Direction, ImportOptions.AcceptComplete); an entry with no position is
 // refused even then, and a refused import writes nothing (one transaction). The daemon
 // imports a Relevé; it never reads a document.
 //

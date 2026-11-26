@@ -273,20 +273,41 @@ diffèrent des pips calculés sont un doute sur les pions : l'entrée n'est alor
 jamais complète. Une position dont des pions sont sortis ne l'est jamais non
 plus.
 
+Le sens de jeu supposé est lui aussi un défaut du document, avec sa propre
+confirmation : un sens faux échangerait les joueurs de toutes les positions
+lues sous lui. Il figure dans le contexte par défaut, sous ``direction`` :
+
+.. code-block:: json
+
+   "direction": {
+     "home": "right",
+     "description": "direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right",
+     "confirmed": false
+   }
+
+Confirmer le contexte ne le confirme pas. On le contrôle sur quelques
+diagrammes, puis on écrit ``"confirmed": true`` dans ``direction``.
+
 ``import --accept-complete`` accepte en bloc les entrées complètes dont le
-contexte est certifié (lu, ou sous le contexte par défaut confirmé), sans les
-marquer vérifiées ; ``check`` les compte :
+contexte est certifié (lu, ou sous le contexte par défaut confirmé) et dont le
+sens de jeu est certain (voté par les pips, ou supposé puis confirmé), sans les
+marquer vérifiées ; ``check`` les compte, et compte à part celles qu'un sens
+non confirmé retient :
+
+.. code-block:: text
+
+   Direction:  direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right, not confirmed: check it on a few diagrams, then set "direction": {"confirmed": true}
+   Complete:   84 more held back until the direction of play is confirmed
 
 .. code-block:: text
 
    Complete:   84 with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)
-               84 of them with the direction of play assumed: check it on a few diagrams first
    Unverified: rank 3, 7, 12 (import refused without --force; rank 12 with --accept-complete)
 
-Un sens de jeu mal supposé échange les joueurs de toutes ces positions : on le
-contrôle sur quelques diagrammes avant d'accepter en bloc. L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15
+L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15
 checkers read with no doubt``). Une entrée complète dont le contexte n'est pas
-certifié reste refusée.
+certifié, ou dont le sens de jeu supposé n'est pas confirmé, reste refusée ; le
+message d'erreur dit de le confirmer.
 
 Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et
 l'image elle-même. Dans l'image, la commande lit les nombres isolés autour du

@@ -189,15 +189,35 @@ func TestCLI_DocumentCompleteEndToEnd(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	write := func() {
+		data, err := r.Encode()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, data, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if r.Document.Defaults.Direction == nil || r.Document.Defaults.Direction.Confirmed {
+		t.Fatalf("no unconfirmed direction of play: %+v", r.Document.Defaults)
+	}
+	// The context confirmed, the direction assumed is not: refused.
 	r.Document.Defaults.Confirmed = true
 	r.Entries[1].Verified = true
-	data, err := r.Encode()
-	if err != nil {
-		t.Fatal(err)
+	write()
+	out = captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if !strings.Contains(out, "Direction:  direction of play assumed") || !strings.Contains(out, "7 more held back until the direction of play is confirmed") {
+		t.Errorf("check with the direction unconfirmed:\n%s", out)
 	}
-	if err := os.WriteFile(path, data, 0o600); err != nil {
-		t.Fatal(err)
+	err = cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path})
+	if !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "confirm it once") {
+		t.Errorf("import with the direction unconfirmed: %v", err)
 	}
+	if cols, _ := cli.db.GetAllCollections(); len(cols) != 0 {
+		t.Errorf("a refused import wrote a collection: %+v", cols)
+	}
+	r.Document.Defaults.Direction.Confirmed = true
+	write()
 	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "accept complete") {
 		t.Errorf("import without --accept-complete: %v", err)
 	}

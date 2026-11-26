@@ -180,15 +180,22 @@ func printCertainties(out io.Writer, s document.Summary) {
 			state = "confirmed"
 		}
 		fmt.Fprintf(out, "Defaults:   %s (%s), %s\n", d.Description, d.Context, state)
+		if dir := d.Direction; dir != nil {
+			state := "not confirmed: check it on a few diagrams, then set \"direction\": {\"confirmed\": true}"
+			if dir.Confirmed {
+				state = "confirmed"
+			}
+			fmt.Fprintf(out, "Direction:  %s, %s\n", dir.Description, state)
+		}
 	}
 	if s.CheckersConfirmed > 0 {
 		fmt.Fprintf(out, "Checkers:   %d confirmed, their context alone to verify (cube, dice, player on roll, score)\n", s.CheckersConfirmed)
 	}
 	if s.Complete > 0 {
 		fmt.Fprintf(out, "Complete:   %d with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)\n", s.Complete)
-		if s.CompleteDirectionAssumed > 0 {
-			fmt.Fprintf(out, "            %d of them with the direction of play assumed: check it on a few diagrams first\n", s.CompleteDirectionAssumed)
-		}
+	}
+	if s.CompleteDirectionUnconfirmed > 0 {
+		fmt.Fprintf(out, "Complete:   %d more held back until the direction of play is confirmed\n", s.CompleteDirectionUnconfirmed)
 	}
 }
 

@@ -413,14 +413,17 @@ _Avoid_: metadata, header, situation
 The context a document's diagrams share when they do not print it — for a scanned book, a
 centred cube, no dice, the bottom player on roll, money play — carried once in the Relevé's
 header and confirmed once by a person (`confirmed`), which certifies the context of every
-entry under it. Only the exceptions a reader detected are then left to verify one by one.
+entry under it. A direction of play assumed for want of printed pips is a default too
+(`Defaults.Direction`), confirmed on its own. Only the exceptions a reader detected are then left to verify one by one.
 _Avoid_: assumption, preset, template
 
 **Complete reading** (interface: *15 + 15 sans doute*; code: `document.Entry.Complete`):
 A reading of fifteen checkers a side with no doubt that no cross-check confirmed — a diagram
 without printed pips; its only doubts beside the context are the absent pips and, for a
 document no printed pips voted on, the assumed direction of play. Printed pips that disagree
-are a doubt on the checkers: such a reading is never complete. Exact on every measure so far, it is a state between to verify and
+are a doubt on the checkers: such a reading is never complete. An assumed direction is a
+default of the document (`document.Direction`) with a confirmation of its own: until a person
+confirms it, no complete entry carrying it is accepted. Exact on every measure so far, it is a state between to verify and
 sure: an import accepts complete entries whose context is certified as a whole, on request
 (`ImportOptions.AcceptComplete`), never by default. A position with checkers borne off is
 never complete.

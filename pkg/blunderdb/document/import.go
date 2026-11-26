@@ -69,7 +69,7 @@ func refusalHint(r *Releve, ranks []int, acceptComplete bool) string {
 	for _, k := range ranks {
 		want[k] = true
 	}
-	var defaults, complete, context bool
+	var defaults, direction, complete, context bool
 	for _, e := range r.Entries {
 		if !want[e.Rank] {
 			continue
@@ -77,7 +77,10 @@ func refusalHint(r *Releve, ranks []int, acceptComplete bool) string {
 		if e.Context == ContextDefault && !r.ContextCertified(e) {
 			defaults = true
 		}
-		if !acceptComplete && e.Complete && r.ContextCertified(e) {
+		if e.Complete && r.ContextCertified(e) && !r.DirectionCertified(e) {
+			direction = true
+		}
+		if !acceptComplete && e.Complete && r.ContextCertified(e) && r.DirectionCertified(e) {
 			complete = true
 		}
 		if !r.ContextCertified(e) {
@@ -87,6 +90,9 @@ func refusalHint(r *Releve, ranks []int, acceptComplete bool) string {
 	var hints []string
 	if defaults {
 		hints = append(hints, "confirm the document's defaults once if its diagrams follow them (\"defaults\": {\"confirmed\": true})")
+	}
+	if direction {
+		hints = append(hints, "check the direction of play the reader assumed on a few diagrams, then confirm it once (\"defaults\": {\"direction\": {\"confirmed\": true}})")
 	}
 	if complete {
 		hints = append(hints, "accept the entries of fifteen checkers a side read with no doubt as a whole (accept complete)")

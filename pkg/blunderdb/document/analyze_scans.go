@@ -35,7 +35,7 @@ func analyzeScans(rd *pdf.Reader, r *Releve, opts AnalyzeOptions, outline []pdf.
 		opts.Warn(unreadSummary(res.Unread))
 	}
 	r.Document.Profile = structureProfile(res.Profile)
-	r.Document.Defaults = structureDefaults()
+	r.Document.Defaults = structureDefaults(res.Profile)
 	for _, d := range res.Diagrams {
 		e := structureEntry(d, len(r.Entries)+1)
 		e.Chapter = chapterOf(outline, e.Page)

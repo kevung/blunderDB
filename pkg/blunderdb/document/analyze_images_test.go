@@ -20,7 +20,7 @@ func TestStructureEntry(t *testing.T) {
 	confirmed := structure.Diagram{Page: 2, Rect: image.Rect(100, 200, 600, 650), PageSize: [2]int{1000, 1300},
 		Board: "-b----E-C---eE---c-e----B-", State: structure.Confirmed, CheckersSure: true}
 	e := structureEntry(confirmed, 1)
-	one := &Releve{Version: Version, Document: Source{Defaults: structureDefaults()}}
+	one := &Releve{Version: Version, Document: Source{Defaults: structureDefaults(structure.Profile{DirectionVoted: true})}}
 	if one.StateOf(e) != ToVerify || e.Checkers != Sure || e.Context != ContextDefault || e.Page != 3 || e.Position != "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10" || e.Rect == nil || e.Rect.W != 0.5 {
 		t.Errorf("confirmed entry %+v", e)
 	}
@@ -45,7 +45,7 @@ func TestStructureEntry(t *testing.T) {
 	if one.StateOf(empty) != Uncertain || empty.Position != "" || len(empty.Doubts) != 2 || empty.Doubts[0] != ContextDoubt || one.CheckersConfirmed(empty) {
 		t.Errorf("empty side %+v", empty)
 	}
-	r := &Releve{Format: Format, Version: Version, Document: Source{Title: "t", Defaults: structureDefaults()}, Entries: []Entry{e, drawn, tv, empty}}
+	r := &Releve{Format: Format, Version: Version, Document: Source{Title: "t", Defaults: structureDefaults(structure.Profile{DirectionVoted: true})}, Entries: []Entry{e, drawn, tv, empty}}
 	for i := range r.Entries {
 		r.Entries[i].Page = 3
 	}
@@ -70,7 +70,7 @@ func TestStructureEntryNeverSure(t *testing.T) {
 				for _, ds := range doubts {
 					for _, complete := range []bool{true, false} {
 						e := structureEntry(structure.Diagram{Board: b, State: st, CheckersSure: cs, Complete: complete, Doubts: ds}, 1)
-						r := &Releve{Format: Format, Version: Version, Document: Source{Title: "t", Defaults: structureDefaults()}, Entries: []Entry{e}}
+						r := &Releve{Format: Format, Version: Version, Document: Source{Title: "t", Defaults: structureDefaults(structure.Profile{DirectionVoted: true})}, Entries: []Entry{e}}
 						if err := r.Validate(); err != nil {
 							t.Errorf("state %v, checkers sure %v, board %q, doubts %v: %v", st, cs, b, ds, err)
 						}
@@ -182,6 +182,13 @@ func TestAnalyzeCompleteWithoutPips(t *testing.T) {
 	if got := Unverified(r, false); len(got) != 8 {
 		t.Errorf("complete entries not accepted: unverified %v, want every rank", got)
 	}
+	if got := Unverified(r, true); len(got) != 8 {
+		t.Errorf("direction of play assumed and not confirmed: unverified %v, want every rank", got)
+	}
+	if d := r.Document.Defaults.Direction; d == nil || d.Home != r.Document.Profile.Home || !hasDoubt(r.Entries[0].Doubts, AssumedDirectionDoubt) {
+		t.Fatalf("direction default %+v", d)
+	}
+	r.Document.Defaults.Direction.Confirmed = true
 	if got := Unverified(r, true); !slices.Equal(got, []int{2}) {
 		t.Errorf("complete entries accepted: unverified %v, want [2]", got)
 	}

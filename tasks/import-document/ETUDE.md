@@ -33,8 +33,9 @@ sont sûrs et le contexte certifié (lu, ou sous défaut confirmé). Le lecteur 
 le défaut « videau centré, pas de dés, joueur du bas, money », non confirmé ; un videau ou des
 dés dessinés mettent le contexte à vérifier, que la confirmation ne lève pas. `document import
 --accept-complete` (et `acceptComplete` du démon, 4e argument de `ImportDocumentReleve`)
-accepte en bloc les entrées complètes au contexte certifié ; le reste est refusé sans
-`--force`. Un relevé v1 se lit encore (`Upgrade` : sûre → pions sûrs et contexte lu ; entrée
+accepte en bloc les entrées complètes au contexte certifié et au sens de jeu certain ; le
+sens supposé faute de pips est un défaut du document à part (`defaults.direction`), confirmé
+par son propre `confirmed` ; le reste est refusé sans `--force`. Un relevé v1 se lit encore (`Upgrade` : sûre → pions sûrs et contexte lu ; entrée
 de scan → défaut non confirmé ; autre → contexte à vérifier) ; `analyze` écrit la v2.
 
 Suites, dans l'ordre : portage du contexte (videau, dés, bandeau de score ; banc `JOURNAL.md`
