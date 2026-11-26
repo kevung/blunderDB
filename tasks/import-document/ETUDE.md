@@ -244,6 +244,42 @@ tiré avant le développement, passé une fois, vérifié à l'œil diagramme pa
 Suite : le compte des piles (jointives, chiffrées, hautes) avant tout portage en Go ; nouvel
 échantillon de mesure ; la réserve reste fermée.
 
+### Compte des piles et mesure 2 (2026-11-27) — banc, `JOURNAL.md` D7-D9
+
+Échantillon neuf tiré avant le développement (graine 20261127), code gelé, un passage, 131
+diagrammes vérifiés à l'œil. Les deux échantillons sont maintenant consommés.
+
+| Livre | Trouvés | Sûres | Sûres fausses | À vérifier exactes / fausses | Exactes |
+|---|---|---|---|---|---|
+| Trice | 46 / 46 | 36 (78 %, avant 63 %) | 0 | 9 / 1 | 45 / 46 |
+| Woolsey | 42 / 43 | 20 (48 %, avant 40 %) | 0 | 21 / 1 | 41 / 42 |
+| Robertie (sans pips) | 43 / 43 | — | — | 36 / 7 | 36 / 43 |
+| Deep Cube rasterisé | 1 518 | 1 498 (avant 1 420) | 0 | 9 / 10 | — |
+
+- Parmi les diagrammes qui impriment leurs pips : 36 sûres sur 38 (Trice), 20 sur 21 (Woolsey).
+  Le rendement est désormais limité par l'absence de pips (la moitié des diagrammes de Woolsey,
+  tout Robertie), plus que par la lecture.
+- Changements : pile sombre comptée par sa longueur ; colonne entière partagée au changement de
+  classe ; pips employés comme contrainte pour une seule pile ambiguë, la position n'étant sûre
+  que si le camp atteint alors 15 pions (seconde équation, indépendante des pips). Deux piles
+  ambiguës dans un camp ne sont jamais résolues.
+- Lectures à 15 + 15 pions sans doute : 92 sur 92 exactes à la mesure 2, 95 sur 95 sur
+  l'ancien échantillon relu, 1 576 sur 1 577 concordantes avec les pips en développement
+  (l'exception est une coquille du livre). Toutes les lectures fausses ont un camp à moins de 15.
+- Erreurs restantes (10) : pion clair pâle, coupé, collé au cadre ou sous une numérotation (6),
+  pion sombre taché (2), deux piles chiffrées dans un camp (1) ; un diagramme non localisé.
+- Replis (§2 bis) : la calibration par document ne rapporte rien (aucune erreur ne vient du pas
+  d'empilement ni du sens de jeu ; estimé, non rejoué) ; le diagramme voisin non plus (les séries
+  de variantes n'ont pas de pips). La vérification par familles tient pour une seule famille :
+  « 15 + 15 sans doute », entièrement juste (174 sur 174). Les erreurs ne forment pas de famille
+  qu'une correction rejouée réparerait.
+- Erratum : deux verdicts à l'œil de la première mesure étaient faux (Robertie, pile de 7 jugée
+  6) ; la vérité à l'œil n'est pas infaillible sur les piles hautes.
+
+Décision ouverte, à l'utilisateur : faire de « 15 + 15 sans doute » un état intermédiaire
+(compte complet), distinct de sûr, acceptable en bloc après échantillon. Ne vaut pas pour une fin
+de partie avec pions sortis.
+
 ## Décisions de l'utilisateur (2026-11-25)
 
 - Recommandations suivies : rendu PDF, premier périmètre, ADR neuf.
