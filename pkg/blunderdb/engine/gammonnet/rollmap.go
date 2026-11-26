@@ -150,7 +150,7 @@ func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, p
 	}
 	// Ascending roll index, in float64: the order the search sums in.
 	for i, r := range job.rolls {
-		m.Average += r.weight * m.Rows[i].Equity
+		m.Average += float64(r.weight * m.Rows[i].Equity)
 	}
 	return m, nil
 }
