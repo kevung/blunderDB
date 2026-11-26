@@ -1205,24 +1205,6 @@
         "title": "Varoitus",
         "confirmTitle": "Vahvistus"
     },
-    "cubeMatrix": {
-        "title": "Tuplauskuution matriisi",
-        "computing": "lasketaan…",
-        "depth": "{ply}-ply",
-        "points": "{n} p",
-        "axes": "rivit: pisteet, jotka vuorossa oleva pelaaja vielä tarvitsee; sarakkeet: pisteet, jotka vastustaja vielä tarvitsee",
-        "glyphNoDouble": "ET",
-        "glyphDoubleTake": "TO",
-        "glyphDoublePass": "TP",
-        "glyphTooGood": "LH",
-        "legendNoDouble": "ei tuplausta",
-        "legendDoubleTake": "tuplaus, otto",
-        "legendDoublePass": "tuplaus, pass",
-        "legendTooGood": "liian hyvä",
-        "legendRefused": "ei arvioitavissa",
-        "currentScore": "aseman pistetilanne",
-        "note": "Aseman oma pistetilanne korvataan kunkin ruudun tilanteella; sen kuutio säilyy. Ruudukko on Crawfordin jälkeinen: Crawford-pelissä kuutio ei ole pelissä."
-    },
     "merge": {
         "canonicalName": "Kanoninen nimi:",
         "filterPlaceholder": "Suodata pelaajia…",
@@ -3008,7 +2990,8 @@
             "m": "Palaa viimeksi katsottuun otteluun",
             "met": "Ottelun equity-taulukko",
             "reference": "Viitetiedot: MET, ottopisteet, gammonin arvot, Neil",
-            "cm": "Kuutiomatriisi",
+            "sm": "Tilannekartta",
+            "jets": "Heittokartta",
             "tags": "Tagisanasto",
             "train": "Harjoittelu",
             "duel": "Kaksintaistelu bottia vastaan",
@@ -3677,5 +3660,72 @@
         "copyTournamentTo": "Kopioi turnaus kohteeseen {base}",
         "addToLot": "Lisää erään",
         "addToCollection": "Lisää kokoelmaan {name}"
+    },
+    "maps": {
+        "view": {
+            "label": "Näkymä",
+            "decision": "Päätös",
+            "scores": "Tilanteet",
+            "rolls": "Heitot"
+        },
+        "rolls": {
+            "roll": "Heitto",
+            "move": "Siirto",
+            "equity": "Equity",
+            "gap": "Ero",
+            "market": "Markkina",
+            "marketTip": "Markkina menetetty: tämän heiton jälkeen tuplaus hylättäisiin",
+            "average": "Keskiarvo",
+            "best": "Paras",
+            "worst": "Huonoin",
+            "spread": "Hajonta",
+            "dance": "Tanssi",
+            "replies": "Vastaukset",
+            "other": "Toinen siirto…",
+            "start": "Alku",
+            "me": "minä",
+            "him": "hän",
+            "myRolls": "Minun heitot",
+            "hisRolls": "Hänen heitot",
+            "trail": "Polku",
+            "progress": "{ply}-ply: {n} / {total}",
+            "computing": "Lasketaan",
+            "error": "Virhe"
+        },
+        "scores": {
+            "me": "Minä",
+            "opponent": "Vastustaja",
+            "match": "Ottelu {n}:ään",
+            "evaluate": "Arvioi",
+            "best": "Paras",
+            "second": "Toinen",
+            "progress": "{ply}-ply: {n} / {total}",
+            "legend": "Siirrot",
+            "close": "Sulje",
+            "refused": "Hylätty",
+            "crawford": "Crawford",
+            "error": "Virhe"
+        },
+        "verdict": {
+            "short": {
+                "no_double": "ET",
+                "double_take": "T/H",
+                "double_pass": "T/P",
+                "too_good": "LH"
+            },
+            "long": {
+                "no_double": "Ei tuplausta",
+                "double_take": "Tuplaus/Hyväksy",
+                "double_pass": "Tuplaus/Hylkää",
+                "too_good": "Liian hyvä"
+            }
+        },
+        "menu": {
+            "replies": "Vastaukset",
+            "scores": "Tilannekartta"
+        },
+        "config": {
+            "defaultMatch": "Oletusottelu"
+        }
     }
 }

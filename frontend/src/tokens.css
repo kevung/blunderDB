@@ -108,4 +108,25 @@
     --group-color-4: #8a4f9e;
     --group-color-5: #a83b5c;
     --group-color-6: #6b7a2e;
+
+    /* Roll and score maps (ADR-0031): orange for worse, blue for better, a neutral grey between
+       — a daltonism-safe pair. A cell never relies on them alone: its figure, letter or frame
+       says the same. Dark variants below. */
+    --map-worse: #f47230;
+    --map-better: #257de0;
+    --map-neutral: #d6d6d6;
+    --map-play-1: #257de0;
+    --map-play-2: #f47230;
+    --map-play-3: #00b894;
+    --map-play-other: #8a8a8a;
+}
+
+:root[data-scheme='dark'] {
+    --map-worse: #d9622a;
+    --map-better: #3b82d8;
+    --map-neutral: #4d4d4d;
+    --map-play-1: #3b82d8;
+    --map-play-2: #d9622a;
+    --map-play-3: #1aa386;
+    --map-play-other: #7a7a7a;
 }

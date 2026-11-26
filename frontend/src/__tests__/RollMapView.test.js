@@ -1,0 +1,116 @@
+// @ts-nocheck
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, fireEvent } from '@testing-library/svelte';
+import { get } from 'svelte/store';
+
+const handlers = vi.hoisted(() => /** @type {Record<string, (e: any) => void>} */ ({}));
+const app = vi.hoisted(() => ({
+    StartRollMap: vi.fn().mockResolvedValue(undefined),
+    StartRollMapAfterPlay: vi.fn().mockResolvedValue(undefined),
+    CancelRollMap: vi.fn().mockResolvedValue(undefined),
+    EvaluatePositionImmediate: vi.fn().mockResolvedValue({ moves: [{ move: '24/14' }, { move: '13/7 13/9' }] })
+}));
+vi.mock('../../wailsjs/go/gui/App.js', () => app);
+vi.mock('../../wailsjs/go/main/Config.js', () => ({
+    GetGammonNetDisplayPly: vi.fn().mockResolvedValue(2),
+    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+}));
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({
+    EventsOn: vi.fn((name, fn) => {
+        handlers[name] = fn;
+        return () => {};
+    })
+}));
+vi.mock('../services/modeMachine.js', () => ({ sendPositionToEval: vi.fn(), toggleEvalMode: vi.fn() }));
+
+import RollMapView from '../components/RollMapView.svelte';
+import { positionStore } from '../stores/positionStore.js';
+import { rollTrailStore } from '../stores/mapStore.js';
+import { sendPositionToEval } from '../services/modeMachine.js';
+
+function opening() {
+    const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
+    for (const [i, n] of [
+        [24, 2],
+        [13, 5],
+        [8, 3],
+        [6, 5]
+    ])
+        points[i] = { checkers: n, color: 0 };
+    for (const [i, n] of [
+        [1, 2],
+        [12, 5],
+        [17, 3],
+        [19, 5]
+    ])
+        points[i] = { checkers: n, color: 1 };
+    return { id: 0, board: { points, bearoff: [0, 0] }, cube: { owner: -1, value: 0 }, dice: [0, 0], score: [-1, -1], player_on_roll: 0, decision_type: 0, has_jacoby: 0, max_cube: 0, has_beaver: 0 };
+}
+
+const ROLLS = [];
+for (let a = 1; a <= 6; a++) for (let b = a; b <= 6; b++) ROLLS.push([a, b]);
+
+async function feed(tag, ply = 2) {
+    ROLLS.forEach(([die1, die2], index) => {
+        handlers['gammonnet-rolls:row']({ tag, index, row: { die1, die2, weight: die1 === die2 ? 1 : 2, move: '24/14', equity: index / 100, ply, marketLost: index < 3 } });
+    });
+    await Promise.resolve();
+}
+
+describe('RollMapView', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        positionStore.set(opening());
+        rollTrailStore.set({ root: null, steps: [] });
+    });
+    afterEach(() => rollTrailStore.set({ root: null, steps: [] }));
+
+    test('starts the map of the position and draws its 21 rows and the grid', async () => {
+        const { container, findByText } = render(RollMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalledTimes(1));
+        const tag = app.StartRollMap.mock.calls[0][3];
+        expect(app.StartRollMap.mock.calls[0][1]).toBe(2);
+        await feed(tag);
+        expect(container.querySelectorAll('tbody tr')).toHaveLength(21);
+        expect(container.querySelectorAll('.grid .cell')).toHaveLength(36);
+        await findByText(/2-ply/);
+        // the "market lost" count is a filter
+        const market = container.querySelector('.market');
+        expect(market.textContent).toContain('5/36');
+        await fireEvent.click(market);
+        expect(container.querySelectorAll('tbody tr')).toHaveLength(3);
+    });
+
+    test('an answer of an older start is dropped', async () => {
+        const { container } = render(RollMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalled());
+        await feed(app.StartRollMap.mock.calls[0][3] + 99);
+        expect(container.querySelectorAll('tbody tr')).toHaveLength(0);
+    });
+
+    test('computes nothing while not shown', async () => {
+        render(RollMapView, { active: false });
+        await Promise.resolve();
+        expect(app.StartRollMap).not.toHaveBeenCalled();
+    });
+
+    test('descending plays the roll, moves the board and asks for the replies', async () => {
+        const { container, getByText } = render(RollMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalled());
+        await feed(app.StartRollMap.mock.calls[0][3]);
+        // 6-4 is the row the engine numbers 8 + ... : pick the 4-6 row through the table
+        const row = [...container.querySelectorAll('tbody tr')].find((r) => r.querySelector('.roll').textContent === '4-6');
+        await fireEvent.click(row);
+        await fireEvent.click(getByText(/^Réponses|^Replies/));
+        expect(get(rollTrailStore).steps).toHaveLength(1);
+        expect(get(rollTrailStore).steps[0]).toMatchObject({ die1: 4, die2: 6, move: '24/14' });
+        expect(sendPositionToEval).toHaveBeenCalled();
+        await vi.waitFor(() => expect(app.StartRollMapAfterPlay).toHaveBeenCalled());
+        expect(app.StartRollMapAfterPlay.mock.calls[0].slice(1, 4)).toEqual([4, 6, '24/14']);
+        // the trail reads: start, my play, his rolls
+        expect(container.querySelectorAll('.trail .crumb')).toHaveLength(3);
+        // climbing back
+        await fireEvent.click(container.querySelector('.trail .crumb'));
+        expect(get(rollTrailStore).steps).toHaveLength(0);
+    });
+});

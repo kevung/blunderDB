@@ -1176,7 +1176,7 @@ La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce que
 l'on ne sait plus où chercher : une commande de la ligne de commande, un
 onglet, un filtre de la bibliothèque ou un match. Les lettres tapées doivent
 apparaître dans l'ordre, pas forcément côte à côte, et sans égard aux
-majuscules ni aux accents : « mtrc » trouve la matrice du videau, « lyon » les
+majuscules ni aux accents : « crsc » trouve la carte des scores, « lyon » les
 matchs d'un tournoi de Lyon.
 
 Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se lance

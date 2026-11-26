@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 02:39+0100\n"
+"POT-Creation-Date: 2026-11-26 00:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -175,14 +175,30 @@ msgid ""
 msgstr "参照データパネルを Kazaross-XG2 マッチエクイティテーブルで開きます。"
 
 #: ../../source/cmd_mode.rst:1
-msgid "cm"
-msgstr "cm"
+msgid "sm, cm"
+msgstr "sm, cm"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre la matrice du videau : le verdict de la position courante à tous "
-"les scores d'un match de 5, 7 ou 9 points."
-msgstr "キューブ判断のマトリクスを開きます。5・7・9 点マッチのあらゆるスコアにおける現在の局面の判断を示します。"
+"Ouvre la vue Scores du panneau Eval : la décision de la position courante"
+" à tous les scores d'un match de 3 à 15 points (voir :ref:`eval_cartes`)."
+" ``cm`` est l'ancien nom de la matrice du videau, conservé."
+msgstr ""
+"Eval パネルのスコア表示を開きます。現在のポジションの判断を、3 から 15 "
+"ポイントのマッチのすべてのスコアで示します（:ref:`eval_cartes` を参照）。\\ ``cm``\\ "
+"はキューブ行列の旧名で、そのまま残されています。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "jets"
+msgstr "jets"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la vue Jets du panneau Eval : le meilleur coup et l'équité des 21 "
+"jets de la position, et leurs réponses (voir :ref:`eval_cartes`)."
+msgstr ""
+"Eval パネルのロール表示を開きます。ポジションの 21 "
+"通りのロールについて、最良の手とエクイティ、およびそれらへの応手を示します（:ref:`eval_cartes` を参照）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "tags"
@@ -273,7 +289,7 @@ msgstr ""
 "参照データパネルをギャモン価値タブで開きます。このタブには、キューブ 1、2、4 の表がまとめられています。この 3 "
 "つのコマンドは同じタブを開きます。"
 
-#: ../../source/cmd_mode.rst:47
+#: ../../source/cmd_mode.rst:48
 msgid "Positions et navigation"
 msgstr "局面とナビゲーション"
 
@@ -482,7 +498,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "最後に閲覧したマッチ内を移動します。"
 
-#: ../../source/cmd_mode.rst:78
+#: ../../source/cmd_mode.rst:79
 msgid "Édition et recherche"
 msgstr "編集と検索"
 
@@ -525,11 +541,11 @@ msgid ""
 "ouverte ou match en cours de revue."
 msgstr "表示中のポジションの中を検索：現在の結果、開いているコレクション、またはレビュー中のマッチ。"
 
-#: ../../source/cmd_mode.rst:94
+#: ../../source/cmd_mode.rst:95
 msgid "Filtres de recherche"
 msgstr "検索フィルタ"
 
-#: ../../source/cmd_mode.rst:96
+#: ../../source/cmd_mode.rst:97
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -543,7 +559,7 @@ msgstr ""
 "のフラグが存在する場合にそれを示します（\\ :ref:`cli`\\ "
 "を参照）。ダッシュは、この文法でしか表現できないフィルターであることを示します。"
 
-#: ../../source/cmd_mode.rst:103
+#: ../../source/cmd_mode.rst:104
 msgid ""
 "Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -560,7 +576,7 @@ msgstr ""
 "は存在せず、数字を持つのは除外の形（\\ ``xD65``\\ "
 "）だけです。盤面のないコマンドラインでは、これらのトークンは空の盤面と比較されます。そこでは第3列のフラグを使ってください。"
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:113
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -569,7 +585,7 @@ msgstr ""
 "トークンのうち ``like`` だけは、絞り込むのではなく\\ **並べ替え**\\ "
 "ます。目標局面からの距離の昇順に結果を並べ、ほかのトークンはすべて、そうして並んだ集合を絞り込みます。"
 
-#: ../../source/cmd_mode.rst:116
+#: ../../source/cmd_mode.rst:117
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -578,18 +594,18 @@ msgstr ""
 "エラーとエクイティは\\ **エクイティの千分の1**\\ 単位で数えます——下の表でいう *ミリポイント* です。\\ ``E>100`` "
 "は、少なくとも 0.1 ポイントを失った手を残します。1ポイントは 1000 ミリポイントです。"
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid "Deux recherches complètes :"
 msgstr "完全な検索の例を二つ："
 
-#: ../../source/cmd_mode.rst:122
+#: ../../source/cmd_mode.rst:123
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
 "chances de gain, aucun commentaire."
 msgstr "``s p>30 w40,60 xco`` — 30 ピップ以上遅れており、勝率が 40 % から 60 % の間で、コメントがないもの。"
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1884,7 +1900,7 @@ msgstr ""
 "は目標と上限を組み合わせます。二ロールを超える検索は拒否され、もはや存在しない星付きの形（\\ ``like42*``\\ ）も同様です。\\ "
 ":ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:249
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1900,11 +1916,11 @@ msgstr ""
 "）が、二重引用符は決して含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、\\ ``ma1;2`` "
 "はトークンではありません（\\ ``ma1 ma2`` と書きます）。"
 
-#: ../../source/cmd_mode.rst:253
+#: ../../source/cmd_mode.rst:254
 msgid "Transcrire depuis un terminal"
 msgstr "ターミナルから転記する"
 
-#: ../../source/cmd_mode.rst:255
+#: ../../source/cmd_mode.rst:256
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1922,7 +1938,7 @@ msgstr ""
 "は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、\\ ``sessionId`` "
 "はなく、呼び出しをまたいだ取り消しもできません。"
 
-#: ../../source/cmd_mode.rst:266
+#: ../../source/cmd_mode.rst:267
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 
@@ -2115,3 +2131,13 @@ msgstr "コマンド履歴を消去します。"
 #~ "tournoi, collections, commentaires, paquet "
 #~ "Anki, analyses) pour découvrir l'outil."
 #~ msgstr "ツールを試すためのサンプルデータベース（マッチ、トーナメント、コレクション、コメント、Anki デッキ、解析）を読み込みます。"
+
+#~ msgid "cm"
+#~ msgstr "cm"
+
+#~ msgid ""
+#~ "Ouvre la matrice du videau : le"
+#~ " verdict de la position courante à"
+#~ " tous les scores d'un match de "
+#~ "5, 7 ou 9 points."
+#~ msgstr "キューブ判断のマトリクスを開きます。5・7・9 点マッチのあらゆるスコアにおける現在の局面の判断を示します。"

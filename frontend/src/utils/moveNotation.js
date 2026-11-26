@@ -315,3 +315,38 @@ export function resolveBoard(position, notation, marks) {
     const boards = playBoards(position, notation, marks);
     return boards.length === 1 ? boards[0] : null;
 }
+
+/**
+ * The position position reaches once played with d1-d2 and move, the other side on roll before
+ * their dice: gammonnet.PositionAfterPlay in Go. An empty move is a dance. Null when the
+ * notation names no play, or may leave several boards.
+ *
+ * @param {any} position
+ * @param {number} d1
+ * @param {number} d2
+ * @param {string} move
+ * @returns {any | null}
+ */
+export function positionAfterPlay(position, d1, d2, move) {
+    if (!position?.board) return null;
+    const rolled = { ...position, dice: [d1, d2] };
+    const opponent = position.player_on_roll === WHITE ? BLACK : WHITE;
+    const next = JSON.parse(JSON.stringify(position));
+    if (move) {
+        const key = resolveBoard(rolled, move, false);
+        if (key === null) return null;
+        const [pointsPart, bearoffPart] = key.split('|');
+        next.board = {
+            points: pointsPart.split(',').map((cell) => {
+                if (!cell) return { checkers: 0, color: NONE };
+                const [color, checkers] = cell.split(':').map(Number);
+                return { checkers, color };
+            }),
+            bearoff: bearoffPart.split(',').map(Number)
+        };
+    }
+    next.player_on_roll = opponent;
+    next.dice = [0, 0];
+    next.id = 0;
+    return next;
+}

@@ -73,11 +73,6 @@
     <Modal visible={$activeModal === MODAL.RESUME_BATCH} onClose={() => closeModal()} />
 {/if}
 
-{#if $loaded.cubeMatrix}
-    {@const Modal = $loaded.cubeMatrix}
-    <Modal visible={$activeModal === MODAL.CUBE_MATRIX} onClose={() => closeModal()} />
-{/if}
-
 {#if $loaded.tags}
     {@const Modal = $loaded.tags}
     <Modal visible={$activeModal === MODAL.TAGS} onClose={() => closeModal()} />

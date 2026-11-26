@@ -14,6 +14,8 @@ import { tMsg } from './i18n';
 import { withDisplayedPositionIDs, searchQueryBoard, showReferencePanel, toggleReferencePanel } from './services/positionService.js';
 import { openContactSheet } from './services/contactSheet.js';
 import { runRolloutCommand } from './services/rolloutService.js';
+import { openEvalView } from './services/mapService.js';
+import { EVAL_VIEW } from './stores/mapStore.js';
 import { listLessons, openLesson, openLessonEditor } from './services/lessonService.js';
 import { startStudyBacklog } from './services/studyQueueService.js';
 // The search-token grammar lives in searchFilterService.js (shared with the "retour" replay);
@@ -165,8 +167,10 @@ export function processCommand(command) {
         toggleReferencePanel();
     } else if (command === 'met') {
         showReferencePanel('met');
-    } else if (command === 'cm') {
-        openModal(MODAL.CUBE_MATRIX);
+    } else if (command === 'sm' || command === 'cm') {
+        openEvalView(EVAL_VIEW.SCORES);
+    } else if (command === 'jets') {
+        openEvalView(EVAL_VIEW.ROLLS);
     } else if (command === 'tags') {
         openModal(MODAL.TAGS);
     } else if (command === 'log') {

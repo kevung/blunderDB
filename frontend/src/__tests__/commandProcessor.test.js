@@ -16,10 +16,11 @@ import { translate, resolveStatusMessage } from '../i18n';
 // the status bar can re-translate live. Resolve it to the English string the
 // way StatusBar does (via the translate function) for these assertions.
 const statusText = () => resolveStatusMessage(get(statusBarTextStore), translate);
-import { commentTextStore, currentPositionIndexStore, statusBarTextStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
+import { commentTextStore, currentPositionIndexStore, statusBarTextStore, activeModal, activeTabStore } from '../stores/uiStore.js';
 import { referenceSectionStore } from '../stores/referenceStore.js';
 import { duelStore, duelHoldsBoardStore } from '../stores/duelStore.js';
 import { positionsStore } from '../stores/positionStore.js';
+import { evalViewStore } from '../stores/mapStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { statusBarModeStore } from '../stores/uiStore.js';
 import { commandHistoryStore } from '../stores/commandHistoryStore.js';
@@ -768,9 +769,17 @@ describe('processCommand', () => {
         expect(callbacks.importPosition).not.toHaveBeenCalled();
     });
 
-    test('cm opens the cube matrix modal', () => {
-        processCommand('cm');
-        expect(get(activeModal)).toBe(MODAL.CUBE_MATRIX);
+    test('sm and its alias cm open the score view of the Eval panel', () => {
+        for (const command of ['sm', 'cm']) {
+            evalViewStore.set('decision');
+            processCommand(command);
+            expect(get(evalViewStore)).toBe('scores');
+        }
+    });
+
+    test('jets opens the roll view of the Eval panel', () => {
+        processCommand('jets');
+        expect(get(evalViewStore)).toBe('rolls');
     });
 
     // -- meta command --------------------------------------------------------

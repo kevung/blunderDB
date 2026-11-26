@@ -65,7 +65,6 @@ export function pageStepSize(setting, count) {
 
 // ── Modal identifiers (exclusive — only one modal at a time) ──
 export const MODAL = {
-    CUBE_MATRIX: 'cubeMatrix',
     TAGS: 'tags',
     LESSON_EDITOR: 'lessonEditor',
     WARNING: 'warning',

@@ -1,11 +1,14 @@
 // The context menu of a candidate moves table, shared by the Analysis and Eval panels: start or
-// cancel a rollout, and copy the board with the analysis — whole, as C-X C-X, and, when plays are
+// cancel a rollout, open the maps (replies to a play, the position at every score), and copy the board with the analysis — whole, as C-X C-X, and, when plays are
 // selected, with those plays only.
 import { get } from 'svelte/store';
 import { t } from '../i18n';
 import { rolloutStore, rolloutChoiceStore } from '../stores/rolloutStore.js';
 import { toggleRollout, cancelRollout } from './rolloutService.js';
 import { copyBoardWithAnalysisImage } from './clipboardService.js';
+import { positionStore } from '../stores/positionStore.js';
+import { openRollReplies, openEvalView } from './mapService.js';
+import { EVAL_VIEW } from '../stores/mapStore.js';
 
 /**
  * @param {string[]} moves the plays selected; none for the whole position or a cube decision
@@ -26,6 +29,10 @@ export function analysisMenuItems(moves, options = {}) {
                   onClick: () => toggleRollout(moves, options)
               }
           ];
+    const position = get(positionStore);
+    const rolled = (position?.dice?.[0] ?? 0) > 0 && (position?.dice?.[1] ?? 0) > 0;
+    if (moves.length === 1 && rolled) items.push({ label: tr('maps.menu.replies'), onClick: () => openRollReplies(position, moves[0]) });
+    items.push({ label: tr('maps.menu.scores'), onClick: () => openEvalView(EVAL_VIEW.SCORES) });
     items.push({ label: tr('analysis.menuCopy'), shortcut: 'C-X C-X', onClick: () => copyBoardWithAnalysisImage({ moves: [] }) });
     if (moves.length) items.push({ label: tr('analysis.menuCopySelected'), onClick: () => copyBoardWithAnalysisImage({ moves }) });
     return items;

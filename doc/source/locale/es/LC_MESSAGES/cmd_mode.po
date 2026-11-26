@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 02:39+0100\n"
+"POT-Creation-Date: 2026-11-26 00:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -187,16 +187,31 @@ msgstr ""
 "Kazaross-XG2."
 
 #: ../../source/cmd_mode.rst:1
-msgid "cm"
-msgstr "cm"
+msgid "sm, cm"
+msgstr "sm, cm"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre la matrice du videau : le verdict de la position courante à tous "
-"les scores d'un match de 5, 7 ou 9 points."
+"Ouvre la vue Scores du panneau Eval : la décision de la position courante"
+" à tous les scores d'un match de 3 à 15 points (voir :ref:`eval_cartes`)."
+" ``cm`` est l'ancien nom de la matrice du videau, conservé."
 msgstr ""
-"Abre la matriz del cubo: el veredicto de la posición actual en todos los "
-"marcadores de un partido a 5, 7 o 9 puntos."
+"Abre la vista Marcadores del panel Eval: la decisión de la posición "
+"actual en todos los marcadores de una partida de 3 a 15 puntos (véase "
+":ref:`eval_cartes`). ``cm`` es el antiguo nombre de la matriz del cubo, "
+"conservado."
+
+#: ../../source/cmd_mode.rst:1
+msgid "jets"
+msgstr "jets"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la vue Jets du panneau Eval : le meilleur coup et l'équité des 21 "
+"jets de la position, et leurs réponses (voir :ref:`eval_cartes`)."
+msgstr ""
+"Abre la vista Tiradas del panel Eval: la mejor jugada y la equity de las "
+"21 tiradas de la posición, y sus respuestas (véase :ref:`eval_cartes`)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tags"
@@ -298,7 +313,7 @@ msgstr ""
 "reúne las tablas del cubo a 1, 2 y 4: estos tres comandos abren la misma "
 "pestaña."
 
-#: ../../source/cmd_mode.rst:47
+#: ../../source/cmd_mode.rst:48
 msgid "Positions et navigation"
 msgstr "Posiciones y navegación"
 
@@ -525,7 +540,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navegar por el último match visitado."
 
-#: ../../source/cmd_mode.rst:78
+#: ../../source/cmd_mode.rst:79
 msgid "Édition et recherche"
 msgstr "Edición y búsqueda"
 
@@ -571,11 +586,11 @@ msgstr ""
 "Buscar entre las posiciones mostradas: resultados actuales, colección "
 "abierta o partida en revisión."
 
-#: ../../source/cmd_mode.rst:94
+#: ../../source/cmd_mode.rst:95
 msgid "Filtres de recherche"
 msgstr "Filtros de búsqueda"
 
-#: ../../source/cmd_mode.rst:96
+#: ../../source/cmd_mode.rst:97
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -590,7 +605,7 @@ msgstr ""
 "cuando existe, la opción de ``search`` que hace lo mismo (ver "
 ":ref:`cli`); un guion señala un filtro que solo la gramática expresa."
 
-#: ../../source/cmd_mode.rst:103
+#: ../../source/cmd_mode.rst:104
 msgid ""
 "Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -610,7 +625,7 @@ msgstr ""
 "se comparan con un tablero vacío; son las opciones de la tercera columna "
 "las que hay que emplear ahí."
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:113
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -620,7 +635,7 @@ msgstr ""
 "resultado por distancia creciente a una posición objetivo, y todos los "
 "demás tokens restringen el conjunto así ordenado."
 
-#: ../../source/cmd_mode.rst:116
+#: ../../source/cmd_mode.rst:117
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -630,11 +645,11 @@ msgstr ""
 "*milipuntos* de la tabla siguiente: ``E>100`` conserva las jugadas que "
 "costaron al menos una décima de punto, valiendo un punto 1000 milésimas."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid "Deux recherches complètes :"
 msgstr "Dos búsquedas completas:"
 
-#: ../../source/cmd_mode.rst:122
+#: ../../source/cmd_mode.rst:123
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -643,7 +658,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — más de 30 pips de retraso, entre 40 % y 60 % de "
 "probabilidad de victoria, sin comentario."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -2007,7 +2022,7 @@ msgstr ""
 "forma con asterisco (``like42*``) que ya no existe. Véase "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:249
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -2026,11 +2041,11 @@ msgstr ""
 " figura en ningún valor, y ``ma1;2`` no es un token (escribir ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:253
+#: ../../source/cmd_mode.rst:254
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribir desde un terminal"
 
-#: ../../source/cmd_mode.rst:255
+#: ../../source/cmd_mode.rst:256
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -2049,7 +2064,7 @@ msgstr ""
 " la revisión devuelta por la llamada anterior; cada llamada es su propia "
 "sesión, sin ``sessionId`` ni deshacer de una llamada a otra."
 
-#: ../../source/cmd_mode.rst:266
+#: ../../source/cmd_mode.rst:267
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 
@@ -2289,3 +2304,17 @@ msgstr "Borra el historial de comandos."
 #~ "Carga una base de ejemplo (partidas, "
 #~ "torneo, colecciones, comentarios, mazo Anki,"
 #~ " análisis) para descubrir la herramienta."
+
+#~ msgid "cm"
+#~ msgstr "cm"
+
+#~ msgid ""
+#~ "Ouvre la matrice du videau : le"
+#~ " verdict de la position courante à"
+#~ " tous les scores d'un match de "
+#~ "5, 7 ou 9 points."
+#~ msgstr ""
+#~ "Abre la matriz del cubo: el "
+#~ "veredicto de la posición actual en "
+#~ "todos los marcadores de un partido "
+#~ "a 5, 7 o 9 puntos."

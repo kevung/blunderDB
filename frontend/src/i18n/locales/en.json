@@ -1205,24 +1205,6 @@
         "title": "Warning",
         "confirmTitle": "Confirmation"
     },
-    "cubeMatrix": {
-        "title": "Cube matrix",
-        "computing": "computing…",
-        "depth": "{ply}-ply",
-        "points": "{n} pts",
-        "axes": "rows: points still needed by the player on roll; columns: points still needed by the opponent",
-        "glyphNoDouble": "ND",
-        "glyphDoubleTake": "DT",
-        "glyphDoublePass": "DP",
-        "glyphTooGood": "TG",
-        "legendNoDouble": "no double",
-        "legendDoubleTake": "double, take",
-        "legendDoublePass": "double, pass",
-        "legendTooGood": "too good",
-        "legendRefused": "not evaluable",
-        "currentScore": "the position's score",
-        "note": "The position's own score is replaced by each cell's; its cube is kept. The grid is post-Crawford: during the Crawford game the cube is not in play."
-    },
     "merge": {
         "canonicalName": "Canonical name:",
         "filterPlaceholder": "Filter players…",
@@ -3008,7 +2990,8 @@
             "m": "Back to the last visited match",
             "met": "Match equity table",
             "reference": "Reference data: MET, take points, gammon values, Neil",
-            "cm": "Cube matrix",
+            "sm": "Score map",
+            "jets": "Roll map",
             "tags": "Tag vocabulary",
             "train": "Training",
             "duel": "Duel against the Bot",
@@ -3677,5 +3660,72 @@
         "copyTournamentTo": "Copy the tournament to {base}",
         "addToLot": "Add to the lot",
         "addToCollection": "Add to the collection {name}"
+    },
+    "maps": {
+        "view": {
+            "label": "View",
+            "decision": "Decision",
+            "scores": "Scores",
+            "rolls": "Rolls"
+        },
+        "rolls": {
+            "roll": "Roll",
+            "move": "Play",
+            "equity": "Equity",
+            "gap": "Gap",
+            "market": "Market",
+            "marketTip": "Market lost: a double would be passed after this roll",
+            "average": "Mean",
+            "best": "Best",
+            "worst": "Worst",
+            "spread": "Std dev",
+            "dance": "Dance",
+            "replies": "Replies",
+            "other": "Other play…",
+            "start": "Start",
+            "me": "me",
+            "him": "him",
+            "myRolls": "My rolls",
+            "hisRolls": "His rolls",
+            "trail": "Path",
+            "progress": "{ply}-ply: {n} / {total}",
+            "computing": "Computing",
+            "error": "Error"
+        },
+        "scores": {
+            "me": "Me",
+            "opponent": "Opponent",
+            "match": "Match to {n}",
+            "evaluate": "Evaluate",
+            "best": "Best",
+            "second": "Second",
+            "progress": "{ply}-ply: {n} / {total}",
+            "legend": "Plays",
+            "close": "Close",
+            "refused": "Refused",
+            "crawford": "Crawford",
+            "error": "Error"
+        },
+        "verdict": {
+            "short": {
+                "no_double": "ND",
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
+            },
+            "long": {
+                "no_double": "No double",
+                "double_take": "Double/Take",
+                "double_pass": "Double/Pass",
+                "too_good": "Too good"
+            }
+        },
+        "menu": {
+            "replies": "Replies",
+            "scores": "Score map"
+        },
+        "config": {
+            "defaultMatch": "Default match"
+        }
     }
 }

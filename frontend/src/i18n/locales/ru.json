@@ -1205,24 +1205,6 @@
         "title": "Предупреждение",
         "confirmTitle": "Подтверждение"
     },
-    "cubeMatrix": {
-        "title": "Матрица куба",
-        "computing": "вычисление…",
-        "depth": "{ply}-ply",
-        "points": "{n} оч.",
-        "axes": "строки: очки, которых ещё не хватает игроку на ходу; столбцы: очки, которых не хватает сопернику",
-        "glyphNoDouble": "БУ",
-        "glyphDoubleTake": "УП",
-        "glyphDoublePass": "УО",
-        "glyphTooGood": "СХ",
-        "legendNoDouble": "без удвоения",
-        "legendDoubleTake": "удвоение, приём",
-        "legendDoublePass": "удвоение, отказ",
-        "legendTooGood": "слишком хорошо",
-        "legendRefused": "не оценивается",
-        "currentScore": "счёт позиции",
-        "note": "Счёт самой позиции заменяется счётом каждой клетки; её куб сохраняется. Сетка — после Кроуфорда: в игре Кроуфорда куб не используется."
-    },
     "merge": {
         "canonicalName": "Каноническое имя:",
         "filterPlaceholder": "Фильтр игроков…",
@@ -3008,7 +2990,8 @@
             "m": "Вернуться к последнему матчу",
             "met": "Таблица эквити матча",
             "reference": "Справочные данные: MET, точки взятия, ценность гаммона, Нил",
-            "cm": "Матрица куба",
+            "sm": "Карта счетов",
+            "jets": "Карта бросков",
             "tags": "Словарь тегов",
             "train": "Тренировка",
             "duel": "Дуэль с ботом",
@@ -3677,5 +3660,72 @@
         "copyTournamentTo": "Копировать турнир в {base}",
         "addToLot": "Добавить в набор",
         "addToCollection": "Добавить в коллекцию {name}"
+    },
+    "maps": {
+        "view": {
+            "label": "Вид",
+            "decision": "Решение",
+            "scores": "Счета",
+            "rolls": "Броски"
+        },
+        "rolls": {
+            "roll": "Бросок",
+            "move": "Ход",
+            "equity": "Эквити",
+            "gap": "Разница",
+            "market": "Рынок",
+            "marketTip": "Рынок потерян: после этого броска удвоение будет отклонено",
+            "average": "Среднее",
+            "best": "Лучший",
+            "worst": "Худший",
+            "spread": "Ст. откл.",
+            "dance": "Танец",
+            "replies": "Ответы",
+            "other": "Другой ход…",
+            "start": "Старт",
+            "me": "я",
+            "him": "он",
+            "myRolls": "Мои броски",
+            "hisRolls": "Его броски",
+            "trail": "Путь",
+            "progress": "{ply}-ply: {n} / {total}",
+            "computing": "Расчёт",
+            "error": "Ошибка"
+        },
+        "scores": {
+            "me": "Я",
+            "opponent": "Соперник",
+            "match": "Матч до {n}",
+            "evaluate": "Оценить",
+            "best": "Лучший",
+            "second": "Второй",
+            "progress": "{ply}-ply: {n} / {total}",
+            "legend": "Ходы",
+            "close": "Закрыть",
+            "refused": "Отказ",
+            "crawford": "Кроуфорд",
+            "error": "Ошибка"
+        },
+        "verdict": {
+            "short": {
+                "no_double": "НД",
+                "double_take": "Д/П",
+                "double_pass": "Д/О",
+                "too_good": "СХ"
+            },
+            "long": {
+                "no_double": "Без удвоения",
+                "double_take": "Удвоение/Принять",
+                "double_pass": "Удвоение/Отказ",
+                "too_good": "Слишком хорошо"
+            }
+        },
+        "menu": {
+            "replies": "Ответы",
+            "scores": "Карта счетов"
+        },
+        "config": {
+            "defaultMatch": "Матч по умолчанию"
+        }
     }
 }
