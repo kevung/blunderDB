@@ -132,6 +132,9 @@ type Result struct {
 	Rejected int // components shaped or framed unlike a diagram
 }
 
+// inspectReading, set by the measure only, sees each raw reading.
+var inspectReading func(*boardReading)
+
 func image2Rect(b box) image.Rectangle { return image.Rect(b.x0, b.y0, b.x1, b.y1) }
 
 func loadPage(pages Pages, i int) (*raster, Page, error) {
@@ -212,6 +215,9 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 			rd.digits, rd.cubes, rd.dice = z.digits, z.cubes, z.dice
 			rd.page, rd.bbox, rd.pageW, rd.pageH = i, z.bbox, g.w, g.h
 			rds = append(rds, &rd)
+			if inspectReading != nil {
+				inspectReading(&rd)
+			}
 		}
 		if len(zs) > 0 && len(pg.Words) > 0 {
 			words[i] = pg.Words

@@ -68,6 +68,22 @@ func TestMeasureStructure(t *testing.T) {
 				pageList = pageList[:n]
 			}
 			src := newPDFPages(t, pdf, pageList)
+			if dump := os.Getenv("BLUNDERDB_DOCUMENT_DUMP"); dump != "" {
+				inspectReading = func(rd *boardReading) {
+					f, err := os.OpenFile(dump, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+					if err != nil {
+						return
+					}
+					defer func() { _ = f.Close() }()
+					fmt.Fprintf(f, "page %d bbox %v n %d bar %+v\n", pageList[rd.page], rd.bbox, rd.n, rd.bar)
+					for _, c := range rd.cols {
+						if len(c.discs) > 0 {
+							fmt.Fprintf(f, "  top=%v j=%d %+v\n", c.top, c.j, c.discs)
+						}
+					}
+				}
+				defer func() { inspectReading = nil }()
+			}
 			t0 := time.Now()
 			res, err := Read(context.Background(), src)
 			if err != nil {
@@ -162,6 +178,18 @@ func compareTruth(t *testing.T, vol int, got map[[2]int]Diagram, truth map[[2]in
 	t.Logf("v%d against the truth: %d found, %d exact, %d sure (%d wrong), %d with sure checkers", vol, len(got), exact, sure, sureWrong, checkersSure)
 }
 
+// explained are the readings sure here and not in the prototype that were
+// checked by eye against the printed diagram: the reading here is right and
+// the prototype's is not. Each holds only for the exact board recorded.
+var explained = map[string]map[[2]int]struct{ board, why string }{
+	"kageyama": {
+		{141, 1}: {"-BBBBBBA------A----bbcbbA-", "the prototype misses the dark checker on 14 and calls the column mixed"},
+		{143, 0}: {"-BBBBBBA----------AbbcbbA-", "the prototype sees a light checker on an empty grey point"},
+		{167, 0}: {"aCBBDbC-----b-a--b-cbb----", "the prototype sees a light checker on an empty point, sixteen light"},
+		{189, 1}: {"aBbBCCB-B----A---ccdb-----", "the prototype sees two pale discs on an empty grey point, off classes"},
+	},
+}
+
 var protoState = map[string]State{"sur": Sure, "a_verifier": ToVerify, "incertain": Uncertain}
 
 // compareProto counts the differences with the prototype's relevé; a
@@ -212,7 +240,9 @@ func compareProto(t *testing.T, book string, got map[[2]int]Diagram, path string
 			sameState++
 		} else {
 			trans[names[ps]+"→"+names[gs]]++
-			if gs == Sure {
+			if x, ok := explained[book][k]; ok && gs == Sure && x.board == d.Board {
+				t.Logf("%s p%d r%d: sure here, %s in the prototype, explained: %s", book, k[0], k[1], p.Etat, x.why)
+			} else if gs == Sure {
 				t.Errorf("%s p%d r%d: sure here, %s in the prototype (%s against %s)", book, k[0], k[1], p.Etat, d.Board, p.Board)
 			} else {
 				t.Logf("%s p%d r%d: %s → %s (%s against %s) %v", book, k[0], k[1], p.Etat, names[d.State], d.Board, p.Board, d.Doubts)
