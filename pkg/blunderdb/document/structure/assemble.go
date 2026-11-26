@@ -486,7 +486,10 @@ func boardString(pts [2]map[int]int, bar [2]int, upper int) (string, bool) {
 
 // relevé learns what the whole document shares (classes, numbering, pip
 // place, direction of play) and turns each raw reading into a diagram.
-func releve(rds []*boardReading, words map[int][]Word, img []*[2]int) ([]Diagram, Profile) {
+// releve judges every diagram with the document's classes, numbering,
+// printed pips (text layer, image) and direction of play; home, when set,
+// imposes the corner of class 0's home instead of voting it.
+func releve(rds []*boardReading, words map[int][]Word, img []*[2]int, home string) ([]Diagram, Profile) {
 	var means []float64
 	for _, rd := range rds {
 		for _, c := range rd.cols {
@@ -653,6 +656,9 @@ func releve(rds []*boardReading, words map[int][]Word, img []*[2]int) ([]Diagram
 	hyps := corners
 	if numberingCorner != "" {
 		hyps = []string{numberingCorner, opposite[numberingCorner]}
+	}
+	if home != "" {
+		hyps = []string{home}
 	}
 	votes := map[string]int{}
 	pipSum := map[string]float64{}

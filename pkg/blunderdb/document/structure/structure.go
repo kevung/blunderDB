@@ -270,23 +270,30 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 	}
 	// The pips printed in the image: the document's figures read, then the
 	// two places of its pip counts learned on the readings judged without
-	// any printed pips, then read beside each diagram.
+	// any printed pips, under the direction of play that gathers the most
+	// voters, then read beside each diagram.
 	all := make([][]printedNumber, len(rds))
 	for i, rd := range rds {
 		all[i] = rd.numbers
 	}
 	readNumbers(all)
-	bare, _ := releve(rds, nil, nil)
-	slots := learnPipSlots(all, bare)
+	var slots []pipSlot
+	voters := 0
+	for _, h := range corners {
+		bare, _ := releve(rds, nil, nil, h)
+		if s, v := learnPipSlots(all, bare); s != nil && v > voters {
+			slots, voters = s, v
+		}
+	}
 	img := make([]*[2]int, len(rds))
 	for i, rd := range rds {
 		img[i] = imagePips(rd.numbers, rd.bbox, slots)
 		rd.numbers = nil
 	}
-	ds, prof := releve(rds, words, img)
+	ds, prof := releve(rds, words, img, "")
 	if inspectSources != nil {
-		text, _ := releve(rds, words, nil)
-		image, _ := releve(rds, nil, img)
+		text, _ := releve(rds, words, nil, "")
+		image, _ := releve(rds, nil, img, "")
 		inspectSources(text, image, ds)
 	}
 	prof.PipsInImage = slots != nil

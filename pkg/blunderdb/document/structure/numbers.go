@@ -790,10 +790,11 @@ type pipSlot struct{ x, y float64 }
 // over its diagrams read with fifteen checkers a side and no doubt: a number
 // read that equals one of the two pip counts of the checkers votes for its
 // place (cells of 0.04). Two places, top and bottom, each with at least ten
-// votes and 30 % of the voting diagrams, or none. The pips only say where to
+// votes and 30 % of the voting diagrams, or none; it also returns how many
+// diagrams voted. The pips only say where to
 // look, over the whole document: no figure is chosen after them, and a
 // diagram's own pips never decide what is read beside it.
-func learnPipSlots(nums [][]printedNumber, ds []Diagram) []pipSlot {
+func learnPipSlots(nums [][]printedNumber, ds []Diagram) ([]pipSlot, int) {
 	const q = 0.04
 	type cell struct{ i, j int }
 	votes := map[cell]int{}
@@ -834,7 +835,7 @@ func learnPipSlots(nums [][]printedNumber, ds []Diagram) []pipSlot {
 		}
 	}
 	if len(sorder) == 0 {
-		return nil
+		return nil, 0
 	}
 	argmax := func(cs []cell) cell {
 		b := cs[0]
@@ -853,7 +854,7 @@ func learnPipSlots(nums [][]printedNumber, ds []Diagram) []pipSlot {
 		}
 	}
 	if len(other) == 0 {
-		return nil
+		return nil, 0
 	}
 	var slots []pipSlot
 	for _, k := range []cell{k1, argmax(other)} {
@@ -871,12 +872,12 @@ func learnPipSlots(nums [][]printedNumber, ds []Diagram) []pipSlot {
 		slots = append(slots, pipSlot{median(xs), median(ys)})
 	}
 	if len(slots) != 2 {
-		return nil
+		return nil, 0
 	}
 	if slots[1].y < slots[0].y {
 		slots[0], slots[1] = slots[1], slots[0]
 	}
-	return slots
+	return slots, voters
 }
 
 // imagePips reads the pip counts printed at the document's two places

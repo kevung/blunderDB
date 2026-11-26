@@ -153,6 +153,8 @@ type drawOpts struct {
 	p          float64 // point width in pixels
 	numbering  bool
 	hidePipTop bool
+	inkPips    bool // draw the pip counts in the image, figures of inkFont
+	inkFont    int
 }
 
 // draw puts a diagram on the canvas with its top-left corner at (ox, oy)
@@ -248,6 +250,11 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 			word(strconv.Itoa(13+j), cx, float64(oy)-0.5*p)
 			word(strconv.Itoa(12-j), cx, float64(y1+t)+0.5*p)
 		}
+	}
+	if o.inkPips {
+		h := 0.55 * p
+		c.inkNumber(strconv.Itoa(pipsOfSide(s.top)), float64(ox)-1.5*p, float64(y0)+0.2*float64(H), h, o.inkFont)
+		c.inkNumber(strconv.Itoa(pipsOfSide(s.bottom)), float64(ox)-1.5*p, float64(y1)-0.2*float64(H), h, o.inkFont)
 	}
 	if o.pips {
 		if !o.hidePipTop {
