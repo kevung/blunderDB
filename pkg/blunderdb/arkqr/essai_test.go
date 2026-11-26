@@ -22,6 +22,16 @@ import (
 // by one defect at a time, and read by the decoder the import uses. The
 // ladders below are the defects' strengths; the first one that breaks the
 // reading is the limit this file records.
+//
+// The simulated sheet leaves out what is not a code: the labels under the
+// codes, the header and foot lines and the fold marks of the margins, which
+// can only help a reader that finds none of them. A scanner's bed, its lid
+// shadow and a photograph's lighting are not drawn either: the white of the
+// paper reaches the frame.
+//
+// The trial costs minutes under the race detector, which checks nothing in
+// pixel arithmetic: it runs in the nightly full suite only (no -race, no
+// -short).
 
 // archiveSheets lays out what a small archive prints: the matches of the
 // corpus and two tranches of position lists, each with its parity. A
@@ -163,6 +173,17 @@ func (g *gray) image() *image.Gray {
 	return img
 }
 
+// raceEnabled is set by race_on_test.go: the trial is pixel arithmetic that
+// the race detector slows tenfold without checking anything.
+var raceEnabled bool
+
+func skipUnlessFull(t *testing.T) {
+	t.Helper()
+	if testing.Short() || raceEnabled {
+		t.Skip("essai de feuilles rastérisées : suite complète sans -race")
+	}
+}
+
 // A defect transforms a scan; the strength is its own unit (see ladders).
 type defect struct {
 	name   string
@@ -223,37 +244,59 @@ func (g *gray) blur(sigma float64) *gray {
 	return out
 }
 
-var defects = []defect{
-	{"pli", "ombre", []float64{0.15, 0.3, 0.5, 0.7}, lift(func(g *gray, level, dpi float64, _ *rand.Rand) *gray {
-		// A crease on both fold lines: a dark line, a light halo beside it,
-		// and the paper shifted a pixel across it as it never lies flat.
-		w := max(1, int(math.Round(0.3*dpi/25.4)))
-		out := newGray(g.w, g.h)
-		copy(out.v, g.v)
-		cx, cy := g.w/2, g.h/2
-		for y := 0; y < g.h; y++ {
-			for x := 0; x < g.w; x++ {
-				d := min(abs(x-cx), abs(y-cy))
-				var f float32
-				switch {
-				case d < w:
-					f = -float32(level)
-				case d < 3*w:
-					f = float32(level) / 3
-				}
-				out.v[y*g.w+x] = g.v[y*g.w+x] + f*(1-0.5*g.v[y*g.w+x])
-			}
+// rotate turns the sheet about its centre inside the same frame: the corners
+// leave it, and past some angle the codes of the outer quadrants with them.
+func (g *gray) rotate(deg float64) *gray {
+	a := deg * math.Pi / 180
+	c, s := math.Cos(a), math.Sin(a)
+	cx, cy := float64(g.w)/2, float64(g.h)/2
+	return g.warp(func(x, y float64) (float64, float64) {
+		dx, dy := x-cx, y-cy
+		return cx + c*dx + s*dy, cy - s*dx + c*dy
+	})
+}
+
+// crease models the two folds of a sheet folded in four, which cross the
+// quadrants' neighbourhood: a soft shadow 4 mm wide on both sides of each fold
+// (the paper bulges there and the light falls off, level being the share of
+// light lost at the fold), a dark line where it is creased, and the halves
+// shifted a pixel against each other. The shadow reaches the codes, which
+// start 6 mm from the fold.
+func (g *gray) crease(level, dpi float64) *gray {
+	pxmm := dpi / 25.4
+	sigma := 4 * pxmm
+	line := max(1, int(math.Round(0.3*pxmm)))
+	cx, cy := g.w/2, g.h/2
+	shifted := g.warp(func(x, y float64) (float64, float64) {
+		if x > float64(cx) {
+			x--
 		}
-		return out
+		if y > float64(cy) {
+			y--
+		}
+		return x, y
+	})
+	out := newGray(g.w, g.h)
+	for y := 0; y < g.h; y++ {
+		for x := 0; x < g.w; x++ {
+			dx, dy := float64(abs(x-cx)), float64(abs(y-cy))
+			shade := math.Exp(-dx*dx/(2*sigma*sigma)) + math.Exp(-dy*dy/(2*sigma*sigma))
+			f := 1 - level*math.Min(1, shade)
+			if min(abs(x-cx), abs(y-cy)) < line {
+				f -= level
+			}
+			out.v[y*g.w+x] = shifted.v[y*g.w+x] * float32(max(0, f))
+		}
+	}
+	return out
+}
+
+var defects = []defect{
+	{"pli", "ombre", []float64{0.1, 0.2, 0.3, 0.5}, lift(func(g *gray, level, dpi float64, _ *rand.Rand) *gray {
+		return g.crease(level, dpi)
 	})},
 	{"rotation", "°", []float64{0.5, 1, 2, 3, 5, 8, 12}, lift(func(g *gray, deg, _ float64, _ *rand.Rand) *gray {
-		a := deg * math.Pi / 180
-		c, s := math.Cos(a), math.Sin(a)
-		cx, cy := float64(g.w)/2, float64(g.h)/2
-		return g.warp(func(x, y float64) (float64, float64) {
-			dx, dy := x-cx, y-cy
-			return cx + c*dx + s*dy, cy - s*dx + c*dy
-		})
+		return g.rotate(deg)
 	})},
 	{"perspective", "k", []float64{0.01, 0.02, 0.04, 0.08, 0.12}, lift(func(g *gray, k, _ float64, _ *rand.Rand) *gray {
 		// A keystone: the far edge of the sheet is 1/(1+k) the size of the near one.
@@ -285,6 +328,23 @@ var defects = []defect{
 	{"jpeg", "qualité", []float64{90, 70, 50, 30, 15, 5}, func(g *gray, q, _ float64, _ *rand.Rand) image.Image {
 		var b bytes.Buffer
 		if err := jpeg.Encode(&b, g.image(), &jpeg.Options{Quality: int(q)}); err != nil {
+			panic(err)
+		}
+		img, err := jpeg.Decode(&b)
+		if err != nil {
+			panic(err)
+		}
+		return img
+	}},
+	{"scan plausible", "k", []float64{0.5, 1, 1.5, 2, 3}, func(g *gray, k, dpi float64, rng *rand.Rand) image.Image {
+		// What a household scanner gives, all at once and in proportion: a
+		// slight blur, a small rotation, a faint crease, noise and JPEG.
+		o := g.crease(0.1*k, dpi).rotate(0.6 * k).blur(0.06 * k * dpi / 25.4)
+		for i := range o.v {
+			o.v[i] += float32(rng.NormFloat64() * 0.03 * k)
+		}
+		var b bytes.Buffer
+		if err := jpeg.Encode(&b, o.image(), &jpeg.Options{Quality: max(5, int(85-15*k))}); err != nil {
 			panic(err)
 		}
 		img, err := jpeg.Decode(&b)
@@ -340,6 +400,7 @@ func readBack(imgs []image.Image, matches [][]byte, tranches map[int][]domain.Po
 // TestEssaiArchiveSansDefaut: a clean print, at 200 and 300 dpi, is
 // read back whole.
 func TestEssaiArchiveSansDefaut(t *testing.T) {
+	skipUnlessFull(t)
 	sheets, matches, tranches := archiveSheets(t)
 	for _, dpi := range []float64{200, 300} {
 		g := rasteriseAll(sheets, dpi)
@@ -351,21 +412,22 @@ func TestEssaiArchiveSansDefaut(t *testing.T) {
 
 // reference is, per scanner resolution, the strength of each defect the
 // archive must still be read through, as the grid measured it (one notch
-// below the first loss). At 200 dpi a module is four pixels: the sheet
+// below the last one read). At 200 dpi a module is four pixels: the sheet
 // survives soft defects, and is lost to a noise of 0.05 or to a rotation of
 // half a degree. At 150 dpi (three pixels) no sheet of this density is read.
 var reference = map[float64]map[string]float64{
-	200: {"pli": 0.7, "perspective": 0.08, "flou": 0.15, "contraste": 0.4, "jpeg": 5},
-	300: {"pli": 0.7, "rotation": 8, "perspective": 0.08, "flou": 0.15, "bruit": 0.1, "contraste": 0.25, "jpeg": 5},
+	200: {"pli": 0.3, "perspective": 0.04, "flou": 0.1, "contraste": 0.6, "jpeg": 15, "scan plausible": 0.5},
+	300: {"pli": 0.3, "rotation": 5, "perspective": 0.04, "flou": 0.1, "bruit": 0.05, "contraste": 0.4, "jpeg": 15, "scan plausible": 1},
 }
 
 // TestEssaiArchiveSeuilsDeReference fixes the reading threshold: at each
 // resolution, every defect at its reference strength still reads the whole
-// archive. Short mode skips it (half a minute).
+// archive. The thresholds are one notch below the first loss the grid measured,
+// so that a different rounding of floating point (fused multiply-add on arm64)
+// does not turn them red. A rotation of 12° is lost to the frame, which
+// crops the corners where the outer codes sit, not to the decoder.
 func TestEssaiArchiveSeuilsDeReference(t *testing.T) {
-	if testing.Short() {
-		t.Skip("rastérisation et lecture de deux feuilles par cas")
-	}
+	skipUnlessFull(t)
 	sheets, matches, tranches := archiveSheets(t)
 	for dpi, levels := range reference {
 		base := rasteriseAll(sheets, dpi)
