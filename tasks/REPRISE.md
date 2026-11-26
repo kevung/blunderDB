@@ -4,25 +4,16 @@
 
 ## État
 
-- Dernière release : **0.59.0** (non publiée). Depuis, sur main (détail des commits :
-  `git log --oneline 0.59.0..main`) :
-  - **Cartes des jets et des scores** en trois paliers 0 → 1 → 2 plis : le palier 1 s'achève en
-    50-150 ms, la première case à 2 plis en 0,2-0,8 s au lieu de 0,3-3,6 s, valeurs finales
-    identiques.
-  - **Priorité aux calculs affichés** (ADR-0120) : un calcul visible réquisitionne les cœurs des
-    lots de fond ; 44 ms en médiane au lieu de 0,8-4,6 s.
-  - **ArkID** (#984), notation textuelle d'une position ; **archive papier** en codes QR (#985)
-    avec ses entrées d'interface, y compris l'import depuis la liste vide et `import_archive` ;
-    **feuille de match imprimable** (#986, fermée) ; **listes de positions imprimables** (#987,
-    ouverte : reste le code de réimport des listes, choix de conception consigné en commentaire de
-    l'issue).
-  - **Import de document** : Relevé v2 (deux certitudes par entrée, pions et contexte ; défauts du
-    document et sens de jeu confirmés une fois ; `--accept-complete`) ; lecture du contexte par le
-    lecteur de structure (videau, dés, trait, score). Aucun contexte n'est entièrement « lu » sur
-    751 diagrammes ; mesure faite sans le banc `~/bkgm/bancs/import-document/`, absent du poste.
-  - Décision du 2026-11-26 : notation du videau proposé `X?` / `X2?` confirmée ; Relevé v2 et état
-    « 15 + 15 sans doute » acceptés.
-- Issues ouvertes : #987, #988 (garde `splitDepth`), #846 (poste Windows), #858 et #870 (vision).
+- Lot du 2026-11-26 **clos** : toutes ses issues sont fusionnées (#987-#997 et #1006). Release
+  **0.60.0** préparée sur `release/0.60.0` (détail : `git log --oneline 0.59.0..main`) :
+  - **Cartes des jets et des scores** : trois paliers 0 → 1 → 2 plis, cache, précalcul en fond de
+    la carte un jet plus bas, priorité aux calculs affichés (ADR-0120), panneau Calculs.
+  - **ArkID**, **archive papier** en codes QR, **feuille de match** et **listes de positions**
+    imprimables avec leur code de réimport (#987).
+  - **Import de document** : relevé v2, lecteur de structure, PDF scannés, assistant graphique avec
+    revue, défauts appris par document, JPEG 2000 et JBIG2 en Go pur (#993, #997).
+- Issues ouvertes : #998-#1005 (défauts de lecture de l'import de document trouvés par la
+  mesure), #846 (poste Windows), #858 et #870 (vision).
 
 ## CI
 
@@ -60,18 +51,12 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. **Cartes** : cache des cartes (clé position + profondeur + PruneK + MET), puis séquences de
-   plusieurs jets successifs : précalcul en fond des cartes suivantes à 0 puis 1 pli pour que
-   descendre d'un jet soit instantané, 2 plis sur la seule branche regardée. Coûts mesurés : deux
-   jets 0,2 s à 0 pli, 1,3 s à 1 pli, 100-150 s à 2 plis ; trois jets 5 s, 30 s, 35-50 min.
-   Exigence : analyse quasi instantanée et mise à jour progressive.
-2. **#987** : code de réimport des listes, après décision de conception.
-3. **Import de document** : défaut de contexte appris par document (un score de match lu rend
-   aujourd'hui tout Deep Cube et Olsen « à vérifier »), repli assisté, assistant graphique
-   (tranche 5), JPEG 2000, mesure finale sur la réserve.
-4. **#988** : garde `splitDepth`, puis retrait du contournement de `runMapPhase`.
-5. Essai réel imprimer-plier-scanner de l'archive papier.
-6. Vision et #846 inchangés.
+1. **Lot suivant proposé : #998-#1005**, les défauts de lecture de l'import de document trouvés
+   par la mesure : pions dessinés en lettres X/O (#998), videau dessiné (#999), plateau de sortie
+   (#1000), dés comptés dans l'image (#1001), contexte en légende sans couche texte (#1002),
+   police Snowie (#1003), Masterclass (#1004), score imprimé non lu en entier (#1005).
+2. Essai réel imprimer-plier-scanner de l'archive papier.
+3. Vision (#858, #870) et #846 : en pause, inchangés.
 
 ## Pièges
 

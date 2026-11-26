@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.60.0" date="2026-11-26">
+      <description>
+        <ul>
+          <li>Paper archive of a database and printable match sheets and position lists, with ArkID text notation</li>
+          <li>Document import: PDFs of positions, scans and images (JPEG 2000, JBIG2) read in pure Go, with a graphical assistant</li>
+          <li>Roll map and score map in the evaluation panel, computed in the background and cached</li>
+          <li>Calculations panel for the background tasks of all libraries</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.59.0" date="2026-11-21">
       <description>
         <ul>
