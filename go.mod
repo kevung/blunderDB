@@ -38,6 +38,7 @@ require (
 )
 
 require (
+	github.com/d-fuji/jpeg2000 v0.0.0-20260723165233-0971f6693ff9
 	github.com/makiuchi-d/gozxing v0.1.1
 	github.com/modelcontextprotocol/go-sdk v1.8.0
 	github.com/shirou/gopsutil/v4 v4.26.10

@@ -143,7 +143,7 @@ flowchart LR
   board font is a scanned book (`analyze_scans.go`): `pdf.Scan` composes each page from its
   images (DCT, CCITT fax through `golang.org/x/image/ccitt`, Flate; stencil and soft masks) at
   their resolution bounded to 150-300 dpi and places the words of its text layer on it; a page
-  it cannot compose (vectors, JBIG2, JPEG 2000) is passed over and named, and a PDF with no
+  it cannot compose (vectors, JBIG2) is passed over and named, and a PDF with no
   page made of images is refused (`ErrNoGlyphDiagram`). Those pages, and page images (a
   folder, or one image: `document.AnalyzeFile`), go to
   the structure reader (`document/structure`), pure Go and standard library: a first pass

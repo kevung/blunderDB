@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
@@ -373,5 +374,16 @@ func TestDefaultsCoversPrinted(t *testing.T) {
 		if got := d.Covers(c.ctx); got != c.want {
 			t.Errorf("printed %v covers %s = %v, want %v", c.printed, c.ctx, got, c.want)
 		}
+	}
+}
+
+// A JPEG 2000 page file is a page image, read like a PNG.
+func TestAnalyzeFileJPEG2000(t *testing.T) {
+	if !IsPageImage("p1.JP2") || !IsPageImage("p1.j2k") {
+		t.Fatal("a JPEG 2000 file is not a page image")
+	}
+	_, err := AnalyzeFile("testdata/jpx/page.j2k", AnalyzeOptions{})
+	if err == nil || strings.Contains(err.Error(), "unknown format") {
+		t.Errorf("a JPEG 2000 page must be decoded, then judged: %v", err)
 	}
 }

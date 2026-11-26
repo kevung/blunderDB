@@ -10,6 +10,8 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/d-fuji/jpeg2000"
+
 	"golang.org/x/image/ccitt"
 )
 
@@ -21,9 +23,9 @@ var (
 	// ErrNoPageImage: the page draws no image. A page of vectors (a diagram
 	// drawn with lines) is not rendered.
 	ErrNoPageImage = errors.New("pdf: the page draws no image (a page drawn with vectors is not rendered)")
-	// ErrImageCodec: an image of the page is compressed with JBIG2 or JPEG
-	// 2000, which this reader does not decode.
-	ErrImageCodec = errors.New("pdf: an image of the page is compressed with JBIG2 or JPEG 2000, which is not decoded; give the pages as images (PNG or JPEG files)")
+	// ErrImageCodec: an image of the page is compressed with JBIG2, which
+	// this reader does not decode.
+	ErrImageCodec = errors.New("pdf: an image of the page is compressed with JBIG2, which is not decoded; give the pages as images (PNG or JPEG files)")
 )
 
 const (
@@ -304,8 +306,10 @@ func (r *Reader) samples(s *Stream, res Dict, stencil bool) (*plane, error) {
 		return nil, err
 	}
 	switch codec {
-	case "JBIG2Decode", "JPXDecode":
+	case "JBIG2Decode":
 		return nil, fmt.Errorf("%w (%s)", ErrImageCodec, codec)
+	case "JPXDecode":
+		return jpxPlane(data, r.lim.MaxStreamSize)
 	case "DCTDecode", "DCT":
 		return jpegPlane(data, r.lim.MaxStreamSize)
 	case "CCITTFaxDecode", "CCF":
@@ -385,6 +389,28 @@ func jpegPlane(data []byte, most int) (*plane, error) {
 	if err != nil {
 		return nil, malformed("jpeg: %v", err)
 	}
+	return greyPlane(img), nil
+}
+
+// jpxPlane decodes a JPEG 2000 image (a JP2 file or a bare codestream, as a
+// PDF stores it) to grey. The decoder is pure Go, so the daemon reads it too.
+func jpxPlane(data []byte, most int) (*plane, error) {
+	cfg, err := jpeg2000.DecodeConfig(bytes.NewReader(data))
+	if err != nil {
+		return nil, malformed("jpeg 2000: %v", err)
+	}
+	if cfg.Width <= 0 || cfg.Height <= 0 || cfg.Width > most/cfg.Height {
+		return nil, fmt.Errorf("%w: a JPEG 2000 image of %d×%d pixels", ErrTooLarge, cfg.Width, cfg.Height)
+	}
+	img, err := jpeg2000.Decode(bytes.NewReader(data))
+	if err != nil {
+		return nil, malformed("jpeg 2000: %v", err)
+	}
+	return greyPlane(img), nil
+}
+
+// greyPlane reduces a decoded image to one grey sample a pixel.
+func greyPlane(img image.Image) *plane {
 	b := img.Bounds()
 	pl := &plane{b.Dx(), b.Dy(), make([]uint8, b.Dx()*b.Dy())}
 	switch m := img.(type) {
@@ -410,7 +436,7 @@ func jpegPlane(data []byte, most int) (*plane, error) {
 			}
 		}
 	}
-	return pl, nil
+	return pl
 }
 
 // ccittPlane decodes a fax-compressed image (Group 3 one-dimensional or

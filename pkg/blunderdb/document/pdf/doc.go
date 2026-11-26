@@ -3,11 +3,11 @@
 // outline, each page's content streams, its fonts (widths and ToUnicode), and
 // an interpreter of the text operators that places every glyph a page draws.
 // It renders no vector: Scan composes a scanned page from the images it
-// draws (DCT, CCITT fax Group 3 one-dimensional and Group 4, raw samples in
+// draws (DCT, JPEG 2000, CCITT fax Group 3 one-dimensional and Group 4, raw samples in
 // grey, colour or indexed spaces, stencil and soft masks; not a colour-keyed
 // mask), at their resolution bounded to MinScanDPI-MaxScanDPI, and places the
 // words of its text layer on it. A page without an image is ErrNoPageImage,
-// an image in JBIG2 or JPEG 2000 ErrImageCodec. An image has at most
+// an image in JBIG2 ErrImageCodec. An image has at most
 // Limits.MaxStreamSize pixels, a page at most 64 million, and the images a
 // page paints at most six times its pixels; images are decoded one at a time
 // and dropped once painted, and their decoded bytes are bounded so, not

@@ -17,6 +17,7 @@ import (
 	"sort"
 	"strings"
 
+	_ "github.com/d-fuji/jpeg2000" // pages scanned as JPEG 2000
 	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/structure"
 )
@@ -25,12 +26,12 @@ import (
 const MaxImageFileSize = 64 << 20
 
 // ErrNoImage refuses a folder holding no page image.
-var ErrNoImage = errors.New("document: no PNG or JPEG page image in the folder")
+var ErrNoImage = errors.New("document: no PNG, JPEG or JPEG 2000 page image in the folder")
 
 // IsPageImage reports whether a file name is a page image the reader takes.
 func IsPageImage(name string) bool {
 	switch strings.ToLower(filepath.Ext(name)) {
-	case ".png", ".jpg", ".jpeg":
+	case ".png", ".jpg", ".jpeg", ".jp2", ".j2k":
 		return true
 	}
 	return false

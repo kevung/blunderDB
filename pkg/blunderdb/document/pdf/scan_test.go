@@ -6,6 +6,7 @@ import (
 	"errors"
 	"image"
 	"image/jpeg"
+	"os"
 	"strings"
 	"testing"
 
@@ -192,4 +193,111 @@ func TestScanRefusals(t *testing.T) {
 	if at(s, 10, 10) != 0 || s.DPI != 150 {
 		t.Errorf("inline image: %d at %v dpi", at(s, 10, 10), s.DPI)
 	}
+}
+
+// TestScanJPX: a JPEG 2000 image reads as the same page as the lossless
+// grey samples it was made from.
+func TestScanJPX(t *testing.T) {
+	jp2, err := os.ReadFile("testdata/fixture.jp2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	im := pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/JPXDecode", Data: jp2}
+	d := pdftest.Doc{Pages: []pdftest.Page{{Width: 153.6, Height: 19.2, Content: "153.6 0 0 19.2 0 0 cm /Im1 Do", Images: []pdftest.Image{im}}}}
+	s, err := scanOf(t, d, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if g := at(s, 120, 30); g > 5 {
+		t.Errorf("bar: %d", g)
+	}
+	if g := at(s, 10, 30); g < 40 || g > 60 {
+		t.Errorf("gradient start: %d", g)
+	}
+	if g := at(s, 300, 5); g < 200 {
+		t.Errorf("gradient end: %d", g)
+	}
+	bad := im
+	bad.Data = []byte("not a JPEG 2000 stream")
+	d.Pages[0].Images = []pdftest.Image{bad}
+	if s, err := scanOf(t, d, 1); err != nil || len(s.Skipped) != 1 {
+		t.Errorf("a broken JPEG 2000 stream is skipped and named: %v %v", err, s)
+	}
+}
+
+// jpxWant is the grey image the JPEG 2000 fixtures were encoded from by a
+// third-party encoder: a ramp with a black bar.
+func jpxWant(x, y int) int {
+	if x >= 100 && x < 140 && y >= 20 {
+		return 0
+	}
+	return 40 + x*180/320
+}
+
+func jpxPage(t *testing.T, data []byte) (*pdf.Scan, error) {
+	t.Helper()
+	im := pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/JPXDecode", Data: data}
+	d := pdftest.Doc{Pages: []pdftest.Page{{Width: 153.6, Height: 19.2, Content: "153.6 0 0 19.2 0 0 cm /Im1 Do", Images: []pdftest.Image{im}}}}
+	return scanOf(t, d, 1)
+}
+
+// TestScanJPXOracle: the reversible 5/3 transform returns the encoder's
+// input exactly, the irreversible 9/7 within its quantisation.
+func TestScanJPXOracle(t *testing.T) {
+	for _, c := range []struct {
+		file string
+		tol  float64
+	}{{"fixture.jp2", 0}, {"lossy97.jp2", 8}} {
+		data, err := os.ReadFile("testdata/" + c.file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		s, err := jpxPage(t, data)
+		if err != nil || len(s.Skipped) != 0 {
+			t.Fatalf("%s: %v %v", c.file, err, s)
+		}
+		sum, worst := 0.0, 0
+		for y := 0; y < 40; y++ {
+			for x := 0; x < 320; x++ {
+				e := int(at(s, x, y)) - jpxWant(x, y)
+				if e < 0 {
+					e = -e
+				}
+				sum += float64(e)
+				worst = max(worst, e)
+			}
+		}
+		if c.tol == 0 && worst != 0 {
+			t.Errorf("%s: worst error %d", c.file, worst)
+		}
+		if mean := sum / (320 * 40); mean > c.tol {
+			t.Errorf("%s: mean error %.2f", c.file, mean)
+		}
+	}
+}
+
+// TestScanJPXHostile: truncated and corrupted streams are skipped or read,
+// never a panic.
+func TestScanJPXHostile(t *testing.T) {
+	data, err := os.ReadFile("testdata/lossy97.jp2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for n := 0; n < len(data); n += 7 {
+		_, _ = jpxPage(t, data[:n])
+	}
+	for i := 0; i < len(data); i += 5 {
+		b := append([]byte(nil), data...)
+		b[i] ^= 0xff
+		_, _ = jpxPage(t, b)
+	}
+}
+
+func FuzzJPX(f *testing.F) {
+	data, err := os.ReadFile("testdata/lossy97.jp2")
+	if err != nil {
+		f.Fatal(err)
+	}
+	f.Add(data)
+	f.Fuzz(func(t *testing.T, b []byte) { _, _ = jpxPage(t, b) })
 }

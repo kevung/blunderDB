@@ -194,12 +194,12 @@ défaut, le grand côté de la page est pris pour onze pouces.
 Un PDF scanné est lu directement, sans outil externe : chaque page est composée
 de ses images, placées comme le PDF les place, à la résolution de la plus fine
 d'entre elles bornée entre 150 et 300 dpi, puis lue et oubliée. Sont décodées
-les images JPEG (``DCTDecode``), fax (``CCITTFaxDecode``, groupes 3 en une
+les images JPEG (``DCTDecode``), JPEG 2000 (``JPXDecode``), fax (``CCITTFaxDecode``, groupes 3 en une
 dimension et 4) et brutes (``FlateDecode``, gris, couleur ou indexées) ; les
 masques de pochoir et les masques doux sont appliqués, si bien qu'une page faite
 d'un fond JPEG et de masques fax se compose lisiblement. Ne sont pas gérés : un
-masque par couleur clé (l'image est peinte entière), les images JBIG2 et
-JPEG 2000 (la page est passée), une page dessinée en vecteurs (passée aussi).
+masque par couleur clé (l'image est peinte entière), les images JBIG2
+(la page est passée), une page dessinée en vecteurs (passée aussi).
 Les pages passées sont nommées sur la sortie d'erreur, avec leur motif ; les
 autres sont lues. La couche texte d'une page, visible ou non (celle qu'une OCR
 laisse sous l'image), donne ses mots à leur place sur l'image ; un texte que sa

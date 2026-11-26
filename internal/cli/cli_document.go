@@ -128,8 +128,8 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 			"or uncertain otherwise, with the doubt named. A PDF is read when its diagrams are drawn\n"+
 			"with eXtreme Gammon's board font (XG's PDF prints), from its glyphs. A scanned book is\n"+
 			"read by the structure of each diagram, from a scanned PDF (its pages composed from their\n"+
-			"images; JBIG2 and JPEG 2000 images are not decoded) or from its pages as images (a folder\n"+
-			"of PNG or JPEG files, one a page, in the order of their names). The printed pip counts\n"+
+			"images; JBIG2 images are not decoded) or from its pages as images (a folder\n"+
+			"of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). The printed pip counts\n"+
 			"are read in the PDF's text layer and in the image; when the two disagree the entry is not\n"+
 			"sure. Pages that cannot be read are named on standard error. Nothing is written to a\n"+
 			"database: check the relevé, then import it with\n"+
