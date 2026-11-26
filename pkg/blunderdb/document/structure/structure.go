@@ -145,6 +145,14 @@ type Diagram struct {
 	CheckersSure bool
 }
 
+// NoPipsReason is the reason of the "pips" doubt of a diagram next to which
+// no pip count was found — absent, as against printed and disagreeing.
+const NoPipsReason = "no printed pip count was found next to the diagram"
+
+// AssumedDirectionReason is the reason of the "orientation" doubt of a
+// document whose direction of play no printed pips voted for.
+const AssumedDirectionReason = "the direction of play is assumed (no printed pips confirm it): checkers taken to move toward the side with the fewer pips"
+
 // Profile is what the reader learned of the document.
 type Profile struct {
 	Rx, Ry, Step   float64 // checker half axes and stacking step, in point widths

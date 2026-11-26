@@ -14,6 +14,9 @@ type documentImportReleveReq struct {
 	Releve json.RawMessage `json:"releve"`
 	// Collection names the Collection; the document's title when empty.
 	Collection string `json:"collection"`
+	// AcceptComplete imports the entries of fifteen checkers a side read with
+	// no doubt whose context is certified.
+	AcceptComplete bool `json:"acceptComplete"`
 	// Force imports entries neither sure nor verified.
 	Force bool `json:"force"`
 }
@@ -29,7 +32,7 @@ func (s *Server) documentRoutes() []route {
 			if err != nil {
 				return document.ImportResult{}, err
 			}
-			return document.Import(ctx, s.opts.Storage, scope, r, document.ImportOptions{Collection: req.Collection, Force: req.Force})
+			return document.Import(ctx, s.opts.Storage, scope, r, document.ImportOptions{Collection: req.Collection, AcceptComplete: req.AcceptComplete, Force: req.Force})
 		})},
 	}
 }

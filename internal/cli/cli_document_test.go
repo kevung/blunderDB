@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -87,8 +88,8 @@ func TestCLI_DocumentContextNotRead(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	r.Entries[0].State, r.Entries[0].Doubts = document.ToVerify, []capture.Doubt{document.ContextDoubt}
-	if !r.Entries[0].CheckersConfirmed() {
+	r.Entries[0].Context, r.Entries[0].Doubts = document.ContextToVerify, []capture.Doubt{document.ContextDoubt}
+	if !r.CheckersConfirmed(r.Entries[0]) {
 		t.Fatal("the entry is not taken as checkers confirmed")
 	}
 	path := filepath.Join(t.TempDir(), "scan.json")
@@ -107,7 +108,7 @@ func TestCLI_DocumentContextNotRead(t *testing.T) {
 		t.Errorf("check:\n%s", out)
 	}
 	err = cli.Run([]string{"document", "import", "--db", dbPath, path})
-	if !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "check its cube, dice, player on roll and score") || !strings.Contains(err.Error(), `"verified": true`) {
+	if !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "cube, dice, player on roll and score") || !strings.Contains(err.Error(), `"verified": true`) {
 		t.Errorf("import of an unread context: %v", err)
 	}
 	if cols, _ := cli.db.GetAllCollections(); len(cols) != 0 {
@@ -117,6 +118,130 @@ func TestCLI_DocumentContextNotRead(t *testing.T) {
 	write()
 	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); err != nil {
 		t.Errorf("import once verified: %v", err)
+	}
+}
+
+// Under the document's defaults, nothing is sure until they are confirmed;
+// then an entry of 15 + 15 checkers read with no doubt is imported with
+// --accept-complete, and only with it.
+func TestCLI_DocumentDefaultsAndComplete(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	pos := "XGID=-b----E-C---eE---c-e----B-:" + document.StructureDefaults.Context
+	d := document.StructureDefaults
+	r := &document.Releve{Format: document.Format, Version: document.Version, Document: document.Source{Title: "Scan", Defaults: &d},
+		Entries: []document.Entry{
+			{Rank: 1, Page: 1, Position: pos, Checkers: document.Sure, Context: document.ContextDefault, Doubts: []capture.Doubt{document.ContextDoubt}},
+			{Rank: 2, Page: 2, Position: "XGID=-b---BD-B---eE---c-e----B-:" + document.StructureDefaults.Context, Checkers: document.ToVerify, Complete: true,
+				Context: document.ContextDefault, Doubts: []capture.Doubt{document.ContextDoubt}},
+		}}
+	path := filepath.Join(t.TempDir(), "scan.json")
+	write := func() {
+		data, err := r.Encode()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, data, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write()
+	out := captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if !strings.Contains(out, "sure 0, to verify 2") || !strings.Contains(out, "not confirmed") || !strings.Contains(out, "Unverified: rank 1, 2 (import refused without --force)") {
+		t.Errorf("check under unconfirmed defaults:\n%s", out)
+	}
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "confirm the document's defaults") {
+		t.Errorf("import under unconfirmed defaults: %v", err)
+	}
+	d.Confirmed = true
+	write()
+	out = captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if !strings.Contains(out, "sure 1, to verify 1") || !strings.Contains(out, "Complete:   1") || !strings.Contains(out, "Unverified: rank 2 (import refused without --accept-complete or --force)") {
+		t.Errorf("check under confirmed defaults:\n%s", out)
+	}
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "accept complete") {
+		t.Errorf("import of a complete entry without --accept-complete: %v", err)
+	}
+	out = captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path}); err != nil {
+			t.Errorf("import with --accept-complete: %v", err)
+		}
+	})
+	if !strings.Contains(out, "Complete: 1 entries") {
+		t.Errorf("import with --accept-complete:\n%s", out)
+	}
+}
+
+// From the page images of a book without printed pips to the database:
+// analyze writes complete entries under unconfirmed defaults; once the
+// person confirms them and verifies the diagram whose cube is drawn,
+// --accept-complete imports the rest as a whole, and only with it.
+func TestCLI_DocumentCompleteEndToEnd(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	path := filepath.Join(t.TempDir(), "releve.json")
+	out := captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "analyze", "pkg/blunderdb/document/testdata/sans-pips", "-o", path, "--title", "Sans pips"}); err != nil {
+			t.Errorf("analyze: %v", err)
+		}
+	})
+	if !strings.Contains(out, "default 7, to verify 1") {
+		t.Errorf("analyze:\n%s", out)
+	}
+	r, err := document.Decode(mustRead(t, path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	write := func() {
+		data, err := r.Encode()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, data, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if r.Document.Defaults.Direction == nil || r.Document.Defaults.Direction.Confirmed {
+		t.Fatalf("no unconfirmed direction of play: %+v", r.Document.Defaults)
+	}
+	// The context confirmed, the direction assumed is not: refused.
+	r.Document.Defaults.Confirmed = true
+	r.Entries[1].Verified = true
+	write()
+	out = captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if !strings.Contains(out, "Direction:  direction of play assumed") || !strings.Contains(out, "7 more held back until the direction of play is confirmed") {
+		t.Errorf("check with the direction unconfirmed:\n%s", out)
+	}
+	err = cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path})
+	if !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "confirm it once") {
+		t.Errorf("import with the direction unconfirmed: %v", err)
+	}
+	if cols, _ := cli.db.GetAllCollections(); len(cols) != 0 {
+		t.Errorf("a refused import wrote a collection: %+v", cols)
+	}
+	// The doubts stripped by hand, the document still says the direction
+	// unconfirmed: check does not call the entries certified, import refuses.
+	for i := range r.Entries {
+		r.Entries[i].Doubts = slices.DeleteFunc(r.Entries[i].Doubts, func(d capture.Doubt) bool { return d == document.AssumedDirectionDoubt })
+	}
+	write()
+	out = captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if strings.Contains(out, "certified context (imported") || !strings.Contains(out, "7 more held back until the direction of play is confirmed") {
+		t.Errorf("check with the doubts stripped, the direction unconfirmed:\n%s", out)
+	}
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path}); !errors.Is(err, document.ErrUnverified) {
+		t.Errorf("import with the doubts stripped, the direction unconfirmed: %v", err)
+	}
+	r.Document.Defaults.Direction.Confirmed = true
+	write()
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "accept complete") {
+		t.Errorf("import without --accept-complete: %v", err)
+	}
+	out = captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path}); err != nil {
+			t.Errorf("import with --accept-complete: %v", err)
+		}
+	})
+	if !strings.Contains(out, "Complete: 7 entries") || strings.Contains(out, "Forced") {
+		t.Errorf("import with --accept-complete:\n%s", out)
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
 	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -24,10 +25,10 @@ func docReleve() *document.Releve {
 		Version:  document.Version,
 		Document: document.Source{Title: "Exemples inventés", Author: "Personne", Edition: "1re édition"},
 		Entries: []document.Entry{
-			{Rank: 1, Page: 3, Label: "Problème 1", Position: docAfter31, State: document.Sure},
-			{Rank: 2, Page: 3, Label: "Problème 2", Position: docOpening, State: document.Sure},
-			{Rank: 3, Page: 7, Label: "Problème 3", Position: docCube, State: document.ToVerify, Verified: true},
-			{Rank: 4, Page: 9, Label: "Problème 4", Position: docAfter31, State: document.Sure},
+			{Rank: 1, Page: 3, Label: "Problème 1", Position: docAfter31, Checkers: document.Sure, Context: document.ContextRead},
+			{Rank: 2, Page: 3, Label: "Problème 2", Position: docOpening, Checkers: document.Sure, Context: document.ContextRead},
+			{Rank: 3, Page: 7, Label: "Problème 3", Position: docCube, Checkers: document.ToVerify, Context: document.ContextRead, Verified: true},
+			{Rank: 4, Page: 9, Label: "Problème 4", Position: docAfter31, Checkers: document.Sure, Context: document.ContextRead},
 		},
 	}
 }
@@ -104,7 +105,7 @@ func CheckDocumentImport(t *testing.T, s storage.Storage, ctx context.Context, s
 
 	bad := docReleve()
 	bad.Document.Title = "Autre document"
-	bad.Entries = append(bad.Entries, document.Entry{Rank: 5, Page: 10, Position: "XGID=-b----E-C---eE---c-e----B-:0:0:1:62:0:0:0:7:10", State: document.Uncertain})
+	bad.Entries = append(bad.Entries, document.Entry{Rank: 5, Page: 10, Position: "XGID=-b----E-C---eE---c-e----B-:0:0:1:62:0:0:0:7:10", Checkers: document.Uncertain, Context: document.ContextRead})
 	if _, err := document.Import(ctx, s, scope, bad, document.ImportOptions{}); !errors.Is(err, document.ErrUnverified) || !errors.Is(err, storage.ErrInvalid) {
 		t.Errorf("unverified entry: err = %v", err)
 	}
@@ -114,6 +115,24 @@ func CheckDocumentImport(t *testing.T, s storage.Storage, ctx context.Context, s
 	forced, err := document.Import(ctx, s, scope, bad, document.ImportOptions{Force: true, Collection: "Forcé"})
 	if err != nil || forced.Forced != 1 || forced.Collection != "Forcé" || forced.Positions != 4 {
 		t.Errorf("forced import = %+v, %v", forced, err)
+	}
+
+	// Fifteen checkers a side read with no doubt, under the document's
+	// defaults: refused while the defaults are not confirmed, even when
+	// complete entries are accepted; accepted as a whole once they are.
+	complete := &document.Releve{Format: document.Format, Version: document.Version,
+		Document: document.Source{Title: "Relevé d'un scan", Defaults: &document.Defaults{Context: document.StructureDefaults.Context}},
+		Entries: []document.Entry{{Rank: 1, Page: 1, Position: "XGID=-b----E-C---eE---c-e----B-:" + document.StructureDefaults.Context,
+			Checkers: document.ToVerify, Complete: true, Context: document.ContextDefault, Doubts: []capture.Doubt{document.ContextDoubt}}}}
+	if _, err := document.Import(ctx, s, scope, complete, document.ImportOptions{AcceptComplete: true}); !errors.Is(err, document.ErrUnverified) {
+		t.Errorf("complete entry under unconfirmed defaults: err = %v", err)
+	}
+	complete.Document.Defaults.Confirmed = true
+	if _, err := document.Import(ctx, s, scope, complete, document.ImportOptions{}); !errors.Is(err, document.ErrUnverified) {
+		t.Errorf("complete entry without AcceptComplete: err = %v", err)
+	}
+	if res, err := document.Import(ctx, s, scope, complete, document.ImportOptions{AcceptComplete: true}); err != nil || res.Complete != 1 || res.Forced != 0 || res.Positions != 1 {
+		t.Errorf("complete import = %+v, %v", res, err)
 	}
 }
 

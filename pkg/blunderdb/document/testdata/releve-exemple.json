@@ -1,6 +1,6 @@
 {
   "format": "blunderdb-releve",
-  "version": 1,
+  "version": 2,
   "document": {
     "title": "Exemples inventés",
     "author": "blunderDB",
@@ -21,7 +21,8 @@
       "chapter": "Ouvertures",
       "label": "Exemple 1",
       "position": "XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:7:10",
-      "state": "sure",
+      "checkers": "sure",
+      "context": "read",
       "rect": { "x": 0.1, "y": 0.1, "w": 0.8, "h": 0.4 },
       "verified": false
     },
@@ -31,7 +32,8 @@
       "chapter": "Ouvertures",
       "label": "Exemple 2",
       "position": "XGID=-b---BD-B---eE---c-e----B-:0:0:-1:52:0:0:0:7:10",
-      "state": "to-verify",
+      "checkers": "to-verify",
+      "context": "read",
       "doubts": [{ "field": "point", "point": 5, "reason": "stack height unclear" }],
       "rect": { "x": 0.1, "y": 0.55, "w": 0.8, "h": 0.4 },
       "verified": true
@@ -42,7 +44,8 @@
       "chapter": "Videau",
       "label": "Exemple 3",
       "position": "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:2:4:0:7:10",
-      "state": "sure",
+      "checkers": "sure",
+      "context": "read",
       "verified": true
     },
     {
@@ -51,7 +54,8 @@
       "chapter": "Révision",
       "label": "Exemple 4",
       "position": "XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:7:10",
-      "state": "sure",
+      "checkers": "sure",
+      "context": "read",
       "verified": false
     }
   ]

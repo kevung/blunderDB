@@ -57,6 +57,7 @@ Le parcours en trois commandes
 
       Document:   Mon livre
       Entries:    6 (sure 3, to verify 2, uncertain 1)
+      Context:    read 5, default 0, to verify 1
       Positions:  5 distinct, 1 repeated
       Relevé:     releve.json
 
@@ -71,6 +72,7 @@ Le parcours en trois commandes
 
       Document:   Mon livre
       Entries:    6 (sure 3, to verify 2, uncertain 1; verified 0)
+      Context:    read 5, default 0, to verify 1
       Positions:  5 distinct, 1 repeated
       Unverified: rank 4, 5, 6 (import refused without --force)
 
@@ -89,15 +91,26 @@ Le relevé
 
 Le relevé est un fichier JSON lisible, que l'on peut ouvrir dans un éditeur de
 texte. L'en-tête (``document``) donne le titre, l'auteur, l'édition ou l'adresse
-du document, l'empreinte SHA-256 du fichier lu et le profil de ses diagrammes.
-Puis chaque diagramme est une entrée, dans l'ordre du document :
+du document, l'empreinte SHA-256 du fichier lu, le profil de ses diagrammes et,
+pour un livre scanné, son contexte par défaut (``defaults``, voir
+:ref:`cli_document_defaults`). Puis chaque diagramme est une entrée, dans
+l'ordre du document :
 
 * ``rank`` — son rang, de 1 sans trou ;
 * ``page``, ``chapter`` et ``label`` — sa page, le chapitre des signets et le
   nom que le document lui donne (« Problem 191 ») quand il est imprimé au-dessus ;
 * ``position`` — la position, en XGID : pions, videau, trait, dés, score et
   longueur du match en une seule chaîne ;
-* ``state`` — son état, avec ``doubts``, les doutes nommés de la lecture ;
+* ``checkers`` — la certitude des pions : ``sure``, ``to-verify`` ou
+  ``uncertain`` ;
+* ``complete`` — ``true`` quand les pions ont été lus à quinze par camp sans
+  aucun doute, sans qu'un recoupement les confirme (voir
+  :ref:`cli_document_complete`) ;
+* ``context`` — comment le contexte (videau, dés, trait, score) est connu :
+  ``read`` (lu et recoupé), ``default`` (le contexte par défaut du document),
+  ``to-verify`` (ni lu ni sous le défaut : un videau ou des dés dessinés et non
+  lus, un score introuvable) ou ``uncertain`` (contredit) ;
+* ``doubts`` — les doutes nommés de la lecture ;
 * ``rect`` — où le diagramme se trouve sur la page, en fraction de sa taille,
   pour le retrouver dans le PDF ;
 * ``verified`` — ``true`` quand une personne a comparé la lecture au diagramme.
@@ -108,17 +121,31 @@ retire une entrée en renumérotant les rangs. Un relevé se vérifie en plusieu
 séances : ``verified`` reste dans le fichier. ``check`` refuse un relevé dont un
 champ est inconnu, dont les rangs ont un trou, dont une page recule, dont un
 XGID n'est pas une position légale, ou d'un format plus récent que le programme.
-Une entrée ``sure`` n'a aucun doute.
+Des pions ``sure`` ne portent de doute que sur le contexte ; un contexte ``read``
+n'en porte aucun ; une entrée ``default`` porte le contexte par défaut dans son
+XGID.
+
+Le relevé est au format de version 2. Un relevé de version 1, qui donnait un
+seul état (``state``) par entrée, se lit encore : une entrée ``sure`` y a ses
+pions sûrs et son contexte lu, une entrée d'un livre scanné passe sous le
+contexte par défaut, non confirmé, et toute autre a son contexte à vérifier.
+``analyze`` écrit toujours la version 2.
 
 Les trois états
 ---------------
 
+L'état d'une entrée découle de ses deux certitudes ; il n'est pas écrit dans le
+relevé.
+
 ``sure``
-   Les recoupements du diagramme tiennent : chaque camp compte quinze pions
+   Les pions sont sûrs **et** le contexte est certifié : lu, ou sous le contexte
+   par défaut du document une fois celui-ci confirmé. Les pions sont sûrs quand
+   les recoupements du diagramme tiennent : chaque camp compte quinze pions
    (sur les points, sur la barre et dans le plateau de sortie), et les pips
    calculés d'après la position égalent les pips imprimés des deux joueurs. Le
-   score et la longueur du match sont ceux que le PDF imprime à côté. Une entrée
-   d'un livre scanné n'est jamais ``sure`` : voir :ref:`cli_document_images`.
+   contexte d'un PDF d'XG est lu : le score et la longueur du match sont ceux
+   qu'il imprime à côté. Celui d'un livre scanné ne l'est jamais : voir
+   :ref:`cli_document_images`.
 
 ``to-verify``
    La lecture tient, mais rien ne la confirme : un pip imprimé diffère du pip
@@ -131,12 +158,13 @@ Les trois états
    police que la table ne lit pas. Ces cas sont lus mais jamais déclarés sûrs.
 
 ``uncertain``
-   La lecture est contredite ou incomplète : un glyphe inconnu, un camp qui ne
+   Les pions ou le contexte sont contredits, ou la lecture est incomplète : un glyphe inconnu, un camp qui ne
    compte pas quinze pions et dont les pips ne correspondent pas, un cadre
    abîmé. Un diagramme dont on ne tire aucune position légale garde sa place
    dans le relevé, sans position (``"position": ""``).
 
-Une entrée est **importable** quand elle est ``sure`` ou vérifiée. Les doutes
+Une entrée est **importable** quand elle est ``sure`` ou vérifiée, ou, sur
+demande, quand elle est complète (:ref:`cli_document_complete`). Les doutes
 qu'elle porte disent quoi contrôler, par exemple :
 
 .. code-block:: text
@@ -177,24 +205,109 @@ autres sont lues. La couche texte d'une page, visible ou non (celle qu'une OCR
 laisse sous l'image), donne ses mots à leur place sur l'image ; un texte que sa
 police ne traduit pas en caractères ne donne aucun mot.
 
-Sur un livre scanné, **seuls les pions sont certifiés**. Ils sont confirmés
-quand les pips imprimés à côté du diagramme égalent les pips calculés des deux
-camps, qu'aucun camp n'a plus de quinze pions et qu'aucun doute ne reste sur les
-pions. Le videau, les dés, le trait et le score ne sont pas lus : une entrée d'un
-livre scanné n'est donc **jamais** ``sure``. Pions confirmés, elle est
-``to-verify`` avec le doute ``context not read: cube, dice, player on roll,
-score`` (champ ``context``), seul ou suivi d'un videau ou de dés dessinés ; ses
-pions non confirmés, elle porte ce doute et ceux des pions. ``analyze`` et
-``check`` comptent à part les entrées aux pions confirmés :
+Sur un livre scanné, **seuls les pions sont certifiés** par la lecture. Ils sont
+``sure`` quand les pips imprimés à côté du diagramme égalent les pips calculés
+des deux camps, qu'aucun camp n'a plus de quinze pions et qu'aucun doute ne reste
+sur les pions. Le videau, les dés, le trait et le score ne sont pas lus : chaque
+entrée porte le doute ``context not read: cube, dice, player on roll, score``
+(champ ``context``) et son XGID porte le contexte par défaut du document
+(``"context": "default"``), sauf quand un videau hors du centre ou des dés sont
+dessinés (``"context": "to-verify"``, avec ce doute). Une entrée d'un livre
+scanné n'est donc **jamais** ``sure`` tant que le contexte par défaut n'est pas
+confirmé, et celle dont le videau ou les dés sont dessinés ne l'est jamais.
+``analyze`` et ``check`` comptent les entrées par contexte, et à part celles dont
+seuls les pions sont certifiés :
 
 .. code-block:: text
 
-   Checkers:   12 confirmed by the printed pips; cube, dice, player on roll and score to verify
+   Context:    read 0, default 140, to verify 12
+   Defaults:   centred cube, no dice, the bottom player on roll, money play (0:0:1:00:0:0:0:0:10), not confirmed: set "confirmed": true once the document's diagrams follow them
+   Checkers:   112 confirmed, their context alone to verify (cube, dice, player on roll, score)
 
-Pour chacune, on ouvre le livre à la page de l'entrée, on compare au diagramme le
-videau (valeur et propriétaire : un videau dessiné au milieu peut être possédé),
-les dés, le joueur au trait et le score, on corrige ces champs du XGID s'il le
-faut, puis on marque ``"verified": true``.
+Pour une entrée dont le contexte reste à vérifier, on ouvre le livre à la page de
+l'entrée, on compare au diagramme le videau (valeur et propriétaire : un videau
+dessiné au milieu peut être possédé), les dés, le joueur au trait et le score, on
+corrige ces champs du XGID s'il le faut, puis on marque ``"verified": true``.
+
+.. _cli_document_defaults:
+
+Le contexte par défaut
+~~~~~~~~~~~~~~~~~~~~~~
+
+Le contexte par défaut d'un livre scanné est celui qu'écrit la lecture : videau
+centré, pas de dés, joueur du bas au trait, partie libre. Il figure dans
+l'en-tête du relevé :
+
+.. code-block:: json
+
+   "defaults": {
+     "context": "0:0:1:00:0:0:0:0:10",
+     "description": "centred cube, no dice, the bottom player on roll, money play",
+     "confirmed": false
+   }
+
+``context`` est la fin du XGID après le plateau ; toute entrée ``default`` la
+porte. Quand les diagrammes du document suivent ce contexte — un livre de
+problèmes en partie libre, joueur du bas au trait, par exemple — on le
+**confirme une fois** en écrivant ``"confirmed": true`` : toutes les entrées
+``default`` ont alors leur contexte certifié, et celles dont les pions sont
+sûrs deviennent ``sure``. Seules restent à vérifier une à une les exceptions que
+la lecture a vues (videau hors du centre, dés dessinés) et les entrées dont les
+pions ne sont pas sûrs. On ne confirme pas un contexte que le document ne suit
+pas : un videau possédé dessiné au milieu, un score imprimé dans la légende ou un
+trait donné par la prose ne sont pas vus.
+
+.. _cli_document_complete:
+
+Quinze et quinze sans doute
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Un diagramme sans pips imprimés n'a pas de recoupement : ses pions restent
+``to-verify``. Lus à quinze pions par camp sans aucun doute, ils sont marqués
+``"complete": true`` : sur toutes les mesures faites, ces lectures étaient
+exactes, mais rien ne les confirme diagramme par diagramme. C'est un état
+intermédiaire, distinct de ``sure``. Une entrée complète ne porte, outre le
+contexte, que deux doutes : l'absence de pips imprimés, et le sens de jeu
+supposé quand aucun pip du document ne l'a confirmé. Des pips imprimés qui
+diffèrent des pips calculés sont un doute sur les pions : l'entrée n'est alors
+jamais complète. Une position dont des pions sont sortis ne l'est jamais non
+plus.
+
+Le sens de jeu supposé est lui aussi un défaut du document, avec sa propre
+confirmation : un sens faux échangerait les joueurs de toutes les positions
+lues sous lui. Il figure dans le contexte par défaut, sous ``direction`` :
+
+.. code-block:: json
+
+   "direction": {
+     "home": "right",
+     "description": "direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right",
+     "confirmed": false
+   }
+
+Confirmer le contexte ne le confirme pas. On le contrôle sur quelques
+diagrammes, puis on écrit ``"confirmed": true`` dans ``direction``.
+
+``import --accept-complete`` accepte en bloc les entrées complètes dont le
+contexte est certifié (lu, ou sous le contexte par défaut confirmé) et dont le
+sens de jeu est certain (voté par les pips, ou supposé puis confirmé), sans les
+marquer vérifiées ; ``check`` les compte, et compte à part celles qu'un sens
+non confirmé retient :
+
+.. code-block:: text
+
+   Direction:  direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right, not confirmed: check it on a few diagrams, then set "direction": {"confirmed": true}
+   Complete:   84 more held back until the direction of play is confirmed
+
+.. code-block:: text
+
+   Complete:   84 with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)
+   Unverified: rank 3, 7, 12 (import refused without --force; rank 12 with --accept-complete)
+
+L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15
+checkers read with no doubt``). Une entrée complète dont le contexte n'est pas
+certifié, ou dont le sens de jeu supposé n'est pas confirmé, reste refusée ; le
+message d'erreur dit de le confirmer.
 
 Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et
 l'image elle-même. Dans l'image, la commande lit les nombres isolés autour du
@@ -222,9 +335,9 @@ pointe), le sens de jeu supposé (les pions avancent vers le côté qui a le moi
 de pips), les pions sortis comptés par différence, un videau dessiné hors du
 centre, des dés dessinés.
 
-Ne sont jamais lus : la valeur et le propriétaire du videau (la position le dit
-centré), les dés (aucun), le score (partie libre), le joueur au trait (celui du
-bas), le plateau de sortie (un camp dessiné avec moins de quinze pions a les
+Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte par
+défaut le dit centré), les dés (aucun), le score (partie libre), le joueur au
+trait (celui du bas), le plateau de sortie (un camp dessiné avec moins de quinze pions a les
 autres sortis).
 
 Pourquoi l'import refuse
@@ -232,18 +345,18 @@ Pourquoi l'import refuse
 
 Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans une
 collection se partage à l'export. L'import refuse donc **tout** le relevé, avant
-d'écrire quoi que ce soit, et nomme les rangs :
+d'écrire quoi que ce soit, nomme les rangs et dit quoi faire :
 
 .. code-block:: text
 
-   Error: document: entries neither sure nor verified: storage: invalid argument: rank 4, 5, 6; verify them, or force the import
+   Error: document: entries neither sure nor verified: storage: invalid argument: rank 4, 5, 6; check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
 
-Quand l'une d'elles vient d'un livre scanné, le message dit de contrôler son
-videau, ses dés, son trait et son score, puis de la marquer vérifiée :
+Quand des entrées sont sous un contexte par défaut non confirmé, ou complètes
+sans ``--accept-complete``, le message le dit aussi :
 
 .. code-block:: text
 
-   Error: document: entries neither sure nor verified: storage: invalid argument: rank 1, 2; verify them (read from a scan, an entry's checkers at most are certified: check its cube, dice, player on roll and score against the diagram, then set "verified": true), or force the import
+   Error: document: entries neither sure nor verified: storage: invalid argument: rank 1, 2; confirm the document's defaults once if its diagrams follow them ("defaults": {"confirmed": true}); accept the entries of fifteen checkers a side read with no doubt as a whole (accept complete); check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
 
 On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé tel quel ;
 l'import dit alors combien d'entrées il a forcées (``Forced: 3 entries neither
