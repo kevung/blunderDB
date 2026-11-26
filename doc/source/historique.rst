@@ -42,6 +42,24 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.60.0 (2026-11-26)
+-------------------
+
+- **ArkID, une position en texte lisible** : ``blunderdb arkid`` écrit et lit une position dans la notation textuelle de blunderDB, lisible et prononçable (:ref:`cli_arkid`), à partir d'un XGID, d'un OGID ou d'un ArkID.
+- **Archive papier d'une base** : ``blunderdb archive export`` et ``archive import``, et la boîte *Archive papier…* du panneau Matchs, impriment les matchs en pages A4 de codes QR sans texte, puis les relisent depuis la page HTML exportée ou depuis des scans et des photos des feuilles ; l'import s'ouvre aussi depuis la liste des matchs vide, par ``import_archive`` en mode commande, et le démon le propose.
+- **Feuille de match imprimable** : *Imprimer…* met un match sur une page A4 sans diagramme, avec son en-tête, le PR, les erreurs et le temps de chaque joueur, la transcription coup par coup, et les positions à revoir en ArkID, numérotées comme dans la transcription.
+- **Listes de positions imprimables, avec leur code de réimport** : ``blunderdb sheet`` et ``positions.sheet`` impriment une liste de positions en ArkID, que le panneau Bibliothèque offre aussi ; un code accompagne la feuille et permet de la réimporter.
+- **Import d'un document** : ``blunderdb document analyze`` lit un PDF (diagrammes d'eXtreme Gammon reconnus par leurs glyphes, PDF scannés, dossier d'images de pages ou image seule) et en dresse le relevé des positions, importable en collection ; le lecteur de structure, en Go pur, lit les diagrammes, leurs pips imprimés et leur contexte. Chaque entrée porte deux certitudes, une entrée lue sur un scan n'est jamais donnée pour sûre, et ce qui n'a pas été lu est nommé.
+- **Images JPEG 2000 et JBIG2** : les PDF qui portent ces images (``JPXDecode``, ``.jp2`` et ``.j2k``, JBIG2) se lisent sans bibliothèque externe, avec des bornes de mémoire et de temps ; une page refusée n'empêche pas de lire les autres.
+- **Assistant graphique de l'import de document** : l'interface guide l'import d'un document pas à pas, avec une revue des entrées douteuses, les refus expliqués et les notes traduites.
+- **Défauts appris par document** : quand un document n'imprime pas son contexte (sens de jeu, score, cube), le défaut le plus sûr est proposé et se confirme à part, une seule fois pour le document ; l'import assisté propose un repli quand la lecture ne suffit pas.
+- **Carte des jets** : pour une position, les 21 jets avec le meilleur coup, l'équité et le marché perdu de chacun (``blunderdb rolls``), dans le panneau d'évaluation.
+- **Carte des scores** : la meilleure décision de cube à tous les scores d'un match, Crawford compris (``blunderdb scoremap``).
+- **Les cartes se calculent en fond et se gardent** : un cache garde les cartes des jets et des scores, un précalcul en fond prépare celles du jet suivant, et le calcul affiché passe devant les autres sur les cœurs de la machine.
+- **Panneau Calculs** : une puce unique de la barre d'état résume les tâches de fond (analyses, rollouts, imports, maintenance, transferts) ; son panneau les range en cours, en attente et terminées, par bibliothèque, avec pause, annulation, priorité et le compte des cœurs utilisés. Un travail demandé pendant un autre prend sa place dans la file de la bibliothèque.
+- **Corrections notables** : l'ouverture d'une base tenue par une autre instance est refusée en le disant, et la bibliothèque vide n'est pas touchée ; une couche texte OCR invisible ne passe plus pour la police de plateau d'eXtreme Gammon.
+- Voir :ref:`cli_arkid`, :ref:`archive_papier_interface`, :ref:`feuille_match`, :ref:`liste_imprimable`, :ref:`assistant_import_document`, :ref:`cli_document`, :ref:`eval_cartes`, :ref:`cli_scoremap`, :ref:`cli_rolls` et :ref:`manuel_calculs`.
+
 0.59.0 (2026-11-21)
 -------------------
 
