@@ -24,7 +24,8 @@ import (
 type ScoreMapCell struct {
 	CubeMatrixCell
 	// Ply is the depth this cell was searched at: the grid is filled at
-	// 0-ply first, then refined cell by cell.
+	// 0-ply, then at 1-ply, then refined cell by cell; below ScoreMap.Ply it
+	// is provisional.
 	Ply int `json:"ply"`
 	// Crawford says the cell is the Crawford game (checker cells at 1-away
 	// against more); false is post-Crawford, or no 1-away side.
@@ -54,15 +55,15 @@ type ScoreMap struct {
 // DefaultMapMatchLength is the match length a map opens on.
 const DefaultMapMatchLength = 9
 
-// ScoreMapCellFunc receives a cell as soon as it is computed, at 0-ply then
-// at the display depth; index is its place in ScoreMap.Cells. Calls are
-// serialised.
+// ScoreMapCellFunc receives a cell as soon as it is computed, once per depth
+// of mapDepths (0-ply, 1-ply, then the display depth); index is its place
+// in ScoreMap.Cells. Calls are serialised.
 type ScoreMapCellFunc func(index int, cell ScoreMapCell)
 
 // ComputeScoreMap evaluates pos at every away × away score of a
 // matchLength-point match: the best play when pos has dice, the cube decision
-// otherwise. The grid is filled at 0-ply, then refined at ply starting from
-// the position's own score and moving outwards; onCell (may be nil) sees each
+// otherwise. The grid is filled at each depth of mapDepths(ply), the deep
+// one starting from the position's own score and moving outwards; onCell (may be nil) sees each
 // cell at each depth. A cell where the position's cube cannot have been
 // reached is refused (ErrNotEvaluable), never re-centred. ctx cancels between
 // cells and inside a search; a cancelled call returns what it had.
@@ -98,10 +99,7 @@ func ComputeScoreMap(ctx context.Context, pos domain.Position, met *engine.MET, 
 
 	var mu sync.Mutex
 	phase := func(depth int) error {
-		err := exec(len(order), func(k int, s *Searcher) {
-			if ctx.Err() != nil {
-				return
-			}
+		err := runMapPhase(ctx, exec, len(order), depth, func(k int, s *Searcher) {
 			idx := order[k]
 			onRoll, opponent := idx/matchLength+1, idx%matchLength+1
 			var cell ScoreMapCell
@@ -126,11 +124,8 @@ func ComputeScoreMap(ctx context.Context, pos domain.Position, met *engine.MET, 
 		return err
 	}
 
-	if err := phase(0); err != nil {
-		return m, err
-	}
-	if ply > 0 {
-		if err := phase(ply); err != nil {
+	for _, depth := range mapDepths(ply) {
+		if err := phase(depth); err != nil {
 			return m, err
 		}
 	}

@@ -42,8 +42,8 @@ type RollMapRow struct {
 	// with a pass ("too good, take" keeps the market).
 	// Nil when the roller has no access to the cube.
 	MarketLost *bool `json:"marketLost,omitempty"`
-	// Ply is the depth this row was searched at: the map is filled at 0-ply
-	// first, then refined row by row.
+	// Ply is the depth this row was searched at: the map is filled at 0-ply,
+	// then at 1-ply, then refined row by row; below RollMap.Ply it is provisional.
 	Ply int `json:"ply"`
 }
 
@@ -60,24 +60,30 @@ type RollMap struct {
 	CubeAccess bool `json:"cubeAccess"`
 }
 
-// RollMapRowFunc receives a row as soon as it is computed, at 0-ply then at
-// the display depth. Calls are serialised.
+// RollMapRowFunc receives a row as soon as it is computed, once per depth of
+// mapDepths (0-ply, 1-ply, then the display depth). Calls are serialised.
 type RollMapRowFunc func(index int, row RollMapRow)
 
 // LocalExec is the CellExec of a computation that owns its cores: workers
-// goroutines (0: one per core), each reusing one searcher built for
-// ply/pruneK, each holding a core of the process budget while it searches.
+// goroutines, each reusing one searcher built for ply/pruneK, each holding a
+// core of the process budget while it searches, taking cells in index order.
+// workers = 0 is one per core below 2 ply, and mapDeepWidth from 2 ply,
+// where each search forks into the cores left idle: the cells then land one
+// after another rather than all together at the end.
 func LocalExec(workers, ply, pruneK int) CellExec {
 	if workers <= 0 {
 		workers = runtime.NumCPU()
+		if ply >= 2 {
+			workers = mapDeepWidth
+		}
 	}
 	return cubeMatrixGoroutines(workers, ply, pruneK)
 }
 
 // ComputeRollMap evaluates the 21 rolls of pos, a position whose player on
 // roll has not rolled yet (its dice are ignored). Rows go to onRow (may be
-// nil) at 0-ply first, then at ply. exec runs the rows; ctx cancels between
-// rolls and inside a row's search, and a cancelled call returns what it had
+// nil) at each depth of mapDepths(ply). exec runs the rows; ctx cancels
+// between rolls and inside a row's search, and a cancelled call returns what it had
 // with ctx's error. Nothing is stored.
 func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, ply, pruneK int, exec CellExec, onRow RollMapRowFunc) (RollMap, error) {
 	if IsResponsePosition(&pos) {
@@ -86,35 +92,19 @@ func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, p
 	if ply < 0 || ply > MaxPly {
 		return RollMap{}, fmt.Errorf("gammonnet: ply %d is outside 0-%d", ply, MaxPly)
 	}
-	pos.Dice = [2]int{0, 0}
-	gnPos, err := FromDomain(&pos)
+	job, err := newRollMapJob(pos, met, ply, pruneK)
 	if err != nil {
 		return RollMap{}, err
 	}
-	if gnPos.isOver() {
-		return RollMap{}, fmt.Errorf("%w: the game is over", ErrNotEvaluable)
-	}
-	cfg, state, err := ConfigForPositionMET(&pos, met, ply, pruneK)
-	if err != nil {
-		return RollMap{}, err
-	}
-	scale, ok := NewEquityScale(state)
-	if !ok {
-		return RollMap{}, fmt.Errorf("%w: no equity referential at score %v", ErrNotEvaluable, pos.Score)
-	}
-
-	m := RollMap{Ply: ply, Rows: make([]RollMapRow, NumRolls), CubeAccess: hasCubeAccess(cfg.CubeOwner, state)}
-	job := rollMapJob{pos: pos, gnPos: gnPos, cfg: cfg, state: state, scale: scale, access: m.CubeAccess, rolls: buildRolls()}
+	cfg := job.cfg
+	m := RollMap{Ply: ply, Rows: make([]RollMapRow, NumRolls), CubeAccess: job.access}
 
 	var mu sync.Mutex
 	var firstErr error
 	phase := func(depth int) error {
 		job.cfg = cfg
 		job.cfg.Ply = depth
-		err := exec(NumRolls, func(i int, s *Searcher) {
-			if ctx.Err() != nil {
-				return
-			}
+		err := runMapPhase(ctx, exec, NumRolls, depth, func(i int, s *Searcher) {
 			row, err := job.row(ctx, i, s, pruneK)
 			mu.Lock()
 			defer mu.Unlock()
@@ -138,13 +128,8 @@ func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, p
 		return firstErr
 	}
 
-	// The whole map at 0-ply first, so a reader sees every roll at once; then
-	// the display depth replaces each row as it lands.
-	if err := phase(0); err != nil {
-		return m, err
-	}
-	if ply > 0 {
-		if err := phase(ply); err != nil {
+	for _, depth := range mapDepths(ply) {
+		if err := phase(depth); err != nil {
 			return m, err
 		}
 	}
@@ -212,6 +197,27 @@ type rollMapJob struct {
 	scale  EquityScale
 	access bool
 	rolls  [NumRolls]diceRoll
+}
+
+// newRollMapJob is the shared part of pos's rows, configured at ply.
+func newRollMapJob(pos domain.Position, met *engine.MET, ply, pruneK int) (rollMapJob, error) {
+	pos.Dice = [2]int{0, 0}
+	gnPos, err := FromDomain(&pos)
+	if err != nil {
+		return rollMapJob{}, err
+	}
+	if gnPos.isOver() {
+		return rollMapJob{}, fmt.Errorf("%w: the game is over", ErrNotEvaluable)
+	}
+	cfg, state, err := ConfigForPositionMET(&pos, met, ply, pruneK)
+	if err != nil {
+		return rollMapJob{}, err
+	}
+	scale, ok := NewEquityScale(state)
+	if !ok {
+		return rollMapJob{}, fmt.Errorf("%w: no equity referential at score %v", ErrNotEvaluable, pos.Score)
+	}
+	return rollMapJob{pos: pos, gnPos: gnPos, cfg: cfg, state: state, scale: scale, access: hasCubeAccess(cfg.CubeOwner, state), rolls: buildRolls()}, nil
 }
 
 // row evaluates roll i at j.cfg's depth on s (nil: a fresh searcher).
