@@ -338,6 +338,39 @@ vote sur le livre. Aucune lecture de chiffre n'est choisie d'après les pips cal
   variable d'Olsen. `lire.py`, `plateau.py`, `localise.py` inchangés ; `releve.py` identique sans
   les deux variables nouvelles.
 
+### Tranche 3 (2026-11-29) — fusionnée : lecteur de structure en Go
+
+`pkg/blunderdb/document/structure`, bibliothèque standard seule, sans modèle appris ;
+`document analyze` accepte un dossier d'images de pages ou une image. Mesure contre le prototype
+(`TestMeasureStructure`, sauté sans variables d'environnement) :
+
+| Livre | Diagrammes | Même plateau | Sûres prototype | Sûres Go |
+|---|---|---|---|---|
+| Deep Cube rasterisé | 1 518 | — | 1 498 | 1 312 sûres ; 1 489 confirmées par les pips, 0 fausse |
+| Trice | 189 | 189 | 146 | 132 |
+| Woolsey | 161 | 159 | 91 | 91 |
+| Robertie | 445 | 442 | 0 | 0 |
+| Olsen | 333 | 333 | 315 | 315 |
+| Kageyama (Endgame) | 352 | 344 | 80 | 26 |
+| Mochizuki | 218 | 205 | 0 | 0 |
+
+- Les sûres en moins viennent d'une règle plus stricte que celle du prototype : un videau possédé
+  ou des dés dessinés sont un doute, puisque leur valeur n'est pas lue.
+- Quatre diagrammes de Kageyama sont sûrs en Go et pas dans le prototype : lecture Go juste dans
+  les quatre (le prototype voyait un pion sur une pointe vide), l'un recompté par l'orchestrateur.
+- 0,2 à 0,8 s par page, 1,5 s sur de très grandes pages.
+
+Limites à lever avant que la lecture d'images serve vraiment :
+1. Une image n'a pas de couche texte : depuis le CLI, aucune entrée lue sur image n'est sûre
+   aujourd'hui. Il faut porter la lecture des nombres dans l'image (E4) et lire les PDF scannés
+   (images de page et texte OCR invisible).
+2. **« Sûr » ne certifie que les pions.** Videau, dés, trait et score ne sont pas lus : l'XGID
+   écrit porte « videau centré, pas de dés, joueur du bas au trait, money ». Un videau possédé non
+   détecté (détection 29 sur 41 chez Kageyama, 7 sur 25 chez Olsen) donnerait une position sûre
+   au videau faux. À traiter avant tout import depuis une image : contexte par défaut confirmé
+   une fois par document, détection fiable du videau et des dés, lecture de la légende.
+3. Le drapeau « 15 + 15 sans doute » et les familles n'ont pas de champ dans le Relevé v1.
+
 ## Décisions de l'utilisateur (2026-11-25)
 
 - Recommandations suivies : rendu PDF, premier périmètre, ADR neuf.
