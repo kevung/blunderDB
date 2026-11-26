@@ -153,6 +153,7 @@
         const rolled = { ...shown, dice: [row.die1, row.die2] };
         const best = row.move ? positionAfterPlay(rolled, row.die1, row.die2, row.move) : null;
         const bestKey = best ? boardKey(best.board) : null;
+        /** @type {any[]} */
         let plays = [];
         try {
             plays = (await LegalMoves(/** @type {any} */ (rolled))) ?? [];
