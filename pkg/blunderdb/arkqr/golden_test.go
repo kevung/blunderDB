@@ -73,12 +73,13 @@ func TestDecodeGolden(t *testing.T) {
 	if v := os.Getenv("BLUNDERDB_ARKQR_GOLDEN_WRITE"); v != "" {
 		streams := map[string]string{}
 		for name, m := range matches {
-			data, err := Encode(m)
+			n, err := strconv.Atoi(v)
+			if err != nil || n < 1 || n > FormatVersion {
+				t.Fatalf("version %q", v)
+			}
+			data, err := encodeVersion(m, byte(n))
 			if err != nil {
 				t.Fatal(err)
-			}
-			if v != strconv.Itoa(int(data[0])) {
-				t.Fatalf("Encode writes version %d, not %s", data[0], v)
 			}
 			streams[name] = hex.EncodeToString(data)
 		}
@@ -109,6 +110,10 @@ func TestDecodeGolden(t *testing.T) {
 				t.Fatalf("version %d: %s: %v", v, name, err)
 			}
 			checkDecoded(t, name, m, back)
+			// The models of a version are frozen: coding again writes the same stream.
+			if again, err := encodeVersion(m, v); err != nil || hex.EncodeToString(again) != streams[name] {
+				t.Errorf("version %d: %s: the encoder of the version changed (%v)", v, name, err)
+			}
 		}
 	}
 }

@@ -1,6 +1,10 @@
 package arkqr
 
-import "github.com/kevung/blunderdb/pkg/blunderdb/domain"
+import (
+	"sync"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+)
 
 // half is one side of the board in its OWN numbering: index 1..24 is the
 // side's points counted from its home (1 is the deepest home point), 25 its
@@ -112,7 +116,7 @@ func relPoint(mover, idx int) (int, bool) {
 
 // step is one die's move in the mover's numbering; to 0 is borne off.
 type step struct {
-	from, to int
+	from, to int8
 	hit      bool
 }
 
@@ -141,39 +145,68 @@ func (r rel) applyStep(s step) (rel, bool) {
 
 // single lists the moves one die allows.
 func (r rel) single(d int) []step {
-	var srcs []int
+	var buf [16]step
+	return append([]step(nil), r.singleInto(d, &buf)...)
+}
+
+// singleInto is single, written into buf: a side has at most fifteen sources.
+func (r rel) singleInto(d int, buf *[16]step) []step {
+	out := buf[:0]
 	if r.my[25] > 0 {
-		srcs = []int{25}
-	} else {
-		for p := 24; p >= 1; p-- {
-			if r.my[p] > 0 {
-				srcs = append(srcs, p)
-			}
+		dst := 25 - d
+		if r.opp[25-dst] < 2 {
+			out = append(out, step{25, int8(dst), r.opp[25-dst] == 1})
 		}
+		return out
 	}
 	hi := 0
-	if len(srcs) > 0 {
-		hi = srcs[0]
-	}
-	var out []step
-	for _, p := range srcs {
+	for p := 24; p >= 1; p-- {
+		if r.my[p] == 0 {
+			continue
+		}
+		if hi == 0 {
+			hi = p
+		}
 		dst := p - d
 		if dst >= 1 {
 			o := r.opp[25-dst]
-			if o >= 2 {
-				continue
+			if o < 2 {
+				out = append(out, step{int8(p), int8(dst), o == 1})
 			}
-			out = append(out, step{p, dst, o == 1})
 			continue
 		}
 		if hi > 6 {
 			continue
 		}
 		if dst == 0 || p == hi {
-			out = append(out, step{p, 0, false})
+			out = append(out, step{int8(p), 0, false})
 		}
 	}
 	return out
+}
+
+// canMove reports whether one die of d moves a checker: single(d) is not empty.
+func (r rel) canMove(d int) bool {
+	if r.my[25] > 0 {
+		return r.opp[25-(25-d)] < 2
+	}
+	hi := 0
+	for p := 24; p >= 1; p-- {
+		if r.my[p] == 0 {
+			continue
+		}
+		if hi == 0 {
+			hi = p
+		}
+		if dst := p - d; dst >= 1 {
+			if r.opp[25-dst] < 2 {
+				return true
+			}
+		} else if hi <= 6 && (dst == 0 || p == hi) {
+			return true
+		}
+	}
+	return false
 }
 
 // play is one legal play: the board it leaves and the steps that reach it.
@@ -190,62 +223,131 @@ func (r rel) plays(d1, d2 int) []play {
 	if d1 < d2 {
 		d1, d2 = d2, d1
 	}
-	type term struct {
-		used, first int
-		steps       []step
-	}
-	found := map[rel][]term{}
-	var order []rel
-	best := 0
-	var rec func(b rel, dice []int, used, first int, steps []step)
-	rec = func(b rel, dice []int, used, first int, steps []step) {
-		moved := false
-		if len(dice) > 0 {
-			for _, s := range b.single(dice[0]) {
-				nb, _ := b.applyStep(s)
-				f := first
-				if f == 0 {
-					f = dice[0]
-				}
-				moved = true
-				rec(nb, dice[1:], used+1, f, append(append([]step(nil), steps...), s))
-			}
-		}
-		if !moved {
-			best = max(best, used)
-			if _, ok := found[b]; !ok {
-				order = append(order, b)
-			}
-			found[b] = append(found[b], term{used, first, steps})
-		}
-	}
+	g := explorers.Get().(*explorer)
+	defer g.release()
 	if d1 == d2 {
-		rec(r, []int{d1, d1, d1, d1}, 0, 0, nil)
+		g.memo = true
+		g.rec(r, [4]int8{int8(d1), int8(d1), int8(d1), int8(d1)}, 4, 0, 0, [4]step{})
 	} else {
-		rec(r, []int{d1, d2}, 0, 0, nil)
-		rec(r, []int{d2, d1}, 0, 0, nil)
+		g.rec(r, [4]int8{int8(d1), int8(d2)}, 2, 0, 0, [4]step{})
+		g.rec(r, [4]int8{int8(d2), int8(d1)}, 2, 0, 0, [4]step{})
 	}
 	larger := false
-	if d1 != d2 && best == 1 {
-		for _, b := range order {
-			for _, t := range found[b] {
-				if t.used == 1 && t.first == d1 {
-					larger = true
-				}
-			}
-		}
-	}
-	var out []play
-	for _, b := range order {
-		for _, t := range found[b] {
-			if t.used == best && (!larger || t.first == d1) {
-				out = append(out, play{b, t.steps})
+	if d1 != d2 && g.best == 1 {
+		for _, t := range g.terms {
+			if t.used == 1 && int(t.first) == d1 {
+				larger = true
 				break
 			}
 		}
 	}
+	// The first sequence of each board that uses the most dice — the larger
+	// die when only one can be played.
+	pick := g.pick[:0]
+	for range g.boards {
+		pick = append(pick, -1)
+	}
+	g.pick = pick
+	n := 0
+	for i, t := range g.terms {
+		if pick[t.board] < 0 && int(t.used) == g.best && (!larger || int(t.first) == d1) {
+			pick[t.board] = int32(i)
+			n++
+		}
+	}
+	out := make([]play, 0, n)
+	backing := make([]step, 0, 4*n)
+	for b, i := range pick {
+		if i < 0 {
+			continue
+		}
+		t := &g.terms[i]
+		start := len(backing)
+		backing = append(backing, t.steps[:t.used]...)
+		var steps []step
+		if t.used > 0 {
+			steps = backing[start:len(backing):len(backing)]
+		}
+		out = append(out, play{g.boards[b], steps})
+	}
 	sortPlays(out)
 	return out
+}
+
+// explorers keeps the tables of an exploration from one roll to the next.
+var explorers = sync.Pool{New: func() any {
+	return &explorer{index: make(map[rel]int32, 64), seen: make(map[node]struct{}, 256)}
+}}
+
+func (g *explorer) release() {
+	clear(g.index)
+	clear(g.seen)
+	g.boards, g.terms, g.best, g.memo = g.boards[:0], g.terms[:0], 0, false
+	explorers.Put(g)
+}
+
+// explorer walks every sequence of moves a roll allows, recording where each
+// one ends in the order it finds them.
+type explorer struct {
+	index  map[rel]int32
+	boards []rel
+	terms  []term
+	pick   []int32
+	best   int
+	// memo skips a board already explored at the same depth, which a double
+	// reaches by every order of its moves: the sequences below it end on
+	// boards already recorded, by a sequence found earlier, so the plays and
+	// their steps are the ones the full exploration gives.
+	memo bool
+	seen map[node]struct{}
+}
+
+type node struct {
+	b    rel
+	used int8
+}
+
+// term is one sequence that cannot go further: the board it leaves (an index
+// into boards), the dice it used and the first of them.
+type term struct {
+	board       int32
+	used, first int8
+	steps       [4]step
+}
+
+func (g *explorer) rec(b rel, dice [4]int8, nd, used, first int, steps [4]step) {
+	if g.memo && used > 0 {
+		k := node{b, int8(used)}
+		if _, ok := g.seen[k]; ok {
+			return
+		}
+		g.seen[k] = struct{}{}
+	}
+	moved := false
+	if used < nd {
+		d := int(dice[used])
+		var buf [16]step
+		for _, s := range b.singleInto(d, &buf) {
+			nb, _ := b.applyStep(s)
+			f := first
+			if f == 0 {
+				f = d
+			}
+			moved = true
+			steps[used] = s
+			g.rec(nb, dice, nd, used+1, f, steps)
+		}
+	}
+	if !moved {
+		g.best = max(g.best, used)
+		k, ok := g.index[b]
+		if !ok {
+			k = int32(len(g.boards))
+			g.index[b] = k
+			g.boards = append(g.boards, b)
+		}
+		g.terms = append(g.terms, term{k, int8(used), int8(first), steps})
+	}
 }
 
 func sortPlays(ps []play) {

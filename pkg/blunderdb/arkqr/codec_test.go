@@ -21,7 +21,7 @@ type corpusMatch struct {
 
 var corpusCache []corpusMatch
 
-func loadCorpus(t *testing.T) []corpusMatch {
+func loadCorpus(t testing.TB) []corpusMatch {
 	t.Helper()
 	if corpusCache == nil {
 		corpusCache = readCorpus(t)
@@ -31,7 +31,7 @@ func loadCorpus(t *testing.T) []corpusMatch {
 	return out
 }
 
-func readCorpus(t *testing.T) []corpusMatch {
+func readCorpus(t testing.TB) []corpusMatch {
 	t.Helper()
 	root := "../../../testdata"
 	var out []corpusMatch
@@ -194,27 +194,32 @@ func TestDecodeDamaged(t *testing.T) {
 	}
 }
 
-// TestArchiveSize fixes the size of the corpus once coded: a change to the
-// models that makes it grow is a regression of the compression, and one
-// that changes it at all is a new format version.
+// TestArchiveSize fixes the size of the corpus once coded, in every format
+// version: a change to the models that makes it grow is a regression of the
+// compression, and one that changes it at all is a new format version.
 func TestArchiveSize(t *testing.T) {
-	want := map[string]int{
-		"test.mat": 364,
-		"charlot1-charlot2_7p_2025-11-08-2305.mat": 202,
+	want := map[byte]map[string]int{
+		1: {"test.mat": 364, "charlot1-charlot2_7p_2025-11-08-2305.mat": 202, "": 799},
+		2: {"test.mat": 305, "charlot1-charlot2_7p_2025-11-08-2305.mat": 180, "": 689},
 	}
-	total := 0
-	for _, cm := range loadCorpus(t) {
-		data, err := Encode(Match{Doc: cm.doc})
-		if err != nil {
-			t.Fatal(err)
-		}
-		total += len(data)
-		if w, ok := want[cm.name]; ok && w != len(data) {
-			t.Errorf("%s: %d bytes, want %d", cm.name, len(data), w)
-		}
+	if len(want) != FormatVersion {
+		t.Fatalf("sizes for %d versions, want %d", len(want), FormatVersion)
 	}
-	if total != wantCorpusBytes {
-		t.Errorf("corpus: %d bytes, want %d", total, wantCorpusBytes)
+	for v, sizes := range want {
+		total := 0
+		for _, cm := range loadCorpus(t) {
+			data, err := encodeVersion(Match{Doc: cm.doc}, v)
+			if err != nil {
+				t.Fatal(err)
+			}
+			total += len(data)
+			if w, ok := sizes[cm.name]; ok && w != len(data) {
+				t.Errorf("v%d: %s: %d bytes, want %d", v, cm.name, len(data), w)
+			}
+		}
+		if total != sizes[""] {
+			t.Errorf("v%d: corpus: %d bytes, want %d", v, total, sizes[""])
+		}
 	}
 }
 
@@ -252,8 +257,6 @@ func TestLegalPlaysMatchDomain(t *testing.T) {
 		t.Fatalf("only %d positions compared", n)
 	}
 }
-
-const wantCorpusBytes = 799
 
 func TestEncodeRefusesWhatDecodeRefuses(t *testing.T) {
 	doc := loadCorpus(t)[0].doc

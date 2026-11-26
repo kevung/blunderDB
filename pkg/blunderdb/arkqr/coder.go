@@ -114,8 +114,10 @@ type decoder struct {
 	failed bool
 }
 
-func newDecoder(data []byte) *decoder {
-	d := &decoder{hi: top, data: data, budget: 64 + 64*len(data)}
+// newDecoder reads data, at most perByte symbols a byte: an adaptive model
+// can code a long run of one symbol in a small fraction of a bit each.
+func newDecoder(data []byte, perByte int) *decoder {
+	d := &decoder{hi: top, data: data, budget: 64 + perByte*len(data)}
 	for range precision {
 		d.val = d.val<<1 | d.in()
 	}
