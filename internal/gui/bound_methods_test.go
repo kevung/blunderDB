@@ -104,6 +104,7 @@ var boundAppMethods = []string{
 	"OpenMETDialog",
 	"OpenLocalPage",
 	"OpenLogsFolder",
+	"OpenPaperArchiveDialog",
 	"OpenPositionFilesDialog",
 	"OpenPositionFolderDialog",
 	"OpenSyncFolderDialog",
