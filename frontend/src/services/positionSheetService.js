@@ -6,7 +6,7 @@ import { browsingLibrary, listedIds } from '../stores/positionStore.js';
 import { activeCollectionStore } from '../stores/collectionStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { logger } from '../utils/logger.js';
-import { language, tMsg } from '../i18n';
+import { language, tMsg, translate } from '../i18n';
 
 // La liste de positions imprimable : une ligne par position en ArkID, dans un
 // fichier HTML autonome construit par le moteur (printsheet.BuildPositions),
@@ -40,7 +40,7 @@ export async function openBrowsedListPrint() {
     const ids = await listedIds();
     const collection = get(activeCollectionStore);
     const search = /** @type {{ command?: string } | null} */ (get(lastSearchStore));
-    const title = browsingLibrary() ? tMsg('positionSheet.library') : collection?.name || search?.command || '';
+    const title = browsingLibrary() ? translate('positionSheet.library') : collection?.name || search?.command || '';
     positionPrintRequest.set({ source: { ids }, title, count: ids.length });
 }
 

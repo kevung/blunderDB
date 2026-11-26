@@ -473,7 +473,7 @@
                 handleDoubleClick(selectedMatch);
             } else if (event.key === 'Delete') {
                 event.preventDefault();
-                const syntheticEvent = { stopPropagation: () => {} };
+                const syntheticEvent = /** @type {Event} */ (/** @type {unknown} */ ({ stopPropagation: () => {} }));
                 deleteMatchEntry(selectedMatch, syntheticEvent);
             }
         }
@@ -487,18 +487,19 @@
         if (get(isAnyModalOpen)) return;
         // Don't interfere while the merge players modal is open
         if (showManagePlayersModal) return;
+        const target = /** @type {Element | null} */ (event.target);
         // Close tournament dropdown if clicking outside
-        if ((tournamentEdit.editingId !== null || sheet?.tournamentEditing()) && !event.target.closest('.tournament-cell-edit')) {
+        if ((tournamentEdit.editingId !== null || sheet?.tournamentEditing()) && !target?.closest('.tournament-cell-edit')) {
             tournamentEdit.cancel();
             sheet?.cancelTournamentEdit();
         }
         // Cancel match edit if clicking outside the editing row
-        if (matchEdit.editingId !== null && !event.target.closest('.match-editing-row')) {
+        if (matchEdit.editingId !== null && !target?.closest('.match-editing-row')) {
             matchEdit.cancel();
         }
         const panel = document.getElementById('matchPanel');
-        if (panel && !panel.contains(event.target)) {
-            document.activeElement.blur();
+        if (panel && !panel.contains(target)) {
+            /** @type {HTMLElement | null} */ (document.activeElement)?.blur();
         }
     }
 

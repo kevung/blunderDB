@@ -16,6 +16,7 @@
         listAll = async () => [],
         /** Called after an import that brought matches in. */
         onimported = () => {},
+        /** @type {() => void} */
         onclose = () => {}
     } = $props();
 
@@ -61,7 +62,7 @@
         <label><input type="radio" bind:group={scope} value="library" data-scope="library" /> {$t('paperArchive.scopeLibrary')}</label>
     </fieldset>
     {#snippet footer()}
-        <button type="button" onclick={onclose}>{$t('common.cancel')}</button>
+        <button type="button" onclick={() => onclose()}>{$t('common.cancel')}</button>
         <button type="button" data-testid="paper-archive-import" disabled={busy} onclick={doImport}>{$t('paperArchive.import')}</button>
         <button type="button" class="primary" data-testid="paper-archive-export" disabled={busy || (scope === 'match' && matchId == null)} onclick={doExport}>{$t('paperArchive.export')}</button>
     {/snippet}

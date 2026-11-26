@@ -16,6 +16,7 @@
         if (request) title = request.title;
     });
 
+    /** @type {{ key: keyof typeof DEFAULT_POSITION_SHEET_OPTIONS, label: string, tip: string }[]} */
     const BOXES = [
         { key: 'analysis', label: 'positionSheet.analysis', tip: 'positionSheet.analysisTip' },
         { key: 'verso', label: 'positionSheet.verso', tip: 'positionSheet.versoTip' },

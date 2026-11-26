@@ -28,14 +28,19 @@ import { libraryMark } from '../stores/groupActivityStore.js';
  */
 export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
     let editingId = $state(null);
-    let draft = $state('');
+    /** @type {T} */
+    let draft = $state(/** @type {any} */ (''));
     let saving = false;
     let mark = libraryMark();
 
+    /**
+     * @param {any} id
+     * @param {T | string} [value]
+     */
     function start(id, value = '') {
         editingId = id;
         mark = libraryMark();
-        draft = typeof value === 'object' && value !== null ? { ...value } : value;
+        draft = typeof value === 'object' && value !== null ? { ...value } : /** @type {any} */ (value);
     }
 
     function snapshot() {

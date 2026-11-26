@@ -34,6 +34,7 @@ export function initCommandProcessor(cbs) {
     callbacks = cbs;
 }
 
+/** @param {string} command */
 export function processCommand(command) {
     const positions = get(positionsStore);
     const databaseLoaded = get(databaseLoadedStore);
@@ -232,6 +233,10 @@ export function processCommand(command) {
 // Handles `s…` (search) and `ss…` (sub-search in the list on screen, displayedPositionIDs —
 // never guessed). `s` is refused in a collection or a match: it would replace the list being
 // studied, so the refusal names `ss`.
+/**
+ * @param {string} command
+ * @param {{ isSubSearch: boolean }} opts
+ */
 function handleSearchCommand(command, { isSubSearch }) {
     const mode = get(statusBarModeStore);
     if (!isSubSearch && (mode === 'COLLECTION' || mode === 'MATCH')) {

@@ -15,6 +15,7 @@
         listedTotal = 0,
         /** Every id of the filtered list, in its order, for the batch. @type {() => Promise<number[]>} */
         listAll = async () => [],
+        /** @type {() => void} */
         onclose = () => {}
     } = $props();
 
@@ -23,6 +24,7 @@
     let busy = $state(false);
     const tooMany = $derived(batch && listedTotal > MAX_SHEET_MATCHES);
 
+    /** @type {{ key: keyof typeof DEFAULT_SHEET_OPTIONS, label: string, tip: string }[]} */
     const BOXES = [
         { key: 'opponentBlunders', label: 'matchSheet.opponentBlunders', tip: 'matchSheet.opponentBlundersTip' },
         { key: 'analysis', label: 'matchSheet.analysis', tip: 'matchSheet.analysisTip' },
@@ -63,7 +65,7 @@
         {/if}
     </div>
     {#snippet footer()}
-        <button type="button" onclick={onclose}>{$t('common.cancel')}</button>
+        <button type="button" onclick={() => onclose()}>{$t('common.cancel')}</button>
         <button type="button" class="primary" data-testid="match-print-go" disabled={busy || tooMany || (!batch && matchId == null)} onclick={print}>{$t('matchSheet.print')}</button>
     {/snippet}
 </Modal>
