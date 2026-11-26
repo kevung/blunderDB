@@ -277,8 +277,9 @@ document — Lire et importer les positions d'un document
 -------------------------------------------------------
 
 Range dans une collection, dans l'ordre du document, les positions d'un PDF
-imprimé par eXtreme Gammon, en trois commandes (``analyze``, ``check``,
-``import``) autour d'un **relevé** JSON. Voir :ref:`cli_document`.
+imprimé par eXtreme Gammon ou des pages d'un livre scanné en images, en trois
+commandes (``analyze``, ``check``, ``import``) autour d'un **relevé** JSON. Voir
+:ref:`cli_document`.
 
 .. code-block:: bash
 

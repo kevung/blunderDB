@@ -18,9 +18,10 @@ import (
 )
 
 // ErrNoGlyphDiagram refuses a PDF in which no diagram is drawn with a board
-// font: today only diagrams printed by eXtreme Gammon are read from their
-// glyphs, and a picture of a board is not read at all.
-var ErrNoGlyphDiagram = errors.New("document: no diagram readable by its glyphs (only PDF diagrams drawn with eXtreme Gammon's board font are read)")
+// font: from a PDF only diagrams printed by eXtreme Gammon are read, from
+// their glyphs. A PDF's pictures are not rendered: the pages of a scanned
+// book are read when given as images (AnalyzeFile).
+var ErrNoGlyphDiagram = errors.New("document: no diagram readable by its glyphs (only PDF diagrams drawn with eXtreme Gammon's board font are read); for a scanned book, give its pages as images: a folder of PNG or JPEG files, one a page")
 
 // AnalyzeOptions are a caller's choices for AnalyzePDF.
 type AnalyzeOptions struct {

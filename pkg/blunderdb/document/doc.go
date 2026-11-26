@@ -20,7 +20,13 @@
 // nothing in it lies beyond what the table was proven on. A PDF without such
 // a diagram is refused (ErrNoGlyphDiagram). Package pdf is the reader of the
 // file itself: pure Go, it distrusts the PDF and is bounded (see its doc).
-// The dice are never read: a reading's XGID always says "no dice".
+// AnalyzeImages reads page images (a folder of them, or one: AnalyzeFile) with
+// package structure, which finds diagrams by their structure and learns the
+// document's style from the document; an image has no text layer, so no
+// printed pip count confirms its entries and none is sure. The dice are
+// never read: a reading's XGID always says "no dice"; from an image the cube
+// is centred, the bottom player on roll and the game a money game, each drawn
+// cube off the centre and drawn dice named as a doubt.
 //
 // Only Import writes, and only what a Relevé allows: positions, each as a
 // position brought in on its own, in one Collection named after the document,

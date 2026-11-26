@@ -397,7 +397,8 @@ incomplete or contradicted). An entry is importable when it is sure or a person 
 it; any other entry refuses the whole import unless forced.
 _Avoid_: confidence, score, status, flag
 
-**Cross-check** (interface: *recoupement*; code: the checks of `document.AnalyzePDF`):
+**Cross-check** (interface: *recoupement*; code: the checks of `document.AnalyzePDF` and of
+`structure.Read`):
 A fact the print states on its own that the reading must reproduce to be sure: fifteen checkers
 a side, and the pip counts printed next to the diagram equal to those computed from the
 position. Never the engine's opinion of the position (ADR-0108 rule 4).
@@ -405,9 +406,16 @@ _Avoid_: validation, sanity check, confidence
 
 **Profile** (code: `document.Profile`):
 How a document draws its diagrams — home board side, colour at the bottom, where pips and cube
-are printed, how points are numbered — fixed on the first diagram and valid for all. Carried
-in the Relevé's header.
+are printed, how points are numbered — fixed on the first diagram and valid for all (pages
+read as images: learned over all the document's diagrams, the checker's shape over the first
+ones). Carried in the Relevé's header.
 _Avoid_: template, layout, style
+
+**Family** (interface: *famille*; code: `structure.Diagram.Families`):
+The named cause of a doubt or of a stack counted otherwise than checker by checker — a figure
+on a checker, a dark stack counted by its length, a half board — so entries to verify are
+checked by family rather than one by one.
+_Avoid_: category, cluster
 
 **Basket** (interface: *panier*):
 The desktop's list of rows — Positions, Matches, Collections, Lessons — gathered from any

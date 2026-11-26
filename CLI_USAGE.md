@@ -3235,14 +3235,17 @@ Examples:
 ### `blunderdb document analyze`
 
 ```
-Usage: blunderdb document analyze [options] <file.pdf>
+Usage: blunderdb document analyze [options] <file.pdf|page-images-folder|page.png>
 
-Read the diagrams of a PDF into a relevé, in the document's order, each with its page,
+Read the diagrams of a document into a relevé, in the document's order, each with its page,
 label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own
 cross-checks hold (15 checkers a side, the printed pip counts of both players), to-verify
-or uncertain otherwise, with the doubt named. Only diagrams drawn with eXtreme Gammon's
-board font (XG's PDF prints) are read; any other PDF is refused. Nothing is written to a
-database: check the relevé, then import it with 'blunderdb document import'.
+or uncertain otherwise, with the doubt named. A PDF is read when its diagrams are drawn
+with eXtreme Gammon's board font (XG's PDF prints); a scanned book is read from its pages
+as images (a folder of PNG or JPEG files, one a page, in the order of their names),
+by the structure of each diagram. A page image has no text layer: its entries are never
+sure. Nothing is written to a database: check the relevé, then import it with
+'blunderdb document import'.
 
 Options:
   -author string
@@ -3250,10 +3253,11 @@ Options:
   -o string
     	Write the relevé to this file (default: standard output)
   -title string
-    	Title of the document (default: the PDF's metadata, else the file name)
+    	Title of the document (default: the PDF's metadata, else the file or folder name)
 
 Examples:
   blunderdb document analyze book.pdf -o releve.json
+  blunderdb document analyze pages/ -o releve.json --title "My book"
   blunderdb document analyze book.pdf -o releve.json --title "My book" --author "Its author"
 ```
 

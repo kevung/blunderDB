@@ -124,6 +124,8 @@ flowchart LR
     PDF["book.pdf"] --> READER["document/pdf\n(file, fonts, glyphs)"]
     READER --> GLYPHS["document: xgboard.go\n(glyph table → board)"]
     GLYPHS --> CHECK["cross-checks\n(15 checkers, printed pips)"]
+    IMAGES["page images\n(PNG, JPEG)"] --> STRUCT["document/structure\n(profile, then reading)"]
+    STRUCT --> CHECK
     CHECK --> RELEVE[("Relevé JSON\nstates, doubts, verified")]
     RELEVE --> PERSON["a person reads,\ncorrects, verifies"]
     PERSON --> IMPORT["document.Import\n(one transaction)"]
@@ -136,8 +138,14 @@ flowchart LR
   one exactly, reads the score, pips and match length printed beside it, and compares: fifteen
   checkers a side and computed pips equal to printed pips make an entry *sure*; anything else
   is *to verify* or *uncertain* with the doubt named. A PDF with no such diagram is refused
-  (`ErrNoGlyphDiagram`). Nothing is written. Only the CLI and the desktop's façade read a
-  document; the daemon does not.
+  (`ErrNoGlyphDiagram`). Page images (a folder, or one image: `document.AnalyzeFile`) go to
+  the structure reader (`document/structure`), pure Go and standard library: a first pass
+  learns the checker's shape on the first diagrams, a second reads every page (paper divided
+  out, ink by hysteresis, components straightened and framed, columns followed slot by slot),
+  then the classes, numbering, pip place and direction of play are learned over all the
+  diagrams and each is judged by the same cross-checks, a supposition the pips do not lift
+  being a named doubt. A page is decoded, read and dropped; no image is kept. Nothing is
+  written. Only the CLI and the desktop's façade read a document; the daemon does not.
 - **The Relevé** (`document/releve.go`): `Decode` is strict (unknown fields, gapless ranks,
   legal XGID) so a hand edit cannot slip a bad position in; `Summarize` (`summary.go`) counts
   states and repeated positions for `document check`.
