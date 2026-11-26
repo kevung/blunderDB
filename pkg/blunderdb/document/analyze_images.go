@@ -111,7 +111,7 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 	if title == "" || title == "." {
 		title = "Untitled document"
 	}
-	res, err := structure.Read(context.Background(), &imageFiles{paths: paths, jpx: jpx.Budget{Left: MaxJPXPixels}})
+	res, err := structure.Read(opts.context(), &imageFiles{ctx: opts.context(), paths: paths, jpx: jpx.Budget{Left: MaxJPXPixels}})
 	if errors.Is(err, structure.ErrNoDiagram) {
 		return nil, fmt.Errorf("document: no backgammon diagram found in the page images: %w", err)
 	}
@@ -235,12 +235,15 @@ func structureProfile(p structure.Profile) *Profile {
 
 // imageFiles are page image files decoded on demand, bounded before decoding.
 type imageFiles struct {
+	ctx   context.Context
 	paths []string
 	jpx   jpx.Budget
 }
 
-// MaxJPXPixels bounds the pixels a document decodes from JPEG 2000 files.
-const MaxJPXPixels = 1_000_000_000
+// MaxJPXPixels bounds the pixels a document decodes from JPEG 2000 files:
+// their coded data costs at worst about 1.5 µs a pixel, some five minutes
+// for the whole budget.
+const MaxJPXPixels = 200_000_000
 
 func (f *imageFiles) Len() int { return len(f.paths) }
 
@@ -250,15 +253,21 @@ func (f *imageFiles) Page(i int) (structure.Page, error) {
 		return structure.Page{}, err
 	}
 	if isJPEG2000(f.paths[i]) {
-		img, info, err := jpx.Decode(data, 0, 0, &f.jpx)
+		img, info, err := jpx.Decode(f.ctx, data, 0, 0, &f.jpx)
 		if err != nil {
 			return structure.Page{}, fmt.Errorf("%s: %w", f.paths[i], err)
 		}
 		return structure.Page{Image: img, DPI: estimatedDPI(info.Width, info.Height)}, nil
 	}
-	cfg, _, err := image.DecodeConfig(bytes.NewReader(data))
+	cfg, format, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil {
 		return structure.Page{}, fmt.Errorf("%s: %w", f.paths[i], err)
+	}
+	// Whatever the file's name, only the formats this reader means are
+	// decoded here: any other decoder registered in the process stays out
+	// of reach of a page image.
+	if format != "png" && format != "jpeg" {
+		return structure.Page{}, fmt.Errorf("%w: %s is not a PNG or JPEG image (%s)", structure.ErrPage, f.paths[i], format)
 	}
 	if cfg.Width <= 0 || cfg.Height <= 0 || cfg.Width > 40_000 || cfg.Height > 40_000 || cfg.Width*cfg.Height > structure.MaxPixels {
 		return structure.Page{}, fmt.Errorf("%w: %s is %d×%d pixels", structure.ErrPage, f.paths[i], cfg.Width, cfg.Height)

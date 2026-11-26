@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/flate"
 	"compress/zlib"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -45,8 +46,9 @@ type Limits struct {
 	// MaxGlyphs is the most glyphs one page may draw.
 	MaxGlyphs int
 	// MaxJPXPixels is the sum of the pixels of the JPEG 2000 images the
-	// reader decodes: a decode cannot be cancelled, so its work is bounded
-	// before it starts.
+	// reader decodes: the coded data, which no header bounds, costs at
+	// worst about 1.5 µs a pixel, so this bounds a document's work before
+	// any decode starts, whatever the caller's deadline.
 	MaxJPXPixels int64
 }
 
@@ -59,9 +61,10 @@ var DefaultLimits = Limits{
 	MaxPages:      20000,
 	MaxObjects:    4 << 20,
 	MaxGlyphs:     1 << 20,
-	// A scanned book of about 150 pages at 6 Mpx: a decode takes about a
-	// second a 6 Mpx page, and cannot be cancelled.
-	MaxJPXPixels: 1_000_000_000,
+	// At worst about 1.5 µs a pixel: some five minutes of a hostile
+	// document's decoding. A page is decoded twice by the structure
+	// reader, and spends its pixels twice.
+	MaxJPXPixels: 200_000_000,
 }
 
 type xrefEntry struct {
@@ -84,6 +87,9 @@ type Reader struct {
 	objStm    map[int][]byte
 	pages     []Page
 	jpx       jpx.Budget
+	// ctx is the context of the Scan in progress, which a JPEG 2000
+	// decode checks as it goes.
+	ctx context.Context
 }
 
 // Open reads the cross-reference and the trailer of a PDF file. The data is

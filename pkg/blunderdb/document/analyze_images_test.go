@@ -6,11 +6,14 @@ import (
 	"errors"
 	"hash/crc32"
 	"image"
+	"image/color"
 	"image/png"
+	"io"
 	"os"
 	"path/filepath"
 	"reflect"
 	"slices"
+	"sync/atomic"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
@@ -419,5 +422,32 @@ func TestAnalyzeFileJPEG2000Refused(t *testing.T) {
 	}
 	if _, err := AnalyzeFile(dir, AnalyzeOptions{}); !errors.Is(err, jpx.ErrMalformed) {
 		t.Errorf("a broken JPEG 2000 file: %v", err)
+	}
+}
+
+// A page image is decoded only as the PNG or JPEG it claims to be: a JP2
+// file named .png reaches no decoder that another package may register.
+func TestAnalyzeFilePNGNamedJP2(t *testing.T) {
+	sig := "\x00\x00\x00\x0cjP  \r\n\x87\n"
+	var decoded atomic.Bool
+	image.RegisterFormat("jp2", sig, func(io.Reader) (image.Image, error) {
+		decoded.Store(true)
+		return image.NewGray(image.Rect(0, 0, 2000, 2000)), nil
+	}, func(io.Reader) (image.Config, error) {
+		return image.Config{ColorModel: color.GrayModel, Width: 2000, Height: 2000}, nil
+	})
+	jp2, err := os.ReadFile("testdata/jpx/p001.jp2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "p001.png"), jp2, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if r, err := AnalyzeFile(dir, AnalyzeOptions{}); err == nil {
+		t.Errorf("a JP2 file named .png reads %d entries", len(r.Entries))
+	}
+	if decoded.Load() {
+		t.Error("a registered JPEG 2000 decoder is reached")
 	}
 }

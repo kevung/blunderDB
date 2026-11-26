@@ -3,6 +3,7 @@ package pdf_test
 import (
 	"bytes"
 	"compress/zlib"
+	"context"
 	"errors"
 	"image"
 	"image/jpeg"
@@ -378,5 +379,28 @@ func TestScanJPXAsJPEG(t *testing.T) {
 	}
 	if mean := float64(sum) / float64(len(jp.Image.Pix)); mean > 2 {
 		t.Errorf("mean difference %.2f", mean)
+	}
+}
+
+// TestScanContextStopsJPX: a JPEG 2000 decode stops with the context of the
+// scan, and the scan with it, rather than painting a page without the image.
+func TestScanContextStopsJPX(t *testing.T) {
+	im := pdftest.Image{Width: 320, Height: 40, BPC: 8, ColorSpace: "/DeviceGray", Filter: "/JPXDecode", Data: readFile(t, "fixture.jp2")}
+	d := pdftest.Doc{Pages: []pdftest.Page{{Width: 153.6, Height: 19.2, Content: "153.6 0 0 19.2 0 0 cm /Im1 Do", Images: []pdftest.Image{im}}}}
+	r, err := pdf.Open(d.Bytes(), pdf.DefaultLimits)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p, err := r.Page(1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if _, err := r.ScanContext(ctx, p); !errors.Is(err, context.Canceled) {
+		t.Errorf("a cancelled scan: %v", err)
+	}
+	if _, err := r.ScanContext(context.Background(), p); err != nil {
+		t.Errorf("the scan after it: %v", err)
 	}
 }

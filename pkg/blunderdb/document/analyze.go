@@ -1,6 +1,7 @@
 package document
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -33,6 +34,17 @@ type AnalyzeOptions struct {
 	// Warn, when set, receives what the analysis passed over and why (the
 	// pages of a scanned PDF that could not be composed).
 	Warn func(string) `json:"-"`
+	// Context, when set, stops the reading of page images: a scanned
+	// document's decoding is checked against it between packets of coded
+	// data. Nil is context.Background.
+	Context context.Context `json:"-"`
+}
+
+func (o AnalyzeOptions) context() context.Context {
+	if o.Context == nil {
+		return context.Background()
+	}
+	return o.Context
 }
 
 // AnalyzePDFFile reads the PDF file at path, refusing one larger than the

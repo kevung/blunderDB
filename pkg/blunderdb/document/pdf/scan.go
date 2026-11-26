@@ -2,6 +2,7 @@ package pdf
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"image"
@@ -76,7 +77,14 @@ type imageDraw struct {
 // Unicode gives no word. A page without any image is ErrNoPageImage; an
 // image compressed with JBIG2 is ErrImageCodec. Images are
 // decoded one at a time and dropped once painted.
-func (r *Reader) Scan(p Page) (sc *Scan, err error) {
+func (r *Reader) Scan(p Page) (*Scan, error) {
+	return r.ScanContext(context.Background(), p)
+}
+
+// ScanContext is Scan, whose JPEG 2000 decodes stop with ctx.
+func (r *Reader) ScanContext(ctx context.Context, p Page) (sc *Scan, err error) {
+	r.ctx = ctx
+	defer func() { r.ctx = nil }()
 	defer func() {
 		if e := recover(); e != nil {
 			sc, err = nil, malformed("%v", e)
@@ -147,6 +155,9 @@ func (r *Reader) Scan(p Page) (sc *Scan, err error) {
 		if errors.Is(err, ErrImageCodec) {
 			codecErr = err
 			continue
+		}
+		if err != nil && ctx.Err() != nil {
+			return nil, ctx.Err()
 		}
 		if err != nil {
 			out.Skipped = append(out.Skipped, err.Error())
@@ -417,7 +428,7 @@ func (r *Reader) jpxPlane(data []byte, dict Dict, w, h int, stencil bool) (*plan
 	if isIndexed(r, dict["ColorSpace"]) {
 		return nil, fmt.Errorf("%w: JPEG 2000 in an Indexed colour space", jpx.ErrUnsupported)
 	}
-	img, info, err := jpx.Decode(data, w, h, &r.jpx)
+	img, info, err := jpx.Decode(r.ctx, data, w, h, &r.jpx)
 	if err != nil {
 		return nil, err
 	}

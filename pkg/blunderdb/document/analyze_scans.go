@@ -21,7 +21,7 @@ func analyzeScans(rd *pdf.Reader, r *Releve, opts AnalyzeOptions, outline []pdf.
 	if n > structure.MaxPages {
 		return nil, fmt.Errorf("document: %d pages, at most %d", n, structure.MaxPages)
 	}
-	res, err := structure.Read(context.Background(), pdfScans{rd, n})
+	res, err := structure.Read(opts.context(), pdfScans{opts.context(), rd, n})
 	if errors.Is(err, structure.ErrNoPage) && errors.Is(err, pdf.ErrNoPageImage) {
 		return nil, fmt.Errorf("%w; %w", ErrNoGlyphDiagram, err)
 	}
@@ -72,8 +72,9 @@ func unreadSummary(us []structure.PageError) string {
 // pdfScans are a PDF's pages, each composed from its images when the
 // structure reader asks for it and dropped once read.
 type pdfScans struct {
-	r *pdf.Reader
-	n int
+	ctx context.Context
+	r   *pdf.Reader
+	n   int
 }
 
 func (s pdfScans) Len() int { return s.n }
@@ -83,7 +84,7 @@ func (s pdfScans) Page(i int) (structure.Page, error) {
 	if err != nil {
 		return structure.Page{}, err
 	}
-	sc, err := s.r.Scan(p)
+	sc, err := s.r.ScanContext(s.ctx, p)
 	if err != nil {
 		return structure.Page{Unread: err}, nil
 	}

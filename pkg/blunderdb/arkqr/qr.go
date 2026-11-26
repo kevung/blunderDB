@@ -31,7 +31,20 @@ func Modules(f Frame) ([][]bool, error) {
 // of one or several sheets, PNG or JPEG. A code that is not an archive's is
 // skipped; finding none is not an error.
 func ScanImage(r io.Reader) ([]Frame, error) {
-	img, _, err := image.Decode(r)
+	data, err := io.ReadAll(r)
+	if err != nil {
+		return nil, fmt.Errorf("arkqr: image: %w", err)
+	}
+	// Any other decoder registered in the process stays out of reach of a
+	// sheet brought by a request.
+	_, format, err := image.DecodeConfig(bytes.NewReader(data))
+	if err != nil {
+		return nil, fmt.Errorf("arkqr: image: %w", err)
+	}
+	if format != "png" && format != "jpeg" {
+		return nil, fmt.Errorf("arkqr: image: %s is not a PNG or JPEG image", format)
+	}
+	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
 		return nil, fmt.Errorf("arkqr: image: %w", err)
 	}

@@ -1,12 +1,9 @@
 // Package jpx reads JPEG 2000 images (a JP2 file, or the bare codestream a
-// PDF's JPXDecode filter holds) in pure Go, behind guards the decoder does
-// not have.
+// PDF's JPXDecode filter holds) in pure Go, under a work budget.
 //
-// The decoder (github.com/d-fuji/jpeg2000) reads untrusted input without a
-// work budget: a handful of header bytes can ask for more memory or time than
-// any request may take, and a decode cannot be cancelled. Inspect therefore
-// walks the main header and every tile-part header, skipping the packet data,
-// and refuses before anything is allocated what this reader does not take:
+// The decoder is internal/j2k, a copy of github.com/d-fuji/jpeg2000 whose
+// parser refuses, before anything proportional to the image is allocated,
+// what this reader does not take:
 //
 //   - not one or three components, or components subsampled;
 //   - a reference grid that is not the image's own, or over MaxPixels;
@@ -14,8 +11,15 @@
 //   - a precinct under 32×32 or a code-block under 16×16, at any level;
 //   - high-throughput JPEG 2000 (Rsiz bit 14, the CAP marker, a code-block
 //     style with the HT bit);
-//   - a JP2 palette, component mapping or channel definition.
+//   - a JP2 palette, component mapping or channel definition;
+//   - a header the parser cannot read in one pass: a SIZ anywhere but at
+//     byte 2, a SOD in the main header, a SOT in a tile-part header.
 //
-// The decoder is not registered with the image package, so no other reader
-// in the process (a screen capture, a position image) can reach it.
+// What the headers cannot bound, the coded data, is bounded by the caller:
+// a Budget of pixels per document, and a context checked between packets
+// and between code-blocks.
+//
+// Nothing is registered with the image package, so no other reader in the
+// process (a screen capture, a position image, an archive sheet) reaches the
+// decoder.
 package jpx

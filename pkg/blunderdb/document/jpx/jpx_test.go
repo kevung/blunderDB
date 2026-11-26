@@ -2,6 +2,7 @@ package jpx
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"errors"
 	"os"
@@ -113,7 +114,7 @@ func TestInspectRefuses(t *testing.T) {
 		"the HT block style": with(func(s *spec) { s.style = 0x40 }),
 	} {
 		start := time.Now()
-		_, _, err := Decode(build(s), 0, 0, &Budget{Left: 1 << 40})
+		_, _, err := Decode(context.Background(), build(s), 0, 0, &Budget{Left: 1 << 40})
 		if !errors.Is(err, ErrUnsupported) {
 			t.Errorf("%s: %v", name, err)
 		}
@@ -141,19 +142,19 @@ func TestInspectAccepts(t *testing.T) {
 
 func TestDecodeContainer(t *testing.T) {
 	data, _ := os.ReadFile("testdata/lossy97.jp2")
-	if _, _, err := Decode(data, 321, 40, nil); !errors.Is(err, ErrUnsupported) {
+	if _, _, err := Decode(context.Background(), data, 321, 40, nil); !errors.Is(err, ErrUnsupported) {
 		t.Errorf("another reference grid than the container's: %v", err)
 	}
-	if _, _, err := Decode(data, 320, 40, &Budget{Left: 1000}); !errors.Is(err, ErrBudget) {
+	if _, _, err := Decode(context.Background(), data, 320, 40, &Budget{Left: 1000}); !errors.Is(err, ErrBudget) {
 		t.Errorf("budget: %v", err)
 	}
 	b := &Budget{Left: 320 * 40 * 2}
 	for i := 0; i < 2; i++ {
-		if _, _, err := Decode(data, 320, 40, b); err != nil {
+		if _, _, err := Decode(context.Background(), data, 320, 40, b); err != nil {
 			t.Fatal(err)
 		}
 	}
-	if _, _, err := Decode(data, 320, 40, b); !errors.Is(err, ErrBudget) {
+	if _, _, err := Decode(context.Background(), data, 320, 40, b); !errors.Is(err, ErrBudget) {
 		t.Errorf("the third decode: %v", err)
 	}
 }
@@ -184,12 +185,12 @@ func TestJP2Boxes(t *testing.T) {
 func TestHostile(t *testing.T) {
 	data, _ := os.ReadFile("testdata/lossy97.jp2")
 	for n := 0; n < len(data); n += 3 {
-		_, _, _ = Decode(data[:n], 0, 0, nil)
+		_, _, _ = Decode(context.Background(), data[:n], 0, 0, nil)
 	}
 	for i := 0; i < len(data); i += 3 {
 		b := append([]byte(nil), data...)
 		b[i] ^= 0xff
-		_, _, _ = Decode(b, 0, 0, &Budget{Left: 1 << 30})
+		_, _, _ = Decode(context.Background(), b, 0, 0, &Budget{Left: 1 << 30})
 	}
 }
 
@@ -198,6 +199,6 @@ func FuzzDecode(f *testing.F) {
 	f.Add(data)
 	f.Add(build(gray(64, 64)))
 	f.Fuzz(func(t *testing.T, b []byte) {
-		_, _, _ = Decode(b, 0, 0, &Budget{Left: 1 << 22})
+		_, _, _ = Decode(context.Background(), b, 0, 0, &Budget{Left: 1 << 22})
 	})
 }
