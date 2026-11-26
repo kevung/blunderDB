@@ -18,7 +18,10 @@ type Glyph struct {
 	W float64
 	// Upright is false when the glyph is rotated, skewed or mirrored.
 	Upright bool
-	Font    *Font
+	// Invisible is true for text drawn in rendering mode 3, the invisible
+	// layer an OCR pass lays over a scan.
+	Invisible bool
+	Font      *Font
 	// Text is the glyph's Unicode text, empty when the font does not say.
 	Text string
 	// m maps the glyph's text space to user space; adv and size are its
@@ -45,6 +48,7 @@ type gstate struct {
 	size, tc, tw, tz float64
 	leading          float64
 	fill             uint8 // the grey a stencil mask paints with
+	invisible        bool  // text rendering mode 3: the glyphs paint nothing
 }
 
 type interp struct {
@@ -197,6 +201,8 @@ func (in *interp) op(op string, ops []any, res Dict) error {
 		in.g.tc = n(len(ops) - 1)
 	case "Tw":
 		in.g.tw = n(len(ops) - 1)
+	case "Tr":
+		in.g.invisible = int(n(len(ops)-1)) == 3
 	case "Tz":
 		in.g.tz = n(len(ops)-1) / 100
 	case "TL":
@@ -311,7 +317,7 @@ func (in *interp) show(o any) error {
 			size = in.g.size * m[3]
 		}
 		in.out = append(in.out, Glyph{
-			X: m[4], Y: m[5], Size: size, W: adv * m[0], Upright: upright,
+			X: m[4], Y: m[5], Size: size, W: adv * m[0], Upright: upright, Invisible: in.g.invisible,
 			Font: f, Text: f.text(code), m: m, adv: adv, size: in.g.size,
 		})
 		in.tm = matrix{1, 0, 0, 1, adv, 0}.mul(in.tm)

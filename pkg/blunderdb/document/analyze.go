@@ -113,14 +113,19 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 		if err != nil {
 			return nil, fmt.Errorf("document: %w", err)
 		}
-		hasFont := pageHasBoardFont(rd.Fonts(page))
-		boardFont = boardFont || hasFont
+		listed := pageHasBoardFont(rd.Fonts(page))
 		gs, err := rd.Glyphs(page)
 		if err != nil {
-			if hasFont {
+			if listed {
 				return nil, fmt.Errorf("document: page %d draws with a board font but cannot be read: %w", n, err)
 			}
 			continue
+		}
+		// A font that maps every frame code but is only drawn invisibly is
+		// an OCR layer's, not a board's.
+		gs = visibleGlyphs(gs)
+		if listed && drawsBoardFont(gs) {
+			boardFont = true
 		}
 		entries, profile := readPage(gs, page)
 		if r.Document.Profile == nil && profile != nil {
@@ -143,6 +148,28 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 		return nil, err
 	}
 	return r, nil
+}
+
+// visibleGlyphs drops the invisible text layer.
+func visibleGlyphs(gs []pdf.Glyph) []pdf.Glyph {
+	out := gs[:0:0]
+	for _, g := range gs {
+		if !g.Invisible {
+			out = append(out, g)
+		}
+	}
+	return out
+}
+
+// drawsBoardFont reports whether a glyph is drawn in a font that maps the
+// frame codes.
+func drawsBoardFont(gs []pdf.Glyph) bool {
+	for _, g := range gs {
+		if g.Font.Maps(xgFrameRunes...) {
+			return true
+		}
+	}
+	return false
 }
 
 func pageHasBoardFont(fs []*pdf.Font) bool {
