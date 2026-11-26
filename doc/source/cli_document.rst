@@ -117,8 +117,8 @@ Les trois états
    Les recoupements du diagramme tiennent : chaque camp compte quinze pions
    (sur les points, sur la barre et dans le plateau de sortie), et les pips
    calculés d'après la position égalent les pips imprimés des deux joueurs. Le
-   score et la longueur du match sont ceux que le PDF imprime à côté. Pour un
-   livre scanné, voir :ref:`cli_document_images`.
+   score et la longueur du match sont ceux que le PDF imprime à côté. Une entrée
+   d'un livre scanné n'est jamais ``sure`` : voir :ref:`cli_document_images`.
 
 ``to-verify``
    La lecture tient, mais rien ne la confirme : un pip imprimé diffère du pip
@@ -177,9 +177,24 @@ autres sont lues. La couche texte d'une page, visible ou non (celle qu'une OCR
 laisse sous l'image), donne ses mots à leur place sur l'image ; un texte que sa
 police ne traduit pas en caractères ne donne aucun mot.
 
-Une telle lecture n'est ``sure`` que si les pips imprimés à côté du diagramme
-égalent les pips calculés des deux camps, qu'aucun camp n'a plus de quinze pions
-et qu'aucun doute ne reste.
+Sur un livre scanné, **seuls les pions sont certifiés**. Ils sont confirmés
+quand les pips imprimés à côté du diagramme égalent les pips calculés des deux
+camps, qu'aucun camp n'a plus de quinze pions et qu'aucun doute ne reste sur les
+pions. Le videau, les dés, le trait et le score ne sont pas lus : une entrée d'un
+livre scanné n'est donc **jamais** ``sure``. Pions confirmés, elle est
+``to-verify`` avec le doute ``context not read: cube, dice, player on roll,
+score`` (champ ``context``), seul ou suivi d'un videau ou de dés dessinés ; ses
+pions non confirmés, elle porte ce doute et ceux des pions. ``analyze`` et
+``check`` comptent à part les entrées aux pions confirmés :
+
+.. code-block:: text
+
+   Checkers:   12 confirmed by the printed pips; cube, dice, player on roll and score to verify
+
+Pour chacune, on ouvre le livre à la page de l'entrée, on compare au diagramme le
+videau (valeur et propriétaire : un videau dessiné au milieu peut être possédé),
+les dés, le joueur au trait et le score, on corrige ces champs du XGID s'il le
+faut, puis on marque ``"verified": true``.
 
 Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et
 l'image elle-même. Dans l'image, la commande lit les nombres isolés autour du
@@ -191,8 +206,8 @@ le document : un nombre lu qui égale les pips d'un diagramme compté à quinze
 pions par camp vote pour sa place, et deux places (haut et bas) doivent réunir
 assez de votes. Aucun chiffre n'est choisi d'après les pips du diagramme qu'il
 accompagne, et rien n'est gardé d'un document à l'autre. Quand le texte et
-l'image donnent chacun des pips et qu'ils diffèrent, l'entrée n'est pas ``sure``
-et le doute le dit (``the two disagree``). Une entrée sans pips lus reste
+l'image donnent chacun des pips et qu'ils diffèrent, les pions ne sont pas
+confirmés et le doute le dit (``the two disagree``). Une entrée sans pips lus reste
 ``to-verify`` (``no printed pip count was found next to the diagram``).
 
 La lecture des chiffres suppose des chiffres arabes sombres sur fond clair,
@@ -222,6 +237,13 @@ d'écrire quoi que ce soit, et nomme les rangs :
 .. code-block:: text
 
    Error: document: entries neither sure nor verified: storage: invalid argument: rank 4, 5, 6; verify them, or force the import
+
+Quand l'une d'elles vient d'un livre scanné, le message dit de contrôler son
+videau, ses dés, son trait et son score, puis de la marquer vérifiée :
+
+.. code-block:: text
+
+   Error: document: entries neither sure nor verified: storage: invalid argument: rank 1, 2; verify them (read from a scan, an entry's checkers at most are certified: check its cube, dice, player on roll and score against the diagram, then set "verified": true), or force the import
 
 On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé tel quel ;
 l'import dit alors combien d'entrées il a forcées (``Forced: 3 entries neither
