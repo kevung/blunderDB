@@ -154,6 +154,7 @@ func (c *canvas) disc(cx, cy, r float64, fill float64) {
 type drawOpts struct {
 	pips       bool    // print the pip counts in the text layer
 	cubeTop    bool    // draw a cube on the top side, beside the field
+	cubeBare   bool    // its face bare; otherwise a mark no figure reads
 	p          float64 // point width in pixels
 	numbering  bool
 	hidePipTop bool
@@ -298,6 +299,9 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 		x := d + t + int(0.4*p)
 		c.rect(x, y0+2, x+side, y0+2+side, 0)
 		c.rect(x+2, y0+4, x+side-2, y0+side, 1)
+		if !o.cubeBare {
+			c.rect(x+side/2-2, y0+2+side/4, x+side/2+2, y0+2+3*side/4, 0)
+		}
 	}
 	var words []Word
 	digitW := 0.25 * p

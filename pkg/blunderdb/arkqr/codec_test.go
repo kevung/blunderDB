@@ -21,7 +21,7 @@ type corpusMatch struct {
 
 var corpusCache []corpusMatch
 
-func loadCorpus(t *testing.T) []corpusMatch {
+func loadCorpus(t testing.TB) []corpusMatch {
 	t.Helper()
 	if corpusCache == nil {
 		corpusCache = readCorpus(t)
@@ -31,7 +31,7 @@ func loadCorpus(t *testing.T) []corpusMatch {
 	return out
 }
 
-func readCorpus(t *testing.T) []corpusMatch {
+func readCorpus(t testing.TB) []corpusMatch {
 	t.Helper()
 	root := "../../../testdata"
 	var out []corpusMatch
@@ -98,6 +98,17 @@ func roundTrip(t *testing.T, name string, m Match) []byte {
 	if err != nil {
 		t.Fatalf("%s: decode: %v", name, err)
 	}
+	checkDecoded(t, name, m, back)
+	again, err := Encode(back)
+	if err != nil || !bytes.Equal(again, data) {
+		t.Fatalf("%s: re-encoding the decoded match changes it (%v)", name, err)
+	}
+	return data
+}
+
+// checkDecoded fails unless back is m as the archive restores it.
+func checkDecoded(t *testing.T, name string, m, back Match) {
+	t.Helper()
 	want := normalized(m.Doc)
 	if !reflect.DeepEqual(back.Doc, want) {
 		for i := range min(len(back.Doc.Actions), len(want.Actions)) {
@@ -118,11 +129,6 @@ func roundTrip(t *testing.T, name string, m Match) []byte {
 			t.Fatalf("%s: action %d: boards differ", name, i)
 		}
 	}
-	again, err := Encode(back)
-	if err != nil || !bytes.Equal(again, data) {
-		t.Fatalf("%s: re-encoding the decoded match changes it (%v)", name, err)
-	}
-	return data
 }
 
 func TestRoundTripCorpus(t *testing.T) {
@@ -136,6 +142,12 @@ func TestRoundTripCorpus(t *testing.T) {
 // whose play is unknown, impossible dice, a board entered by hand, a
 // declared score, durations and timecodes, notes, and a forfeit.
 func TestRoundTripDegenerate(t *testing.T) {
+	roundTrip(t, "degenerate", degenerateMatch(t))
+	empty := transcript.New(5)
+	roundTrip(t, "empty", Match{Doc: empty})
+}
+
+func degenerateMatch(t *testing.T) Match {
 	doc := loadCorpus(t)[0].doc
 	acts := append([]transcript.Action(nil), doc.Actions...)
 	ms := func(v int64) *int64 { return &v }
@@ -159,53 +171,59 @@ func TestRoundTripDegenerate(t *testing.T) {
 	notes := make([]Note, len(acts))
 	notes[0] = Note{Comments: []string{"première note", "#ouverture"}}
 	notes[20] = Note{Flagged: true}
-	roundTrip(t, "degenerate", Match{Doc: doc, Comment: "Commentaire du match", Notes: notes})
-
-	empty := transcript.New(5)
-	roundTrip(t, "empty", Match{Doc: empty})
+	return Match{Doc: doc, Comment: "Commentaire du match", Notes: notes}
 }
 
 // TestDecodeDamaged feeds the decoder truncated and altered streams: it
 // refuses or decodes something, and never panics or loops.
 func TestDecodeDamaged(t *testing.T) {
-	data, err := Encode(Match{Doc: loadCorpus(t)[0].doc})
-	if err != nil {
-		t.Fatal(err)
-	}
-	for cut := 0; cut < len(data); cut += 7 {
-		_, _ = Decode(data[:cut])
-	}
-	for i := 1; i < len(data); i += 5 {
-		bad := append([]byte(nil), data...)
-		bad[i] ^= 0x5a
-		_, _ = Decode(bad)
+	for _, m := range []Match{{Doc: loadCorpus(t)[0].doc}, timedMatch(t)} {
+		for v := byte(1); v <= FormatVersion; v++ {
+			data, err := encodeVersion(m, v)
+			if err != nil {
+				t.Fatal(err)
+			}
+			for cut := 0; cut < len(data); cut += 7 {
+				_, _ = Decode(data[:cut])
+			}
+			for i := 1; i < len(data); i += 5 {
+				bad := append([]byte(nil), data...)
+				bad[i] ^= 0x5a
+				_, _ = Decode(bad)
+			}
+		}
 	}
 	if _, err := Decode([]byte{FormatVersion + 1, 1, 2}); err == nil {
 		t.Fatal("a later format version decoded")
 	}
 }
 
-// TestArchiveSize fixes the size of the corpus once coded: a change to the
-// models that makes it grow is a regression of the compression, and one
-// that changes it at all is a new format version.
+// TestArchiveSize fixes the size of the corpus once coded, in every format
+// version: a change to the models that makes it grow is a regression of the
+// compression, and one that changes it at all is a new format version.
 func TestArchiveSize(t *testing.T) {
-	want := map[string]int{
-		"test.mat": 364,
-		"charlot1-charlot2_7p_2025-11-08-2305.mat": 202,
+	want := map[byte]map[string]int{
+		1: {"test.mat": 364, "charlot1-charlot2_7p_2025-11-08-2305.mat": 202, "": 799},
+		2: {"test.mat": 305, "charlot1-charlot2_7p_2025-11-08-2305.mat": 180, "": 689},
 	}
-	total := 0
-	for _, cm := range loadCorpus(t) {
-		data, err := Encode(Match{Doc: cm.doc})
-		if err != nil {
-			t.Fatal(err)
-		}
-		total += len(data)
-		if w, ok := want[cm.name]; ok && w != len(data) {
-			t.Errorf("%s: %d bytes, want %d", cm.name, len(data), w)
-		}
+	if len(want) != FormatVersion {
+		t.Fatalf("sizes for %d versions, want %d", len(want), FormatVersion)
 	}
-	if total != wantCorpusBytes {
-		t.Errorf("corpus: %d bytes, want %d", total, wantCorpusBytes)
+	for v, sizes := range want {
+		total := 0
+		for _, cm := range loadCorpus(t) {
+			data, err := encodeVersion(Match{Doc: cm.doc}, v)
+			if err != nil {
+				t.Fatal(err)
+			}
+			total += len(data)
+			if w, ok := sizes[cm.name]; ok && w != len(data) {
+				t.Errorf("v%d: %s: %d bytes, want %d", v, cm.name, len(data), w)
+			}
+		}
+		if total != sizes[""] {
+			t.Errorf("v%d: corpus: %d bytes, want %d", v, total, sizes[""])
+		}
 	}
 }
 
@@ -243,8 +261,6 @@ func TestLegalPlaysMatchDomain(t *testing.T) {
 		t.Fatalf("only %d positions compared", n)
 	}
 }
-
-const wantCorpusBytes = 799
 
 func TestEncodeRefusesWhatDecodeRefuses(t *testing.T) {
 	doc := loadCorpus(t)[0].doc

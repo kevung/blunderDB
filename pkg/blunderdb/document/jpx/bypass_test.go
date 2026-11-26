@@ -177,8 +177,10 @@ func TestSmallestPrecincts(t *testing.T) {
 
 // TestWorstCaseStops: the coded data no header bounds is stopped by the
 // context, between code-blocks, and refused by the budget before it starts.
+// Its code-blocks decode in parallel: the image is large enough that every
+// core of a machine is still busy with it at the deadline.
 func TestWorstCaseStops(t *testing.T) {
-	const a = 1024
+	const a = 2048
 	data := hostile("cpu", a)
 	if _, _, err := Decode(context.Background(), data, 0, 0, &Budget{Left: a*a - 1}); !errors.Is(err, ErrBudget) {
 		t.Errorf("budget: %v", err)
@@ -196,7 +198,7 @@ func TestWorstCaseStops(t *testing.T) {
 }
 
 // BenchmarkWorstCase reports the cost a pixel of the coded data that costs
-// the most: the budgets' comments state it (about 1.1 µs).
+// the most: the budgets' comments state it (about 0.2 µs on one core).
 func BenchmarkWorstCase(b *testing.B) {
 	const a = 512
 	data := hostile("cpu", a)

@@ -11,6 +11,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/internal/parallel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/jbig2"
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/jpx"
 
@@ -374,33 +375,85 @@ func (r *Reader) samples(s *Stream, res Dict, stencil bool) (*plane, error) {
 	}
 	maxv := float64(int(1)<<bpc - 1)
 	pl := &plane{w, h, make([]uint8, w*h)}
-	comp := make([]float64, n)
-	for y := 0; y < h; y++ {
-		line := data[y*row : (y+1)*row]
-		bit := 0
-		for x := 0; x < w; x++ {
-			for k := 0; k < n; k++ {
-				var v int
-				switch bpc {
-				case 8:
-					v = int(line[bit/8])
-				case 16:
-					v = int(line[bit/8])<<8 | int(line[bit/8+1])
-				default:
-					v = int(line[bit/8]>>(8-bpc-bit%8)) & (1<<bpc - 1)
-				}
-				bit += bpc
-				comp[k] = float64(v) / maxv
-				if dec != nil {
-					comp[k] = dec[k][0] + comp[k]*(dec[k][1]-dec[k][0])
-				}
-				if cs.lookup != nil {
-					comp[k] = float64(v)
-				}
+	// value is component k of sample v, as grey takes it.
+	value := func(k, v int) float64 {
+		c := float64(v) / maxv
+		if dec != nil {
+			c = dec[k][0] + c*(dec[k][1]-dec[k][0])
+		}
+		if cs.lookup != nil {
+			c = float64(v)
+		}
+		return c
+	}
+	// A grey that depends on one sample is a table of its values, when the
+	// image has more pixels than the table; the components of the others
+	// are tables up to 8 bits.
+	var greyOf []uint8
+	var values [][]float64
+	if n == 1 && 1<<bpc <= w*h {
+		greyOf = make([]uint8, 1<<bpc)
+		for v := range greyOf {
+			greyOf[v] = cs.grey([]float64{value(0, v)})
+		}
+	} else if bpc <= 8 {
+		values = make([][]float64, n)
+		for k := range values {
+			values[k] = make([]float64, 1<<bpc)
+			for v := range values[k] {
+				values[k][v] = value(k, v)
 			}
-			pl.p[y*w+x] = cs.grey(comp)
 		}
 	}
+	sample := func(line []byte, bit int) int {
+		switch bpc {
+		case 8:
+			return int(line[bit/8])
+		case 16:
+			return int(line[bit/8])<<8 | int(line[bit/8+1])
+		default:
+			return int(line[bit/8]>>(8-bpc-bit%8)) & (1<<bpc - 1)
+		}
+	}
+	// Rows are independent: they decode in parallel.
+	parallel.For(h, max(1, 1<<15/max(w*n, 1)), func(lo, hi int) {
+		comp := make([]float64, n)
+		for y := lo; y < hi; y++ {
+			line := data[y*row : (y+1)*row]
+			out := pl.p[y*w : (y+1)*w]
+			switch {
+			case greyOf != nil && bpc == 8:
+				for x := range out {
+					out[x] = greyOf[line[x]]
+				}
+			case greyOf != nil:
+				for x := range out {
+					out[x] = greyOf[sample(line, x*bpc)]
+				}
+			case values != nil && bpc == 8:
+				for x := range out {
+					for k := range comp {
+						comp[k] = values[k][line[x*n+k]]
+					}
+					out[x] = cs.grey(comp)
+				}
+			default:
+				bit := 0
+				for x := range out {
+					for k := range comp {
+						v := sample(line, bit)
+						bit += bpc
+						if values != nil {
+							comp[k] = values[k][v]
+						} else {
+							comp[k] = value(k, v)
+						}
+					}
+					out[x] = cs.grey(comp)
+				}
+			}
+		}
+	})
 	return pl, nil
 }
 
@@ -790,36 +843,100 @@ func paint(dst *image.Gray, t matrix, pic picture) int {
 	dv := math.Hypot(inv[1], inv[3]) * float64(src.h)
 	k := min(max(int(math.Ceil(max(du, dv))), 1), 3)
 	n := float64(k * k)
-	for y := iy0; y < iy1; y++ {
-		for x := ix0; x < ix1; x++ {
-			var sumG, sumA float64
+	// The sample points of a column (and of a row) are the same on every
+	// row: their products with the inverse are computed once, and summed
+	// in the order inv.apply sums them, so that every sample lands where
+	// it would.
+	cols := (ix1 - ix0) * k
+	cu, cv := make([]float64, cols), make([]float64, cols)
+	for x := ix0; x < ix1; x++ {
+		for sx := 0; sx < k; sx++ {
+			px := float64(x) + (float64(sx)+0.5)/float64(k)
+			cu[(x-ix0)*k+sx], cv[(x-ix0)*k+sx] = px*inv[0], px*inv[1]
+		}
+	}
+	// Each page pixel is its own: rows compose in parallel.
+	parallel.For(iy1-iy0, max(1, 1<<14/max(cols*k, 1)), func(lo, hi int) {
+		var ru, rv [3]float64
+		for y := iy0 + lo; y < iy0+hi; y++ {
 			for sy := 0; sy < k; sy++ {
-				for sx := 0; sx < k; sx++ {
-					u, v := inv.apply(float64(x)+(float64(sx)+0.5)/float64(k), float64(y)+(float64(sy)+0.5)/float64(k))
+				py := float64(y) + (float64(sy)+0.5)/float64(k)
+				ru[sy], rv[sy] = py*inv[2], py*inv[3]
+			}
+			row := dst.Pix[y*dst.Stride:]
+			if k == 1 {
+				// One sample a pixel: an opaque one is the pixel.
+				for x := ix0; x < ix1; x++ {
+					u, v := cu[x-ix0]+ru[0]+inv[4], cv[x-ix0]+rv[0]+inv[5]
 					if u < 0 || u >= 1 || v < 0 || v >= 1 {
 						continue
 					}
-					a := 255.0
+					a := 255
 					if pic.alpha != nil {
-						a = float64(pic.alpha.at(u, v))
+						if a = int(pic.alpha.at(u, v)); a == 0 {
+							continue
+						}
 					}
-					g := float64(pic.fill)
+					g := int(pic.fill)
 					if pic.grey != nil {
-						g = float64(pic.grey.at(u, v))
+						g = int(pic.grey.at(u, v))
 					}
-					sumA += a
-					sumG += g * a
+					if a == 255 {
+						row[x] = uint8(g)
+						continue
+					}
+					alpha := float64(a) / n / 255
+					gg := float64(g*a) / float64(a)
+					row[x] = uint8(math.Round(float64(row[x])*(1-alpha) + gg*alpha))
 				}
-			}
-			if sumA == 0 {
 				continue
 			}
-			alpha := sumA / n / 255
-			g := sumG / sumA
-			i := y*dst.Stride + x
-			dst.Pix[i] = uint8(math.Round(float64(dst.Pix[i])*(1-alpha) + g*alpha))
+			for x := ix0; x < ix1; x++ {
+				// The sums are of integers, exact in float64 as in
+				// integers: they are summed as integers, and the blend
+				// computed in floating point only where it is not an
+				// integer rounding.
+				var sumG, sumA, sum int
+				c := (x - ix0) * k
+				for sy := 0; sy < k; sy++ {
+					for sx := 0; sx < k; sx++ {
+						u, v := cu[c+sx]+ru[sy]+inv[4], cv[c+sx]+rv[sy]+inv[5]
+						if u < 0 || u >= 1 || v < 0 || v >= 1 {
+							continue
+						}
+						a := 255
+						if pic.alpha != nil {
+							a = int(pic.alpha.at(u, v))
+						}
+						g := int(pic.fill)
+						if pic.grey != nil {
+							g = int(pic.grey.at(u, v))
+						}
+						sumA += a
+						sumG += g * a
+						sum += g
+					}
+				}
+				if sumA == 0 {
+					continue
+				}
+				if sumA == 255*k*k {
+					// Opaque: the blend is the mean of the samples,
+					// math.Round(sum / k²), whose ties (at k = 2) round
+					// up.
+					if k == 2 {
+						row[x] = uint8((sum + 2) >> 2)
+					} else {
+						row[x] = uint8((2*sum + 9) / 18)
+					}
+					continue
+				}
+				alpha := float64(sumA) / n / 255
+				g := float64(sumG) / float64(sumA)
+				row[x] = uint8(math.Round(float64(row[x])*(1-alpha) + g*alpha))
+			}
 		}
-	}
+	})
 	return (ix1 - ix0) * (iy1 - iy0)
 }
 

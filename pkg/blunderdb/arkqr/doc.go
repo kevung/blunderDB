@@ -18,6 +18,13 @@
 // board entered by hand, impossible dice, a board the replay reaches another
 // way — is spelled out, so every document a Replay reads round-trips.
 //
+// Format version 2 (model2.go) keeps these models and adds: the roll's law
+// conditioned on the board (a roll that leaves no play is unlikely for a
+// play, likely for a dance), the Action kind conditioned on a roller on the
+// bar, timecodes coded as their gap to the end of the Action before, adaptive
+// text for the strings, program names and whole ratings in short, and dates
+// by the day.
+//
 // A legal play is written back with the steps this package's own generator
 // finds for the board it leaves: two spellings of one play are one archive.
 //
@@ -25,8 +32,10 @@
 //
 // The format does not depend on the engine: the legal plays come from this
 // package's own generator (board.go), ordered by the board they leave, and no
-// floating point enters the coder. The first byte of a coded match is
-// FormatVersion; the weights and tables are frozen for it.
+// floating point enters the coder. The first byte of a coded match is its
+// format version; the weights and tables are frozen for each, Decode reads
+// every version down to 1, and testdata/golden_v<N>.json holds streams of
+// each that must keep decoding. Encode writes FormatVersion.
 //
 // # Codes and pages
 //

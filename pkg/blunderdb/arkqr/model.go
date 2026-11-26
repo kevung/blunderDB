@@ -139,7 +139,12 @@ func feats(r rel) [nFeats]int {
 // playFreqs are the coder frequencies of the candidates of a play.
 func playFreqs(ps []play, regime int) []uint64 {
 	w := &weights[regime]
-	sc := make([]int, len(ps))
+	var buf [128]int
+	sc := buf[:0]
+	if len(ps) > len(buf) {
+		sc = make([]int, 0, len(ps))
+	}
+	sc = sc[:len(ps)]
 	mx := 0
 	for i, p := range ps {
 		f := feats(p.after)

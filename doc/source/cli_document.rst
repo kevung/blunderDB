@@ -25,6 +25,11 @@ Ce qui est lu, ce qui est refusé
 * un PDF dont les diagrammes sont dessinés avec la police de plateau
   d'eXtreme Gammon (les PDF imprimés par XG) : chaque diagramme y est du texte,
   que la commande décode exactement, glyphe par glyphe ;
+* un PDF dont les diagrammes sont dessinés avec une police de plateau de Snowie
+  (famille Atchoum, par exemple « AtchoumSnowie4Normal ») : les pions sont lus
+  d'après la forme des glyphes que le PDF embarque, quelle que soit la version
+  de la police ; les pips imprimés confirment la lecture. Le score n'y est pas
+  imprimé : le contexte reste à vérifier ;
 * un livre scanné : un PDF dont les pages sont faites d'images, avec ou sans
   couche texte, ou ses pages en images (un dossier de fichiers PNG ou JPEG, une
   page par fichier, lus dans l'ordre de leurs noms, ou une image seule). Les
@@ -36,6 +41,9 @@ livre dessiné en vecteurs) est refusé ; ses pages se donnent alors en images :
 .. code-block:: text
 
    Error: document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page; structure: no page of the document could be read: page 1: pdf: the page draws no image (a page drawn with vectors is not rendered)
+
+Un PDF dessiné avec une police de plateau dont les formes ne sont pas
+embarquées est refusé avec un message qui nomme la police.
 
 Un fichier qui n'est ni un PDF ni une image, un PDF chiffré ou plus gros que
 512 Mio, une image de plus de 64 Mio ou de plus de 100 millions de pixels est
@@ -225,10 +233,15 @@ n'est lu que recoupé :
 * le videau, par sa valeur lue dans son carré (chiffres du document) ou dans la
   couche texte — deux sources présentes doivent concorder — et cohérente avec sa
   place : 64 au milieu est centré, 2 à 64 en haut ou en bas appartient au joueur
-  de ce côté ;
-* les dés, comptés sur l'image et confirmés par le texte (« to play 41 ») ; le
-  trait, par la couleur des dés et leur moitié du plateau (la droite pour le
-  joueur du bas), qui doivent désigner le même joueur ;
+  de ce côté ; un carré seul à la face vierge est le videau centré quand le
+  document le dessine ainsi, au même endroit, à côté d'au moins trois
+  diagrammes, puisqu'un videau possédé porte sa valeur ;
+* les dés, comptés sur l'image et confirmés par le texte voisin : un jet nommé
+  (« to play 41 », « rolls a 65 ») ou un coup écrit dont chaque pas est un dé
+  (« 2/0 2/1 », « 8/5(2) 6/3(2) »), cité deux fois si le texte nomme plusieurs
+  jets ; un mot plus proche d'un autre diagramme est à celui-ci ; le trait, par
+  la couleur des dés et leur moitié du plateau (la droite pour le joueur du
+  bas), qui doivent désigner le même joueur ;
 * le score, par le bandeau de la couche texte (``score:``, ``pip:``,
   ``7 point match``), chaque score attribué au joueur dont il porte les pips.
 

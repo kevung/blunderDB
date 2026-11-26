@@ -21,8 +21,13 @@ type Font struct {
 	// Widths gives a code's width in thousandths of the font size; others
 	// are 1000 for a Type0 font and 500 for a simple one.
 	Widths map[rune]int
-	// ToUnicode maps codes First..Last to the same Unicode values (Type0).
+	// ToUnicode maps codes First..Last to the same Unicode values (Type0,
+	// or a simple font with a Program).
 	First, Last rune
+	// Program embeds a TrueType program (FontFile2) in a simple TrueType
+	// font whose one-byte codes First..Last have the text of the same
+	// Unicode value (Latin-1).
+	Program []byte
 }
 
 // Page is one page: its size and content stream; fonts are named /F1, /F2…
@@ -104,6 +109,22 @@ func (d Doc) Bytes() []byte {
 	info := add(fmt.Sprintf("<</Title %s /Author %s /Producer (pdftest)>>", Literal(d.Title), Literal(d.Author)))
 	var fontRefs []int
 	for _, f := range d.Fonts {
+		if !f.Type0 && f.Program != nil {
+			cmap := fmt.Sprintf("/CIDInit /ProcSet findresource begin\n12 dict begin\nbegincmap\n1 begincodespacerange\n<00> <FF>\nendcodespacerange\n1 beginbfrange\n<%02X> <%02X> <%04X>\nendbfrange\nendcmap\nend\nend", f.First, f.Last, f.First)
+			tu := add(stream("", []byte(cmap)))
+			ff := add(stream(fmt.Sprintf(" /Length1 %d", len(f.Program)), f.Program))
+			fd := add(fmt.Sprintf("<</Type /FontDescriptor /FontName /%s /Flags 4 /FontBBox [0 0 1000 1000] /ItalicAngle 0 /Ascent 1000 /Descent 0 /CapHeight 1000 /StemV 80 /FontFile2 %d 0 R>>", f.BaseFont, ff))
+			var w strings.Builder
+			for c := f.First; c <= f.Last; c++ {
+				v := 1000
+				if x, ok := f.Widths[c]; ok {
+					v = x
+				}
+				fmt.Fprintf(&w, " %d", v)
+			}
+			fontRefs = append(fontRefs, add(fmt.Sprintf("<</Type /Font /Subtype /TrueType /BaseFont /%s /FirstChar %d /LastChar %d /Widths [%s] /FontDescriptor %d 0 R /ToUnicode %d 0 R>>", f.BaseFont, f.First, f.Last, w.String(), fd, tu)))
+			continue
+		}
 		if !f.Type0 {
 			var w strings.Builder
 			for c := 32; c <= 255; c++ {

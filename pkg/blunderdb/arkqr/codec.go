@@ -10,9 +10,11 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
-// FormatVersion is the first byte of every coded match. The models below —
-// the kind table, the dice law, the play model — are frozen for it.
-const FormatVersion = 1
+// FormatVersion is the first byte of every coded match, the version Encode
+// writes. The models of every version — the kind table, the dice law, the play
+// model, and those model2.go adds — are frozen for it, and Decode reads every
+// version from 1 to this one.
+const FormatVersion = 2
 
 // ErrFormat is returned for a coded match this build cannot read.
 var ErrFormat = errors.New("arkqr: not a readable archived match")
@@ -92,14 +94,24 @@ var dicePairs, diceFreq = func() ([21][2]int, []uint64) {
 
 var resignFreq = []uint64{8, 3, 1}
 
-// models holds the adaptive bits of one coded match.
+// models holds the adaptive bits of one coded match, for its format version.
 type models struct {
+	version                                                      byte
 	declared, sideSame, standard, order, beforeSame, legal, note *adaptive
 	times                                                        [4]*adaptive
+
+	// Version 2.
+	text     *textModel
+	small    gamma
+	kind     [2][tokStart + 1]*adaptiveFreqs
+	timesAt  [4][3][2]*adaptive
+	timeVal  [4]gamma
+	timeline timeline
 }
 
-func newModels() *models {
+func newModels(version byte) *models {
 	m := &models{
+		version:  version,
 		declared: newAdaptive(255, 1), sideSame: newAdaptive(1, 255), standard: newAdaptive(1, 255),
 		order: newAdaptive(1, 1), beforeSame: newAdaptive(1, 255), legal: newAdaptive(1, 255),
 		note: newAdaptive(63, 1),
@@ -107,7 +119,32 @@ func newModels() *models {
 	for i := range m.times {
 		m.times[i] = newAdaptive(63, 1)
 	}
+	if version >= 2 {
+		m.text, m.small = newTextModel(), newGamma(12)
+		for bar := range m.kind {
+			for i := range m.kind[bar] {
+				m.kind[bar][i] = newAdaptiveFreqs(kindPrior(bar == 1, i), kindAdapt)
+			}
+		}
+		for i := range m.timesAt {
+			for k := range m.timesAt[i] {
+				m.timesAt[i][k] = [2]*adaptive{newAdaptive(63, 1), newAdaptive(1, 63)}
+			}
+			m.timeVal[i] = newGamma(0)
+		}
+	}
 	return m
+}
+
+// kindAdapt is the weight a coded Action kind adds to its context (version 2).
+const kindAdapt = 100
+
+// str codes a string, as the version says.
+func (md *models) str(c coder, s string) string {
+	if md.version >= 2 {
+		return md.text.code(c, s)
+	}
+	return str(c, s)
 }
 
 // state is what both ends track to predict the next Action: the board, whose
@@ -132,6 +169,15 @@ func (s *state) before(side int) rel {
 	}
 }
 
+// rollerOnBar is 1 when the side expected to roll next has a checker on the
+// bar, the one case where a dance is likely (version 2).
+func (s *state) rollerOnBar() int {
+	if s.atStart || s.lastRoller < 0 || s.before(1 - s.lastRoller).my[25] == 0 {
+		return 0
+	}
+	return 1
+}
+
 func (s *state) expectedSide(k transcript.Kind) int {
 	switch {
 	case k == transcript.KindTake || k == transcript.KindPass:
@@ -146,7 +192,11 @@ func (s *state) expectedSide(k transcript.Kind) int {
 
 // Encode codes a match. The document must be one a Replay can read: Actions
 // of known kinds and sides, of the current transcription format.
-func Encode(m Match) ([]byte, error) {
+func Encode(m Match) ([]byte, error) { return encodeVersion(m, FormatVersion) }
+
+// encodeVersion codes a match in an earlier format version, which Decode
+// still reads: the tests measure and freeze them.
+func encodeVersion(m Match, version byte) ([]byte, error) {
 	doc := m.Doc
 	if doc.FormatVersion != transcript.FormatVersion {
 		return nil, fmt.Errorf("arkqr: transcription format %d, want %d", doc.FormatVersion, transcript.FormatVersion)
@@ -171,18 +221,22 @@ func Encode(m Match) ([]byte, error) {
 	ann := transcript.Replay(doc, 0)
 	e := newEncoder()
 	out := m
-	codeMatch(e, &out, ann.Actions)
-	return append([]byte{FormatVersion}, e.finish()...), nil
+	codeMatch(e, version, &out, ann.Actions)
+	return append([]byte{version}, e.finish()...), nil
 }
 
 // Decode reads a match Encode wrote.
 func Decode(data []byte) (Match, error) {
-	if len(data) == 0 || data[0] != FormatVersion {
+	if len(data) == 0 || data[0] < 1 || data[0] > FormatVersion {
 		return Match{}, fmt.Errorf("%w: format byte", ErrFormat)
 	}
-	d := newDecoder(data[1:])
+	perByte := 64
+	if data[0] >= 2 {
+		perByte = 4096
+	}
+	d := newDecoder(data[1:], perByte)
 	var m Match
-	codeMatch(d, &m, nil)
+	codeMatch(d, data[0], &m, nil)
 	if d.failed {
 		return Match{}, fmt.Errorf("%w: damaged stream", ErrFormat)
 	}
@@ -227,11 +281,12 @@ func boolBit(c coder, v bool) bool { return flag(c, 1, 1, v) }
 
 // str codes a string as its length and its bytes.
 func str(c coder, s string) string {
-	n := int(uvar(c, uint64(len(s))))
-	if d, ok := c.(*decoder); ok && (n > maxLen || d.failed) {
+	u := uvar(c, uint64(len(s)))
+	if d, ok := c.(*decoder); ok && (u > maxLen || d.failed) {
 		d.failed = true
 		return ""
 	}
+	n := int(u)
 	b := make([]byte, n)
 	for i := range n {
 		var v uint64
@@ -244,42 +299,54 @@ func str(c coder, s string) string {
 }
 
 func count(c coder, n int) int {
-	v := int(uvar(c, uint64(n)))
+	v := uvar(c, uint64(n))
 	if d, ok := c.(*decoder); ok && (v > maxLen || d.failed) {
 		d.failed = true
 		return 0
 	}
-	return v
+	return int(v)
 }
 
-func codeHeader(c coder, m *Match) {
+func codeHeader(c coder, md *models, m *Match) {
 	h := &m.Doc.Header
 	h.MatchLength = int(uvar(c, uint64(h.MatchLength)))
 	h.Jacoby = boolBit(c, h.Jacoby)
 	h.Beaver = boolBit(c, h.Beaver)
 	h.MaxCube = int(uvar(c, uint64(h.MaxCube)))
 	h.PostCrawford = boolBit(c, h.PostCrawford)
-	h.Player1 = str(c, h.Player1)
-	h.Player2 = str(c, h.Player2)
-	h.Event = str(c, h.Event)
-	h.Location = str(c, h.Location)
-	h.Round = str(c, h.Round)
-	h.Transcriber = str(c, h.Transcriber)
-	h.VideoSource = str(c, h.VideoSource)
-	m.Comment = str(c, m.Comment)
+	h.Player1 = md.str(c, h.Player1)
+	h.Player2 = md.str(c, h.Player2)
+	h.Event = md.str(c, h.Event)
+	h.Location = md.str(c, h.Location)
+	h.Round = md.str(c, h.Round)
+	h.Transcriber = md.str(c, h.Transcriber)
+	h.VideoSource = md.str(c, h.VideoSource)
+	m.Comment = md.str(c, m.Comment)
 	if boolBit(c, !h.Date.IsZero()) {
-		sec := svar(c, h.Date.Unix())
-		nsec := svar(c, int64(h.Date.Nanosecond()))
-		h.Date = time.Unix(sec, nsec).UTC()
+		if md.version >= 2 {
+			h.Date = codeDate(c, md, h.Date)
+		} else {
+			sec := svar(c, h.Date.Unix())
+			nsec := svar(c, int64(h.Date.Nanosecond()))
+			h.Date = time.Unix(sec, nsec).UTC()
+		}
 	}
 	if boolBit(c, m.Elo[0] != nil || m.Elo[1] != nil || m.Experience[0] != nil || m.Experience[1] != nil || m.EngineVersion != "") {
 		for i := range 2 {
 			if boolBit(c, m.Elo[i] != nil) {
-				var v uint64
+				var f float64
 				if m.Elo[i] != nil {
-					v = math.Float64bits(*m.Elo[i])
+					f = *m.Elo[i]
 				}
-				f := math.Float64frombits(raw(c, 64, v))
+				if md.version >= 2 {
+					base := int64(1500)
+					if i == 1 && m.Elo[0] != nil && *m.Elo[0] == math.Trunc(*m.Elo[0]) && math.Abs(*m.Elo[0]) < 1<<40 {
+						base = int64(*m.Elo[0])
+					}
+					f = rating(c, md, f, base)
+				} else {
+					f = math.Float64frombits(raw(c, 64, math.Float64bits(f)))
+				}
 				m.Elo[i] = &f
 			}
 			if boolBit(c, m.Experience[i] != nil) {
@@ -291,19 +358,23 @@ func codeHeader(c coder, m *Match) {
 				m.Experience[i] = &x
 			}
 		}
-		m.EngineVersion = str(c, m.EngineVersion)
+		if md.version >= 2 {
+			m.EngineVersion = engineName(c, md.text, m.EngineVersion)
+		} else {
+			m.EngineVersion = str(c, m.EngineVersion)
+		}
 	}
 }
 
 // codeMatch is the format: one function both ends run, the encoder reading
 // m and info, the decoder filling m.
-func codeMatch(c coder, m *Match, info []transcript.ActionInfo) {
+func codeMatch(c coder, version byte, m *Match, info []transcript.ActionInfo) {
 	enc := !c.decoding()
 	if !enc {
 		m.Doc.FormatVersion = transcript.FormatVersion
 	}
-	codeHeader(c, m)
-	md := newModels()
+	md := newModels(version)
+	codeHeader(c, md, m)
 	var st state
 	st.newGame()
 	prev := tokStart
@@ -319,7 +390,11 @@ func codeMatch(c coder, m *Match, info []transcript.ActionInfo) {
 			a = m.Doc.Actions[i]
 			tok = kindIndex(a.Kind)
 		}
-		tok = c.sym(kindTable[prev][:], tok)
+		if version >= 2 {
+			tok = md.kind[st.rollerOnBar()][prev].code(c, tok)
+		} else {
+			tok = c.sym(kindTable[prev][:], tok)
+		}
 		if tok == tokEnd {
 			break
 		}
@@ -347,7 +422,11 @@ func codeMatch(c coder, m *Match, info []transcript.ActionInfo) {
 			ai = &info[i]
 		}
 		codeAction(c, md, &st, &a, ai)
-		codeTimes(c, md, &a)
+		if version >= 2 {
+			codeTimes2(c, md, &a)
+		} else {
+			codeTimes(c, md, &a)
+		}
 		var n Note
 		if enc && i < len(m.Notes) {
 			n = m.Notes[i]
@@ -361,7 +440,7 @@ func codeMatch(c coder, m *Match, info []transcript.ActionInfo) {
 				if enc {
 					s = n.Comments[j]
 				}
-				cs[j] = str(c, s)
+				cs[j] = md.str(c, s)
 			}
 			n.Comments = nil
 			if k > 0 {
@@ -446,7 +525,7 @@ func applyDomainSteps(r rel, steps []domain.CheckerStep, side int) (rel, bool) {
 		// The hit is the board's to say: a source may leave the mark out.
 		hit := to > 0 && r.opp[25-to] == 1
 		var ok bool
-		if r, ok = r.applyStep(step{from, to, hit}); !ok {
+		if r, ok = r.applyStep(step{int8(from), int8(to), hit}); !ok {
 			return r, false
 		}
 	}
@@ -456,7 +535,7 @@ func applyDomainSteps(r rel, steps []domain.CheckerStep, side int) (rel, bool) {
 func domainSteps(steps []step, side int) []domain.CheckerStep {
 	out := make([]domain.CheckerStep, len(steps))
 	for i, s := range steps {
-		out[i] = domain.CheckerStep{From: absPoint(side, s.from), To: absPoint(side, s.to), Hit: s.hit}
+		out[i] = domain.CheckerStep{From: absPoint(side, int(s.from)), To: absPoint(side, int(s.to)), Hit: s.hit}
 	}
 	return out
 }
@@ -494,12 +573,25 @@ func codeAction(c coder, md *models, st *state, a *transcript.Action, info *tran
 		}
 		return
 	}
+	// Version 2 reads the board before the dice, whose law it conditions.
+	if md.version >= 2 && a.Kind == transcript.KindChecker {
+		before = codeBefore(c, md, st, a.Side, before)
+	}
 	if isRoll(a.Kind) {
+		law := diceFreq
+		if md.version >= 2 {
+			switch a.Kind {
+			case transcript.KindChecker:
+				law = diceLaw(before, false)
+			case transcript.KindDance:
+				law = diceLaw(st.before(a.Side), true)
+			}
+		}
 		di := 0
 		if enc {
 			di = pairIndex(a.Dice)
 		}
-		di = c.sym(diceFreq, di)
+		di = c.sym(law, di)
 		p := dicePairs[di]
 		if p[0] != p[1] && md.order.code(c, enc && a.Dice[0] < a.Dice[1]) {
 			p[0], p[1] = p[1], p[0]
@@ -508,11 +600,8 @@ func codeAction(c coder, md *models, st *state, a *transcript.Action, info *tran
 	}
 	switch a.Kind {
 	case transcript.KindChecker:
-		exp := st.before(a.Side)
-		if md.beforeSame.code(c, before == exp) {
-			before = exp
-		} else {
-			before = rawRel(c, before)
+		if md.version < 2 {
+			before = codeBefore(c, md, st, a.Side, before)
 		}
 		if !enc {
 			ps = before.plays(a.Dice[0], a.Dice[1])
@@ -536,6 +625,16 @@ func codeAction(c coder, md *models, st *state, a *transcript.Action, info *tran
 	default:
 		st.after(a.Kind, a.Side)
 	}
+}
+
+// codeBefore codes the board a checker play is played from: most often the
+// one the replay expects.
+func codeBefore(c coder, md *models, st *state, side int, before rel) rel {
+	exp := st.before(side)
+	if md.beforeSame.code(c, before == exp) {
+		return exp
+	}
+	return rawRel(c, before)
 }
 
 func (s *state) played(side int, after rel) {

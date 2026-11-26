@@ -18,6 +18,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/pdf"
 )
 
+// ErrUnknownBoardFont refuses a PDF whose diagrams are drawn with a board
+// font whose glyphs cannot be read by their shapes; the error names it.
+var ErrUnknownBoardFont = errors.New("document: board font not recognised")
+
 // ErrNoGlyphDiagram refuses a PDF in which no diagram is drawn with a board
 // font and no page is made of images: a page drawn with vectors is neither
 // read by its glyphs nor rendered.
@@ -32,10 +36,12 @@ type AnalyzeOptions struct {
 	// title; its extension is dropped.
 	FileName string `json:"fileName"`
 	// Warn, when set, receives what the analysis passed over and why (the
-	// pages of a scanned PDF that could not be composed).
+	// pages of a scanned PDF that could not be composed, the board fonts
+	// whose diagrams are not read while others are).
 	Warn func(string) `json:"-"`
-	// Context stops the reading of page images: a scanned document's
-	// decoding is checked against it between packets and code-blocks.
+	// Context stops the reading: checked before each page and each
+	// diagram drawn in a Snowie board font, and, in a scanned document,
+	// between packets and code-blocks.
 	// Every caller gives one (CancelImport, Ctrl-C); nil, for a test, is
 	// context.Background.
 	Context context.Context `json:"-"`
@@ -108,7 +114,12 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 	outline := rd.Outline()
 	sort.SliceStable(outline, func(a, b int) bool { return outline[a].Page < outline[b].Page })
 	boardFont := false
+	sr := newSnowieRead(opts.context())
+	unreadFonts := map[string]bool{}
 	for n := 1; n <= rd.NumPages(); n++ {
+		if err := opts.context().Err(); err != nil {
+			return nil, fmt.Errorf("document: %w", err)
+		}
 		page, err := rd.Page(n)
 		if err != nil {
 			return nil, fmt.Errorf("document: %w", err)
@@ -128,6 +139,19 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 			boardFont = true
 		}
 		entries, profile := readPage(gs, page)
+		if len(entries) == 0 {
+			var unread []string
+			entries, profile, unread, err = readSnowiePage(gs, page, sr)
+			if err != nil {
+				return nil, fmt.Errorf("document: %w", err)
+			}
+			if len(entries) > 0 || len(unread) > 0 {
+				boardFont = true
+			}
+			for _, f := range unread {
+				unreadFonts[f] = true
+			}
+		}
 		if r.Document.Profile == nil && profile != nil {
 			r.Document.Profile = profile
 		}
@@ -140,6 +164,17 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 	}
 	if len(r.Entries) == 0 && !boardFont {
 		return analyzeScans(rd, r, opts, outline)
+	}
+	names := make([]string, 0, len(unreadFonts))
+	for f := range unreadFonts {
+		names = append(names, strconv.Quote(f))
+	}
+	sort.Strings(names)
+	if len(r.Entries) > 0 && len(names) > 0 && opts.Warn != nil {
+		opts.Warn(fmt.Sprintf("diagrams drawn with the board font %s are not read: its glyph shapes are not embedded in a form this reader knows (a TrueType program)", strings.Join(names, ", ")))
+	}
+	if len(r.Entries) == 0 && len(names) > 0 {
+		return nil, fmt.Errorf("%w: the diagrams are drawn with the board font %s, whose glyph shapes are not embedded in a form this reader knows (a TrueType program)", ErrUnknownBoardFont, strings.Join(names, ", "))
 	}
 	if len(r.Entries) == 0 {
 		return nil, ErrNoGlyphDiagram
@@ -401,6 +436,13 @@ func entryOf(b *xgBoard, p panel) Entry {
 			}
 		}
 	}
+	return entryFromBoard(b, "00", length, s1, s2, crawford, p.kinds == "spmps")
+}
+
+// entryFromBoard builds the entry of a decoded diagram: its XGID, and its
+// two certainties lowered by its doubts. pipsChecked says whether the
+// printed pip counts were found to confirm the checkers.
+func entryFromBoard(b *xgBoard, dice string, length, s1, s2, crawford int, pipsChecked bool) Entry {
 	e := Entry{}
 	board, ok := b.boardXGID()
 	if ok {
@@ -408,7 +450,7 @@ func entryOf(b *xgBoard, p panel) Entry {
 		for v := b.cube; v > 1; v >>= 1 {
 			lg++
 		}
-		xgid := fmt.Sprintf("XGID=%s:%d:%d:%d:00:%d:%d:%d:%d:10", board, lg, b.cubeOwner, b.turn, s1, s2, crawford, length)
+		xgid := fmt.Sprintf("XGID=%s:%d:%d:%d:%s:%d:%d:%d:%d:10", board, lg, b.cubeOwner, b.turn, dice, s1, s2, crawford, length)
 		if _, err := ParsePosition(xgid); err != nil {
 			b.doubt(true, "position", 0, "the reading is not a legal position: %v", err)
 		} else {
@@ -443,7 +485,7 @@ func entryOf(b *xgBoard, p panel) Entry {
 		lower(&c, d.hard)
 		e.Context = map[State]ContextState{Sure: ContextRead, ToVerify: ContextToVerify, Uncertain: ContextUncertain}[c]
 	}
-	if p.kinds != "spmps" {
+	if !pipsChecked {
 		lower(&e.Checkers, false)
 	}
 	if e.Position == "" {

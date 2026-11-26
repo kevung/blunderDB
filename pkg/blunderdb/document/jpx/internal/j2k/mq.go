@@ -1,5 +1,7 @@
 package j2k
 
+import "math/bits"
+
 // MQ arithmetic decoder as specified in ISO/IEC 15444-1 Annex C.
 
 // mqState is one row of the probability state transition table
@@ -124,16 +126,19 @@ func (d *mqDecoder) decode(cx *mqContext) uint8 {
 	return bit
 }
 
+// renorm shifts until a's bit 15 is set, as many bits at once as the byte
+// read holds, reading the next byte where the bit-by-bit loop of C.3.3
+// reads it.
 func (d *mqDecoder) renorm() {
-	for {
+	n := bits.LeadingZeros32(d.a) - 16
+	for n > 0 {
 		if d.ct == 0 {
 			d.bytein()
 		}
-		d.a <<= 1
-		d.c <<= 1
-		d.ct--
-		if d.a&0x8000 != 0 {
-			break
-		}
+		t := min(n, d.ct)
+		d.a <<= uint(t)
+		d.c <<= uint(t)
+		d.ct -= t
+		n -= t
 	}
 }
