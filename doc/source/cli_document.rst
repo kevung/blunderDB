@@ -25,6 +25,11 @@ Ce qui est lu, ce qui est refusé
 * un PDF dont les diagrammes sont dessinés avec la police de plateau
   d'eXtreme Gammon (les PDF imprimés par XG) : chaque diagramme y est du texte,
   que la commande décode exactement, glyphe par glyphe ;
+* un PDF dont les diagrammes sont dessinés avec une police de plateau de Snowie
+  (famille Atchoum, par exemple « AtchoumSnowie4Normal ») : les pions sont lus
+  d'après la forme des glyphes que le PDF embarque, quelle que soit la version
+  de la police ; les pips imprimés confirment la lecture. Le score n'y est pas
+  imprimé : le contexte reste à vérifier ;
 * un livre scanné : un PDF dont les pages sont faites d'images, avec ou sans
   couche texte, ou ses pages en images (un dossier de fichiers PNG ou JPEG, une
   page par fichier, lus dans l'ordre de leurs noms, ou une image seule). Les
@@ -36,6 +41,9 @@ livre dessiné en vecteurs) est refusé ; ses pages se donnent alors en images :
 .. code-block:: text
 
    Error: document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page; structure: no page of the document could be read: page 1: pdf: the page draws no image (a page drawn with vectors is not rendered)
+
+Un PDF dessiné avec une police de plateau dont les formes ne sont pas
+embarquées est refusé avec un message qui nomme la police.
 
 Un fichier qui n'est ni un PDF ni une image, un PDF chiffré ou plus gros que
 512 Mio, une image de plus de 64 Mio ou de plus de 100 millions de pixels est

@@ -139,8 +139,13 @@ flowchart LR
   glyph reader (`document/xgboard.go`, `analyze.go`) finds the board-font diagrams, decodes each
   one exactly, reads the score, pips and match length printed beside it, and compares: fifteen
   checkers a side and computed pips equal to printed pips make an entry *sure*; anything else
-  is *to verify* or *uncertain* with the doubt named. A PDF without a page drawn with the
-  board font is a scanned book (`analyze_scans.go`): `pdf.Scan` composes each page from its
+  is *to verify* or *uncertain* with the doubt named. Diagrams drawn with a Snowie board font
+  (`document/snowieboard.go`) are found by their two rows of point numbers and read from the
+  shapes of the embedded TrueType glyphs (`document/ttshape.go`: a ring of ink is a checker,
+  its filled inside a black one; 512 points a glyph, one shape budget per document, the
+  context checked before each page and each diagram), whatever the font's version or codes; a board font whose
+  shapes are not embedded is refused by name (`ErrUnknownBoardFont`). A PDF without a page
+  drawn with a board font is a scanned book (`analyze_scans.go`): `pdf.Scan` composes each page from its
   images (DCT, CCITT fax through `golang.org/x/image/ccitt`, Flate; stencil and soft masks) at
   their resolution bounded to 150-300 dpi and places the words of its text layer on it; a page
   it cannot compose (vectors, JBIG2) is passed over and named, and a PDF with no

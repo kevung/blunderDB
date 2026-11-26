@@ -129,7 +129,8 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 			"label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own\n"+
 			"cross-checks hold (15 checkers a side, the printed pip counts of both players), to-verify\n"+
 			"or uncertain otherwise, with the doubt named. A PDF is read when its diagrams are drawn\n"+
-			"with eXtreme Gammon's board font (XG's PDF prints), from its glyphs. A scanned book is\n"+
+			"with eXtreme Gammon's board font (XG's PDF prints), from its glyphs, or with a Snowie\n"+
+			"board font (the Atchoum family), from the shapes of its embedded glyphs. A scanned book is\n"+
 			"read by the structure of each diagram, from a scanned PDF (its pages composed from their\n"+
 			"images, JPEG, JPEG 2000, JBIG2 or fax) or from its pages as images (a folder\n"+
 			"of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). The printed pip counts\n"+
