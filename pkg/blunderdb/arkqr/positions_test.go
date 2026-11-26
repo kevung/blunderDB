@@ -131,3 +131,109 @@ func TestPositionFramesTrancheAlone(t *testing.T) {
 		t.Fatalf("tranche: first %d, %d positions, %v", tr.First, len(tr.Positions), err)
 	}
 }
+
+// widest is a position of the most bits the codec spends: Away scores of 99,
+// dice, a cube held at the highest exponent the ArkID spells, and fifteen
+// checkers a side, none on a bar or borne off.
+func widest(t *testing.T) *domain.Position {
+	t.Helper()
+	p, err := domain.DecodeArkID("[99-99]65:x10")
+	if err != nil {
+		t.Fatal(err)
+	}
+	p.Board = domain.Board{}
+	for k := range 8 {
+		n := 2
+		if k == 7 {
+			n = 1
+		}
+		p.Board.Points[1+k] = domain.Point{Checkers: n, Color: domain.Black}
+		p.Board.Points[24-k] = domain.Point{Checkers: n, Color: domain.White}
+	}
+	if _, err := domain.EncodeArkID(&p); err != nil {
+		t.Fatal(err)
+	}
+	return &p
+}
+
+// The bound Tranche rests on: a full tranche of the widest positions, from
+// the highest first number a two-byte header holds, is two data codes and
+// their parity.
+func TestPositionsWorstTrancheTwoCodes(t *testing.T) {
+	w := widest(t)
+	ps := make([]*domain.Position, Tranche)
+	for i := range ps {
+		ps[i] = w
+	}
+	data, err := EncodePositions(1<<14-1, ps)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := 5 + (Tranche*109+7)/8; len(data) != want || len(data) > 2*maxPart {
+		t.Fatalf("%d bytes, want %d and at most %d", len(data), want, 2*maxPart)
+	}
+	frames, err := PositionFrames(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	codes, parity := 0, 0
+	for _, f := range frames {
+		if f.Parity {
+			parity++
+		} else {
+			codes++
+		}
+	}
+	if codes != 2 || parity != 1 {
+		t.Fatalf("%d data codes and %d parity codes, want 2 and 1", codes, parity)
+	}
+}
+
+// Two tranches of two different lists read together: each is rebuilt from
+// its own codes only, a lost code of each repaired by its own parity.
+func TestPositionFramesTwoListsApart(t *testing.T) {
+	ps := randomPositions(t, 2*Tranche)
+	var read []Frame
+	want := map[int][]string{}
+	for k, first := range []int{1, 146} {
+		part := ps[k*Tranche : (k+1)*Tranche]
+		data, err := EncodePositions(first, part)
+		if err != nil {
+			t.Fatal(err)
+		}
+		frames, err := PositionFrames(data)
+		if err != nil {
+			t.Fatal(err)
+		}
+		// Each list loses a different data code.
+		for i, f := range frames {
+			if i != k {
+				read = append(read, f)
+			}
+		}
+		for _, p := range part {
+			a, _ := domain.EncodeArkID(p)
+			want[first] = append(want[first], a)
+		}
+	}
+	asm := Assemble(read)
+	if asm.Repaired != 2 || len(asm.Missing) != 0 || len(asm.Tranches) != 2 {
+		t.Fatalf("repaired %d, missing %v, %d tranches", asm.Repaired, asm.Missing, len(asm.Tranches))
+	}
+	for _, data := range asm.Tranches {
+		tr, err := DecodePositions(data)
+		if err != nil {
+			t.Fatal(err)
+		}
+		w := want[tr.First]
+		if len(tr.Positions) != len(w) {
+			t.Fatalf("tranche %d: %d positions, want %d", tr.First, len(tr.Positions), len(w))
+		}
+		for i := range tr.Positions {
+			if a, _ := domain.EncodeArkID(&tr.Positions[i]); a != w[i] {
+				t.Fatalf("tranche %d, position %d: %s, want %s", tr.First, i, a, w[i])
+			}
+		}
+		delete(want, tr.First)
+	}
+}

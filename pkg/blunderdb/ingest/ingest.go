@@ -68,8 +68,9 @@ type Progress struct {
 type Summary struct {
 	SavedPositions int `json:"savedPositions"`
 	// ListPositions counts the positions a printed list's reimport code
-	// brought that the library did not hold; ListPositionsKnown those it
-	// held already. Both are saved on their own, outside any match.
+	// brought that the library did not hold; ListPositionsKnown the others:
+	// those it held already, and a position the list prints twice from its
+	// second line on. Both are saved on their own, outside any match.
 	ListPositions      int `json:"listPositions,omitempty"`
 	ListPositionsKnown int `json:"listPositionsKnown,omitempty"`
 	// PositionsLeftOut counts the source positions a capped native .db

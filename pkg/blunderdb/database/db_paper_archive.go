@@ -46,8 +46,9 @@ type PaperArchiveImport struct {
 	Imported   []int64 `json:"imported"`
 	Duplicates int     `json:"duplicates"`
 	// Positions counts the positions a printed list's reimport code brought
-	// that the library did not hold, KnownPositions those it already held:
-	// each is saved on its own, as a position the user brings.
+	// that the library did not hold, KnownPositions the others: those it
+	// already held, and a position the list prints twice from its second
+	// line on. Each is saved on its own, as a position the user brings.
 	Positions      int `json:"positions"`
 	KnownPositions int `json:"knownPositions"`
 	// Missing lists the ranks (from 1) of the codes neither read nor rebuilt.
@@ -61,8 +62,8 @@ type PaperArchiveImport struct {
 // JPEG) of its sheets, any number and in any order — and imports their
 // matches through the import path of every format: an import batch when the
 // caller opened one, and the duplicate check. The reimport codes of a printed
-// position list, read the same way, bring their positions back one by one. Nothing about the archive or
-// its producer is recorded (ADR-0007).
+// position list, read the same way, bring their positions back one by one.
+// Nothing about the archive or its producer is recorded (ADR-0007).
 func (d *Database) ImportPaperArchive(paths []string) (*PaperArchiveImport, error) {
 	// Reading scans is the long part: it is cancellable like the writes.
 	ctx, done := d.beginCancellableImport()

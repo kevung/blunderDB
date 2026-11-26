@@ -17,9 +17,10 @@ import (
 // analyses, comments and provenance are left out, as the ArkID leaves them.
 
 // Tranche is the number of positions one tranche codes, about a printed face
-// of a list with its analyses. A position takes 109 bits at most, so a
-// tranche never passes two data codes of maxPart bytes: two codes and their
-// parity.
+// of a list with its analyses. A position takes 109 bits at most, so a full
+// tranche codes in 1 976 bytes, plus a header of 5 (the version, a first
+// number below 16 384 and the count, each uvarint on two bytes): 1 981 bytes,
+// never more than two data codes of maxPart bytes, and their parity.
 const Tranche = 145
 
 // PositionsVersion is the first byte of a coded tranche.

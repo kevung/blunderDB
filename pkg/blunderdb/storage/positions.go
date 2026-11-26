@@ -156,9 +156,9 @@ func SaveEach(ctx context.Context, store PositionStore, scope string, ps []*doma
 
 // SaveIndividual stores a position the user brought on its own — written on
 // the board, pasted, read back from a printed list — rather than as part of a
-// match: it raises the sticky provenance flag (ADR-0001), which the store ORs
-// into a row a match already brought in, and reports whether the position is
-// new.
+// match: it raises the sticky provenance flag, outside the Zobrist hash
+// (ADR-0028), which SaveCreated ORs into a row a match already brought in,
+// and reports whether the position is new.
 func SaveIndividual(ctx context.Context, store PositionStore, scope string, p *domain.Position) (id int64, created bool, err error) {
 	p.IndividuallyImported = true
 	return store.SaveCreated(ctx, scope, p)
