@@ -12,9 +12,26 @@ type Summary struct {
 	// CheckersConfirmed counts the entries to verify whose checkers the
 	// printed pips confirmed, their context alone left to verify.
 	CheckersConfirmed int `json:"checkersConfirmed"`
-	Verified          int `json:"verified"`
-	// Unverified lists the ranks that refuse an import unless it is forced.
-	Unverified []int `json:"unverified"`
+	// Complete counts the entries an import accepts as a whole on request:
+	// fifteen checkers a side read with no doubt, the context and the
+	// direction of play certified.
+	Complete int `json:"complete"`
+	// CompleteDirectionUnconfirmed counts the complete entries, context
+	// certified, held back by a direction of play assumed and not confirmed.
+	CompleteDirectionUnconfirmed int `json:"completeDirectionUnconfirmed"`
+	// ContextRead, ContextDefault and ContextToVerify count the entries by
+	// how their context is known (uncertain ones apart).
+	ContextRead     int `json:"contextRead"`
+	ContextDefault  int `json:"contextDefault"`
+	ContextToVerify int `json:"contextToVerify"`
+	// Defaults is the document's default context, nil when it has none.
+	Defaults *Defaults `json:"defaults,omitempty"`
+	Verified int       `json:"verified"`
+	// Unverified lists the ranks that refuse an import unless it is forced;
+	// UnverifiedComplete those that still refuse it with complete entries
+	// accepted.
+	Unverified         []int `json:"unverified"`
+	UnverifiedComplete []int `json:"unverifiedComplete"`
 	// Positions counts the distinct positions, by the Zobrist hash the
 	// library identifies them with; Repeated the entries showing one again.
 	Positions int `json:"positions"`
@@ -23,19 +40,34 @@ type Summary struct {
 
 // Summarize counts a valid Relevé's entries.
 func Summarize(r *Releve) Summary {
-	s := Summary{Title: r.Document.Title, Entries: len(r.Entries), Unverified: Unverified(r)}
+	r = r.Upgrade()
+	s := Summary{Title: r.Document.Title, Entries: len(r.Entries), Defaults: r.Document.Defaults,
+		Unverified: Unverified(r, false), UnverifiedComplete: Unverified(r, true)}
 	seen := map[uint64]bool{}
 	for _, e := range r.Entries {
-		switch e.State {
+		switch r.StateOf(e) {
 		case Sure:
 			s.Sure++
 		case ToVerify:
 			s.ToVerify++
-			if e.CheckersConfirmed() {
+			if r.CheckersConfirmed(e) {
 				s.CheckersConfirmed++
+			}
+			if r.CompleteCertified(e) {
+				s.Complete++
+			} else if e.Complete && !e.Verified && r.ContextCertified(e) && !r.DirectionCertified(e) {
+				s.CompleteDirectionUnconfirmed++
 			}
 		case Uncertain:
 			s.Uncertain++
+		}
+		switch e.Context {
+		case ContextRead:
+			s.ContextRead++
+		case ContextDefault:
+			s.ContextDefault++
+		case ContextToVerify:
+			s.ContextToVerify++
 		}
 		if e.Verified {
 			s.Verified++

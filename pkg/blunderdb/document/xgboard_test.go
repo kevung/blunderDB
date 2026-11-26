@@ -284,7 +284,7 @@ func TestAnalyzeFixture(t *testing.T) {
 			fields = append(fields, d.Field)
 		}
 		if e.Rank != i+1 || e.Page != w.page || e.Chapter != w.chapter || e.Label != w.label || e.Position != w.xgid ||
-			e.State != w.state || strings.Join(fields, " ") != w.doubtFields || e.Rect == nil || e.Verified {
+			r.StateOf(e) != w.state || strings.Join(fields, " ") != w.doubtFields || e.Rect == nil || e.Verified {
 			t.Errorf("rank %d = %+v (doubts %v), want %+v", i+1, e, e.Doubts, w)
 		}
 	}
@@ -312,10 +312,10 @@ func TestAnalyzeRefusesAPDFWithoutBoardFont(t *testing.T) {
 func TestUnreadableDiagramKeepsItsPlace(t *testing.T) {
 	g := gridOf(xgRows(t, tooFull))
 	e := entryOf(g.decode(), panel{})
-	if e.State != Uncertain || e.Position != "" {
+	if e.Checkers != Uncertain || e.Position != "" {
 		t.Fatalf("entry %+v", e)
 	}
-	r := &Releve{Format: Format, Version: Version, Document: Source{Title: "T"}, Entries: []Entry{{Rank: 1, Page: 1, State: Uncertain}}}
+	r := &Releve{Format: Format, Version: Version, Document: Source{Title: "T"}, Entries: []Entry{{Rank: 1, Page: 1, Checkers: Uncertain, Context: ContextRead}}}
 	if err := r.Validate(); err != nil {
 		t.Fatalf("an uncertain entry without position is refused: %v", err)
 	}

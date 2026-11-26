@@ -1,13 +1,17 @@
 package structure
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"image"
 	"image/color"
+	"image/png"
 	"math"
 	"math/rand"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
@@ -525,6 +529,69 @@ func TestReadBounds(t *testing.T) {
 	for _, img := range []image.Image{noisy, blank} {
 		if _, err := Read(context.Background(), memPages{{Image: img, DPI: 150}}); !errors.Is(err, ErrNoDiagram) {
 			t.Errorf("err %v, want ErrNoDiagram", err)
+		}
+	}
+}
+
+// unconfirmedBook is the book of TestSyntheticUnconfirmed: no pip count
+// printed, the direction of play assumed, a cube drawn on the top side of
+// the second diagram.
+func unconfirmedBook(t *testing.T) (memPages, []string) {
+	r := rand.New(rand.NewSource(11))
+	var pages []synthPage
+	for i := 0; i < 4; i++ {
+		o := drawOpts{p: 36, numbering: true}
+		o2 := o
+		if i == 0 {
+			o2.cubeTop = true
+		}
+		pages = append(pages, synthPage{pos: []synthPos{randomPos(r), randomPos(r)}, opts: []drawOpts{o, o2}})
+	}
+	return book(t, pages, 2)
+}
+
+// TestSyntheticCompleteWithoutPips: a reading of fifteen checkers a side
+// with no printed pips is complete, and its only doubts beside a drawn cube
+// are the absent pips and the assumed direction, by their fixed reasons — the
+// ones package document accepts on a complete entry.
+func TestSyntheticCompleteWithoutPips(t *testing.T) {
+	src, _ := unconfirmedBook(t)
+	res, err := Read(context.Background(), src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i, d := range res.Diagrams {
+		if !d.Complete || d.CheckersSure {
+			t.Errorf("diagram %d: complete %v, checkers sure %v: %s", i+1, d.Complete, d.CheckersSure, describe(d))
+		}
+		for _, x := range d.Doubts {
+			ok := (x.Field == "pips" && x.Reason == NoPipsReason) || (x.Field == "orientation" && x.Reason == AssumedDirectionReason) || x.Field == "cube"
+			if !ok {
+				t.Errorf("diagram %d: doubt %+v", i+1, x)
+			}
+		}
+	}
+}
+
+// TestWriteSyntheticNoPips writes the unconfirmed book as page images into
+// package document's testdata, for its end-to-end tests; run it with
+// BLUNDERDB_WRITE_SYNTH=1 after changing the drawing.
+func TestWriteSyntheticNoPips(t *testing.T) {
+	if os.Getenv("BLUNDERDB_WRITE_SYNTH") == "" {
+		t.Skip("set BLUNDERDB_WRITE_SYNTH=1 to write the page images")
+	}
+	src, _ := unconfirmedBook(t)
+	dir := filepath.Join("..", "testdata", "sans-pips")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for i, p := range src {
+		var b bytes.Buffer
+		if err := png.Encode(&b, p.Image); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, fmt.Sprintf("p%03d.png", i+1)), b.Bytes(), 0o644); err != nil {
+			t.Fatal(err)
 		}
 	}
 }

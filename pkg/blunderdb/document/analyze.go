@@ -377,17 +377,37 @@ func entryOf(b *xgBoard, p panel) Entry {
 	} else {
 		b.doubt(true, "position", 0, "more than 15 checkers on one point")
 	}
-	e.State = Sure
-	for _, d := range b.doubts {
-		e.Doubts = append(e.Doubts, d.Doubt)
-		if d.hard {
-			e.State = Uncertain
-		} else if e.State == Sure {
-			e.State = ToVerify
+	// The print's band gives the context: it is read. A doubt lowers the
+	// part of the reading it is about; without the band, the pips that
+	// confirm the checkers are missing too.
+	e.Checkers, e.Context = Sure, ContextRead
+	lower := func(s *State, hard bool) {
+		if hard {
+			*s = Uncertain
+		} else if *s == Sure {
+			*s = ToVerify
 		}
 	}
+	for _, d := range b.doubts {
+		e.Doubts = append(e.Doubts, d.Doubt)
+		if !contextField[d.Field] {
+			lower(&e.Checkers, d.hard)
+			continue
+		}
+		c := State(Sure)
+		if e.Context == ContextToVerify {
+			c = ToVerify
+		} else if e.Context == ContextUncertain {
+			c = Uncertain
+		}
+		lower(&c, d.hard)
+		e.Context = map[State]ContextState{Sure: ContextRead, ToVerify: ContextToVerify, Uncertain: ContextUncertain}[c]
+	}
+	if p.kinds != "spmps" {
+		lower(&e.Checkers, false)
+	}
 	if e.Position == "" {
-		e.State = Uncertain
+		e.Checkers = Uncertain
 	}
 	return e
 }
