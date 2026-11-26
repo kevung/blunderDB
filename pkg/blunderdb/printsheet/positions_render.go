@@ -2,10 +2,12 @@ package printsheet
 
 import (
 	"context"
+	"fmt"
 	"html"
 	"strconv"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/arkqr"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -29,14 +31,28 @@ func BuildPositions(ctx context.Context, s storage.Storage, scope string, src Po
 	if l.Title == "" {
 		l.Title = label(c, "listTitle")
 	}
-	return Document(lang, "blunderDB · "+l.Title, []string{RenderPositions(l, o, c)}, ""), nil
+	doc, err := RenderPositions(l, o, c)
+	if err != nil {
+		return nil, err
+	}
+	var frames []arkqr.Frame
+	for _, tc := range l.Codes {
+		frames = append(frames, tc.Frames...)
+	}
+	tail := ""
+	if len(frames) > 0 {
+		tail = arkqr.EmbedFrames(frames)
+	}
+	return Document(lang, "blunderDB · "+l.Title, []string{doc}, tail), nil
 }
 
 // RenderPositions writes a position list in the labels c. With the analyses
 // on the back, the front block holds the positions and the data-verso block
 // the answers under the same numbers; the fitting script pairs each front
-// page with its back.
-func RenderPositions(l *PositionList, o PositionsOptions, c map[string]string) string {
+// page with its back. The reimport codes follow the lines, a .qrb block a
+// tranche marked with its first number (data-from), which the script moves
+// to the front page where that line falls.
+func RenderPositions(l *PositionList, o PositionsOptions, c map[string]string) (string, error) {
 	esc := html.EscapeString
 	verso := o.Verso && o.Analysis
 	inline := o.Analysis && !verso
@@ -74,6 +90,25 @@ func RenderPositions(l *PositionList, o PositionsOptions, c map[string]string) s
 		b.WriteString(`</span></div>`)
 	}
 	b.WriteString(`</div>`)
+	if o.ReimportCode {
+		b.WriteString(`<div class="qrs">`)
+		for _, tc := range l.Codes {
+			fmt.Fprintf(&b, `<div class="qrb" data-from="%d">`, tc.From)
+			for _, f := range tc.Frames {
+				svg, _, err := arkqr.SVG(f, codeModuleMM)
+				if err != nil {
+					return "", err
+				}
+				b.WriteString(svg)
+			}
+			b.WriteString(`<div><b>` + label(c, "reimportRange", "a", strconv.Itoa(tc.From), "b", strconv.Itoa(tc.To)) + `</b> · ` +
+				label(c, "bytes", "n", strconv.Itoa(tc.Size)) + `<br>` + label(c, "reimportListNote") + `</div></div>`)
+		}
+		if l.CodeErr != "" {
+			b.WriteString(`<div class="qrb">` + esc(label(c, "noCode", "err", l.CodeErr)) + `</div>`)
+		}
+		b.WriteString(`</div>`)
+	}
 
 	if verso {
 		b.WriteString(`<div data-verso><div class="ph"><div>` + label(c, "answers") + `</div><span>` + label(c, "lgAnalysis") +
@@ -87,7 +122,7 @@ func RenderPositions(l *PositionList, o PositionsOptions, c map[string]string) s
 		}
 		b.WriteString(`</div></div>`)
 	}
-	return ListSheet("positions", b.String())
+	return ListSheet("positions", b.String()), nil
 }
 
 // analysisHTML is the analysis of one line: the best choice in bold, the

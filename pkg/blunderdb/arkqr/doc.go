@@ -37,4 +37,13 @@
 // alphabet. Page lays the codes out on A4 sheets in four quadrants with a
 // white gutter on both fold lines, and embeds the frames so the HTML file
 // imports without reading a code; ScanImage reads them from a PNG or JPEG.
+//
+// # Position lists
+//
+// A printed position list carries its positions in frames of their own kind
+// (KindPositions, a first byte of its own): EncodePositions codes a tranche
+// of Tranche positions as their ArkIDs say them, in about twelve bytes each,
+// and PositionFrames makes it an archive of its own, its parity included, so
+// one printed page reads back without the others. Assemble returns matches
+// and tranches apart; a match archive is read exactly as before.
 package arkqr

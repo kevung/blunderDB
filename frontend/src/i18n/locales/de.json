@@ -388,6 +388,8 @@
         "commentsTip": "Die Kommentare der Stellungen, vollständig, mit den Antworten auf der Rückseite",
         "expanded": "Ausführliche ArkID",
         "expandedTip": "Schreibt die Stellungen in der ausführlichen Form der ArkID",
+        "reimportCode": "Code zum Wiedereinlesen",
+        "reimportCodeTip": "QR-Codes mit den Stellungen, ein Block je 145 auf der Seite seiner ersten Stellung; die Datei oder ein Scan oder Foto einer einzelnen Seite wird über das Papierarchiv wieder eingelesen (ohne Analysen und Kommentare)",
         "count": "{n} Stellungen, vollständig gedruckt",
         "heading": "Titel",
         "tooMany": "{n} Stellungen in der Liste: ein Druck umfasst höchstens {max}. Filtern Sie die Liste, um sie zu verkleinern.",
@@ -410,7 +412,7 @@
         "exporting": "Papierarchiv wird geschrieben…",
         "exported": "Papierarchiv gespeichert: {path} ({matches} Matches, {codes} Codes, {skipped} ausgelassen)",
         "importing": "Papierarchiv wird gelesen…",
-        "imported": "Papierarchiv: {imported} Matches importiert, {duplicates} Duplikate, {missing} Codes fehlen, {failed} fehlgeschlagen",
+        "imported": "Papierarchiv: {imported} Matches importiert, {duplicates} Duplikate; {positions} Stellungen importiert, {knownPositions} bereits vorhanden, {missing} Codes fehlen, {failed} fehlgeschlagen",
         "failed": "Papierarchiv fehlgeschlagen: {err}"
     },
     "match": {

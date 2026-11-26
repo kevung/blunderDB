@@ -2721,6 +2721,8 @@ Import the matches of paper archives: the exported HTML page (its embedded match
 reading), or scans and photographs of its sheets (PNG, JPEG), several codes an image, any
 number of images in any order. A lost code is rebuilt from its parity code. Matches go
 through the ordinary import: an import batch, and a match already held is a duplicate.
+The reimport codes of a printed position list (sheet --reimport-code) bring their
+positions back, each saved on its own.
 
 Options:
   -db string
@@ -5343,7 +5345,10 @@ decision, the right action and what the others lose. The whole list is printed,
 on as many numbered pages as it takes, header and legend on each; a comment
 longer than a page goes on over the next: nothing is ever cut off. With --verso
 each page of positions is followed by its answers. At most 3000 positions;
-a longer list is refused. Nothing is written to the library.
+a longer list is refused. Nothing is written to the library. With --reimport-code
+the positions are coded 145 at a time, each block of QR codes printed on the
+page of its first position and read back alone: `archive import` takes the saved
+file, a scan or a photograph and saves the positions, without analyses or comments.
 
 Options:
   -analysis
@@ -5364,6 +5369,8 @@ Options:
     	HTML file to write (default: standard output)
   -query string
     	Print the result of this search, in the command bar's grammar (see search --query-help)
+  -reimport-code
+    	Draw the positions' reimport QR codes, a block every 145 positions, and embed them in the file
   -title string
     	Title of every page (default: the query, the collection's name)
   -verso
@@ -5372,6 +5379,7 @@ Options:
 Examples:
   blunderdb sheet --db database.db --query 'E>80' --lang fr --output blunders.html
   blunderdb sheet --db database.db --collection 3 --verso --comments=false
+  blunderdb sheet --db database.db --query 'E>80' --reimport-code --output blunders.html
 ```
 
 ### `blunderdb stats biases`

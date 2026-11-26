@@ -122,8 +122,7 @@ func togglePile(ctx context.Context, st Stores, scope string, pos *domain.Positi
 	out := PileToggle{PositionID: pos.ID}
 	if out.PositionID <= 0 {
 		p := *pos
-		p.IndividuallyImported = true
-		id, created, err := st.Positions().SaveCreated(ctx, scope, &p)
+		id, created, err := SaveIndividual(ctx, st.Positions(), scope, &p)
 		if err != nil {
 			return PileToggle{}, err
 		}

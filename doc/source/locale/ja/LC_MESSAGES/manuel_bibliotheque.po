@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:13+0100\n"
+"POT-Creation-Date: 2026-11-26 15:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/manuel_bibliotheque.rst:4
 msgid "Analyse, commentaires et recherche"
@@ -1173,24 +1173,42 @@ msgid ""
 "compacte."
 msgstr "**ArkID を展開**\\ （オフ）：コンパクト形式ではなく展開形式を使います。"
 
-#: ../../source/manuel_bibliotheque.rst:604
+#: ../../source/manuel_bibliotheque.rst:603
+msgid ""
+"**Code de réimport** (décochée) : des codes QR qui portent les positions,"
+" un bloc toutes les 145 positions, imprimé sur la page de la première "
+"position de son bloc et embarqué dans le fichier. Le fichier enregistré, "
+"ou le scan ou la photo d'une seule page, se réimporte par :ref:`Archive "
+"papier… <archive_papier_interface>` : chaque bloc se relit seul, et un "
+"code illisible est reconstruit par les autres codes de son bloc. Les "
+"codes ne portent que les positions (ce que dit l'ArkID), sans analyses ni"
+" commentaires ; chacune est enregistrée comme une position apportée "
+"seule, et une position déjà en base n'est pas dupliquée."
+msgstr ""
+"**再インポート用コード**\\ （オフ）：局面を載せた QR コード。145 局面ごとに 1 "
+"ブロックを、そのブロックの最初の局面のページに印刷し、ファイルに埋め込みます。保存したファイル、または 1 ページだけのスキャンや写真は、\\ "
+":ref:`紙のアーカイブ… <archive_papier_interface>`\\ "
+"から再インポートできます。各ブロックは単独で読み込め、読めないコードは同じブロックの他のコードから復元されます。コードが載せるのは局面（ArkID"
+" が表すもの）だけで、分析・コメントは含みません。各局面は単独で持ち込んだ局面として保存され、データベースに既にある局面は重複しません。"
+
+#: ../../source/manuel_bibliotheque.rst:613
 msgid ""
 "L'impression n'écrit rien dans la base. En ligne de commande : ``sheet`` "
 "(:doc:`cli_import_export`)."
 msgstr "印刷はデータベースに何も書き込みません。コマンドラインでは：\\ ``sheet``\\ （:doc:`cli_import_export`）。"
 
-#: ../../source/manuel_bibliotheque.rst:610
-#: ../../source/manuel_bibliotheque.rst:612
+#: ../../source/manuel_bibliotheque.rst:619
+#: ../../source/manuel_bibliotheque.rst:621
 msgid "Panneau Collections"
 msgstr "コレクションパネル"
 
-#: ../../source/manuel_bibliotheque.rst:616
+#: ../../source/manuel_bibliotheque.rst:625
 msgid ""
 "Le panneau Collections : nom, nombre de positions, description, dernière "
 "modification."
 msgstr "Collections パネル：名前、ポジション数、説明、最終更新日時。"
 
-#: ../../source/manuel_bibliotheque.rst:619
+#: ../../source/manuel_bibliotheque.rst:628
 msgid ""
 "Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton"
 " **+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle "
@@ -1206,7 +1224,7 @@ msgstr ""
 "のパネルでは、\\ *Esc* または **キャンセル** で閉じます。マッチ一覧では、⌨ アイコンでマッチの記譜を開き、✎ "
 "アイコンでそのメタデータを修正します。"
 
-#: ../../source/manuel_bibliotheque.rst:627
+#: ../../source/manuel_bibliotheque.rst:636
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -1227,7 +1245,7 @@ msgstr ""
 "を参照）。コレクションの並び順、およびコレクション内の局面の並び順は、ドラッグ＆ドロップで変更できます。*CTRL-B* を押すか "
 "``collection`` コマンドを実行するとパネルの表示・非表示が切り替わります。"
 
-#: ../../source/manuel_bibliotheque.rst:638
+#: ../../source/manuel_bibliotheque.rst:647
 msgid ""
 "En tête d'une collection ouverte, le nombre de positions est un lien qui "
 "les remet dans le parcours, depuis la première ; la case **dans cette "
@@ -1237,7 +1255,7 @@ msgstr ""
 "開いたコレクションの見出しでは、局面数がリンクになっており、最初の局面から閲覧に戻します。\\ **このコレクションに含む**\\ "
 "のチェックボックスで、表示中の局面を追加または削除します。空のリストでは\\ **+ 新しいコレクション**\\ を提案します。"
 
-#: ../../source/manuel_bibliotheque.rst:643
+#: ../../source/manuel_bibliotheque.rst:652
 msgid ""
 "La **Pile** est la collection du geste « à revoir plus tard » : un "
 "double-clic hors du plateau, la touche *b* ou le bouton marque-page de la"
@@ -1260,7 +1278,7 @@ msgstr ""
 "を参照）から行います。パイルは通常のコレクションで、ほかと同じように名前の変更、並べ替え、エクスポート、空にすることができます。初回の使用時に作成され、削除された場合は作り直されます。まだライブラリにない局面（検索盤面や評価盤面の下書き）は、単独で持ち込んだ局面と同じようにその場でライブラリに書き込まれ、そのあとパイルに載ります。コマンドラインでは\\"
 " ``collection pile``\\ で同じ操作を行います。"
 
-#: ../../source/manuel_bibliotheque.rst:656
+#: ../../source/manuel_bibliotheque.rst:665
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1274,7 +1292,7 @@ msgstr ""
 "の結果になり、開くたびに再評価されます。コレクション見出しの ◇ ボタンが直近の検索でそれを生きたものにし、◈ "
 "はすでにそうであることを示します。同じボタンでリストに戻せます。生きたものにしても何も壊れません。含まれていた局面は戻ったときにそのまま残っています。"
 
-#: ../../source/manuel_bibliotheque.rst:663
+#: ../../source/manuel_bibliotheque.rst:672
 msgid ""
 "Deux critères de provenance se prêtent à une collection qui se range "
 "seule : ``s i`` garde les positions apportées une à une (à la main ou par"
@@ -1286,7 +1304,7 @@ msgstr ""
 "(手で、または局面ファイルから) 持ち込まれた局面を、\\ ``s fl``\\ "
 "は元のソフトウェアがインポート時にマークしていた局面を残します。どちらも他の任意の条件と組み合わせられます。"
 
-#: ../../source/manuel_bibliotheque.rst:669
+#: ../../source/manuel_bibliotheque.rst:678
 msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
@@ -1297,7 +1315,7 @@ msgstr ""
 "ライブコレクションに表示される ❄ ボタンは、そのコレクションを\\ **固定**\\ "
 "します。その時点で検索が選ぶポジションが、検索の順序のまま通常のコレクションの内容となり、クエリは消去されます。ライブになる前に保持していたポジションは置き換えられます。"
 
-#: ../../source/manuel_bibliotheque.rst:674
+#: ../../source/manuel_bibliotheque.rst:683
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1307,7 +1325,7 @@ msgstr ""
 "このバージョンがもう知らないトークンを含む問い合わせを持つ生きたコレクションは、データベース全体を返すのではなく、**開くことを拒み** "
 "そう告げます。保存された絞り込みが決して起こしてはならない唯一の故障が、黙って広がることだからです。"
 
-#: ../../source/manuel_bibliotheque.rst:679
+#: ../../source/manuel_bibliotheque.rst:688
 msgid ""
 "Une collection vivante ne peut pas porter ``like`` : une collection est "
 "un ensemble, et ce jeton classe. Elle refuse la requête qui le porte, en "
@@ -1320,7 +1338,7 @@ msgstr ""
 "``like`` に対応するのは検索だけです。古い保存済み検索がなお持つ星付きの形（\\ ``like42*``\\ "
 "）は、履歴からでもフィルターライブラリからでも、再実行時に拒否されます。"
 
-#: ../../source/manuel_bibliotheque.rst:685
+#: ../../source/manuel_bibliotheque.rst:694
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1338,7 +1356,7 @@ msgstr ""
 "ポジション）。ポジション、マッチ、トーナメントを番号で指定するクエリは、ファイル内の番号に書き換えられます。そのいずれかがファイルに含まれない場合、コレクションは\\"
 " **固定**\\ され、エクスポート時点でクエリが選ぶポジションを持って書き出されます。"
 
-#: ../../source/manuel_bibliotheque.rst:694
+#: ../../source/manuel_bibliotheque.rst:703
 msgid ""
 "Une collection vivante dont la base refuse la requête (``like``, une "
 "forme étoilée) part **figée et vide**, dans un export comme dans un "
@@ -1348,7 +1366,7 @@ msgstr ""
 "データベースがクエリを拒否するライブコレクション（\\ ``like``\\ 、星付きの形）は、エクスポートでも別のデータベースへの転送でも\\ "
 "**固定された空の状態**\\ になります。ライブのままでは、転送先でもう一度拒否されるだけだからです。"
 
-#: ../../source/manuel_bibliotheque.rst:698
+#: ../../source/manuel_bibliotheque.rst:707
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1362,7 +1380,7 @@ msgstr ""
 " 5,000 ポジションの\\ **上限**\\ "
 "で制限されます。クエリがそれより多く選んだ場合、検索の順序で最初のものだけがデッキに入り、ステータスバーが実際に選ばれたポジション数とともにそれを知らせます。"
 
-#: ../../source/manuel_bibliotheque.rst:708
+#: ../../source/manuel_bibliotheque.rst:717
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1377,7 +1395,7 @@ msgstr ""
 "件を学習すると、同じ問題の 10 "
 "通りの変形や、他について何も教えない特異なポジションになりがちです。参照ポジションは、構造の近いあなたの複数のミスの中心にあり、その教訓がすべてに役立ちます。"
 
-#: ../../source/manuel_bibliotheque.rst:715
+#: ../../source/manuel_bibliotheque.rst:724
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1389,7 +1407,7 @@ msgstr ""
 "で数値化され、ファミリー(ゲームプラン、性質、テーマ)ごとに整理されます。同じファミリーの 2 つのミスは、輸送距離で最大 12 "
 "チェッカーステップ以内なら\\ **隣接**\\ しています。キューブのミスの隣接は同じスコアのものだけです。"
 
-#: ../../source/manuel_bibliotheque.rst:719
+#: ../../source/manuel_bibliotheque.rst:728
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1405,7 +1423,7 @@ msgstr ""
 "な判定(別の深さやロールアウトが異なる結果を示す)は半分として数えられます。裏付けるロールアウトがあれば表示されます。 "
 "各行の先頭の数字はカバーする MWC で、理由は教訓が半分として数えられるときに数えられる値を示します。"
 
-#: ../../source/manuel_bibliotheque.rst:726
+#: ../../source/manuel_bibliotheque.rst:735
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1418,7 +1436,7 @@ msgstr ""
 " **処理済み**\\ のポジション(コメント付き、コレクション内、Anki "
 "カード、または「学習済み」マーク付き)は提案されず、その隣接ポジションはカバー済みとみなされます。"
 
-#: ../../source/manuel_bibliotheque.rst:732
+#: ../../source/manuel_bibliotheque.rst:741
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1438,11 +1456,11 @@ msgstr ""
 "デッキ**、または\\ **クイズ**\\ になります。コマンドラインでは ``blunderdb collection suggest``\\ "
 "(\\ :ref:`cli_collection`\\ を参照)を使います。"
 
-#: ../../source/manuel_bibliotheque.rst:745
+#: ../../source/manuel_bibliotheque.rst:754
 msgid "Leçons"
 msgstr "レッスン"
 
-#: ../../source/manuel_bibliotheque.rst:747
+#: ../../source/manuel_bibliotheque.rst:756
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1457,7 +1475,7 @@ msgstr ""
 " コマンドはデータベースのレッスンをステータスバーに一覧表示し、``le 2`` はレッスン 2 を開き、``le edit`` "
 "はレッスンエディタを開きます。"
 
-#: ../../source/manuel_bibliotheque.rst:754
+#: ../../source/manuel_bibliotheque.rst:763
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1470,7 +1488,7 @@ msgstr ""
 "*次へ*\\ でステップを切り替えます。ステップは、表示するコレクションまたはポジションを盤に呼び出し、それを通常の操作で閲覧できます。\\ "
 "*閉じる*\\ でレッスンを終了します。コレクションまたはポジションが削除されたステップも、テキストは残ります。"
 
-#: ../../source/manuel_bibliotheque.rst:761
+#: ../../source/manuel_bibliotheque.rst:770
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1483,7 +1501,7 @@ msgstr ""
 "バーの\\ *ステップ完了*\\ "
 "ボックスは、現在のステップを完了としてマークします。もう一度クリックするとマークが外れ、バーは完了したステップの数を表示します。何かを書き込む操作はこれだけです。レッスンを読む、ステップを変える、レッスンを開くといった操作では、到達したステップも開いたことも記録されません。マークは開いているデータベース(生徒のもの)に書き込まれ、どのエクスポートにも含まれません。レッスンを含むファイルをインポートするとそのレッスンが作成され、同じ名前のレッスンがすでにある場合は変更されません。"
 
-#: ../../source/manuel_bibliotheque.rst:769
+#: ../../source/manuel_bibliotheque.rst:778
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1513,7 +1531,7 @@ msgstr ""
 " *削除*\\ はレッスンとそのステップを消しますが、ステップが表示していたコレクションやポジションには触れません。レッスンはコマンドラインや "
 "API からも作成・変更できます(:ref:`headless_lecons`)。"
 
-#: ../../source/manuel_bibliotheque.rst:786
+#: ../../source/manuel_bibliotheque.rst:795
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"

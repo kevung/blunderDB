@@ -11,10 +11,15 @@ import (
 )
 
 // A Frame is what one QR code carries: one coded match — or one part of a
-// match too long for a code —, or the parity of a group of ParityGroup data
+// match too long for a code —, one part of a tranche of a position list, or
+// the parity of a group of ParityGroup data
 // frames. Each frame names its archive, its rank and the archive's size, and
 // ends with a CRC-32 of everything before it.
 type Frame struct {
+	// Kind is what the archive holds: matches, or a tranche of a position
+	// list. Each has its own first byte, so a reader of one never takes a
+	// code of the other for its own.
+	Kind    Kind
 	Archive uint32
 	Parity  bool
 	// Index is the rank of a data frame, or the group of a parity frame.
@@ -26,9 +31,30 @@ type Frame struct {
 	Body []byte
 }
 
+// Kind is what an archive holds.
+type Kind uint8
+
 const (
-	frameMagic = 0xA7 // and frame layout 1
-	headerLen  = 10
+	// KindMatches is an archive of coded matches (Encode).
+	KindMatches Kind = iota
+	// KindPositions is one tranche of a position list (EncodePositions).
+	KindPositions
+)
+
+// frameMagic is the first byte of a frame of each Kind, with frame layout 1.
+var frameMagic = [...]byte{KindMatches: 0xA7, KindPositions: 0xA8}
+
+func kindOf(magic byte) (Kind, bool) {
+	for k, m := range frameMagic {
+		if m == magic {
+			return Kind(k), true
+		}
+	}
+	return 0, false
+}
+
+const (
+	headerLen = 10
 	// ParityGroup is the number of data frames one parity frame covers.
 	ParityGroup = 5
 	// maxPart bounds the payload of one frame, so the densest code stays
@@ -49,7 +75,7 @@ var ErrFrame = errors.New("arkqr: not an archive code")
 // Bytes is the frame as a code carries it.
 func (f Frame) Bytes() []byte {
 	b := make([]byte, headerLen, headerLen+len(f.Body)+4)
-	b[0] = frameMagic
+	b[0] = frameMagic[f.Kind]
 	if f.Parity {
 		b[1] = 1
 	}
@@ -62,7 +88,11 @@ func (f Frame) Bytes() []byte {
 
 // ParseFrame reads a frame and checks its CRC.
 func ParseFrame(b []byte) (Frame, error) {
-	if len(b) < headerLen+4 || b[0] != frameMagic || b[1] > 1 {
+	if len(b) < headerLen+4 || b[1] > 1 {
+		return Frame{}, ErrFrame
+	}
+	kind, ok := kindOf(b[0])
+	if !ok {
 		return Frame{}, ErrFrame
 	}
 	n := len(b) - 4
@@ -70,6 +100,7 @@ func ParseFrame(b []byte) (Frame, error) {
 		return Frame{}, fmt.Errorf("%w: checksum", ErrFrame)
 	}
 	f := Frame{
+		Kind:    kind,
 		Archive: binary.BigEndian.Uint32(b[2:]),
 		Parity:  b[1] == 1,
 		Index:   int(binary.BigEndian.Uint16(b[6:])),
@@ -99,7 +130,23 @@ func ParseText(s string) (Frame, error) {
 // frames in match order, each group of ParityGroup followed by its parity.
 // owner[i] is the match a frame belongs to, -1 for a parity frame.
 func Frames(matches [][]byte) (frames []Frame, owner []int, err error) {
+	return cut(KindMatches, matches)
+}
+
+// PositionFrames cuts one coded tranche of a position list into its own
+// archive: its data frames and their parity, so the tranche reads back alone.
+func PositionFrames(tranche []byte) ([]Frame, error) {
+	frames, _, err := cut(KindPositions, [][]byte{tranche})
+	return frames, err
+}
+
+func cut(kind Kind, matches [][]byte) (frames []Frame, owner []int, err error) {
 	h := sha256.New()
+	// The kind seeds the id of a tranche only: a match archive keeps the id
+	// it always had.
+	if kind != KindMatches {
+		h.Write([]byte{frameMagic[kind]})
+	}
 	for _, m := range matches {
 		h.Write(binary.BigEndian.AppendUint32(nil, uint32(len(m))))
 		h.Write(m)
@@ -116,7 +163,7 @@ func Frames(matches [][]byte) (frames []Frame, owner []int, err error) {
 		for p := range parts {
 			chunk := m[min(len(m), p*size):min(len(m), (p+1)*size)]
 			body := append([]byte{byte(p), byte(parts)}, chunk...)
-			data = append(data, Frame{Archive: id, Index: len(data), Body: body})
+			data = append(data, Frame{Kind: kind, Archive: id, Index: len(data), Body: body})
 			dataOwner = append(dataOwner, mi)
 		}
 	}
@@ -133,7 +180,7 @@ func Frames(matches [][]byte) (frames []Frame, owner []int, err error) {
 			frames = append(frames, f)
 			owner = append(owner, dataOwner[g*ParityGroup+i])
 		}
-		frames = append(frames, Frame{Archive: id, Parity: true, Index: g, Total: len(data), Body: parityOf(group)})
+		frames = append(frames, Frame{Kind: kind, Archive: id, Parity: true, Index: g, Total: len(data), Body: parityOf(group)})
 		owner = append(owner, -1)
 	}
 	return frames, owner, nil
@@ -157,8 +204,12 @@ func parityOf(group []Frame) []byte {
 
 // Assembly is what a set of frames gives back.
 type Assembly struct {
-	// Matches are the coded matches, in archive order, of every archive met.
+	// Matches are the coded matches, in archive order, of every match
+	// archive met.
 	Matches [][]byte
+	// Tranches are the coded tranches of position lists, one per tranche
+	// archive met (DecodePositions).
+	Tranches [][]byte
 	// Repaired counts the data frames rebuilt from a parity frame.
 	Repaired int
 	// Missing lists, per archive, the ranks no frame and no parity restored.
@@ -170,6 +221,7 @@ type Assembly struct {
 // data frame gets it back from its parity frame.
 func Assemble(frames []Frame) Assembly {
 	type archive struct {
+		kind   Kind
 		total  int
 		data   map[int]Frame
 		parity map[int]Frame
@@ -179,9 +231,12 @@ func Assemble(frames []Frame) Assembly {
 	for _, f := range frames {
 		a := arcs[f.Archive]
 		if a == nil {
-			a = &archive{total: f.Total, data: map[int]Frame{}, parity: map[int]Frame{}}
+			a = &archive{kind: f.Kind, total: f.Total, data: map[int]Frame{}, parity: map[int]Frame{}}
 			arcs[f.Archive] = a
 			ids = append(ids, f.Archive)
+		}
+		if f.Kind != a.kind {
+			continue
 		}
 		if f.Parity {
 			a.parity[f.Index] = f
@@ -221,7 +276,7 @@ func Assemble(frames []Frame) Assembly {
 			if size > len(body) || size < 2 {
 				continue
 			}
-			a.data[lost] = Frame{Archive: id, Index: lost, Total: a.total, Body: body[:size]}
+			a.data[lost] = Frame{Kind: a.kind, Archive: id, Index: lost, Total: a.total, Body: body[:size]}
 			res.Repaired++
 		}
 		for r := 0; r < a.total; {
@@ -250,7 +305,11 @@ func Assemble(frames []Frame) Assembly {
 				m = append(m, g.Body[2:]...)
 			}
 			if whole {
-				res.Matches = append(res.Matches, m)
+				if a.kind == KindPositions {
+					res.Tranches = append(res.Tranches, m)
+				} else {
+					res.Matches = append(res.Matches, m)
+				}
 			}
 			r += parts
 		}

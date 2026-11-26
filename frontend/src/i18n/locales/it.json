@@ -388,6 +388,8 @@
         "commentsTip": "I commenti delle posizioni, interi, sul retro con le risposte",
         "expanded": "ArkID esteso",
         "expandedTip": "Scrive le posizioni nella forma estesa dell'ArkID",
+        "reimportCode": "Codice di reimportazione",
+        "reimportCodeTip": "Codici QR che portano le posizioni, un blocco ogni 145 sulla pagina della sua prima posizione; il file, o una scansione o foto di una sola pagina, si reimporta con l'archivio cartaceo (senza analisi né commenti)",
         "count": "{n} posizioni, stampate per intero",
         "heading": "Titolo",
         "tooMany": "{n} posizioni nell'elenco: una stampa ne prende al massimo {max}. Filtra l'elenco per ridurlo.",
@@ -410,7 +412,7 @@
         "exporting": "Scrittura dell'archivio cartaceo…",
         "exported": "Archivio cartaceo salvato: {path} ({matches} match, {codes} codici, {skipped} esclusi)",
         "importing": "Lettura dell'archivio cartaceo…",
-        "imported": "Archivio cartaceo: {imported} match importati, {duplicates} duplicati, {missing} codici mancanti, {failed} non riusciti",
+        "imported": "Archivio cartaceo: {imported} match importati, {duplicates} duplicati; {positions} posizioni importate, {knownPositions} già presenti, {missing} codici mancanti, {failed} non riusciti",
         "failed": "Archivio cartaceo non riuscito: {err}"
     },
     "match": {

@@ -388,6 +388,8 @@
         "commentsTip": "Asemien kommentit kokonaisina, kääntöpuolella vastausten kanssa",
         "expanded": "Laajennettu ArkID",
         "expandedTip": "Kirjoittaa asemat ArkID:n laajennetussa muodossa",
+        "reimportCode": "Uudelleentuontikoodi",
+        "reimportCodeTip": "QR-koodit, jotka kantavat asemat, lohko joka 145. asemalle sen ensimmäisen aseman sivulla; tiedosto tai yhden sivun skannaus tai valokuva tuodaan takaisin paperiarkiston kautta (ilman analyyseja ja kommentteja)",
         "count": "{n} asemaa, tulostetaan kokonaan",
         "heading": "Otsikko",
         "tooMany": "Luettelossa on {n} asemaa: yksi tulostus ottaa enintään {max}. Suodata luetteloa sen rajaamiseksi.",
@@ -410,7 +412,7 @@
         "exporting": "Kirjoitetaan paperiarkistoa…",
         "exported": "Paperiarkisto tallennettu: {path} ({matches} ottelua, {codes} koodia, {skipped} jätetty pois)",
         "importing": "Luetaan paperiarkistoa…",
-        "imported": "Paperiarkisto: {imported} ottelua tuotu, {duplicates} kaksoiskappaletta, {missing} koodia puuttuu, {failed} epäonnistui",
+        "imported": "Paperiarkisto: {imported} ottelua tuotu, {duplicates} kaksoiskappaletta; {positions} asemaa tuotu, {knownPositions} jo kirjastossa, {missing} koodia puuttuu, {failed} epäonnistui",
         "failed": "Paperiarkisto epäonnistui: {err}"
     },
     "match": {

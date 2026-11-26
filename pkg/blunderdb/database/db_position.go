@@ -31,11 +31,7 @@ func (d *Database) SaveIndividualPosition(position *Position) (IndividualSaveRes
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	ctx := context.Background()
-	// Sticky: Save ORs this into the stored value, so a match import that later
-	// brings in the same position cannot clear it.
-	position.IndividuallyImported = true
-	id, created, err := d.store.Positions().SaveCreated(ctx, "", position)
+	id, created, err := storage.SaveIndividual(context.Background(), d.store.Positions(), "", position)
 	if err != nil {
 		return IndividualSaveResult{}, err
 	}

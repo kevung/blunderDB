@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:46+0100\n"
+"POT-Creation-Date: 2026-11-26 15:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -35,10 +35,10 @@ msgid ""
 msgstr "Создаёт новый файл базы данных с необязательными метаданными."
 
 #: ../../source/cli_import_export.rst:15 ../../source/cli_import_export.rst:42
-#: ../../source/cli_import_export.rst:380
-#: ../../source/cli_import_export.rst:504
-#: ../../source/cli_import_export.rst:572
-#: ../../source/cli_import_export.rst:598
+#: ../../source/cli_import_export.rst:396
+#: ../../source/cli_import_export.rst:520
+#: ../../source/cli_import_export.rst:588
+#: ../../source/cli_import_export.rst:614
 msgid "**Options:**"
 msgstr "**Параметры:**"
 
@@ -542,6 +542,25 @@ msgstr ""
 
 #: ../../source/cli_import_export.rst:332
 msgid ""
+"``import`` lit aussi les codes de réimport d'une liste de positions "
+"imprimée (``sheet --reimport-code``) : le fichier enregistré, ou les "
+"scans et photos de ses pages, même une seule. Ses positions sont "
+"enregistrées une à une, comme une position apportée seule (sans analyses "
+"ni commentaires) ; la sortie compte celles qui sont nouvelles et celles "
+"que la base avait déjà, et ``/v1/imports.archive`` les rend dans les "
+"champs ``list_positions`` et ``list_positions_known``. L'import par lot "
+"ne prend pas une liste : il l'écarte avec son motif."
+msgstr ""
+"``import`` также читает коды повторного импорта напечатанного списка "
+"позиций (``sheet --reimport-code``): сохранённый файл или сканы и "
+"фотографии его страниц, даже одной. Его позиции сохраняются по одной, как"
+" позиция, внесённая отдельно (без анализа и комментариев); вывод считает "
+"новые и те, что уже были в базе, а ``/v1/imports.archive`` возвращает их "
+"в полях ``list_positions`` и ``list_positions_known``. Пакетный импорт не"
+" принимает список: он откладывает его, указав причину."
+
+#: ../../source/cli_import_export.rst:341
+msgid ""
 "Dans l'interface, la boîte *Archive papier…* du menu contextuel d'un "
 "match fait l'export et l'import (:ref:`archive_papier_interface`) ; "
 "l'import s'ouvre aussi depuis la liste des matchs vide et par la commande"
@@ -551,11 +570,11 @@ msgstr ""
 "экспорт и импорт (:ref:`archive_papier_interface`); импорт открывается "
 "также из пустого списка матчей и командой ``import_archive``."
 
-#: ../../source/cli_import_export.rst:337
+#: ../../source/cli_import_export.rst:346
 msgid "sheet — Liste de positions imprimable"
 msgstr "sheet — Печатный список позиций"
 
-#: ../../source/cli_import_export.rst:339
+#: ../../source/cli_import_export.rst:348
 msgid ""
 "Écrit la liste imprimable de l'interface (:ref:`liste_imprimable`) : "
 "toute une recherche, une collection ou une liste d'identifiants, une "
@@ -605,19 +624,34 @@ msgstr ""
 "``options`` не называет, берутся те же значения по умолчанию, что и у "
 "команды."
 
-#: ../../source/cli_import_export.rst:372
+#: ../../source/cli_import_export.rst:371
+msgid ""
+"``--reimport-code`` (désactivé par défaut) code les positions par blocs "
+"de 145, chacun en deux codes QR et un code de parité imprimés sur la page"
+" de la première position du bloc, et les embarque dans le fichier : "
+"``archive import`` relit le fichier, ou le scan d'une seule page, bloc "
+"par bloc. Une position y coûte environ 13 octets : son ArkID, sans "
+"analyse ni commentaire."
+msgstr ""
+"``--reimport-code`` (по умолчанию выключено) кодирует позиции блоками по "
+"145, каждый — двумя QR-кодами и кодом чётности, напечатанными на странице"
+" первой позиции блока, и встраивает их в файл: ``archive import`` читает "
+"файл или скан одной страницы обратно блок за блоком. Позиция занимает там"
+" около 13 байт: её ArkID, без анализа и комментария."
+
+#: ../../source/cli_import_export.rst:388
 msgid "export — Exporter des données"
 msgstr "export — Экспорт данных"
 
-#: ../../source/cli_import_export.rst:374
+#: ../../source/cli_import_export.rst:390
 msgid "Exporte le contenu de la base vers des fichiers."
 msgstr "Экспортирует содержимое базы в файлы."
 
-#: ../../source/cli_import_export.rst:382
+#: ../../source/cli_import_export.rst:398
 msgid "``--db`` — Base source (obligatoire)."
 msgstr "``--db`` — Исходная база (обязательно)."
 
-#: ../../source/cli_import_export.rst:383
+#: ../../source/cli_import_export.rst:399
 msgid ""
 "``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
 "``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
@@ -627,7 +661,7 @@ msgstr ""
 "``mat`` (экспорт одного или нескольких матчей в транскрипции Jellyfish "
 "``.mat``) (обязательно)."
 
-#: ../../source/cli_import_export.rst:386
+#: ../../source/cli_import_export.rst:402
 msgid ""
 "``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
 "utilisé avec ``--dir``)."
@@ -635,7 +669,7 @@ msgstr ""
 "``--file`` — Выходной файл (обязательно, кроме случая ``--type mat``, "
 "используемого с ``--dir``)."
 
-#: ../../source/cli_import_export.rst:388
+#: ../../source/cli_import_export.rst:404
 msgid ""
 "``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
 "(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
@@ -644,27 +678,27 @@ msgstr ""
 "``--dir`` — Выходной каталог для пакетного экспорта ``.mat`` (несколько "
 "матчей, один файл на матч; без ``--match-ids`` экспортируются все матчи)."
 
-#: ../../source/cli_import_export.rst:391
+#: ../../source/cli_import_export.rst:407
 msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
 msgstr "``--analysis`` — Включить анализ (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:392
+#: ../../source/cli_import_export.rst:408
 msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
 msgstr "``--comments`` — Включить комментарии (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:393
+#: ../../source/cli_import_export.rst:409
 msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
 msgstr "``--filters`` — Включить библиотеку фильтров (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:394
+#: ../../source/cli_import_export.rst:410
 msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
 msgstr "``--played-moves`` — Включить сыгранные ходы (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:395
+#: ../../source/cli_import_export.rst:411
 msgid "``--matches`` — Inclure les matchs (défaut: oui)."
 msgstr "``--matches`` — Включить матчи (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:396
+#: ../../source/cli_import_export.rst:412
 msgid ""
 "``--transcriptions`` — Inclure le brouillon de transcription de chaque "
 "match exporté (défaut: oui)."
@@ -672,7 +706,7 @@ msgstr ""
 "``--transcriptions`` — Включить черновик транскрипции каждого "
 "экспортируемого матча (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:398
+#: ../../source/cli_import_export.rst:414
 msgid ""
 "``--aliases`` — Inclure les alias de joueurs et d'événements que les "
 "matchs exportés écrivent, pour que la fusion de joueurs les suive "
@@ -682,19 +716,19 @@ msgstr ""
 "в выгружаемых матчах, чтобы объединение игроков следовало за ними (по "
 "умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:400
+#: ../../source/cli_import_export.rst:416
 msgid "``--collections`` — Inclure les collections (défaut: oui)."
 msgstr "``--collections`` — Включить коллекции (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:401
+#: ../../source/cli_import_export.rst:417
 msgid "``--tournaments`` — Inclure les tournois (défaut: oui)."
 msgstr "``--tournaments`` — Включить турниры (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:402
+#: ../../source/cli_import_export.rst:418
 msgid "``--decks`` — Inclure les paquets Anki (défaut: oui)."
 msgstr "``--decks`` — Включить колоды Anki (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:403
+#: ../../source/cli_import_export.rst:419
 msgid ""
 "``--lessons`` — Inclure les leçons, avec les collections et les positions"
 " que leurs étapes montrent (défaut: oui)."
@@ -702,7 +736,7 @@ msgstr ""
 "``--lessons`` — Включать уроки вместе с коллекциями и позициями, которые "
 "показывают их шаги (по умолчанию: да)."
 
-#: ../../source/cli_import_export.rst:405
+#: ../../source/cli_import_export.rst:421
 msgid ""
 "``--anki-history`` — Emporter l'historique de révision des paquets "
 "exportés : l'état de chaque carte et le journal de ses révisions (défaut:"
@@ -712,7 +746,7 @@ msgstr ""
 "колод: состояние каждой карточки и журнал её повторений (по умолчанию: "
 "да)."
 
-#: ../../source/cli_import_export.rst:407
+#: ../../source/cli_import_export.rst:423
 msgid ""
 "``--collection-ids`` — IDs de collections à exporter (séparés par des "
 "virgules, vide = toutes)."
@@ -720,7 +754,7 @@ msgstr ""
 "``--collection-ids`` — Идентификаторы коллекций для экспорта (через "
 "запятую, пусто = все)."
 
-#: ../../source/cli_import_export.rst:409
+#: ../../source/cli_import_export.rst:425
 msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
@@ -728,7 +762,7 @@ msgstr ""
 "``--match-ids`` — Идентификаторы матчей для экспорта (через запятую, "
 "пусто = все)."
 
-#: ../../source/cli_import_export.rst:410
+#: ../../source/cli_import_export.rst:426
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules, vide = tous)."
@@ -736,7 +770,7 @@ msgstr ""
 "``--tournament-ids`` — Идентификаторы турниров для экспорта (через "
 "запятую, пусто = все)."
 
-#: ../../source/cli_import_export.rst:412
+#: ../../source/cli_import_export.rst:428
 msgid ""
 "``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions "
 "(séparés par des virgules, vide = tous)."
@@ -744,13 +778,13 @@ msgstr ""
 "``--deck-ids`` — ID колод Anki, которые экспортируются вместе со своими "
 "позициями (через запятую, пусто = все)."
 
-#: ../../source/cli_import_export.rst:414
+#: ../../source/cli_import_export.rst:430
 msgid ""
 "``--lesson-ids`` — IDs de leçons à exporter (séparés par des virgules, "
 "vide = toutes)."
 msgstr "``--lesson-ids`` — ID уроков для экспорта (через запятую, пусто = все)."
 
-#: ../../source/cli_import_export.rst:417
+#: ../../source/cli_import_export.rst:433
 msgid ""
 "``--password`` — Enveloppe le résultat dans un conteneur chiffré "
 "(``.dbx``)."
@@ -758,7 +792,7 @@ msgstr ""
 "``--password`` — Оборачивает результат в зашифрованный контейнер "
 "(``.dbx``)."
 
-#: ../../source/cli_import_export.rst:418
+#: ../../source/cli_import_export.rst:434
 msgid ""
 "``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
 "fichier exporté (voir :ref:`diffusion_controlee`)."
@@ -766,7 +800,7 @@ msgstr ""
 "``--watermark`` — Записывает **подписанное** заявление о происхождении в "
 "экспортируемый файл (см. :ref:`diffusion_controlee`)."
 
-#: ../../source/cli_import_export.rst:420
+#: ../../source/cli_import_export.rst:436
 msgid ""
 "``--watermark-note`` — Texte libre associé au filigrane (conditions "
 "d'usage, contact) ; utilisé avec ``--watermark``."
@@ -774,7 +808,7 @@ msgstr ""
 "``--watermark-note`` — Произвольный текст при водяном знаке (условия "
 "использования, контакт); применяется вместе с ``--watermark``."
 
-#: ../../source/cli_import_export.rst:422
+#: ../../source/cli_import_export.rst:438
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document "
 "résumant l'export: chemin, taille en octets, nombres)."
@@ -782,7 +816,7 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` "
 "(документ с итогами экспорта: путь, размер в байтах, количества)."
 
-#: ../../source/cli_import_export.rst:424
+#: ../../source/cli_import_export.rst:440
 msgid ""
 "``--incremental`` — Avec ``--type database`` : n'exporte que ce qui est "
 "entré dans la bibliothèque depuis le dernier export incrémental vers le "
@@ -801,7 +835,7 @@ msgstr ""
 "существующий файл содержит предыдущую дельту, которую другой компьютер, "
 "возможно, ещё не объединил."
 
-#: ../../source/cli_import_export.rst:431
+#: ../../source/cli_import_export.rst:447
 msgid ""
 "``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, "
 "à la place du dossier de destination."
@@ -809,7 +843,7 @@ msgstr ""
 "``--sync-cursor`` — С ``--incremental``: имя читаемой и сдвигаемой "
 "отметки вместо папки назначения."
 
-#: ../../source/cli_import_export.rst:433
+#: ../../source/cli_import_export.rst:449
 msgid ""
 "``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille "
 "par famille, ce que l'export écrirait, sans écrire de fichier (``--file``"
@@ -824,7 +858,7 @@ msgstr ""
 "коллекции, которые ушли бы замороженными, и колоды «recherche», источник "
 "которых потерял бы часть. С другим типом опция отклоняется."
 
-#: ../../source/cli_import_export.rst:439
+#: ../../source/cli_import_export.rst:455
 msgid ""
 "``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des "
 "identifiants derrière un compte : ``positions``, ``comments`` (les "
@@ -843,7 +877,7 @@ msgstr ""
 "``transcriptions`` или ``filters``. ``--offset`` и ``--limit`` выбирают "
 "страницу (не более 1000 идентификаторов)."
 
-#: ../../source/cli_import_export.rst:445
+#: ../../source/cli_import_export.rst:461
 msgid ""
 "``--type database`` exporte toute la bibliothèque, comme l'export du "
 "serveur et comme la fenêtre d'export quand la liste affichée est la "
@@ -869,12 +903,12 @@ msgstr ""
 "породивший матч, экспортируется, только если экспортируются все матчи. "
 "``--type matches`` также уносит черновик каждого матча."
 
-#: ../../source/cli_import_export.rst:454
-#: ../../source/cli_import_export.rst:539
+#: ../../source/cli_import_export.rst:470
+#: ../../source/cli_import_export.rst:555
 msgid "**Exemples:**"
 msgstr "**Примеры:**"
 
-#: ../../source/cli_import_export.rst:477
+#: ../../source/cli_import_export.rst:493
 msgid ""
 "Un filigrane est signé avec l'identité d'émetteur locale (voir la "
 "commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
@@ -897,11 +931,11 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
 "mark-origin-and-nothing-else.md>`__."
 
-#: ../../source/cli_import_export.rst:489
+#: ../../source/cli_import_export.rst:505
 msgid "transfer — Copier d'une bibliothèque à une autre"
 msgstr "transfer — Копирование из одной библиотеки в другую"
 
-#: ../../source/cli_import_export.rst:491
+#: ../../source/cli_import_export.rst:507
 msgid ""
 "Copie une partie d'une bibliothèque dans une autre, sans fichier "
 "intermédiaire à manipuler. La sélection est celle de ``export --type "
@@ -920,7 +954,7 @@ msgstr ""
 "дублируется. Поэтому копирование из A в B, а затем из B в A не создаёт "
 "дубликатов."
 
-#: ../../source/cli_import_export.rst:506
+#: ../../source/cli_import_export.rst:522
 msgid ""
 "``--from`` — Bibliothèque source (obligatoire ; elle doit exister et être"
 " au schéma de cette version de blunderDB). Une bibliothèque plus ancienne"
@@ -933,7 +967,7 @@ msgstr ""
 "так как её обновление означало бы запись в неё: откройте её один раз в "
 "blunderDB. Более новая библиотека также отклоняется: обновите blunderDB."
 
-#: ../../source/cli_import_export.rst:511
+#: ../../source/cli_import_export.rst:527
 msgid ""
 "``--to`` — Bibliothèque de destination (obligatoire ; créée si elle "
 "n'existe pas). Elle ne peut pas être la source."
@@ -941,7 +975,7 @@ msgstr ""
 "``--to`` — Целевая библиотека (обязательно; создаётся, если не "
 "существует). Она не может совпадать с исходной."
 
-#: ../../source/cli_import_export.rst:513
+#: ../../source/cli_import_export.rst:529
 msgid ""
 "``--analysis``, ``--comments``, ``--played-moves``, ``--matches``, "
 "``--transcriptions``, ``--aliases``, ``--collections``, "
@@ -953,7 +987,7 @@ msgstr ""
 "``--tournaments``, ``--decks``, ``--lessons`` — Как у ``export``: опция "
 "со значением ``false`` исключает свою группу (по умолчанию: да для всех)."
 
-#: ../../source/cli_import_export.rst:517
+#: ../../source/cli_import_export.rst:533
 msgid ""
 "``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
 "ids``, ``--lesson-ids`` — Une liste d'IDs de la source restreint sa "
@@ -965,7 +999,7 @@ msgstr ""
 " этими элементами и включает её. ID, которого нет в источнике, является "
 "ошибкой, и ничего не копируется."
 
-#: ../../source/cli_import_export.rst:521
+#: ../../source/cli_import_export.rst:537
 msgid ""
 "``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la "
 "source et ce que la destination en a pris)."
@@ -973,7 +1007,7 @@ msgstr ""
 "``--format`` — ``text`` (по умолчанию) или ``json`` (что было прочитано "
 "из источника и что из него взяла целевая библиотека)."
 
-#: ../../source/cli_import_export.rst:524
+#: ../../source/cli_import_export.rst:540
 msgid ""
 "**Quelles positions partent.** Sans liste d'IDs, toutes les positions de "
 "la source partent, rangées ou non. Dès qu'une liste d'IDs est donnée, "
@@ -994,7 +1028,7 @@ msgstr ""
 "турнира (название, дата, место), но не другие матчи этого турнира; при "
 "``--tournaments=false`` он приходит без турнира."
 
-#: ../../source/cli_import_export.rst:533
+#: ../../source/cli_import_export.rst:549
 msgid ""
 "Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal "
 "d'import, ni métadonnée de la source ; la destination garde les siennes, "
@@ -1008,7 +1042,7 @@ msgstr ""
 "повторений колод Anki не копируются: колода приходит без истории, а уже "
 "имеющаяся колода с тем же именем сохраняет свою."
 
-#: ../../source/cli_import_export.rst:554
+#: ../../source/cli_import_export.rst:570
 msgid ""
 "Le serveur offre le même transfert entre deux tenants, tiré par le tenant"
 " qui reçoit (voir :ref:`mode_headless_transfert`)."
@@ -1016,11 +1050,11 @@ msgstr ""
 "Сервер предлагает тот же перенос между двумя тенантами, который забирает "
 "принимающий тенант (см. :ref:`mode_headless_transfert`)."
 
-#: ../../source/cli_import_export.rst:558
+#: ../../source/cli_import_export.rst:574
 msgid "identity — Identité d'émetteur"
 msgstr "identity — Идентичность издателя"
 
-#: ../../source/cli_import_export.rst:560
+#: ../../source/cli_import_export.rst:576
 msgid ""
 "Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
 "signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
@@ -1033,19 +1067,19 @@ msgstr ""
 "нанесении знака; настраивать нечего. Он принадлежит человеку, а не базе: "
 "всё, что вы помечаете, несёт один и тот же публичный отпечаток."
 
-#: ../../source/cli_import_export.rst:574
+#: ../../source/cli_import_export.rst:590
 msgid "``--name`` — Change le nom affiché de l'identité."
 msgstr "``--name`` — Меняет отображаемое имя идентичности."
 
-#: ../../source/cli_import_export.rst:575
+#: ../../source/cli_import_export.rst:591
 msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
 msgstr "``--export`` — Экспортирует идентичность в файл ``.bdbid``."
 
-#: ../../source/cli_import_export.rst:576
+#: ../../source/cli_import_export.rst:592
 msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
 msgstr "``--import`` — Импортирует идентичность из файла ``.bdbid``."
 
-#: ../../source/cli_import_export.rst:577
+#: ../../source/cli_import_export.rst:593
 msgid ""
 "``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
 "exporté/importé (l'identité locale, elle, est volontairement non "
@@ -1055,7 +1089,7 @@ msgstr ""
 "экспортируемый/импортируемый файл (сама локальная идентичность намеренно "
 "не защищена)."
 
-#: ../../source/cli_import_export.rst:579
+#: ../../source/cli_import_export.rst:595
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom, "
 "empreinte, chemin de stockage)."
@@ -1063,7 +1097,7 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` (имя, "
 "отпечаток, путь хранения)."
 
-#: ../../source/cli_import_export.rst:582
+#: ../../source/cli_import_export.rst:598
 msgid ""
 "Le fichier exporté permet à quiconque le détient de signer en votre nom —"
 " ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
@@ -1075,11 +1109,11 @@ msgstr ""
 "подпись-ярлык: уже помеченные файлы сохраняют имя, под которым были "
 "запечатаны, и по-прежнему проверяются."
 
-#: ../../source/cli_import_export.rst:588
+#: ../../source/cli_import_export.rst:604
 msgid "open — Ouvrir un fichier protégé"
 msgstr "open — Открыть защищённый файл"
 
-#: ../../source/cli_import_export.rst:590
+#: ../../source/cli_import_export.rst:606
 msgid ""
 "Transforme un fichier protégé par mot de passe (``.dbx``) en base "
 "ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
@@ -1088,15 +1122,15 @@ msgstr ""
 "Превращает файл, защищённый паролем (``.dbx``), в обычную базу. Пароль "
 "спрашивают один раз; дальше это обычный файл."
 
-#: ../../source/cli_import_export.rst:600
+#: ../../source/cli_import_export.rst:616
 msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
 msgstr "``--db`` — Файл ``.dbx``, который нужно открыть (обязательно)."
 
-#: ../../source/cli_import_export.rst:601
+#: ../../source/cli_import_export.rst:617
 msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
 msgstr "``--password`` — Пароль контейнера (обязательно)."
 
-#: ../../source/cli_import_export.rst:602
+#: ../../source/cli_import_export.rst:618
 msgid ""
 "``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
 "extension ``.db``)."
@@ -1104,7 +1138,7 @@ msgstr ""
 "``--file`` — Путь вывода для обычной базы (по умолчанию: то же имя, "
 "расширение ``.db``)."
 
-#: ../../source/cli_import_export.rst:605
+#: ../../source/cli_import_export.rst:621
 msgid ""
 "Ce que le mot de passe protège : le *transport* du fichier — la copie "
 "égarée dans un dossier de téléchargements, la pièce jointe envoyée par "

@@ -776,6 +776,8 @@ export namespace database {
 	    repaired: number;
 	    imported: number[];
 	    duplicates: number;
+	    positions: number;
+	    knownPositions: number;
 	    missing?: number[];
 	    failed?: string[];
 	
@@ -789,6 +791,8 @@ export namespace database {
 	        this.repaired = source["repaired"];
 	        this.imported = source["imported"];
 	        this.duplicates = source["duplicates"];
+	        this.positions = source["positions"];
+	        this.knownPositions = source["knownPositions"];
 	        this.missing = source["missing"];
 	        this.failed = source["failed"];
 	    }
@@ -6460,6 +6464,7 @@ export namespace printsheet {
 	    verso: boolean;
 	    comments: boolean;
 	    expanded: boolean;
+	    reimportCode: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new PositionsOptions(source);
@@ -6473,6 +6478,7 @@ export namespace printsheet {
 	        this.verso = source["verso"];
 	        this.comments = source["comments"];
 	        this.expanded = source["expanded"];
+	        this.reimportCode = source["reimportCode"];
 	    }
 	}
 

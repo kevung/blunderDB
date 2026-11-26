@@ -112,13 +112,39 @@ func fixtureMatch(t *testing.T) *MatchSheet {
 	return ms
 }
 
+// fixtureCodes codes the fixture's positions as a printed list does.
+func fixtureCodes(t *testing.T, l *PositionList) []TrancheCode {
+	t.Helper()
+	var ps []*domain.Position
+	for _, e := range l.Entries {
+		p, err := domain.DecodeArkID(e.ArkID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ps = append(ps, &p)
+	}
+	codes, err := trancheCodes(ps)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return codes
+}
+
 // TestPrintFixtures: the fixtures of the e2e suite are what the renderers
 // write today. Run with -update-fixtures after changing a renderer or the
 // style sheet.
 func TestPrintFixtures(t *testing.T) {
 	_, c := catalogue("fr")
 	list := func(n int, long map[int]int, o PositionsOptions) []byte {
-		return Document("fr", "fixture", []string{RenderPositions(fixtureList(t, n, long), o, c)}, "")
+		l := fixtureList(t, n, long)
+		if o.ReimportCode {
+			l.Codes = fixtureCodes(t, l)
+		}
+		doc, err := RenderPositions(l, o, c)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return Document("fr", "fixture", []string{doc}, "")
 	}
 	match, err := RenderMatch(fixtureMatch(t), DefaultMatchOptions(), c)
 	if err != nil {
@@ -129,6 +155,7 @@ func TestPrintFixtures(t *testing.T) {
 		"list-plain.html":      list(400, nil, PositionsOptions{}),
 		"list-long.html":       list(60, map[int]int{12: 9000}, PositionsOptions{Analysis: true, Comments: true}),
 		"list-verso-long.html": list(40, map[int]int{9: 16000}, PositionsOptions{Analysis: true, Verso: true, Comments: true}),
+		"list-codes.html":      list(330, nil, PositionsOptions{Analysis: true, ReimportCode: true}),
 		"match.html":           Document("fr", "fixture", []string{match}, ""),
 	}
 	for name, want := range fixtures {

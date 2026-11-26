@@ -67,6 +67,11 @@ type Progress struct {
 // Summary is the terminal result of an import.
 type Summary struct {
 	SavedPositions int `json:"savedPositions"`
+	// ListPositions counts the positions a printed list's reimport code
+	// brought that the library did not hold; ListPositionsKnown those it
+	// held already. Both are saved on their own, outside any match.
+	ListPositions      int `json:"listPositions,omitempty"`
+	ListPositionsKnown int `json:"listPositionsKnown,omitempty"`
 	// PositionsLeftOut counts the source positions a capped native .db
 	// import did not carry (Source.MaxPositions).
 	PositionsLeftOut int `json:"positionsLeftOut,omitempty"`

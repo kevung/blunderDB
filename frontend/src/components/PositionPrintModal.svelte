@@ -21,7 +21,8 @@
         { key: 'analysis', label: 'positionSheet.analysis', tip: 'positionSheet.analysisTip' },
         { key: 'verso', label: 'positionSheet.verso', tip: 'positionSheet.versoTip' },
         { key: 'comments', label: 'positionSheet.comments', tip: 'positionSheet.commentsTip' },
-        { key: 'expanded', label: 'positionSheet.expanded', tip: 'positionSheet.expandedTip' }
+        { key: 'expanded', label: 'positionSheet.expanded', tip: 'positionSheet.expandedTip' },
+        { key: 'reimportCode', label: 'positionSheet.reimportCode', tip: 'positionSheet.reimportCodeTip' }
     ];
 
     function close() {

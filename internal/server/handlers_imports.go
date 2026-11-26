@@ -645,6 +645,11 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			"deepened":           sum.Deepened,
 			"dropped_analyses":   sum.DroppedAnalyses,
 		}
+		if format == ingest.FormatArchive {
+			// A printed list's reimport codes bring positions, not matches.
+			done["list_positions"] = sum.ListPositions
+			done["list_positions_known"] = sum.ListPositionsKnown
+		}
 		if format == ingest.FormatNativeDB {
 			done["positions_left_out"] = sum.PositionsLeftOut
 			done["matches_left_out"] = sum.MatchesLeftOut
