@@ -9,6 +9,7 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
@@ -147,5 +148,62 @@ func TestAnalyzeFileImages(t *testing.T) {
 	}
 	if _, err := AnalyzeFile(dir, AnalyzeOptions{}); err == nil {
 		t.Errorf("a broken image must be refused")
+	}
+}
+
+// A real reading of a book without printed pips: fifteen checkers a side
+// with no doubt are complete, under the defaults; once the defaults are
+// confirmed they pass an import accepting complete entries, the diagram with
+// a cube drawn on the top side aside.
+func TestAnalyzeCompleteWithoutPips(t *testing.T) {
+	r, err := AnalyzeFile("testdata/sans-pips", AnalyzeOptions{Title: "Sans pips"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(r.Entries) != 8 {
+		t.Fatalf("%d entries, want 8", len(r.Entries))
+	}
+	var cube []int
+	for _, e := range r.Entries {
+		if !e.Complete || e.Checkers != ToVerify || !hasDoubt(e.Doubts, NoPipsDoubt) {
+			t.Errorf("rank %d not complete: %+v", e.Rank, e)
+		}
+		if e.Context == ContextToVerify {
+			cube = append(cube, e.Rank)
+		}
+	}
+	if !slices.Equal(cube, []int{2}) {
+		t.Errorf("context to verify on ranks %v, want the drawn cube's 2", cube)
+	}
+	if got := Unverified(r, true); len(got) != 8 {
+		t.Errorf("unconfirmed defaults: unverified %v, want every rank", got)
+	}
+	r.Document.Defaults.Confirmed = true
+	if got := Unverified(r, false); len(got) != 8 {
+		t.Errorf("complete entries not accepted: unverified %v, want every rank", got)
+	}
+	if got := Unverified(r, true); !slices.Equal(got, []int{2}) {
+		t.Errorf("complete entries accepted: unverified %v, want [2]", got)
+	}
+	if _, err := r.Encode(); err != nil {
+		t.Errorf("the relevé does not encode: %v", err)
+	}
+}
+
+// Pips printed and disagreeing are a doubt on the checkers: never complete.
+func TestDisagreeingPipsNeverComplete(t *testing.T) {
+	board := "-b----E-C---eE---c-e----B-"
+	for _, pips := range []capture.Doubt{
+		{Field: "pips", Reason: "pips read 167 (bottom) and 167 (top), printed 160 and 167"},
+		{Field: "pips", Reason: "printed pips read 167 and 167 in the text layer, 160 and 167 in the image: the two disagree"},
+	} {
+		e := structureEntry(structure.Diagram{Board: board, State: structure.ToVerify, Complete: true, Doubts: []capture.Doubt{pips}}, 1)
+		if e.Complete {
+			t.Errorf("%q: complete", pips.Reason)
+		}
+	}
+	e := structureEntry(structure.Diagram{Board: board, State: structure.ToVerify, Complete: true, Doubts: []capture.Doubt{NoPipsDoubt, AssumedDirectionDoubt}}, 1)
+	if !e.Complete {
+		t.Errorf("no pips printed: not complete: %+v", e)
 	}
 }

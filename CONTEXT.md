@@ -418,7 +418,9 @@ _Avoid_: assumption, preset, template
 
 **Complete reading** (interface: *15 + 15 sans doute*; code: `document.Entry.Complete`):
 A reading of fifteen checkers a side with no doubt that no cross-check confirmed — a diagram
-without printed pips. Exact on every measure so far, it is a state between to verify and
+without printed pips; its only doubts beside the context are the absent pips and, for a
+document no printed pips voted on, the assumed direction of play. Printed pips that disagree
+are a doubt on the checkers: such a reading is never complete. Exact on every measure so far, it is a state between to verify and
 sure: an import accepts complete entries whose context is certified as a whole, on request
 (`ImportOptions.AcceptComplete`), never by default. A position with checkers borne off is
 never complete.

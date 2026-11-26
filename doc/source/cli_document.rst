@@ -266,8 +266,12 @@ Un diagramme sans pips imprimés n'a pas de recoupement : ses pions restent
 ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils sont marqués
 ``"complete": true`` : sur toutes les mesures faites, ces lectures étaient
 exactes, mais rien ne les confirme diagramme par diagramme. C'est un état
-intermédiaire, distinct de ``sure``. Une position dont des pions sont sortis
-n'est jamais complète.
+intermédiaire, distinct de ``sure``. Une entrée complète ne porte, outre le
+contexte, que deux doutes : l'absence de pips imprimés, et le sens de jeu
+supposé quand aucun pip du document ne l'a confirmé. Des pips imprimés qui
+diffèrent des pips calculés sont un doute sur les pions : l'entrée n'est alors
+jamais complète. Une position dont des pions sont sortis ne l'est jamais non
+plus.
 
 ``import --accept-complete`` accepte en bloc les entrées complètes dont le
 contexte est certifié (lu, ou sous le contexte par défaut confirmé), sans les
@@ -276,9 +280,11 @@ marquer vérifiées ; ``check`` les compte :
 .. code-block:: text
 
    Complete:   84 with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)
+               84 of them with the direction of play assumed: check it on a few diagrams first
    Unverified: rank 3, 7, 12 (import refused without --force; rank 12 with --accept-complete)
 
-L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15
+Un sens de jeu mal supposé échange les joueurs de toutes ces positions : on le
+contrôle sur quelques diagrammes avant d'accepter en bloc. L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15
 checkers read with no doubt``). Une entrée complète dont le contexte n'est pas
 certifié reste refusée.
 

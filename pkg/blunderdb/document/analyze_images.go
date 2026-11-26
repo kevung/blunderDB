@@ -163,9 +163,10 @@ func structureEntry(d structure.Diagram, rank int) Entry {
 			e.Doubts = append(e.Doubts, doubtPosition(errors.New("the reading is not a position")))
 		}
 	}
-	// Fifteen checkers a side with no doubt about them, not confirmed by the
-	// pips: the intermediate state an import accepts as a whole on request.
-	e.Complete = d.Complete && e.Checkers == ToVerify && !checkerDoubt(e.Doubts)
+	// Fifteen checkers a side with no doubt about them and no pip count
+	// printed to confirm them: the intermediate state an import accepts as a
+	// whole on request. Pips printed and disagreeing never make it.
+	e.Complete = d.Complete && e.Checkers == ToVerify && e.Position != "" && hasDoubt(e.Doubts, NoPipsDoubt) && onlyCompleteLeads(e.Doubts)
 	if pw, ph := d.PageSize[0], d.PageSize[1]; pw > 0 && ph > 0 {
 		rc := d.Rect.Intersect(image.Rect(0, 0, pw, ph))
 		if !rc.Empty() {
@@ -294,8 +295,24 @@ func imageDPI(data []byte) float64 {
 // them.
 var ContextDoubt = capture.Doubt{Field: "context", Reason: "context not read: cube, dice, player on roll, score"}
 
+// NoPipsDoubt and AssumedDirectionDoubt are the only doubts beside the
+// context a complete entry carries: no pip count printed to cross-check the
+// checkers, and the document's direction of play taken from the fewer pips
+// for want of one. A pip count printed and disagreeing is a doubt on the
+// checkers that no complete entry has.
+var (
+	NoPipsDoubt           = capture.Doubt{Field: "pips", Reason: structure.NoPipsReason}
+	AssumedDirectionDoubt = capture.Doubt{Field: "orientation", Reason: structure.AssumedDirectionReason}
+)
+
+// completeLead reports a doubt a complete entry may carry beside its
+// context.
+func completeLead(d capture.Doubt) bool {
+	return contextField[d.Field] || d == NoPipsDoubt || d == AssumedDirectionDoubt
+}
+
 // contextField names the doubts about what surrounds the checkers.
-var contextField = map[string]bool{"context": true, "cube": true, "dice": true, "score": true}
+var contextField = map[string]bool{"context": true, "cube": true, "dice": true, "score": true, "turn": true}
 
 // structureDefaults is a fresh, unconfirmed copy of StructureDefaults.
 func structureDefaults() *Defaults {
@@ -303,14 +320,13 @@ func structureDefaults() *Defaults {
 	return &d
 }
 
-// checkerDoubt reports a doubt about something else than the context.
-func checkerDoubt(ds []capture.Doubt) bool {
+func onlyCompleteLeads(ds []capture.Doubt) bool {
 	for _, d := range ds {
-		if !contextField[d.Field] {
-			return true
+		if !completeLead(d) {
+			return false
 		}
 	}
-	return false
+	return true
 }
 
 func doubtPosition(err error) capture.Doubt {

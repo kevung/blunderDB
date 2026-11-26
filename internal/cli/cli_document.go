@@ -186,6 +186,9 @@ func printCertainties(out io.Writer, s document.Summary) {
 	}
 	if s.Complete > 0 {
 		fmt.Fprintf(out, "Complete:   %d with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)\n", s.Complete)
+		if s.CompleteDirectionAssumed > 0 {
+			fmt.Fprintf(out, "            %d of them with the direction of play assumed: check it on a few diagrams first\n", s.CompleteDirectionAssumed)
+		}
 	}
 }
 

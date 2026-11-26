@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 11:29+0100\n"
+"POT-Creation-Date: 2026-11-26 11:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -541,17 +541,25 @@ msgid ""
 "restent ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils "
 "sont marqués ``\"complete\": true`` : sur toutes les mesures faites, ces "
 "lectures étaient exactes, mais rien ne les confirme diagramme par "
-"diagramme. C'est un état intermédiaire, distinct de ``sure``. Une "
-"position dont des pions sont sortis n'est jamais complète."
+"diagramme. C'est un état intermédiaire, distinct de ``sure``. Une entrée "
+"complète ne porte, outre le contexte, que deux doutes : l'absence de pips"
+" imprimés, et le sens de jeu supposé quand aucun pip du document ne l'a "
+"confirmé. Des pips imprimés qui diffèrent des pips calculés sont un doute"
+" sur les pions : l'entrée n'est alors jamais complète. Une position dont "
+"des pions sont sortis ne l'est jamais non plus."
 msgstr ""
 "Un diagrama sin pips impresos no tiene comprobación cruzada: sus fichas "
 "quedan ``to-verify``. Leídas a quince fichas por bando sin ninguna duda, "
 "se marcan con ``\"complete\": true``: en todas las mediciones hechas, "
 "estas lecturas eran exactas, pero nada las confirma diagrama por "
-"diagrama. Es un estado intermedio, distinto de ``sure``. Una posición de "
-"la que se han sacado fichas nunca es completa."
+"diagrama. Es un estado intermedio, distinto de ``sure``. Una entrada "
+"completa solo lleva, además del contexto, dos dudas: la ausencia de pips "
+"impresos y el sentido de juego supuesto cuando ningún pip del documento "
+"lo ha confirmado. Unos pips impresos que difieren de los pips calculados "
+"son una duda sobre las fichas: la entrada nunca es entonces completa. Una"
+" posición de la que se han sacado fichas tampoco es nunca completa."
 
-#: ../../source/cli_document.rst:272
+#: ../../source/cli_document.rst:276
 msgid ""
 "``import --accept-complete`` accepte en bloc les entrées complètes dont "
 "le contexte est certifié (lu, ou sous le contexte par défaut confirmé), "
@@ -561,17 +569,21 @@ msgstr ""
 " contexto está certificado (leído, o bajo el contexto por defecto "
 "confirmado), sin marcarlas como verificadas; ``check`` las cuenta:"
 
-#: ../../source/cli_document.rst:281
+#: ../../source/cli_document.rst:286
 msgid ""
-"L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
-" checkers read with no doubt``). Une entrée complète dont le contexte "
+"Un sens de jeu mal supposé échange les joueurs de toutes ces positions : "
+"on le contrôle sur quelques diagrammes avant d'accepter en bloc. L'import"
+" dit combien il en a acceptées (``Complete: 84 entries of 15 + 15 "
+"checkers read with no doubt``). Une entrée complète dont le contexte "
 "n'est pas certifié reste refusée."
 msgstr ""
-"La importación dice cuántas ha aceptado (``Complete: 84 entries of 15 + "
-"15 checkers read with no doubt``). Una entrada completa cuyo contexto no "
-"está certificado sigue rechazándose."
+"Un sentido de juego mal supuesto intercambia los jugadores de todas estas"
+" posiciones: se comprueba en algunos diagramas antes de aceptar en "
+"bloque. La importación dice cuántas ha aceptado (``Complete: 84 entries "
+"of 15 + 15 checkers read with no doubt``). Una entrada completa cuyo "
+"contexto no está certificado sigue rechazándose."
 
-#: ../../source/cli_document.rst:285
+#: ../../source/cli_document.rst:291
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
@@ -605,7 +617,7 @@ msgstr ""
 "pips leídos sigue ``to-verify`` (``no printed pip count was found next to"
 " the diagram``)."
 
-#: ../../source/cli_document.rst:299
+#: ../../source/cli_document.rst:305
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
@@ -619,7 +631,7 @@ msgstr ""
 "documento y una treintena de diagramas leídos con quince fichas por bando"
 " para aprender ese lugar."
 
-#: ../../source/cli_document.rst:304
+#: ../../source/cli_document.rst:310
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -637,7 +649,7 @@ msgstr ""
 "sacadas contadas por diferencia, un cubo dibujado fuera del centro, dados"
 " dibujados."
 
-#: ../../source/cli_document.rst:311
+#: ../../source/cli_document.rst:317
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
@@ -649,11 +661,11 @@ msgstr ""
 "libre), el jugador al turno (el de abajo), el tablero de salida (un bando"
 " dibujado con menos de quince fichas tiene las demás sacadas)."
 
-#: ../../source/cli_document.rst:317
+#: ../../source/cli_document.rst:323
 msgid "Pourquoi l'import refuse"
 msgstr "Por qué la importación rechaza"
 
-#: ../../source/cli_document.rst:319
+#: ../../source/cli_document.rst:325
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -665,7 +677,7 @@ msgstr ""
 "por tanto **todo** el relevé, antes de escribir nada, nombra los rangos y"
 " dice qué hacer:"
 
-#: ../../source/cli_document.rst:327
+#: ../../source/cli_document.rst:333
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -673,7 +685,7 @@ msgstr ""
 "Cuando hay entradas bajo un contexto por defecto sin confirmar, o "
 "completas sin ``--accept-complete``, el mensaje también lo dice:"
 
-#: ../../source/cli_document.rst:334
+#: ../../source/cli_document.rst:340
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -686,11 +698,11 @@ msgstr ""
 "``--force``, una entrada sin posición se rechaza: hay que rellenarla o "
 "retirarla."
 
-#: ../../source/cli_document.rst:340
+#: ../../source/cli_document.rst:346
 msgid "Ce qui entre en base"
 msgstr "Qué entra en la base"
 
-#: ../../source/cli_document.rst:342
+#: ../../source/cli_document.rst:348
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -704,7 +716,7 @@ msgstr ""
 "su identidad: una posición que ya tiene no se duplica (``new in the "
 "library`` cuenta las que le faltaban)."
 
-#: ../../source/cli_document.rst:348
+#: ../../source/cli_document.rst:354
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -718,7 +730,7 @@ msgstr ""
 "descripción si la tiene; una colección dinámica (definida por una "
 "consulta) se rechaza."
 
-#: ../../source/cli_document.rst:352
+#: ../../source/cli_document.rst:358
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -726,7 +738,7 @@ msgstr ""
 "Cada posición lleva un **comentario** que da su referencia, tras el "
 "título del documento: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:355
+#: ../../source/cli_document.rst:361
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -736,11 +748,11 @@ msgstr ""
 "importación interrumpida o rechazada no escribe nada: es una sola "
 "transacción."
 
-#: ../../source/cli_document.rst:359
+#: ../../source/cli_document.rst:365
 msgid "Une position répétée"
 msgstr "Una posición repetida"
 
-#: ../../source/cli_document.rst:361
+#: ../../source/cli_document.rst:367
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -752,11 +764,11 @@ msgstr ""
 "referencia: ``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` cuenta "
 "estas repeticiones."
 
-#: ../../source/cli_document.rst:367
+#: ../../source/cli_document.rst:373
 msgid "Réimporter"
 msgstr "Reimportar"
 
-#: ../../source/cli_document.rst:369
+#: ../../source/cli_document.rst:375
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -768,11 +780,11 @@ msgstr ""
 "referencia se reescribe solo si sus referencias han cambiado, nunca se "
 "duplica. Se puede, pues, retomar una importación tras corregir el relevé."
 
-#: ../../source/cli_document.rst:375
+#: ../../source/cli_document.rst:381
 msgid "Le démon"
 msgstr "El demonio"
 
-#: ../../source/cli_document.rst:377
+#: ../../source/cli_document.rst:383
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

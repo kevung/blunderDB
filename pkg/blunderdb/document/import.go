@@ -77,7 +77,7 @@ func refusalHint(r *Releve, ranks []int, acceptComplete bool) string {
 		if e.Context == ContextDefault && !r.ContextCertified(e) {
 			defaults = true
 		}
-		if !acceptComplete && e.Complete {
+		if !acceptComplete && e.Complete && r.ContextCertified(e) {
 			complete = true
 		}
 		if !r.ContextCertified(e) {

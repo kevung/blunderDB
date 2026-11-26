@@ -170,6 +170,47 @@ func TestCLI_DocumentDefaultsAndComplete(t *testing.T) {
 	}
 }
 
+// From the page images of a book without printed pips to the database:
+// analyze writes complete entries under unconfirmed defaults; once the
+// person confirms them and verifies the diagram whose cube is drawn,
+// --accept-complete imports the rest as a whole, and only with it.
+func TestCLI_DocumentCompleteEndToEnd(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	path := filepath.Join(t.TempDir(), "releve.json")
+	out := captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "analyze", "pkg/blunderdb/document/testdata/sans-pips", "-o", path, "--title", "Sans pips"}); err != nil {
+			t.Errorf("analyze: %v", err)
+		}
+	})
+	if !strings.Contains(out, "default 7, to verify 1") {
+		t.Errorf("analyze:\n%s", out)
+	}
+	r, err := document.Decode(mustRead(t, path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Document.Defaults.Confirmed = true
+	r.Entries[1].Verified = true
+	data, err := r.Encode()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, data, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "accept complete") {
+		t.Errorf("import without --accept-complete: %v", err)
+	}
+	out = captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path}); err != nil {
+			t.Errorf("import with --accept-complete: %v", err)
+		}
+	})
+	if !strings.Contains(out, "Complete: 7 entries") || strings.Contains(out, "Forced") {
+		t.Errorf("import with --accept-complete:\n%s", out)
+	}
+}
+
 func mustRead(t *testing.T, path string) []byte {
 	t.Helper()
 	data, err := os.ReadFile(path)

@@ -221,6 +221,18 @@ func TestContextRule(t *testing.T) {
 	if s.Sure != 2 || s.Complete != 1 || s.CheckersConfirmed != 1 || s.ContextDefault != 3 || s.ContextToVerify != 2 || s.ContextRead != 1 {
 		t.Errorf("summary %+v", s)
 	}
+	// The hint never offers complete entries whose context is not certified.
+	r.Document.Defaults.Confirmed = false
+	if h := refusalHint(r, []int{3, 4}, false); strings.Contains(h, "accept complete") || !strings.Contains(h, "confirm the document's defaults") {
+		t.Errorf("unconfirmed defaults: hint %q", h)
+	}
+	if h := refusalHint(r, []int{4}, false); strings.Contains(h, "accept complete") {
+		t.Errorf("context to verify: hint %q", h)
+	}
+	r.Document.Defaults.Confirmed = true
+	if h := refusalHint(r, []int{3}, false); !strings.Contains(h, "accept complete") {
+		t.Errorf("confirmed defaults: hint %q", h)
+	}
 	// Under the defaults, the position carries them.
 	r.Entries[0].Position = "XGID=-b----E-C---eE---c-e----B-:1:1:1:00:0:0:0:0:10"
 	if err := r.Validate(); !errors.Is(err, ErrInvalid) {

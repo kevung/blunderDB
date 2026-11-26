@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 11:29+0100\n"
+"POT-Creation-Date: 2026-11-26 11:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -472,15 +472,20 @@ msgid ""
 "restent ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils "
 "sont marqués ``\"complete\": true`` : sur toutes les mesures faites, ces "
 "lectures étaient exactes, mais rien ne les confirme diagramme par "
-"diagramme. C'est un état intermédiaire, distinct de ``sure``. Une "
-"position dont des pions sont sortis n'est jamais complète."
+"diagramme. C'est un état intermédiaire, distinct de ``sure``. Une entrée "
+"complète ne porte, outre le contexte, que deux doutes : l'absence de pips"
+" imprimés, et le sens de jeu supposé quand aucun pip du document ne l'a "
+"confirmé. Des pips imprimés qui diffèrent des pips calculés sont un doute"
+" sur les pions : l'entrée n'est alors jamais complète. Une position dont "
+"des pions sont sortis ne l'est jamais non plus."
 msgstr ""
 "ピップ数が印刷されていない図には突き合わせがなく、駒は\\ ``to-verify``\\ のままです。各サイド 15 "
 "個の駒が疑いなく読み取られた場合は、\\ ``\"complete\": true``\\ "
 "と印を付けます。これまでのすべての測定で、これらの読み取りは正確でしたが、図ごとに裏付けるものはありません。これは\\ ``sure``\\ "
-"とは別の中間状態です。駒がベアオフされた局面は、決して完全にはなりません。"
+"とは別の中間状態です。完全なエントリが、コンテキストのほかに持つ疑いは 2 "
+"つだけです。ピップ数が印刷されていないこと、そして、ドキュメントのどのピップ数も確認していないときに仮定された進行方向です。印刷されたピップ数が計算したピップ数と異なる場合は駒への疑いとなり、そのエントリは決して完全になりません。駒がベアオフされた局面も、決して完全になりません。"
 
-#: ../../source/cli_document.rst:272
+#: ../../source/cli_document.rst:276
 msgid ""
 "``import --accept-complete`` accepte en bloc les entrées complètes dont "
 "le contexte est certifié (lu, ou sous le contexte par défaut confirmé), "
@@ -490,16 +495,19 @@ msgstr ""
 "は、コンテキストが保証された(読み取り済み、または確認済みのデフォルトコンテキストの下にある)完全なエントリを、検証済みの印を付けずに一括して受け入れます。\\"
 " ``check``\\ はそれらを数えます。"
 
-#: ../../source/cli_document.rst:281
+#: ../../source/cli_document.rst:286
 msgid ""
-"L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
-" checkers read with no doubt``). Une entrée complète dont le contexte "
+"Un sens de jeu mal supposé échange les joueurs de toutes ces positions : "
+"on le contrôle sur quelques diagrammes avant d'accepter en bloc. L'import"
+" dit combien il en a acceptées (``Complete: 84 entries of 15 + 15 "
+"checkers read with no doubt``). Une entrée complète dont le contexte "
 "n'est pas certifié reste refusée."
 msgstr ""
-"インポートは、受け入れた件数を表示します(\\ ``Complete: 84 entries of 15 + 15 checkers read "
-"with no doubt``\\ )。コンテキストが保証されていない完全なエントリは、引き続き拒否されます。"
+"進行方向の仮定が誤っていると、これらすべての局面でプレイヤーが入れ替わります。一括して受け入れる前に、いくつかの図で確認してください。インポートは、受け入れた件数を表示します(\\"
+" ``Complete: 84 entries of 15 + 15 checkers read with no doubt``\\ "
+")。コンテキストが保証されていない完全なエントリは、引き続き拒否されます。"
 
-#: ../../source/cli_document.rst:285
+#: ../../source/cli_document.rst:291
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
@@ -525,7 +533,7 @@ msgstr ""
 " two disagree``)。ピップ数が読み取れなかったエントリは\\ ``to-verify``\\ のままです(``no printed "
 "pip count was found next to the diagram``)。"
 
-#: ../../source/cli_document.rst:299
+#: ../../source/cli_document.rst:305
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
@@ -537,7 +545,7 @@ msgstr ""
 "ピクセル以上あること、ピップ数が文書全体で同じ位置に印刷されていること、そしてその位置を学習するために 1 サイドあたり 15 "
 "個で読み取られた図が 30 個ほどあることを前提とします。"
 
-#: ../../source/cli_document.rst:304
+#: ../../source/cli_document.rst:310
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -548,7 +556,7 @@ msgid ""
 "dessinés."
 msgstr "疑いは、まだ確認すべき点を示します。数字が付いた駒の山、どちらのクラスでもない円盤(色あせた、または汚れた駒)、上から下まで埋まった列、長さで数えた暗い色の山、半分のボード(ポイントのない列)、仮定した進行方向(駒はピップ数の少ない側へ進む)、差から数えたベアオフ済みの駒、中央以外に描かれたキューブ、描かれたダイスです。"
 
-#: ../../source/cli_document.rst:311
+#: ../../source/cli_document.rst:317
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
@@ -559,11 +567,11 @@ msgstr ""
 "キューブの値と所有者(デフォルトコンテキストでは中央とされます)、サイコロ(なし)、スコア(フリーゲーム)、手番のプレイヤー(下側)、ベアオフの盤面(駒が"
 " 15 個未満で描かれたサイドは、残りがベアオフ済みとされます)。"
 
-#: ../../source/cli_document.rst:317
+#: ../../source/cli_document.rst:323
 msgid "Pourquoi l'import refuse"
 msgstr "インポートが拒否する理由"
 
-#: ../../source/cli_document.rst:319
+#: ../../source/cli_document.rst:325
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -574,7 +582,7 @@ msgstr ""
 "でも検証済みでもないエントリは信頼できず、コレクションに入ったものはエクスポート時に共有されます。そのためインポートは、何も書き込む前に "
 "relevé\\ **全体**\\ を拒否し、ランクを示して、対処を伝えます。"
 
-#: ../../source/cli_document.rst:327
+#: ../../source/cli_document.rst:333
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -582,7 +590,7 @@ msgstr ""
 "未確認のデフォルトコンテキストの下にあるエントリや、\\ ``--accept-complete``\\ "
 "なしの完全なエントリがある場合は、メッセージがそれも伝えます。"
 
-#: ../../source/cli_document.rst:334
+#: ../../source/cli_document.rst:340
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -594,11 +602,11 @@ msgstr ""
 " nor verified``)。\\ ``--force`` \\ "
 "を付けても、局面のないエントリは拒否されます。記入するか削除する必要があります。"
 
-#: ../../source/cli_document.rst:340
+#: ../../source/cli_document.rst:346
 msgid "Ce qui entre en base"
 msgstr "データベースに入るもの"
 
-#: ../../source/cli_document.rst:342
+#: ../../source/cli_document.rst:348
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -610,7 +618,7 @@ msgstr ""
 "の名前)のコレクションに入ります。各局面は単独で持ち込まれた局面として入り、ライブラリはその同一性で局面を認識します。すでに持っている局面は重複しません(``new"
 " in the library`` \\ は、足りなかった局面の数です)。"
 
-#: ../../source/cli_document.rst:348
+#: ../../source/cli_document.rst:354
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -621,7 +629,7 @@ msgstr ""
 "コレクションの\\ **説明**\\ には、ドキュメントのタイトル、著者、版、アドレスが 1 行に 1 "
 "つずつ入ります。同名の既存コレクションは足りない局面を受け取り、説明があればそれを保持します。ダイナミックコレクション(クエリで定義されたもの)は拒否されます。"
 
-#: ../../source/cli_document.rst:352
+#: ../../source/cli_document.rst:358
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -629,18 +637,18 @@ msgstr ""
 "各局面には、ドキュメントのタイトルに続けて参照を示す\\ **コメント**\\ が付きます。\\ ``Mon livre — p. 146, "
 "Problem 191``"
 
-#: ../../source/cli_document.rst:355
+#: ../../source/cli_document.rst:361
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
 "transaction."
 msgstr "それ以外のものは決して入りません。画像も、矩形も、著者のテキストも入りません。中断または拒否されたインポートは何も書き込みません。インポートは単一のトランザクションです。"
 
-#: ../../source/cli_document.rst:359
+#: ../../source/cli_document.rst:365
 msgid "Une position répétée"
 msgstr "繰り返される局面"
 
-#: ../../source/cli_document.rst:361
+#: ../../source/cli_document.rst:367
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -650,11 +658,11 @@ msgstr ""
 "ドキュメントが同じ局面を 2 回示す場合、その局面は最初の出現位置でコレクションに 1 回だけ入ります。そのコメントはすべての参照を挙げます。\\"
 " ``Mon livre — p. 2, Problem 1; p. 4``\\ 。\\ ``repeated`` \\ はこの繰り返しの数です。"
 
-#: ../../source/cli_document.rst:367
+#: ../../source/cli_document.rst:373
 msgid "Réimporter"
 msgstr "再インポート"
 
-#: ../../source/cli_document.rst:369
+#: ../../source/cli_document.rst:375
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -665,11 +673,11 @@ msgstr ""
 "collection: 0``)、参照コメントは参照が変わった場合にのみ書き直され、二重にはなりません。したがって、relevé "
 "を修正した後でインポートをやり直せます。"
 
-#: ../../source/cli_document.rst:375
+#: ../../source/cli_document.rst:381
 msgid "Le démon"
 msgstr "デーモン"
 
-#: ../../source/cli_document.rst:377
+#: ../../source/cli_document.rst:383
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

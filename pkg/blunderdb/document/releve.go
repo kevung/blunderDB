@@ -462,16 +462,18 @@ func (r *Releve) validateCertainties(e Entry) error {
 	}
 	for _, d := range e.Doubts {
 		switch {
-		case !contextField[d.Field] && (e.Checkers == Sure || e.Complete):
-			return fmt.Errorf("a doubt on %q: checkers sure or complete have none", d.Field)
+		case !contextField[d.Field] && e.Checkers == Sure:
+			return fmt.Errorf("a doubt on %q: checkers sure have none", d.Field)
+		case e.Complete && !completeLead(d):
+			return fmt.Errorf("a doubt on %q (%s): a complete entry has none but an absent pip count and an assumed direction", d.Field, d.Reason)
 		case contextField[d.Field] && e.Context == ContextRead:
 			return fmt.Errorf("a doubt on %q: a context read has none", d.Field)
 		case contextField[d.Field] && d != ContextDoubt && e.Context == ContextDefault:
 			return fmt.Errorf("a doubt on %q: an entry under the defaults has a cube and dice as they say", d.Field)
 		}
 	}
-	if e.Complete && e.Checkers == Uncertain {
-		return fmt.Errorf("uncertain checkers are not complete")
+	if e.Complete && e.Checkers != ToVerify {
+		return fmt.Errorf("checkers %s are not complete: complete is a state of checkers to verify", e.Checkers)
 	}
 	if e.Context == ContextDefault && e.Position != "" {
 		if r.Document.Defaults == nil {
