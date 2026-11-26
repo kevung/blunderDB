@@ -47,7 +47,7 @@ vi.mock('../services/databaseService.js', () => ({
     warningMessageStore: { subscribe: vi.fn(), set: vi.fn(), update: vi.fn() }
 }));
 vi.mock('../services/sessionService.js', () => ({ saveSessionState: vi.fn() }));
-vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(() => Promise.resolve(true)), confirmModalStore: { subscribe: (run) => (run(null), () => {}) } }));
+vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(() => Promise.resolve(true)), confirmModalStore: { subscribe: (/** @type {any} */ run) => (run(null), () => {}) } }));
 
 import SearchPanel from '../components/SearchPanel.svelte';
 import { processCommand, initCommandProcessor } from '../commandProcessor.js';
@@ -71,20 +71,20 @@ function drawnBoard() {
 
 /** @type {Promise<unknown> | undefined} */
 let pending;
-function trackedLoad(opts) {
+function trackedLoad(/** @type {any} */ opts) {
     pending = loadPositionsByFilters(opts);
     return pending;
 }
 
 // Ce que le backend reçoit pour une commande tapée dans la barre.
-async function typed(command, board) {
+async function typed(/** @type {string} */ command, /** @type {any} */ board) {
     positionStore.set(board);
     pending = undefined;
     initCommandProcessor({ onLoadPositionsByFilters: trackedLoad });
     processCommand(command);
     expect(pending, `${command} never reached loadPositionsByFilters`).toBeDefined();
     await pending;
-    const calls = bindings.RankPositionIDsByFilters.mock.calls;
+    const calls = /** @type {any[][]} */ (bindings.RankPositionIDsByFilters.mock.calls);
     expect(calls, `${command} typed was not ranked`).toHaveLength(1);
     const sent = calls[0];
     vi.clearAllMocks();
@@ -92,7 +92,7 @@ async function typed(command, board) {
     return sent;
 }
 
-async function mountOn(subTab) {
+async function mountOn(/** @type {'history' | 'saved'} */ subTab) {
     pending = undefined;
     const utils = render(SearchPanel, { props: { onLoadPositionsByFilters: trackedLoad, onAddToFilterLibrary: vi.fn() } });
     await tick();
@@ -104,8 +104,8 @@ async function mountOn(subTab) {
 
 // Rejoue une entrée d'historique ; l'écran porte un AUTRE plateau, pour
 // prouver que c'est celui de l'entrée qui voyage.
-async function replayHistory(command, board) {
-    const entry = { timestamp: 1700000000000, command, position: board ? JSON.stringify(board) : null, excludePosition: null };
+async function replayHistory(/** @type {string} */ command, /** @type {any} */ board) {
+    const entry = /** @type {any} */ ({ timestamp: 1700000000000, command, position: board ? JSON.stringify(board) : null, excludePosition: null });
     searchHistoryStore.set([entry]);
     bindings.LoadSearchHistory.mockResolvedValue([entry]);
     positionStore.set(emptyPosition());
@@ -117,11 +117,11 @@ async function replayHistory(command, board) {
     if (pending) await pending;
 }
 
-async function replaySaved(command, board) {
-    const filter = { id: 1, name: 'voisines', command };
+async function replaySaved(/** @type {string} */ command, /** @type {any} */ board) {
+    const filter = /** @type {any} */ ({ id: 1, name: 'voisines', command });
     filterLibraryStore.set([filter]);
     bindings.LoadFilters.mockResolvedValue([filter]);
-    bindings.LoadEditPosition.mockResolvedValue(board ? JSON.stringify(board) : null);
+    /** @type {any} */ (bindings.LoadEditPosition).mockResolvedValue(board ? JSON.stringify(board) : null);
     positionStore.set(emptyPosition());
     const { container } = await mountOn('saved');
     const item = container.querySelector('.saved-item');
@@ -135,7 +135,7 @@ async function replaySaved(command, board) {
 function ranked() {
     expect(bindings.LoadPositionIDsByFilters, 'the replay ran an unranked search').not.toHaveBeenCalled();
     expect(bindings.RankPositionIDsByFilters).toHaveBeenCalledTimes(1);
-    return bindings.RankPositionIDsByFilters.mock.calls[0];
+    return /** @type {any[]} */ (/** @type {any} */ (bindings.RankPositionIDsByFilters).mock.calls[0]);
 }
 
 beforeEach(() => {
@@ -206,7 +206,7 @@ describe('le rejeu porte le classement like (#404)', () => {
 });
 
 describe('une forme de like refusée arrive refusée, jamais lancée sans elle', () => {
-    function refusedWith(token) {
+    function refusedWith(/** @type {string} */ token) {
         expect(bindings.RankPositionIDsByFilters).not.toHaveBeenCalled();
         expect(bindings.LoadPositionIDsByFilters).not.toHaveBeenCalled();
         expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('similar.widenedRefused', { token }));

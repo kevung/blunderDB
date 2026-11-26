@@ -27,7 +27,7 @@ describe('positionSheetService', () => {
 
     it('prints a collection through the engine, which resolves it', async () => {
         await svc.openCollectionPrint({ id: 3, name: 'Révisions' });
-        const req = get(svc.positionPrintRequest);
+        const req = /** @type {any} */ (get(svc.positionPrintRequest));
         expect(req).toMatchObject({ source: { collection: 3 }, title: 'Révisions', count: 7 });
         await svc.printPositionSheet(req.source, { ...svc.DEFAULT_POSITION_SHEET_OPTIONS, title: req.title });
         expect(PositionSheetHTML).toHaveBeenCalledWith({ collection: 3 }, expect.objectContaining({ analysis: true, verso: false, title: 'Révisions' }));

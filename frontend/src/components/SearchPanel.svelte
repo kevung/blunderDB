@@ -64,7 +64,7 @@
 
     // History state — mirrors of stores, always current
     let searchHistory = $derived($searchHistoryStore);
-    let selectedSearch = $state(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number } | null} */ (null));
+    let selectedSearch = $state(/** @type {{ command: string, position: string, excludePosition?: string, timestamp: number } | null} */ (null));
     let showSaveDialog = $state(false);
     let filterName = $state('');
 
@@ -309,7 +309,7 @@
     });
 
     // Back to 'include' editing, loading the entry's "Sauf" board (or an empty one).
-    function restoreExcludeStructure(/** @type {string} */ excludePositionJSON) {
+    function restoreExcludeStructure(/** @type {string | undefined} */ excludePositionJSON) {
         structureMode = 'include';
         searchStructureModeStore.set('include');
         includeBoardStash = null;
@@ -362,7 +362,7 @@
         await loadFilterLibrary();
     }
 
-    function isInFilterLibrary(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
+    function isInFilterLibrary(/** @type {{ command: string, position: string, excludePosition?: string, timestamp: number }} */ search) {
         return savedFilters.some((f) => f.command === search.command);
     }
 
@@ -475,7 +475,7 @@
     }
 
     // History functions
-    function selectSearch(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
+    function selectSearch(/** @type {{ command: string, position: string, excludePosition?: string, timestamp: number }} */ search) {
         if (selectedSearch === search) {
             selectedSearch = null;
             if ($positionBeforeFilterLibraryStore) {
@@ -500,7 +500,7 @@
         }
     }
 
-    function executeSearch(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
+    function executeSearch(/** @type {{ command: string, position: string, excludePosition?: string, timestamp: number }} */ search) {
         if (search.position) {
             positionStore.set(JSON.parse(search.position));
         }
@@ -517,11 +517,11 @@
         }
     }
 
-    function handleDoubleClick(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
+    function handleDoubleClick(/** @type {{ command: string, position: string, excludePosition?: string, timestamp: number }} */ search) {
         executeSearch(search);
     }
 
-    function showAddToLibraryDialog(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search) {
+    function showAddToLibraryDialog(/** @type {{ command: string, position: string, excludePosition?: string, timestamp: number }} */ search) {
         selectedSearch = search;
         showSaveDialog = true;
         filterName = '';
@@ -545,7 +545,7 @@
         cancelSaveDialog();
     }
 
-    async function deleteSearch(/** @type {{ command: string, position: string, excludePosition: string, timestamp: number }} */ search, /** @type {Event} */ event) {
+    async function deleteSearch(/** @type {{ command: string, position: string, excludePosition?: string, timestamp: number }} */ search, /** @type {Event} */ event) {
         event.stopPropagation();
         try {
             await DeleteSearchHistoryEntry(search.timestamp);

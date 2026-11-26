@@ -37,7 +37,21 @@ import { jobsStore, coresStore, yieldedJobs, startJobsFeed, runningJobs, waiting
 import JobsModal from '../components/JobsModal.svelte';
 
 /** @param {Record<string, any>} [over] */
-const job = (over) => ({ id: 1, kind: 'rollout', label: 'Position 3', library: 1, priority: 'requested', state: 'running', done: 2, total: 8, position: 0, pausable: true, cancelable: true, ...over });
+const job = (over) => ({
+    id: 1,
+    yielded: false,
+    kind: 'rollout',
+    label: 'Position 3',
+    library: 1,
+    priority: 'requested',
+    state: 'running',
+    done: 2,
+    total: 8,
+    position: 0,
+    pausable: true,
+    cancelable: true,
+    ...over
+});
 
 const JOBS = [
     job({ id: 1 }),

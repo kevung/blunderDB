@@ -6,8 +6,8 @@ import { must } from './helpers/must.js';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
 
-function key(k, extra = {}) {
-    return { key: k, stopPropagation: vi.fn(), preventDefault: vi.fn(), ...extra };
+function key(/** @type {string} */ k, extra = {}) {
+    return /** @type {any} */ ({ key: k, stopPropagation: vi.fn(), preventDefault: vi.fn(), ...extra });
 }
 
 afterEach(() => {
@@ -65,7 +65,8 @@ describe('createInlineEdit', () => {
     });
 
     test('a second save while the first is still awaiting does not persist twice (Enter then blur)', async () => {
-        let resolve;
+        /** @type {(v?: any) => void} */
+        let resolve = () => {};
         const onSave = vi.fn(() => new Promise((r) => (resolve = r)));
         const edit = createInlineEdit({ onSave });
         edit.start(1, 'v');

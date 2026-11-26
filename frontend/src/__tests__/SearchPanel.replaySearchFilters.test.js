@@ -26,8 +26,8 @@ afterEach(() => {
     filterLibraryStore.set([]);
 });
 
-async function replayHistoryEntry(command) {
-    searchHistoryStore.set([{ timestamp: 1700000000000, command, position: null, excludePosition: null }]);
+async function replayHistoryEntry(/** @type {string} */ command) {
+    searchHistoryStore.set(/** @type {any} */ ([{ timestamp: 1700000000000, command, position: null, excludePosition: null }]));
     const onLoadPositionsByFilters = vi.fn();
     const utils = render(SearchPanel, { props: { onLoadPositionsByFilters, onAddToFilterLibrary: vi.fn() } });
     await tick();

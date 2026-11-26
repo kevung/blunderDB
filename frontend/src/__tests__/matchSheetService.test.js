@@ -9,10 +9,10 @@
 
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 
-const MatchSheetHTML = vi.fn(() => Promise.resolve('<!doctype html><html></html>'));
-const SaveBoardImageDialog = vi.fn(() => Promise.resolve('/tmp/feuille.html'));
-const SaveBoardSVG = vi.fn(() => Promise.resolve(undefined));
-const OpenLocalPage = vi.fn(() => Promise.resolve(undefined));
+const MatchSheetHTML = vi.fn((/** @type {any[]} */ ..._a) => Promise.resolve('<!doctype html><html></html>'));
+const SaveBoardImageDialog = vi.fn((/** @type {any[]} */ ..._a) => Promise.resolve('/tmp/feuille.html'));
+const SaveBoardSVG = vi.fn((/** @type {any[]} */ ..._a) => Promise.resolve(undefined));
+const OpenLocalPage = vi.fn((/** @type {any[]} */ ..._a) => Promise.resolve(undefined));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     MatchSheetHTML: (/** @type {any[]} */ ...args) => MatchSheetHTML(...args)

@@ -26,7 +26,7 @@ export const MAX_SHEET_MATCHES = 100;
  * Construit la feuille des matchs, propose de l'enregistrer, puis l'ouvre dans
  * le navigateur, d'où elle s'imprime.
  * @param {number[]} matchIds
- * @param {typeof DEFAULT_SHEET_OPTIONS} options
+ * @param {{ [K in keyof typeof DEFAULT_SHEET_OPTIONS]: boolean }} options
  * @returns {Promise<string|null>} le chemin écrit, ou null.
  */
 export async function printMatchSheet(matchIds, options) {

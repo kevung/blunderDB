@@ -27,7 +27,7 @@ afterEach(() => {
 function noop() {}
 
 async function openSaveDialog() {
-    searchHistoryStore.set([{ timestamp: 1700000000000, command: 't"blunder"', position: null, excludePosition: null }]);
+    searchHistoryStore.set(/** @type {any} */ ([{ timestamp: 1700000000000, command: 't"blunder"', position: null, excludePosition: null }]));
     const utils = render(SearchPanel, {
         props: { onLoadPositionsByFilters: noop, onAddToFilterLibrary: vi.fn().mockResolvedValue(undefined) }
     });

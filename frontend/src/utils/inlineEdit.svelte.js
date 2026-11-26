@@ -26,7 +26,7 @@ import { libraryMark } from '../stores/groupActivityStore.js';
  *   if focus has left that group — moving between the fields of the same row
  *   keeps editing. Without it, blur saves at once.
  */
-export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
+export function createInlineEdit({ onSave, onCancel, blurGroup }) {
     let editingId = $state(null);
     /** @type {T} */
     let draft = $state(/** @type {any} */ (''));
@@ -44,7 +44,7 @@ export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
     }
 
     function snapshot() {
-        return typeof draft === 'object' && draft !== null ? $state.snapshot(draft) : draft;
+        return /** @type {T} */ (typeof draft === 'object' && draft !== null ? $state.snapshot(draft) : draft);
     }
 
     async function save() {
@@ -59,7 +59,7 @@ export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
             // The edit may have been cancelled or restarted while awaiting.
             if (untrack(() => editingId) === id) {
                 editingId = null;
-                draft = '';
+                draft = /** @type {any} */ ('');
             }
             return true;
         } finally {
@@ -71,7 +71,7 @@ export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
         if (editingId === null) return;
         const id = editingId;
         editingId = null;
-        draft = '';
+        draft = /** @type {any} */ ('');
         onCancel?.(id);
     }
 
@@ -87,7 +87,7 @@ export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
         }
     }
 
-    function onBlur(event) {
+    function onBlur(/** @type {any} */ event) {
         if (!blurGroup) {
             save();
             return;
@@ -111,7 +111,7 @@ export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
             draft = value;
         },
         /** True while `id` is the row being edited. */
-        isEditing(id) {
+        isEditing(/** @type {any} */ id) {
             return editingId !== null && editingId === id;
         },
         start,

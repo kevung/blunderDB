@@ -8,7 +8,7 @@ import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 import { get } from 'svelte/store';
 
-const summary = (confirmed) => ({
+const summary = (/** @type {boolean} */ confirmed) => ({
     title: 'Livre',
     entries: 2,
     sure: 1,
@@ -46,11 +46,14 @@ import DocumentImportModal from '../components/DocumentImportModal.svelte';
 describe('the assistant, mounted', () => {
     beforeEach(() => {
         documentImportStore.set(initialDocumentImport());
-        db.SummarizeDocumentReleve.mockReset().mockResolvedValueOnce(summary(false)).mockResolvedValue(summary(true));
+        /** @type {any} */ (db.SummarizeDocumentReleve).mockReset().mockResolvedValueOnce(summary(false)).mockResolvedValue(summary(true));
         // Go's answers: nothing offered before the defaults are confirmed; then the fallback takes rank 2.
-        db.ReviewDocumentReleve.mockReset()
+        /** @type {any} */ (db.ReviewDocumentReleve)
+            .mockReset()
             .mockResolvedValueOnce(review())
-            .mockImplementation(async (_r, _complete, fallback) => review({ fallbackRanks: [2], refused: fallback ? [] : [2], items: [{ ...review().items[0], held: !fallback, fallback }] }));
+            .mockImplementation(async (/** @type {any} */ _r, /** @type {any} */ _complete, /** @type {any} */ fallback) =>
+                review({ fallbackRanks: [2], refused: fallback ? [] : [2], items: [{ ...review().items[0], held: !fallback, fallback }] })
+            );
     });
     afterEach(() => cleanup());
 
@@ -61,8 +64,8 @@ describe('the assistant, mounted', () => {
         await waitFor(() => expect(getByTestId('document-import-review')).toBeTruthy());
         expect(getByTestId('document-import-review').textContent).toContain('p. 3, Problem 4');
         expect(getByTestId('document-import-review').textContent).toContain('cube, dice');
-        expect(getByTestId('document-import-run').disabled).toBe(true);
-        expect(getByTestId('document-import-fallback').disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement} */ (getByTestId('document-import-run')).disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement} */ (getByTestId('document-import-fallback')).disabled).toBe(true);
         expect(get(importForegroundStore)).toBe(false);
 
         await fireEvent.click(getByTestId('document-import-confirm'));
@@ -70,9 +73,9 @@ describe('the assistant, mounted', () => {
         expect(db.ConfirmDocumentReleve).toHaveBeenCalledWith('{"releve":1}');
         expect(db.ConfirmDocumentReleve).toHaveBeenCalledTimes(1);
 
-        await waitFor(() => expect(getByTestId('document-import-fallback').disabled).toBe(false));
+        await waitFor(() => expect(/** @type {HTMLButtonElement} */ (getByTestId('document-import-fallback')).disabled).toBe(false));
         await fireEvent.click(getByTestId('document-import-fallback'));
-        await waitFor(() => expect(getByTestId('document-import-run').disabled).toBe(false));
+        await waitFor(() => expect(/** @type {HTMLButtonElement} */ (getByTestId('document-import-run')).disabled).toBe(false));
         expect(db.ReviewDocumentReleve).toHaveBeenLastCalledWith('{"releve":2}', false, true);
 
         await fireEvent.click(getByTestId('document-import-complete'));
@@ -85,8 +88,9 @@ describe('the assistant, mounted', () => {
     });
 
     test('no group switch while reading: the foreground flag is raised and Cancel is off', async () => {
-        let release;
-        db.AnalyzeDocument.mockImplementationOnce(() => new Promise((r) => (release = r)));
+        /** @type {(v: any) => void} */
+        let release = () => {};
+        /** @type {any} */ (db.AnalyzeDocument).mockImplementationOnce(() => new Promise((r) => (release = r)));
         const { getByTestId } = render(DocumentImportModal, { visible: true });
         const started = startDocumentImport();
         await waitFor(() => expect(getByTestId('document-import-reading')).toBeTruthy());
@@ -103,8 +107,8 @@ describe('the assistant, mounted', () => {
         await waitFor(() => expect(getByTestId('document-import-review')).toBeTruthy());
         /** @type {(v: any) => void} */
         let slow = () => {};
-        db.ReviewDocumentReleve.mockReset();
-        db.ReviewDocumentReleve.mockImplementationOnce(() => new Promise((r) => (slow = r))).mockResolvedValueOnce(review({ refused: [], items: [] }));
+        /** @type {any} */ (db.ReviewDocumentReleve).mockReset();
+        /** @type {any} */ (db.ReviewDocumentReleve).mockImplementationOnce(() => new Promise((r) => (slow = r))).mockResolvedValueOnce(review({ refused: [], items: [] }));
         const first = setChoice('acceptComplete', true);
         const second = setChoice('fallback', true);
         await second;
