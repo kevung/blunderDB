@@ -13,6 +13,9 @@ func (dc *decoder) decodeSymbolDict(s *segment) error {
 	if len(in) != p.nin {
 		return malformed("symbol dictionary %d: %d input symbols, %d announced", s.num, len(in), p.nin)
 	}
+	if err := dc.holdSymbols(int64(minCost) * int64(p.nin+p.nexp)); err != nil {
+		return err
+	}
 	d := newMQ(s.data)
 	ia := newIA(p.idLen)
 	gb, gr := make(contexts, genericCX[p.template]), make(contexts, refineCX)
@@ -98,8 +101,11 @@ func (dc *decoder) aggregate(d *mq, ia *iaContexts, gr contexts, p *sdParams, sy
 	if err != nil {
 		return nil, err
 	}
-	if n < 1 || n > maxInstances {
+	if n < 1 {
 		return nil, malformed("a symbol aggregating %d symbols", n)
+	}
+	if n > maxInstances-dc.instances {
+		return nil, unsupported("more than %d symbols placed", maxInstances)
 	}
 	if n == 1 {
 		id := d.id(ia.id, p.idLen)

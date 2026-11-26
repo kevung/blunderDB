@@ -73,39 +73,50 @@ func combine(d, s byte, op int) byte {
 	return d | s
 }
 
-// compose draws src with its top-left corner at (x, y), clipped to m.
+// compose draws src with its top-left corner at (x, y), clipped to m, a
+// byte of m at a time: the eight source bits under it are gathered by
+// shifting, whatever x is.
 func (m *bitmap) compose(src *bitmap, x, y, op int) {
 	x0, y0 := max(x, 0), max(y, 0)
 	x1, y1 := min(x+src.w, m.w), min(y+src.h, m.h)
 	if x0 >= x1 || y0 >= y1 {
 		return
 	}
-	if x&7 == 0 && x >= 0 {
-		// Byte-aligned: whole bytes, the last one masked to the clip.
-		n := (x1 - x0 + 7) / 8
-		last := byte(0xFF) << uint(n*8-(x1-x0))
-		for yy := y0; yy < y1; yy++ {
-			dr := m.b[yy*m.stride+x0>>3:]
-			sr := src.b[(yy-y)*src.stride+(x0-x)>>3:]
-			for i := 0; i < n; i++ {
-				mask := byte(0xFF)
-				if i == n-1 {
-					mask = last
-				}
-				dr[i] = dr[i]&^mask | combine(dr[i], sr[i], op)&mask
-			}
-		}
-		return
-	}
+	j0, j1 := x0>>3, (x1-1)>>3
 	for yy := y0; yy < y1; yy++ {
-		for xx := x0; xx < x1; xx++ {
-			s := byte(src.get(xx-x, yy-y))
-			if op == opOR && s == 0 {
-				continue
+		dr := m.b[yy*m.stride : (yy+1)*m.stride]
+		sr := src.b[(yy-y)*src.stride : (yy-y+1)*src.stride]
+		for j := j0; j <= j1; j++ {
+			mask := byte(0xFF)
+			if j == j0 {
+				mask &= 0xFF >> uint(x0&7)
 			}
-			m.set(xx, yy, int(combine(byte(m.get(xx, yy)), s, op)&1))
+			if j == j1 {
+				mask &= 0xFF << uint(7-(x1-1)&7)
+			}
+			dr[j] = dr[j]&^mask | combine(dr[j], bits8(sr, j*8-x), op)&mask
 		}
 	}
+}
+
+// bits8 is the eight bits of row r from bit b on (b may be negative), 0
+// outside the row.
+func bits8(r []byte, b int) byte {
+	if b < 0 {
+		if b <= -8 {
+			return 0
+		}
+		return r[0] >> uint(-b)
+	}
+	q, k := b>>3, uint(b&7)
+	var v byte
+	if q < len(r) {
+		v = r[q] << k
+	}
+	if k != 0 && q+1 < len(r) {
+		v |= r[q+1] >> (8 - k)
+	}
+	return v
 }
 
 // crop copies the w×h area of m at (x, y), white outside m.

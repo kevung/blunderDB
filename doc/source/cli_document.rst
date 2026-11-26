@@ -208,7 +208,9 @@ masques doux sont appliqués, si bien qu'une page faite d'un fond JPEG et de
 masques fax se compose lisiblement. Ne sont pas gérés : un masque par couleur
 clé (l'image est peinte entière), une image JBIG2 en codage de Huffman ou en
 demi-teintes, une page dessinée en vecteurs (passée). Une page dont une image
-est refusée est passée sans décoder ses autres images.
+est refusée par son en-tête est passée sans décoder ses autres images ; une
+image refusée faute de budget de décodage est omise, et la page est lue sans
+elle si une autre image la peint.
 Les pages passées sont nommées sur la sortie d'erreur, avec leur motif ; les
 autres sont lues. La couche texte d'une page, visible ou non (celle qu'une OCR
 laisse sous l'image), donne ses mots à leur place sur l'image ; un texte que sa

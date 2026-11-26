@@ -63,11 +63,6 @@ func (dc *decoder) decodeText(d *mq, ia *iaContexts, gr contexts, p *textParams)
 		firsts += dfs
 		curs := firsts
 		for {
-			if n&255 == 255 {
-				if err := dc.check(); err != nil {
-					return nil, err
-				}
-			}
 			curt := 0
 			if p.strips > 1 {
 				if curt, err = dc.integer(d, ia.it, "T"); err != nil {
@@ -118,14 +113,14 @@ func (dc *decoder) decodeText(d *mq, ia *iaContexts, gr contexts, p *textParams)
 			if !top {
 				y -= hi - 1
 			}
+			if err := dc.place(1, wi*hi); err != nil {
+				return nil, err
+			}
 			out.compose(ib, x, y, p.op)
 			if !p.transposed && !right {
 				curs += wi - 1
 			} else if p.transposed && top {
 				curs += hi - 1
-			}
-			if err := dc.spend(int64(max(wi*hi, 1))); err != nil {
-				return nil, err
 			}
 			n++
 			ds, oob := d.integer(ia.ds)

@@ -15,20 +15,23 @@
 //   - a page over MaxPixels or a side over 2^20, of another size than its
 //     container says; a region over the same bounds; a page and regions
 //     of more than 2^28 pixels together, what a stream holds in memory;
-//   - a dictionary of more than 2^20 symbols, with what it refers to, or
-//     exporting more than it holds; a text region placing more than 2^22
-//     symbols, or from more than 2^20;
+//   - dictionaries holding more than 2^20 symbols together, their input
+//     included (a dictionary re-exporting another's holds its symbols
+//     again), or one exporting more than it holds; a text region placing
+//     more than 2^20 symbols, or from more than 2^20;
 //   - a segment longer than what remains, a reference to a segment not read
 //     before it, a region before the page information.
 //
 // The coded data is bounded where it is read: the arithmetic decoder reads
 // past the end as 0xFF, and every loop of the procedures stops on the counts
-// the headers announced. Over a document it is bounded by the caller: a
-// Budget of pixels, spent by the page and its regions before decoding, then
-// by each symbol a dictionary decodes (2^28 pixels at most in a stream) and
-// each symbol a text region places;
-// and a context, read before each segment, each symbol and every 256 rows
-// of a region or symbols of a text region.
+// the headers announced, a stream placing at most 2^20 symbols, its
+// aggregated symbols included. Over a document it is bounded by the caller:
+// a Budget of pixels, spent by the page and its regions before decoding (a
+// refinement of the page twice, for the copy it refines), then by each
+// symbol a dictionary takes in, decodes and exports, and each symbol placed
+// before it is composed, 64 pixels at least each (2^28 pixels of symbols at
+// most in a stream); and a context, read before each segment, each symbol,
+// every 256 rows of a region and every 2^20 pixels or so composed.
 //
 // Nothing is registered with the image package: the decoder is reached only
 // through this package.

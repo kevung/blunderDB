@@ -11,8 +11,14 @@ const (
 	// maxSymbols bounds the symbols a dictionary holds (its input and its
 	// new ones) and those a text region draws from.
 	maxSymbols = 1 << 20
-	// maxInstances bounds the symbols a text region places.
-	maxInstances = 1 << 22
+	// maxInstances bounds the symbols a stream places, in its text regions
+	// and its aggregated symbols together.
+	maxInstances = 1 << 20
+	// minCost is what a symbol, a symbol a dictionary takes in or exports,
+	// and a symbol placed cost at least, in pixels of the budget and of
+	// maxStreamPixels: an empty one still costs its decoding and its
+	// pointer.
+	minCost = 64
 	// maxStreamPixels bounds what a stream holds in memory at once: its
 	// page and regions, and apart the symbols of its dictionaries.
 	maxStreamPixels = 1 << 28
@@ -76,11 +82,12 @@ type segment struct {
 
 // plan is a stream parsed, every header read and bounded, nothing decoded.
 type plan struct {
-	segs   []*segment
-	w, h   int
-	defpix int
-	pixels int64 // pixels of the page and its regions
-	info   Info
+	segs    []*segment
+	w, h    int
+	defpix  int
+	pixels  int64 // pixels of the page and its regions
+	symbols int   // symbols the dictionaries hold, their input included
+	info    Info
 }
 
 type reader struct {
@@ -366,6 +373,10 @@ func (pl *plan) refineRegion(s *segment, r *reader) error {
 			return malformed("refinement segment %d refers to a segment of type %d", s.num, t.typ)
 		}
 	}
+	if len(s.refs) == 0 {
+		// Its reference is a copy of the page under it, as large.
+		pl.pixels += int64(p.w) * int64(p.h)
+	}
 	return nil
 }
 
@@ -420,6 +431,11 @@ func (pl *plan) symbolDict(s *segment, r *reader) error {
 		return unsupported("a symbol dictionary of %d+%d symbols, at most %d", p.nin, nnew, maxSymbols)
 	}
 	p.nexp, p.nnew = int(nexp), int(nnew)
+	// A dictionary re-exporting another's symbols holds them again: the
+	// stream's dictionaries are bounded together, not one by one.
+	if pl.symbols += p.nin + p.nnew; pl.symbols > maxSymbols {
+		return unsupported("symbol dictionaries holding %d symbols together, at most %d", pl.symbols, maxSymbols)
+	}
 	if p.nexp > p.nin+p.nnew {
 		return malformed("symbol dictionary %d exports %d of %d symbols", s.num, nexp, p.nin+p.nnew)
 	}

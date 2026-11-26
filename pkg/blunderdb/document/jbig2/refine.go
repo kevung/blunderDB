@@ -14,7 +14,10 @@ type refineParams struct {
 const refineCX = 1 << 13
 
 // The typical-prediction bit is coded in the context where only the
-// reference pixel at the centre is set.
+// reference pixel at the centre is set (T.88 6.3.5.6), for either template:
+// 0x100 and 0x080 in the bit order of refineContext. jbig2dec takes 0x040
+// for template 1, the pixel right of the centre; the rule that gives 0x100
+// for template 0, which it shares, gives 0x080, and pdf.js agrees.
 var refineSLTP = [2]int{0x100, 0x080}
 
 func refineContext(m *bitmap, x, y int, p *refineParams) int {

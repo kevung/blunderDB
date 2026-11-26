@@ -82,9 +82,11 @@ func parseSafe(globals, data []byte, width, height int) (pl *plan, err error) {
 }
 
 type decoder struct {
-	ctx     context.Context
-	budget  *Budget
-	symbols int64 // pixels of the symbols decoded
+	ctx       context.Context
+	budget    *Budget
+	symbols   int64 // pixels of the symbols decoded, input and exports
+	instances int   // symbols placed, aggregations included
+	work      int64 // pixels composed since the context was last read
 }
 
 func (dc *decoder) check() error {
@@ -110,10 +112,33 @@ func (dc *decoder) symbolSize(w, h int) error {
 	if w < 0 || h < 0 || w > maxSide || h > maxSide || int64(w)*int64(h) > MaxPixels {
 		return malformed("a symbol of %d×%d pixels", w, h)
 	}
-	if dc.symbols += int64(w * h); dc.symbols > maxStreamPixels {
+	return dc.holdSymbols(int64(max(w*h, minCost)))
+}
+
+// holdSymbols counts pixels of symbols a stream holds, and spends them.
+func (dc *decoder) holdSymbols(n int64) error {
+	if dc.symbols += n; dc.symbols > maxStreamPixels {
 		return unsupported("symbols of more than %d pixels", maxStreamPixels)
 	}
-	return dc.spend(int64(max(w*h, 1)))
+	return dc.spend(n)
+}
+
+// place accounts for n symbols placed, and spends the pixels a composition
+// of area pixels costs, before it is done; the context is read once a
+// million pixels or so have been composed.
+func (dc *decoder) place(n, area int) error {
+	if dc.instances += n; dc.instances > maxInstances {
+		return unsupported("more than %d symbols placed", maxInstances)
+	}
+	c := int64(max(area, minCost*n))
+	if err := dc.spend(c); err != nil {
+		return err
+	}
+	if dc.work += c; dc.work >= 1<<20 {
+		dc.work = 0
+		return dc.check()
+	}
+	return nil
 }
 
 func (dc *decoder) run(pl *plan) (m *bitmap, err error) {
