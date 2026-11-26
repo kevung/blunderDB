@@ -311,6 +311,33 @@ elle existe ; opérations en boucles simples, aucune bibliothèque d'image. Hors
 rendu de page (pour un scan, composer les images de la page : JPEG en bibliothèque standard,
 CCITT G4 par `golang.org/x/image/ccitt`, rien pour JBIG2) et le texte OCR invisible positionné.
 
+### Nombres lus dans l'image (2026-11-29) — banc, `JOURNAL.md` E4
+
+Lecteur de pips imprimés sans couche texte : glyphes isolés hors du champ, gabarits (numérotation
+du diagramme, petite police embarquée de 80 gabarits 20 × 20, auto-apprentissage sur le
+document), nombre rendu seulement si tous ses chiffres sont lus ; emplacement des pips appris par
+vote sur le livre. Aucune lecture de chiffre n'est choisie d'après les pips calculés.
+
+| Livre | Pips présents | Lus justes | Abstentions | Lus faux |
+|---|---|---|---|---|
+| Trice | 344 | 326 | 17 | 1 |
+| Woolsey | 188 | 179 | 9 | 0 |
+| Kageyama | 353 | 217 | 136 | 0 |
+| Olsen | 542 | 457 | 85 | 0 |
+| Mochizuki | 299 | 238 | 61 | 0 |
+
+- Mochizuki : 0 → 83 sûres par l'image seule. Vérifié à l'œil : 30 sur 30 (Mochizuki), 30 sur 30
+  (Olsen). Jamais une sûre par l'image ne contredit une sûre par le texte.
+- Texte et image se complètent : l'image rattrape les pips que l'OCR du livre a perdus ou faussés
+  (36 sûres de plus chez Trice, 33 chez Kageyama), le texte ceux que l'image n'ose pas lire. Le
+  produit doit prendre les deux sources ; si elles se contredisent, à vérifier.
+- Une sûre fausse exigerait un plateau mal lu, un nombre mal lu et un écart qui tombe juste des
+  deux côtés : de l'ordre de quelques millionièmes par diagramme (estimé, erreurs supposées
+  indépendantes).
+- Restes : valeur du videau non lue ; chiffres tramés de Kageyama (8/9, 5/6) ; mise en page
+  variable d'Olsen. `lire.py`, `plateau.py`, `localise.py` inchangés ; `releve.py` identique sans
+  les deux variables nouvelles.
+
 ## Décisions de l'utilisateur (2026-11-25)
 
 - Recommandations suivies : rendu PDF, premier périmètre, ADR neuf.
