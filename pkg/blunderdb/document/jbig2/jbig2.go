@@ -171,6 +171,19 @@ func (dc *decoder) segment(s *segment, page *bitmap) error {
 		return dc.decodeSymbolDict(s)
 	case segTextIntermediate, segText, segTextLossless:
 		p := s.tp
+		// The symbols it draws from and its symbol-ID contexts are built for
+		// each region: they are spent first, a region placing nothing as
+		// much as another, and built only when it places something.
+		if err := dc.spend(int64(minCost)*int64(exports(s)) + 2<<p.idLen); err != nil {
+			return err
+		}
+		if p.ninst == 0 {
+			m = newBitmap(p.w, p.h)
+			if p.defpix == 1 {
+				m.fill(1)
+			}
+			break
+		}
 		for _, t := range s.refs {
 			if t.typ == segSymbolDict {
 				p.syms = append(p.syms, t.exported...)

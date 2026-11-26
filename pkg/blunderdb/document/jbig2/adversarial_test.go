@@ -363,3 +363,28 @@ func TestCompose(t *testing.T) {
 		}
 	}
 }
+
+// TestTextRegionsDrawingFromMany: text regions placing nothing from a large
+// dictionary spend what building their symbols and contexts costs, so their
+// number is bounded by the budget, not by the stream's length.
+func TestTextRegionsDrawingFromMany(t *testing.T) {
+	const n = 1 << 16
+	data := hdr(0, segPageInfo, nil, pinfo(1, 1))
+	data = append(data, hdr(1, segSymbolDict, nil, emptySymbols(n))...)
+	const k = 100
+	for i := uint32(2); i < 2+k; i++ {
+		tb := rinfo(0, 0, 0, 0, 0)
+		tb = binary.BigEndian.AppendUint16(tb, 1<<4)
+		tb = binary.BigEndian.AppendUint32(tb, 0)
+		data = append(data, hdr(i, segText, []byte{1}, tb)...)
+	}
+	region := int64(minCost*n + 2<<16)
+	b := &Budget{Left: 1 << 30}
+	if _, _, err := Decode(context.Background(), data, nil, 0, 0, b); err != nil || 1<<30-b.Left < k*region {
+		t.Errorf("%v, spent %d, want %d at least", err, 1<<30-b.Left, k*region)
+	}
+	b = &Budget{Left: 1 << 26}
+	if _, _, err := Decode(context.Background(), data, nil, 0, 0, b); !errors.Is(err, ErrBudget) {
+		t.Errorf("a smaller budget: %v", err)
+	}
+}

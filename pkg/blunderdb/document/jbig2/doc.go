@@ -28,7 +28,8 @@
 // aggregated symbols included. Over a document it is bounded by the caller:
 // a Budget of pixels, spent by the page and its regions before decoding (a
 // refinement of the page twice, for the copy it refines), then by each
-// symbol a dictionary takes in, decodes and exports, and each symbol placed
+// symbol a dictionary takes in, decodes and exports, each symbol a text
+// region draws from (with its symbol-ID contexts), and each symbol placed
 // before it is composed, 64 pixels at least each (2^28 pixels of symbols at
 // most in a stream); and a context, read before each segment, each symbol,
 // every 256 rows of a region and every 2^20 pixels or so composed.
