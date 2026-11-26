@@ -119,10 +119,17 @@ codes, et à 150 dpi aucune feuille dense n'est relue. Le module de la page d'ar
    |---|---|---|---|---|
    | rotation | aucune | 8° | 8° | 8° |
    | bruit σ | aucun | aucun | 0,1 | 0,1 |
+   | perspective (k) | 0,08 | 0,02 | 0,04 | 0,08 |
    | flou | 0,15 mm | 0,15 mm | 0,2 mm | 0,2 mm |
    | scan plausible (k) | 1 | 1 | 2 | 1,5 |
 
-   À 200 dpi, la feuille de 0,6 mm tient ce qu'une feuille de 0,5 mm ne tenait qu'à 300 dpi.
+   À 200 dpi, la feuille de 0,6 mm tient la rotation, le bruit et le scan plausible qu'une
+   feuille de 0,5 mm ne tenait qu'à 300 dpi, mais la perspective recule : 0,04 au lieu de
+   0,08, et 0,02 à 150 dpi. Un code plus grand couvre plus de feuille, donc plus de
+   déformation en trapèze. Le compromis est voulu : la rotation, le bruit et le flou sont les
+   défauts d'un scanner à plat, qui n'a pas de perspective ; la perspective est celle d'une
+   photo prise de biais, que l'on évite en photographiant la feuille bien de face, alors
+   qu'on ne choisit pas le bruit de son scanner. La documentation le conseille.
    Les seuils de `TestEssaiArchiveSeuilsDeReference` en sont un cran en dessous.
 2. **Densité** : la surface d'un code croît comme le carré du module, soit 1/1,44 de densité
    (−31 %) sans l'effet de grille. Mesurée par `layout` sur des archives de matchs de taille

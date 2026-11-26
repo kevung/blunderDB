@@ -126,7 +126,8 @@ fichier HTML et l'ouvre dans le navigateur, qui l'imprime. **Importer…** lit
 une ou plusieurs pages d'archive : le fichier HTML exporté, ou des scans et des
 photos (PNG, JPEG) de ses feuilles, en nombre quelconque et dans n'importe quel
 ordre. Un scan à 200 ou 300 dpi se lit même plié, un peu de travers ou bruité ;
-à 150 dpi, il faut une feuille propre et droite. Un code illisible est reconstruit par son code de parité quand c'est
+à 150 dpi, le bruit et la perspective ne passent plus. Une photo se prend bien
+de face. Un code illisible est reconstruit par son code de parité quand c'est
 possible ; la barre d'état donne les matchs importés, les doublons et les codes
 manquants. Les matchs passent par l'import ordinaire, et les analyses sont
 recalculées ensuite. En ligne de commande : ``archive`` (:doc:`cli_import_export`).

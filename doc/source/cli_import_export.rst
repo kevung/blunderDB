@@ -310,7 +310,8 @@ d'eux devenu illisible. Les codes remplissent les quatre quarts de la feuille,
 avec une gouttière blanche sur les deux lignes de pliure, et une ligne sous
 chacun donne son rang, les joueurs, la date et la longueur. Un module de code
 mesure 0,6 mm : un scan à 200 ou 300 dpi se lit même plié, un peu de travers ou
-bruité, un scan à 150 dpi seulement d'une feuille propre et droite ; une feuille
+bruité, un scan à 150 dpi seulement sans bruit ni perspective ; une photo se
+prend bien de face, et une feuille
 imprimée avec l'ancien module de 0,5 mm se lit à 300 dpi. Sans ``--match``,
 toute la bibliothèque est archivée. ``--origin`` imprime une ligne d'origine
 en pied de feuille. L'archive garde les métadonnées du match (joueurs, date et

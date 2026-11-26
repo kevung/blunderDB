@@ -36,7 +36,7 @@ import (
 
 // archiveSheets lays out what a small archive prints: the matches of the
 // corpus and two tranches of position lists, each with its parity. A
-// tranche's three codes are 60 mm wide each: the archive spreads over
+// tranche's three codes are 72.6 mm wide each: the archive spreads over
 // several sheets, scanned one by one.
 func archiveSheets(t *testing.T, mod float64) (sheets [][4][]placed, matches [][]byte, tranches map[int][]domain.Position) {
 	t.Helper()
@@ -426,8 +426,11 @@ type printing struct{ module, dpi float64 }
 // (one notch below the last one read).
 //
 // At 0.6 mm a module is 4.7 pixels at 200 dpi: the sheet takes a rotation of
-// 8°, a noise of 0.1 and a household scan up to k = 2, as at 300 dpi. At
-// 150 dpi (3.5 pixels) it is still read, noise aside.
+// 8°, a noise of 0.1 and a household scan up to k = 2, as at 300 dpi, but a
+// keystone of 0.04 only where the legacy sheet took 0.08: a larger code spans
+// more of the distortion. A flatbed scan has no keystone; a photograph taken
+// straight on avoids it. At 150 dpi (3.5 pixels) the sheet is still read,
+// but neither noise nor more than a slight keystone.
 //
 // At the legacy 0.5 mm a module is four pixels at 200 dpi: the sheet survives
 // soft defects and is lost to a noise of 0.05 or to a rotation of half a
