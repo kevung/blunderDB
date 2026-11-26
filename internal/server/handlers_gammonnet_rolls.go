@@ -71,7 +71,7 @@ func (s *Server) handleGammonNetRolls(w http.ResponseWriter, r *http.Request) {
 		writeStorageError(w, err)
 		return
 	}
-	m, err := gammonnet.ComputeRollMap(r.Context(), pos, met, ply, req.PruneK, s.analysisExec(r, scope, ply, req.PruneK), nil)
+	m, err := s.maps.RollMap(r.Context(), scope, pos, met, ply, req.PruneK, s.analysisExec(r, scope, ply, req.PruneK), nil)
 	writeMapResult(w, m, err)
 }
 

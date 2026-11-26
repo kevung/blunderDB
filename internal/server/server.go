@@ -28,6 +28,7 @@ import (
 	"github.com/kevung/blunderdb/internal/server/webui"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/events"
 	"github.com/kevung/blunderdb/pkg/blunderdb/events/pgnotify"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
@@ -53,6 +54,10 @@ type Server struct {
 	allowedMethod map[string]string
 
 	imports *importRegistry
+	// maps is the roll and score maps' cache, keyed by tenant:
+	// gammonnet.Maps(), the one the desktop app and the CLI use, unless a
+	// test gives the server its own.
+	maps *gammonnet.MapCache
 	// captureSlots admits two capture readings at a time: at
 	// capture.MaxPixels each holds about 290 MB, so the readings never take
 	// more than ~600 MB; a third request waits for a slot or gives up.
@@ -106,6 +111,7 @@ func New(opts Options) (*Server, error) {
 
 	s := &Server{
 		opts: opts,
+		maps: gammonnet.Maps(),
 		health: &handlers.Health{
 			Storage:         opts.Storage,
 			Metrics:         opts.Metrics,

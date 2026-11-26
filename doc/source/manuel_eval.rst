@@ -312,6 +312,12 @@ façon remet le fil à zéro. Le menu contextuel d'un coup candidat (Analyse ou
 après ce coup (grisé quand la notation du coup peut mener à plusieurs
 plateaux), et *Carte des scores*. La commande ``jets`` ouvre la vue.
 
+Une carte déjà calculée tant que blunderDB reste ouvert — des jets ou des
+scores, à la profondeur demandée ou à une profondeur qu'un calcul plus profond
+a traversée — s'affiche aussitôt, sans nouvelle recherche, et un calcul plus
+profond reprend à la dernière profondeur connue. Changer la position, la
+profondeur, l'élagage ou la table d'équités de match relance la recherche.
+
 .. _panneau_reference:
 
 Panneau Données de référence

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -66,8 +67,16 @@ type ScoreMapCellFunc func(index int, cell ScoreMapCell)
 // one starting from the position's own score and moving outwards; onCell (may be nil) sees each
 // cell at each depth. A cell where the position's cube cannot have been
 // reached is refused (ErrNotEvaluable), never re-centred. ctx cancels between
-// cells and inside a search; a cancelled call returns what it had.
+// cells and inside a search; a cancelled call returns what it had. Nothing
+// is stored, not even in a MapCache.
 func ComputeScoreMap(ctx context.Context, pos domain.Position, met *engine.MET, matchLength, ply, pruneK int, exec CellExec, onCell ScoreMapCellFunc) (ScoreMap, error) {
+	return (*MapCache)(nil).ScoreMap(ctx, "", pos, met, matchLength, ply, pruneK, exec, onCell)
+}
+
+// ScoreMap is ComputeScoreMap served from c, as RollMap is for the rolls: a
+// phase already computed under scope is replayed to onCell, every phase
+// completed here is kept. A nil c caches nothing.
+func (c *MapCache) ScoreMap(ctx context.Context, scope string, pos domain.Position, met *engine.MET, matchLength, ply, pruneK int, exec CellExec, onCell ScoreMapCellFunc) (ScoreMap, error) {
 	if matchLength < 1 || matchLength > engine.MaxScore {
 		return ScoreMap{}, fmt.Errorf("gammonnet: match length %d is outside 1-%d", matchLength, engine.MaxScore)
 	}
@@ -98,7 +107,12 @@ func ComputeScoreMap(ctx context.Context, pos domain.Position, met *engine.MET, 
 	order := scoreMapOrder(&pos, matchLength)
 
 	var mu sync.Mutex
+	// answered counts the cells this phase searched to an answer: a phase
+	// short of one (a cell the executor skipped, a refusal that is only a
+	// stopped search) still returns its cells, but is not kept.
+	var answered int
 	phase := func(depth int) error {
+		answered = 0
 		err := runMapPhase(ctx, exec, len(order), func(k int, s *Searcher) {
 			idx := order[k]
 			onRoll, opponent := idx/matchLength+1, idx%matchLength+1
@@ -113,6 +127,9 @@ func ComputeScoreMap(ctx context.Context, pos domain.Position, met *engine.MET, 
 			}
 			mu.Lock()
 			defer mu.Unlock()
+			if !refusedByCancel(cell) {
+				answered++
+			}
 			m.Cells[idx] = cell
 			if onCell != nil {
 				onCell(idx, cell)
@@ -124,12 +141,38 @@ func ComputeScoreMap(ctx context.Context, pos domain.Position, met *engine.MET, 
 		return err
 	}
 
-	for _, depth := range mapDepths(ply) {
+	digest := c.metDigest(met)
+	keyAt := func(depth int) mapKey { return scoreMapKey(scope, pos, digest, matchLength, depth, pruneK) }
+	depths := mapDepths(ply)
+	start := 0
+	for k := len(depths) - 1; k >= 0; k-- {
+		if cells, ok := c.cells(keyAt(depths[k])); ok {
+			copy(m.Cells, cells)
+			if onCell != nil {
+				for _, idx := range order {
+					onCell(idx, m.Cells[idx])
+				}
+			}
+			start = k + 1
+			break
+		}
+	}
+	for _, depth := range depths[start:] {
 		if err := phase(depth); err != nil {
 			return m, err
 		}
+		if answered == len(order) {
+			c.putCells(keyAt(depth), m.Cells)
+		}
 	}
 	return m, nil
+}
+
+// refusedByCancel says a refused cell's reason is a search that was stopped,
+// not the engine declining the score: the cell is no answer. The refusal
+// keeps only the error's text, which a wrapped ErrCanceled always contains.
+func refusedByCancel(cell ScoreMapCell) bool {
+	return cell.Refused && strings.Contains(cell.Reason, ErrCanceled.Error())
 }
 
 // scoreMapOrder is the order cells are searched in: the position's own score
