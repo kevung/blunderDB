@@ -612,8 +612,13 @@ func keepSquares(rds []*boardReading, stretch float64) {
 	}
 }
 
-// readsCentred tells whether 64 is read in the diagram's k-th cube.
+// readsCentred tells whether the diagram's k-th cube reads centred: 64
+// read in it, in the middle. A 64 at the top or the bottom is an owned cube
+// showing its value, which a bare face at that place must not be taken for.
 func readsCentred(rd *boardReading, k int) bool {
+	if rd.cubes[k].place != "middle" {
+		return false
+	}
 	for _, n := range rd.cubeFigs {
 		if n.val == 64 && squareOf(rd.cubes, n) == k {
 			return true
