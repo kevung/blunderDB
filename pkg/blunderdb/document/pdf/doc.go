@@ -2,11 +2,20 @@
 // needs and nothing more: the page tree, the document information and
 // outline, each page's content streams, its fonts (widths and ToUnicode), and
 // an interpreter of the text operators that places every glyph a page draws.
-// It renders nothing and decodes no image.
+// It renders no vector: Scan composes a scanned page from the images it
+// draws (DCT, CCITT fax Group 3 one-dimensional and Group 4, raw samples in
+// grey, colour or indexed spaces, stencil and soft masks; not a colour-keyed
+// mask), at their resolution bounded to MinScanDPI-MaxScanDPI, and places the
+// words of its text layer on it. A page without an image is ErrNoPageImage,
+// an image in JBIG2 or JPEG 2000 ErrImageCodec. An image has at most
+// Limits.MaxStreamSize pixels, a page at most 64 million, and the images a
+// page paints at most six times its pixels; images are decoded one at a time
+// and dropped once painted, and their decoded bytes are bounded so, not
+// counted in Limits.MaxDecoded.
 //
-// It is pure Go on the standard library alone, so the single binary and the
-// cgo-free daemon build carry it, and nothing outside the repository has to be
-// audited for it. A PDF here is a file a person downloaded: the reader never
+// It is pure Go, on the standard library and golang.org/x/image/ccitt (the
+// fax decoder, pure Go), so the single binary and the cgo-free daemon build
+// carry it. A PDF here is a file a person downloaded: the reader never
 // trusts it. The file, each decoded stream and the sum of decoded streams have
 // size limits, nesting and indirection have depth limits, every loop over the
 // file's own structure has a bound or a visited set, DefaultLimits fixing the

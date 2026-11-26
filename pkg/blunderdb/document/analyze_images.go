@@ -77,8 +77,8 @@ func AnalyzeFile(path string, opts AnalyzeOptions) (*Releve, error) {
 // given order, with the structure reader (package structure), and returns
 // the Relevé. It writes nothing and keeps no image: each page is decoded when
 // read, twice (the reader learns the document's style first). A page image
-// carries no text layer, so no printed pip count is read from it and no
-// entry is sure; each one says why.
+// carries no text layer: the printed pip counts that confirm an entry are
+// read in the image itself, and an entry without them is not sure.
 func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 	if len(paths) == 0 {
 		return nil, ErrNoImage
@@ -172,6 +172,9 @@ func structureProfile(p structure.Profile) *Profile {
 		'G': "left of the board", 'D': "right of the board", 'L': "after the word pips",
 		'B': "in the numbering row, at the bar",
 	}[p.PipPlace]
+	if p.PipsInImage {
+		out.Pips = strings.TrimPrefix(out.Pips+"; also read in the image", "; also ")
+	}
 	if c := p.Numbering; c != "" {
 		row := map[byte]string{'B': "bottom", 'T': "top"}[c[0]]
 		side := map[byte]string{'L': "left", 'R': "right"}[c[1]]

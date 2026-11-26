@@ -124,7 +124,9 @@ flowchart LR
     PDF["book.pdf"] --> READER["document/pdf\n(file, fonts, glyphs)"]
     READER --> GLYPHS["document: xgboard.go\n(glyph table → board)"]
     GLYPHS --> CHECK["cross-checks\n(15 checkers, printed pips)"]
-    IMAGES["page images\n(PNG, JPEG)"] --> STRUCT["document/structure\n(profile, then reading)"]
+    READER --> SCAN["pdf.Scan\n(page composed from its images,\nwords of its text layer)"]
+    SCAN --> STRUCT
+    IMAGES["page images\n(PNG, JPEG)"] --> STRUCT["document/structure\n(profile, then reading,\npips read in the image)"]
     STRUCT --> CHECK
     CHECK --> RELEVE[("Relevé JSON\nstates, doubts, verified")]
     RELEVE --> PERSON["a person reads,\ncorrects, verifies"]
@@ -137,14 +139,23 @@ flowchart LR
   glyph reader (`document/xgboard.go`, `analyze.go`) finds the board-font diagrams, decodes each
   one exactly, reads the score, pips and match length printed beside it, and compares: fifteen
   checkers a side and computed pips equal to printed pips make an entry *sure*; anything else
-  is *to verify* or *uncertain* with the doubt named. A PDF with no such diagram is refused
-  (`ErrNoGlyphDiagram`). Page images (a folder, or one image: `document.AnalyzeFile`) go to
+  is *to verify* or *uncertain* with the doubt named. A PDF without a page drawn with the
+  board font is a scanned book (`analyze_scans.go`): `pdf.Scan` composes each page from its
+  images (DCT, CCITT fax through `golang.org/x/image/ccitt`, Flate; stencil and soft masks) at
+  their resolution bounded to 150-300 dpi and places the words of its text layer on it; a page
+  it cannot compose (vectors, JBIG2, JPEG 2000) is passed over and named, and a PDF with no
+  page made of images is refused (`ErrNoGlyphDiagram`). Those pages, and page images (a
+  folder, or one image: `document.AnalyzeFile`), go to
   the structure reader (`document/structure`), pure Go and standard library: a first pass
   learns the checker's shape on the first diagrams, a second reads every page (paper divided
   out, ink by hysteresis, components straightened and framed, columns followed slot by slot),
   then the classes, numbering, pip place and direction of play are learned over all the
   diagrams and each is judged by the same cross-checks, a supposition the pips do not lift
-  being a named doubt. A page is decoded, read and dropped; no image is kept. Nothing is
+  being a named doubt. The printed pips come from the text layer and from the image
+  (`structure/numbers.go`: isolated numbers read figure by figure against the document's
+  numbering, an embedded set of eight typefaces and the figures already read, abstaining
+  unless every figure is clear; their place learned by a vote over the document); when the two
+  sources give different pips, neither is taken and the entry says so. A page is decoded, read and dropped; no image is kept. Nothing is
   written. Only the CLI and the desktop's façade read a document; the daemon does not.
 - **The Relevé** (`document/releve.go`): `Decode` is strict (unknown fields, gapless ranks,
   legal XGID) so a hand edit cannot slip a bad position in; `Summarize` (`summary.go`) counts
@@ -180,7 +191,7 @@ Each package's `doc.go` is the first thing to read; this map only says where to 
   all three modes), `parser/` (position text),
   `migrate/` (SQLite → PostgreSQL), `server/` (`Bootstrap()` for embedding in gammonGo).
 - Feature packages, pure of SQL: `document/` (the Relevé of a document and its import, §4;
-  `document/pdf/` is its dependency-free PDF reader), `searchquery/` (the search grammar, locked to the frontend
+  `document/pdf/` is its PDF reader, whose only dependency is `golang.org/x/image/ccitt`), `searchquery/` (the search grammar, locked to the frontend
   parser by a shared corpus), `transcript/` (Transcription; `transcription/` is its service
   on the storage contract — sessions, revision, Finish — and `database/db_transcription*.go`
   the desktop's façade), `direction/` (tournament

@@ -408,7 +408,8 @@ _Avoid_: validation, sanity check, confidence
 How a document draws its diagrams — home board side, colour at the bottom, where pips and cube
 are printed, how points are numbered — fixed on the first diagram and valid for all (pages
 read as images: learned over all the document's diagrams, the checker's shape over the first
-ones). Carried in the Relevé's header.
+ones, the two places of the printed pips by a vote over the diagrams). Carried in the Relevé's
+header.
 _Avoid_: template, layout, style
 
 **Family** (interface: *famille*; code: `structure.Diagram.Families`):

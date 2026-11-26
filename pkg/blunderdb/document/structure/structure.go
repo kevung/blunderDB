@@ -14,6 +14,17 @@
 //     counts are printed and the direction of play are learned over all the
 //     diagrams, then each diagram is judged.
 //
+// The printed pip counts come from the text layer and from the image
+// itself (numbers.go): numbers standing alone around a diagram are read
+// figure by figure — against the document's own numbering, labelled by its
+// shape, eight embedded typefaces, then the figures read elsewhere in the
+// document — and a number is read only when every figure is clear; the two
+// places where the document prints its pips are learned by a vote over the
+// diagrams read with fifteen checkers a side. No figure is chosen after a
+// diagram's pips, and nothing is kept from one document to the next. When
+// the text and the image give different pips, neither is taken and the
+// disagreement is a named doubt.
+//
 // A diagram is sure only when the pip counts printed beside it agree with
 // both sides of the reading, no side has more than fifteen checkers and
 // nothing is in doubt. The printed pips may also fix the height of one
@@ -27,7 +38,8 @@
 //
 // Pages and text come from the caller: an image per page (grey or colour,
 // 150 to 300 dpi) and, when the document has one, its text layer as words
-// with their boxes in the image's pixels. Images are bounded (MaxPixels) and
+// with their boxes in the image's pixels; a page the caller cannot give is
+// passed over with its reason (Page.Unread, Result.Unread). Images are bounded (MaxPixels) and
 // never kept: a page is decoded, read and dropped, twice (once per pass).
 package structure
 

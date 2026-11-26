@@ -3241,10 +3241,13 @@ Read the diagrams of a document into a relevé, in the document's order, each wi
 label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own
 cross-checks hold (15 checkers a side, the printed pip counts of both players), to-verify
 or uncertain otherwise, with the doubt named. A PDF is read when its diagrams are drawn
-with eXtreme Gammon's board font (XG's PDF prints); a scanned book is read from its pages
-as images (a folder of PNG or JPEG files, one a page, in the order of their names),
-by the structure of each diagram. A page image has no text layer: its entries are never
-sure. Nothing is written to a database: check the relevé, then import it with
+with eXtreme Gammon's board font (XG's PDF prints), from its glyphs. A scanned book is
+read by the structure of each diagram, from a scanned PDF (its pages composed from their
+images; JBIG2 and JPEG 2000 images are not decoded) or from its pages as images (a folder
+of PNG or JPEG files, one a page, in the order of their names). The printed pip counts
+are read in the PDF's text layer and in the image; when the two disagree the entry is not
+sure. Pages that cannot be read are named on standard error. Nothing is written to a
+database: check the relevé, then import it with
 'blunderdb document import'.
 
 Options:

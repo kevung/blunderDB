@@ -17,13 +17,18 @@
 // prints): each diagram is decoded exactly from its glyphs (xgboard.go holds
 // the table) and is sure only when the print's own cross-checks hold —
 // fifteen checkers a side, the printed pip counts of both players — and
-// nothing in it lies beyond what the table was proven on. A PDF without such
-// a diagram is refused (ErrNoGlyphDiagram). Package pdf is the reader of the
-// file itself: pure Go, it distrusts the PDF and is bounded (see its doc).
-// AnalyzeImages reads page images (a folder of them, or one: AnalyzeFile) with
-// package structure, which finds diagrams by their structure and learns the
-// document's style from the document; an image has no text layer, so no
-// printed pip count confirms its entries and none is sure. The dice are
+// nothing in it lies beyond what the table was proven on. A PDF without a
+// page drawn with that font is a scanned book: each page is composed from its
+// images with its text layer (pdf.Scan) and read by package structure; a page
+// that cannot be composed is passed over and named (AnalyzeOptions.Warn), and
+// a PDF with no page made of images is refused (ErrNoGlyphDiagram). Package
+// pdf is the reader of the file itself: pure Go, it distrusts the PDF and is
+// bounded (see its doc). AnalyzeImages reads page images (a folder of them,
+// or one: AnalyzeFile) with the same package structure, which finds diagrams
+// by their structure and learns the document's style from the document. The
+// printed pip counts that confirm its entries are read in the text layer
+// when there is one and in the image itself; when the two disagree, the
+// entry is not sure. The dice are
 // never read: a reading's XGID always says "no dice"; from an image the cube
 // is centred, the bottom player on roll and the game a money game, each drawn
 // cube off the centre and drawn dice named as a doubt.
