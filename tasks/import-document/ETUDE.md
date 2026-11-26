@@ -3,6 +3,51 @@
 Étude du 2026-11-25, sans code de production. Banc hors dépôt : `~/bkgm/bancs/import-document/`
 (`JOURNAL.md` tient la reprise). Corpus : `~/bkgm/bibliotheque/livres` (17 PDF, 1 EPUB, 1 DOC).
 
+## REPRISE (2026-11-30) — à lire en premier
+
+État de `main` (non poussé) : tranches 1, 2, 3 fusionnées (Relevé et import, lecteur à glyphes,
+lecteur de structure en Go sur images de pages), documentation interne et externe à jour pour
+ces tranches.
+
+En attente de fusion : branche `feat/document-scans` (worktree
+`/home/unger/src/blunderDB-document-scans`) — lecture des nombres dans l'image et lecture directe
+des PDF scannés ; ajoute `golang.org/x/image` (ccitt).
+- Contrôle à l'œil indépendant fait (`~/bkgm/bancs/import-document/controle/verdicts.txt`) : 59
+  positions « sûres ici seulement » vérifiées, dont les 30 au plateau différent du prototype :
+  59 exactes. Les pions tiennent.
+- Mais 13 des 14 positions de Kageyama déclarées sûres sans doute portent un videau 2 possédé non
+  détecté (et une de Trice) : la branche NE SE FUSIONNE PAS en l'état. Un ouvrier pose le
+  garde-fou dans ce worktree (lancé le 2026-11-30) : une entrée lue par le lecteur de structure
+  n'est jamais « sûre » tant que le contexte n'est pas lu ; elle est « à vérifier » avec le doute
+  « contexte non lu », les pions confirmés restant comptés à part. Sa notification est perdue
+  après un /clear : lire `git -C /home/unger/src/blunderDB-document-scans log --oneline -5` et
+  vérifier ce garde-fou par un test avant de fusionner (conflits `.po` : ceux de main,
+  `doc-po-update.sh`, `po-fill.py`), puis `go test -p 2 ./pkg/blunderdb/document/...
+  ./internal/cli/...`, retirer le worktree, consigner.
+
+Décisions attendues de l'utilisateur :
+1. Deux certitudes par entrée (pions, contexte) et défauts de document confirmés une fois —
+   demande un Relevé v2 (voir « Contexte »). Recommandé.
+2. L'état « 15 + 15 sans doute », distinct de sûr, acceptable en bloc. Recommandé.
+
+Suites, dans l'ordre : Relevé v2 et règle de sûreté du contexte (après décision 1) ; portage du
+contexte (videau, dés, bandeau de score ; banc `JOURNAL.md` F) ; repli assisté (encadrer un
+plateau, montrer où sont les pips) ; assistant graphique (tranche 5, forme validée) ; JPEG 2000
+(Woolsey ne se lit pas directement) ; mesure finale sur la réserve, jamais ouverte, avec deux
+pages web et deux documents choisis par l'utilisateur ; EPUB, DOCX, HTML.
+
+Écarts connus, non corrigés : un import refusé crée le fichier de base s'il n'existait pas ;
+l'ADR-0117 promet des vignettes redessinées, pas encore codées ; le GUI ne remonte pas les pages
+passées par `pdf.Scan` ; `pkg/blunderdb/transcript` échoue sur `main` (cycle d'import dans un
+test), hors de ce chantier.
+
+Push : l'utilisateur a demandé de pousser à la fin si tout est propre et concluant. `main` porte
+aussi les commits non poussés d'une autre session (cartes, ordonnanceur) : le lui rappeler.
+
+Banc : `~/bkgm/bancs/import-document/` (git local, `JOURNAL.md` avec sa propre Reprise). Tous les
+échantillons de mesure des sept livres de développement sont consommés. Réserve intacte : Bagai,
+Jacoby, les deux Magriel, Kageyama « Back Checker » et « Opening Concepts », l'EPUB, le livre FT.
+
 ## Synthèse
 
 - But : lire toutes les positions d'un livre, d'un article ou d'une page web que l'utilisateur
