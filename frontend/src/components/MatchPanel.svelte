@@ -18,6 +18,7 @@
     import MatchSheet from './MatchSheet.svelte';
     import MatchPrintModal from './MatchPrintModal.svelte';
     import PaperArchiveModal from './PaperArchiveModal.svelte';
+    import { importPaperArchive } from '../services/paperArchiveService.js';
     import { clampSheetWidth, rememberedSheetShare, rememberSheetShare } from '../utils/matchSheet.js';
     import { resizable } from '../utils/resizeHandle.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
@@ -608,6 +609,7 @@
                           )}
                 emptyActions
                 emptyClear={filterText.trim() ? { label: $t('emptyState.clearFilter'), onClick: clearFilter } : null}
+                emptyExtra={{ label: $t('paperArchive.importMenu'), onClick: () => importPaperArchive() }}
                 emptyText={matches.length === 0 && ($matchListStore.loaded || !$databasePathStore) ? (filterText.trim() ? $t('match.noMatchesFiltered') : $t('match.noMatchesImported')) : ''}
             >
                 {#snippet cells(/** @type {Match} */ match, /** @type {number} */ index)}

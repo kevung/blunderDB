@@ -398,6 +398,7 @@
     },
     "paperArchive": {
         "menu": "Paperiarkisto…",
+        "importMenu": "Tuo paperiarkisto…",
         "title": "Paperiarkisto",
         "note": "A4-sivuja QR-koodeja ilman tekstiä: ne säilyttävät ottelut paperilla ja tuodaan takaisin tiedostosta, skannauksesta tai valokuvasta.",
         "exportWhat": "Vie",
@@ -3019,6 +3020,7 @@
             "open_group": "Avaa tietokanta uudessa ryhmässä",
             "import": "Tuo asemia tai otteluita",
             "import_db": "Yhdistä toinen tietokanta",
+            "import_archive": "Tuo paperiarkisto",
             "export_db": "Vie tietokanta",
             "write": "Tallenna asema",
             "write!": "Päivitä asema",

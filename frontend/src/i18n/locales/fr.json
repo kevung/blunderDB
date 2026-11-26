@@ -398,6 +398,7 @@
     },
     "paperArchive": {
         "menu": "Archive papier…",
+        "importMenu": "Importer une archive papier…",
         "title": "Archive papier",
         "note": "Des pages A4 de codes QR, sans texte, qui gardent les matchs sur papier et se réimportent depuis le fichier, un scan ou une photo.",
         "exportWhat": "Exporter",
@@ -3019,6 +3020,7 @@
             "open_group": "Ouvrir une base dans un nouveau groupe",
             "import": "Importer des positions ou des matchs",
             "import_db": "Fusionner une autre base de données",
+            "import_archive": "Importer une archive papier",
             "export_db": "Exporter la base de données",
             "write": "Enregistrer la position",
             "write!": "Mettre à jour la position",

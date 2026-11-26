@@ -88,6 +88,7 @@
      * @property {boolean} [emptyActions]
      * @property {any} [emptyClear]
      * @property {any} [emptyAction]
+     * @property {any} [emptyExtra]
      * @property {string} [class]
      * @property {import('svelte').Snippet} [header]
      * @property {import('svelte').Snippet} [subheader]
@@ -135,6 +136,8 @@
         emptyClear = null,
         /** With `emptyActions`: the panel's own primary action, in place of the import. */
         emptyAction = null,
+        /** With `emptyActions`: a second action beside the primary one. */
+        emptyExtra = null,
         class: className = '',
         /** Rendered above the table in a `.detail-header` strip. */
         header = undefined,
@@ -436,7 +439,7 @@
         {#if rows.length === 0 && filtersActive && sourceRows.length > 0}
             <EmptyState text={$t('table.filteredOut')} clear={{ label: $t('emptyState.clearFilter'), onClick: clearFilters }} />
         {:else if rows.length === 0 && emptyText}
-            <EmptyState text={emptyText} actions={emptyActions} clear={emptyClear} action={emptyAction} />
+            <EmptyState text={emptyText} actions={emptyActions} clear={emptyClear} action={emptyAction} extra={emptyExtra} />
         {/if}
     </div>
     {#if rowMenuAt}

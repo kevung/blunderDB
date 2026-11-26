@@ -4,6 +4,7 @@ import { setStatusBarMessage } from './databaseService.js';
 import { openPage } from './printService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
+import { matchListStore } from '../stores/matchListStore.js';
 
 // L'archive papier dans l'interface : les mêmes ExportPaperArchive et
 // ImportPaperArchive que `archive export|import` et le serveur (ADR-0119).
@@ -50,6 +51,9 @@ export async function importPaperArchive() {
                 failed: res?.failed?.length ?? 0
             })
         );
+        // Every entry to the import (match menu, empty panel, command mode)
+        // shows the matches it brought without its caller asking.
+        if (res?.imported?.length) matchListStore.reload();
         return res;
     } catch (err) {
         logger.error('could not import the paper archive:', err);

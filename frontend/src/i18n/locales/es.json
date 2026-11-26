@@ -398,6 +398,7 @@
     },
     "paperArchive": {
         "menu": "Archivo en papel…",
+        "importMenu": "Importar un archivo en papel…",
         "title": "Archivo en papel",
         "note": "Páginas A4 de códigos QR, sin texto, que guardan las partidas en papel y se reimportan desde el archivo, un escaneo o una foto.",
         "exportWhat": "Exportar",
@@ -3019,6 +3020,7 @@
             "open_group": "Abrir una base de datos en un grupo nuevo",
             "import": "Importar posiciones o matches",
             "import_db": "Fusionar otra base de datos",
+            "import_archive": "Importar un archivo en papel",
             "export_db": "Exportar la base de datos",
             "write": "Guardar la posición",
             "write!": "Actualizar la posición",

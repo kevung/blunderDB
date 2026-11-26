@@ -398,6 +398,7 @@
     },
     "paperArchive": {
         "menu": "Archivio cartaceo…",
+        "importMenu": "Importa un archivio cartaceo…",
         "title": "Archivio cartaceo",
         "note": "Pagine A4 di codici QR, senza testo, che conservano i match su carta e si reimportano dal file, da una scansione o da una foto.",
         "exportWhat": "Esporta",
@@ -3019,6 +3020,7 @@
             "open_group": "Apri un database in un nuovo gruppo",
             "import": "Importa posizioni o match",
             "import_db": "Unisci un altro database",
+            "import_archive": "Importa un archivio cartaceo",
             "export_db": "Esporta il database",
             "write": "Salva la posizione",
             "write!": "Aggiorna la posizione",

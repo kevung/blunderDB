@@ -398,6 +398,7 @@
     },
     "paperArchive": {
         "menu": "Paper archive…",
+        "importMenu": "Import a paper archive…",
         "title": "Paper archive",
         "note": "A4 pages of QR codes, without text, that keep matches on paper and import back from the file, a scan or a photograph.",
         "exportWhat": "Export",
@@ -3019,6 +3020,7 @@
             "open_group": "Open a database in a new group",
             "import": "Import positions or matches",
             "import_db": "Merge another database",
+            "import_archive": "Import a paper archive",
             "export_db": "Export the database",
             "write": "Save the position",
             "write!": "Update the position",

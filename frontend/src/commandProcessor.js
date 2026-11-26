@@ -95,6 +95,8 @@ export function processCommand(command) {
         import('./services/databaseService.js').then((m) => m.openDatabaseInNewGroup());
     } else if (command === 'import_db' || command === 'idb') {
         callbacks.onImportDatabase?.();
+    } else if (command === 'import_archive' || command === 'iar') {
+        callbacks.onImportPaperArchive?.();
     } else if (command === 'export_db' || command === 'edb') {
         callbacks.onExportDatabase?.();
     } else if (command.startsWith('import ')) {

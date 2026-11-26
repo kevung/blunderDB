@@ -398,6 +398,7 @@
     },
     "paperArchive": {
         "menu": "Papierarchiv…",
+        "importMenu": "Papierarchiv importieren…",
         "title": "Papierarchiv",
         "note": "A4-Seiten mit QR-Codes ohne Text, die Matches auf Papier bewahren und sich aus der Datei, einem Scan oder einem Foto wieder einlesen lassen.",
         "exportWhat": "Exportieren",
@@ -3019,6 +3020,7 @@
             "open_group": "Datenbank in einer neuen Gruppe öffnen",
             "import": "Positionen oder Matches importieren",
             "import_db": "Andere Datenbank zusammenführen",
+            "import_archive": "Papierarchiv importieren",
             "export_db": "Datenbank exportieren",
             "write": "Position speichern",
             "write!": "Position aktualisieren",
