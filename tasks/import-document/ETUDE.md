@@ -128,6 +128,25 @@ de structure est un second lecteur, qui rend le même `capture.Reading`.
    entourés ; une touche valide, une autre ouvre EDIT.
 5. Import, ouverture de la Collection.
 
+### Forme dans l'interface (validée par l'utilisateur, 2026-11-26) — cible de la tranche 5
+
+Ni bouton dédié ni panneau permanent : l'usage est occasionnel.
+
+- **Entrée** : le geste d'import existant. Un document déposé sur la fenêtre ou choisi par le
+  bouton d'import ouvre l'assistant au lieu d'importer directement ; une URL collée suivra le
+  même chemin quand les pages web seront lues. Plus une commande du mode commande.
+- **Assistant** : une modale temporaire, sur le modèle des modales existantes
+  (`ContactSheetModal`, `JobsModal`). Trois moments : profil du document (avec la calibration
+  optionnelle si l'analyse rend peu) ; analyse en fond et trois compteurs cliquables ; planche de
+  vérification par familles, puis import.
+- **Reprise** : tant qu'un relevé est en cours, un compteur cliquable dans la barre d'état
+  (« Relevé : 37 à vérifier ») rouvre l'assistant où il a été laissé. Absent sinon.
+- **Résultat** : une Collection ordinaire ; l'outil n'a plus d'existence propre après l'import.
+
+À vérifier à la tranche 5 : l'analyse en fond par l'ordonnanceur de calculs (ADR-0115) ; où vit
+le relevé en cours — à côté du document plutôt qu'en base (§2 règle 4), avec une mémoire du
+poste pour le retrouver, jamais exportée (ADR-0007).
+
 ## 6. Intégration
 
 - Paquet neuf `pkg/blunderdb/document` : extraction (pages, images, texte), découpe des
