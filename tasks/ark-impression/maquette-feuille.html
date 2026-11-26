@@ -1,0 +1,477 @@
+<title>Feuille de match et notation Ark</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;600&display=swap">
+<style>
+/* Mise en page : une colonne de lecture (spécification), puis un établi pleine largeur où la feuille A4 est posée à l'échelle. */
+:root {
+  --bg: #eceeed; --surface: #ffffff; --fg: #1b2220; --muted: #5a6562; --line: #d2d8d5; --accent: #0e6a5a; --accent-soft: #dcefeb;
+  --paper: #ffffff; --ink: #111111; --ink-soft: #555555;
+  --sans: "IBM Plex Sans", system-ui, sans-serif;
+  --cond: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #131817; --surface: #1c2321; --fg: #e5eae8; --muted: #9aa6a2; --line: #2f3936; --accent: #5cc7b2; --accent-soft: #17332e; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #131817; --surface: #1c2321; --fg: #e5eae8; --muted: #9aa6a2; --line: #2f3936; --accent: #5cc7b2; --accent-soft: #17332e; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 36px; }
+.prose { max-width: 70ch; display: flex; flex-direction: column; gap: 12px; }
+h1 { font-size: 30px; line-height: 1.15; margin: 0; font-weight: 600; text-wrap: balance; }
+h2 { font-size: 21px; margin: 0; font-weight: 600; text-wrap: balance; }
+h3 { font-size: 12px; margin: 0; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+p { margin: 0; }
+section { display: flex; flex-direction: column; gap: 16px; }
+code, .mono { font-family: var(--mono); font-size: .92em; }
+.lead { color: var(--muted); }
+.big { font-family: var(--mono); font-size: clamp(15px, 3.4vw, 24px); font-weight: 600; color: var(--accent); overflow-wrap: anywhere; }
+.anat { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 22px; }
+.anat div { border-top: 2px solid var(--accent); padding-top: 6px; min-width: 0; }
+.anat b { font-family: var(--mono); display: block; }
+.anat span { color: var(--muted); font-size: 13.5px; }
+.tw { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 13.5px; width: 100%; }
+th { text-align: left; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+th, td { padding: 5px 12px 5px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.n { font-family: var(--mono); overflow-wrap: anywhere; }
+.best { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2px 20px; font-size: 13.5px; }
+.best div { display: grid; grid-template-columns: 2.8em 1.6em 1.3fr 1fr; column-gap: 6px; border-bottom: 1px solid var(--line); padding: 3px 0; font-variant-numeric: tabular-nums; }
+.best .p { color: var(--muted); } .best .l { font-family: var(--mono); font-weight: 600; color: var(--accent); } .best .e { color: var(--muted); }
+button, select { font: inherit; font-size: 13px; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 9px; }
+button { cursor: pointer; } button:hover { border-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+ul { margin: 0; padding-left: 1.15em; display: flex; flex-direction: column; gap: 7px; }
+.names { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px 22px; }
+.names div { min-width: 0; } .names b { display: block; } .names span { color: var(--muted); font-size: 13.5px; }
+.names .pick { background: var(--accent-soft); border-radius: 8px; padding: 10px 12px; }
+
+.bench { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.ctl { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 13px; }
+.ctl label { display: flex; gap: 6px; align-items: center; }
+.read { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.read b { color: var(--fg); } .read .warn { color: #b3261e; font-weight: 600; }
+.stage { overflow: auto; background: var(--bg); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.pagebox { position: relative; flex: none; box-shadow: 0 1px 6px rgba(0,0,0,.25); }
+
+/* La feuille : papier blanc et encre noire dans les deux thèmes, c'est un tirage. */
+.sheet { position: absolute; top: 0; left: 0; width: 210mm; height: 297mm; box-sizing: border-box; padding: 9mm 8mm; background: var(--paper); color: var(--ink); font-family: var(--cond); font-size: 6pt; line-height: 1.2; overflow: hidden; transform-origin: 0 0; font-variant-numeric: tabular-nums; }
+.sheet .mh { display: flex; justify-content: space-between; gap: 2em; align-items: flex-end; border-bottom: .6pt solid var(--ink); padding-bottom: .35em; }
+.sheet .mt { font-size: 1.9em; font-weight: 600; line-height: 1.1; }
+.sheet .mm { color: var(--ink-soft); }
+.sheet .st { border-collapse: collapse; width: auto; font-size: 1em; }
+.sheet .st th, .sheet .st td { border: 0; padding: 0 0 0 1.2em; text-align: right; color: var(--ink); font-size: 1em; letter-spacing: 0; text-transform: none; }
+.sheet .st th { color: var(--ink-soft); font-weight: 400; } .sheet .st td:first-child { text-align: left; font-weight: 600; }
+.sheet .lg { color: var(--ink-soft); padding: .3em 0 .5em; }
+.sheet .tr { column-gap: 1.5em; column-rule: .3pt solid #aaa; }
+.sheet .tr.rows { column-width: 20em; } .sheet .tr.flow { column-width: 30em; }
+.sheet .gh { font-weight: 600; border-bottom: .3pt solid var(--ink); margin-top: .45em; break-after: avoid; display: flex; justify-content: space-between; gap: 1em; }
+.sheet .gh span { font-weight: 400; color: var(--ink-soft); }
+.sheet .rw { display: grid; grid-template-columns: 1.7em 1fr 1fr; break-inside: avoid; }
+.sheet .no { color: var(--ink-soft); }
+.sheet .fl { text-align: left; } .sheet .fl .no { font-weight: 600; color: var(--ink); margin-left: .5em; } .sheet .fl .sep { color: #999; }
+.sheet .d { font-weight: 600; }
+.sheet .g { font-weight: 600; }
+.sheet .bl { font-weight: 600; text-decoration: underline; }
+.sheet .ref { font-family: var(--sans); font-weight: 600; font-size: .82em; background: var(--ink); color: var(--paper); padding: 0 .3em; border-radius: .25em; margin-left: .2em; border: .4pt solid var(--ink); }
+.sheet .ref.o { background: var(--paper); color: var(--ink); }
+.sheet .tm { font-style: italic; color: var(--ink-soft); margin-left: .25em; font-size: .88em; }
+.sheet .ph { font-weight: 600; font-size: 1.15em; border-bottom: .6pt solid var(--ink); margin: .8em 0 .25em; display: flex; justify-content: space-between; }
+.sheet .ph span { font-weight: 400; font-size: .87em; color: var(--ink-soft); }
+.sheet .pl.c3 { column-count: 3; }
+.sheet .pl { column-count: 2; column-gap: 1.8em; column-rule: .3pt solid #aaa; }
+.sheet .pe { break-inside: avoid; padding: .12em 0; display: grid; grid-template-columns: 2em 1fr; }
+.sheet .pe .nt { font-family: var(--mono); font-size: .93em; font-weight: 600; overflow-wrap: anywhere; }
+.sheet .pe .wh { color: var(--ink-soft); } .sheet .pe .cm { font-style: italic; }
+.sheet .dl { column-gap: 1.6em; column-rule: .3pt solid #aaa; }
+.sheet .dl.two { column-count: 2; } .sheet .dl.many { column-width: 27em; } .sheet .dl.ans { column-width: 30em; }
+.sheet .de { display: flex; gap: .6em; align-items: baseline; break-inside: avoid; }
+.sheet .de .no { min-width: 1.9em; text-align: right; font-weight: 600; color: var(--ink); flex: none; }
+.sheet .de .nt { font-family: var(--mono); font-size: .93em; font-weight: 600; white-space: nowrap; }
+.sheet .de .an { min-width: 0; } .sheet .de .wh { color: var(--ink-soft); }
+.sheet .qrb { break-inside: avoid; display: flex; gap: 1.2em; align-items: flex-end; margin-top: .9em; color: var(--ink-soft); }
+.sheet canvas { image-rendering: pixelated; flex: none; display: block; }
+.sheet .grid { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; row-gap: 2.5mm; margin-top: 2mm; }
+.sheet .grid div { color: var(--ink-soft); }
+@media (max-width: 520px) { h1 { font-size: 24px; } }
+</style>
+
+<div class="wrap">
+  <header class="prose">
+    <h3>blunderDB · maquette de discussion</h3>
+    <h1>Un match sur une feuille A4, les positions écrites en lettres</h1>
+    <p class="lead">Aucun diagramme n'est imprimé. La transcription occupe le haut de la feuille, les positions à revoir sont listées à part dans une notation textuelle, et un numéro relie les deux. Toutes les données de la maquette sont factices.</p>
+  </header>
+
+  <section>
+    <div class="prose">
+      <h2>La notation</h2>
+      <p>Votre exemple, position de départ à 3-away / 4-away, 6-5 à jouer, videau à 4 chez le joueur du bas :</p>
+      <p class="big" id="hero"></p>
+    </div>
+    <div class="anat">
+      <div><b>[34]</b><span>Score en away : joueur en minuscules d'abord. Au-delà de 9 : <code>[11-9]</code>. Partie Crawford : <code>[14c]</code>. Money : <code>[$]</code>.</span></div>
+      <div><b>65</b><span>Dés, le plus grand d'abord. Absents : décision de videau.</span></div>
+      <div><b>x2</b><span>Videau : <code>x</code> chez les minuscules, <code>X</code> chez les majuscules, suivi de l'exposant (omis s'il vaut 1, soit videau à 2). Videau au centre : rien.</span></div>
+      <div><b>(ySQmLhfA)</b><span>Les portes : chaque lettre vaut deux pions. Minuscule pour un camp, majuscule pour l'autre, de la barre vers le point 1.</span></div>
+      <div><b>S3Qm3L3hf3</b><span>Tout le reste : pions en plus sur une porte, ou pion seul si la lettre n'est pas entre parenthèses. Un nombre suit la lettre à partir de deux.</span></div>
+      <div><b>z · Z</b><span>Barre : <code>z2</code> pour deux pions à la barre, jamais entre parenthèses. Les pions sortis se déduisent : quinze moins le total.</span></div>
+    </div>
+
+    <h3>L'alphabet des points (X est réservé au videau)</h3>
+    <div class="best" id="best"></div>
+
+    <h3>Exemples, encodés par la maquette</h3>
+    <div class="tw"><table><thead><tr><th>Position</th><th>Compacte</th><th>Développée</th><th></th></tr></thead><tbody id="ex"></tbody></table></div>
+
+    <div class="prose">
+      <h3>Points à trancher</h3>
+      <ul>
+        <li><b>Qui est au trait ?</b> Votre règle fixe le joueur 1 en minuscules. Il manque alors de quoi dire que c'est le joueur 2 qui joue. Deux voies : les minuscules désignent toujours le joueur au trait (une position, une seule écriture ; c'est ce que la maquette applique), ou le joueur 1 reste en minuscules et une apostrophe après les dés signale le trait adverse : <code>[34]65':…</code>.</li>
+        <li><b>Crawford.</b> blunderDB distingue Crawford et post-Crawford dans le score away. Je propose le suffixe <code>c</code> pour la partie Crawford, rien après.</li>
+        <li><b>Forme canonique.</b> L'ordre libre est accepté à la lecture ; à l'écriture blunderDB produit toujours le même ordre (barre, puis 24 vers 1), pour que deux copies de la même position soient identiques au caractère près.</li>
+        <li><b>Animaux par langue.</b> Les lettres sont universelles, les animaux sont un moyen mnémotechnique. La documentation existe en neuf langues : traduire le bestiaire en gardant les initiales pour chacune, ou seulement français et anglais ?</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="prose"><h2>Un nom pour la notation</h2></div>
+    <div class="names">
+      <div class="pick"><b>Ark, identifiant ArkID</b><span>Ma préférence. Les animaux y entrent deux par deux, comme les pions font une porte, et les parenthèses dessinent la coque. Court, identique en français et en anglais, et « ArkID » se range à côté de XGID et GNUbg ID.</span></div>
+      <div><b>Bestiaire (Bestiary)</b><span>Le mot juste pour la table des 25 animaux. Reste le nom de l'alphabet, Ark étant celui de l'écriture.</span></div>
+      <div><b>Ménagerie</b><span>Même image, plus long, se traduit mal en identifiant.</span></div>
+      <div><b>Zoo (ZooID)</b><span>Le plus court, le moins singulier.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="prose">
+      <h2>La feuille</h2>
+      <p>Le corps du texte est calculé pour que tout tienne : de 7 pt, il descend par quarts de point jusqu'à 5,5 pt, et le nombre de colonnes suit. Si les positions ne tiennent plus sous la transcription, elles passent au verso. Les réglages ci-dessous sont ceux que proposerait la boîte d'impression.</p>
+    </div>
+    <div class="bench">
+      <div class="ctl">
+        <label>Document <select id="doc"><option value="match">Match</option><option value="coll">Positions (recherche, collection)</option><option value="arch">Archive (codes seuls)</option></select></label>
+        <label>Longueur <select id="len"><option>5</option><option selected>7</option><option>11</option><option>15</option><option>21</option></select></label>
+        <label>Transcription <select id="lay"><option value="rows">en lignes</option><option value="flow">en continu</option></select></label>
+        <label>Notation <select id="form"><option value="compact">compacte</option><option value="dev">développée</option></select></label>
+        <label><input type="checkbox" id="opp"> Blunders de l'adversaire</label>
+        <label><input type="checkbox" id="ana" checked> Analyse rapide</label>
+        <label>Positions <select id="npos"><option>100</option><option selected>160</option><option>240</option><option>300</option></select></label>
+        <label><input type="checkbox" id="verso"> Réponses au verso</label>
+        <label><input type="checkbox" id="qr" checked> Code de réimport</label>
+        <label>Zoom <select id="zoom"><option value="fit">ajusté</option><option value="1">100 %</option><option value="1.6">160 %</option></select></label>
+      </div>
+      <div class="read" id="read"></div>
+      <div class="stage" id="stage"></div>
+    </div>
+    <div class="prose">
+      <h3>Ce que la maquette propose</h3>
+      <ul>
+        <li><b>Deux blocs séparés.</b> La transcription d'abord, les positions ensuite. Un numéro sur fond noir dans la transcription renvoie à un blunder détaillé ; un numéro encadré renvoie à une position remarquable (marquée ou commentée), sans erreur.</li>
+        <li><b>Erreurs.</b> <code>?</code> pour une erreur, <code>??</code> et soulignement pour un blunder, selon les seuils de la bibliothèque. Les blunders de l'adversaire restent marqués dans la transcription ; ils ne sont numérotés et détaillés que si la case est cochée (décochée par défaut).</li>
+        <li><b>Durée.</b> Durée du match et temps par joueur en tête, durée par partie, et les réflexions longues en italique à côté du coup. Rien n'est imprimé pour un match sans temps enregistré.</li>
+        <li><b>En lignes ou en continu.</b> En lignes, un numéro de coup par ligne et les deux joueurs côte à côte : plus lisible. En continu, les coups se suivent comme dans une partie d'échecs : environ un tiers de place en moins. L'impression peut basculer seule en continu quand les lignes débordent.</li>
+        <li><b>Listes de positions.</b> Une recherche ou une collection s'imprime à une ligne par position : numéro, notation, compte de pips des deux camps (pour vérifier la pose sur un vrai plateau), puis l'analyse sur la même ligne. Les pertes sont en millièmes, sans « 0. », pour gagner de la place. Sans analyse, la liste passe à trois colonnes ou plus.</li>
+        <li><b>Réponses au verso.</b> Pour s'interroger : le recto ne porte que les positions, le verso les analyses sous le même numéro.</li>
+        <li><b>Police.</b> La notation exige une police où le I majuscule (point 9 adverse) et le l minuscule (point 12) se distinguent ; d'où la police à chasse fixe.</li>
+        <li><b>Commentaires.</b> En option : le commentaire du match sous l'en-tête, celui d'une position sous sa ligne. Un commentaire de coup crée une entrée numérotée dans le bloc Positions, il n'est jamais inséré dans la transcription. Aucun n'est tronqué : s'ils sont longs, le bloc passe au verso.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="prose">
+      <h2>Du papier vers blunderDB</h2>
+      <p>Le texte est fait pour l'œil, pas pour la machine. Relire par OCR une notation en corps 6 où seule la casse distingue les camps (c/C, o/O, s/S, v/V, w/W, z/Z ont la même forme) donnerait des imports faux sans le dire. Le retour se fait donc par un code QR, dont la lecture est exacte ou échoue.</p>
+      <ul>
+        <li><b>Un code par feuille lisible.</b> Il contient la transcription, les scores, les temps, les marques et les commentaires. Les analyses n'y sont pas : le moteur les recalcule à l'import. Avec un codage dédié (chaque coup noté par son rang parmi les coups légaux), un coup pèse environ un octet, un match en 7 points environ 500 octets. Le code de la maquette est un vrai QR de cette taille, au contenu factice.</li>
+        <li><b>Le PDF se réimporte sans lecture optique.</b> Le même contenu est joint au fichier PDF ; blunderDB le relit directement. Le QR ne sert que pour le papier, scanné ou photographié.</li>
+        <li><b>Une archive en codes seuls.</b> Sans texte, une face A4 porte 12 codes de 61 mm, soit environ 35 Ko : près de 70 matchs en 7 points, ou environ 2 500 positions. Une base de 2 000 matchs tient sur une quinzaine de feuilles recto verso. Choisissez « Archive » dans Document pour voir la page.</li>
+        <li><b>Robustesse.</b> Chaque code porte l'identifiant de l'archive, son rang et une somme de contrôle ; un code de parité pour cinq permet de reconstruire un code illisible. Modules de 0,33 mm : lisibles par un scanner à 300 ppp, et par une photo de téléphone prise bien à plat.</li>
+        <li><b>Limites.</b> Stocker aussi les analyses multiplierait le volume par 50 à 100 : le papier garde ce qui ne se recalcule pas. Ces chiffres sont des estimations à confirmer par un prototype du codage sur de vrais matchs.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script id="codec">
+// Encodeur de référence de la notation. Position : a[1..24] et a[25]=barre pour les minuscules ;
+// b[1..24] dans la même numérotation et b[0]=barre pour les majuscules.
+var LET = [null].concat('ABCDEFGHIJKLMNOPQRSTUVW'.split(''), ['Y']);
+function arche(pos, o) {
+  var sc = o.money ? '$' : ((o.away[0] > 9 || o.away[1] > 9) ? o.away.join('-') : o.away.join('')) + (o.crawford ? 'c' : '');
+  var items = [];
+  if (pos.a[25]) items.push({ l: 'z', n: pos.a[25], bar: 1, s: 'a' });
+  for (var p = 24; p >= 1; p--) {
+    if (pos.a[p]) items.push({ l: LET[p].toLowerCase(), n: pos.a[p], s: 'a' });
+    if (pos.b[p]) items.push({ l: LET[p], n: pos.b[p], s: 'b' });
+  }
+  if (pos.b[0]) items.push({ l: 'Z', n: pos.b[0], bar: 1, s: 'b' });
+  function body(it) {
+    var pts = it.filter(function (i) { return !i.bar && i.n >= 2; }).map(function (i) { return i.l; }).join('');
+    var rest = it.map(function (i) { var k = i.bar ? i.n : (i.n >= 2 ? i.n - 2 : 1); return k ? i.l + (k > 1 ? k : '') : ''; }).join('');
+    return '(' + pts + ')' + rest;
+  }
+  var b = o.form === 'dev'
+    ? body(items.filter(function (i) { return i.s === 'a'; })) + body(items.filter(function (i) { return i.s === 'b'; }))
+    : body(items);
+  var cube = o.cube ? (o.cube.owner === 'a' ? 'x' : 'X') + (o.cube.exp > 1 ? o.cube.exp : '') : '';
+  var dice = o.dice ? '' + Math.max(o.dice[0], o.dice[1]) + Math.min(o.dice[0], o.dice[1]) : '';
+  return '[' + sc + ']' + dice + ':' + cube + b;
+}
+function mk(a, b) { var A = new Array(26).fill(0), B = new Array(26).fill(0); for (var k in a) A[k] = a[k]; for (var j in b) B[j] = b[j]; return { a: A, b: B }; }
+var START = function () { return mk({ 24: 2, 13: 5, 8: 3, 6: 5 }, { 1: 2, 12: 5, 17: 3, 19: 5 }); };
+</script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var FR = ['Araignée', 'Bernard-l’ermite', 'Crocodile', 'Dauphin', 'Éléphant', 'Fourmi', 'Gorille', 'Hérisson', 'Ibis', 'Jaguar', 'Kangourou', 'Loup', 'Mouton', 'Nasique', 'Oie', 'Papillon', 'Quetzal', 'Rhinocéros', 'Souris', 'Tortue', 'Urubu', 'Vipère', 'Wombat', 'Yack', 'Zèbre'];
+  var EN = ['Armadillo', 'Bat', 'Crocodile', 'Dog', 'Eagle', 'Flamingo', 'Gorilla', 'Hippo', 'Iguana', 'Jaguar', 'Kangaroo', 'Lion', 'Mule', 'Narwhal', 'Ostrich', 'Penguin', 'Quail', 'Rhino', 'Skunk', 'Tortoise', 'Urchin', 'Viper', 'Wombat', 'Yak', 'Zebra'];
+
+  $('hero').textContent = arche(START(), { away: [3, 4], dice: [6, 5], cube: { owner: 'a', exp: 2 } });
+  $('best').innerHTML = FR.map(function (f, i) {
+    return '<div><span class="p">' + (i === 24 ? 'barre' : i + 1) + '</span><span class="l">' + f[0].normalize('NFD')[0] + '</span><span>' + f + '</span><span class="e">' + EN[i] + '</span></div>';
+  }).join('');
+
+  var EX = [
+    ['Départ, 3a-4a, 6-5 à jouer, videau à 4 chez les minuscules', START(), { away: [3, 4], dice: [6, 5], cube: { owner: 'a', exp: 2 } }],
+    ['Départ, 7a-7a, 3-1 à jouer, videau au centre', START(), { away: [7, 7], dice: [3, 1] }],
+    ['Un pion à la barre, un pion seul au 24, l’adversaire tient son point 5', mk({ 25: 1, 24: 1, 13: 5, 8: 3, 6: 5 }, { 1: 2, 12: 5, 17: 2, 19: 4, 20: 2 }), { away: [5, 3], dice: [4, 2] }],
+    ['Décision de videau, 11a-9a, videau à 2 chez l’adversaire', mk({ 20: 2, 13: 3, 8: 3, 6: 4, 5: 2, 4: 1 }, { 1: 1, 12: 4, 17: 3, 19: 4, 21: 2, 0: 1 }), { away: [11, 9], cube: { owner: 'b', exp: 1 } }],
+    ['Sortie, partie Crawford 1a-4a, 6-1 à jouer', mk({ 6: 3, 5: 3, 4: 2, 2: 1 }, { 19: 2, 20: 3, 22: 2 }), { away: [1, 4], crawford: true, dice: [6, 1] }]
+  ];
+  $('ex').innerHTML = EX.map(function (e, i) {
+    var c = arche(e[1], e[2]), d = arche(e[1], Object.assign({}, e[2], { form: 'dev' }));
+    return '<tr><td>' + e[0] + '</td><td class="n">' + c + '</td><td class="n">' + d + '</td><td><button type="button" id="cp' + i + '" data-t="' + c + '">Copier</button></td></tr>';
+  }).join('');
+  $('ex').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button'); if (!b) return;
+    var done = function (m) { b.textContent = m; setTimeout(function () { b.textContent = 'Copier'; }, 1400); };
+    try { navigator.clipboard.writeText(b.dataset.t).then(function () { done('Copié'); }, function () { done('Sélectionnez le texte'); }); } catch (e) { done('Sélectionnez le texte'); }
+  });
+
+  // ---------- Données factices ----------
+  function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) | 0; var t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  var P = ['A. Morel', 'L. Bianchi'];
+
+  function moveText(r, late) {
+    var d1 = 1 + Math.floor(r() * 6), d2 = 1 + Math.floor(r() * 6); if (d2 > d1) { var t = d1; d1 = d2; d2 = t; }
+    var hit = function () { return r() < 0.1 ? '*' : ''; };
+    var from = function (d) { return d + 1 + Math.floor(r() * (24 - d)); };
+    var txt;
+    if (late && r() < 0.6) txt = d1 === d2 ? d1 + '/off(' + (2 + Math.floor(r() * 3)) + ')' : d1 + '/off ' + d2 + '/off';
+    else if (d1 === d2) { var a = from(d1), b = from(d1); txt = r() < 0.25 ? a + '/' + (a - d1) + '(4)' : a + '/' + (a - d1) + '(2)' + hit() + ' ' + b + '/' + (b - d1) + '(2)'; }
+    else if (r() < 0.07) { var c = from(d2); txt = 'bar/' + (25 - d1) + hit() + ' ' + c + '/' + (c - d2); }
+    else if (r() < 0.22) { var s = d1 + d2 + 1 + Math.floor(r() * (24 - d1 - d2)); txt = s + '/' + (s - d1 - d2) + hit(); }
+    else { var e = from(d1), f = from(d2); txt = e + '/' + (e - d1) + hit() + ' ' + f + '/' + (f - d2); }
+    return { dice: [d1, d2], txt: txt };
+  }
+  function genMatch(L) {
+    var r = rng(1000 + L * 77), score = [0, 0], games = [], plies = 0, secs = 0;
+    while (score[0] < L && score[1] < L) {
+      var n = 10 + Math.floor(r() * 25), cubeAt = r() < 0.4 ? Math.floor(n * (0.25 + r() * 0.5)) : -1, cubeSide = r() < 0.5 ? 0 : 1;
+      var g = { away: [L - score[0], L - score[1]], rows: [], secs: 0 }, cube = null, pend = false, over = null;
+      for (var i = 0; i < n && over === null; i++) {
+        var row = [null, null];
+        for (var s = 0; s < 2 && over === null; s++) {
+          var p = { side: s, game: games.length + 1, num: i + 1, away: g.away, cube: cube, grade: 0 };
+          if (pend) { pend = false; if (r() < 0.25) { p.txt = 'Passe'; over = cubeSide; } else { p.txt = 'Prend'; cube = { owner: s, exp: 1 }; } p.cubeAct = 1; }
+          else if (i === cubeAt && s === cubeSide && !cube) { p.txt = 'Double'; p.cubeAct = 1; pend = true; if (r() < 0.12) { p.grade = 2; p.cost = 0.08 + r() * 0.2; } }
+          else { var m = moveText(r, i > n - 6); p.dice = m.dice; p.txt = m.txt; var q = r(); if (q < 0.03) { p.grade = 2; p.cost = 0.08 + r() * 0.25; } else if (q < 0.1) { p.grade = 1; p.cost = 0.02 + r() * 0.06; } else if (q < 0.115) p.flag = 1; }
+          p.t = r() < 0.035 ? 30 + Math.floor(r() * 90) : 4 + Math.floor(r() * 14);
+          if (p.t >= 30) p.slow = 1;
+          p.alt = [moveText(r, false).txt, moveText(r, false).txt]; p.seed = Math.floor(r() * 1e9);
+          g.secs += p.t; row[s] = p; plies++;
+        }
+        g.rows.push(row);
+      }
+      var w = over !== null ? over : (r() < 0.5 ? 0 : 1), pts = (cube ? 2 : 1) * (over === null && r() < 0.1 ? 2 : 1);
+      g.winner = w; g.pts = Math.min(pts, L - score[w]); score[w] += g.pts; secs += g.secs; games.push(g);
+    }
+    return { L: L, games: games, score: score, plies: plies, secs: secs };
+  }
+  function genPos(seed) {
+    var r = rng(seed), pos = START(), k = 5 + Math.floor(r() * 14);
+    for (var i = 0; i < k * 3; i++) {
+      var a = r() < 0.5, mine = a ? pos.a : pos.b, other = a ? pos.b : pos.a, occ = [];
+      for (var p = 1; p <= 24; p++) if (mine[p]) occ.push(p);
+      var f = occ[Math.floor(r() * occ.length)], d = 1 + Math.floor(r() * 6), to = a ? f - d : f + d;
+      if (to < 1 || to > 24 || other[to]) continue;
+      mine[f]--; mine[to]++;
+    }
+    if (r() < 0.15) { for (var q = 1; q <= 24; q++) if (pos.b[q] === 1) { pos.b[q] = 0; pos.b[0] = 1; break; } }
+    return pos;
+  }
+  var COMMENTS = ['Position de référence : tenir le point 5 ou partir ?', 'Videau à revoir à ce score.', 'Timing du jeu arrière : compter avant de jouer.', 'Deux candidats très proches, structure contre course.', 'À rejouer : le coup naturel est le bon.'];
+  var dur = function (s) { var m = Math.round(s / 60); return m >= 60 ? Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') : m + ' min'; };
+  var eq = function (x) { return '−' + x.toFixed(3); };
+
+  function notation(p, form) {
+    var cube = p.cube ? { owner: p.cube.owner === p.side ? 'a' : 'b', exp: p.cube.exp } : null;
+    return arche(genPos(p.seed), { away: [p.away[p.side], p.away[1 - p.side]], dice: p.dice || null, cube: cube, form: form });
+  }
+  function plyHtml(p) {
+    if (!p) return '<span></span>';
+    var h = (p.dice ? '<span class="d">' + p.dice[0] + p.dice[1] + '</span> ' : '') + (p.grade === 2 ? '<span class="bl">' + p.txt + '</span>' : p.txt);
+    if (p.grade) h += '<span class="g">' + (p.grade === 2 ? '??' : '?') + '</span>';
+    if (p.ref) h += '<span class="ref' + (p.kind === 'r' ? ' o' : '') + '">' + p.ref + '</span>';
+    if (p.slow) h += '<span class="tm">' + p.t + 's</span>';
+    return '<span>' + h + '</span>';
+  }
+  function entryHtml(n, p, o, coll) {
+    var h = '<div class="pe"><span class="ref' + (p.kind === 'r' ? ' o' : '') + '" style="margin:0;justify-self:start;align-self:start">' + n + '</span><div><span class="nt">' + notation(p, o.form) + '</span>';
+    if (!coll) h += ' <span class="wh">P' + p.game + '·' + p.num + ' ' + P[p.side] + '</span>';
+    if (o.ana) {
+      if (coll) h += '<br>1. ' + p.txt + ' · 2. ' + p.alt[0] + ' ' + eq(0.01 + (p.seed % 60) / 1000) + ' · 3. ' + p.alt[1] + ' ' + eq(0.07 + (p.seed % 90) / 1000);
+      else if (p.kind === 'r') h += '<br>joué ' + p.txt + ' (meilleur) · 2. ' + p.alt[0] + ' ' + eq(0.004 + (p.seed % 20) / 1000);
+      else if (p.cubeAct) h += '<br>joué <b>Double ' + eq(p.cost) + '</b> › Pas de double / Prend';
+      else h += '<br>joué <b>' + p.txt + ' ' + eq(p.cost) + '</b> › ' + p.alt[0] + ' · 2. ' + p.alt[1] + ' ' + eq(p.cost * 0.3);
+    }
+    if (p.kind === 'r' || (coll && p.seed % 4 === 0)) h += '<br><span class="cm">' + COMMENTS[p.seed % COMMENTS.length] + '</span>';
+    return h + '</div></div>';
+  }
+
+  // ---------- Rendu et ajustement ----------
+  var stage = $('stage'), cache = {};
+  function newSheet() {
+    var box = document.createElement('div'); box.className = 'pagebox';
+    var sh = document.createElement('div'); sh.className = 'sheet';
+    var inner = document.createElement('div'); sh.appendChild(inner); box.appendChild(sh); stage.appendChild(box);
+    return { box: box, sheet: sh, inner: inner };
+  }
+  function fit(pg, max) {
+    var cs = getComputedStyle(pg.sheet), avail = pg.sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    for (var fs = max || 7; fs >= 5.5; fs -= 0.25) { pg.sheet.style.fontSize = fs + 'pt'; if (pg.inner.offsetHeight <= avail) return { fs: fs, ok: true }; }
+    return { fs: 5.5, ok: false };
+  }
+  function scale() {
+    var z = $('zoom').value, boxes = stage.querySelectorAll('.pagebox'); if (!boxes.length) return;
+    var sh = boxes[0].firstChild, w = sh.offsetWidth, hgt = sh.offsetHeight;
+    var s = z === 'fit' ? Math.min(1, (stage.clientWidth - 24) / w) : parseFloat(z);
+    boxes.forEach(function (b) { b.style.width = w * s + 'px'; b.style.height = hgt * s + 'px'; b.firstChild.style.transform = 'scale(' + s + ')'; });
+  }
+  var pt = function (x) { return String(x).replace('.', ','); };
+  var MOD = 0.33;
+  function qrHtml(n) { return '<canvas class="qrc" data-n="' + Math.min(n, 2900) + '"></canvas>'; }
+  function drawQr() {
+    var mm = 0;
+    stage.querySelectorAll('canvas.qrc').forEach(function (cv, k) {
+      if (typeof qrcode === 'undefined') { cv.hidden = true; return; }
+      var r = rng(99 + k), n = +cv.dataset.n, str = '';
+      for (var i = 0; i < n; i++) str += String.fromCharCode(33 + Math.floor(r() * 90));
+      var q = qrcode(0, 'L'); q.addData(str, 'Byte'); q.make();
+      var c = q.getModuleCount(), w = c + 8, ctx = cv.getContext('2d');
+      cv.width = cv.height = w * 3; mm = w * MOD; cv.style.width = cv.style.height = mm + 'mm';
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w * 3, w * 3); ctx.fillStyle = '#000';
+      for (var y = 0; y < c; y++) for (var x = 0; x < c; x++) if (q.isDark(y, x)) ctx.fillRect((x + 4) * 3, (y + 4) * 3, 3, 3);
+    });
+    return Math.round(mm);
+  }
+
+  function render() {
+    var o = { form: $('form').value, ana: $('ana').checked, opp: $('opp').checked, lay: $('lay').value }, isColl = $('doc').value !== 'match';
+    ['len', 'lay', 'opp'].forEach(function (id) { $(id).disabled = isColl; });
+    $('verso').disabled = $('npos').disabled = $('doc').value !== 'coll';
+    stage.innerHTML = '';
+    o.qr = $('qr').checked;
+    if ($('doc').value === 'arch') { $('lay').disabled = $('opp').disabled = true; return renderArch(); }
+    if ($('doc').value === 'study') return renderStudy(o);
+    if (isColl) return renderColl(o);
+    var L = +$('len').value, m = cache[L] || (cache[L] = genMatch(L)), n = 0, list = [];
+    var st = [{ e: 0, b: 0, c: 0, t: 0, d: 0 }, { e: 0, b: 0, c: 0, t: 0, d: 0 }];
+    m.games.forEach(function (g) { g.rows.forEach(function (row) { row.forEach(function (p) {
+      if (!p) return; delete p.ref; delete p.kind;
+      var s = st[p.side]; s.d++; s.t += p.t; if (p.grade) { s.e++; s.c += p.cost; } if (p.grade === 2) s.b++;
+      if (p.grade === 2 && (p.side === 0 || o.opp)) { p.ref = ++n; p.kind = 'b'; list.push(p); }
+      else if (p.flag && p.side === 0) { p.ref = ++n; p.kind = 'r'; list.push(p); }
+    }); }); });
+    var head = '<div class="mh"><div><div class="mt">' + P[0] + ' ' + m.score[0] + ' – ' + m.score[1] + ' ' + P[1] + '</div><div class="mm">Match en ' + L + ' points · Open d’automne (fictif), quart de finale · 14/11/2026 · ' + m.games.length + ' parties · ' + m.plies + ' coups · ' + dur(m.secs) + '</div></div>' +
+      '<table class="st"><tr><th></th><th>PR</th><th>Erreurs</th><th>Blunders</th><th>Temps</th></tr>' + st.map(function (s, i) { return '<tr><td>' + P[i] + '</td><td>' + (s.c * 500 / s.d).toFixed(1) + '</td><td>' + s.e + '</td><td>' + s.b + '</td><td>' + dur(s.t) + '</td></tr>'; }).join('') + '</table></div>' +
+      '<div class="lg"><b>?</b> erreur · <b>??</b> blunder · <span class="ref">n</span> blunder détaillé · <span class="ref o">n</span> position remarquable · <i>47s</i> réflexion longue · Notation Ark : A=1 … W=23, Y=24, Z=barre, x=videau ; minuscules = joueur au trait ; (portes) puis pions en plus et pions seuls</div>';
+    var bytes = 60 + Math.round(m.plies * 1.1) + list.filter(function (p) { return p.kind === 'r'; }).length * 30;
+    var tr = '<div class="tr ' + o.lay + '">' + m.games.map(function (g, gi) {
+      var hd = '<div class="gh"><div>Partie ' + (gi + 1) + ' <span>' + g.away[0] + 'a–' + g.away[1] + 'a</span></div><span>' + P[g.winner] + ' +' + g.pts + ' · ' + dur(g.secs) + '</span></div>';
+      var body = o.lay === 'rows'
+        ? g.rows.map(function (row, i) { return '<div class="rw"><span class="no">' + (i + 1) + '</span>' + plyHtml(row[0]) + plyHtml(row[1]) + '</div>'; }).join('')
+        : '<div class="fl">' + g.rows.map(function (row, i) { return '<span class="no">' + (i + 1) + '.</span> ' + plyHtml(row[0]) + (row[1] ? ' <span class="sep">/</span> ' + plyHtml(row[1]) : ''); }).join(' ') + '</div>';
+      return hd + body;
+    }).join('') + (o.qr ? '<div class="qrb">' + qrHtml(bytes) + '<div><b>Réimport</b> · ' + bytes + ' octets<br>Transcription, scores, temps, marques, commentaires. Analyses recalculées à l\u2019import.</div></div>' : '') + '</div>';
+    var pos = list.length ? '<div class="ph"><div>Positions</div><span>' + list.filter(function (p) { return p.kind === 'b'; }).length + ' blunders' + (o.opp ? ' (les deux joueurs)' : ' de ' + P[0]) + ' · ' + list.filter(function (p) { return p.kind === 'r'; }).length + ' remarquables</span></div><div class="pl">' + list.map(function (p) { return entryHtml(p.ref, p, o, false); }).join('') + '</div>' : '';
+
+    var p1 = newSheet(); p1.inner.innerHTML = head + tr + pos; var f1 = fit(p1), msg;
+    if (f1.ok) msg = '<b>1 page</b> · corps ' + pt(f1.fs) + ' pt';
+    else {
+      p1.inner.innerHTML = head + tr; f1 = fit(p1);
+      var p2 = newSheet(); p2.inner.innerHTML = head + pos; var f2 = fit(p2);
+      msg = '<b>recto verso</b> · transcription ' + pt(f1.fs) + ' pt' + (f1.ok ? '' : ' <span class="warn">(déborde : passer en continu)</span>') + ' · positions ' + pt(f2.fs) + ' pt' + (f2.ok ? '' : ' <span class="warn">(débordent)</span>');
+    }
+    var side = drawQr();
+    if (o.qr) { var again = fit(p1); if (!again.ok) msg += ' <span class="warn">(le code fait déborder)</span>'; }
+    $('read').innerHTML = msg + ' · ' + m.games.length + ' parties, ' + m.plies + ' coups, ' + list.length + ' positions listées' + (o.qr && side ? ' · code ' + bytes + ' octets, ' + side + ' mm' : '');
+    scale();
+  }
+  function renderColl(o) {
+    var r = rng(4242), items = [], N = +$('npos').value, verso = $('verso').checked;
+    for (var i = 0; i < N; i++) { var m = moveText(r, false); items.push({ side: 0, away: [2 + Math.floor(r() * 6), 2 + Math.floor(r() * 6)], dice: m.dice, txt: m.txt, cube: r() < 0.3 ? { owner: r() < 0.5 ? 0 : 1, exp: 1 } : null, alt: [moveText(r, false).txt, moveText(r, false).txt], seed: Math.floor(r() * 1e9) }); }
+    var mp = function (x) { return '−' + Math.round(x * 1000); };
+    var pips = function (p) { var pos = genPos(p.seed), a = 25 * pos.a[25], b = 25 * pos.b[0]; for (var k = 1; k <= 24; k++) { a += k * pos.a[k]; b += (25 - k) * pos.b[k]; } return a + '–' + b; };
+    var ana = function (p) { return '<b>' + p.txt + '</b> · ' + p.alt[0] + ' ' + mp(0.01 + (p.seed % 60) / 1000) + ' · ' + (38 + p.seed % 30) + '/' + (5 + p.seed % 22); };
+    var hd = function (sub) { return '<div class="mh"><div><div class="mt">Recherche : milieux de partie, 2a à 7a</div><div class="mm">Liste (fictive) · ' + N + ' positions · ' + sub + ' · imprimée le 26/11/2026</div></div></div>'; };
+    var inline = o.ana && !verso, bytes = Math.min(2900, N * 12 + 40);
+    var pg = newSheet();
+    pg.inner.innerHTML = hd(o.ana && verso ? 'réponses au verso, même numéro' : 'questions') +
+      '<div class="lg">Ark : A=1 … W=23, Y=24, Z=barre, x=videau ; minuscules = joueur au trait ; (portes) puis pions en plus et pions seuls · pips trait–adversaire' + (inline ? ' · <b>meilleur coup</b> · 2e coup et sa perte en millièmes · gain/gammon en %' : '') + '</div>' +
+      '<div class="dl ' + (inline ? 'two' : 'many') + '">' + items.map(function (p, i) { return '<div class="de"><span class="no">' + (i + 1) + '</span><span class="nt">' + notation(p, o.form) + '</span><span class="an"><span class="wh">' + pips(p) + '</span>' + (inline ? ' ' + ana(p) : '') + '</span></div>'; }).join('') +
+      (o.qr ? '<div class="qrb">' + qrHtml(bytes) + '<div><b>Réimport</b><br>' + bytes + ' octets</div></div>' : '') + '</div>';
+    drawQr(); var f = fit(pg), msg = '<b>' + N + ' positions</b> · recto ' + pt(f.fs) + ' pt' + (f.ok ? '' : ' <span class="warn">(déborde)</span>');
+    if (o.ana && verso) {
+      var pv = newSheet();
+      pv.inner.innerHTML = hd('réponses') + '<div class="lg"><b>meilleur coup</b> · 2e coup et sa perte en millièmes · gain/gammon en %</div><div class="dl ans">' + items.map(function (p, i) { return '<div class="de"><span class="no">' + (i + 1) + '</span><span class="an">' + ana(p) + '</span></div>'; }).join('') + '</div>';
+      var f2 = fit(pv); msg += ' · verso ' + pt(f2.fs) + ' pt' + (f2.ok ? '' : ' <span class="warn">(déborde)</span>');
+    }
+    $('read').innerHTML = msg + (o.ana ? (verso ? ' · analyse au verso' : ' · analyse sur la ligne') : ' · sans analyse');
+    scale();
+  }
+  function renderCollOld(o) {
+    var r = rng(4242), items = [];
+    for (var i = 0; i < 72; i++) { var m = moveText(r, false); items.push({ side: 0, away: [2 + Math.floor(r() * 6), 2 + Math.floor(r() * 6)], dice: m.dice, txt: m.txt, cube: r() < 0.3 ? { owner: r() < 0.5 ? 0 : 1, exp: 1 } : null, alt: [moveText(r, false).txt, moveText(r, false).txt], seed: Math.floor(r() * 1e9), kind: 'c' }); }
+    var pg = newSheet();
+    pg.inner.innerHTML = '<div class="mh"><div><div class="mt">Milieux de partie à revoir</div><div class="mm">Collection (fictive) · ' + items.length + ' positions · imprimée le 26/11/2026</div></div></div>' +
+      '<div class="lg">Notation Ark : A=1 … W=23, Y=24, Z=barre, x=videau ; minuscules = joueur au trait ; (portes) puis pions en plus et pions seuls' + (o.ana ? ' · coups classés, perte d’équité par rapport au meilleur' : '') + '</div>' +
+      '<div class="pl">' + items.map(function (p, i) { return entryHtml(i + 1, p, o, true); }).join('') + (o.qr ? '<div class="qrb">' + qrHtml(items.length * 16 + 40) + '<div><b>Réimport</b><br>' + (items.length * 16 + 40) + ' octets</div></div>' : '') + '</div>';
+    drawQr(); var f = fit(pg);
+    $('read').innerHTML = '<b>1 page</b> · corps ' + pt(f.fs) + ' pt' + (f.ok ? '' : ' <span class="warn">(déborde)</span>') + ' · ' + items.length + ' positions' + (o.ana ? ' avec analyse' : ' sans analyse');
+    scale();
+  }
+
+  function renderStudy(o) {
+    var r = rng(777), items = [];
+    for (var i = 0; i < 60; i++) { var m = moveText(r, false); items.push({ side: 0, away: [2 + Math.floor(r() * 6), 2 + Math.floor(r() * 6)], dice: m.dice, txt: m.txt, cube: r() < 0.3 ? { owner: r() < 0.5 ? 0 : 1, exp: 1 } : null, alt: [moveText(r, false).txt, moveText(r, false).txt], seed: Math.floor(r() * 1e9) }); }
+    var pips = function (p) { var pos = genPos(p.seed), a = 25 * pos.a[25], b = 25 * pos.b[0]; for (var k = 1; k <= 24; k++) { a += k * pos.a[k]; b += (25 - k) * pos.b[k]; } return a + '\u2013' + b; };
+    var hd = function (t, sub) { return '<div class="mh"><div><div class="mt">' + t + '</div><div class="mm">Fiche d\u2019étude (fictive) · ' + items.length + ' positions · ' + sub + '</div></div></div>'; };
+    var q = newSheet(), a = newSheet();
+    q.inner.innerHTML = hd('Milieux de partie · questions', 'réponses au verso, même numéro') +
+      '<div class="lg">Poser la position de la barre vers le point 1 : (portes) à deux pions, puis pions en plus et pions seuls. A=1 … W=23, Y=24, Z=barre, x=videau ; minuscules = vous, au trait. Le compte de pips (vous\u2013adversaire) vérifie la pose.</div>' +
+      '<div class="pl c3">' + items.map(function (p, i) { return '<div class="pe"><span class="ref o" style="margin:0;justify-self:start;align-self:start">' + (i + 1) + '</span><div><span class="nt">' + notation(p, o.form) + '</span><br><span class="wh">pips ' + pips(p) + '</span></div></div>'; }).join('') + '</div>';
+    a.inner.innerHTML = hd('Milieux de partie · réponses', 'coups classés, perte par rapport au meilleur, chances du joueur au trait') +
+      '<div class="pl c3" style="margin-top:.6em">' + items.map(function (p, i) { var w = 38 + p.seed % 30, g = 5 + p.seed % 22;
+        return '<div class="pe"><span class="ref" style="margin:0;justify-self:start;align-self:start">' + (i + 1) + '</span><div><b>' + p.txt + '</b> · gain ' + w + ' % · gammon ' + g + ' %<br>2. ' + p.alt[0] + ' ' + eq(0.01 + (p.seed % 60) / 1000) + ' · 3. ' + p.alt[1] + ' ' + eq(0.07 + (p.seed % 90) / 1000) + (p.seed % 3 === 0 ? '<br><span class="cm">' + COMMENTS[p.seed % COMMENTS.length] + '</span>' : '') + '</div></div>'; }).join('') + '</div>';
+    var f1 = fit(q, 9), f2 = fit(a, 9);
+    $('read').innerHTML = '<b>1 feuille recto verso</b> · ' + items.length + ' positions · questions ' + pt(f1.fs) + ' pt, réponses ' + pt(f2.fs) + ' pt';
+    scale();
+  }
+  function renderArch() {
+    var pg = newSheet(), g = '';
+    for (var i = 1; i <= 12; i++) g += '<div>' + qrHtml(2900) + i + '/12</div>';
+    pg.inner.innerHTML = '<div class="mh"><div><div class="mt">Archive blunderDB</div><div class="mm">Bibliothèque (fictive) · feuille 1 sur 15, recto · matchs 1 à 68 · identifiant 7f3a-c21e · imprimée le 26/11/2026</div></div></div><div class="grid">' + g + '</div>';
+    pg.sheet.style.fontSize = '6pt'; var side = drawQr();
+    $('read').innerHTML = '<b>12 codes de ' + side + ' mm</b> · 12 × 2 900 octets = 34,8 Ko par face · environ 68 matchs en 7 points';
+    scale();
+  }
+  ['doc', 'len', 'lay', 'form', 'opp', 'ana', 'qr', 'npos', 'verso'].forEach(function (id) { $(id).addEventListener('change', render); });
+  $('zoom').addEventListener('change', scale);
+  window.addEventListener('resize', scale);
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(render, render);
+})();
+</script>
