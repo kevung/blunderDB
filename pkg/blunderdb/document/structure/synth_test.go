@@ -167,6 +167,10 @@ type drawOpts struct {
 	// trayCube draws a cube in the top tray's box; trayHollow draws the
 	// borne-off checkers as hollow rectangles.
 	trayCube, trayHollow bool
+	// trayStrokes draws, in the top tray's box, two hairlines across it
+	// (a cube's or a label's outline), and in the bottom one three bars
+	// floating halfway up, off the tray's outer end.
+	trayStrokes bool
 	// darkFill is the dark checkers' grey, 0.2 when unset.
 	darkFill float64
 }
@@ -278,6 +282,18 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 				}
 				c.rect(x0+4, y, x1-4, y+3, 0)
 			}
+			if o.trayStrokes {
+				if row == 0 {
+					for _, y := range []int{ya + int(0.5*p), ya + int(1.3*p)} {
+						c.rect(x0+2, y, x1-2, y+1, 0)
+					}
+				} else {
+					for k := 0; k < 3; k++ {
+						y := (ya+yb)/2 + k*7
+						c.rect(x0+4, y, x1-4, y+3, 0)
+					}
+				}
+			}
 			if o.trayCube && row == 0 {
 				side := int(0.9 * p)
 				cx := (x0+x1)/2 - side/2
@@ -377,6 +393,9 @@ type synthPage struct {
 	spread bool // two pages side by side, one diagram on each
 	skew   float64
 	noise  float64
+	// inkGrey prints the page with a faded ink: black becomes this grey,
+	// white stays white, every grey between scaled alike.
+	inkGrey float64
 }
 
 // book draws the pages and returns them with the boards expected, in the
@@ -408,6 +427,11 @@ func book(t *testing.T, pages []synthPage, seed int64) (memPages, []string) {
 		}
 		if sp.noise > 0 {
 			c.noise(r, sp.noise)
+		}
+		if sp.inkGrey > 0 {
+			for k, v := range c.p {
+				c.p[k] = sp.inkGrey + (1-sp.inkGrey)*v
+			}
 		}
 		out = append(out, Page{Image: c.image(), DPI: 150, Words: words})
 	}

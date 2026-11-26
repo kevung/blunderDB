@@ -123,6 +123,65 @@ func TestHollowClasses(t *testing.T) {
 	}
 }
 
+// TestFadedInkNotHollow: a scan whose ink has faded to grey prints its
+// filled checkers paler than mid-grey, yet still darker than halfway between
+// its ink and its paper: they are filled checkers, read as such, not a
+// document without them.
+func TestFadedInkNotHollow(t *testing.T) {
+	r := rand.New(rand.NewSource(9))
+	var pages []synthPage
+	for i := 0; i < 4; i++ {
+		o := drawOpts{p: 36, numbering: true, pips: true, darkFill: 0.25}
+		pages = append(pages, synthPage{pos: []synthPos{randomPos(r), randomPos(r)}, opts: []drawOpts{o, o}, inkGrey: 0.4})
+	}
+	src, want := book(t, pages, 4)
+	res, err := Read(context.Background(), src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Diagrams) != len(want) {
+		t.Fatalf("%d diagrams, want %d", len(res.Diagrams), len(want))
+	}
+	for i, d := range res.Diagrams {
+		for _, x := range d.Doubts {
+			if x.Reason == HollowReason {
+				t.Fatalf("diagram %d: faded filled checkers taken for hollow ones: %s", i+1, describe(d))
+			}
+		}
+		if d.Board != want[i] && d.Board != swapCase(want[i]) {
+			t.Errorf("diagram %d: want %s, got %s", i+1, want[i], describe(d))
+		}
+	}
+}
+
+// TestTrayStrokesNotBars: beside camps of fifteen, hairlines drawn across a
+// tray and bars floating off its outer end are not checkers borne off: no
+// tray is read, no doubt is raised by it, and the entries stay complete.
+func TestTrayStrokesNotBars(t *testing.T) {
+	r := rand.New(rand.NewSource(7))
+	var pages []synthPage
+	for i := 0; i < 5; i++ {
+		o := drawOpts{p: 36, numbering: true, tray: true, trayStrokes: true}
+		pages = append(pages, synthPage{pos: []synthPos{randomPos(r), randomPos(r)}, opts: []drawOpts{o, o}})
+	}
+	src, want := book(t, pages, 7)
+	res, err := Read(context.Background(), src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Diagrams) != len(want) {
+		t.Fatalf("%d diagrams, want %d", len(res.Diagrams), len(want))
+	}
+	for i, d := range res.Diagrams {
+		if d.Board != want[i] && d.Board != swapCase(want[i]) {
+			t.Errorf("diagram %d: want %s, got %s", i+1, want[i], describe(d))
+		}
+		if !d.Complete {
+			t.Errorf("diagram %d: strokes in a tray taken for checkers: %s", i+1, describe(d))
+		}
+	}
+}
+
 // TestTrayNotMistaken: a cube drawn in a tray's box, and checkers borne off
 // drawn as hollow rectangles, are not counted as bars: the tray is not read
 // and no entry is complete by it.

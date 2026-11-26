@@ -730,10 +730,12 @@ func readingOrder(zs []zone, W int) []zone {
 // either row. A bar is a run of rows inked across the band, thinner than 0.4
 // point, away from the band's own ends; a run thicker is a divider or a
 // stack whose bars touch. The bars must also look like checkers seen
-// edge-on: of one thickness, at one pitch, and not the edges of hollow
-// rectangles (two bars joined at both ends by side strokes). A band that a
-// square (a cube) overlaps is not read. A row's tray is read only when
-// exactly one band beside it holds bars; 0 is "not read", never "empty".
+// edge-on: of one thickness, at one pitch, no thinner than 0.08 point, not
+// the edges of hollow rectangles (two bars joined at both ends by side
+// strokes), and stacked against the tray's outer end. A band that a square
+// (a cube) overlaps, or whose bars fail these, is not read. A
+// row's tray is read only when exactly one band beside it holds bars; 0 is
+// "not read", never "empty".
 func trays(ink *mask, oy, ox int, f frame, cubes []square, px, py int) [2]int {
 	p := f.pointWidth()
 	var out [2]int
@@ -814,6 +816,10 @@ func trays(ink *mask, oy, ox int, f frame, cubes []square, px, py int) [2]int {
 					found += 2
 					continue
 				}
+				// A checker seen edge-on is a fraction of its diameter thick,
+				// never a hairline: a run thinner than 0.08 point is a
+				// stroke (a cube's or a box's outline), not a checker.
+				minBar := max(1, 0.08*p)
 				var bs []trayBar
 				run := 0
 				end := func(y int) {
@@ -826,7 +832,7 @@ func trays(ink *mask, oy, ox int, f frame, cubes []square, px, py int) [2]int {
 					if edge && n > 0 {
 						n -= wt + 1
 					}
-					if n > 0 && float64(n) < 0.4*p {
+					if float64(n) >= minBar && float64(n) < 0.4*p {
 						bs = append(bs, trayBar{y - n, n, edge})
 					}
 					run = 0
@@ -849,6 +855,19 @@ func trays(ink *mask, oy, ox int, f frame, cubes []square, px, py int) [2]int {
 					continue
 				}
 				if !edgeOnBars(ink, bs, x0, x1) {
+					found += 2
+					continue
+				}
+				// Checkers borne off rest against the tray's outer end, level
+				// with the field's: a stack that stops short of it is
+				// something else drawn in the band, or a stack cut short by
+				// the band's strokes, and its count would be a guess.
+				gap := float64(bs[0].y - (oy + f.y0))
+				if row == 1 {
+					last := bs[len(bs)-1]
+					gap = float64(oy + f.y1 - (last.y + last.h))
+				}
+				if math.Abs(gap) > 0.5*p {
 					found += 2
 					continue
 				}

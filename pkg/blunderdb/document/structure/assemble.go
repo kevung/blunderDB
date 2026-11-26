@@ -502,10 +502,12 @@ func releve(rds []*boardReading, words map[int][]Word, img []*[2]int, home strin
 		}
 	}
 	cl := learnClasses(means)
-	// Both classes lighter than mid-grey on a page whose paper is 1 and ink
-	// 0: the document draws no filled checker, its "dark" class is hollow
-	// discs on shaded points, and the other side is drawn otherwise.
-	hollow := cl.ok && cl.c0 > 0.5
+	// Both classes lighter than halfway between the document's ink and its
+	// paper (1): the document draws no filled checker, its "dark" class is
+	// hollow discs on shaded points, and the other side is drawn otherwise.
+	// The ink is measured, not taken for black: a faded scan's filled
+	// checkers are as pale as its strokes, still darker than that halfway.
+	hollow := cl.ok && cl.c0 > hollowAbove(rds)
 	numbering := map[string]map[[2]int]int{}
 	for _, h := range corners {
 		numbering[h] = map[[2]int]int{}
@@ -939,10 +941,24 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 	return d
 }
 
+// hollowAbove is the grey above which the document's darker checker class
+// is hollow: halfway between its ink, the median of its diagrams' ink greys,
+// and its paper (1).
+func hollowAbove(rds []*boardReading) float64 {
+	var v []float64
+	for _, rd := range rds {
+		v = append(v, rd.inkGrey)
+	}
+	if len(v) == 0 {
+		return 0.5
+	}
+	return (1 + median(v)) / 2
+}
+
 // HollowReason is the doubt of every diagram of a document that draws no
 // filled checker (letters X and O, marks): the reader reads discs, and two
 // classes of hollow discs are not two players.
-const HollowReason = "the document draws no filled checker (both checker classes are lighter than mid-grey): one side is drawn otherwise, as letters or marks, and is not read"
+const HollowReason = "the document draws no filled checker (both checker classes are lighter than halfway between its ink and its paper): one side is drawn otherwise, as letters or marks, and is not read"
 
 // hollowDiagram is a diagram of a document without filled checkers: not a
 // position, its one named cause instead of counts of shaded points.
