@@ -71,6 +71,31 @@ document qu'il n'a pas vu. Un thème par livre n'y répond pas. Conséquences :
    position fausse parmi les sûres ; taux de sûres ; gestes de l'utilisateur pour 100 positions.
    Une réserve ouverte est consommée : la mesure suivante en demande une neuve.
 
+### Replis quand la lecture seule ne suffit pas (demande de l'utilisateur, 2026-11-26)
+
+Trois leviers, du moins coûteux au plus coûteux pour l'utilisateur :
+
+1. **Retrouver l'information autrement.** Une pile douteuse est d'abord détectée et nommée
+   (jointive, chiffrée, plafonnée, pâlie). Sa hauteur se cherche alors par une autre voie : sa
+   longueur le long de la pointe ; les pips imprimés et le compte de 15, deux équations
+   indépendantes ; le coup cité dans la légende ou la solution ; le diagramme voisin, quand un
+   livre de référence enchaîne des variantes à un pion près. Une voie qui a servi à déduire ne
+   sert plus à vérifier.
+2. **Calibration optionnelle, une fois par document.** Gestes simples sur un seul diagramme :
+   les coins ; un pion de chaque camp ; le nombre de pions d'une pile haute (donne le pas
+   d'empilement) ; un exemple de pile chiffrée et son chiffre ; le sens de jeu ; où sont les pips
+   et le videau. Jamais exigée : proposée quand le rendement de l'analyse automatique est bas.
+3. **Vérifier par familles, pas une à une.** Les positions à vérifier sont groupées par cause
+   (même doute, même forme). L'utilisateur en vérifie quelques-unes par famille :
+   - une correction devient une règle rejouée sur toute la famille (« ce signe est un 6 » relit
+     toutes les piles portant ce signe) ;
+   - si les k premières sont justes, le reste de la famille peut être accepté en bloc, sous un
+     état distinct, « validé par échantillon », visible et réversible. Zéro erreur sur k tirages
+     borne le taux d'erreur à environ 3/k : c'est une confiance statistique, pas une preuve, et
+     l'état ne se confond jamais avec « sûr » ni « vérifié ».
+   À mesurer avant de l'offrir : les erreurs se regroupent-elles vraiment par famille, et une
+   famille jugée bonne sur un échantillon l'est-elle en entier.
+
 Les thèmes de `capture` restent la voie des captures de logiciels connus (XG, Galaxy). Le lecteur
 de structure est un second lecteur, qui rend le même `capture.Reading`.
 
@@ -208,3 +233,5 @@ Suite : le compte des piles (jointives, chiffrées, hautes) avant tout portage e
   description de la Collection (règle 3).
 - L'ordre d'import est l'ordre d'apparition dans le document (§4).
 - Robustesse sur un document jamais rencontré (§2 bis).
+- 2026-11-26 : replis à prévoir si la lecture ne suffit pas — calibration optionnelle, autre voie
+  pour les piles douteuses, vérification par familles (§2 bis, « Replis »).
