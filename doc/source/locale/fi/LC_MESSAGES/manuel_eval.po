@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 01:36+0100\n"
+"POT-Creation-Date: 2026-11-26 03:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -542,19 +542,27 @@ msgid ""
 "un seul créneau de calcul, lancer l'une annule l'autre, et chaque "
 "changement de vue relance le calcul de la vue qui apparaît. Dans les deux"
 " cartes, un résultat d'abord affiché en 0-ply est affiné à la profondeur "
-"d'affichage configurée ; la progression s'écrit « 2-ply : n / N ». "
-"Changer de position dans l'application annule le calcul en cours."
+"d'affichage configurée, 2-ply au plus ; la progression s'écrit « 2-ply : "
+"n / N ». Changer de position dans l'application annule le calcul en "
+"cours. Un calcul affiché passe avant les tâches de fond : pendant qu'il "
+"tourne, une analyse gammonNet par lots ou un rollout en cours *cède* à "
+"son prochain point de contrôle, puis reprend (voir :ref:`le panneau "
+"Calculs <manuel_calculs>`)."
 msgstr ""
 "Paneelin yläreunan kolmiosainen valitsin valitsee sen näkymän: **Päätös**"
 " (edellä kuvattu paneeli), **Tilanteet** ja **Heitot**. Vain näytettävä "
 "näkymä laskee: kartat ja lepotilan arviointi jakavat yhden laskupaikan, "
 "toisen käynnistäminen peruu toisen, ja jokainen näkymän vaihto käynnistää"
 " esiin tulevan näkymän laskennan uudelleen. Molemmissa kartoissa ensin "
-"0-ply:llä näytetty tulos tarkennetaan asetettuun näyttösyvyyteen; "
-"eteneminen kirjoitetaan ”2-ply: n / N”. Aseman vaihtaminen sovelluksessa "
-"peruu käynnissä olevan laskennan."
+"0-ply:llä näytetty tulos tarkennetaan asetettuun näyttösyvyyteen, "
+"enintään 2-ply; eteneminen kirjoitetaan ”2-ply: n / N”. Aseman "
+"vaihtaminen sovelluksessa peruu käynnissä olevan laskennan. Näytetty "
+"laskenta menee taustatehtävien edelle: sen ollessa käynnissä gammonNet-"
+"eräanalyysi tai käynnissä oleva rollout *väistää* seuraavassa "
+"tarkistuspisteessään ja jatkaa sitten (ks. :ref:`Laskennat-paneeli "
+"<manuel_calculs>`)."
 
-#: ../../source/manuel_eval.rst:247
+#: ../../source/manuel_eval.rst:250
 msgid ""
 "**Carte des scores.** Une décision de videau n'est pas une propriété du "
 "damier : les mêmes pions, le même compte de pips, se doublent à "
@@ -578,7 +586,7 @@ msgstr ""
 "Crawford, koska kuutio on kuollut Crawford-pelissä. Post-Crawford-asemaa "
 "ei siis koskaan kehystetä Crawford-ruudulle."
 
-#: ../../source/manuel_eval.rst:258
+#: ../../source/manuel_eval.rst:261
 msgid ""
 "Avec des dés, chaque case porte la lettre du meilleur coup à ce score (A "
 "le plus fréquent de la grille, puis B, C…) et son équité en dessous. Les "
@@ -590,35 +598,41 @@ msgid ""
 "avec les mêmes teintes ; la marge d'un double est la plus petite de celle"
 " entre doubler et ne pas doubler et de celle entre prendre et passer. Le "
 "score de la position est encadré ; une case encore à 0-ply est en "
-"pointillé. La légende à droite a un bouton par coup (lettre, notation, "
-"nombre de scores) : un clic met ses cases en évidence. Le survol d'une "
-"case montre son coup sur le plateau. Un clic sur une case ouvre un volet "
-"avec le score, les deux meilleurs coups et leurs équités, et **Évaluer**,"
-" qui bascule la vue Décision à ce score ; une case où la position est "
-"impossible n'a pas **Évaluer**. Le sélecteur *Match en N* choisit la "
-"longueur ; sa valeur par défaut se règle dans la configuration, onglet "
-"gammonNet."
+"pointillé. Une case où le videau de la position ne peut pas se trouver "
+"porte un tiret. La légende à droite a un bouton par coup ou par verdict "
+"(lettre ou sigle, notation, nombre de scores) : un clic met ses cases en "
+"évidence. Avec des dés, le survol d'une case montre son coup sur le "
+"plateau. Un clic sur une case ouvre un volet avec le score, puis les deux"
+" meilleurs coups et leurs équités, ou les équités de pas de double, "
+"double/prise et double/passe et le verdict, et **Évaluer**, qui bascule "
+"la vue Décision à ce score ; le volet d'une case au tiret dit *Refusé* et"
+" n'a pas **Évaluer**. Le sélecteur *Match en N* choisit la longueur ; sa "
+"valeur par défaut (9) se règle dans la configuration, onglet gammonNet, "
+"ligne *Match par défaut*."
 msgstr ""
-"Nopilla kukin ruutu kantaa sen tilanteen parhaan siirron kirjaimen (A "
-"ruudukon yleisin, sitten B, C…) ja sen equityn alla. Kolmella "
+"Noppien kanssa kukin ruutu kantaa sen tilanteen parhaan siirron kirjaimen"
+" (A ruudukon yleisin, sitten B, C…) ja sen equityn alla. Kolmella "
 "ensimmäisellä siirrolla on kullakin väri; neljännestä alkaen harmaa ryhmä"
 " säilyttää kirjaimensa. Sävy on vahvempi, kun marginaali toiseen siirtoon"
 " on suuri (0,050 ja yli), ja ”≈” merkitsee alle 0,010 marginaalia. Ilman "
-"noppia ruutu kertoo kuution tuomion — *ND* (ei tuplausta), *D/T* "
-"(tuplaus, hyväksy), *D/P* (tuplaus, pass), *TG* (liian hyvä) — samoin "
-"sävyin; tuplauksen marginaali on pienempi kahdesta: tuplaamisen ja "
-"tuplaamatta jättämisen välinen marginaali sekä hyväksymisen ja "
-"passaamisen välinen marginaali. Aseman tilanne on kehystetty; vielä "
-"0-ply:llä oleva ruutu on pisteviivalla. Oikealla oleva selite sisältää "
-"yhden painikkeen siirtoa kohti (kirjain, merkintä, tilanteiden määrä): "
-"napsautus korostaa sen ruudut. Ruudun päälle vienti näyttää sen siirron "
-"laudalla. Ruudun napsautus avaa ruudun tilanteen, kaksi parasta siirtoa "
-"ja niiden equityt sisältävän osan sekä **Arvioi**-painikkeen, joka "
-"vaihtaa Päätös-näkymän siihen tilanteeseen; ruudulla, jossa asema on "
-"mahdoton, ei ole **Arvioi**-painiketta. Valitsin *Ottelu N:ään* valitsee "
-"pituuden; sen oletusarvo asetetaan asetusten gammonNet-välilehdellä."
+"noppia ruutu kertoo kuutiotuomion — *ND* (ei tuplausta), *D/T* (tuplaus, "
+"otto), *D/P* (tuplaus, hylkäys), *TG* (liian hyvä) — samoin sävyin; "
+"tuplauksen marginaali on pienempi kahdesta: tuplaamisen ja tuplaamatta "
+"jättämisen välinen marginaali sekä ottamisen ja hylkäämisen välinen "
+"marginaali. Aseman tilanne on kehystetty; vielä 0-ply:llä oleva ruutu on "
+"pisteviivalla. Ruudussa, jossa aseman kuutio ei voi olla, on viiva. "
+"Oikealla oleva selite sisältää yhden painikkeen siirtoa tai tuomiota "
+"kohti (kirjain tai lyhenne, merkintä, tilanteiden määrä): napsautus "
+"korostaa sen ruudut. Noppien kanssa ruudun päälle vienti näyttää sen "
+"siirron laudalla. Ruudun napsautus avaa osan, jossa on tilanne, sitten "
+"kaksi parasta siirtoa ja niiden equityt, tai ei-tuplauksen, tuplaus/oton "
+"ja tuplaus/hylkäyksen equityt ja tuomio, sekä **Arvioi**-painike, joka "
+"vaihtaa Päätös-näkymän siihen tilanteeseen; viivallisen ruudun osa sanoo "
+"*Hylätty* eikä siinä ole **Arvioi**-painiketta. Valitsin *Ottelu N:ään* "
+"valitsee pituuden; sen oletusarvo (9) asetetaan asetusten gammonNet-"
+"välilehdellä, rivillä *Oletusottelu*."
 
-#: ../../source/manuel_eval.rst:275
+#: ../../source/manuel_eval.rst:282
 msgid ""
 "Les commandes ``sm`` et ``cm`` ouvrent cette vue. Elle remplace "
 "l'ancienne matrice du videau, dont la grille se calcule toujours hors de "
@@ -629,7 +643,7 @@ msgstr ""
 " matriisin, jonka ruudukko lasketaan yhä käyttöliittymän ulkopuolella "
 "komentorivin komennolla :ref:`cubematrix <cli_cubematrix>`."
 
-#: ../../source/manuel_eval.rst:279
+#: ../../source/manuel_eval.rst:286
 msgid ""
 "**Carte des jets.** La vue Jets évalue les 21 jets de la position, dés "
 "ignorés : pour chacun, le meilleur coup, l'équité du joueur au trait "
@@ -641,7 +655,8 @@ msgid ""
 " refusé : double/passe, ou trop bon pour être joué ; la ligne et la case "
 "portent « D/P » et un cadre, et le compte « n/36 » filtre les lignes d'un"
 " clic. Il n'existe que si le joueur peut doubler. L'en-tête donne aussi "
-"le meilleur et le pire jet, et l'écart-type."
+"le meilleur et le pire jet, et l'écart-type. Un jet sans coup légal "
+"s'écrit *Danse*."
 msgstr ""
 "**Heittokartta.** Heitot-näkymä arvioi aseman 21 heittoa nopat huomiotta "
 "jättäen: kustakin parhaan siirron, vuorossa olevan pelaajan equityn "
@@ -654,36 +669,39 @@ msgstr ""
 "pelattavaksi; rivillä ja ruudussa on ”D/P” ja kehys, ja luku ”n/36” "
 "suodattaa rivit napsautuksella. Se on olemassa vain, jos pelaaja voi "
 "tuplata. Otsikko antaa myös parhaan ja huonoimman heiton sekä "
-"keskihajonnan."
+"keskihajonnan. Heitto, jolla ei ole laillista siirtoa, kirjoitetaan "
+"*Tanssi*."
 
-#: ../../source/manuel_eval.rst:290
+#: ../../source/manuel_eval.rst:298
 msgid ""
 "Le fil d'Ariane (« Départ › moi 6-4 24/14 › lui 5-2 13/8 24/22 › Mes jets"
-" ») dit d'où vient la position évaluée, et le plateau le suit ; chaque "
-"maillon remonte. Sur un jet sélectionné, **Réponses** joue son meilleur "
-"coup et affiche les 21 réponses suivantes, **Autre coup…** fait choisir "
-"un autre coup légal de ce jet. La profondeur est sans limite. Changer la "
-"position d'une autre façon remet le fil à zéro. Le menu contextuel d'un "
-"coup candidat (Analyse ou Évaluation) offre *Réponses adverses*, qui "
-"ouvre cette vue sur la position après ce coup (grisé quand la notation du"
-" coup peut mener à plusieurs plateaux), et *Carte des scores*. La "
-"commande ``jets`` ouvre la vue."
+" ») dit d'où vient la position évaluée et à qui sont les jets affichés "
+"(*Mes jets* ou *Ses jets*), et le plateau le suit ; chaque maillon "
+"remonte. Sur un jet sélectionné, **Réponses** joue son meilleur coup et "
+"affiche les 21 réponses suivantes, **Autre coup…** fait choisir un autre "
+"coup légal de ce jet (pas sur une danse). La profondeur est sans limite. "
+"Changer la position d'une autre façon remet le fil à zéro. Le menu "
+"contextuel d'un coup candidat (Analyse ou Évaluation) offre *Réponses "
+"adverses*, qui ouvre cette vue sur la position après ce coup (grisé quand"
+" la notation du coup peut mener à plusieurs plateaux), et *Carte des "
+"scores*. La commande ``jets`` ouvre la vue."
 msgstr ""
 "Polku (”Alku › minä 6-4 24/14 › hän 5-2 13/8 24/22 › Minun heitot”) "
-"kertoo, mistä arvioitu asema tulee, ja lauta seuraa sitä; jokainen lenkki"
-" palaa taaksepäin. Valitulla heitolla **Vastaukset** pelaa sen parhaan "
-"siirron ja näyttää seuraavat 21 vastausta, **Toinen siirto…** antaa "
-"valita toisen tämän heiton laillisen siirron. Syvyys on rajaton. Aseman "
-"muuttaminen muulla tavoin nollaa polun. Ehdokassiirron kontekstivalikko "
+"kertoo, mistä arvioitu asema tulee ja kenen heitot näytetään (*Minun "
+"heitot* tai *Hänen heitot*), ja lauta seuraa sitä; jokainen lenkki palaa "
+"taaksepäin. Valitulla heitolla **Vastaukset** pelaa sen parhaan siirron "
+"ja näyttää seuraavat 21 vastausta, **Toinen siirto…** antaa valita toisen"
+" tämän heiton laillisen siirron (ei tanssilla). Syvyys on rajaton. Aseman"
+" muuttaminen muulla tavoin nollaa polun. Ehdokassiirron kontekstivalikko "
 "(Analyysi tai Arviointi) tarjoaa *Vastaukset*, joka avaa tämän näkymän "
 "siirron jälkeisestä asemasta (harmaana, kun siirron merkintä voi johtaa "
 "useaan lautaan), ja *Tilannekartta*. Komento ``jets`` avaa näkymän."
 
-#: ../../source/manuel_eval.rst:303
+#: ../../source/manuel_eval.rst:312
 msgid "Panneau Données de référence"
 msgstr "Viitetiedot-paneeli"
 
-#: ../../source/manuel_eval.rst:305
+#: ../../source/manuel_eval.rst:314
 msgid ""
 "Le panneau **Données de référence** réunit les tables du score. Il "
 "s'ouvre par *CTRL-MAJ-R* ou la commande ``ref``, sans base ouverte. Les "
@@ -703,7 +721,7 @@ msgstr ""
 "voittamiseen tarvittavat pisteet: rivi on pelaaja, josta puhutaan, sarake"
 " hänen vastustajansa. Viisi välilehteä:"
 
-#: ../../source/manuel_eval.rst:312
+#: ../../source/manuel_eval.rst:321
 msgid ""
 "**MET** — la table d'équité de match Kazaross-XG2, de 1 à 15 points "
 "restants, en pour cent de chances de gagner le match ;"
@@ -711,7 +729,7 @@ msgstr ""
 "**MET** — Kazaross-XG2-ottelun tasapainotaulukko, 1–15 puuttuvaa "
 "pistettä, prosentteina ottelun voittamisen todennäköisyydestä;"
 
-#: ../../source/manuel_eval.rst:314
+#: ../../source/manuel_eval.rst:323
 msgid ""
 "**Points de prise** — au videau 2 (de 2 à 9 points restants) et au videau"
 " 4 (de 3 à 9), chacun en deux grilles côte à côte : course longue (videau"
@@ -721,11 +739,11 @@ msgstr ""
 "(3–9), kumpikin kahtena vierekkäisenä ruudukkona: pitkä kilpajuoksu "
 "(elävä kuutio) ja viimeinen heitto (kuollut kuutio);"
 
-#: ../../source/manuel_eval.rst:317
+#: ../../source/manuel_eval.rst:326
 msgid "**Valeurs du gammon** — aux videaux 1, 2 et 4 ;"
 msgstr "**Gammonarvot** — kuutioilla 1, 2 ja 4;"
 
-#: ../../source/manuel_eval.rst:318
+#: ../../source/manuel_eval.rst:327
 msgid ""
 "**Agrégé** — une grille de 2 à 9 points restants, dont une légende en "
 "tête rappelle l'organisation de chaque case. Elle porte trois lignes : le"
@@ -739,11 +757,11 @@ msgstr ""
 "sitten gammonarvot kuutioilla 1, 2 ja 4 himmennetyllä värillä. Viiva "
 "merkitsee arvoa, jota taulukko ei määritä tällä pistetilanteella;"
 
-#: ../../source/manuel_eval.rst:323
+#: ../../source/manuel_eval.rst:332
 msgid "**Nombres de Neil** — un raccourci de tête de la MET, dû à Neil Kazaross."
 msgstr "**Neilin luvut** — MET:n päässälaskuoikotie, Neil Kazarossin kehittämä."
 
-#: ../../source/manuel_eval.rst:325
+#: ../../source/manuel_eval.rst:334
 msgid ""
 "**Les nombres de Neil.** L'équité du meneur s'estime par E ≃ 50 % + "
 "(écart de score) × Neil(*n*), où *n* est le nombre de points restants du "
@@ -777,11 +795,11 @@ msgstr ""
 "johtajalla puuttuu 1 tai 2 pistettä: kahden puuttuvan pisteen johtajan "
 "rivi näyttää MET-arvon himmennetyllä värillä ja ilman eroa."
 
-#: ../../source/manuel_eval.rst:343
+#: ../../source/manuel_eval.rst:352
 msgid "Amener une position dans le panneau Eval"
 msgstr "Aseman tuominen Eval-paneeliin"
 
-#: ../../source/manuel_eval.rst:345
+#: ../../source/manuel_eval.rst:354
 msgid ""
 "Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude "
 "part le plus souvent d'une position déjà en main. Quatre gestes l'y "
@@ -790,7 +808,7 @@ msgstr ""
 "Paneeli avautuu oletuksena bearoff-asemaan, mutta tutkiminen alkaa "
 "useimmiten jo käsillä olevasta asemasta. Neljä elettä tuo sen paneeliin:"
 
-#: ../../source/manuel_eval.rst:348
+#: ../../source/manuel_eval.rst:357
 msgid ""
 "**Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la "
 "navigation d'un match, puis *Évaluer cette position* : le panneau Eval "
@@ -807,7 +825,7 @@ msgstr ""
 " eikä Hakupaneelissa, joissa oikea painike on jo varattu toisen värin "
 "nappuloiden asettamiseen."
 
-#: ../../source/manuel_eval.rst:356
+#: ../../source/manuel_eval.rst:365
 msgid ""
 "**Clic droit sur le plateau, puis** *Évaluer dans un nouvel onglet* : une"
 " nouvelle vue, nommée *Variante de #n* (n étant le numéro de la vue "
@@ -823,48 +841,51 @@ msgstr ""
 "asemansa, luettelonsa ja analyysinsa. Tätä valintaa ei tarjota "
 "Transkriptio-paneelissa."
 
-#: ../../source/manuel_eval.rst:362
+#: ../../source/manuel_eval.rst:371
 msgid ""
 "**CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse, "
 "puis la coller une fois dans le panneau Eval. Le collage accepte aussi un"
 " identifiant venu d'ailleurs — un XGID (eXtreme Gammon, GNU Backgammon, "
-"une autre instance de blunderDB), un OGID (OpenGammon) ou un ID GNUbg "
-"(GNU Backgammon) : il suffit qu'il soit dans le presse-papier."
+"une autre instance de blunderDB), un OGID (OpenGammon), un ArkID (la "
+"notation de blunderDB, voir le :ref:`glossaire <glossaire>`) ou un ID "
+"GNUbg (GNU Backgammon) : il suffit qu'il soit dans le presse-papier."
 msgstr ""
-"**CTRL-C ja sitten CTRL-V**: kopioi asema analyysipaneelista ja liitä se "
-"kerran Eval-paneeliin. Liittäminen hyväksyy myös muualta tulevan "
+"**CTRL-C ja sitten CTRL-V**: kopioi positio analyysipaneelista ja liitä "
+"se kerran Eval-paneeliin. Liittäminen hyväksyy myös muualta tulevan "
 "tunnisteen — XGID:n (eXtreme Gammon, GNU Backgammon, toinen blunderDB-"
-"instanssi), OGID:n (OpenGammon) tai GNUbg ID:n (GNU Backgammon): riittää,"
-" että se on leikepöydällä."
+"instanssi), OGID:n (OpenGammon), ArkID:n (blunderDB:n merkintätapa, katso"
+" :ref:`sanasto <glossaire>`) tai GNUbg-tunnisteen (GNU Backgammon): sen "
+"tarvitsee vain olla leikepöydällä."
 
-#: ../../source/manuel_eval.rst:368
+#: ../../source/manuel_eval.rst:378
 msgid ""
-"**La commande** ``import XGID=…`` (ou ``import OGID=…``) pour le cas où "
-"l'identifiant n'est pas dans le presse-papier mais dans un message, sur "
-"un forum lu dans un terminal, ou produit par un script. C'est le même "
-"verbe qu'``import`` tout court : sans argument il ouvre un sélecteur de "
-"fichiers, avec un argument il lit l'identifiant. Le chemin est ensuite "
-"identique à celui du collage — même lecture, même déduplication, même "
-"ouverture de la position importée."
+"**La commande** ``import XGID=…`` (ou ``import OGID=…``, ``import "
+"ArkID=…``) pour le cas où l'identifiant n'est pas dans le presse-papier "
+"mais dans un message, sur un forum lu dans un terminal, ou produit par un"
+" script. C'est le même verbe qu'``import`` tout court : sans argument il "
+"ouvre un sélecteur de fichiers, avec un argument il lit l'identifiant. Le"
+" chemin est ensuite identique à celui du collage — même lecture, même "
+"déduplication, même ouverture de la position importée."
 msgstr ""
-"**Komento** ``import XGID=…`` (tai ``import OGID=…``) siihen tapaukseen, "
-"ettei tunniste ole leikepöydällä vaan viestissä, päätteessä luetulla "
-"foorumilla tai skriptin tuottamana. Se on sama verbi kuin pelkkä "
-"``import``: ilman argumenttia se avaa tiedostovalitsimen, argumentin "
-"kanssa se lukee tunnisteen. Polku on sen jälkeen sama kuin liittämisessä "
-"— sama luku, sama kaksoiskappaleiden poisto, sama tuodun aseman avaus."
+"**Komento** ``import XGID=…`` (tai ``import OGID=…``, ``import ArkID=…``)"
+" silloin, kun tunniste ei ole leikepöydällä vaan viestissä, päätteessä "
+"luetulla keskustelupalstalla tai skriptin tuottamana. Se on sama verbi "
+"kuin pelkkä ``import``: ilman argumenttia se avaa tiedostovalitsimen, "
+"argumentin kanssa se lukee tunnisteen. Polku on sen jälkeen identtinen "
+"liittämisen kanssa — sama lukeminen, sama kaksoiskappaleiden poisto, sama"
+" tuodun position avaaminen."
 
-#: ../../source/manuel_eval.rst:376
+#: ../../source/manuel_eval.rst:386
 msgid ""
-"Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La "
-"position arrive donc sans analyse, exactement comme un XGID nu, et "
-"l'évaluateur intégré peut la combler ensuite."
+"Un OGID ou un ArkID ne porte qu'une position : ni évaluation, ni "
+"commentaire. La position arrive donc sans analyse, exactement comme un "
+"XGID nu, et l'évaluateur intégré peut la combler ensuite."
 msgstr ""
-"OGID kantaa vain aseman: ei arviota eikä kommenttia. Asema saapuu siis "
-"ilman analyysiä, aivan kuten paljas XGID, ja sisäänrakennettu arviointi "
-"voi täyttää aukon jälkikäteen."
+"OGID tai ArkID kantaa vain position: ei arviota, ei kommenttia. Positio "
+"saapuu siis ilman analyysiä, aivan kuin paljas XGID, ja sisäänrakennettu "
+"arvioija voi täydentää sen myöhemmin."
 
-#: ../../source/manuel_eval.rst:380
+#: ../../source/manuel_eval.rst:390
 msgid ""
 "Un ID GNUbg se colle sous la forme que GNU Backgammon copie : l'ID de "
 "position et l'ID de match joints par deux-points "
@@ -880,17 +901,31 @@ msgstr ""
 " pistetilannetta: asema saapuu silloin alapelaajan vuorolla, ilman "
 "noppia, rahapelinä, kuutio keskellä."
 
-#: ../../source/manuel_eval.rst:386
+#: ../../source/manuel_eval.rst:396
 msgid ""
 "Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du "
 "match (``7C``) : sans lui, un joueur à un point du but est après la "
-"Crawford."
+"Crawford. Dans un ArkID, c'est le ``c`` qui suit les scores (``[14c]``), "
+"avec le même effet."
 msgstr ""
-"OGID:ssä Crawford-peli tunnistetaan ottelun pituuden perässä olevasta "
-"``C``-kirjaimesta (``7C``): ilman sitä pelaaja, jolta puuttuu yksi piste "
-"voittoon, on jo Crawford-pelin jälkeen."
+"OGID:ssä Crawford-peli luetaan ottelun pituutta seuraavasta ``C``:stä "
+"(``7C``): ilman sitä maalista yhden pisteen päässä oleva pelaaja on "
+"Crawford-pelin jälkeen. ArkID:ssä se on tilannetta seuraava ``c`` "
+"(``[14c]``), samalla vaikutuksella."
 
-#: ../../source/manuel_eval.rst:389
+#: ../../source/manuel_eval.rst:400
+msgid ""
+"Un ArkID s'obtient par *Copier l'ArkID* dans le menu d'une position (voir"
+" :ref:`menu_contextuel_actions`), par la commande ``arkid`` (voir "
+":ref:`cli_arkid`) ou, pour un serveur, par la route ``positions.arkId``. "
+"La position collée retombe sur la même ligne de la base que l'original."
+msgstr ""
+"ArkID saadaan valinnalla *Kopioi ArkID* position valikosta (katso "
+":ref:`menu_contextuel_actions`), komennolla ``arkid`` (katso "
+":ref:`cli_arkid`) tai palvelimelle reitillä ``positions.arkId``. Liitetty"
+" positio päätyy tietokannan samalle riville kuin alkuperäinen."
+
+#: ../../source/manuel_eval.rst:405
 msgid ""
 "**Une capture d'écran du plateau** (eXtreme Gammon, thème par défaut) se "
 "lit de trois façons : coller l'image (*CTRL-V*), la glisser sur la "
@@ -919,7 +954,7 @@ msgstr ""
 "tuntematonta lautaa, hylätään, ja syy näkyy tilarivillä. Sama lukeminen "
 "on käytettävissä komentorivillä (``capture``)."
 
-#: ../../source/manuel_eval.rst:401
+#: ../../source/manuel_eval.rst:417
 msgid ""
 "Le plateau du panneau Eval est un brouillon : la position y arrive sans "
 "son identifiant de base, de sorte qu'aucune modification faite ici ne "
@@ -933,7 +968,7 @@ msgstr ""
 "laudan muokkaukset ovat siinä käytettävissä (nappulat, kuutio, nopat, "
 "pistetilanne), ja evaluointi seuraa jokaista muutosta."
 
-#: ../../source/manuel_eval.rst:407
+#: ../../source/manuel_eval.rst:423
 msgid ""
 "Dans l'autre sens, *CTRL-C* copie le plateau du panneau Eval dans le "
 "presse-papier, avec un XGID recalculé à partir des pions posés — donc "
@@ -948,7 +983,7 @@ msgstr ""
 " asema matkustaa: paneelin näyttämä evaluointi ei ole tietokannan tietue "
 "eikä seuraa kopion mukana."
 
-#: ../../source/manuel_eval.rst:413
+#: ../../source/manuel_eval.rst:429
 msgid ""
 "En quittant le panneau Eval, la position consultée auparavant est "
 "restaurée : le brouillon n'est jamais enregistré tout seul."
@@ -956,7 +991,7 @@ msgstr ""
 "Eval-paneelista poistuttaessa aiemmin tarkasteltu asema palautetaan: "
 "luonnosta ei koskaan tallenneta itsestään."
 
-#: ../../source/manuel_eval.rst:416
+#: ../../source/manuel_eval.rst:432
 msgid ""
 "Lorsque la position est un bearoff pur (tous les pions des deux joueurs "
 "dans leur jan) et qu'aucun dé n'est posé, la décision de videau affiche, "
@@ -966,7 +1001,7 @@ msgstr ""
 "kotikentässään) eikä noppia ole asetettu, kuutiopäätös näyttää vuorossa "
 "olevalle pelaajalle:"
 
-#: ../../source/manuel_eval.rst:420
+#: ../../source/manuel_eval.rst:436
 msgid ""
 "en régime *exact* : les équités money (cubeless, sans double, "
 "double/prend, double/passe) et le **verdict de videau money** (pas de "
@@ -978,7 +1013,7 @@ msgstr ""
 "tuplaus/ota, tuplaus/ohita tai liian hyvä tuplattavaksi) — ottelun "
 "pistetilanteen ulkopuolella, katso yllä pistetilanteen tapaus,"
 
-#: ../../source/manuel_eval.rst:425
+#: ../../source/manuel_eval.rst:441
 msgid ""
 "en régime *évalué* : les mêmes équités et le même verdict à quatre "
 "valeurs, mais **joués par gammonNet** (recherche + modèle de videau "
@@ -990,7 +1025,7 @@ msgstr ""
 " lukemisen sijaan — käytettävissä **myös ottelun pistetilanteessa**, mitä"
 " arvioitu tila ei ole koskaan voinut tarjota;"
 
-#: ../../source/manuel_eval.rst:430
+#: ../../source/manuel_eval.rst:446
 msgid ""
 "en régime *estimé* : le verdict de videau n'est alors volontairement pas "
 "affiché — seule la probabilité de gain, dans le tableau de faits, "
@@ -1000,7 +1035,7 @@ msgstr ""
 " vain voittotodennäköisyys faktataulukossa virhemarginaaleineen jää "
 "käytettäväksi."
 
-#: ../../source/manuel_eval.rst:434
+#: ../../source/manuel_eval.rst:450
 msgid ""
 "Dès que des dés sont posés sur une position de course, cette décision de "
 "videau *avant le jet* disparaît — le plateau demande alors une décision "
@@ -1015,7 +1050,7 @@ msgstr ""
 "päätöksenä: se siirtyy *ennen heittoa* -riville siirtoluettelon kärkeen "
 "EPC:n viereen, joka puolestaan pysyy näkyvissä aivan vasemmalla."
 
-#: ../../source/manuel_eval.rst:441
+#: ../../source/manuel_eval.rst:457
 msgid ""
 "Un badge indique le régime : **exact** (valeur lue dans une base de "
 "données two-sided), **évalué · <profondeur>** (joué par gammonNet — la "
@@ -1037,7 +1072,7 @@ msgstr ""
 "tilan. Katso :ref:`epc_methodologie` kolmen tilan ja niiden oletusten "
 "täsmällinen määritelmä."
 
-#: ../../source/manuel_eval.rst:451
+#: ../../source/manuel_eval.rst:467
 msgid ""
 "**Élargir le domaine exact.** La table calculée au premier lancement "
 "couvre 6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet "
@@ -1047,7 +1082,7 @@ msgstr ""
 "taulukko kattaa 6 nappulaa puolellaan. Kaksi tapaa mennä pidemmälle, "
 "asetusten *Bearoff*-välilehdellä:"
 
-#: ../../source/manuel_eval.rst:455
+#: ../../source/manuel_eval.rst:471
 msgid ""
 "calculer une table deux faces plus large — jusqu'à TS-06-15 si la machine"
 " a la mémoire pour. L'onglet annonce la taille, la mémoire et le temps "
@@ -1060,7 +1095,7 @@ msgstr ""
 "ennen aloitusta, ja laskenta menee tauolle ja jatkuu. Peruttu laskenta "
 "jättää ``.part``-tiedoston, jota ei koskaan lueta taulukkona;"
 
-#: ../../source/manuel_eval.rst:461
+#: ../../source/manuel_eval.rst:477
 msgid ""
 "indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au "
 "domaine le plus large l'emporte automatiquement."
@@ -1068,7 +1103,7 @@ msgstr ""
 "osoita mikä tahansa gnubg:n two-sided ``.bd``-tiedosto. Alueeltaan laajin"
 " tietokanta voittaa automaattisesti."
 
-#: ../../source/manuel_eval.rst:464
+#: ../../source/manuel_eval.rst:480
 msgid ""
 "**Le plateau du panneau est un brouillon, et il est retenu.** Quitter le "
 "panneau Eval puis y revenir retrouve la position sur laquelle on l'a "
@@ -1088,7 +1123,7 @@ msgstr ""
 " ei ole aseman identiteettiä, ja sen arvio lasketaan perillä uudelleen "
 "sen sijaan että se kuljetettaisiin mukana."
 
-#: ../../source/manuel_eval.rst:473
+#: ../../source/manuel_eval.rst:489
 msgid ""
 "**Mode défi.** La case *Défi*, dans la bande d'en-tête, active un mode "
 "entraînement : à chaque modification de la position, les valeurs de trois"
@@ -1125,7 +1160,7 @@ msgstr ""
 "harjoitella kummankin puolen EPC:n arviointia ja sitten kuutio- tai "
 "siirtopäätöksen tekemistä ennen tarkistusta. Asetus muistetaan."
 
-#: ../../source/manuel_eval.rst:493
+#: ../../source/manuel_eval.rst:509
 msgid ""
 "**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : on y "
 "pose, colle (*CTRL-V*) et modifie une position, on l'évalue, on la roule,"
@@ -1137,31 +1172,32 @@ msgid ""
 "lancer la recherche, elle, demande une base. Seuls *Ajouter à la base* et"
 " *CTRL-S* exigent une base dans le panneau, et la barre d'état le dit. "
 "Aucune base n'est créée en coulisse. Dans le panneau Eval comme dans "
-"l'onglet Recherche, la commande ``import XGID=…`` (ou ``import OGID=…``) "
-"pose la position sur le plateau brouillon, sans base. L'onglet "
-"**Entraînement** s'ouvre lui aussi sans base : *Scores*, *Pions*, "
-"*Bearoff* et *Évaluation* sont disponibles, *Décision* est désactivé avec"
-" la raison affichée, et la session terminée n'est pas enregistrée (le "
-"journal l'indique). La Direction de tournoi exige une base ouverte."
+"l'onglet Recherche, la commande ``import XGID=…`` (ou ``import OGID=…``, "
+"``import ArkID=…``) pose la position sur le plateau brouillon, sans base."
+" L'onglet **Entraînement** s'ouvre lui aussi sans base : *Scores*, "
+"*Pions*, *Bearoff* et *Évaluation* sont disponibles, *Décision* est "
+"désactivé avec la raison affichée, et la session terminée n'est pas "
+"enregistrée (le journal l'indique). La Direction de tournoi exige une "
+"base ouverte."
 msgstr ""
 "**Ilman avattua tietokantaa.** Eval-paneeli ei tarvitse tietokantaa: "
-"siinä voi asettaa, liittää (*CTRL-V*) ja muokata aseman, arvioida sen, "
-"ajaa sille rolloutin ja kopioida sen tekstinä (*CTRL-C*) tai kuvana "
-"(*CTRL-X*, ja *CTRL-X CTRL-X* arvioinnin kanssa). Paneelin hiiren oikean "
-"painikkeen valikossa on myös *Tallenna kuva (SVG)…* ja *Tallenna kuva "
-"(PNG)…*. Haku-välilehden lauta on myös luonnoslauta: sitä voi muokata ja "
-"siihen voi liittää ilman tietokantaa, ja laudasta toiseen voi siirtyä "
-"menettämättä mitään; haun käynnistäminen sen sijaan vaatii tietokannan. "
-"Vain *Lisää tietokantaan* ja *CTRL-S* vaativat paneelissa tietokannan, ja"
-" tilarivi kertoo siitä. Tietokantaa ei luoda taustalla. Eval-paneelissa "
-"kuten Haku-välilehdelläkin komento ``import XGID=…`` (tai ``import "
-"OGID=…``) asettaa aseman luonnoslaudalle ilman tietokantaa. Myös "
-"**Harjoittelu**-välilehti avautuu ilman tietokantaa: *Pisteet*, "
-"*Nappulat*, *Bearoff* ja *Arviointi* ovat käytettävissä, *Päätös* on "
-"poissa käytöstä ja syy näytetään, eikä päättynyttä istuntoa tallenneta "
-"(loki kertoo siitä). Turnauksen johto edellyttää avattua tietokantaa."
+"siinä voi asettaa, liittää (*CTRL-V*) ja muokata position, arvioida sen, "
+"rollata sen, kopioida sen tekstinä (*CTRL-C*) tai kuvana (*CTRL-X*, ja "
+"*CTRL-X CTRL-X* arvion kanssa). Paneelin hiiren kakkospainikkeen valikko "
+"tarjoaa myös *Tallenna kuva (SVG)…* ja *Tallenna kuva (PNG)…*. Haku-"
+"välilehden lauta on myös luonnos: sitä voi muokata ja se ottaa vastaan "
+"liitettävän ilman tietokantaa, ja yhdestä toiseen siirrytään menettämättä"
+" mitään; haun käynnistäminen sen sijaan vaatii tietokannan. Vain *Lisää "
+"tietokantaan* ja *CTRL-S* vaativat tietokannan paneelissa, ja tilarivi "
+"kertoo sen. Tietokantaa ei luoda kulissien takana. Sekä Eval-paneelissa "
+"että Haku-välilehdellä komento ``import XGID=…`` (tai ``import OGID=…``, "
+"``import ArkID=…``) asettaa position luonnoslaudalle, ilman tietokantaa. "
+"**Harjoittelu**-välilehti avautuu myös ilman tietokantaa: *Tilanteet*, "
+"*Nappulat*, *Bearoff* ja *Arvio* ovat käytettävissä, *Päätös* on poissa "
+"käytöstä syy näytettynä, eikä päättynyttä istuntoa tallenneta (loki "
+"kertoo sen). Turnauksen johto vaatii avatun tietokannan."
 
-#: ../../source/manuel_eval.rst:509
+#: ../../source/manuel_eval.rst:525
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
@@ -1169,11 +1205,11 @@ msgstr ""
 "Sulje Eval-paneeli painamalla *CTRL-E* tai vaihtamalla toiseen "
 "välilehteen."
 
-#: ../../source/manuel_eval.rst:514
+#: ../../source/manuel_eval.rst:530
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Eval-paneelin metodologia ja oletukset"
 
-#: ../../source/manuel_eval.rst:516
+#: ../../source/manuel_eval.rst:532
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
@@ -1181,7 +1217,7 @@ msgstr ""
 "Jokainen paneelin näyttämä arvo perustuu täsmällisiin oletuksiin, jotka "
 "esitetään tässä tyhjentävästi."
 
-#: ../../source/manuel_eval.rst:519
+#: ../../source/manuel_eval.rst:535
 msgid ""
 "**Domaine.** La *zone course* — probabilité de gain et verdict de videau "
 "— ne traite que le bearoff pur : tous les pions restants des deux joueurs"
@@ -1193,7 +1229,7 @@ msgstr ""
 "nappulat omalla kotialueellaan. Asema arvioidaan *ennen heittoa*; "
 "asetetut nopat jätetään huomiotta."
 
-#: ../../source/manuel_eval.rst:524
+#: ../../source/manuel_eval.rst:540
 msgid ""
 "Les **blocs EPC**, eux, vont plus loin : un camp obtient son EPC dès que "
 "son pion le plus éloigné tient dans la table une face chargée. Avec la "
@@ -1217,7 +1253,7 @@ msgstr ""
 "näkyy kilpalohkon kulmassa (”OS-08”) — ilman sitä luettaisiin oletuksena "
 "”kuusi” ja uskottaisiin puolen olevan kokonaan kotona."
 
-#: ../../source/manuel_eval.rst:534
+#: ../../source/manuel_eval.rst:550
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -1238,7 +1274,7 @@ msgstr ""
 "kumpikin pelaaja minimoi omat heittonsa vastustajasta välittämättä — se "
 "on EPC:n vakiomääritelmä."
 
-#: ../../source/manuel_eval.rst:543
+#: ../../source/manuel_eval.rst:559
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (TS-06-06 calculée au premier lancement, "
@@ -1255,7 +1291,7 @@ msgstr ""
 "optimaalisella two-sided-pelillä: ei lisäoletuksia, virhe rajoittuu "
 "kvantisointiin (< 0,002 %)."
 
-#: ../../source/manuel_eval.rst:549
+#: ../../source/manuel_eval.rst:565
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -1270,7 +1306,7 @@ msgstr ""
 "polynomikorjausta, joka on kalibroitu etukäteen TS-06-11-tietokantaa "
 "vasten. Kolme oletusta:"
 
-#: ../../source/manuel_eval.rst:555
+#: ../../source/manuel_eval.rst:571
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
@@ -1278,7 +1314,7 @@ msgstr ""
 "kahden ulosottoprosessin **riippumattomuus** — rakenteellinen ominaisuus "
 "kilpajuoksussa: ilman kontaktia ei ole mitään vuorovaikutusta;"
 
-#: ../../source/manuel_eval.rst:558
+#: ../../source/manuel_eval.rst:574
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -1291,7 +1327,7 @@ msgstr ""
 "Mitattu vaikutus on antisymmetrinen harha (konvoluutio liioittelee "
 "johtajan etumatkaa), jonka korjaus absorboi tilastollisesti;"
 
-#: ../../source/manuel_eval.rst:563
+#: ../../source/manuel_eval.rst:579
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -1306,7 +1342,7 @@ msgstr ""
 "raja on ekstrapoloitu** — suuntaus on monotoninen, mutta mikään oraakkeli"
 " ei todenna sitä."
 
-#: ../../source/manuel_eval.rst:569
+#: ../../source/manuel_eval.rst:585
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -1325,7 +1361,7 @@ msgstr ""
 "GNUbg:n säännön mukaan, joka on validoitu kohta kohdalta sen analyysiä "
 "vasten."
 
-#: ../../source/manuel_eval.rst:577
+#: ../../source/manuel_eval.rst:593
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -1350,7 +1386,7 @@ msgstr ""
 "2: 62 %:n voittotodennäköisyys, tarkka D/T +0,006, XG:llä +0,475). "
 "Näytetty **päätös** sitä vastoin yhtyy moottoreiden päätökseen."
 
-#: ../../source/manuel_eval.rst:588
+#: ../../source/manuel_eval.rst:604
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -1370,7 +1406,7 @@ msgstr ""
 "(katso alempana), ja mahdollistaa, ainoana kolmesta tilasta tarkan "
 "ohella, päätöksen **ottelun pistetilanteessa**."
 
-#: ../../source/manuel_eval.rst:596
+#: ../../source/manuel_eval.rst:612
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -1401,7 +1437,7 @@ msgstr ""
 "perustellusti erilaista menetelmää eroavat eniten tiukassa päätöksessä — "
 "ei hajanainen virhe, joka maksaisi ekviteettiä kaikkialla."
 
-#: ../../source/manuel_eval.rst:609
+#: ../../source/manuel_eval.rst:625
 msgid ""
 "Cette mesure porte sur des décisions **money**, en course. Le verdict au "
 "score de match — que ce régime est seul à savoir rendre — et les "
@@ -1413,7 +1449,7 @@ msgstr ""
 "ja kontaktiasemista ei ole julkaistua mittausta: edellä sanottu ei siirry"
 " näihin tapauksiin."
 
-#: ../../source/manuel_eval.rst:613
+#: ../../source/manuel_eval.rst:629
 msgid ""
 "**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
 "cela ne rapporte rien. Une décision de pions à 3 plis évalue le réseau "
@@ -1438,7 +1474,7 @@ msgstr ""
 "kynnyksen, jonka jälkeen eXtreme Gammon ylipäätään puhuu virheestä. "
 "Päätöstä kohti, kaikki tapaukset yhdessä, hyöty on 0,0000."
 
-#: ../../source/manuel_eval.rst:624
+#: ../../source/manuel_eval.rst:640
 msgid ""
 "Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans "
 "l'onglet *gammonNet* de la configuration. À 3 et 4 plis, comme dans "
@@ -1458,7 +1494,7 @@ msgstr ""
 "toistettavissa (``TestThreePlyMeasure``), ja johtopäätös ratkaistaan "
 "uudelleen, jos verkko muuttuu."
 
-#: ../../source/manuel_eval.rst:632
+#: ../../source/manuel_eval.rst:648
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -1488,7 +1524,7 @@ msgstr ""
 "konvoluutiolla ei ole koskaan ollut oikeutta näyttää päätöstä — tämän "
 "aukon täyttää haku, joka pelaa trajektorin, ei tilastollinen tiivistelmä."
 
-#: ../../source/manuel_eval.rst:645
+#: ../../source/manuel_eval.rst:661
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"

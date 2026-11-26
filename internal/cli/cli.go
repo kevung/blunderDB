@@ -132,6 +132,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"scoremap":    cli.runScoreMap,
 		"epc":         cli.runEpc,
 		"gnubgid":     cli.runGnubgID,
+		"arkid":       cli.runArkID,
 		"capture":     cli.runCapture,
 		"rollout":     cli.runRollout,
 		"search":      cli.runSearch,
@@ -219,6 +220,7 @@ func (cli *CLI) printUsage() {
 	fmt.Fprintln(cli.stdout(), "  scoremap  Best play or cube verdict at every score of a match")
 	fmt.Fprintln(cli.stdout(), "  epc       EPC, win probability and money cube verdict (bearoff)")
 	fmt.Fprintln(cli.stdout(), "  gnubgid   The GNUbg Position ID and Match ID of a position")
+	fmt.Fprintln(cli.stdout(), "  arkid     The ArkID, blunderDB's readable notation, of a position")
 	fmt.Fprintln(cli.stdout(), "  capture   Read a position from a screen capture of an XG board")
 	fmt.Fprintln(cli.stdout(), "  rollout   Roll out a position's plays or cube decision (gammonNet)")
 	fmt.Fprintln(cli.stdout(), "  bearoff   Generate, list, verify and delete the bearoff tables")

@@ -10,3 +10,12 @@ import "github.com/kevung/blunderdb/pkg/blunderdb/domain"
 func (a *App) GnubgID(pos domain.Position) (string, error) {
 	return domain.EncodeGNUbgID(&pos)
 }
+
+// ArkID is the GUI's face of domain.EncodeArkID: the position as an ArkID,
+// compact (the canonical form) or developed.
+func (a *App) ArkID(pos domain.Position, expanded bool) (string, error) {
+	if expanded {
+		return domain.EncodeArkIDExpanded(&pos)
+	}
+	return domain.EncodeArkID(&pos)
+}

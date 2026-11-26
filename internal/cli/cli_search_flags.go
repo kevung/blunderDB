@@ -81,7 +81,7 @@ func defineSearchFlags(fs *flag.FlagSet) *searchFlags {
 		limit:    fs.Int("limit", 0, "Maximum number of results (0 = no limit)"),
 		offset:   fs.Int("offset", 0, "Skip this many results before the first one returned (paging, with --limit)"),
 		cursor:   fs.String("cursor", "", "Read one page of --limit results after this cursor (empty: the first page); the next page's cursor is printed with the count"),
-		format:   fs.String("format", "table", "Output format: table, json, xgid"),
+		format:   fs.String("format", "table", "Output format: table, json, xgid, arkid"),
 
 		// Filter flags
 		decisionType:      fs.String("decision", "", "Filter by decision type: checker, cube"),

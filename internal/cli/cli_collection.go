@@ -200,6 +200,7 @@ type collectionPositionRow struct {
 	XGID         string `json:"xgid"`
 	Score        [2]int `json:"score"`
 	DecisionType string `json:"decision_type"`
+	ArkID        string `json:"arkid"`
 }
 
 func (cli *CLI) runCollectionShow(args []string) error {
@@ -239,6 +240,7 @@ func (cli *CLI) showCollection(id int64, format string) error {
 			row.DecisionType = "checker"
 		}
 		row.XGID = cli.storedOrEncodedXGID(&pos)
+		row.ArkID = arkIDOf(&pos)
 		rows = append(rows, row)
 	}
 
@@ -251,13 +253,13 @@ func (cli *CLI) showCollection(id int64, format string) error {
 	case "csv":
 		w := csv.NewWriter(cli.stdout())
 		defer w.Flush()
-		if err := w.Write([]string{"id", "index", "xgid", "score", "decision_type"}); err != nil {
+		if err := w.Write([]string{"id", "index", "xgid", "score", "decision_type", "arkid"}); err != nil {
 			return fmt.Errorf("write csv header: %w", err)
 		}
 		for _, r := range rows {
 			if err := w.Write([]string{
 				strconv.FormatInt(r.ID, 10), strconv.Itoa(r.Index), r.XGID,
-				fmt.Sprintf("%d-%d", r.Score[0], r.Score[1]), r.DecisionType,
+				fmt.Sprintf("%d-%d", r.Score[0], r.Score[1]), r.DecisionType, r.ArkID,
 			}); err != nil {
 				return fmt.Errorf("write csv row: %w", err)
 			}
@@ -273,10 +275,10 @@ func (cli *CLI) showCollection(id int64, format string) error {
 			return nil
 		}
 		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
-		fmt.Fprintln(w, "ID\tIndex\tScore\tType\tXGID")
-		fmt.Fprintln(w, "--\t-----\t-----\t----\t----")
+		fmt.Fprintln(w, "ID\tIndex\tScore\tType\tXGID\tArkID")
+		fmt.Fprintln(w, "--\t-----\t-----\t----\t----\t-----")
 		for _, r := range rows {
-			fmt.Fprintf(w, "%d\t%d\t%d-%d\t%s\t%s\n", r.ID, r.Index, r.Score[0], r.Score[1], r.DecisionType, orDash(r.XGID))
+			fmt.Fprintf(w, "%d\t%d\t%d-%d\t%s\t%s\t%s\n", r.ID, r.Index, r.Score[0], r.Score[1], r.DecisionType, orDash(r.XGID), orDash(r.ArkID))
 		}
 		return w.Flush()
 	default:
@@ -412,7 +414,7 @@ func (cli *CLI) runCollectionPile(args []string) error {
 		"blunderdb collection pile --db database.db --xgid \"XGID=-b----E-C---eE---c-e----B-:0:0:1:21:0:0:0:0:10\"",
 		"blunderdb collection pile --db database.db")
 	posID := fs.Int64("position-id", 0, "ID of a stored position")
-	xgid := fs.String("xgid", "", "XGID of the position (written to the library if absent)")
+	xgid := fs.String("xgid", "", "XGID, OGID or ArkID of the position (written to the library if absent)")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
 	}
@@ -430,9 +432,9 @@ func (cli *CLI) runCollectionPile(args []string) error {
 		}
 		pos = *p
 	} else {
-		p, err := domain.DecodeXGID(*xgid)
+		p, err := domain.DecodePositionID(*xgid)
 		if err != nil {
-			return fmt.Errorf("invalid XGID: %w", err)
+			return fmt.Errorf("invalid XGID, OGID or ArkID: %w", err)
 		}
 		pos = p
 	}
@@ -637,6 +639,16 @@ func xgidWith(pos *Position, analysis *PositionAnalysis) string {
 // as one point away, not as a match already won.
 func xgidOf(pos *Position) string {
 	return domain.EncodeXGID(pos)
+}
+
+// arkIDOf renders a Position as its canonical ArkID, empty when no ArkID can
+// spell it (money play for one player only, more than 15 checkers).
+func arkIDOf(pos *Position) string {
+	id, err := domain.EncodeArkID(pos)
+	if err != nil {
+		return ""
+	}
+	return id
 }
 
 // printJSON writes v to stdout, indented, the way every --format json output

@@ -40,6 +40,7 @@ describe('actionCatalog', () => {
         expect(labels(submenu(items, 'annotate'))).toEqual(['actions.comment', 'actions.addTag', 'actions.markStudied', 'actions.unmarkStudied']);
         expect(labels(submenu(items, 'navigate'))).toEqual(['board.menu.neighbours', 'actions.sameStructure', 'actions.openMatchAtMove', 'board.menu.newView']);
         expect(labels(submenu(items, 'copy'))).toContain('actions.copyGnubgID');
+        expect(labels(submenu(items, 'copy'))).toContain('actions.copyArkID');
         expect(labels(submenu(items, 'manage'))).toEqual(['actions.trash']);
         // Évaluer stays at the first level and leads its group.
         expect(labels(submenu(items, 'analyze'))[0]).toBe('board.menu.evaluate');

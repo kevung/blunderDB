@@ -41,12 +41,12 @@ func (cli *CLI) runRollout(args []string) error {
 	var moves moveList
 	cmd.Var(&moves, "move", "A play to roll out, in blunderDB notation (repeatable)")
 	dbPath := cmd.String("db", "", "Database to read the position from (with --id)")
-	positionID := cmd.Int64("id", 0, "Position of --db to roll out, in place of an XGID or OGID")
+	positionID := cmd.Int64("id", 0, "Position of --db to roll out, in place of an XGID, OGID or ArkID")
 	store := cmd.Bool("store", false, "Write the finished rollout on the position of --db, beside its analysis (never replacing it)")
 	listStored := cmd.Bool("list", false, "Print the rollouts stored on the position of --db instead of rolling it out")
 
 	cmd.Usage = func() {
-		fmt.Fprintln(cli.stdout(), "Usage: blunderdb rollout [options] <XGID|OGID>")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb rollout [options] <XGID|OGID|ArkID>")
 		fmt.Fprintln(cli.stdout(), "       blunderdb rollout --db <file> --id <position> [--store] [options]")
 		fmt.Fprintln(cli.stdout())
 		fmt.Fprintln(cli.stdout(), "Roll a position out with gammonNet: its plays when the position has dice,")
@@ -90,7 +90,7 @@ func (cli *CLI) runRollout(args []string) error {
 		return fmt.Errorf("--list reads what is stored and rolls nothing out: drop --store")
 	case !fromDB && cmd.NArg() != 1:
 		cmd.Usage()
-		return fmt.Errorf("expected exactly one XGID or OGID argument")
+		return fmt.Errorf("expected exactly one XGID, OGID or ArkID argument")
 	}
 	if *format != "text" && *format != "json" {
 		return fmt.Errorf("unknown format %q (text, json)", *format)
@@ -137,7 +137,7 @@ func (cli *CLI) runRollout(args []string) error {
 		var err error
 		pos, err = domain.DecodePositionID(cmd.Arg(0))
 		if err != nil {
-			return fmt.Errorf("invalid XGID or OGID: %w", err)
+			return fmt.Errorf("invalid XGID, OGID or ArkID: %w", err)
 		}
 	}
 

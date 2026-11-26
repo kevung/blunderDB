@@ -12,6 +12,15 @@ A backgammon decision point: board, cube, dice, score and match flags. Identifie
 Zobrist hash, so the same position imported twice is one row, never two.
 _Avoid_: board, node, entry
 
+**ArkID**:
+The readable, pronounceable text spelling of a Position, `[score]dice:cube(gates)rest`,
+written from the side of the player on roll (`[34]65:x2(ySQmLhfA)S3Qm3L3hf3` is the opening at
+3-away/4-away, 6-5 to play, cube at 4 held by the roller). Lowercase letters are the roller's
+checkers, uppercase the opponent's; each letter is the initial of an animal (the bestiary of
+the glossary). Read leniently, written in one canonical compact form; a pasted ArkID lands on the
+same Zobrist hash as the original (ADR-0118). Like the OGID, it carries no session rules.
+_Avoid_: position ID, notation
+
 **Session rules (Jacoby, beaver)**:
 Which optional rules the *session* was played under. They are columns of the Position and
 are shown on the board, but they are not part of its identity (ADR-0028): only an XGID
@@ -380,6 +389,25 @@ several sittings. An entry whose diagram could not be read as a legal position k
 place with no position, uncertain, and the import refuses it until a person fills it in.
 _Avoid_: transcript (a Transcription is typed in front of a board), scan, capture (a capture
 is one screen image of a program's board), OCR result, extraction, report
+
+**State of an entry** (code: `document.State`):
+How far the reading of one diagram can be trusted: *sure* (an independent cross-check
+confirmed it), *to verify* (it holds together, nothing confirmed it) or *uncertain* (known
+incomplete or contradicted). An entry is importable when it is sure or a person has verified
+it; any other entry refuses the whole import unless forced.
+_Avoid_: confidence, score, status, flag
+
+**Cross-check** (interface: *recoupement*; code: the checks of `document.AnalyzePDF`):
+A fact the print states on its own that the reading must reproduce to be sure: fifteen checkers
+a side, and the pip counts printed next to the diagram equal to those computed from the
+position. Never the engine's opinion of the position (ADR-0108 rule 4).
+_Avoid_: validation, sanity check, confidence
+
+**Profile** (code: `document.Profile`):
+How a document draws its diagrams — home board side, colour at the bottom, where pips and cube
+are printed, how points are numbered — fixed on the first diagram and valid for all. Carried
+in the Relevé's header.
+_Avoid_: template, layout, style
 
 **Basket** (interface: *panier*):
 The desktop's list of rows — Positions, Matches, Collections, Lessons — gathered from any

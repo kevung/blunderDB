@@ -1,6 +1,6 @@
 import { tMsg, translate } from '../i18n';
 import { get } from 'svelte/store';
-import { CopyImageToClipboard, GnubgID, SaveBoardImageDialog, SaveBoardSVG, SaveBoardPNG } from '../../wailsjs/go/gui/App.js';
+import { CopyImageToClipboard, GnubgID, ArkID, SaveBoardImageDialog, SaveBoardSVG, SaveBoardPNG } from '../../wailsjs/go/gui/App.js';
 import { snapshotBoardSVG, svgToCanvas, snapshotToPNGBase64, boardImageFilename, logSnapshotFailure } from './boardSnapshot.js';
 import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
 
@@ -72,6 +72,17 @@ export async function copyGnubgID() {
         setStatusBarMessage(tMsg('status.gnubgIdCopied'));
     } catch (err) {
         logger.error('Error copying the GNUbg ID:', err);
+        setStatusBarMessage(tMsg('status.errorCopyingClipboard'));
+    }
+}
+
+/** Copies the ArkID, blunderDB's readable notation of the position (canonical compact form). */
+export async function copyArkID() {
+    try {
+        await writeTextToClipboard(await ArkID(get(positionStore), false));
+        setStatusBarMessage(tMsg('status.arkIdCopied'));
+    } catch (err) {
+        logger.error('Error copying the ArkID:', err);
         setStatusBarMessage(tMsg('status.errorCopyingClipboard'));
     }
 }

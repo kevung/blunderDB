@@ -29,6 +29,23 @@ type xgidReq struct {
 	XGID string `json:"xgid"`
 }
 
+// arkIDReq carries an ArkID to read.
+type arkIDReq struct {
+	ArkID string `json:"arkid"`
+}
+
+// arkIDWriteReq carries a position to write as an ArkID; Expanded asks for the
+// developed form instead of the canonical compact one.
+type arkIDWriteReq struct {
+	Position *domain.Position `json:"position"`
+	Expanded bool             `json:"expanded"`
+}
+
+// arkIDResp is the ArkID of a position.
+type arkIDResp struct {
+	ArkID string `json:"arkid"`
+}
+
 // ogidReq carries an OpenGammon Position ID.
 type ogidReq struct {
 	OGID string `json:"ogid"`
@@ -239,6 +256,29 @@ func (s *Server) positionRoutes() []route {
 				return nil, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 			}
 			return &pos, nil
+		})},
+		// Decode an ArkID string into a Position (pure; no storage), like fromOGID.
+		{http.MethodPost, "/v1/positions.fromArkID", rpc(func(ctx context.Context, scope string, req arkIDReq) (*domain.Position, error) {
+			pos, err := domain.DecodeArkID(req.ArkID)
+			if err != nil {
+				return nil, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
+			}
+			return &pos, nil
+		})},
+		// The ArkID of a position (pure; no storage). A board no ArkID can spell → 4xx.
+		{http.MethodPost, "/v1/positions.arkId", rpc(func(ctx context.Context, scope string, req arkIDWriteReq) (arkIDResp, error) {
+			if req.Position == nil {
+				return arkIDResp{}, errMissing("position")
+			}
+			encode := domain.EncodeArkID
+			if req.Expanded {
+				encode = domain.EncodeArkIDExpanded
+			}
+			id, err := encode(req.Position)
+			if err != nil {
+				return arkIDResp{}, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
+			}
+			return arkIDResp{ArkID: id}, nil
 		})},
 		// Parse a single-position XG file (.xgp) into a Position + optional analysis
 		// (pure; no storage). The file bytes arrive base64-encoded. Whole matches

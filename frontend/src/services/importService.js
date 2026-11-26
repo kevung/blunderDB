@@ -1281,7 +1281,7 @@ async function pastePositionCore() {
             setStatusBarMessage(tMsg('status.errorPastingBgblitzPos', { error }));
         }
     } else {
-        // An OGID or a GNUbg ID needs no branch here: parser.ParsePosition
+        // An OGID, an ArkID or a GNUbg ID needs no branch here: parser.ParsePosition
         // reads it like it reads an XGID, so a pasted identifier lands in the
         // database through exactly this call.
         const { positionData, parsedAnalysis } = await parsePositionText(result);
@@ -1315,7 +1315,7 @@ async function pastePositionToBoard() {
                 setStatusBarMessage(tMsg('status.positionPastedClipboard'));
                 return;
             } catch (e) {
-                logger.log('Clipboard text looks like an OGID or GNUbg ID but decoding failed:', e);
+                logger.log('Clipboard text looks like an OGID, ArkID or GNUbg ID but decoding failed:', e);
             }
         }
 
@@ -1558,7 +1558,7 @@ export async function analyzeRemainingAfterImport() {
 
 /**
  * Importe une position depuis un identifiant tapé (`import XGID=…`), par le
- * même chemin que le presse-papier. parser.ParsePosition lit aussi un OGID et
+ * même chemin que le presse-papier. parser.ParsePosition lit aussi un OGID, un ArkID et
  * un ID GNUbg ; seul l'aiguillage « est-ce un identifiant ? » vit ici, ni l'un
  * ni l'autre n'ayant de préfixe. Sans évaluation, la fiche d'analyse arrive vide ; le reste est
  * refusé en le disant.

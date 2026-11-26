@@ -35,6 +35,7 @@ func clampLimit(n int) int {
 type PositionSummary struct {
 	ID           int64  `json:"id"`
 	XGID         string `json:"xgid"`
+	ArkID        string `json:"arkid,omitempty"`
 	Decision     string `json:"decision"`
 	Dice         [2]int `json:"dice"`
 	Score        [2]int `json:"score"`
@@ -50,8 +51,9 @@ func decisionName(t int) string {
 }
 
 func summarize(p *domain.Position) PositionSummary {
+	ark, _ := domain.EncodeArkID(p) // empty for a board no ArkID can spell
 	return PositionSummary{
-		ID: p.ID, XGID: domain.EncodeXGID(p), Decision: decisionName(p.DecisionType),
+		ID: p.ID, XGID: domain.EncodeXGID(p), ArkID: ark, Decision: decisionName(p.DecisionType),
 		Dice: p.Dice, Score: p.Score, CubeValue: p.Cube.Value, PlayerOnRoll: p.PlayerOnRoll,
 	}
 }
@@ -117,7 +119,7 @@ type noInput struct{}
 
 type positionRef struct {
 	PositionID int64  `json:"positionId,omitempty" jsonschema:"a position id of this database"`
-	Text       string `json:"text,omitempty" jsonschema:"or a position given as text: XGID, OGID or GNU ID"`
+	Text       string `json:"text,omitempty" jsonschema:"or a position given as text: XGID, OGID, ArkID or GNU ID"`
 }
 
 // position resolves a reference to a position: from the database by id, or
@@ -368,7 +370,7 @@ func registerPositions(tb *Toolbox) {
 		})
 
 	Add(tb, Reads, &sdk.Tool{Name: "decode_position", Title: "Decode a position",
-		Description: "Read a position given as text (XGID, OGID, GNU ID, or an XG/GNU Backgammon analysis pasted whole) without saving it: its XGID, decision, dice, score and cube, and the analysis when the text carried one."},
+		Description: "Read a position given as text (XGID, OGID, ArkID, GNU ID, or an XG/GNU Backgammon analysis pasted whole) without saving it: its XGID, decision, dice, score and cube, and the analysis when the text carried one."},
 		func(ctx context.Context, req *sdk.CallToolRequest, a struct {
 			Text string `json:"text" jsonschema:"the position text"`
 		}) (any, error) {
@@ -772,7 +774,7 @@ func registerStudy(tb *Toolbox) {
 
 func registerWrites(tb *Toolbox) {
 	Add(tb, Writes, &sdk.Tool{Name: "save_position", Title: "Save a position",
-		Description: "Add a position given as text (XGID, OGID, GNU ID, or a pasted XG/GNU Backgammon analysis, kept with it) to the database, as a position brought on its own. A position already present is not duplicated. Answers its id and whether it was new."},
+		Description: "Add a position given as text (XGID, OGID, ArkID, GNU ID, or a pasted XG/GNU Backgammon analysis, kept with it) to the database, as a position brought on its own. A position already present is not duplicated. Answers its id and whether it was new."},
 		func(ctx context.Context, req *sdk.CallToolRequest, a struct {
 			Text string `json:"text" jsonschema:"the position text"`
 		}) (any, error) {

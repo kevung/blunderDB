@@ -100,6 +100,8 @@ export function GetMCPHostStatus():Promise<gui.MCPHostStatus>;
 
 export function GetTournamentDisplayStatus():Promise<gui.TournamentDisplayStatus>;
 
+export function ArkID(arg1:domain.Position,arg2:boolean):Promise<string>;
+
 export function GnubgID(arg1:domain.Position):Promise<string>;
 
 export function HelpBundle(arg1:string):Promise<string>;
@@ -111,6 +113,8 @@ export function ImportFilesIn(arg1:number,arg2:Array<string>,arg3:string):Promis
 export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.IssuerIdentityInfo>;
 
 export function IsDirectory(arg1:string):Promise<boolean>;
+
+export function JobCores():Promise<gui.JobCores>;
 
 export function LegalMoves(arg1:domain.Position):Promise<Array<domain.LegalPlay>>;
 

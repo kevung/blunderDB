@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { ListJobs, CancelJob, PauseJob, ResumeJob, MoveJob, RemoveJob } from '../../wailsjs/go/gui/App.js';
+import { ListJobs, JobCores, CancelJob, PauseJob, ResumeJob, MoveJob, RemoveJob } from '../../wailsjs/go/gui/App.js';
 import { EventsOn } from '../../wailsjs/runtime/runtime.js';
 import { logger } from '../utils/logger.js';
 
@@ -8,6 +8,9 @@ import { logger } from '../utils/logger.js';
 // The registry of durable tasks, followed on jobs:changed / jobs:removed: the one source the
 // Calculs chip and panel read.
 export const jobsStore = writable(/** @type {JobInfo[]} */ ([]));
+
+// The engine's cores in use of its process budget, followed on jobs:cores.
+export const coresStore = writable(/** @type {{used: number, total: number} | null} */ (null));
 
 const ENDED = new Set(['done', 'cancelled', 'error']);
 
@@ -24,6 +27,9 @@ export const isRunning = (job) => job.state === 'running' || (job.state === 'pau
 export const runningJobs = derived(jobsStore, ($jobs) => $jobs.filter(isRunning));
 export const waitingJobs = derived(jobsStore, ($jobs) => $jobs.filter(isWaiting).sort((a, b) => a.library - b.library || a.position - b.position));
 export const endedJobs = derived(jobsStore, ($jobs) => $jobs.filter(isEnded));
+
+/** Running tasks held at their checkpoint by a more urgent computation. */
+export const yieldedJobs = derived(jobsStore, ($jobs) => $jobs.filter((j) => j.state === 'running' && j.yielded));
 
 /** Overall progress of the tasks not ended, 0..1, or null when no one knows its total. */
 export const jobsProgress = derived(jobsStore, ($jobs) => {
@@ -52,14 +58,21 @@ function upsert(job) {
 export function startJobsFeed() {
     /** @type {Set<number>} */
     const removed = new Set();
+    let coresSeen = false;
     const offs = [
         EventsOn('jobs:changed', (/** @type {JobInfo} */ job) => job && upsert(job)),
+        EventsOn('jobs:cores', (/** @type {{used: number, total: number}} */ c) => c && ((coresSeen = true), coresStore.set(c))),
         EventsOn('jobs:removed', (/** @type {{id: number}} */ e) => e && (removed.add(e.id), jobsStore.update(($jobs) => $jobs.filter((j) => j.id !== e.id))))
     ];
     ListJobs().then(
         // An event received before the list is newer than the list: a change stays, a removal holds.
         (list) => (list || []).forEach((job) => removed.has(job.id) || get(jobsStore).some((j) => j.id === job.id) || upsert(job)),
         (error) => logger.error('could not list the tasks:', error)
+    );
+    JobCores().then(
+        // A jobs:cores received first is newer.
+        (c) => coresSeen || coresStore.set(c),
+        (error) => logger.error('could not read the cores in use:', error)
     );
     return () => offs.forEach((off) => off && off());
 }

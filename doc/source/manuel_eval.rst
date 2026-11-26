@@ -240,9 +240,12 @@ Un sélecteur à trois segments en tête du panneau choisit sa vue : **Décision
 calcule : les cartes et l'évaluation au repos partagent un seul créneau de
 calcul, lancer l'une annule l'autre, et chaque changement de vue relance le
 calcul de la vue qui apparaît. Dans les deux cartes, un résultat d'abord
-affiché en 0-ply est affiné à la profondeur d'affichage configurée ; la
-progression s'écrit « 2-ply : n / N ». Changer de position dans l'application
-annule le calcul en cours.
+affiché en 0-ply est affiné à la profondeur d'affichage configurée, 2-ply au
+plus ; la progression s'écrit « 2-ply : n / N ». Changer de position dans
+l'application annule le calcul en cours. Un calcul affiché passe avant les
+tâches de fond : pendant qu'il tourne, une analyse gammonNet par lots ou un
+rollout en cours *cède* à son prochain point de contrôle, puis reprend (voir
+:ref:`le panneau Calculs <manuel_calculs>`).
 
 **Carte des scores.** Une décision de videau n'est pas une propriété du
 damier : les mêmes pions, le même compte de pips, se doublent à 2-away/4-away
@@ -264,13 +267,17 @@ case dit le verdict de videau — *ND* (pas de double), *D/T* (double, prend),
 *D/P* (double, passe), *TG* (trop bon) — avec les mêmes teintes ; la marge
 d'un double est la plus petite de celle entre doubler et ne pas doubler et de
 celle entre prendre et passer. Le score de
-la position est encadré ; une case encore à 0-ply est en pointillé. La
-légende à droite a un bouton par coup (lettre, notation, nombre de scores) :
-un clic met ses cases en évidence. Le survol d'une case montre son coup sur
-le plateau. Un clic sur une case ouvre un volet avec le score, les deux
-meilleurs coups et leurs équités, et **Évaluer**, qui bascule la vue Décision
-à ce score ; une case où la position est impossible n'a pas **Évaluer**. Le sélecteur *Match en N* choisit la longueur ; sa valeur par
-défaut se règle dans la configuration, onglet gammonNet.
+la position est encadré ; une case encore à 0-ply est en pointillé. Une case
+où le videau de la position ne peut pas se trouver porte un tiret. La
+légende à droite a un bouton par coup ou par verdict (lettre ou sigle,
+notation, nombre de scores) : un clic met ses cases en évidence. Avec des dés,
+le survol d'une case montre son coup sur le plateau. Un clic sur une case
+ouvre un volet avec le score, puis les deux meilleurs coups et leurs équités,
+ou les équités de pas de double, double/prise et double/passe et le verdict, et
+**Évaluer**, qui bascule la vue Décision à ce score ; le volet d'une case au
+tiret dit *Refusé* et n'a pas **Évaluer**. Le sélecteur *Match en N* choisit
+la longueur ; sa valeur par défaut (9) se règle dans la configuration, onglet
+gammonNet, ligne *Match par défaut*.
 
 Les commandes ``sm`` et ``cm`` ouvrent cette vue. Elle remplace l'ancienne
 matrice du videau, dont la grille se calcule toujours hors de l'interface avec
@@ -286,12 +293,14 @@ compte les jets après lesquels un double serait refusé : double/passe, ou trop
 bon pour être joué ; la ligne et la case portent « D/P » et un cadre, et le
 compte « n/36 » filtre les lignes d'un clic. Il n'existe que si le joueur peut
 doubler. L'en-tête donne aussi le meilleur et le pire jet, et l'écart-type.
+Un jet sans coup légal s'écrit *Danse*.
 
 Le fil d'Ariane (« Départ › moi 6-4 24/14 › lui 5-2 13/8 24/22 › Mes jets »)
-dit d'où vient la position évaluée, et le plateau le suit ; chaque maillon
-remonte. Sur un jet sélectionné, **Réponses** joue son meilleur coup et affiche
-les 21 réponses suivantes, **Autre coup…** fait choisir un autre coup légal
-de ce jet. La profondeur est sans limite. Changer la position d'une autre
+dit d'où vient la position évaluée et à qui sont les jets affichés (*Mes jets*
+ou *Ses jets*), et le plateau le suit ; chaque maillon remonte. Sur un jet
+sélectionné, **Réponses** joue son meilleur coup et affiche les 21 réponses
+suivantes, **Autre coup…** fait choisir un autre coup légal de ce jet (pas sur
+une danse). La profondeur est sans limite. Changer la position d'une autre
 façon remet le fil à zéro. Le menu contextuel d'un coup candidat (Analyse ou
 Évaluation) offre *Réponses adverses*, qui ouvre cette vue sur la position
 après ce coup (grisé quand la notation du coup peut mener à plusieurs
@@ -362,10 +371,11 @@ le plus souvent d'une position déjà en main. Quatre gestes l'y amènent :
 * **CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse,
   puis la coller une fois dans le panneau Eval. Le collage accepte aussi un
   identifiant venu d'ailleurs — un XGID (eXtreme Gammon, GNU Backgammon, une
-  autre instance de blunderDB), un OGID (OpenGammon) ou un ID GNUbg (GNU
+  autre instance de blunderDB), un OGID (OpenGammon), un ArkID (la notation
+  de blunderDB, voir le :ref:`glossaire <glossaire>`) ou un ID GNUbg (GNU
   Backgammon) : il suffit qu'il soit dans le presse-papier.
 
-* **La commande** ``import XGID=…`` (ou ``import OGID=…``) pour le cas où
+* **La commande** ``import XGID=…`` (ou ``import OGID=…``, ``import ArkID=…``) pour le cas où
   l'identifiant n'est pas dans le presse-papier mais dans un message, sur un
   forum lu dans un terminal, ou produit par un script. C'est le même verbe
   qu'``import`` tout court : sans argument il ouvre un sélecteur de fichiers,
@@ -373,7 +383,7 @@ le plus souvent d'une position déjà en main. Quatre gestes l'y amènent :
   celui du collage — même lecture, même déduplication, même ouverture de la
   position importée.
 
-Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La position
+Un OGID ou un ArkID ne porte qu'une position : ni évaluation, ni commentaire. La position
 arrive donc sans analyse, exactement comme un XGID nu, et l'évaluateur intégré
 peut la combler ensuite.
 
@@ -384,7 +394,13 @@ joueur au trait, ni les dés, ni le score : la position arrive alors au trait du
 joueur du bas, sans dés, en partie d'argent, videau au centre.
 
 Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du match
-(``7C``) : sans lui, un joueur à un point du but est après la Crawford.
+(``7C``) : sans lui, un joueur à un point du but est après la Crawford. Dans un
+ArkID, c'est le ``c`` qui suit les scores (``[14c]``), avec le même effet.
+
+Un ArkID s'obtient par *Copier l'ArkID* dans le menu d'une position (voir
+:ref:`menu_contextuel_actions`), par la commande ``arkid`` (voir :ref:`cli_arkid`) ou, pour
+un serveur, par la route ``positions.arkId``. La position collée retombe sur la
+même ligne de la base que l'original.
 
 **Une capture d'écran du plateau** (eXtreme Gammon, thème par défaut) se lit de
 trois façons : coller l'image (*CTRL-V*), la glisser sur la fenêtre, ou l'ouvrir
@@ -499,7 +515,7 @@ s'édite et reçoit un collage sans base, et l'on passe de l'un à l'autre sans
 rien perdre ; lancer la recherche, elle, demande une base. Seuls *Ajouter à la
 base* et *CTRL-S* exigent une base dans le panneau, et la barre d'état le dit.
 Aucune base n'est créée en coulisse. Dans le panneau Eval comme dans l'onglet
-Recherche, la commande ``import XGID=…`` (ou ``import OGID=…``) pose la position
+Recherche, la commande ``import XGID=…`` (ou ``import OGID=…``, ``import ArkID=…``) pose la position
 sur le plateau brouillon, sans base. L'onglet **Entraînement** s'ouvre lui
 aussi sans base : *Scores*, *Pions*, *Bearoff* et *Évaluation* sont
 disponibles, *Décision* est désactivé avec la raison affichée, et la session

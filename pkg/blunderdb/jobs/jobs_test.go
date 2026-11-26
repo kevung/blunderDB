@@ -166,6 +166,48 @@ func TestCheckpoint_BackgroundYieldsToVisibleAndRequested(t *testing.T) {
 	exit()
 }
 
+func TestCheckpoint_YieldedWhileAVisibleComputationRuns(t *testing.T) {
+	var mu sync.Mutex
+	var seen []bool
+	r := New(func(name string, payload any) {
+		if in, ok := payload.(Info); ok && name == EventChanged && in.Kind == Rollout {
+			mu.Lock()
+			seen = append(seen, in.Yielded)
+			mu.Unlock()
+		}
+	})
+	ro := r.Start(Spec{Kind: Rollout, Priority: Requested, Compute: true, Pausable: true})
+	exit := r.EnterVisible()
+	done := make(chan struct{})
+	go func() { _ = ro.Checkpoint(context.Background()); close(done) }()
+	blocked(t, done, "requested rollout under a visible computation")
+	if got := r.List()[0]; got.State != Running || !got.Yielded {
+		t.Fatalf("while it yields: %+v, want running and yielded", got)
+	}
+	exit()
+	within(t, done, "rollout once the visible computation ended")
+	if got := r.List()[0]; got.Yielded {
+		t.Fatalf("after its checkpoint: %+v, want not yielded", got)
+	}
+	mu.Lock()
+	got := append([]bool(nil), seen...)
+	mu.Unlock()
+	if len(got) < 3 || !got[len(got)-2] || got[len(got)-1] {
+		t.Fatalf("yielded on jobs:changed: %v, want ... true, false", got)
+	}
+
+	// A paused task is paused, not yielded.
+	exit = r.EnterVisible()
+	defer exit()
+	_ = r.Pause(ro.ID())
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)
+	defer cancel()
+	_ = ro.Checkpoint(ctx)
+	if got := r.List()[0]; got.State != Paused || got.Yielded {
+		t.Fatalf("paused under a visible computation: %+v", got)
+	}
+}
+
 func TestCancel_ReleasesWaitersAndFinishesCancelled(t *testing.T) {
 	r := New(nil)
 	hold := r.Start(Spec{Library: 1, Exclusive: true})

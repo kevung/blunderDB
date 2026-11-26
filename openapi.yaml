@@ -5898,6 +5898,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/playerMatchIDsResp"
+  /v1/positions.arkId:
+    post:
+      operationId: positions.arkId
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/arkIDWriteReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/arkIDResp"
   /v1/positions.count:
     post:
       operationId: positions.count
@@ -6018,6 +6035,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/engine_Explanation"
+  /v1/positions.fromArkID:
+    post:
+      operationId: positions.fromArkID
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/arkIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/domain_Position"
+                nullable: true
   /v1/positions.fromImage:
     post:
       operationId: positions.fromImage
@@ -9341,6 +9376,24 @@ components:
         analysis:
           $ref: "#/components/schemas/domain_PositionAnalysis"
           nullable: true
+    arkIDReq:
+      type: object
+      properties:
+        arkid:
+          type: string
+    arkIDResp:
+      type: object
+      properties:
+        arkid:
+          type: string
+    arkIDWriteReq:
+      type: object
+      properties:
+        position:
+          $ref: "#/components/schemas/domain_Position"
+          nullable: true
+        expanded:
+          type: boolean
     batchFileError:
       type: object
       properties:

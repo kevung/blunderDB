@@ -100,6 +100,7 @@ Commandes disponibles
    "rollout", "Joue une position jusqu'au bout pour départager ses coups ou sa décision de videau (XGID ou OGID)."
    "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID ou OGID)."
    "gnubgid", "Écrit l'ID de position et l'ID de match que GNU Backgammon donne à une position (XGID ou OGID)."
+   "arkid", "Écrit l'ArkID, la notation textuelle de blunderDB, d'une position (XGID, OGID ou ArkID)."
    "capture", "Lit la position que montre une capture d'écran d'un plateau eXtreme Gammon."
    "openingbook", "Le coup d'ouverture ou la réponse d'une partie à un score, tiré du livre d'ouverture embarqué et jugé contre lui."
    "bearoff", "Fabrique, liste, vérifie et supprime les bases de sortie."
@@ -130,6 +131,7 @@ Chaque commande accepte l'option ``--help`` pour afficher son aide détaillée.
    :maxdepth: 2
 
    cli_import_export
+   cli_document
    cli_bibliotheque
    cli_matchs
    cli_analyse

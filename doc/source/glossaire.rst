@@ -13,6 +13,75 @@ Position
     fois — c'est son identité, calculée automatiquement, qui la reconnaît,
     jamais le fichier d'où elle vient.
 
+ArkID
+    La notation textuelle d'une position propre à blunderDB, lisible et
+    prononçable : ``[34]65:x2(ySQmLhfA)S3Qm3L3hf3`` est la position de départ,
+    à 3 points et 4 points du but, 6-5 à jouer, le videau à 4 chez le joueur
+    au trait. Elle s'écrit, se lit, s'affiche, se copie et se colle partout où
+    l'on sait le faire d'un XGID, d'un OGID ou d'un ID GNUbg, et une position
+    collée en ArkID retombe sur la même ligne que l'original.
+
+    La forme est ``[score]dés:videau(portes)reste``. Le **score** donne les
+    scores « à combien » (*Away score*) du joueur au trait puis de l'adversaire,
+    ``[$]`` en partie d'argent, un ``c`` marquant la partie Crawford
+    (``[14c]``). Les **dés** sont absents pour une décision de videau. Le
+    **videau** est ``x`` s'il appartient au joueur au trait, ``X`` à
+    l'adversaire, suivi de son exposant s'il dépasse 1 (``x`` : à 2, ``x2`` :
+    à 4), et n'est pas écrit au centre. Les **portes** sont les points tenus par
+    deux pions ou plus ; le **reste** donne, pour chaque case, le nombre de
+    pions au-delà de deux (1 pour un pion seul, le nombre de pions pour la
+    barre), omis quand il vaut 1. Les pions sortis se déduisent. Un videau proposé, à prendre ou à
+    passer, s'écrit ``X``, son exposant s'il dépasse 1, puis ``?`` (``X?`` :
+    proposé à 2) ; il se relit comme un videau au centre, la position de
+    réponse.
+
+    Les lettres sont vues du côté du joueur au trait : les minuscules sont ses
+    pions, les majuscules ceux de l'adversaire, tous deux numérotés comme le
+    joueur au trait numérote son plateau. ``A`` à ``W`` sont les points 1 à 23,
+    ``Y`` le point 24, ``Z`` la barre ; ``X`` est réservé au videau. Chaque
+    lettre est l'initiale d'un animal, qui aide à retenir le point :
+
+    .. csv-table::
+       :header: "Lettre", "Point", "Animal"
+       :widths: 8, 10, 60
+
+      "A", "1", "Araignée — tapie dans un coin"
+      "B", "2", "Bernard-l'ermite — dans sa coquille, point mort"
+      "C", "3", "Crocodile — en eau basse, happe les pions"
+      "D", "4", "Dauphin — deuxième meilleur point"
+      "E", "5", "Éléphant — très puissant, indéplaçable"
+      "F", "6", "Fourmi — gros tas, réservoir"
+      "G", "7", "Gorille — le gros bras qui bloque la sortie"
+      "H", "8", "Hérisson — piquant et solide"
+      "I", "9", "Ibis — sur une patte, bâtisseur isolé"
+      "J", "10", "Jaguar — prêt à bondir"
+      "K", "11", "Kangourou — traverse l'outfield d'un bond"
+      "L", "12", "Loup — dans la bergerie adverse"
+      "M", "13", "Mouton — le troupeau du milieu"
+      "N", "14", "Nasique — met le nez dehors"
+      "O", "15", "Oie — en pleine migration pour rentrer"
+      "P", "16", "Papillon — fragile, éphémère"
+      "Q", "17", "Quetzal — oiseau rare, on y est rarement"
+      "R", "18", "Rhinocéros — du très solide"
+      "S", "19", "Souris — dure à attraper"
+      "T", "20", "Tortue — carapace indestructible"
+      "U", "21", "Urubu — vautour qui attend la frappe"
+      "V", "22", "Vipère — tapie dans l'herbe basse"
+      "W", "23", "Wombat — terrier profond"
+      "Y", "24", "Yack — loin en altitude, lent à redescendre"
+      "Z", "barre", "Zèbre — derrière les barreaux"
+
+    À la lecture, blunderDB accepte la forme compacte et la forme développée
+    (``[34]65:x2(ymhf)m3hf3(SQLA)S3QL3`` : d'abord tous les pions du joueur au
+    trait, puis ceux de l'adversaire), un ordre libre et plusieurs groupes de
+    parenthèses ; à l'écriture, il produit toujours la forme compacte
+    canonique, la développée sur demande. Deux écritures de la même position
+    par blunderDB sont donc identiques au caractère près. Un ArkID ne dit ni
+    les règles de la session (Jacoby, castor), ni le plafond du videau : comme
+    l'OGID, il ne les porte pas et ne les suppose pas. Il est refusé, en le
+    disant, s'il compte plus de quinze pions par camp, une case tenue par les
+    deux camps, une lettre inconnue, un score ou des dés invalides.
+
 Position importée individuellement (*individually imported position*)
     Une position entrée seule dans la base — écrite depuis le plateau, ou
     lue depuis un fichier de position — plutôt qu'apportée par un match.
@@ -117,7 +186,8 @@ Décision (*decision*)
 
 Verdict
     Laquelle des options d'une décision de videau est la bonne : *pas de
-    double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*.
+    double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*,
+    abrégés *ND*, *D/T*, *D/P* et *TG*.
     Deux cas particuliers ne sont jamais laissés vides : *pas de décision*
     (le régime n'y est pas habilité) et *refusé* (le moteur a décliné la
     position, typiquement un score hors de portée de sa table).
@@ -126,6 +196,38 @@ Trop bon (*too good*)
     Le verdict qui dit que la position est si favorable que doubler
     inciterait l'adversaire à passer alors que jouer sans doubler rapporte
     davantage — un videau qu'il vaut mieux garder.
+
+Carte des scores (*score map*)
+    La meilleure décision d'une même position — coup avec des dés, verdict
+    de videau sans — à chaque score d'un match, en une grille *away × away*.
+    Voir :ref:`eval_cartes`.
+
+Carte des jets (*roll map*)
+    Ce que fait chacun des 21 jets d'une position où le joueur au trait n'a
+    pas encore lancé : meilleur coup, équité après lui, écart à la moyenne
+    pondérée par les chances du jet. Voir :ref:`eval_cartes`.
+
+Marché perdu (*lost market*)
+    Un jet après lequel un double du joueur serait refusé : sa décision de
+    videau, sur la position que l'adversaire va lancer, est double/passe ou
+    trop bon. Ne se compte que si le joueur a accès au videau.
+
+Tâche (*task*)
+    Un travail qui dure au-delà d'un clic — analyse gammonNet par lots,
+    rollout, maintenance, import, tables de bearoff, synchronisation —,
+    rattaché à sa bibliothèque et listé dans le :ref:`panneau Calculs
+    <manuel_calculs>`.
+
+File (*queue*)
+    L'ordre d'attente des tâches qui écrivent une même bibliothèque : une
+    seule tourne à la fois, les autres attendent leur tour au lieu d'être
+    refusées.
+
+Priorité visible (*visible priority*)
+    Le rang d'un calcul dont le résultat est à l'écran (l'évaluation, une
+    carte) : il passe avant un rollout demandé, qui passe lui-même avant une
+    analyse de fond ; une tâche moins prioritaire *cède* à son point de
+    contrôle et reprend ensuite.
 
 Chance (*luck*)
     L'apport du lancer de dés à l'équité d'un coup, lu depuis le fichier

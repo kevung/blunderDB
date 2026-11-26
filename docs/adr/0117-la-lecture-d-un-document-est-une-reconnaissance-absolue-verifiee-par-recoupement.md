@@ -18,17 +18,18 @@ partage.
 
 1. **La lecture d'un document est une reconnaissance absolue**, contrairement à l'ADR-0108
    règle 3 : la position est lue sans candidats. Elle ne devient sûre que si un recoupement
-   indépendant du lecteur la confirme (pips imprimés, quinze pions par camp, légende, coup de la
-   solution légal) ; jamais par l'équité ni l'avis du moteur (ADR-0108 règle 4). Dans le doute,
+   indépendant du lecteur la confirme (aujourd'hui : quinze pions par camp et pips imprimés ;
+   la légende et le coup de la solution ne sont pas lus) ; jamais par l'équité ni l'avis du moteur (ADR-0108 règle 4). Dans le doute,
    « à vérifier ».
 2. **La lecture peut se faire hors de la webview**, contrairement à l'ADR-0108 règle 2 : un
-   diagramme d'imprimerie se lit en Go pur (`capture` et ses successeurs), sans CGO ni modèle
+   diagramme d'imprimerie se lit en Go pur (`document/pdf` pour le fichier, la table de glyphes de `document` pour le
+   diagramme), sans CGO ni modèle
    appris. Le reste de l'ADR-0108 vaut : rien n'est appris chez l'utilisateur.
 3. **La lecture produit un Relevé et n'écrit rien en base.** Le Relevé (`pkg/blunderdb/document`,
    CONTEXT.md « Relevé ») est un fichier JSON versionné, relu strictement : champs inconnus
    refusés, rangs continus depuis 1, position légale. La position y est un XGID, l'encodage que
    le dépôt lit et écrit déjà ; dés, videau, trait, score et longueur du match y sont, et nulle
-   part ailleurs.
+   part ailleurs. La lecture d'un PDF n'écrit jamais de dés (`00`).
 4. **Seul l'import d'un Relevé écrit, et seulement des positions.** Chaque position est écrite
    comme importée seule (ADR-0001), dans une Collection au nom du document, dans l'ordre du
    Relevé. Aucune image, aucun rectangle, aucune prose de l'auteur n'entre en base : la

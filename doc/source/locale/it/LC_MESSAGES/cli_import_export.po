@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 03:04+0100\n"
+"POT-Creation-Date: 2026-11-26 03:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -34,10 +34,10 @@ msgid ""
 msgstr "Crea un nuovo file di database con metadati opzionali."
 
 #: ../../source/cli_import_export.rst:15 ../../source/cli_import_export.rst:42
-#: ../../source/cli_import_export.rst:366
-#: ../../source/cli_import_export.rst:490
-#: ../../source/cli_import_export.rst:558
-#: ../../source/cli_import_export.rst:584
+#: ../../source/cli_import_export.rst:335
+#: ../../source/cli_import_export.rst:459
+#: ../../source/cli_import_export.rst:527
+#: ../../source/cli_import_export.rst:553
 msgid "**Options:**"
 msgstr "**Opzioni:**"
 
@@ -455,90 +455,20 @@ msgstr "document — Leggere e importare le posizioni di un documento"
 
 #: ../../source/cli_import_export.rst:279
 msgid ""
-"Range dans une collection les positions d'un livre, d'un article ou d'une"
-" page web, dans l'ordre du document, à partir de son **relevé** : un "
-"fichier JSON qui les liste, chacune avec sa page, son libellé, sa "
-"position (un XGID : pions, videau, trait, dés, score et longueur du "
-"match), son état (``sure``, ``to-verify`` ou ``uncertain``) et le fait "
-"qu'une personne l'a vérifiée ou non. Seules les positions entrent en base"
-" : ni image, ni texte de l'auteur."
+"Range dans une collection, dans l'ordre du document, les positions d'un "
+"PDF imprimé par eXtreme Gammon, en trois commandes (``analyze``, "
+"``check``, ``import``) autour d'un **relevé** JSON. Voir "
+":ref:`cli_document`."
 msgstr ""
-"Colloca in una collezione le posizioni di un libro, di un articolo o di "
-"una pagina web, nell'ordine del documento, a partire dal suo **relevé**: "
-"un file JSON che le elenca, ciascuna con la sua pagina, la sua etichetta,"
-" la sua posizione (un XGID: pedine, cubo, turno, dadi, punteggio e "
-"lunghezza del match), il suo stato (``sure``, ``to-verify`` o "
-"``uncertain``) e se una persona l'ha verificata oppure no. Solo le "
-"posizioni entrano nel database: né immagine né testo dell'autore."
+"Colloca in una collezione, nell'ordine del documento, le posizioni di un "
+"PDF stampato da eXtreme Gammon, in tre comandi (``analyze``, ``check``, "
+"``import``) attorno a un **relevé** JSON. Vedi :ref:`cli_document`."
 
-#: ../../source/cli_import_export.rst:293
-msgid ""
-"``analyze`` produit ce relevé à partir d'un PDF, sans rien écrire en "
-"base. Il lit les diagrammes qu'eXtreme Gammon imprime en PDF avec sa "
-"police de plateau : chaque diagramme est décodé exactement depuis ses "
-"glyphes, et le score, la longueur du match et les pips sont lus dans le "
-"texte imprimé à côté. Une entrée est ``sure`` quand chaque camp compte "
-"quinze pions et que les pips calculés égalent les pips imprimés des deux "
-"joueurs ; sinon elle est ``to-verify``, ou ``uncertain`` si le diagramme "
-"est mal formé, avec le doute nommé. Ce que les impressions de référence "
-"n'ont jamais montré est lu mais laissé ``to-verify`` : pile de plus de 9 "
-"pions, plus de deux pions blancs ou de trois noirs sur la barre, videau "
-"du côté du joueur du haut ou au-delà de 8, dés, joueur du haut au trait. "
-"Le titre et l'auteur viennent des métadonnées du PDF (``--title`` et "
-"``--author`` les remplacent), le chapitre de ses signets. Un PDF sans "
-"diagramme en police de plateau — diagramme dessiné, image ou page scannée"
-" — est refusé (« no diagram readable by its glyphs »)."
-msgstr ""
-"``analyze`` produce questo relevé a partire da un PDF, senza scrivere "
-"nulla nel database. Legge i diagrammi che eXtreme Gammon stampa in PDF "
-"con il suo font di tavoliere: ogni diagramma è decodificato esattamente "
-"dai suoi glifi, e il punteggio, la lunghezza del match e i pip sono letti"
-" dal testo stampato accanto. Una voce è ``sure`` quando ogni lato ha "
-"quindici pedine e i pip calcolati sono uguali ai pip stampati di entrambi"
-" i giocatori; altrimenti è ``to-verify``, o ``uncertain`` se il diagramma"
-" è malformato, con il dubbio indicato. Ciò che le stampe di riferimento "
-"non hanno mai mostrato è letto ma lasciato ``to-verify``: una pila di più"
-" di 9 pedine, più di due pedine bianche o tre nere sulla barra, il cubo "
-"dal lato del giocatore in alto o oltre 8, dadi, giocatore in alto al "
-"tratto. Il titolo e l'autore provengono dai metadati del PDF (``--title``"
-" e ``--author`` li sostituiscono), il capitolo dai suoi segnalibri. Un "
-"PDF senza alcun diagramma nel font di tavoliere — diagramma disegnato, "
-"immagine o pagina scansionata — è rifiutato (« no diagram readable by its"
-" glyphs »)."
-
-#: ../../source/cli_import_export.rst:308
-msgid ""
-"``check`` valide le relevé (format, rangs continus depuis 1, positions "
-"légales, champs inconnus refusés) et compte ses entrées par état, sans "
-"rien écrire. ``import`` crée la collection au nom du document (ou "
-"``--collection``) ; sa description porte le titre, l'auteur et l'édition "
-"(ou l'URL), et chaque position porte sa référence (« p. 146, Problem 191 "
-"») en commentaire, lisible hors de la collection. Une position que le "
-"document montre deux fois n'y entre qu'une fois, à sa première "
-"apparition, et son commentaire cite chaque référence. Une entrée ni "
-"``sure`` ni vérifiée fait refuser tout l'import, sauf ``--force`` ; un "
-"import refusé n'écrit rien. Réimporter le même relevé n'ajoute rien. Le "
-"démon sert l'import sous ``/v1/documents.importReleve`` ; il n'analyse "
-"aucun PDF."
-msgstr ""
-"``check`` convalida il relevé (formato, ranghi continui da 1, posizioni "
-"legali, campi sconosciuti rifiutati) e conta le sue voci per stato, senza"
-" scrivere nulla. ``import`` crea la collezione con il nome del documento "
-"(o ``--collection``); la sua descrizione riporta il titolo, l'autore e "
-"l'edizione (o l'URL), e ogni posizione riporta il suo riferimento (« p. "
-"146, Problem 191 ») come commento, leggibile anche fuori dalla "
-"collezione. Una posizione che il documento mostra due volte entra una "
-"sola volta, alla sua prima comparsa, e il suo commento cita ogni "
-"riferimento. Una voce né ``sure`` né verificata fa rifiutare l'intera "
-"importazione, salvo con ``--force``; un'importazione rifiutata non scrive"
-" nulla. Reimportare lo stesso relevé non aggiunge nulla. Il daemon serve "
-"l'importazione su ``/v1/documents.importReleve``. Non analizza alcun PDF."
-
-#: ../../source/cli_import_export.rst:321
+#: ../../source/cli_import_export.rst:290
 msgid "archive — Archive papier des matchs"
 msgstr "archive — Archivio cartaceo dei match"
 
-#: ../../source/cli_import_export.rst:323
+#: ../../source/cli_import_export.rst:292
 msgid ""
 "Imprime des matchs en codes QR sur des feuilles A4, pour garder une "
 "bibliothèque sur papier en peu de place, et les réimporte depuis la page "
@@ -548,7 +478,7 @@ msgstr ""
 " carta in poco spazio, e li reimporta dalla pagina o da una scansione o "
 "da una foto del foglio."
 
-#: ../../source/cli_import_export.rst:334
+#: ../../source/cli_import_export.rst:303
 msgid ""
 "``export`` écrit une page HTML autonome, à imprimer : chaque match tient "
 "en général dans un seul code (environ 200 octets pour un match en 7 "
@@ -583,7 +513,7 @@ msgstr ""
 " suo URL); le analisi non vengono conservate: si ricalcolano dopo "
 "l'importazione."
 
-#: ../../source/cli_import_export.rst:349
+#: ../../source/cli_import_export.rst:318
 msgid ""
 "``import`` lit la page exportée (les matchs y sont aussi inscrits en "
 "clair, sans lecture optique) ou des images PNG et JPEG portant plusieurs "
@@ -602,19 +532,19 @@ msgstr ""
 "modo. I codici illeggibili e non ricostruiti sono indicati con la loro "
 "posizione."
 
-#: ../../source/cli_import_export.rst:358
+#: ../../source/cli_import_export.rst:327
 msgid "export — Exporter des données"
 msgstr "export — Esportare dati"
 
-#: ../../source/cli_import_export.rst:360
+#: ../../source/cli_import_export.rst:329
 msgid "Exporte le contenu de la base vers des fichiers."
 msgstr "Esporta il contenuto del database in file."
 
-#: ../../source/cli_import_export.rst:368
+#: ../../source/cli_import_export.rst:337
 msgid "``--db`` — Base source (obligatoire)."
 msgstr "``--db`` — Database di origine (obbligatorio)."
 
-#: ../../source/cli_import_export.rst:369
+#: ../../source/cli_import_export.rst:338
 msgid ""
 "``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
 "``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
@@ -624,7 +554,7 @@ msgstr ""
 "``mat`` (export di uno o più match in trascrizione Jellyfish ``.mat``) "
 "(obbligatorio)."
 
-#: ../../source/cli_import_export.rst:372
+#: ../../source/cli_import_export.rst:341
 msgid ""
 "``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
 "utilisé avec ``--dir``)."
@@ -632,7 +562,7 @@ msgstr ""
 "``--file`` — File di output (obbligatorio, tranne che per ``--type mat`` "
 "usato con ``--dir``)."
 
-#: ../../source/cli_import_export.rst:374
+#: ../../source/cli_import_export.rst:343
 msgid ""
 "``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
 "(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
@@ -642,27 +572,27 @@ msgstr ""
 "match, un file per match; senza ``--match-ids``, vengono esportati tutti "
 "i match)."
 
-#: ../../source/cli_import_export.rst:377
+#: ../../source/cli_import_export.rst:346
 msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
 msgstr "``--analysis`` — Includere le analisi (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:378
+#: ../../source/cli_import_export.rst:347
 msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
 msgstr "``--comments`` — Includere i commenti (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:379
+#: ../../source/cli_import_export.rst:348
 msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
 msgstr "``--filters`` — Includere la libreria di filtri (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:380
+#: ../../source/cli_import_export.rst:349
 msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
 msgstr "``--played-moves`` — Includere le mosse giocate (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:381
+#: ../../source/cli_import_export.rst:350
 msgid "``--matches`` — Inclure les matchs (défaut: oui)."
 msgstr "``--matches`` — Includere i match (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:382
+#: ../../source/cli_import_export.rst:351
 msgid ""
 "``--transcriptions`` — Inclure le brouillon de transcription de chaque "
 "match exporté (défaut: oui)."
@@ -670,7 +600,7 @@ msgstr ""
 "``--transcriptions`` — Includere la bozza di trascrizione di ogni match "
 "esportato (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:384
+#: ../../source/cli_import_export.rst:353
 msgid ""
 "``--aliases`` — Inclure les alias de joueurs et d'événements que les "
 "matchs exportés écrivent, pour que la fusion de joueurs les suive "
@@ -680,19 +610,19 @@ msgstr ""
 "esportati scrivono, perché l'unione dei giocatori li segua (predefinito: "
 "sì)."
 
-#: ../../source/cli_import_export.rst:386
+#: ../../source/cli_import_export.rst:355
 msgid "``--collections`` — Inclure les collections (défaut: oui)."
 msgstr "``--collections`` — Includere le collezioni (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:387
+#: ../../source/cli_import_export.rst:356
 msgid "``--tournaments`` — Inclure les tournois (défaut: oui)."
 msgstr "``--tournaments`` — Includere i tornei (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:388
+#: ../../source/cli_import_export.rst:357
 msgid "``--decks`` — Inclure les paquets Anki (défaut: oui)."
 msgstr "``--decks`` — Includere i mazzi Anki (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:389
+#: ../../source/cli_import_export.rst:358
 msgid ""
 "``--lessons`` — Inclure les leçons, avec les collections et les positions"
 " que leurs étapes montrent (défaut: oui)."
@@ -700,7 +630,7 @@ msgstr ""
 "``--lessons`` — Includere le lezioni, con le collezioni e le posizioni "
 "che i loro passaggi mostrano (predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:391
+#: ../../source/cli_import_export.rst:360
 msgid ""
 "``--anki-history`` — Emporter l'historique de révision des paquets "
 "exportés : l'état de chaque carte et le journal de ses révisions (défaut:"
@@ -710,7 +640,7 @@ msgstr ""
 "esportati: lo stato di ogni carta e il registro dei suoi ripassi "
 "(predefinito: sì)."
 
-#: ../../source/cli_import_export.rst:393
+#: ../../source/cli_import_export.rst:362
 msgid ""
 "``--collection-ids`` — IDs de collections à exporter (séparés par des "
 "virgules, vide = toutes)."
@@ -718,7 +648,7 @@ msgstr ""
 "``--collection-ids`` — ID delle collezioni da esportare (separati da "
 "virgole, vuoto = tutte)."
 
-#: ../../source/cli_import_export.rst:395
+#: ../../source/cli_import_export.rst:364
 msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
@@ -726,7 +656,7 @@ msgstr ""
 "``--match-ids`` — ID dei match da esportare (separati da virgole, vuoto ="
 " tutti)."
 
-#: ../../source/cli_import_export.rst:396
+#: ../../source/cli_import_export.rst:365
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules, vide = tous)."
@@ -734,7 +664,7 @@ msgstr ""
 "``--tournament-ids`` — ID dei tornei da esportare (separati da virgole, "
 "vuoto = tutti)."
 
-#: ../../source/cli_import_export.rst:398
+#: ../../source/cli_import_export.rst:367
 msgid ""
 "``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions "
 "(séparés par des virgules, vide = tous)."
@@ -742,7 +672,7 @@ msgstr ""
 "``--deck-ids`` — ID dei mazzi Anki da esportare con le loro posizioni "
 "(separati da virgole, vuoto = tutti)."
 
-#: ../../source/cli_import_export.rst:400
+#: ../../source/cli_import_export.rst:369
 msgid ""
 "``--lesson-ids`` — IDs de leçons à exporter (séparés par des virgules, "
 "vide = toutes)."
@@ -750,7 +680,7 @@ msgstr ""
 "``--lesson-ids`` — ID delle lezioni da esportare (separati da virgole, "
 "vuoto = tutte)."
 
-#: ../../source/cli_import_export.rst:403
+#: ../../source/cli_import_export.rst:372
 msgid ""
 "``--password`` — Enveloppe le résultat dans un conteneur chiffré "
 "(``.dbx``)."
@@ -758,7 +688,7 @@ msgstr ""
 "``--password`` — Avvolge il risultato in un contenitore cifrato "
 "(``.dbx``)."
 
-#: ../../source/cli_import_export.rst:404
+#: ../../source/cli_import_export.rst:373
 msgid ""
 "``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
 "fichier exporté (voir :ref:`diffusion_controlee`)."
@@ -766,7 +696,7 @@ msgstr ""
 "``--watermark`` — Scrive una dichiarazione d'origine **firmata** nel file"
 " esportato (vedere :ref:`diffusion_controlee`)."
 
-#: ../../source/cli_import_export.rst:406
+#: ../../source/cli_import_export.rst:375
 msgid ""
 "``--watermark-note`` — Texte libre associé au filigrane (conditions "
 "d'usage, contact) ; utilisé avec ``--watermark``."
@@ -774,7 +704,7 @@ msgstr ""
 "``--watermark-note`` — Testo libero associato alla filigrana (condizioni "
 "d'uso, contatto); si usa con ``--watermark``."
 
-#: ../../source/cli_import_export.rst:408
+#: ../../source/cli_import_export.rst:377
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document "
 "résumant l'export: chemin, taille en octets, nombres)."
@@ -783,7 +713,7 @@ msgstr ""
 "documento che riassume l'esportazione: percorso, dimensione in byte, "
 "conteggi)."
 
-#: ../../source/cli_import_export.rst:410
+#: ../../source/cli_import_export.rst:379
 msgid ""
 "``--incremental`` — Avec ``--type database`` : n'exporte que ce qui est "
 "entré dans la bibliothèque depuis le dernier export incrémental vers le "
@@ -802,7 +732,7 @@ msgstr ""
 "rifiutato: il file presente contiene il delta precedente, che l'altra "
 "macchina potrebbe non aver ancora unito."
 
-#: ../../source/cli_import_export.rst:417
+#: ../../source/cli_import_export.rst:386
 msgid ""
 "``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, "
 "à la place du dossier de destination."
@@ -810,7 +740,7 @@ msgstr ""
 "``--sync-cursor`` — Con ``--incremental``: nome del segnaposto letto e "
 "fatto avanzare, al posto della cartella di destinazione."
 
-#: ../../source/cli_import_export.rst:419
+#: ../../source/cli_import_export.rst:388
 msgid ""
 "``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille "
 "par famille, ce que l'export écrirait, sans écrire de fichier (``--file``"
@@ -826,7 +756,7 @@ msgstr ""
 "partirebbero congelate e i mazzi «recherche» la cui sorgente perderebbe "
 "una parte. Con un altro tipo, l'opzione è rifiutata."
 
-#: ../../source/cli_import_export.rst:425
+#: ../../source/cli_import_export.rst:394
 msgid ""
 "``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des "
 "identifiants derrière un compte : ``positions``, ``comments`` (les "
@@ -844,7 +774,7 @@ msgstr ""
 "``ankiDecks``, ``transcriptions`` o ``filters``. ``--offset`` e "
 "``--limit`` scelgono la pagina (al massimo 1000 identificatori)."
 
-#: ../../source/cli_import_export.rst:431
+#: ../../source/cli_import_export.rst:400
 msgid ""
 "``--type database`` exporte toute la bibliothèque, comme l'export du "
 "serveur et comme la fenêtre d'export quand la liste affichée est la "
@@ -870,12 +800,12 @@ msgstr ""
 "parte solo se partono tutti i match. Anche ``--type matches`` porta con "
 "sé la bozza di ogni match."
 
-#: ../../source/cli_import_export.rst:440
-#: ../../source/cli_import_export.rst:525
+#: ../../source/cli_import_export.rst:409
+#: ../../source/cli_import_export.rst:494
 msgid "**Exemples:**"
 msgstr "**Esempi:**"
 
-#: ../../source/cli_import_export.rst:463
+#: ../../source/cli_import_export.rst:432
 msgid ""
 "Un filigrane est signé avec l'identité d'émetteur locale (voir la "
 "commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
@@ -899,11 +829,11 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
 "mark-origin-and-nothing-else.md>`__."
 
-#: ../../source/cli_import_export.rst:475
+#: ../../source/cli_import_export.rst:444
 msgid "transfer — Copier d'une bibliothèque à une autre"
 msgstr "transfer — Copiare da una libreria a un'altra"
 
-#: ../../source/cli_import_export.rst:477
+#: ../../source/cli_import_export.rst:446
 msgid ""
 "Copie une partie d'une bibliothèque dans une autre, sans fichier "
 "intermédiaire à manipuler. La sélection est celle de ``export --type "
@@ -923,7 +853,7 @@ msgstr ""
 "presente non viene duplicato. Copiare da A a B e poi da B ad A non crea "
 "quindi alcun duplicato."
 
-#: ../../source/cli_import_export.rst:492
+#: ../../source/cli_import_export.rst:461
 msgid ""
 "``--from`` — Bibliothèque source (obligatoire ; elle doit exister et être"
 " au schéma de cette version de blunderDB). Une bibliothèque plus ancienne"
@@ -937,7 +867,7 @@ msgstr ""
 "volta in blunderDB. Viene rifiutata anche una libreria più recente: "
 "aggiornate blunderDB."
 
-#: ../../source/cli_import_export.rst:497
+#: ../../source/cli_import_export.rst:466
 msgid ""
 "``--to`` — Bibliothèque de destination (obligatoire ; créée si elle "
 "n'existe pas). Elle ne peut pas être la source."
@@ -945,7 +875,7 @@ msgstr ""
 "``--to`` — Libreria di destinazione (obbligatorio; creata se non esiste)."
 " Non può essere quella di origine."
 
-#: ../../source/cli_import_export.rst:499
+#: ../../source/cli_import_export.rst:468
 msgid ""
 "``--analysis``, ``--comments``, ``--played-moves``, ``--matches``, "
 "``--transcriptions``, ``--aliases``, ``--collections``, "
@@ -958,7 +888,7 @@ msgstr ""
 "un'opzione a ``false`` esclude la sua famiglia (predefinito: sì per "
 "tutte)."
 
-#: ../../source/cli_import_export.rst:503
+#: ../../source/cli_import_export.rst:472
 msgid ""
 "``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
 "ids``, ``--lesson-ids`` — Une liste d'IDs de la source restreint sa "
@@ -970,7 +900,7 @@ msgstr ""
 "famiglia a questi elementi e la include. Un ID che l'origine non contiene"
 " è un errore, e non viene copiato nulla."
 
-#: ../../source/cli_import_export.rst:507
+#: ../../source/cli_import_export.rst:476
 msgid ""
 "``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la "
 "source et ce que la destination en a pris)."
@@ -978,7 +908,7 @@ msgstr ""
 "``--format`` — ``text`` (predefinito) o ``json`` (ciò che è stato letto "
 "nell'origine e ciò che la destinazione ne ha preso)."
 
-#: ../../source/cli_import_export.rst:510
+#: ../../source/cli_import_export.rst:479
 msgid ""
 "**Quelles positions partent.** Sans liste d'IDs, toutes les positions de "
 "la source partent, rangées ou non. Dès qu'une liste d'IDs est donnée, "
@@ -1000,7 +930,7 @@ msgstr ""
 "luogo), ma non le altre partite di quel torneo; con "
 "``--tournaments=false``, arriva senza torneo."
 
-#: ../../source/cli_import_export.rst:519
+#: ../../source/cli_import_export.rst:488
 msgid ""
 "Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal "
 "d'import, ni métadonnée de la source ; la destination garde les siennes, "
@@ -1015,7 +945,7 @@ msgstr ""
 "arriva senza cronologia, e un mazzo con lo stesso nome già presente "
 "mantiene la propria."
 
-#: ../../source/cli_import_export.rst:540
+#: ../../source/cli_import_export.rst:509
 msgid ""
 "Le serveur offre le même transfert entre deux tenants, tiré par le tenant"
 " qui reçoit (voir :ref:`mode_headless_transfert`)."
@@ -1023,11 +953,11 @@ msgstr ""
 "Il server offre lo stesso trasferimento tra due tenant, tirato dal tenant"
 " che riceve (vedi :ref:`mode_headless_transfert`)."
 
-#: ../../source/cli_import_export.rst:544
+#: ../../source/cli_import_export.rst:513
 msgid "identity — Identité d'émetteur"
 msgstr "identity — Identità di emittente"
 
-#: ../../source/cli_import_export.rst:546
+#: ../../source/cli_import_export.rst:515
 msgid ""
 "Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
 "signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
@@ -1040,19 +970,19 @@ msgstr ""
 "non c'è nulla da configurare. Appartiene a una persona, non a un "
 "database: tutto ciò che marchi porta una sola impronta pubblica."
 
-#: ../../source/cli_import_export.rst:560
+#: ../../source/cli_import_export.rst:529
 msgid "``--name`` — Change le nom affiché de l'identité."
 msgstr "``--name`` — Cambia il nome visualizzato dell'identità."
 
-#: ../../source/cli_import_export.rst:561
+#: ../../source/cli_import_export.rst:530
 msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
 msgstr "``--export`` — Esporta l'identità in un file ``.bdbid``."
 
-#: ../../source/cli_import_export.rst:562
+#: ../../source/cli_import_export.rst:531
 msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
 msgstr "``--import`` — Importa un'identità da un file ``.bdbid``."
 
-#: ../../source/cli_import_export.rst:563
+#: ../../source/cli_import_export.rst:532
 msgid ""
 "``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
 "exporté/importé (l'identité locale, elle, est volontairement non "
@@ -1061,7 +991,7 @@ msgstr ""
 "``--passphrase`` — Frase segreta facoltativa che protegge il file "
 "esportato/importato (l'identità locale resta volutamente non protetta)."
 
-#: ../../source/cli_import_export.rst:565
+#: ../../source/cli_import_export.rst:534
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom, "
 "empreinte, chemin de stockage)."
@@ -1069,7 +999,7 @@ msgstr ""
 "``--format`` — Formato di output: ``text`` (predefinito) o ``json`` "
 "(nome, impronta, percorso di archiviazione)."
 
-#: ../../source/cli_import_export.rst:568
+#: ../../source/cli_import_export.rst:537
 msgid ""
 "Le fichier exporté permet à quiconque le détient de signer en votre nom —"
 " ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
@@ -1081,11 +1011,11 @@ msgstr ""
 "marcati conservano il nome con cui sono stati sigillati e continuano a "
 "verificarsi."
 
-#: ../../source/cli_import_export.rst:574
+#: ../../source/cli_import_export.rst:543
 msgid "open — Ouvrir un fichier protégé"
 msgstr "open — Aprire un file protetto"
 
-#: ../../source/cli_import_export.rst:576
+#: ../../source/cli_import_export.rst:545
 msgid ""
 "Transforme un fichier protégé par mot de passe (``.dbx``) en base "
 "ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
@@ -1095,15 +1025,15 @@ msgstr ""
 "ordinario. La password viene chiesta una sola volta; poi è un file "
 "normale."
 
-#: ../../source/cli_import_export.rst:586
+#: ../../source/cli_import_export.rst:555
 msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
 msgstr "``--db`` — File ``.dbx`` da aprire (obbligatorio)."
 
-#: ../../source/cli_import_export.rst:587
+#: ../../source/cli_import_export.rst:556
 msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
 msgstr "``--password`` — Password del contenitore (obbligatoria)."
 
-#: ../../source/cli_import_export.rst:588
+#: ../../source/cli_import_export.rst:557
 msgid ""
 "``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
 "extension ``.db``)."
@@ -1111,7 +1041,7 @@ msgstr ""
 "``--file`` — Percorso di uscita per il database ordinario (predefinito: "
 "stesso nome, estensione ``.db``)."
 
-#: ../../source/cli_import_export.rst:591
+#: ../../source/cli_import_export.rst:560
 msgid ""
 "Ce que le mot de passe protège : le *transport* du fichier — la copie "
 "égarée dans un dossier de téléchargements, la pièce jointe envoyée par "
@@ -1124,3 +1054,151 @@ msgstr ""
 "Non il database: chiunque abbia ricevuto la password può aprirlo. "
 "L'intestazione del contenitore è in chiaro, cosicché ``blunderdb info`` "
 "legge l'origine di un file protetto senza la sua password."
+
+#~ msgid ""
+#~ "Range dans une collection les positions"
+#~ " d'un livre, d'un article ou d'une"
+#~ " page web, dans l'ordre du document,"
+#~ " à partir de son **relevé** : "
+#~ "un fichier JSON qui les liste, "
+#~ "chacune avec sa page, son libellé, "
+#~ "sa position (un XGID : pions, "
+#~ "videau, trait, dés, score et longueur"
+#~ " du match), son état (``sure``, "
+#~ "``to-verify`` ou ``uncertain``) et le "
+#~ "fait qu'une personne l'a vérifiée ou "
+#~ "non. Seules les positions entrent en "
+#~ "base : ni image, ni texte de "
+#~ "l'auteur."
+#~ msgstr ""
+#~ "Colloca in una collezione le posizioni"
+#~ " di un libro, di un articolo o"
+#~ " di una pagina web, nell'ordine del"
+#~ " documento, a partire dal suo "
+#~ "**relevé**: un file JSON che le "
+#~ "elenca, ciascuna con la sua pagina, "
+#~ "la sua etichetta, la sua posizione "
+#~ "(un XGID: pedine, cubo, turno, dadi, "
+#~ "punteggio e lunghezza del match), il "
+#~ "suo stato (``sure``, ``to-verify`` o "
+#~ "``uncertain``) e se una persona l'ha "
+#~ "verificata oppure no. Solo le posizioni"
+#~ " entrano nel database: né immagine né"
+#~ " testo dell'autore."
+
+#~ msgid ""
+#~ "``analyze`` produit ce relevé à partir"
+#~ " d'un PDF, sans rien écrire en "
+#~ "base. Il lit les diagrammes qu'eXtreme"
+#~ " Gammon imprime en PDF avec sa "
+#~ "police de plateau : chaque diagramme "
+#~ "est décodé exactement depuis ses "
+#~ "glyphes, et le score, la longueur "
+#~ "du match et les pips sont lus "
+#~ "dans le texte imprimé à côté. Une"
+#~ " entrée est ``sure`` quand chaque "
+#~ "camp compte quinze pions et que "
+#~ "les pips calculés égalent les pips "
+#~ "imprimés des deux joueurs ; sinon "
+#~ "elle est ``to-verify``, ou ``uncertain``"
+#~ " si le diagramme est mal formé, "
+#~ "avec le doute nommé. Ce que les"
+#~ " impressions de référence n'ont jamais "
+#~ "montré est lu mais laissé ``to-"
+#~ "verify`` : pile de plus de 9 "
+#~ "pions, plus de deux pions blancs "
+#~ "ou de trois noirs sur la barre,"
+#~ " videau du côté du joueur du "
+#~ "haut ou au-delà de 8, dés, "
+#~ "joueur du haut au trait. Le titre"
+#~ " et l'auteur viennent des métadonnées "
+#~ "du PDF (``--title`` et ``--author`` les"
+#~ " remplacent), le chapitre de ses "
+#~ "signets. Un PDF sans diagramme en "
+#~ "police de plateau — diagramme dessiné,"
+#~ " image ou page scannée — est "
+#~ "refusé (« no diagram readable by "
+#~ "its glyphs »)."
+#~ msgstr ""
+#~ "``analyze`` produce questo relevé a "
+#~ "partire da un PDF, senza scrivere "
+#~ "nulla nel database. Legge i diagrammi"
+#~ " che eXtreme Gammon stampa in PDF "
+#~ "con il suo font di tavoliere: ogni"
+#~ " diagramma è decodificato esattamente dai"
+#~ " suoi glifi, e il punteggio, la "
+#~ "lunghezza del match e i pip sono"
+#~ " letti dal testo stampato accanto. "
+#~ "Una voce è ``sure`` quando ogni "
+#~ "lato ha quindici pedine e i pip"
+#~ " calcolati sono uguali ai pip "
+#~ "stampati di entrambi i giocatori; "
+#~ "altrimenti è ``to-verify``, o "
+#~ "``uncertain`` se il diagramma è "
+#~ "malformato, con il dubbio indicato. Ciò"
+#~ " che le stampe di riferimento non "
+#~ "hanno mai mostrato è letto ma "
+#~ "lasciato ``to-verify``: una pila di "
+#~ "più di 9 pedine, più di due "
+#~ "pedine bianche o tre nere sulla "
+#~ "barra, il cubo dal lato del "
+#~ "giocatore in alto o oltre 8, dadi,"
+#~ " giocatore in alto al tratto. Il "
+#~ "titolo e l'autore provengono dai "
+#~ "metadati del PDF (``--title`` e "
+#~ "``--author`` li sostituiscono), il capitolo"
+#~ " dai suoi segnalibri. Un PDF senza"
+#~ " alcun diagramma nel font di "
+#~ "tavoliere — diagramma disegnato, immagine "
+#~ "o pagina scansionata — è rifiutato "
+#~ "(« no diagram readable by its "
+#~ "glyphs »)."
+
+#~ msgid ""
+#~ "``check`` valide le relevé (format, "
+#~ "rangs continus depuis 1, positions "
+#~ "légales, champs inconnus refusés) et "
+#~ "compte ses entrées par état, sans "
+#~ "rien écrire. ``import`` crée la "
+#~ "collection au nom du document (ou "
+#~ "``--collection``) ; sa description porte "
+#~ "le titre, l'auteur et l'édition (ou "
+#~ "l'URL), et chaque position porte sa "
+#~ "référence (« p. 146, Problem 191 "
+#~ "») en commentaire, lisible hors de "
+#~ "la collection. Une position que le "
+#~ "document montre deux fois n'y entre "
+#~ "qu'une fois, à sa première apparition,"
+#~ " et son commentaire cite chaque "
+#~ "référence. Une entrée ni ``sure`` ni "
+#~ "vérifiée fait refuser tout l'import, "
+#~ "sauf ``--force`` ; un import refusé "
+#~ "n'écrit rien. Réimporter le même relevé"
+#~ " n'ajoute rien. Le démon sert "
+#~ "l'import sous ``/v1/documents.importReleve`` ; "
+#~ "il n'analyse aucun PDF."
+#~ msgstr ""
+#~ "``check`` convalida il relevé (formato, "
+#~ "ranghi continui da 1, posizioni legali,"
+#~ " campi sconosciuti rifiutati) e conta "
+#~ "le sue voci per stato, senza "
+#~ "scrivere nulla. ``import`` crea la "
+#~ "collezione con il nome del documento "
+#~ "(o ``--collection``); la sua descrizione "
+#~ "riporta il titolo, l'autore e l'edizione"
+#~ " (o l'URL), e ogni posizione riporta"
+#~ " il suo riferimento (« p. 146, "
+#~ "Problem 191 ») come commento, leggibile"
+#~ " anche fuori dalla collezione. Una "
+#~ "posizione che il documento mostra due"
+#~ " volte entra una sola volta, alla "
+#~ "sua prima comparsa, e il suo "
+#~ "commento cita ogni riferimento. Una voce"
+#~ " né ``sure`` né verificata fa "
+#~ "rifiutare l'intera importazione, salvo con "
+#~ "``--force``; un'importazione rifiutata non "
+#~ "scrive nulla. Reimportare lo stesso "
+#~ "relevé non aggiunge nulla. Il daemon "
+#~ "serve l'importazione su "
+#~ "``/v1/documents.importReleve``. Non analizza alcun"
+#~ " PDF."

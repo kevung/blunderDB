@@ -55,6 +55,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `scoremap` - Best play or cube verdict at every score of a match
 - `epc` - EPC, win probability and money cube verdict (bearoff)
 - `gnubgid` - The GNUbg Position ID and Match ID of a position
+- `arkid` - The ArkID, blunderDB's readable notation, of a position
 - `capture` - Read a position from a screen capture of an XG board
 - `rollout` - Roll out a position's plays or cube decision (gammonNet)
 - `bearoff` - Generate, list, verify and delete the bearoff tables
@@ -1274,6 +1275,31 @@ does.
 ```bash
 ./blunderDB gnubgid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'
 ./blunderDB gnubgid --format json '<XGID>'
+```
+
+## Arkid Command
+
+Print the **ArkID** of a position given as an XGID, an OGID or an ArkID:
+blunderDB's readable text notation, `[score]dice:cube(gates)rest`, written from
+the side of the player on roll (`[34]65:x2(ySQmLhfA)S3Qm3L3hf3` is the opening at
+3-away/4-away, 6-5 to play, cube at 4 held by the roller). An ArkID given as an
+argument, in either form, comes back canonical. Pure computation: no database
+file is involved. `epc`, `rolls`, `scoremap`, `cubematrix`, `rollout` and
+`gnubgid` also take an ArkID, and `capture` and `search` write one with
+`--format arkid`.
+
+```bash
+./blunderDB arkid [options] '<XGID|OGID|ArkID>'
+```
+
+**Options:**
+- `--expanded` - Write the developed form: every checker of the player on roll, then every checker of the opponent
+- `--format` - Output format: `text` or `json` (default: text)
+
+**Example:**
+```bash
+./blunderDB arkid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:65:0:0:0:0:10'
+./blunderDB arkid --expanded '[34]65:x2(ySQmLhfA)S3Qm3L3hf3'
 ```
 
 ## Capture Command
@@ -2649,6 +2675,28 @@ Examples:
   blunderdb archive import --db database.db page1.jpg page2.jpg
 ```
 
+### `blunderdb arkid`
+
+```
+Usage: blunderdb arkid [options] <XGID|OGID|ArkID>
+
+Print the ArkID of a position, blunderDB's readable notation:
+[score]dice:cube(gates)rest, written from the side of the player on roll
+(lowercase letters; the opponent is uppercase). Two spellings of one
+position by blunderDB are identical to the character. An ArkID given as
+argument, in either form, comes back canonical.
+
+Options:
+  -expanded
+    	Write the developed form: every checker of the player on roll, then every checker of the opponent
+  -format string
+    	Output format: text, json (default "text")
+
+Examples:
+  blunderdb arkid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:65:0:0:0:0:10'
+  blunderdb arkid --expanded '[34]65:x2(ySQmLhfA)S3Qm3L3hf3'
+```
+
 ### `blunderdb bearoff delete`
 
 ```
@@ -2757,7 +2805,7 @@ Options:
   -force
     	Save even though the reading has doubts (points, bar, cube, dice or orientation it could not settle)
   -format string
-    	Output format: text, json, xgid (default "text")
+    	Output format: text, json, xgid, arkid (default "text")
   -save
     	Save the position into --db as an individual position
   -score string
@@ -2941,7 +2989,7 @@ Options:
   -position-id int
     	ID of a stored position
   -xgid string
-    	XGID of the position (written to the library if absent)
+    	XGID, OGID or ArkID of the position (written to the library if absent)
 
 Examples:
   blunderdb collection pile --db database.db --position-id 42
@@ -3131,7 +3179,7 @@ Examples:
 ### `blunderdb cubematrix`
 
 ```
-Usage: blunderdb cubematrix [options] <XGID|OGID>
+Usage: blunderdb cubematrix [options] <XGID|OGID|ArkID>
 
 Show the cube verdict at every score of a match: for each away × away
 cell, whether this position is a double and whether it is a take.
@@ -3660,7 +3708,7 @@ Options:
   -tournament int
     	Instead of a board: a tournament id of --db, found elsewhere by its name
   -xgid string
-    	The board, as an XGID
+    	The board, as an XGID, OGID or ArkID
   -zobrist string
     	The board, as its Zobrist hash (decimal); neighbours are then ranked only where it is held
 
@@ -3674,7 +3722,7 @@ Examples:
 ### `blunderdb epc`
 
 ```
-Usage: blunderdb epc [options] <XGID|OGID>
+Usage: blunderdb epc [options] <XGID|OGID|ArkID>
 
 Compute EPC, win probability and money cube verdict for a position.
 Win probability is exact inside the two-sided database domain and
@@ -3859,7 +3907,7 @@ Examples:
 ### `blunderdb gnubgid`
 
 ```
-Usage: blunderdb gnubgid [options] <XGID|OGID>
+Usage: blunderdb gnubgid [options] <XGID|OGID|ArkID>
 
 Print the GNUbg identifier of a position: the Position ID (the board,
 from the side of the player on roll) and the Match ID (cube, score,
@@ -4885,7 +4933,7 @@ Examples:
 ### `blunderdb rollout`
 
 ```
-Usage: blunderdb rollout [options] <XGID|OGID>
+Usage: blunderdb rollout [options] <XGID|OGID|ArkID>
        blunderdb rollout --db <file> --id <position> [--store] [options]
 
 Roll a position out with gammonNet: its plays when the position has dice,
@@ -4912,7 +4960,7 @@ Options:
   -games int
     	Most games per candidate (0 = the preset's)
   -id int
-    	Position of --db to roll out, in place of an XGID or OGID
+    	Position of --db to roll out, in place of an XGID, OGID or ArkID
   -jobs int
     	Games played at once (0 = one per core); never changes the numbers
   -jsd float
@@ -4946,7 +4994,7 @@ Examples:
 ### `blunderdb rolls`
 
 ```
-Usage: blunderdb rolls [options] <XGID|OGID>
+Usage: blunderdb rolls [options] <XGID|OGID|ArkID>
 
 Show what each of the 21 rolls does for the player about to roll: the
 best play, the equity after it, and whether it loses the market (after
@@ -4982,7 +5030,7 @@ Examples:
 ### `blunderdb scoremap`
 
 ```
-Usage: blunderdb scoremap [options] <XGID|OGID>
+Usage: blunderdb scoremap [options] <XGID|OGID|ArkID>
 
 Show the best decision of one position at every score of a match. With
 dice, each away × away cell gives the best play, its equity, the second
@@ -5046,7 +5094,7 @@ Options:
   -flagged
     	Only positions you marked for study in the source tool (eXtreme Gammon flags)
   -format string
-    	Output format: table, json, xgid (default "table")
+    	Output format: table, json, xgid, arkid (default "table")
   -game-type blunderdb repair
     	Only positions in these plans of play, comma-separated: race, bearin, crunch, backgame, acepoint, blitz, primevprime, mutualholding, holding, contact (derived label, see blunderdb repair)
   -has-analysis

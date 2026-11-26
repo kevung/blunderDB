@@ -24,7 +24,8 @@ vi.mock('../../wailsjs/go/database/Database.js', async () => {
 // (no real Wails runtime), so both need the same per-file mock every other
 // EventsOn-consuming component test already uses (see EvalPanelEvalEffect.test.js).
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    ListJobs: vi.fn(() => Promise.resolve([]))
+    ListJobs: vi.fn(() => Promise.resolve([])),
+    JobCores: vi.fn(() => Promise.resolve(null))
 }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
     EventsOn: vi.fn(() => () => {})
@@ -231,6 +232,13 @@ describe('StatusBar — réactivité', () => {
         await tick();
         const chip = screen.getByTestId('jobs-chip');
         expect(chip.textContent).toContain('1');
+        expect(screen.queryByTestId('jobs-chip-yielded')).toBeNull();
+        jobsStore.set([
+            { ...job, id: 1, state: 'running', yielded: true },
+            { ...job, id: 2, state: 'waiting', position: 1 }
+        ]);
+        await tick();
+        expect(screen.getByTestId('jobs-chip-yielded')).toBeTruthy();
         await fireEvent.click(chip);
         expect(get(activeModal)).toBe(MODAL.JOBS);
         jobsStore.set([]);

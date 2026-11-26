@@ -145,6 +145,8 @@ var serverOnly = map[string]string{
 	"/v1/training.generateEvaluation": whyTrainingGenerate,
 	"/v1/tenants.quota":               whyTenantQuota,
 	"/v1/positions.fromOGID":          whyIdentifierDecode,
+	"/v1/positions.fromArkID":         whyIdentifierDecode,
+	"/v1/positions.arkId":             whyPureDomain,
 	"/v1/positions.fromXGID":          whyPureDomain,
 	"/v1/positions.gnubgId":           whyPureDomain,
 	// The opening book is data embedded in the binary, not a tenant's rows:

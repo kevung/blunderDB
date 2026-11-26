@@ -252,7 +252,8 @@ liste des matchs, des tournois ou des collections. Les deux gestes les plus
 courants sur une position, *Évaluer cette position* et *Copier l'image*, sont
 au premier niveau ; les autres sont rangés en sous-menus, marqués ▸ :
 
-* **Copier / partager** : l'image (*CTRL-X*), l'XGID seul, l'ID GNUbg (l'ID de
+* **Copier / partager** : l'image (*CTRL-X*), l'XGID seul, l'ArkID (la notation de
+  blunderDB, aussi donnée par la commande ``arkid``), l'ID GNUbg (l'ID de
   position et l'ID de match que GNU Backgammon charge avec ``set gnubgid``,
   aussi donnés par la commande ``gnubgid``), la position et son
   analyse en texte (*CTRL-C*), l'image avec l'analyse, l'image enregistrée en

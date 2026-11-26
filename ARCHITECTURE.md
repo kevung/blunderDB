@@ -112,6 +112,43 @@ is the one the GUI and CLI use when a single position is brought in on its
 own (a pasted XGID, an `.xgp` file) — the same dedup, with the
 `individually_imported` flag set.
 
+## 4. A document's positions, end to end
+
+A book or article shows positions as diagrams; `blunderdb document` brings them into a
+Collection in three steps that never skip the middle one (ADR-0117). The step that reads
+writes nothing, the step that writes reads no document, and a JSON file — the Relevé — sits
+between them for a person to check.
+
+```mermaid
+flowchart LR
+    PDF["book.pdf"] --> READER["document/pdf\n(file, fonts, glyphs)"]
+    READER --> GLYPHS["document: xgboard.go\n(glyph table → board)"]
+    GLYPHS --> CHECK["cross-checks\n(15 checkers, printed pips)"]
+    CHECK --> RELEVE[("Relevé JSON\nstates, doubts, verified")]
+    RELEVE --> PERSON["a person reads,\ncorrects, verifies"]
+    PERSON --> IMPORT["document.Import\n(one transaction)"]
+    IMPORT --> STORAGE3[("Storage: Collection,\nindividually imported positions,\none comment each")]
+```
+
+- **Reading** (`document analyze`, `Database.AnalyzeDocument`): `pdf.Open` parses the file
+  under `pdf.DefaultLimits` and distrusts it; `Glyphs` places every glyph a page draws. The
+  glyph reader (`document/xgboard.go`, `analyze.go`) finds the board-font diagrams, decodes each
+  one exactly, reads the score, pips and match length printed beside it, and compares: fifteen
+  checkers a side and computed pips equal to printed pips make an entry *sure*; anything else
+  is *to verify* or *uncertain* with the doubt named. A PDF with no such diagram is refused
+  (`ErrNoGlyphDiagram`). Nothing is written. Only the CLI and the desktop's façade read a
+  document; the daemon does not.
+- **The Relevé** (`document/releve.go`): `Decode` is strict (unknown fields, gapless ranks,
+  legal XGID) so a hand edit cannot slip a bad position in; `Summarize` (`summary.go`) counts
+  states and repeated positions for `document check`.
+- **Import** (`document/import.go`): `Database.ImportDocumentReleve`, `blunderdb document
+  import` and `POST /v1/documents.importReleve` all call `document.Import`. It refuses the
+  whole Relevé if an entry is neither sure nor verified (unless forced), then in one transaction
+  saves each position as individually imported (ADR-0001, identified by its Zobrist hash),
+  adds the new ones to the Collection in the document's order and keeps one reference comment
+  per position, found again by its prefix so a second import changes nothing. Images and the
+  author's text never reach the database.
+
 ## Package map
 
 Each package's `doc.go` is the first thing to read; this map only says where to look.
@@ -134,7 +171,8 @@ Each package's `doc.go` is the first thing to read; this map only says where to 
 - `pkg/blunderdb/ingest/` (format mapping, `WriteMatch`, the unified SQLite export — used by
   all three modes), `parser/` (position text),
   `migrate/` (SQLite → PostgreSQL), `server/` (`Bootstrap()` for embedding in gammonGo).
-- Feature packages, pure of SQL: `searchquery/` (the search grammar, locked to the frontend
+- Feature packages, pure of SQL: `document/` (the Relevé of a document and its import, §4;
+  `document/pdf/` is its dependency-free PDF reader), `searchquery/` (the search grammar, locked to the frontend
   parser by a shared corpus), `transcript/` (Transcription; `transcription/` is its service
   on the storage contract — sessions, revision, Finish — and `database/db_transcription*.go`
   the desktop's façade), `direction/` (tournament

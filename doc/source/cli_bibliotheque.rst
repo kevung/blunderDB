@@ -15,7 +15,7 @@ Recherche des positions dans la base selon des critères combinables.
 **Options principales:**
 
 * ``--db`` — Base de données (obligatoire).
-* ``--format`` — Format de sortie: ``table``, ``json`` ou ``xgid`` (défaut: ``table``).
+* ``--format`` — Format de sortie: ``table``, ``json``, ``xgid`` ou ``arkid`` (défaut: ``table``).
 * ``--limit`` — Nombre maximum de résultats (0 = illimité).
 * ``--offset`` — Ignorer les n premiers résultats avant de commencer à
   compter ; avec ``--limit``, c'est la pagination.
@@ -188,6 +188,7 @@ que le JSON.
 d'autre** sur la sortie standard. Le XGID enregistré avec l'analyse est
 préféré, car il porte la longueur de match de la source ; à défaut, il est
 régénéré depuis le damier. Le même XGID figure dans le champ ``xgid`` du JSON.
+``--format arkid`` imprime de même un ArkID par ligne, sans préfixe.
 
 **Le langage de requête:**
 

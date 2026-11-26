@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 	"github.com/kevung/blunderdb/pkg/blunderdb/maintenance"
 )
@@ -167,5 +168,56 @@ func TestStartMaintenance_WaitingPassKeepsItsLibraryAcrossASwitch(t *testing.T) 
 	}
 	if lastRun() == nil {
 		t.Fatal("the pass did not run on the library it was asked for")
+	}
+}
+
+// A rollout that yields to the evaluation on screen is listed as yielded,
+// and no longer once it goes on.
+func TestVisibleComputation_RolloutListedAsYielded(t *testing.T) {
+	a := NewApp(nil)
+	task := a.jobs.Start(jobs.Spec{Kind: jobs.Rollout, Priority: jobs.Requested, Compute: true, Pausable: true})
+	end := a.beginVisibleComputation()
+	passed := make(chan struct{})
+	go func() { task.Yield(context.Background()); close(passed) }()
+	deadline := time.Now().Add(5 * time.Second)
+	for !a.ListJobs()[0].Yielded {
+		if time.Now().After(deadline) {
+			t.Fatalf("not listed as yielded: %+v", a.ListJobs()[0])
+		}
+		time.Sleep(time.Millisecond)
+	}
+	end()
+	select {
+	case <-passed:
+	case <-time.After(5 * time.Second):
+		t.Fatal("the rollout stayed held once the visible computation ended")
+	}
+	if got := a.ListJobs()[0]; got.Yielded || got.State != jobs.Running {
+		t.Fatalf("after its checkpoint: %+v", got)
+	}
+	task.Finish(nil)
+}
+
+// The cores in use reach the listener after a change, and the last state is
+// never lost however fast the tokens move.
+func TestWatchCores_SendsTheLastCount(t *testing.T) {
+	c := gammonnet.NewCores(3)
+	got := make(chan JobCores, 16)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go watchCores(ctx, c, time.Millisecond, func(jc JobCores) { got <- jc })
+	r1, r2 := c.Hold(), c.Hold()
+	r1()
+	want := JobCores{Used: 1, Total: 3}
+	for {
+		select {
+		case jc := <-got:
+			if jc == want {
+				r2()
+				return
+			}
+		case <-time.After(5 * time.Second):
+			t.Fatalf("never sent %+v", want)
+		}
 	}
 }

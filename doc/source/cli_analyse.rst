@@ -191,7 +191,7 @@ ou d'une base (``--db`` et ``--id``) ; sans ``--store``, rien n'est enregistré.
 
 .. code-block:: bash
 
-   ./blunderdb rollout [options] '<XGID|OGID>'
+   ./blunderdb rollout [options] '<XGID|OGID|ArkID>'
    ./blunderdb rollout --db <path> --id <position> [--store] [options]
 
 **Options:**
@@ -248,7 +248,7 @@ pur : aucun fichier de base de données n'est impliqué.
 
 .. code-block:: bash
 
-   ./blunderdb epc [options] '<XGID|OGID>'
+   ./blunderdb epc [options] '<XGID|OGID|ArkID>'
 
 **Options:**
 
@@ -289,7 +289,7 @@ combien » que la position porte, comme le fait l'XGID.
 
 .. code-block:: bash
 
-   ./blunderdb gnubgid [options] '<XGID|OGID>'
+   ./blunderdb gnubgid [options] '<XGID|OGID|ArkID>'
 
 **Options:**
 
@@ -301,6 +301,38 @@ combien » que la position porte, comme le fait l'XGID.
 
    ./blunderdb gnubgid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'
    ./blunderdb gnubgid --format json '<XGID>'
+
+.. _cli_arkid:
+
+arkid — ArkID
+-------------
+
+Écrit l'**ArkID** d'une position donnée par XGID, par OGID ou par ArkID :
+la notation textuelle de blunderDB, lisible et prononçable
+(``[34]65:x2(ySQmLhfA)S3Qm3L3hf3``, voir le :ref:`glossaire <glossaire>`). Un
+ArkID passé en argument, sous l'une ou l'autre forme, revient sous sa forme
+canonique. Calcul pur : aucun fichier de base de données n'est impliqué.
+
+.. code-block:: bash
+
+   ./blunderdb arkid [options] '<XGID|OGID|ArkID>'
+
+**Options:**
+
+* ``--expanded`` — Écrit la forme développée : tous les pions du joueur au
+  trait, puis tous ceux de l'adversaire.
+* ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb arkid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:65:0:0:0:0:10'
+   ./blunderdb arkid --expanded '[34]65:x2(ySQmLhfA)S3Qm3L3hf3'
+
+Les commandes qui prennent une position en argument (``epc``, ``rolls``,
+``scoremap``, ``cubematrix``, ``rollout``, ``gnubgid``) acceptent aussi un
+ArkID, et ``capture`` et ``search`` l'écrivent avec ``--format arkid``.
 
 .. _cli_cubematrix:
 
@@ -314,7 +346,7 @@ XGID ou son OGID (OpenGammon).
 
 .. code-block:: bash
 
-   ./blunderdb cubematrix [options] '<XGID|OGID>'
+   ./blunderdb cubematrix [options] '<XGID|OGID|ArkID>'
 
 **Options:**
 
@@ -364,7 +396,7 @@ n'est ouverte.
 
 .. code-block:: bash
 
-   ./blunderdb scoremap [options] '<XGID|OGID>'
+   ./blunderdb scoremap [options] '<XGID|OGID|ArkID>'
 
 **Options:**
 
@@ -411,7 +443,7 @@ XGID ou son OGID. Les dés de la position sont ignorés.
 
 .. code-block:: bash
 
-   ./blunderdb rolls [options] '<XGID|OGID>'
+   ./blunderdb rolls [options] '<XGID|OGID|ArkID>'
 
 **Options:**
 
@@ -470,7 +502,7 @@ illisibles.
 
 **Options:**
 
-* ``--format`` — Format de sortie : ``text``, ``json`` ou ``xgid`` (défaut : ``text``).
+* ``--format`` — Format de sortie : ``text``, ``json``, ``xgid`` ou ``arkid`` (défaut : ``text``).
 * ``--db`` et ``--save`` — Enregistre la position dans la base comme position
   individuelle.
 * ``--score`` — Le score, que la capture ne montre pas : ``money``, ou les

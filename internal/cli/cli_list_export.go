@@ -35,7 +35,7 @@ var positionColumns = []string{
 	"score_1", "score_2", "cube_value", "cube_owner", "player_on_roll",
 	"pip_1", "pip_2", "flagged", "individually_imported",
 	"best_cube_action", "cube_error_mp", "played_move_error_mp",
-	"is_forced", "is_close_cube",
+	"is_forced", "is_close_cube", "arkid",
 }
 
 // moveColumns is the header of `list --type moves --format csv`. One row per
@@ -93,6 +93,7 @@ func (cli *CLI) exportPositionsCSV(limit int) error {
 			strconv.FormatInt(cols.BestMoveEquityError, 10),
 			strconv.FormatInt(cols.IsForced, 10),
 			strconv.FormatInt(cols.IsCloseCube, 10),
+			arkIDOf(p),
 		})
 	})
 	if err != nil && !errors.Is(err, errWalkDone) {

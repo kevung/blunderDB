@@ -178,6 +178,10 @@ export function GetTournamentDisplayStatus() {
   return window['go']['gui']['App']['GetTournamentDisplayStatus']();
 }
 
+export function ArkID(arg1, arg2) {
+  return window['go']['gui']['App']['ArkID'](arg1, arg2);
+}
+
 export function GnubgID(arg1) {
   return window['go']['gui']['App']['GnubgID'](arg1);
 }
@@ -200,6 +204,10 @@ export function ImportIssuerIdentity(arg1, arg2) {
 
 export function IsDirectory(arg1) {
   return window['go']['gui']['App']['IsDirectory'](arg1);
+}
+
+export function JobCores() {
+  return window['go']['gui']['App']['JobCores']();
 }
 
 export function LegalMoves(arg1) {

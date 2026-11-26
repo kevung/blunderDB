@@ -25,7 +25,7 @@ func (cli *CLI) runRolls(args []string) error {
 	move := cmd.String("move", "", "With --roll: the play made (any legal one; empty for a dance)")
 
 	cmd.Usage = func() {
-		fmt.Fprintln(cli.stdout(), "Usage: blunderdb rolls [options] <XGID|OGID>")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb rolls [options] <XGID|OGID|ArkID>")
 		fmt.Fprintln(cli.stdout())
 		fmt.Fprintln(cli.stdout(), "Show what each of the 21 rolls does for the player about to roll: the")
 		fmt.Fprintln(cli.stdout(), "best play, the equity after it, and whether it loses the market (after")
@@ -52,7 +52,7 @@ func (cli *CLI) runRolls(args []string) error {
 	}
 	if cmd.NArg() != 1 {
 		cmd.Usage()
-		return fmt.Errorf("expected exactly one XGID or OGID argument")
+		return fmt.Errorf("expected exactly one XGID, OGID or ArkID argument")
 	}
 	if err := gammonnet.ValidateMapPly(*ply); err != nil {
 		return err
@@ -60,7 +60,7 @@ func (cli *CLI) runRolls(args []string) error {
 
 	pos, err := domain.DecodePositionID(cmd.Arg(0))
 	if err != nil {
-		return fmt.Errorf("invalid XGID or OGID: %w", err)
+		return fmt.Errorf("invalid XGID, OGID or ArkID: %w", err)
 	}
 	if *roll != "" {
 		d1, d2, err := parseRoll(*roll)
