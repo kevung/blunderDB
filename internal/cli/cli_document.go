@@ -57,7 +57,8 @@ func (cli *CLI) printDocumentUsage() {
 	fmt.Fprintln(cli.stdout(), "Usage: blunderdb document <sub-command> [options] <file>")
 	fmt.Fprintln(cli.stdout())
 	fmt.Fprintln(cli.stdout(), "A relevé lists the positions a document shows, in its order, each with its")
-	fmt.Fprintln(cli.stdout(), "page, label and state (sure, to-verify, uncertain).")
+	fmt.Fprintln(cli.stdout(), "page, label and two certainties: its checkers (sure, to-verify, uncertain) and its")
+	fmt.Fprintln(cli.stdout(), "context (read, default, to-verify, uncertain). An entry is sure only when both are.")
 	fmt.Fprintln(cli.stdout())
 	fmt.Fprintln(cli.stdout(), "Sub-commands:")
 	fmt.Fprintln(cli.stdout(), "  analyze  Read the diagrams of a PDF or of page images into a relevé; nothing is written")
@@ -162,23 +163,47 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 	out := cli.stdout()
 	fmt.Fprintf(out, "Document:   %s\n", s.Title)
 	fmt.Fprintf(out, "Entries:    %d (sure %d, to verify %d, uncertain %d)\n", s.Entries, s.Sure, s.ToVerify, s.Uncertain)
-	printCheckersConfirmed(out, s)
+	printCertainties(out, s)
 	fmt.Fprintf(out, "Positions:  %d distinct, %d repeated\n", s.Positions, s.Repeated)
 	fmt.Fprintf(out, "Relevé:     %s\n", *output)
 	return nil
 }
 
-// printCheckersConfirmed names the entries a scan's reader confirmed by
-// their checkers only, so they are not taken for sure ones.
-func printCheckersConfirmed(out io.Writer, s document.Summary) {
+// printCertainties names what the state of the entries rests on: how their
+// context is known, the document's defaults, the entries whose checkers
+// alone are certified and the complete ones, so none is taken for sure.
+func printCertainties(out io.Writer, s document.Summary) {
+	fmt.Fprintf(out, "Context:    read %d, default %d, to verify %d\n", s.ContextRead, s.ContextDefault, s.ContextToVerify)
+	if d := s.Defaults; d != nil {
+		state := "not confirmed: set \"confirmed\": true once the document's diagrams follow them"
+		if d.Confirmed {
+			state = "confirmed"
+		}
+		fmt.Fprintf(out, "Defaults:   %s (%s), %s\n", d.Description, d.Context, state)
+		if dir := d.Direction; dir != nil {
+			state := "not confirmed: check it on a few diagrams, then set \"direction\": {\"confirmed\": true}"
+			if dir.Confirmed {
+				state = "confirmed"
+			}
+			fmt.Fprintf(out, "Direction:  %s, %s\n", dir.Description, state)
+		}
+	}
 	if s.CheckersConfirmed > 0 {
-		fmt.Fprintf(out, "Checkers:   %d confirmed by the printed pips; cube, dice, player on roll and score to verify\n", s.CheckersConfirmed)
+		fmt.Fprintf(out, "Checkers:   %d confirmed, their context alone to verify (cube, dice, player on roll, score)\n", s.CheckersConfirmed)
+	}
+	if s.Complete > 0 {
+		fmt.Fprintf(out, "Complete:   %d with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)\n", s.Complete)
+	}
+	if s.CompleteDirectionUnconfirmed > 0 {
+		fmt.Fprintf(out, "Complete:   %d more held back until the direction of play is confirmed\n", s.CompleteDirectionUnconfirmed)
 	}
 }
 
 func (cli *CLI) runDocumentCheck(args []string) error {
 	fs := cli.documentFlagSet("check",
-		"Validate a relevé (format, ranks, legal positions) and count its entries by state.\nNothing is read from or written to a database.",
+		"Validate a relevé (format, ranks, legal positions; version 1 is still read) and count its\n"+
+			"entries by state and by how their context is known. Nothing is read from or written to a\n"+
+			"database.",
 		"blunderdb document check releve.json",
 		"blunderdb document check releve.json --format json")
 	format := fs.String("format", "text", "Output format: text or json")
@@ -197,12 +222,17 @@ func (cli *CLI) runDocumentCheck(args []string) error {
 	out := cli.stdout()
 	fmt.Fprintf(out, "Document:   %s\n", s.Title)
 	fmt.Fprintf(out, "Entries:    %d (sure %d, to verify %d, uncertain %d; verified %d)\n", s.Entries, s.Sure, s.ToVerify, s.Uncertain, s.Verified)
-	printCheckersConfirmed(out, s)
+	printCertainties(out, s)
 	fmt.Fprintf(out, "Positions:  %d distinct, %d repeated\n", s.Positions, s.Repeated)
-	if len(s.Unverified) > 0 {
-		fmt.Fprintf(out, "Unverified: rank %s (import refused without --force)\n", joinRanks(s.Unverified))
-	} else {
+	switch {
+	case len(s.Unverified) == 0:
 		fmt.Fprintln(out, "Unverified: none")
+	case s.Complete > 0 && len(s.UnverifiedComplete) == 0:
+		fmt.Fprintf(out, "Unverified: rank %s (import refused without --accept-complete or --force)\n", joinRanks(s.Unverified))
+	case s.Complete > 0:
+		fmt.Fprintf(out, "Unverified: rank %s (import refused without --force; rank %s with --accept-complete)\n", joinRanks(s.Unverified), joinRanks(s.UnverifiedComplete))
+	default:
+		fmt.Fprintf(out, "Unverified: rank %s (import refused without --force)\n", joinRanks(s.Unverified))
 	}
 	return nil
 }
@@ -211,12 +241,17 @@ func (cli *CLI) runDocumentImport(args []string) error {
 	fs := cli.documentFlagSet("import",
 		"Import the positions of a relevé, in the document's order, into a collection named after\n"+
 			"the document (its title, author and edition as description; each position's page and\n"+
-			"label as a comment). An entry neither sure nor verified refuses the import unless --force;\n"+
-			"a refused import writes nothing. Importing the same relevé again adds nothing.",
+			"label as a comment). An entry is sure when its checkers are and its context is certified:\n"+
+			"read, or under the document's defaults once \"confirmed\" is set on them. An entry neither\n"+
+			"sure nor verified refuses the import unless --force; --accept-complete accepts as a whole\n"+
+			"the entries of 15 + 15 checkers read with no doubt whose context is certified. A refused\n"+
+			"import writes nothing. Importing the same relevé again adds nothing.",
 		"blunderdb document import --db database.db releve.json",
+		"blunderdb document import --db database.db releve.json --accept-complete",
 		"blunderdb document import --db database.db releve.json --collection \"My book\" --force")
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	collection := fs.String("collection", "", "Name of the collection (default: the document's title)")
+	acceptComplete := fs.Bool("accept-complete", false, "Import the entries of 15 + 15 checkers read with no doubt whose context is certified")
 	force := fs.Bool("force", false, "Import entries neither sure nor verified")
 	format := fs.String("format", "text", "Output format: text or json")
 	path, err := documentFlags(fs, args)
@@ -234,7 +269,7 @@ func (cli *CLI) runDocumentImport(args []string) error {
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
 	}
-	res, err := cli.db.ImportDocumentReleve(string(data), *collection, *force)
+	res, err := cli.db.ImportDocumentReleve(string(data), *collection, *acceptComplete, *force)
 	if err != nil {
 		return err
 	}
@@ -249,6 +284,9 @@ func (cli *CLI) runDocumentImport(args []string) error {
 	fmt.Fprintf(out, "%s collection %q (id %d)\n", verb, res.Collection, res.CollectionID)
 	fmt.Fprintf(out, "Entries: %d, distinct positions: %d (%d new in the library), added to the collection: %d, repeated: %d\n",
 		res.Entries, res.Positions, res.NewPositions, res.Added, res.Repeated)
+	if res.Complete > 0 {
+		fmt.Fprintf(out, "Complete: %d entries of 15 + 15 checkers read with no doubt\n", res.Complete)
+	}
 	if res.Forced > 0 {
 		fmt.Fprintf(out, "Forced: %d entries neither sure nor verified\n", res.Forced)
 	}

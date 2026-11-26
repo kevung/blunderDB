@@ -8,6 +8,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/printsheet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -20,6 +21,18 @@ type matchUpdateReq struct {
 	Player1Name string `json:"player1Name"`
 	Player2Name string `json:"player2Name"`
 	MatchDate   string `json:"matchDate"`
+}
+
+// matchSheetReq is the body of matches.sheet: the matches, one sheet each,
+// and the choices of the print dialog.
+type matchSheetReq struct {
+	MatchIDs []int64 `json:"matchIds"`
+	// Options absent is DefaultMatchOptions, as in the other two modes.
+	Options *printsheet.MatchOptions `json:"options,omitempty"`
+}
+
+type matchSheetResp struct {
+	HTML string `json:"html"`
 }
 
 type matchCommentReq struct {
@@ -130,6 +143,16 @@ func (s *Server) matchRoutes() []route {
 			}
 			id, err := ms().Save(ctx, scope, req.Match)
 			return idResp{ID: id}, err
+		})},
+		// The printable match sheet, from the generator the desktop app and
+		// `match sheet` use; it writes nothing.
+		{http.MethodPost, "/v1/matches.sheet", rpc(func(ctx context.Context, scope string, req matchSheetReq) (matchSheetResp, error) {
+			o := printsheet.DefaultMatchOptions()
+			if req.Options != nil {
+				o = *req.Options
+			}
+			page, err := printsheet.BuildMatches(ctx, s.opts.Storage, scope, req.MatchIDs, o)
+			return matchSheetResp{HTML: string(page)}, err
 		})},
 		{http.MethodPost, "/v1/matches.get", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Match, error) {
 			return ms().Get(ctx, scope, req.ID)

@@ -5512,6 +5512,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/matches.sheet:
+    post:
+      operationId: matches.sheet
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchSheetReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/matchSheetResp"
   /v1/matches.swapPlayers:
     post:
       operationId: matches.swapPlayers
@@ -10077,6 +10094,8 @@ components:
           description: "Arbitrary JSON value."
         collection:
           type: string
+        acceptComplete:
+          type: boolean
         force:
           type: boolean
     document_ImportResult:
@@ -10646,6 +10665,22 @@ components:
         match:
           $ref: "#/components/schemas/domain_Match"
           nullable: true
+    matchSheetReq:
+      type: object
+      properties:
+        matchIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+        options:
+          $ref: "#/components/schemas/printsheet_MatchOptions"
+          nullable: true
+    matchSheetResp:
+      type: object
+      properties:
+        html:
+          type: string
     matchTextValuesReq:
       type: object
       properties:
@@ -10784,6 +10819,9 @@ components:
           format: int64
         created:
           type: boolean
+    printsheet_MatchOptions:
+      type: object
+      description: "Opaque: see the Go type printsheet.MatchOptions (defined outside internal/server, not expanded here)."
     publicIDResp:
       type: object
       properties:

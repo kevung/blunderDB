@@ -11,11 +11,17 @@ papier par codes QR. Issues #984 à #987.
 - #985 archive papier : `pkg/blunderdb/arkqr` (codec, trames, QR, page A4), commande
   `archive export|import`, routes `/v1/exports.archive` et `/v1/imports.archive`, import d'une
   page `.html` par le chemin commun, ADR-0119.
+- #986 feuille de match : `pkg/blunderdb/printsheet` (feuille A4, styles et script
+  d'ajustement communs, modèle `MatchSheet`), `Database.MatchSheetHTML`, commande
+  `match sheet`, route `/v1/matches.sheet`, action « Imprimer… » du panneau Match et sa
+  boîte d'options. Le code de réimport est l'archive papier du match, dessinée et
+  embarquée : la feuille enregistrée se réimporte comme une page d'archive.
 
 ## À faire, dans l'ordre
 
-1. #986 feuille de match imprimable (dépend d'ArkID et du QR, tous deux dans main).
-2. #987 listes de positions imprimables, et entrées d'interface de l'archive papier.
+1. #987 listes de positions imprimables, et entrées d'interface de l'archive papier. Le
+   mécanisme est prêt : `printsheet.Document` / `Sheet`, les classes `.pl`, `.pe`, `.ref`,
+   `.nt`, `.qrb`, et le bloc `data-verso` que le script passe au verso.
 
 Les deux issues citent la maquette par un chemin local : elle est ici,
 `tasks/ark-impression/maquette-feuille.html` (données factices). Elle porte l'encodeur de
@@ -26,7 +32,7 @@ référence, les trois documents (Match, Positions, Archive) et leurs options.
 - Minuscules = joueur au trait, toujours ; la position est écrite de son point de vue.
 - Crawford = suffixe `c` ; money = `[$]`.
 - Videau proposé (position de prise ou de passe) : `X?`, `X2?`. Ajout fait pendant #984, sans
-  lequel ces positions changeaient d'empreinte ; à confirmer par l'utilisateur.
+  lequel ces positions changeaient d'empreinte ; confirmé par l'utilisateur le 2026-11-26.
 - Un seul coup alternatif par ligne dans les listes de positions.
 - Les blunders de l'adversaire ne sont pas exportés par défaut ; l'export le demande.
 - Les commentaires s'exportent en option.
@@ -47,3 +53,6 @@ référence, les trois documents (Match, Positions, Archive) et leurs options.
 - La dernière correction de #985 n'a pas eu de revue indépendante.
 - Bestiaire hors français et anglais : à relire par un locuteur.
 - Essai de pliage réel (imprimer, plier, scanner) : non fait.
+- Feuille de match : l'ajustement du corps est fait par le navigateur (script) ; il n'est
+  pas mesuré par un test, ni sur la base de 298 matchs. L'interface n'a pas de sélection
+  multiple : le lot imprime les matchs que la liste affiche.

@@ -129,6 +129,7 @@ export const CATALOG = {
     match: [
         { id: 'open', label: 'actions.openMatch', group: null, top: true },
         { id: 'exportMat', label: 'match.exportMat', group: 'copy' },
+        { id: 'print', label: 'matchSheet.menu', group: 'copy' },
         { id: 'editTranscription', label: 'match.editTranscription', group: 'manage' },
         { id: 'swapPlayers', label: 'match.swapPlayers', group: 'manage' },
         { id: 'edit', label: 'common.edit', group: 'manage' },

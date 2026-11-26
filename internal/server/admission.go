@@ -38,10 +38,11 @@ func newHeavyGate(slots int) *heavyGate {
 }
 
 // heavyRoute reports whether a route reads across the library: every
-// statistic, a search other than parsing it, the match list.
+// statistic, a search other than parsing it, the match list, the printed
+// match sheets.
 func heavyRoute(pattern string) bool {
 	switch pattern {
-	case "/v1/search.count", "/v1/search.find", "/v1/search.ids", "/v1/search.query", "/v1/search.indexOf", "/v1/matches.list":
+	case "/v1/search.count", "/v1/search.find", "/v1/search.ids", "/v1/search.query", "/v1/search.indexOf", "/v1/matches.list", "/v1/matches.sheet":
 		return true
 	}
 	return strings.HasPrefix(pattern, "/v1/stats.")

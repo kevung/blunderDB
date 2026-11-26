@@ -69,11 +69,11 @@ func TestMeasureDeepCube(t *testing.T) {
 			default:
 				same++
 			}
-			if e.State == Sure {
+			if r.StateOf(e) == Sure {
 				sure++
 				volSure++
 			} else {
-				t.Errorf("volume %d page %d: %s %+v", vol, e.Page, e.State, e.Doubts)
+				t.Errorf("volume %d page %d: %s %+v", vol, e.Page, r.StateOf(e), e.Doubts)
 			}
 			delete(want, key)
 			total++

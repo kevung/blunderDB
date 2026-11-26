@@ -771,6 +771,33 @@ Position 2 [Game 1, Move 2]
   ...
 ```
 
+### Printable match sheet
+
+`match sheet` writes the sheet of the Match panel's Print action: one A4 sheet
+per match, in a single self-contained HTML file that a browser prints or saves
+as PDF. No diagram is drawn: the header (players, score, length, event, round,
+date, games and moves; PR, errors, blunders and time per player), the
+transcription (`?` for an Error, `??` underlined for a Blunder, at the library's
+thresholds), and apart the positions to review written in ArkID, each numbered
+in the transcription. The body shrinks from 9 pt to 5.5 pt to fit one page; the
+positions go overleaf when they still do not fit. Printing writes nothing to the
+library.
+
+```bash
+./blunderDB match sheet --db database.db --match <ids> [--output sheet.html] [options]
+```
+
+- `--lang` - Language of the sheet (default `en`)
+- `--player` - Player the sheet is printed for (default: the Main player, else player 1)
+- `--opponent-blunders` - Number and detail the opponent's blunders too (off by
+  default: they stay marked `??` and nothing more)
+- `--analysis` - Short analysis of each listed position (default on)
+- `--comments` - The match's and the positions' comments, never cut (default on)
+- `--expanded` - ArkIDs in their developed form
+- `--reimport-code` - The match's paper archive QR code at the end of the
+  transcription, embedded in the file too (default on): `archive import` reads
+  the saved sheet back
+
 ## Collection Command
 
 Manage collections — the hand-picked sets of positions of the GUI's
@@ -931,8 +958,13 @@ the same archive or another format, counts as a duplicate. `import --type match
 Import the positions a document shows — a book, an article, a web page — from
 its *relevé*: a JSON file that lists them in the document's order, each with its
 page, label, position (an XGID: checkers, cube, player on roll, dice, score and
-match length) and state (`sure`, `to-verify` or `uncertain`), and whether a
-person has verified it. Only positions enter the database: no image and no text
+match length) and two certainties: its checkers (`sure`, `to-verify` or
+`uncertain`, with `complete` for fifteen checkers a side read with no doubt) and
+its context (`read`, `default`, `to-verify` or `uncertain`), and whether a
+person has verified it. An entry is `sure` only when its checkers are and its
+context is certified: read, or under the document's default context
+(`document.defaults`) once a person set `"confirmed": true` on it. A relevé of
+format version 1 (one `state` per entry) is still read. Only positions enter the database: no image and no text
 of the author.
 
 ```bash
@@ -941,9 +973,9 @@ of the author.
 
 **Sub-commands:**
 - `check <releve.json>` - Validate the relevé (format, ranks from 1 with no gap,
-  legal positions, unknown fields refused) and count its entries by state;
-  nothing is written. `--format json` prints the counts as JSON
-- `import <releve.json> --db <file> [--collection <name>] [--force]` - Import the
+  legal positions, unknown fields refused) and count its entries by state and by
+  how their context is known; nothing is written. `--format json` prints the counts as JSON
+- `import <releve.json> --db <file> [--collection <name>] [--accept-complete] [--force]` - Import the
   positions into a collection named after the document (or `--collection`), in
   the document's order
 
@@ -953,13 +985,16 @@ comment, so it stays readable outside the collection. Each position is saved as
 a position brought in on its own. A position the document shows twice belongs to
 the collection once, at its first appearance, and its comment lists every
 reference. An entry neither `sure` nor verified refuses the whole import unless
-`--force`; a refused import writes nothing. Importing the same relevé again adds
+`--force`; `--accept-complete` accepts as a whole the entries of fifteen
+checkers a side read with no doubt whose context is certified. A refused import
+writes nothing. Importing the same relevé again adds
 nothing. The daemon serves the import as `/v1/documents.importReleve`.
 
 **Examples:**
 ```bash
 ./blunderDB document check releve.json
 ./blunderDB document import --db database.db releve.json
+./blunderDB document import --db database.db releve.json --accept-complete
 ./blunderDB document import --db database.db releve.json --collection "My book" --force
 ```
 
@@ -3269,8 +3304,9 @@ Examples:
 ```
 Usage: blunderdb document check [options] <releve.json>
 
-Validate a relevé (format, ranks, legal positions) and count its entries by state.
-Nothing is read from or written to a database.
+Validate a relevé (format, ranks, legal positions; version 1 is still read) and count its
+entries by state and by how their context is known. Nothing is read from or written to a
+database.
 
 Options:
   -format string
@@ -3288,10 +3324,15 @@ Usage: blunderdb document import [options] <releve.json>
 
 Import the positions of a relevé, in the document's order, into a collection named after
 the document (its title, author and edition as description; each position's page and
-label as a comment). An entry neither sure nor verified refuses the import unless --force;
-a refused import writes nothing. Importing the same relevé again adds nothing.
+label as a comment). An entry is sure when its checkers are and its context is certified:
+read, or under the document's defaults once "confirmed" is set on them. An entry neither
+sure nor verified refuses the import unless --force; --accept-complete accepts as a whole
+the entries of 15 + 15 checkers read with no doubt whose context is certified. A refused
+import writes nothing. Importing the same relevé again adds nothing.
 
 Options:
+  -accept-complete
+    	Import the entries of 15 + 15 checkers read with no doubt whose context is certified
   -collection string
     	Name of the collection (default: the document's title)
   -db string
@@ -3303,6 +3344,7 @@ Options:
 
 Examples:
   blunderdb document import --db database.db releve.json
+  blunderdb document import --db database.db releve.json --accept-complete
   blunderdb document import --db database.db releve.json --collection "My book" --force
 ```
 
@@ -4629,6 +4671,46 @@ Examples:
   blunderdb match repair --db base.db --list
   blunderdb match repair --db base.db --id 42 --dry-run
   blunderdb match repair --db base.db --id 42
+```
+
+### `blunderdb match sheet`
+
+```
+Usage: blunderdb match sheet --db FILE --match IDS [options]
+
+Write the printable sheet of matches, one A4 sheet a match, as one self-contained
+HTML file a browser prints or saves as PDF: header, transcription with ? and ??
+at the library's thresholds, and apart the positions to review written in ArkID,
+numbered in the transcription. The body shrinks from 9 to 5.5 pt to fit one page;
+the positions go overleaf when they still do not, and on further sheets when the
+overleaf is full: no position is ever cut. At most 100 matches a file.
+Nothing is written to the library.
+
+Options:
+  -analysis
+    	Write the short analysis of each listed position (default true)
+  -comments
+    	Print the match's and the positions' comments, whole (default true)
+  -db string
+    	Path to the database file (required)
+  -expanded
+    	Write the ArkIDs in their developed form
+  -lang string
+    	Sheet language: fr, en, de, el, es, fi, it, ja, ru (default "en")
+  -match string
+    	Comma-separated match ids, one sheet each, at most 100 (required)
+  -opponent-blunders
+    	Number and detail the opponent's blunders too
+  -output string
+    	HTML file to write (default: standard output)
+  -player string
+    	Player the sheet is printed for (default: the Main player, else player 1)
+  -reimport-code
+    	Draw the match's reimport QR code and embed it in the file (default true)
+
+Examples:
+  blunderdb match sheet --db database.db --match 12 --lang fr --output feuille.html
+  blunderdb match sheet --db database.db --match 12,15 --opponent-blunders --reimport-code=false
 ```
 
 ### `blunderdb mcp`

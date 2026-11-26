@@ -108,4 +108,14 @@ describe('createMatchList', () => {
         await first;
         expect(get(store).rows.map((r) => r.id)).toEqual([100]);
     });
+
+    test('allRows reads the whole filtered list, not the pages loaded', async () => {
+        const { store, list } = make(1200, 500);
+        await store.reload();
+        store.setText('alice');
+        list.mockClear();
+        const all = await store.allRows();
+        expect(all).toHaveLength(1200);
+        expect(list).toHaveBeenCalledWith(expect.objectContaining({ Text: 'alice', Limit: 0, Offset: 0 }));
+    });
 });

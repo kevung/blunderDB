@@ -1738,6 +1738,7 @@ export namespace document {
 	    newPositions: number;
 	    added: number;
 	    repeated: number;
+	    complete: number;
 	    forced: number;
 	
 	    static createFrom(source: any = {}) {
@@ -1754,6 +1755,7 @@ export namespace document {
 	        this.newPositions = source["newPositions"];
 	        this.added = source["added"];
 	        this.repeated = source["repeated"];
+	        this.complete = source["complete"];
 	        this.forced = source["forced"];
 	    }
 	}
@@ -6358,6 +6360,35 @@ export namespace parser {
 		    }
 		    return a;
 		}
+	}
+
+}
+
+export namespace printsheet {
+	
+	export class MatchOptions {
+	    language?: string;
+	    player?: string;
+	    opponentBlunders: boolean;
+	    analysis: boolean;
+	    comments: boolean;
+	    expanded: boolean;
+	    reimportCode: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.language = source["language"];
+	        this.player = source["player"];
+	        this.opponentBlunders = source["opponentBlunders"];
+	        this.analysis = source["analysis"];
+	        this.comments = source["comments"];
+	        this.expanded = source["expanded"];
+	        this.reimportCode = source["reimportCode"];
+	    }
 	}
 
 }

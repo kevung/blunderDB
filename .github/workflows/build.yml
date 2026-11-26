@@ -137,10 +137,19 @@ jobs:
               # A failing `go list` inside $( ) would be swallowed and leave an
               # empty list: the step must fail instead of testing nothing.
               pkgs=$(go list ./pkg/...) || exit 1
-              pkgs=$(printf '%s\n' "$pkgs" | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/storage/sqlite$' | grep -v '/pkg/blunderdb/ingest$' | grep -v -E '/pkg/blunderdb/engine/(gammonnet|bearoffgen|rollout)$')
+              pkgs=$(printf '%s\n' "$pkgs" | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/storage/sqlite$' | grep -v '/pkg/blunderdb/ingest$' | grep -v -E '/pkg/blunderdb/engine/(gammonnet|bearoffgen|rollout)$' | grep -v '/pkg/blunderdb/document/structure$')
               test -n "$pkgs" || { echo "rest shard: empty package list" >&2; exit 1; }
               go test -timeout 1200s -race -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
                 $pkgs 2>&1 | tee test-output.txt
+          # document/structure leaves `rest` for the race detector and the
+          # atomic counters: it is single-threaded pixel arithmetic (no
+          # goroutine outside its skipped measure tests), so -race checks
+          # nothing there, yet it takes the package from 61 s to over 20
+          # minutes at GOMAXPROCS=2 (one test, 7 s plain, 42 s with atomic
+          # counters, past 14 minutes with both). Plain with `set` counters
+          # it runs in about a minute.
+          - shard: structure
+            run: go test -timeout 1200s -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=set ./pkg/blunderdb/document/structure/ 2>&1 | tee test-output.txt
           # bearoffgen and rollout leave `rest` for the coverage counters, not
           # the race detector. Under -race every counter is an atomic write the
           # detector instruments, inside the hottest loops: bearoffgen's own
