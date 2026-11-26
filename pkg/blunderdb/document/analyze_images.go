@@ -110,7 +110,7 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 	}
 	r := &Releve{Format: Format, Version: Version, Document: Source{
 		Title: title, Author: strings.TrimSpace(opts.Author), SHA256: hex.EncodeToString(h.Sum(nil)),
-		Profile: structureProfile(res.Profile),
+		Profile: structureProfile(res.Profile), Defaults: structureDefaults(),
 	}}
 	for _, d := range res.Diagrams {
 		r.Entries = append(r.Entries, structureEntry(d, len(r.Entries)+1))
@@ -125,11 +125,14 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 }
 
 func structureEntry(d structure.Diagram, rank int) Entry {
-	// The reader certifies the checkers only: the XGID's cube, dice, player
-	// on roll and score are defaults, and a cube drawn in the middle may be
-	// owned, so no entry it gives is ever sure.
-	e := Entry{Rank: rank, Page: d.Page + 1, State: ToVerify, Doubts: []capture.Doubt{ContextDoubt}}
+	// The reader certifies the checkers at most: the XGID's cube, dice,
+	// player on roll and score are the document's defaults, which a person
+	// confirms once, and a cube or dice drawn and not read leave the context
+	// to verify. No entry it gives is sure until then.
+	e := Entry{Rank: rank, Page: d.Page + 1, Checkers: ToVerify, Context: ContextDefault,
+		Doubts: []capture.Doubt{ContextDoubt}}
 	if d.CheckersSure {
+		e.Checkers = Sure
 		// The other doubts of a reading whose checkers the pips confirm are
 		// leads for checking checkers: only the drawn context stays.
 		for _, x := range d.Doubts {
@@ -140,12 +143,14 @@ func structureEntry(d structure.Diagram, rank int) Entry {
 	} else {
 		e.Doubts = append(e.Doubts, d.Doubts...)
 	}
+	if drawnContext(e.Doubts) {
+		e.Context = ContextToVerify
+	}
 	if d.State == structure.Uncertain {
-		e.State = Uncertain
+		e.Checkers = Uncertain
 	}
 	if d.Board != "" {
-		// A centred cube, no dice, the bottom player on roll, money play.
-		xgid := "XGID=" + d.Board + ":0:0:1:00:0:0:0:0:10"
+		xgid := "XGID=" + d.Board + ":" + StructureDefaults.Context
 		if _, err := ParsePosition(xgid); err == nil {
 			e.Position = xgid
 		} else {
@@ -153,11 +158,14 @@ func structureEntry(d structure.Diagram, rank int) Entry {
 		}
 	}
 	if e.Position == "" {
-		e.State = Uncertain
+		e.Checkers = Uncertain
 		if d.Board == "" {
 			e.Doubts = append(e.Doubts, doubtPosition(errors.New("the reading is not a position")))
 		}
 	}
+	// Fifteen checkers a side with no doubt about them, not confirmed by the
+	// pips: the intermediate state an import accepts as a whole on request.
+	e.Complete = d.Complete && e.Checkers == ToVerify && !checkerDoubt(e.Doubts)
 	if pw, ph := d.PageSize[0], d.PageSize[1]; pw > 0 && ph > 0 {
 		rc := d.Rect.Intersect(image.Rect(0, 0, pw, ph))
 		if !rc.Empty() {
@@ -287,7 +295,23 @@ func imageDPI(data []byte) float64 {
 var ContextDoubt = capture.Doubt{Field: "context", Reason: "context not read: cube, dice, player on roll, score"}
 
 // contextField names the doubts about what surrounds the checkers.
-var contextField = map[string]bool{"context": true, "cube": true, "dice": true}
+var contextField = map[string]bool{"context": true, "cube": true, "dice": true, "score": true}
+
+// structureDefaults is a fresh, unconfirmed copy of StructureDefaults.
+func structureDefaults() *Defaults {
+	d := StructureDefaults
+	return &d
+}
+
+// checkerDoubt reports a doubt about something else than the context.
+func checkerDoubt(ds []capture.Doubt) bool {
+	for _, d := range ds {
+		if !contextField[d.Field] {
+			return true
+		}
+	}
+	return false
+}
 
 func doubtPosition(err error) capture.Doubt {
 	return capture.Doubt{Field: "position", Reason: err.Error()}

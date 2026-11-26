@@ -87,8 +87,8 @@ func TestCLI_DocumentContextNotRead(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	r.Entries[0].State, r.Entries[0].Doubts = document.ToVerify, []capture.Doubt{document.ContextDoubt}
-	if !r.Entries[0].CheckersConfirmed() {
+	r.Entries[0].Context, r.Entries[0].Doubts = document.ContextToVerify, []capture.Doubt{document.ContextDoubt}
+	if !r.CheckersConfirmed(r.Entries[0]) {
 		t.Fatal("the entry is not taken as checkers confirmed")
 	}
 	path := filepath.Join(t.TempDir(), "scan.json")
@@ -107,7 +107,7 @@ func TestCLI_DocumentContextNotRead(t *testing.T) {
 		t.Errorf("check:\n%s", out)
 	}
 	err = cli.Run([]string{"document", "import", "--db", dbPath, path})
-	if !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "check its cube, dice, player on roll and score") || !strings.Contains(err.Error(), `"verified": true`) {
+	if !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "cube, dice, player on roll and score") || !strings.Contains(err.Error(), `"verified": true`) {
 		t.Errorf("import of an unread context: %v", err)
 	}
 	if cols, _ := cli.db.GetAllCollections(); len(cols) != 0 {
@@ -117,6 +117,56 @@ func TestCLI_DocumentContextNotRead(t *testing.T) {
 	write()
 	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); err != nil {
 		t.Errorf("import once verified: %v", err)
+	}
+}
+
+// Under the document's defaults, nothing is sure until they are confirmed;
+// then an entry of 15 + 15 checkers read with no doubt is imported with
+// --accept-complete, and only with it.
+func TestCLI_DocumentDefaultsAndComplete(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	pos := "XGID=-b----E-C---eE---c-e----B-:" + document.StructureDefaults.Context
+	d := document.StructureDefaults
+	r := &document.Releve{Format: document.Format, Version: document.Version, Document: document.Source{Title: "Scan", Defaults: &d},
+		Entries: []document.Entry{
+			{Rank: 1, Page: 1, Position: pos, Checkers: document.Sure, Context: document.ContextDefault, Doubts: []capture.Doubt{document.ContextDoubt}},
+			{Rank: 2, Page: 2, Position: "XGID=-b---BD-B---eE---c-e----B-:" + document.StructureDefaults.Context, Checkers: document.ToVerify, Complete: true,
+				Context: document.ContextDefault, Doubts: []capture.Doubt{document.ContextDoubt}},
+		}}
+	path := filepath.Join(t.TempDir(), "scan.json")
+	write := func() {
+		data, err := r.Encode()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, data, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write()
+	out := captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if !strings.Contains(out, "sure 0, to verify 2") || !strings.Contains(out, "not confirmed") || !strings.Contains(out, "Unverified: rank 1, 2 (import refused without --force)") {
+		t.Errorf("check under unconfirmed defaults:\n%s", out)
+	}
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "confirm the document's defaults") {
+		t.Errorf("import under unconfirmed defaults: %v", err)
+	}
+	d.Confirmed = true
+	write()
+	out = captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if !strings.Contains(out, "sure 1, to verify 1") || !strings.Contains(out, "Complete:   1") || !strings.Contains(out, "Unverified: rank 2 (import refused without --accept-complete or --force)") {
+		t.Errorf("check under confirmed defaults:\n%s", out)
+	}
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "accept complete") {
+		t.Errorf("import of a complete entry without --accept-complete: %v", err)
+	}
+	out = captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "import", "--db", dbPath, "--accept-complete", path}); err != nil {
+			t.Errorf("import with --accept-complete: %v", err)
+		}
+	})
+	if !strings.Contains(out, "Complete: 1 entries") {
+		t.Errorf("import with --accept-complete:\n%s", out)
 	}
 }
 

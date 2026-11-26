@@ -20,13 +20,26 @@ possédé non détecté. Pions confirmés par lecture directe du PDF : Trice 181
 sur 332, Kageyama 146 sur 353, Mochizuki 121 sur 208, Robertie 0 sur 445 (pas de pips imprimés).
 Woolsey ne se lit pas directement (JPEG 2000).
 
-Décisions attendues de l'utilisateur :
-1. Deux certitudes par entrée (pions, contexte) et défauts de document confirmés une fois —
-   demande un Relevé v2 (voir « Contexte »). Recommandé.
-2. L'état « 15 + 15 sans doute », distinct de sûr, acceptable en bloc. Recommandé.
+Décisions prises par l'utilisateur le 2026-11-26 :
+1. Deux certitudes par entrée (pions, contexte) et défauts de document confirmés une fois :
+   c'est le Relevé v2.
+2. L'état « 15 + 15 sans doute », distinct de sûr, acceptable en bloc à l'import.
 
-Suites, dans l'ordre : Relevé v2 et règle de sûreté du contexte (après décision 1) ; portage du
-contexte (videau, dés, bandeau de score ; banc `JOURNAL.md` F) ; repli assisté (encadrer un
+Relevé v2 fait (branche `feat/releve-v2`) : chaque entrée porte `checkers` (sure, to-verify,
+uncertain), `complete` (15 + 15 sans doute, sans recoupement) et `context` (read, default,
+to-verify, uncertain) ; l'en-tête porte `defaults` (fin de l'XGID après le plateau, description,
+`confirmed`). L'état n'est plus écrit : `Releve.StateOf` le dérive — sûr seulement si les pions
+sont sûrs et le contexte certifié (lu, ou sous défaut confirmé). Le lecteur de structure écrit
+le défaut « videau centré, pas de dés, joueur du bas, money », non confirmé ; un videau ou des
+dés dessinés mettent le contexte à vérifier, que la confirmation ne lève pas. `document import
+--accept-complete` (et `acceptComplete` du démon, 4e argument de `ImportDocumentReleve`)
+accepte en bloc les entrées complètes au contexte certifié ; le reste est refusé sans
+`--force`. Un relevé v1 se lit encore (`Upgrade` : sûre → pions sûrs et contexte lu ; entrée
+de scan → défaut non confirmé ; autre → contexte à vérifier) ; `analyze` écrit la v2.
+
+Suites, dans l'ordre : portage du contexte (videau, dés, bandeau de score ; banc `JOURNAL.md`
+F) — il remplira `context: read` et détectera les exceptions au défaut (videau possédé, score
+de légende), ce dont la confirmation du défaut dépend aujourd'hui de l'œil de l'utilisateur ; repli assisté (encadrer un
 plateau, montrer où sont les pips) ; assistant graphique (tranche 5, forme validée) ; JPEG 2000
 (Woolsey ne se lit pas directement) ; mesure finale sur la réserve, jamais ouverte, avec deux
 pages web et deux documents choisis par l'utilisateur ; EPUB, DOCX, HTML.

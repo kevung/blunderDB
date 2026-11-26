@@ -10077,6 +10077,8 @@ components:
           description: "Arbitrary JSON value."
         collection:
           type: string
+        acceptComplete:
+          type: boolean
         force:
           type: boolean
     document_ImportResult:

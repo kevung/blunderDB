@@ -20,6 +20,10 @@ type ImportOptions struct {
 	// Collection names the Collection; the document's title when empty. An
 	// existing Collection of that name receives the positions it lacks.
 	Collection string `json:"collection"`
+	// AcceptComplete imports, as a whole, the entries whose fifteen checkers
+	// a side were read with no doubt and whose context is certified
+	// (Releve.CompleteCertified), neither sure nor verified.
+	AcceptComplete bool `json:"acceptComplete"`
 	// Force imports entries neither sure nor verified.
 	Force bool `json:"force"`
 }
@@ -40,38 +44,58 @@ type ImportResult struct {
 	// Repeated counts the entries whose position the document showed
 	// earlier: their reference joins the first appearance.
 	Repeated int `json:"repeated"`
+	// Complete counts the entries imported because AcceptComplete was set.
+	Complete int `json:"complete"`
 	// Forced counts the entries imported only because Force was set.
 	Forced int `json:"forced"`
 }
 
-// Unverified returns the ranks of the entries neither sure nor verified.
-func Unverified(r *Releve) []int {
+// Unverified returns the ranks of the entries an import refuses unless it is
+// forced: neither sure nor verified, nor complete when acceptComplete.
+func Unverified(r *Releve, acceptComplete bool) []int {
+	r = r.Upgrade()
 	var ranks []int
 	for _, e := range r.Entries {
-		if !e.Importable() {
+		if !r.Importable(e, acceptComplete) {
 			ranks = append(ranks, e.Rank)
 		}
 	}
 	return ranks
 }
 
-// contextUnread reports whether one of the ranks carries ContextDoubt.
-func contextUnread(r *Releve, ranks []int) bool {
+// refusalHint says what a person does about the refused ranks.
+func refusalHint(r *Releve, ranks []int, acceptComplete bool) string {
 	want := map[int]bool{}
 	for _, k := range ranks {
 		want[k] = true
 	}
+	var defaults, complete, context bool
 	for _, e := range r.Entries {
 		if !want[e.Rank] {
 			continue
 		}
-		for _, d := range e.Doubts {
-			if d == ContextDoubt {
-				return true
-			}
+		if e.Context == ContextDefault && !r.ContextCertified(e) {
+			defaults = true
+		}
+		if !acceptComplete && e.Complete {
+			complete = true
+		}
+		if !r.ContextCertified(e) {
+			context = true
 		}
 	}
-	return false
+	var hints []string
+	if defaults {
+		hints = append(hints, "confirm the document's defaults once if its diagrams follow them (\"defaults\": {\"confirmed\": true})")
+	}
+	if complete {
+		hints = append(hints, "accept the entries of fifteen checkers a side read with no doubt as a whole (accept complete)")
+	}
+	if context {
+		hints = append(hints, "check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram")
+	}
+	hints = append(hints, "verify the others (\"verified\": true)")
+	return strings.Join(hints, "; ")
 }
 
 // Description is the Collection's description for the document: its title,
@@ -95,11 +119,14 @@ func (s Source) commentPrefix() string { return strings.TrimSpace(s.Title) + " â
 // the document, a position the document shows twice belonging once, at its
 // first appearance, with all its references in one comment. Importing the
 // same RelevÃ© again writes nothing new. An entry neither sure nor verified
-// refuses the import, before anything is written, unless opts.Force.
+// refuses the import, before anything is written, unless opts.Force; an
+// entry complete with its context certified is accepted when
+// opts.AcceptComplete.
 func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, opts ImportOptions) (ImportResult, error) {
 	if err := r.Validate(); err != nil {
 		return ImportResult{}, err
 	}
+	r = r.Upgrade()
 	var unread []int
 	for _, e := range r.Entries {
 		if e.Position == "" {
@@ -109,13 +136,17 @@ func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, op
 	if len(unread) > 0 {
 		return ImportResult{}, fmt.Errorf("%w: rank %s has no position; fill it in or remove the entry", ErrInvalid, joinInts(unread))
 	}
-	unverified := Unverified(r)
+	unverified := Unverified(r, opts.AcceptComplete)
 	if len(unverified) > 0 && !opts.Force {
-		how := "verify them"
-		if contextUnread(r, unverified) {
-			how = "verify them (read from a scan, an entry's checkers at most are certified: check its cube, dice, player on roll and score against the diagram, then set \"verified\": true)"
+		return ImportResult{}, fmt.Errorf("%w: rank %s; %s, or force the import", ErrUnverified, joinInts(unverified), refusalHint(r, unverified, opts.AcceptComplete))
+	}
+	complete := 0
+	if opts.AcceptComplete {
+		for _, e := range r.Entries {
+			if r.CompleteCertified(e) {
+				complete++
+			}
 		}
-		return ImportResult{}, fmt.Errorf("%w: rank %s; %s, or force the import", ErrUnverified, joinInts(unverified), how)
 	}
 	name := strings.TrimSpace(opts.Collection)
 	if name == "" {
@@ -133,6 +164,7 @@ func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, op
 	if err := tx.Commit(); err != nil {
 		return ImportResult{}, err
 	}
+	res.Complete = complete
 	res.Forced = len(unverified)
 	return res, nil
 }

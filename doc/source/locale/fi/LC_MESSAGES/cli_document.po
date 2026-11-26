@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 05:49+0100\n"
+"POT-Creation-Date: 2026-11-26 11:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -119,7 +119,7 @@ msgstr ""
 "``analyze`` lukee PDF:n ja kirjoittaa relevén (ilman ``-o``:ta se "
 "kirjoittaa sen vakiotulosteeseen). Se tiivistää löytämänsä:"
 
-#: ../../source/cli_document.rst:63
+#: ../../source/cli_document.rst:64
 msgid ""
 "Le titre et l'auteur viennent des métadonnées du PDF, à défaut le titre "
 "est le nom du fichier ; ``--title`` et ``--author`` les remplacent. Le "
@@ -129,7 +129,7 @@ msgstr ""
 "tiedoston nimi; ``--title`` ja ``--author`` korvaavat ne. Kunkin "
 "merkinnän luku tulee PDF:n kirjanmerkeistä."
 
-#: ../../source/cli_document.rst:67
+#: ../../source/cli_document.rst:68
 msgid ""
 "``check`` valide le relevé et compte ses entrées, sans lire ni écrire de "
 "base. ``--format json`` donne les mêmes comptes en JSON :"
@@ -138,11 +138,11 @@ msgstr ""
 "kirjoittamatta tietokantaa. ``--format json`` antaa samat luvut JSON-"
 "muodossa:"
 
-#: ../../source/cli_document.rst:77
+#: ../../source/cli_document.rst:79
 msgid "``import`` écrit les positions dans la collection :"
 msgstr "``import`` kirjoittaa asemat kokoelmaan:"
 
-#: ../../source/cli_document.rst:84
+#: ../../source/cli_document.rst:86
 msgid ""
 "``--collection`` choisit un autre nom que le titre du document. Si le "
 "fichier de base n'existe pas, il est créé."
@@ -150,28 +150,31 @@ msgstr ""
 "``--collection`` valitsee muun nimen kuin asiakirjan otsikon. Jos "
 "tietokantatiedostoa ei ole, se luodaan."
 
-#: ../../source/cli_document.rst:88
+#: ../../source/cli_document.rst:90
 msgid "Le relevé"
 msgstr "Relevé"
 
-#: ../../source/cli_document.rst:90
+#: ../../source/cli_document.rst:92
 msgid ""
 "Le relevé est un fichier JSON lisible, que l'on peut ouvrir dans un "
 "éditeur de texte. L'en-tête (``document``) donne le titre, l'auteur, "
-"l'édition ou l'adresse du document, l'empreinte SHA-256 du fichier lu et "
-"le profil de ses diagrammes. Puis chaque diagramme est une entrée, dans "
-"l'ordre du document :"
+"l'édition ou l'adresse du document, l'empreinte SHA-256 du fichier lu, le"
+" profil de ses diagrammes et, pour un livre scanné, son contexte par "
+"défaut (``defaults``, voir :ref:`cli_document_defaults`). Puis chaque "
+"diagramme est une entrée, dans l'ordre du document :"
 msgstr ""
 "Relevé on luettava JSON-tiedosto, jonka voi avata tekstieditorissa. "
-"Otsikkotieto (``document``) antaa asiakirjan otsikon, tekijän, painoksen "
-"tai osoitteen, luetun tiedoston SHA-256-sormenjäljen ja sen kaavioiden "
-"profiilin. Sitten jokainen kaavio on merkintä asiakirjan järjestyksessä:"
+"Otsake (``document``) kertoo asiakirjan otsikon, tekijän, painoksen tai "
+"osoitteen, luetun tiedoston SHA-256-sormenjäljen, sen kaavioiden "
+"profiilin ja skannatun kirjan kohdalla sen oletuskontekstin "
+"(``defaults``, katso :ref:`cli_document_defaults`). Sen jälkeen jokainen "
+"kaavio on merkintä asiakirjan järjestyksessä:"
 
-#: ../../source/cli_document.rst:95
+#: ../../source/cli_document.rst:99
 msgid "``rank`` — son rang, de 1 sans trou ;"
 msgstr "``rank`` — sen järjestysluku, alkaen luvusta 1 ilman aukkoja;"
 
-#: ../../source/cli_document.rst:96
+#: ../../source/cli_document.rst:100
 msgid ""
 "``page``, ``chapter`` et ``label`` — sa page, le chapitre des signets et "
 "le nom que le document lui donne (« Problem 191 ») quand il est imprimé "
@@ -181,7 +184,7 @@ msgstr ""
 "nimi, jonka asiakirja sille antaa (”Problem 191”), kun se on painettu "
 "kaavion yläpuolelle;"
 
-#: ../../source/cli_document.rst:98
+#: ../../source/cli_document.rst:102
 msgid ""
 "``position`` — la position, en XGID : pions, videau, trait, dés, score et"
 " longueur du match en une seule chaîne ;"
@@ -189,11 +192,42 @@ msgstr ""
 "``position`` — asema XGID-muodossa: nappulat, tuplauskuutio, vuoro, "
 "nopat, pistetilanne ja ottelun pituus yhtenä merkkijonona;"
 
-#: ../../source/cli_document.rst:100
-msgid "``state`` — son état, avec ``doubts``, les doutes nommés de la lecture ;"
-msgstr "``state`` — sen tila sekä ``doubts``, luennan nimetyt epäilyt;"
+#: ../../source/cli_document.rst:104
+msgid ""
+"``checkers`` — la certitude des pions : ``sure``, ``to-verify`` ou "
+"``uncertain`` ;"
+msgstr ""
+"``checkers`` — nappuloiden varmuus: ``sure``, ``to-verify`` tai "
+"``uncertain``;"
 
-#: ../../source/cli_document.rst:101
+#: ../../source/cli_document.rst:106
+msgid ""
+"``complete`` — ``true`` quand les pions ont été lus à quinze par camp "
+"sans aucun doute, sans qu'un recoupement les confirme (voir "
+":ref:`cli_document_complete`) ;"
+msgstr ""
+"``complete`` — ``true``, kun nappulat on luettu viisitoista per puoli "
+"ilman epäilyksiä, vaikka mikään ristiintarkistus ei vahvista niitä (katso"
+" :ref:`cli_document_complete`);"
+
+#: ../../source/cli_document.rst:109
+msgid ""
+"``context`` — comment le contexte (videau, dés, trait, score) est connu :"
+" ``read`` (lu et recoupé), ``default`` (le contexte par défaut du "
+"document), ``to-verify`` (ni lu ni sous le défaut : un videau ou des dés "
+"dessinés et non lus, un score introuvable) ou ``uncertain`` (contredit) ;"
+msgstr ""
+"``context`` — miten konteksti (tuplauskuutio, nopat, vuoro, pistetilanne)"
+" tunnetaan: ``read`` (luettu ja ristiintarkistettu), ``default`` "
+"(asiakirjan oletuskonteksti), ``to-verify`` (ei luettu eikä oletuksen "
+"alla: piirretty mutta lukematon tuplauskuutio tai nopat, löytymätön "
+"pistetilanne) tai ``uncertain`` (ristiriitainen);"
+
+#: ../../source/cli_document.rst:113
+msgid "``doubts`` — les doutes nommés de la lecture ;"
+msgstr "``doubts`` — luvun nimetyt epäilyt;"
+
+#: ../../source/cli_document.rst:114
 msgid ""
 "``rect`` — où le diagramme se trouve sur la page, en fraction de sa "
 "taille, pour le retrouver dans le PDF ;"
@@ -201,13 +235,13 @@ msgstr ""
 "``rect`` — missä kaavio on sivulla, osuutena sivun koosta, jotta se "
 "löytyy PDF:stä;"
 
-#: ../../source/cli_document.rst:103
+#: ../../source/cli_document.rst:116
 msgid ""
 "``verified`` — ``true`` quand une personne a comparé la lecture au "
 "diagramme."
 msgstr "``verified`` — ``true``, kun henkilö on verrannut luentaa kaavioon."
 
-#: ../../source/cli_document.rst:105
+#: ../../source/cli_document.rst:118
 msgid ""
 "On relit un relevé en ouvrant le PDF à la page de l'entrée. On y corrige "
 "la position (le XGID), on marque ``\"verified\": true`` une entrée "
@@ -215,47 +249,78 @@ msgid ""
 "vérifie en plusieurs séances : ``verified`` reste dans le fichier. "
 "``check`` refuse un relevé dont un champ est inconnu, dont les rangs ont "
 "un trou, dont une page recule, dont un XGID n'est pas une position "
-"légale, ou d'un format plus récent que le programme. Une entrée ``sure`` "
-"n'a aucun doute."
+"légale, ou d'un format plus récent que le programme. Des pions ``sure`` "
+"ne portent de doute que sur le contexte ; un contexte ``read`` n'en porte"
+" aucun ; une entrée ``default`` porte le contexte par défaut dans son "
+"XGID."
 msgstr ""
 "Relevé tarkistetaan avaamalla PDF merkinnän sivulta. Siellä korjataan "
-"asema (XGID), merkitään tarkistettu merkintä ``\"verified\": true`` ja "
-"poistetaan merkintä numeroimalla järjestysluvut uudelleen. Relevé "
-"tarkistetaan useassa istunnossa: ``verified`` säilyy tiedostossa. "
-"``check`` hylkää relevén, jossa on tuntematon kenttä, aukko "
-"järjestysluvuissa, taaksepäin hyppäävä sivu, XGID joka ei ole sallittu "
-"asema tai ohjelmaa uudempi formaatti. ``sure``-merkinnässä ei ole "
-"epäilyjä."
+"asema (XGID), merkitään tarkistettu merkintä arvolla ``\"verified\": "
+"true`` ja poistetaan merkintä numeroimalla järjestysluvut uudelleen. "
+"Relevé tarkistetaan useassa istunnossa: ``verified`` säilyy tiedostossa. "
+"``check`` hylkää relevén, jossa on tuntematon kenttä, jonka "
+"järjestysluvuissa on aukko, jonka sivu menee taaksepäin, jonka XGID ei "
+"ole laillinen asema tai jonka muoto on ohjelmaa uudempi. "
+"``sure``-nappuloissa voi olla epäilys vain kontekstista; "
+"``read``-kontekstissa ei ole yhtään; ``default``-merkintä kantaa "
+"oletuskontekstin XGID:ssään."
 
-#: ../../source/cli_document.rst:114
+#: ../../source/cli_document.rst:128
+msgid ""
+"Le relevé est au format de version 2. Un relevé de version 1, qui donnait"
+" un seul état (``state``) par entrée, se lit encore : une entrée ``sure``"
+" y a ses pions sûrs et son contexte lu, une entrée d'un livre scanné "
+"passe sous le contexte par défaut, non confirmé, et toute autre a son "
+"contexte à vérifier. ``analyze`` écrit toujours la version 2."
+msgstr ""
+"Relevé on version 2 muodossa. Version 1 relevé, joka antoi merkintää "
+"kohden vain yhden tilan (``state``), voidaan yhä lukea: "
+"``sure``-merkinnällä on siinä varmat nappulat ja luettu konteksti, "
+"skannatun kirjan merkintä siirtyy vahvistamattoman oletuskontekstin alle "
+"ja kaikilla muilla konteksti on tarkistettava. ``analyze`` kirjoittaa "
+"aina version 2."
+
+#: ../../source/cli_document.rst:135
 msgid "Les trois états"
 msgstr "Kolme tilaa"
 
-#: ../../source/cli_document.rst:116
+#: ../../source/cli_document.rst:137
+msgid ""
+"L'état d'une entrée découle de ses deux certitudes ; il n'est pas écrit "
+"dans le relevé."
+msgstr ""
+"Merkinnän tila johtuu sen kahdesta varmuudesta; sitä ei kirjoiteta "
+"relevéen."
+
+#: ../../source/cli_document.rst:140
 msgid "``sure``"
 msgstr "``sure``"
 
-#: ../../source/cli_document.rst:117
+#: ../../source/cli_document.rst:141
 msgid ""
-"Les recoupements du diagramme tiennent : chaque camp compte quinze pions "
-"(sur les points, sur la barre et dans le plateau de sortie), et les pips "
-"calculés d'après la position égalent les pips imprimés des deux joueurs. "
-"Le score et la longueur du match sont ceux que le PDF imprime à côté. Une"
-" entrée d'un livre scanné n'est jamais ``sure`` : voir "
-":ref:`cli_document_images`."
+"Les pions sont sûrs **et** le contexte est certifié : lu, ou sous le "
+"contexte par défaut du document une fois celui-ci confirmé. Les pions "
+"sont sûrs quand les recoupements du diagramme tiennent : chaque camp "
+"compte quinze pions (sur les points, sur la barre et dans le plateau de "
+"sortie), et les pips calculés d'après la position égalent les pips "
+"imprimés des deux joueurs. Le contexte d'un PDF d'XG est lu : le score et"
+" la longueur du match sont ceux qu'il imprime à côté. Celui d'un livre "
+"scanné ne l'est jamais : voir :ref:`cli_document_images`."
 msgstr ""
-"Kaavion ristiintarkistukset pitävät: kummallakin puolella on viisitoista "
-"nappulaa (pisteillä, listalla ja pois pelatuissa), ja aseman perusteella "
-"lasketut pipit vastaavat molempien pelaajien painettuja pipejä. "
-"Pistetilanne ja ottelun pituus ovat ne, jotka PDF painaa vieressä. "
-"Skannatun kirjan merkintä ei ole koskaan ``sure``: ks. "
-":ref:`cli_document_images`."
+"Nappulat ovat varmat **ja** konteksti on todennettu: luettu tai "
+"asiakirjan oletuskontekstin alla, kun se on vahvistettu. Nappulat ovat "
+"varmat, kun kaavion ristiintarkistukset pitävät: kummallakin puolella on "
+"viisitoista nappulaa (pisteillä, laudalla ja pois pelatuissa) ja aseman "
+"perusteella lasketut pipit vastaavat molempien pelaajien painettuja "
+"pippejä. XG:n PDF:n konteksti luetaan: pistetilanne ja ottelun pituus "
+"ovat ne, jotka se painaa viereen. Skannatun kirjan kontekstia ei lueta "
+"koskaan: katso :ref:`cli_document_images`."
 
-#: ../../source/cli_document.rst:123
+#: ../../source/cli_document.rst:150
 msgid "``to-verify``"
 msgstr "``to-verify``"
 
-#: ../../source/cli_document.rst:124
+#: ../../source/cli_document.rst:151
 msgid ""
 "La lecture tient, mais rien ne la confirme : un pip imprimé diffère du "
 "pip calculé, ou le diagramme montre ce que les impressions de référence "
@@ -277,39 +342,43 @@ msgstr ""
 "seuraavia ei voi erottaa), fontin glyfit, joita taulukko ei lue. Nämä "
 "tapaukset luetaan mutta niitä ei koskaan julisteta varmoiksi."
 
-#: ../../source/cli_document.rst:133
+#: ../../source/cli_document.rst:160
 msgid "``uncertain``"
 msgstr "``uncertain``"
 
-#: ../../source/cli_document.rst:134
+#: ../../source/cli_document.rst:161
 msgid ""
-"La lecture est contredite ou incomplète : un glyphe inconnu, un camp qui "
-"ne compte pas quinze pions et dont les pips ne correspondent pas, un "
-"cadre abîmé. Un diagramme dont on ne tire aucune position légale garde sa"
-" place dans le relevé, sans position (``\"position\": \"\"``)."
+"Les pions ou le contexte sont contredits, ou la lecture est incomplète : "
+"un glyphe inconnu, un camp qui ne compte pas quinze pions et dont les "
+"pips ne correspondent pas, un cadre abîmé. Un diagramme dont on ne tire "
+"aucune position légale garde sa place dans le relevé, sans position "
+"(``\"position\": \"\"``)."
 msgstr ""
-"Luenta on ristiriitainen tai vaillinainen: tuntematon glyfi, puoli jolla "
-"ei ole viittätoista nappulaa ja jonka pipit eivät täsmää, vaurioitunut "
-"kehys. Kaavio, josta ei saada sallittua asemaa, säilyttää paikkansa "
-"releveessä ilman asemaa (``\"position\": \"\"``)."
+"Nappulat tai konteksti ovat ristiriitaiset tai luku on epätäydellinen: "
+"tuntematon glyfi, puoli, jolla ei ole viittätoista nappulaa ja jonka "
+"pipit eivät täsmää, vaurioitunut kehys. Kaavio, josta ei saada laillista "
+"asemaa, säilyttää paikkansa relevéssä ilman asemaa (``\"position\": "
+"\"\"``)."
 
-#: ../../source/cli_document.rst:139
+#: ../../source/cli_document.rst:166
 msgid ""
-"Une entrée est **importable** quand elle est ``sure`` ou vérifiée. Les "
+"Une entrée est **importable** quand elle est ``sure`` ou vérifiée, ou, "
+"sur demande, quand elle est complète (:ref:`cli_document_complete`). Les "
 "doutes qu'elle porte disent quoi contrôler, par exemple :"
 msgstr ""
-"Merkintä on **tuotavissa**, kun se on ``sure`` tai tarkistettu. Sen "
-"mukana olevat epäilyt kertovat, mitä tarkistaa, esimerkiksi:"
+"Merkintä on **tuotavissa**, kun se on ``sure`` tai tarkistettu tai "
+"pyynnöstä, kun se on täydellinen (:ref:`cli_document_complete`). Sen "
+"kantamat epäilyt kertovat, mitä tarkistaa, esimerkiksi:"
 
-#: ../../source/cli_document.rst:146
+#: ../../source/cli_document.rst:174
 msgid "Le dé n'est pas lu : l'analyse écrit toujours « pas de dés » (``00``)."
 msgstr "Noppaa ei lueta: analyysi kirjoittaa aina ”ei noppia” (``00``)."
 
-#: ../../source/cli_document.rst:151
+#: ../../source/cli_document.rst:179
 msgid "Livres scannés"
 msgstr "Skannatut kirjat"
 
-#: ../../source/cli_document.rst:153
+#: ../../source/cli_document.rst:181
 msgid ""
 "Une page en image est lue sans style supposé : la commande y cherche deux"
 " rangées de douze pointes coupées par une barre, et des pions, disques de"
@@ -327,7 +396,7 @@ msgstr ""
 "painetun numeroinnin ja pelisuunnan. Mitään ei säilytetä asiakirjasta "
 "toiseen, eikä yhtään kuvaa säilytetä."
 
-#: ../../source/cli_document.rst:160
+#: ../../source/cli_document.rst:188
 msgid ""
 "Elle lit les diagrammes au trait et les captures de logiciel imprimées, "
 "dans l'ordre de lecture : page de gauche puis de droite d'une double "
@@ -342,7 +411,7 @@ msgstr ""
 "poistetaan. Käyttökelpoinen tarkkuus: 150-300 dpi, tiedoston ilmoittama; "
 "muuten sivun pitkän sivun oletetaan olevan yksitoista tuumaa."
 
-#: ../../source/cli_document.rst:166
+#: ../../source/cli_document.rst:194
 msgid ""
 "Un PDF scanné est lu directement, sans outil externe : chaque page est "
 "composée de ses images, placées comme le PDF les place, à la résolution "
@@ -374,44 +443,132 @@ msgstr ""
 "kuvassa; teksti, jota sen fontti ei käännä merkeiksi, ei anna yhtään "
 "sanaa."
 
-#: ../../source/cli_document.rst:180
+#: ../../source/cli_document.rst:208
 msgid ""
-"Sur un livre scanné, **seuls les pions sont certifiés**. Ils sont "
-"confirmés quand les pips imprimés à côté du diagramme égalent les pips "
-"calculés des deux camps, qu'aucun camp n'a plus de quinze pions et "
+"Sur un livre scanné, **seuls les pions sont certifiés** par la lecture. "
+"Ils sont ``sure`` quand les pips imprimés à côté du diagramme égalent les"
+" pips calculés des deux camps, qu'aucun camp n'a plus de quinze pions et "
 "qu'aucun doute ne reste sur les pions. Le videau, les dés, le trait et le"
-" score ne sont pas lus : une entrée d'un livre scanné n'est donc "
-"**jamais** ``sure``. Pions confirmés, elle est ``to-verify`` avec le "
-"doute ``context not read: cube, dice, player on roll, score`` (champ "
-"``context``), seul ou suivi d'un videau ou de dés dessinés ; ses pions "
-"non confirmés, elle porte ce doute et ceux des pions. ``analyze`` et "
-"``check`` comptent à part les entrées aux pions confirmés :"
+" score ne sont pas lus : chaque entrée porte le doute ``context not read:"
+" cube, dice, player on roll, score`` (champ ``context``) et son XGID "
+"porte le contexte par défaut du document (``\"context\": \"default\"``), "
+"sauf quand un videau hors du centre ou des dés sont dessinés "
+"(``\"context\": \"to-verify\"``, avec ce doute). Une entrée d'un livre "
+"scanné n'est donc **jamais** ``sure`` tant que le contexte par défaut "
+"n'est pas confirmé, et celle dont le videau ou les dés sont dessinés ne "
+"l'est jamais. ``analyze`` et ``check`` comptent les entrées par contexte,"
+" et à part celles dont seuls les pions sont certifiés :"
 msgstr ""
-"Skannatussa kirjassa **vain nappulat sertifioidaan**. Ne vahvistetaan, "
-"kun kaavion vieressä painetut pipit vastaavat molempien puolten "
-"laskettuja pipejä, kummallakaan puolella ei ole yli viittätoista nappulaa"
-" eikä nappuloista jää epäilystä. Kuutiota, noppia, vuorossa olevaa "
-"pelaajaa ja tulosta ei lueta: skannatun kirjan merkintä ei siis ole "
-"**koskaan** ``sure``. Kun nappulat on vahvistettu, se on ``to-verify`` "
-"epäilyllä ``context not read: cube, dice, player on roll, score`` (kenttä"
-" ``context``), yksin tai piirretyn kuution tai noppien kanssa; jos "
-"nappuloita ei ole vahvistettu, se kantaa tämän epäilyn ja nappuloiden "
-"epäilyt. ``analyze`` ja ``check`` laskevat vahvistetuilla nappuloilla "
-"olevat merkinnät erikseen:"
+"Skannatussa kirjassa luku varmentaa **vain nappulat**. Ne ovat ``sure``, "
+"kun kaavion viereen painetut pipit vastaavat molempien puolten laskettuja"
+" pippejä, kummallakaan puolella ei ole yli viittätoista nappulaa eikä "
+"nappuloista jää epäilyä. Tuplauskuutiota, noppia, vuoroa ja "
+"pistetilannetta ei lueta: jokaisella merkinnällä on epäily ``context not "
+"read: cube, dice, player on roll, score`` (kenttä ``context``) ja sen "
+"XGID kantaa asiakirjan oletuskontekstin (``\"context\": \"default\"``), "
+"paitsi kun piirretään keskustan ulkopuolella oleva tuplauskuutio tai "
+"nopat (``\"context\": \"to-verify\"``, tällä epäilyllä). Skannatun kirjan"
+" merkintä ei siis ole **koskaan** ``sure``, kun oletuskontekstia ei ole "
+"vahvistettu, eikä sellainen, jonka tuplauskuutio tai nopat on piirretty, "
+"ole sitä koskaan. ``analyze`` ja ``check`` laskevat merkinnät kontekstin "
+"mukaan ja erikseen ne, joissa vain nappulat on varmennettu:"
 
-#: ../../source/cli_document.rst:194
+#: ../../source/cli_document.rst:227
 msgid ""
-"Pour chacune, on ouvre le livre à la page de l'entrée, on compare au "
-"diagramme le videau (valeur et propriétaire : un videau dessiné au milieu"
-" peut être possédé), les dés, le joueur au trait et le score, on corrige "
-"ces champs du XGID s'il le faut, puis on marque ``\"verified\": true``."
+"Pour une entrée dont le contexte reste à vérifier, on ouvre le livre à la"
+" page de l'entrée, on compare au diagramme le videau (valeur et "
+"propriétaire : un videau dessiné au milieu peut être possédé), les dés, "
+"le joueur au trait et le score, on corrige ces champs du XGID s'il le "
+"faut, puis on marque ``\"verified\": true``."
 msgstr ""
-"Kunkin kohdalla kirja avataan merkinnän sivulta, kaavioon verrataan "
-"kuutio (arvo ja omistaja: keskelle piirretty kuutio voi olla jonkun "
-"omistuksessa), nopat, vuorossa oleva pelaaja ja tulos, XGID:n nämä kentät"
-" korjataan tarvittaessa ja sitten merkitään ``\"verified\": true``."
+"Merkinnälle, jonka konteksti on yhä tarkistettava, avataan kirja "
+"merkinnän sivulta, verrataan kaavioon tuplauskuutio (arvo ja omistaja: "
+"keskelle piirretty kuutio voi olla jonkun omistuksessa), nopat, vuorossa "
+"oleva pelaaja ja pistetilanne, korjataan nämä XGID:n kentät tarvittaessa "
+"ja merkitään sitten ``\"verified\": true``."
 
-#: ../../source/cli_document.rst:199
+#: ../../source/cli_document.rst:235
+msgid "Le contexte par défaut"
+msgstr "Oletuskonteksti"
+
+#: ../../source/cli_document.rst:237
+msgid ""
+"Le contexte par défaut d'un livre scanné est celui qu'écrit la lecture : "
+"videau centré, pas de dés, joueur du bas au trait, partie libre. Il "
+"figure dans l'en-tête du relevé :"
+msgstr ""
+"Skannatun kirjan oletuskonteksti on se, jonka luku kirjoittaa: keskellä "
+"oleva tuplauskuutio, ei noppia, alapelaaja vuorossa, vapaa peli. Se on "
+"relevén otsakkeessa:"
+
+#: ../../source/cli_document.rst:249
+msgid ""
+"``context`` est la fin du XGID après le plateau ; toute entrée "
+"``default`` la porte. Quand les diagrammes du document suivent ce "
+"contexte — un livre de problèmes en partie libre, joueur du bas au trait,"
+" par exemple — on le **confirme une fois** en écrivant ``\"confirmed\": "
+"true`` : toutes les entrées ``default`` ont alors leur contexte certifié,"
+" et celles dont les pions sont sûrs deviennent ``sure``. Seules restent à"
+" vérifier une à une les exceptions que la lecture a vues (videau hors du "
+"centre, dés dessinés) et les entrées dont les pions ne sont pas sûrs. On "
+"ne confirme pas un contexte que le document ne suit pas : un videau "
+"possédé dessiné au milieu, un score imprimé dans la légende ou un trait "
+"donné par la prose ne sont pas vus."
+msgstr ""
+"``context`` on XGID:n loppu laudan jälkeen; jokainen ``default``-merkintä"
+" kantaa sen. Kun asiakirjan kaaviot noudattavat tätä kontekstia — "
+"esimerkiksi ongelmakirja vapaassa pelissä, alapelaaja vuorossa — se "
+"**vahvistetaan kerran** kirjoittamalla ``\"confirmed\": true``: kaikkien "
+"``default``-merkintöjen konteksti on tällöin todennettu, ja ne, joiden "
+"nappulat ovat varmat, muuttuvat ``sure``-merkinnöiksi. Yksitellen "
+"tarkistettavaksi jäävät vain poikkeukset, jotka luku on nähnyt (keskustan"
+" ulkopuolinen tuplauskuutio, piirretyt nopat) ja merkinnät, joiden "
+"nappulat eivät ole varmat. Kontekstia, jota asiakirja ei noudata, ei "
+"vahvisteta: keskelle piirrettyä omistettua tuplauskuutiota, kuvatekstiin "
+"painettua pistetilannetta tai tekstin antamaa vuoroa ei nähdä."
+
+#: ../../source/cli_document.rst:263
+msgid "Quinze et quinze sans doute"
+msgstr "Viisitoista ja viisitoista ilman epäilystä"
+
+#: ../../source/cli_document.rst:265
+msgid ""
+"Un diagramme sans pips imprimés n'a pas de recoupement : ses pions "
+"restent ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils "
+"sont marqués ``\"complete\": true`` : sur toutes les mesures faites, ces "
+"lectures étaient exactes, mais rien ne les confirme diagramme par "
+"diagramme. C'est un état intermédiaire, distinct de ``sure``. Une "
+"position dont des pions sont sortis n'est jamais complète."
+msgstr ""
+"Kaaviolla ilman painettuja pippejä ei ole ristiintarkistusta: sen "
+"nappulat pysyvät tilassa ``to-verify``. Kun ne on luettu viisitoista "
+"nappulaa per puoli ilman mitään epäilyä, ne merkitään ``\"complete\": "
+"true``: kaikissa tehdyissä mittauksissa nämä luvut olivat tarkkoja, mutta"
+" mikään ei vahvista niitä kaavio kerrallaan. Se on välitila, joka eroaa "
+"tilasta ``sure``. Asema, josta nappuloita on pelattu pois, ei ole koskaan"
+" täydellinen."
+
+#: ../../source/cli_document.rst:272
+msgid ""
+"``import --accept-complete`` accepte en bloc les entrées complètes dont "
+"le contexte est certifié (lu, ou sous le contexte par défaut confirmé), "
+"sans les marquer vérifiées ; ``check`` les compte :"
+msgstr ""
+"``import --accept-complete`` hyväksyy kerralla täydelliset merkinnät, "
+"joiden konteksti on todennettu (luettu tai vahvistetun oletuskontekstin "
+"alla), merkitsemättä niitä tarkistetuiksi; ``check`` laskee ne:"
+
+#: ../../source/cli_document.rst:281
+msgid ""
+"L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
+" checkers read with no doubt``). Une entrée complète dont le contexte "
+"n'est pas certifié reste refusée."
+msgstr ""
+"Tuonti kertoo, kuinka monta se hyväksyi (``Complete: 84 entries of 15 + "
+"15 checkers read with no doubt``). Täydellinen merkintä, jonka kontekstia"
+" ei ole todennettu, hylätään edelleen."
+
+#: ../../source/cli_document.rst:285
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
@@ -444,7 +601,7 @@ msgstr ""
 "(``the two disagree``). Merkintä ilman luettuja pipejä pysyy tilassa "
 "``to-verify`` (``no printed pip count was found next to the diagram``)."
 
-#: ../../source/cli_document.rst:213
+#: ../../source/cli_document.rst:299
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
@@ -458,7 +615,7 @@ msgstr ""
 " noin kolmeakymmentä viidellätoista nappulalla puolta kohden luettua "
 "kaaviota tämän paikan oppimiseksi."
 
-#: ../../source/cli_document.rst:218
+#: ../../source/cli_document.rst:304
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -476,43 +633,44 @@ msgstr ""
 "vähiten pipejä), erotuksena laskettu pois pelatut nappulat, keskeltä pois"
 " piirretty tuplauskuutio, piirretyt nopat."
 
-#: ../../source/cli_document.rst:225
+#: ../../source/cli_document.rst:311
 msgid ""
-"Ne sont jamais lus : la valeur et le propriétaire du videau (la position "
-"le dit centré), les dés (aucun), le score (partie libre), le joueur au "
-"trait (celui du bas), le plateau de sortie (un camp dessiné avec moins de"
-" quinze pions a les autres sortis)."
+"Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
+"par défaut le dit centré), les dés (aucun), le score (partie libre), le "
+"joueur au trait (celui du bas), le plateau de sortie (un camp dessiné "
+"avec moins de quinze pions a les autres sortis)."
 msgstr ""
-"Näitä ei koskaan lueta: tuplauskuution arvo ja omistaja (asema kertoo sen"
-" olevan keskellä), nopat (ei yhtään), pistetilanne (vapaa peli), vuorossa"
-" oleva pelaaja (alempi), pois pelaamisen lauta (puoli, joka on piirretty "
-"alle viidellätoista nappulalla, on pelannut loput pois)."
+"Koskaan ei lueta: tuplauskuution arvoa ja omistajaa (oletuskonteksti "
+"sanoo sen olevan keskellä), noppia (ei yhtään), pistetilannetta (vapaa "
+"peli), vuorossa olevaa pelaajaa (alapelaaja), pois pelattujen lautaa "
+"(puoli, joka on piirretty alle viidellätoista nappulalla, on pelannut "
+"loput pois)."
 
-#: ../../source/cli_document.rst:231
+#: ../../source/cli_document.rst:317
 msgid "Pourquoi l'import refuse"
 msgstr "Miksi tuonti hylkää"
 
-#: ../../source/cli_document.rst:233
+#: ../../source/cli_document.rst:319
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
-"relevé, avant d'écrire quoi que ce soit, et nomme les rangs :"
+"relevé, avant d'écrire quoi que ce soit, nomme les rangs et dit quoi "
+"faire :"
 msgstr ""
 "Merkintä, joka ei ole ``sure`` eikä tarkistettu, ei ole luotettava, ja "
-"kokoelmaan päätyvä jaetaan vietäessä. Tuonti hylkää siksi **koko** "
-"relevén ennen kuin mitään kirjoitetaan, ja nimeää järjestysluvut:"
+"kokoelmaan päätyvä jaetaan viennissä. Tuonti hylkää siksi **koko** "
+"relevén ennen kuin se kirjoittaa mitään, nimeää järjestysluvut ja kertoo,"
+" mitä tehdä:"
 
-#: ../../source/cli_document.rst:241
+#: ../../source/cli_document.rst:327
 msgid ""
-"Quand l'une d'elles vient d'un livre scanné, le message dit de contrôler "
-"son videau, ses dés, son trait et son score, puis de la marquer vérifiée "
-":"
+"Quand des entrées sont sous un contexte par défaut non confirmé, ou "
+"complètes sans ``--accept-complete``, le message le dit aussi :"
 msgstr ""
-"Kun jokin niistä tulee skannatusta kirjasta, viesti kehottaa tarkistamaan"
-" sen kuution, nopat, vuorossa olevan pelaajan ja tuloksen ja merkitsemään"
-" sen sitten tarkistetuksi:"
+"Kun merkintöjä on vahvistamattoman oletuskontekstin alla tai ne ovat "
+"täydellisiä ilman valitsinta ``--accept-complete``, viesti kertoo senkin:"
 
-#: ../../source/cli_document.rst:248
+#: ../../source/cli_document.rst:334
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -524,11 +682,11 @@ msgstr ""
 "(``Forced: 3 entries neither sure nor verified``). Myös ``--force``:n "
 "kanssa merkintä ilman asemaa hylätään: se on täytettävä tai poistettava."
 
-#: ../../source/cli_document.rst:254
+#: ../../source/cli_document.rst:340
 msgid "Ce qui entre en base"
 msgstr "Mitä tietokantaan päätyy"
 
-#: ../../source/cli_document.rst:256
+#: ../../source/cli_document.rst:342
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -542,7 +700,7 @@ msgstr ""
 "identiteetistään: asemaa, joka sillä jo on, ei kahdenneta (``new in the "
 "library`` laskee ne, joita siltä puuttui)."
 
-#: ../../source/cli_document.rst:262
+#: ../../source/cli_document.rst:348
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -555,7 +713,7 @@ msgstr ""
 "puuttuvat asemat ja säilyttää kuvauksensa, jos sillä on sellainen; "
 "dynaaminen kokoelma (kyselyllä määritelty) hylätään."
 
-#: ../../source/cli_document.rst:266
+#: ../../source/cli_document.rst:352
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -563,7 +721,7 @@ msgstr ""
 "Jokaisella asemalla on **kommentti**, joka antaa sen viitteen asiakirjan "
 "otsikon jälkeen: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:269
+#: ../../source/cli_document.rst:355
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -573,11 +731,11 @@ msgstr ""
 "tekstiä. Keskeytetty tai hylätty tuonti ei kirjoita mitään: se on yksi "
 "transaktio."
 
-#: ../../source/cli_document.rst:273
+#: ../../source/cli_document.rst:359
 msgid "Une position répétée"
 msgstr "Toistuva asema"
 
-#: ../../source/cli_document.rst:275
+#: ../../source/cli_document.rst:361
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -589,11 +747,11 @@ msgstr ""
 "jokaisen viitteen: ``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` "
 "laskee nämä toistot."
 
-#: ../../source/cli_document.rst:281
+#: ../../source/cli_document.rst:367
 msgid "Réimporter"
 msgstr "Uudelleentuonti"
 
-#: ../../source/cli_document.rst:283
+#: ../../source/cli_document.rst:369
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -605,11 +763,11 @@ msgstr ""
 "kirjoitetaan uudelleen vain, jos sen viitteet ovat muuttuneet, ei koskaan"
 " kahdennettuna. Tuonnin voi siis jatkaa relevén korjaamisen jälkeen."
 
-#: ../../source/cli_document.rst:289
+#: ../../source/cli_document.rst:375
 msgid "Le démon"
 msgstr "Daemon"
 
-#: ../../source/cli_document.rst:291
+#: ../../source/cli_document.rst:377
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "
@@ -638,3 +796,16 @@ msgstr ""
 #~ " molempien puolten laskettuja pipejä, "
 #~ "kummallakaan puolella ei ole yli "
 #~ "viittätoista nappulaa eikä epäilyksiä jää."
+
+#~ msgid ""
+#~ "Quand l'une d'elles vient d'un livre "
+#~ "scanné, le message dit de contrôler "
+#~ "son videau, ses dés, son trait et"
+#~ " son score, puis de la marquer "
+#~ "vérifiée :"
+#~ msgstr ""
+#~ "Kun jokin niistä tulee skannatusta "
+#~ "kirjasta, viesti kehottaa tarkistamaan sen "
+#~ "kuution, nopat, vuorossa olevan pelaajan "
+#~ "ja tuloksen ja merkitsemään sen sitten"
+#~ " tarkistetuksi:"
