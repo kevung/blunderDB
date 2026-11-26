@@ -32,7 +32,12 @@ import (
 //   - Dice     two digits, larger first; absent for a cube decision.
 //   - Cube     "x" held by the player on roll, "X" held by the opponent,
 //     followed by the exponent when it is not 1 ("x" is a cube at 2,
-//     "x2" a cube at 4, "x0" a cube at 1 held); nothing when centred.
+//     "x2" a cube at 4, "x0" a cube at 1 held); nothing when centred. A
+//     cube offered, to take or pass, is "X" (the offer comes from the
+//     opponent of the player answering), the exponent when it is not 1, and
+//     "?": "X?" is a cube offered at 2, "X2?" at 4. It reads back as a
+//     centred cube of that exponent, the stored shape of a response
+//     position (IsResponsePosition); "x?" is refused.
 //   - Gates    in parentheses, one letter per point of two checkers or more
 //     (never the bar).
 //   - Rest     each square once as a letter and a count k, omitted when 1: the
@@ -54,9 +59,11 @@ import (
 //
 // The session rules (Jacoby, beaver), the cube ceiling and the provenance are
 // not part of a Position's identity (ADR-0028): decoding sets none of them, as
-// DecodeOGID does. A centred cube is spelled with no exponent, so a centred
-// cube above 1 (which no source produces) reads back at 1. Decoding returns
-// the Position normalised, Black on roll, which is the hash's own view.
+// DecodeOGID does. A centred cube above 1 is spelled only as an offered cube
+// (a response position); on a checker decision it is refused, as are dice on
+// a cube decision, since the hash folds both in and the notation has no room
+// for them. Decoding returns the Position normalised, Black on roll, which is
+// the hash's own view.
 
 // ErrInvalidArkID is returned for malformed ArkID strings. Callers map it to a
 // 4xx response, as they do ErrInvalidXGID.
@@ -184,7 +191,22 @@ func arkEncode(pos *Position, expanded bool) (string, error) {
 	}
 	sb.WriteByte(':')
 
-	if norm.Cube.Owner == Black || norm.Cube.Owner == White {
+	switch {
+	case norm.DecisionType == CubeAction && (norm.Dice[0] >= 1 && norm.Dice[0] <= 6 && norm.Dice[1] >= 1 && norm.Dice[1] <= 6):
+		// The hash folds in valid dice, and a cube decision spells none.
+		return "", fmt.Errorf("%w: a cube decision with dice %d-%d", ErrInvalidArkID, norm.Dice[0], norm.Dice[1])
+	case IsResponsePosition(&norm):
+		if norm.Cube.Value > 10 {
+			return "", fmt.Errorf("%w: cube exponent %d", ErrInvalidArkID, norm.Cube.Value)
+		}
+		sb.WriteByte('X')
+		if norm.Cube.Value != 1 {
+			sb.WriteString(strconv.Itoa(norm.Cube.Value))
+		}
+		sb.WriteByte('?')
+	case norm.Cube.Owner == None && norm.Cube.Value > 0:
+		return "", fmt.Errorf("%w: a centred cube of exponent %d on a checker decision", ErrInvalidArkID, norm.Cube.Value)
+	case norm.Cube.Owner == Black || norm.Cube.Owner == White:
 		if norm.Cube.Value < 0 || norm.Cube.Value > 10 {
 			return "", fmt.Errorf("%w: cube exponent %d", ErrInvalidArkID, norm.Cube.Value)
 		}
@@ -326,6 +348,13 @@ func DecodeArkID(text string) (Position, error) {
 		}
 		pos.Cube.Value = n
 		rest = rest[1+digits:]
+		if rest != "" && rest[0] == '?' {
+			if pos.Cube.Owner != White || pos.DecisionType != CubeAction || n < 1 {
+				return pos, arkErr("an offered cube is X, at least exponent 1, on a cube decision")
+			}
+			pos.Cube.Owner = None
+			rest = rest[1:]
+		}
 	}
 
 	for i := range pos.Board.Points {

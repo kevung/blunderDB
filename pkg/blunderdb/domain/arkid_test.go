@@ -39,7 +39,6 @@ func TestArkIDExamples(t *testing.T) {
 		t.Fatalf("expanded = %q, %v; want %q", got, err, arkStartExpanded)
 	}
 	for _, in := range []string{arkStartCompact, arkStartExpanded, "ArkID=" + arkStartCompact, "(SQLA)S3QL3(ymhf)m3hf3"} {
-		in := in
 		// the reader takes any order only inside a group of the same shape; the
 		// last spelling puts the opponent first, which is still one Position.
 		if strings.HasPrefix(in, "(") {
@@ -190,6 +189,10 @@ func TestArkIDRoundTripCorpus(t *testing.T) {
 	}
 	for _, c := range cases {
 		pos := gnubgPosition(c)
+		if pos.Cube.Owner == None && pos.DecisionType == CheckerAction {
+			// gnubg draws centred cubes of any value; a real position has none.
+			pos.Cube.Value = 0
+		}
 		id, err := EncodeArkID(&pos)
 		if err != nil {
 			t.Fatalf("%s: %v", c.Name, err)
@@ -200,9 +203,6 @@ func TestArkIDRoundTripCorpus(t *testing.T) {
 		}
 		want := pos.NormalizeForStorage()
 		want.HasJacoby, want.HasBeaver, want.MaxCube, want.ID = 0, 0, 0, 0
-		if want.Cube.Owner == None {
-			want.Cube.Value = 0
-		}
 		for i, p := range want.Board.Points {
 			if p.Checkers <= 0 {
 				want.Board.Points[i] = Point{Color: None}
@@ -247,4 +247,37 @@ func FuzzDecodeArkID(f *testing.F) {
 			t.Fatalf("%q -> %q does not round trip: %v", in, id, err)
 		}
 	})
+}
+
+func TestArkIDOfferedCube(t *testing.T) {
+	for in, exp := range map[string]int{"[77]:X?(mf)m3f3": 1, "[77]:X2?(mf)m3f3": 2} {
+		pos, err := DecodeArkID(in)
+		if err != nil {
+			t.Fatalf("%q: %v", in, err)
+		}
+		if !IsResponsePosition(&pos) || pos.Cube.Value != exp || pos.Cube.Owner != None {
+			t.Errorf("%q: cube %+v, response %v", in, pos.Cube, IsResponsePosition(&pos))
+		}
+		if got, err := EncodeArkID(&pos); err != nil || got != in {
+			t.Errorf("%q re-encoded as %q, %v", in, got, err)
+		}
+	}
+	for _, in := range []string{"[77]:x?(mf)m3f3", "[77]:X0?(mf)m3f3", "[77]31:X?(mf)m3f3"} {
+		if _, err := DecodeArkID(in); !errors.Is(err, ErrInvalidArkID) {
+			t.Errorf("%q: err = %v", in, err)
+		}
+	}
+}
+
+func TestArkIDRefusesWhatItWouldLose(t *testing.T) {
+	pos := arkStart(t)
+	pos.DecisionType, pos.Cube = CubeAction, Cube{Owner: None}
+	if _, err := EncodeArkID(&pos); err == nil {
+		t.Error("a cube decision with dice was written, losing them")
+	}
+	pos = arkStart(t)
+	pos.Cube = Cube{Owner: None, Value: 2}
+	if _, err := EncodeArkID(&pos); err == nil {
+		t.Error("a centred cube above 1 on a checker decision was written")
+	}
 }

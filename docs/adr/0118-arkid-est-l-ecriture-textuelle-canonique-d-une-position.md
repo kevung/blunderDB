@@ -34,6 +34,11 @@ perdre l'identité d'une position (ADR-0001).
 5. **Ce que la notation ne porte pas, elle ne le suppose pas** : les règles de session (Jacoby,
    castor) et le plafond du videau restent à zéro à la lecture, comme pour l'OGID
    (ADR-0028) ; un videau au centre se lit à 1 sans exposant.
+   Un videau **proposé** (position de réponse, `IsResponsePosition` : au centre, de valeur
+   non nulle, ADR-0083) s'écrit `X`, l'exposant s'il dépasse 1, puis `?` (`X?` : proposé à 2) et
+   se relit au centre à cette valeur, de sorte que l'empreinte est conservée ; `x?` est refusé.
+   Ce que la notation ne sait pas écrire sans le perdre — dés d'une décision de videau, videau
+   central au-dessus de 1 sur une décision de pions — est refusé par l'encodeur.
 6. **Une seule place dans le code, `domain.EncodeArkID` / `DecodeArkID`**, à côté des autres
    codecs ; l'ArkID est proposé partout où l'XGID l'est (commande `arkid`, `--format arkid`
    de `search` et de `capture`, route `positions.arkId` / `positions.fromArkID`, copie du

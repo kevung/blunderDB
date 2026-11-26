@@ -30,7 +30,10 @@ ArkID
     à 4), et n'est pas écrit au centre. Les **portes** sont les points tenus par
     deux pions ou plus ; le **reste** donne, pour chaque case, le nombre de
     pions au-delà de deux (1 pour un pion seul, le nombre de pions pour la
-    barre), omis quand il vaut 1. Les pions sortis se déduisent.
+    barre), omis quand il vaut 1. Les pions sortis se déduisent. Un videau proposé, à prendre ou à
+    passer, s'écrit ``X``, son exposant s'il dépasse 1, puis ``?`` (``X?`` :
+    proposé à 2) ; il se relit comme un videau au centre, la position de
+    réponse.
 
     Les lettres sont vues du côté du joueur au trait : les minuscules sont ses
     pions, les majuscules ceux de l'adversaire, tous deux numérotés comme le
