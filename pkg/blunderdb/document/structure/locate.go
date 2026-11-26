@@ -450,7 +450,13 @@ func locate(g *raster, dpi float64) []zone {
 			} else {
 				rawInk := hysteresis(raw)
 				z.digits = labelDigits(rawInk, r0, c0, fb)
-				z.cubes, z.dice = squares(raw, rawInk, r0, c0, fb, X0, Y0)
+				// The cube may stand farther out than the board's margin:
+				// squares are sought in a crop widened alike on each side,
+				// so it turns about the same centre as raw.
+				ex := min(trunc(0.25*float64(b.w())), X0, W-X1)
+				ey := min(trunc(0.25*float64(b.w())), Y0, H-Y1)
+				wide := rotate(g.crop(X0-ex, Y0-ey, X1+ex, Y1+ey), ang)
+				z.cubes, z.dice = squares(wide, hysteresis(wide), r0+ey, c0+ex, fb, X0-ex, Y0-ey)
 				z.field = [6]float64{float64(X0 + c0 + fb.a), float64(X0 + c0 + fb.b), float64(X0 + c0 + fb.c),
 					float64(X0 + c0 + fb.d), float64(Y0 + r0 + fb.y0), float64(Y0 + r0 + fb.y1)}
 			}
@@ -502,6 +508,7 @@ func labelDigits(ink *mask, oy, ox int, f frame) [2][12]int {
 // die, with its colour and the pips counted on it.
 type square struct {
 	place string // a cube's: "top", "middle", "bottom"
+	blank bool   // a cube's face bare of any mark: no value printed
 	dark  bool   // a die filled with ink
 	pips  int    // a die's pips, 0 when they are not counted clearly
 	// the square in the page's pixels, the straightening neglected
@@ -511,8 +518,10 @@ type square struct {
 // squares finds the squares drawn about the board by their shape alone (ink
 // in the four corners of their box, which a round checker has not; a side of
 // 0.45 to 1.4 point): in the field near mid-height, a die, whose pips are
-// counted; on the bar or beside the field, a cube, with its height. The
-// cube's value is read with the document's figures (cubeFigures).
+// counted; on the bar or beside the field, at most 2.5 points out, a cube,
+// with its height and whether its face is bare. A cube may be drawn wider
+// than high (a scan stretched across), a die is not. The cube's value is
+// read with the document's figures (cubeFigures).
 func squares(g *raster, ink *mask, oy, ox int, f frame, px, py int) ([]square, []square) {
 	p := f.pointWidth()
 	h := float64(f.y1 - f.y0)
@@ -520,7 +529,7 @@ func squares(g *raster, ink *mask, oy, ox int, f frame, px, py int) ([]square, [
 	var cubes, dice []square
 	for i, b := range bs {
 		hh, ww := float64(b.h()), float64(b.w())
-		if hh < 0.45*p || hh > 1.4*p || ww/hh < 0.75 || ww/hh > 1.33 {
+		if hh < 0.45*p || hh > 1.4*p || ww/hh < 0.75 || ww/hh > 1.75 {
 			continue
 		}
 		k := max(1, trunc(0.12*min(hh, ww)))
@@ -547,9 +556,13 @@ func squares(g *raster, ink *mask, oy, ox int, f frame, px, py int) ([]square, [
 		inField := (float64(f.a) < cx && cx < float64(f.b)) || (float64(f.c) < cx && cx < float64(f.d))
 		switch {
 		case inField && float64(f.y0)+0.3*h <= cy && cy <= float64(f.y1)-0.3*h:
+			if ww/hh > 1.33 {
+				continue
+			}
 			sq.dark, sq.pips = diePips(g, ink, lab, int32(i+1), b)
 			dice = append(dice, sq)
-		case inBar || cx < float64(f.a) || cx > float64(f.d):
+		case inBar || (cx < float64(f.a) && cx > float64(f.a)-2.5*p) || (cx > float64(f.d) && cx < float64(f.d)+2.5*p):
+			sq.blank = bareFace(g, b)
 			switch {
 			case cy < float64(f.y0)+0.3*h:
 				sq.place = "top"
@@ -562,6 +575,25 @@ func squares(g *raster, ink *mask, oy, ox int, f frame, px, py int) ([]square, [
 		}
 	}
 	return cubes, dice
+}
+
+// bareFace tells whether a square's inside, its outline left out, holds no
+// mark at all: no pixel even half as dark as ink, so a faint figure is
+// not taken for a bare face.
+func bareFace(g *raster, b box) bool {
+	m := max(2, trunc(0.2*float64(min(b.w(), b.h()))))
+	x0, y0, x1, y1 := b.x0+m, b.y0+m, b.x1-m, b.y1-m
+	if x1-x0 < 3 || y1-y0 < 3 {
+		return false
+	}
+	for y := y0; y < y1; y++ {
+		for x := x0; x < x1; x++ {
+			if g.at(x, y) < 0.75 {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // diePips tells a die's colour (ink over most of its inside) and counts its

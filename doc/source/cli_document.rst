@@ -225,10 +225,13 @@ n'est lu que recoupé :
 * le videau, par sa valeur lue dans son carré (chiffres du document) ou dans la
   couche texte — deux sources présentes doivent concorder — et cohérente avec sa
   place : 64 au milieu est centré, 2 à 64 en haut ou en bas appartient au joueur
-  de ce côté ;
-* les dés, comptés sur l'image et confirmés par le texte (« to play 41 ») ; le
-  trait, par la couleur des dés et leur moitié du plateau (la droite pour le
-  joueur du bas), qui doivent désigner le même joueur ;
+  de ce côté ; un carré seul à la face vierge est le videau centré, où qu'il
+  soit dessiné, puisqu'un videau possédé porte sa valeur ;
+* les dés, comptés sur l'image et confirmés par le texte voisin : un jet nommé
+  (« to play 41 », « rolls a 65 ») ou un coup écrit dont chaque pas est un dé
+  (« 2/0 2/1 », « 8/5(2) 6/3(2) ») ; le trait, par la couleur des dés et leur
+  moitié du plateau (la droite pour le joueur du bas), qui doivent désigner le
+  même joueur ;
 * le score, par le bandeau de la couche texte (``score:``, ``pip:``,
   ``7 point match``), chaque score attribué au joueur dont il porte les pips.
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/rand"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -12,9 +13,11 @@ type ctxOpts struct {
 	cube      int    // the cube's value, 0 for none
 	cubePlace string // "top", "middle", "bottom"
 	cubeText  bool   // the cube's value also in the text layer
+	cubeBare  bool   // the cube's square drawn with a bare face
 	dice      [2]int // 0 for none
 	diceDark  bool
-	diceText  bool // "to play 41" printed above the diagram
+	diceText  bool     // "to play 41" printed above the diagram
+	below     []string // words printed under the diagram: a move, a roll
 	score     [3]int
 }
 
@@ -49,7 +52,9 @@ func (c *canvas) drawContext(s synthPos, ox, oy int, p float64, o ctxOpts) []Wor
 		c.rect(x+2, y+2, x+side-2, y+side-2, 1)
 		cx, cy := float64(x)+float64(side)/2, float64(y)+float64(side)/2
 		h := 0.42 * p
-		c.inkNumber(strconv.Itoa(o.cube), cx, cy, h, 0)
+		if !o.cubeBare {
+			c.inkNumber(strconv.Itoa(o.cube), cx, cy, h, 0)
+		}
 		if o.cubeText {
 			word(strconv.Itoa(o.cube), cx, cy)
 		}
@@ -78,6 +83,9 @@ func (c *canvas) drawContext(s synthPos, ox, oy int, p float64, o ctxOpts) []Wor
 			word("play", float64(a)+4*p, float64(oy)-1.6*p)
 			word(strconv.Itoa(o.dice[0])+strconv.Itoa(o.dice[1]), float64(a)+5*p, float64(oy)-1.6*p)
 		}
+	}
+	for i, w := range o.below {
+		word(w, float64(a)+float64(1+2*i)*p, float64(y1)+1.6*p)
 	}
 	if o.score[0] > 0 {
 		x := float64(d+t) + 3*p
@@ -163,6 +171,83 @@ func TestSyntheticContext(t *testing.T) {
 		case 3:
 			if x.Read || x.DiceRead || !f["dice"] || x.Dice != o.dice || !x.CubeRead || x.CubeOwner != 1 || x.Cube != 4 || !f["score"] {
 				t.Errorf("diagram %d: context %+v, want the cube read, dice 63 counted not read, 4-away doubted; doubts %v", i+1, x, d.Doubts)
+			}
+		}
+	}
+}
+
+// TestSyntheticContextBareCubeAndRolls: a cube's bare face, wherever it is
+// drawn, is the centred cube, read; dice counted in the image are read when
+// a roll named beside the diagram ("rolls a 52") or a move written out whose
+// every step is one die agrees with them. A move whose step spends two
+// dice confirms nothing; one of other dice is a doubt, never a reading.
+func TestSyntheticContextBareCubeAndRolls(t *testing.T) {
+	r := rand.New(rand.NewSource(7))
+	cases := []ctxOpts{
+		{cube: 64, cubePlace: "top", cubeBare: true, dice: [2]int{6, 3}, diceDark: true, below: []string{"13/7", "10/7"}},
+		{cube: 64, cubePlace: "bottom", cubeBare: true, dice: [2]int{5, 2}, diceDark: true, below: []string{"Dark", "rolls", "a", "52."}},
+		{dice: [2]int{4, 4}, diceDark: true, below: []string{"8/4(2)", "6/2(2)"}},
+		{dice: [2]int{6, 1}, diceDark: true, below: []string{"13/6"}},
+		{dice: [2]int{3, 1}, diceDark: true, below: []string{"6/4", "5/4"}},
+		{dice: [2]int{2, 1}, diceDark: true, below: []string{"2/0", "2/1;"}},
+	}
+	var pages []synthPage
+	var ctxs []ctxOpts
+	for i := 0; i < 6; i++ {
+		pages = append(pages, synthPage{pos: []synthPos{randomPos(r), randomPos(r)}, opts: []drawOpts{plainOpts(36), plainOpts(36)}})
+		ctxs = append(ctxs, cases[(2*i)%6], cases[(2*i+1)%6])
+	}
+	src, want := book(t, pages, 3)
+	k := 0
+	for i, sp := range pages {
+		c := newCanvas(1275, 1650)
+		var words []Word
+		for j, s := range sp.pos {
+			ox, oy := 300, 200+j*int(14*36.0)
+			words = append(words, c.draw(s, ox, oy, sp.opts[j])...)
+			words = append(words, c.drawContext(s, ox, oy, 36, ctxs[k])...)
+			k++
+		}
+		src[i] = Page{Image: c.image(), DPI: 150, Words: words}
+	}
+	res, err := Read(context.Background(), src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.Diagrams) != len(want) {
+		t.Fatalf("%d diagrams, want %d", len(res.Diagrams), len(want))
+	}
+	for i, d := range res.Diagrams {
+		x, o := d.Context, ctxs[i]
+		reasons := map[string]string{}
+		for _, y := range d.Doubts {
+			reasons[y.Field] += y.Reason
+		}
+		if d.Board != want[i] {
+			t.Errorf("diagram %d: board %s, want %s", i+1, d.Board, want[i])
+			continue
+		}
+		if o.cubeBare && (!x.CubeRead || x.Cube != 1 || x.CubeOwner != 0 || reasons["cube"] != "") {
+			t.Errorf("diagram %d: a bare cube on the %s side read as %+v, want centred; doubts %v", i+1, o.cubePlace, x, d.Doubts)
+		}
+		if x.Dice != o.dice {
+			t.Errorf("diagram %d: dice %v counted, want %v", i+1, x.Dice, o.dice)
+			continue
+		}
+		switch i % 6 {
+		case 0, 1, 2, 5:
+			if !x.DiceRead || reasons["dice"] != "" {
+				t.Errorf("diagram %d: dice %v with %v beside not read; doubts %v", i+1, o.dice, o.below, d.Doubts)
+			}
+		case 3:
+			// The move of the diagram above, 4-4, is near enough to be
+			// read too: a doubt either way, never a reading.
+			if x.DiceRead || reasons["dice"] == "" {
+				t.Errorf("diagram %d: dice %v confirmed by a step of two dice; doubts %v", i+1, o.dice, d.Doubts)
+			}
+		case 4:
+			if x.DiceRead || !strings.Contains(reasons["dice"], "the text says otherwise") {
+				t.Errorf("diagram %d: dice %v read against a 2-1 move; doubts %v", i+1, o.dice, d.Doubts)
 			}
 		}
 	}

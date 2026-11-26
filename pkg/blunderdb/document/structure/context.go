@@ -17,12 +17,17 @@ import (
 //   - the cube: its value read in its square (figures of the document) or
 //     in the text layer, where two sources must agree, and coherent with its
 //     place — 64 in the middle is centred, 2 to 64 at the top or the bottom
-//     is owned by that side's player. A cube not found is not centred: the
-//     field is then left to the document's defaults.
+//     is owned by that side's player. A cube drawn alone with a bare face,
+//     wherever it stands, is centred: an owned cube shows its value, and
+//     neither its square nor the text layer prints one. A cube not found is
+//     not centred: the field is then left to the document's defaults.
 //   - the dice: two dice of one colour whose pips are counted in the image,
-//     confirmed by the text layer ("to play 41"); the player on roll by the
-//     dice's colour (the class of checkers they match) and their half of the
-//     board (the right half for the bottom player), which must agree.
+//     confirmed by the text layer beside the diagram: a roll named ("to play
+//     41", "rolls a 65") or a move written out whose steps are those dice
+//     ("2/0 2/1"). The count alone, however clear, is one source; the
+//     player on roll by the dice's colour (the class of checkers they match)
+//     and their half of the board (the right half for the bottom player),
+//     which must agree.
 //   - the score: a panel of the text layer giving the match length and two
 //     scores, each assigned to a player by the pip count printed beside it,
 //     which must be the pips read for that player.
@@ -54,9 +59,13 @@ var cubeValues = map[int]bool{2: true, 4: true, 8: true, 16: true, 32: true, 64:
 var (
 	reScoreTag = regexp.MustCompile(`(?i)^score:?$`)
 	rePlayTag  = regexp.MustCompile(`(?i)^(plays?|rolls?|rolled)$`)
-	reDiceWord = regexp.MustCompile(`^\(?([1-6])-?([1-6])\)?[.,:;]?$`)
+	reDiceWord = regexp.MustCompile(`^\(?([1-6])-?([1-6])\)?[.,:;?!]?$`)
 	rePoint    = regexp.MustCompile(`(?i)^(point|pt\.?|points)$`)
 	reMatch    = regexp.MustCompile(`(?i)^match`)
+	reArticle  = regexp.MustCompile(`(?i)^an?$`)
+	// reMoveWord is one part of a move's notation: "13/7", "bar/22*",
+	// "6/off", "13/9/5", "8/5(2)".
+	reMoveWord = regexp.MustCompile(`(?i)^\(?((?:bar|\d{1,2})(?:/(?:\d{1,2}|off)\*?)+)(?:\(([1-4])\))?\)?[.,:;]?$`)
 )
 
 // fieldPoint is the width of one point in the page's pixels.
@@ -92,15 +101,46 @@ func (rd *boardReading) placeOf(y float64) string {
 }
 
 // cubeFigures keeps, once the document's figures are read, the numbers of
-// a cube's value read in a square beside the field.
+// a cube's value read in a square beside the field, and every number
+// printed inside a cube drawn, read or not, to name why its value is not.
 func cubeFigures(rd *boardReading) []printedNumber {
 	var out []printedNumber
 	for _, n := range rd.numbers {
-		if n.boxed && cubeValues[n.val] && rd.inCubeZone(n.cx(), n.cy()) {
+		if !rd.inCubeZone(n.cx(), n.cy()) {
+			continue
+		}
+		if (n.boxed && cubeValues[n.val]) || squareOf(rd.cubes, n) >= 0 {
 			out = append(out, n)
 		}
 	}
 	return out
+}
+
+// squareOf is the index of the square holding the number's centre, or -1.
+func squareOf(sqs []square, n printedNumber) int {
+	for i, s := range sqs {
+		if s.x0 <= n.cx() && n.cx() <= s.x1 && s.y0 <= n.cy() && n.cy() <= s.y1 {
+			return i
+		}
+	}
+	return -1
+}
+
+// unreadCube says why the value of a cube drawn, its face not bare, is not
+// read: the figures found in it, or their absence.
+func unreadCube(rd *boardReading, k int) string {
+	for _, n := range rd.cubeFigs {
+		if squareOf(rd.cubes, n) != k {
+			continue
+		}
+		if n.val < 0 {
+			return "the figures printed in it are not recognised"
+		}
+		if !cubeValues[n.val] {
+			return fmt.Sprintf("%d is read in it, not a cube's value", n.val)
+		}
+	}
+	return "no figure of the document's is found in it (printed light on dark, or smaller)"
 }
 
 // readContext reads the diagram's context and names what it leaves unread.
@@ -135,7 +175,9 @@ func readCube(rd *boardReading, d *Diagram, words []Word, prof Profile, c *Conte
 	}
 	var fs []found
 	for _, n := range rd.cubeFigs {
-		fs = append(fs, found{n.val, rd.placeOf(n.cy()), "image"})
+		if n.boxed && cubeValues[n.val] {
+			fs = append(fs, found{n.val, rd.placeOf(n.cy()), "image"})
+		}
 	}
 	for i, w := range words {
 		if !reNumber.MatchString(w.Text) {
@@ -164,9 +206,28 @@ func readCube(rd *boardReading, d *Diagram, words []Word, prof Profile, c *Conte
 		drawn[s.place] = true
 	}
 	if len(fs) == 0 {
-		for _, pl := range []string{"top", "middle", "bottom"} {
-			if drawn[pl] && pl != "middle" {
-				add("cube", "cube drawn", "a cube is drawn on the %s side: its value is not read, the position says centred", pl)
+		// A bare face, alone, is the centred cube: an owned cube always
+		// shows its value, and neither the square nor the text layer
+		// prints one. Some documents draw it so, wherever it stands.
+		if len(rd.cubes) == 1 && rd.cubes[0].blank {
+			c.Cube, c.CubeOwner, c.CubeRead = 1, 0, true
+			return
+		}
+		bare := 0
+		for _, s := range rd.cubes {
+			if s.blank {
+				bare++
+			}
+		}
+		if bare > 0 {
+			add("cube", "cube drawn", "%d cubes are drawn, %d with a bare face: not read, the position says centred", len(rd.cubes), bare)
+			return
+		}
+		said := map[string]bool{}
+		for k, s := range rd.cubes {
+			if s.place != "middle" && !said[s.place] {
+				said[s.place] = true
+				add("cube", "cube drawn", "a cube is drawn on the %s side: its value is not read, %s; the position says centred", s.place, unreadCube(rd, k))
 			}
 		}
 		return
@@ -228,30 +289,121 @@ func readDice(rd *boardReading, words []Word, prof Profile, c *Context, add func
 	// The dice: confirmed by the text layer beside the diagram.
 	X0, Y0, X1, Y1 := float64(rd.bbox.x0), float64(rd.bbox.y0), float64(rd.bbox.x1), float64(rd.bbox.y1)
 	p := rd.fieldPoint()
-	var said [][2]int
-	for i := 1; i < len(words); i++ {
-		w := words[i]
+	near := func(w Word) bool {
 		cx, cy := (w.X0+w.X1)/2, (w.Y0+w.Y1)/2
-		if cx < X0-8*p || cx > X1+8*p || cy < Y0-4*p || cy > Y1+4*p {
-			continue
-		}
-		if m := reDiceWord.FindStringSubmatch(w.Text); m != nil && rePlayTag.MatchString(words[i-1].Text) {
-			x, _ := strconv.Atoi(m[1])
-			y, _ := strconv.Atoi(m[2])
-			said = append(said, [2]int{x, y})
-		}
+		return cx >= X0-8*p && cx <= X1+8*p && cy >= Y0-4*p && cy <= Y1+4*p
 	}
+	said := textRolls(words, near)
 	same := func(s [2]int) bool {
 		return s == c.Dice || s == [2]int{c.Dice[1], c.Dice[0]}
 	}
+	agree := false
+	for _, s := range said {
+		agree = agree || same(s)
+	}
 	switch {
-	case len(said) == 1 && same(said[0]):
+	case agree:
 		c.DiceRead = true
 	case len(said) == 0:
 		add("dice", "dice drawn", "dice %d-%d counted in the image, no text confirms them", c.Dice[0], c.Dice[1])
 	default:
 		add("dice", "dice drawn", "dice %d-%d counted in the image, the text says otherwise", c.Dice[0], c.Dice[1])
 	}
+}
+
+// textRolls are the rolls the text layer names beside a diagram (words for
+// which near holds), each a second source for the dice counted in the
+// image: a roll tagged by a verb ("to play 41", "rolls a 65"), or a move
+// written out whose every step is one die ("2/0 2/1" is 2-1, "8/5(2) 6/3(2)"
+// is 3-3; a checker borne off spends the die of its point). A move with a
+// step of two dice tells no roll and is passed over. A checker borne off
+// with a larger die makes the text disagree with the image: a doubt, never
+// a reading.
+func textRolls(words []Word, near func(Word) bool) [][2]int {
+	var out [][2]int
+	for i := 1; i < len(words); i++ {
+		w := words[i]
+		if !near(w) {
+			continue
+		}
+		m := reDiceWord.FindStringSubmatch(w.Text)
+		if m == nil {
+			continue
+		}
+		tag := i - 1
+		if reArticle.MatchString(words[tag].Text) && tag > 0 {
+			tag--
+		}
+		if rePlayTag.MatchString(words[tag].Text) {
+			x, _ := strconv.Atoi(m[1])
+			y, _ := strconv.Atoi(m[2])
+			out = append(out, [2]int{x, y})
+		}
+	}
+	for i := 0; i < len(words); {
+		j := i
+		var steps []int
+		exact := true
+		for ; j < len(words) && near(words[j]); j++ {
+			m := reMoveWord.FindStringSubmatch(words[j].Text)
+			if m == nil {
+				break
+			}
+			times := 1
+			if m[2] != "" {
+				times, _ = strconv.Atoi(m[2])
+			}
+			pts := strings.Split(strings.ReplaceAll(strings.ToLower(m[1]), "*", ""), "/")
+			for k := 1; k < len(pts); k++ {
+				from, to := pointOf(pts[k-1]), pointOf(pts[k])
+				d := from - to
+				if d < 1 || d > 6 {
+					exact = false // a step of two dice
+				}
+				for range times {
+					steps = append(steps, d)
+				}
+			}
+		}
+		if j == i {
+			i++
+			continue
+		}
+		if r, ok := rollOf(steps); ok && exact {
+			out = append(out, r)
+		}
+		i = j
+	}
+	return out
+}
+
+// pointOf is a point of a move's notation: 25 the bar, 0 off.
+func pointOf(s string) int {
+	switch s {
+	case "bar":
+		return 25
+	case "off":
+		return 0
+	}
+	n, _ := strconv.Atoi(s)
+	return n
+}
+
+// rollOf is the roll a move's steps spend: two different dice once each,
+// or one die two to four times (a double, possibly not played in full).
+func rollOf(steps []int) ([2]int, bool) {
+	switch {
+	case len(steps) == 2 && steps[0] != steps[1]:
+		return [2]int{steps[0], steps[1]}, true
+	case len(steps) >= 2 && len(steps) <= 4:
+		for _, d := range steps {
+			if d != steps[0] {
+				return [2]int{}, false
+			}
+		}
+		return [2]int{steps[0], steps[0]}, true
+	}
+	return [2]int{}, false
 }
 
 // readScore reads the panel a diagram's text layer prints beside it — "score:
