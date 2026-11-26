@@ -771,6 +771,28 @@ export namespace database {
 	        this.training_items_without_session = source["training_items_without_session"];
 	    }
 	}
+	export class PaperArchiveImport {
+	    codes: number;
+	    repaired: number;
+	    imported: number[];
+	    duplicates: number;
+	    missing?: number[];
+	    failed?: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new PaperArchiveImport(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.codes = source["codes"];
+	        this.repaired = source["repaired"];
+	        this.imported = source["imported"];
+	        this.duplicates = source["duplicates"];
+	        this.missing = source["missing"];
+	        this.failed = source["failed"];
+	    }
+	}
 	export class PhaseStats {
 	    Phase: string;
 	    PR: number;
@@ -4284,33 +4306,7 @@ export namespace gammonnet {
 		}
 	}
 	
-	
-	export class CubeMatrixCell {
-	    awayOnRoll: number;
-	    awayOpponent: number;
-	    verdict?: string;
-	    noDouble: number;
-	    doubleTake: number;
-	    doublePass: number;
-	    refused?: boolean;
-	    reason?: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new CubeMatrixCell(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.awayOnRoll = source["awayOnRoll"];
-	        this.awayOpponent = source["awayOpponent"];
-	        this.verdict = source["verdict"];
-	        this.noDouble = source["noDouble"];
-	        this.doubleTake = source["doubleTake"];
-	        this.doublePass = source["doublePass"];
-	        this.refused = source["refused"];
-	        this.reason = source["reason"];
-	    }
-	}
+
 }
 
 export namespace gui {
@@ -5292,6 +5288,57 @@ export namespace image {
 }
 
 export namespace ingest {
+	
+	export class ArchiveSkip {
+	    matchId: number;
+	    reason: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ArchiveSkip(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.matchId = source["matchId"];
+	        this.reason = source["reason"];
+	    }
+	}
+	export class ArchiveExport {
+	    matches: number;
+	    codes: number;
+	    bytes: number;
+	    skipped?: ArchiveSkip[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ArchiveExport(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.matches = source["matches"];
+	        this.codes = source["codes"];
+	        this.bytes = source["bytes"];
+	        this.skipped = this.convertValues(source["skipped"], ArchiveSkip);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	
 	export class DBAnalysis {
 	    sourceVersion: string;
@@ -6388,6 +6435,44 @@ export namespace printsheet {
 	        this.comments = source["comments"];
 	        this.expanded = source["expanded"];
 	        this.reimportCode = source["reimportCode"];
+	    }
+	}
+	export class PositionSource {
+	    ids?: number[];
+	    query?: string;
+	    collection?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PositionSource(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ids = source["ids"];
+	        this.query = source["query"];
+	        this.collection = source["collection"];
+	    }
+	}
+	export class PositionsOptions {
+	    language?: string;
+	    title?: string;
+	    analysis: boolean;
+	    verso: boolean;
+	    comments: boolean;
+	    expanded: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new PositionsOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.language = source["language"];
+	        this.title = source["title"];
+	        this.analysis = source["analysis"];
+	        this.verso = source["verso"];
+	        this.comments = source["comments"];
+	        this.expanded = source["expanded"];
 	    }
 	}
 

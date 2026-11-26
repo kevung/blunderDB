@@ -530,6 +530,10 @@ export function ExportMatchMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportMatchMAT'](arg1, arg2);
 }
 
+export function ExportPaperArchive(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ExportPaperArchive'](arg1, arg2, arg3);
+}
+
 export function ExportTranscriptionMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportTranscriptionMAT'](arg1, arg2);
 }
@@ -872,6 +876,10 @@ export function ImportMET(arg1) {
 
 export function ImportOGXMMatch(arg1) {
   return window['go']['database']['Database']['ImportOGXMMatch'](arg1);
+}
+
+export function ImportPaperArchive(arg1) {
+  return window['go']['database']['Database']['ImportPaperArchive'](arg1);
 }
 
 export function ImportReport(arg1) {
@@ -1268,6 +1276,10 @@ export function PlayerRankingCtx(arg1, arg2, arg3) {
 
 export function PositionListFields(arg1) {
   return window['go']['database']['Database']['PositionListFields'](arg1);
+}
+
+export function PositionSheetHTML(arg1, arg2) {
+  return window['go']['database']['Database']['PositionSheetHTML'](arg1, arg2);
 }
 
 export function PositionsToRollout(arg1, arg2, arg3) {

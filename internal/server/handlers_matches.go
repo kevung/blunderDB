@@ -35,6 +35,14 @@ type matchSheetResp struct {
 	HTML string `json:"html"`
 }
 
+// positionSheetReq is the body of positions.sheet: the list (ids, a query or
+// a collection, exactly one) and the choices of the print dialog.
+type positionSheetReq struct {
+	printsheet.PositionSource
+	// Options absent is DefaultPositionsOptions, as in the other two modes.
+	Options *printsheet.PositionsOptions `json:"options,omitempty"`
+}
+
 type matchCommentReq struct {
 	ID      int64  `json:"id"`
 	Comment string `json:"comment"`
@@ -152,6 +160,16 @@ func (s *Server) matchRoutes() []route {
 				o = *req.Options
 			}
 			page, err := printsheet.BuildMatches(ctx, s.opts.Storage, scope, req.MatchIDs, o)
+			return matchSheetResp{HTML: string(page)}, err
+		})},
+		// The printable position list, from the generator the desktop app and
+		// `sheet` use: the whole list the source names; it writes nothing.
+		{http.MethodPost, "/v1/positions.sheet", rpc(func(ctx context.Context, scope string, req positionSheetReq) (matchSheetResp, error) {
+			o := printsheet.DefaultPositionsOptions()
+			if req.Options != nil {
+				o = *req.Options
+			}
+			page, err := printsheet.BuildPositions(ctx, s.opts.Storage, scope, req.PositionSource, o)
 			return matchSheetResp{HTML: string(page)}, err
 		})},
 		{http.MethodPost, "/v1/matches.get", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Match, error) {

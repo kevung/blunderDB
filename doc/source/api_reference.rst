@@ -333,6 +333,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.setDrawing                 JSON
      POST /v1/positions.setIndividuallyImported    JSON
      POST /v1/positions.setPublicId                JSON
+     POST /v1/positions.sheet                      JSON
      POST /v1/positions.similar                    JSON
      POST /v1/positions.update                     JSON
      POST /v1/positions.variants                   JSON

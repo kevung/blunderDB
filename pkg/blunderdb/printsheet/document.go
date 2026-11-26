@@ -60,6 +60,14 @@ body { --ink: #111; --soft: #555; --paper: #fff;
 .pe > .cm { grid-column: 2 / -1 }
 .qrb { break-inside: avoid; display: flex; gap: 1.2em; align-items: flex-end; margin-top: .9em; color: var(--soft) }
 .qrb svg { flex: none; display: block; shape-rendering: crispEdges }
+.pe.cont > .cm::before, .de.cont > .cm:first-child::before { content: "… " }
+.dl { column-gap: 1.6em; column-rule: .3pt solid #aaa }
+.dl.two { column-count: 2 } .dl.many { column-width: 27em } .dl.ans { column-width: 30em }
+.de { display: flex; gap: .6em; align-items: baseline; break-inside: avoid }
+.de .no { min-width: 1.9em; text-align: right; font-weight: 600; flex: none }
+.de .nt { flex: none } .de .an { min-width: 0 }
+.de.cont { display: block; padding-left: 2.5em }
+.pg { position: absolute; bottom: 4mm; right: 8mm; color: var(--soft); font-size: 6pt }
 `
 
 // BodySizes is the scale the fitting script tries, largest first: MaxBodyPt
@@ -106,19 +114,128 @@ const fitScript = `(function () {
     doc.insertBefore(n, s.nextSibling);
     return n;
   }
+  function height(x) { var h = 0, rs = x.getClientRects(); for (var k = 0; k < rs.length; k++) h += rs[k].height; return h; }
+  // long tells whether entry x, just laid on sheet s at the smallest size,
+  // is worth cutting there: comments taller than a third of the page, and
+  // the rest of the entry fitting without them.
+  function long(x, s) {
+    var cms = x.querySelectorAll('.cm'), t = [], ok;
+    if (!cms.length || height(x) <= avail(s) / 3) return false;
+    cms.forEach(function (cm, k) { t[k] = cm.textContent; cm.textContent = ''; });
+    ok = fits(s, MIN);
+    cms.forEach(function (cm, k) { cm.textContent = t[k]; });
+    fits(s, MIN);
+    return ok;
+  }
   function entries(pl) { return pl.querySelectorAll(':scope > .pe'); }
+  // split cuts entry e, alone on sheet s and taller than it, at the last
+  // word that still fits, and returns the rest as a continuation entry: its
+  // comments, moved whole from the end, then the end of the one cut.
+  function split(e, s) {
+    if (!e) return null;
+    var cms = e.querySelectorAll('.cm'), c = e.cloneNode(false), k;
+    c.classList.add('cont');
+    for (k = cms.length - 1; k >= 0; k--) {
+      var cm = cms[k], text = cm.textContent;
+      cm.textContent = '';
+      if (!fits(s, MIN)) { cm.textContent = text; c.insertBefore(cm, c.firstChild); continue; }
+      var lo = 0, hi = text.length;
+      while (lo < hi) { var mid = (lo + hi + 1) >> 1; cm.textContent = text.slice(0, mid); if (fits(s, MIN)) lo = mid; else hi = mid - 1; }
+      var cut = text.lastIndexOf(' ', lo);
+      if (cut <= 0) cut = lo;
+      cm.textContent = text.slice(0, cut);
+      var rest = cm.cloneNode(false); rest.textContent = text.slice(cut).replace(/^\s+/, '');
+      c.insertBefore(rest, c.firstChild);
+      break;
+    }
+    return c.firstChild ? c : null;
+  }
   function spill(doc, s, head) {
     while (!fit(s)) {
       var pl = s.querySelector('.pl');
-      if (!pl || entries(pl).length < 2) return;
+      if (!pl || entries(pl).length < 1) return;
       var next = sheetAfter(doc, s, head), npl = document.createElement('div');
       npl.className = 'pl'; next.firstElementChild.appendChild(npl);
       var es = entries(pl);
       while (es.length > 1 && !fits(s, MIN)) { npl.insertBefore(es[es.length - 1], npl.firstChild); es = entries(pl); }
+      if (!fits(s, MIN)) {
+        var c = split(es[0], s);
+        if (!c) { doc.removeChild(next); fit(s); return; }
+        npl.insertBefore(c, npl.firstChild);
+      }
       fit(s); s = next;
     }
   }
+  // list lays a data-fill document out page by page: header and legend on
+  // each, every page holding the lines that fit at the smallest size; with a
+  // data-verso block, each front page is followed by the back that carries
+  // the same numbers. A line taller than a page goes on over the next one.
+  // Every page is then fitted and numbered.
+  function list(doc) {
+    var s = doc.querySelector('.sheet'), inner = s.firstElementChild;
+    var dl = inner.querySelector(':scope > .dl'), v = inner.querySelector(':scope > [data-verso]');
+    if (!dl) return;
+    var es = Array.prototype.slice.call(dl.children), as = null, vframe = null;
+    es.forEach(function (e) { dl.removeChild(e); });
+    if (v) {
+      var vdl = v.querySelector('.dl');
+      as = Array.prototype.slice.call(vdl.children);
+      as.forEach(function (e) { vdl.removeChild(e); });
+      inner.removeChild(v);
+      vframe = inner.cloneNode(true);
+      vframe.replaceChild(v, vframe.querySelector(':scope > .dl'));
+      var vlg = vframe.querySelector(':scope > .lg'); if (vlg) vframe.removeChild(vlg);
+    }
+    var rframe = inner.cloneNode(true), pages = [], i = 0, r = s, last = s;
+    function page(frame) {
+      var n = document.createElement('div'); n.className = 'sheet'; n.appendChild(frame.cloneNode(true));
+      doc.insertBefore(n, last.nextSibling); last = n; return n;
+    }
+    for (;;) {
+      var b = vframe ? page(vframe) : null, rp = r.querySelector('.dl'), bp = b && b.querySelector('[data-verso] .dl'), n = 0;
+      pages.push(r); if (b) pages.push(b);
+      while (i < es.length) {
+        var e = es[i], a = as && as[i];
+        if (e) rp.appendChild(e);
+        if (a) bp.appendChild(a);
+        if (!e && a && n === 0 && b) {
+          // An answer going on past its back: the front of this sheet,
+          // empty otherwise, carries it first, then its back.
+          rp.appendChild(a);
+          if (fits(r, MIN)) { i++; n++; continue; }
+          var rest = split(a, r);
+          bp.appendChild(rest);
+          if (fits(b, MIN)) { i++; n++; continue; }
+          as[i] = split(rest, b);
+          if (!as[i]) i++;
+          break;
+        }
+        var okR = fits(r, MIN), okB = !b || fits(b, MIN);
+        if (okR && okB) { i++; n++; continue; }
+        if (n > 0) {
+          // A long line starts where the page has room rather than leaving
+          // it nearly empty; a short one moves whole to the next page.
+          var c = okB ? (e && long(e, r) ? split(e, r) : null) : (okR && long(a, b) ? split(a, b) : null);
+          if (!c) { if (e) rp.removeChild(e); if (a) bp.removeChild(a); break; }
+          if (okB) { es[i] = c; if (as) as[i] = null; } else { as[i] = c; es[i] = null; }
+          break;
+        }
+        var c = okR ? split(a, b) : split(e, r);
+        if (!c) i++;
+        else if (okR) { as[i] = c; es[i] = null; }
+        else { es[i] = c; if (as) as[i] = null; }
+        break;
+      }
+      if (i >= es.length) break;
+      r = page(rframe);
+    }
+    pages.forEach(function (x, k) {
+      fit(x);
+      var p = document.createElement('div'); p.className = 'pg'; p.textContent = (k + 1) + ' / ' + pages.length; x.appendChild(p);
+    });
+  }
   document.querySelectorAll('.doc').forEach(function (doc) {
+    if (doc.hasAttribute('data-fill')) { list(doc); return; }
     var s = doc.querySelector('.sheet');
     if (!s || fit(s)) return;
     var v = s.querySelector('[data-verso]'), head = s.querySelector('.mh');
@@ -154,4 +271,12 @@ func Document(lang, title string, docs []string, tail string) []byte {
 // verso when it needs one.
 func Sheet(kind, content string) string {
 	return `<section class="doc" data-doc="` + kind + `"><div class="sheet"><div>` + content + `</div></div></section>`
+}
+
+// ListSheet is a document laid out line by line over as many pages as it
+// takes (the script's data-fill layout): content holds the header, the
+// legend, the .dl block of lines and, optionally, the data-verso block of
+// their backs.
+func ListSheet(kind, content string) string {
+	return `<section class="doc" data-doc="` + kind + `" data-fill><div class="sheet"><div>` + content + `</div></div></section>`
 }

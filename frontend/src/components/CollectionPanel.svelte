@@ -1,4 +1,5 @@
 <script>
+    import { openCollectionPrint } from '../services/positionSheetService.js';
     import { logger } from '../utils/logger.js';
     import { refusalReason } from '../utils/refusal.js';
     import NewButton from './panels/NewButton.svelte';
@@ -789,7 +790,18 @@
                 rowMenu={(collection) =>
                     collectionEdit.isEditing(collection.id)
                         ? []
-                        : menuFor('collection', { do: { open: () => openCollection(collection), edit: () => startEditing(collection), trash: () => deleteCollection(collection, undefined) } }, $t)}
+                        : menuFor(
+                              'collection',
+                              {
+                                  do: {
+                                      open: () => openCollection(collection),
+                                      print: () => openCollectionPrint(collection),
+                                      edit: () => startEditing(collection),
+                                      trash: () => deleteCollection(collection, undefined)
+                                  }
+                              },
+                              $t
+                          )}
                 onReorder={collectionOrder.reorder}
                 rowAttrs={(collection) =>
                     libraryDragAttrs(() => (collectionEdit.isEditing(collection.id) ? null : { group: $activeGroupId, kind: 'collection', id: collection.id, label: collection.name }))}

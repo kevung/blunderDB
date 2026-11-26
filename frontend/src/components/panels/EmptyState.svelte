@@ -11,8 +11,9 @@
     // because nothing was ever imported. `action` replaces it when the panel's content is made
     // here rather than imported (a new collection, a new deck).
     /** @typedef {{ label: string, onClick: () => void }} EmptyAction */
-    /** @type {{ text: string, actions?: boolean, clear?: EmptyAction | null, action?: EmptyAction | null }} */
-    let { text, actions = true, clear = null, action = null } = $props();
+    /** `extra` sits beside the primary action of an open base: a second way in, such as another kind of import. */
+    /** @type {{ text: string, actions?: boolean, clear?: EmptyAction | null, action?: EmptyAction | null, extra?: EmptyAction | null }} */
+    let { text, actions = true, clear = null, action = null, extra = null } = $props();
 </script>
 
 <div class="empty-state" data-testid="empty-state">
@@ -27,6 +28,9 @@
                 <button type="button" class="empty-btn primary" onclick={() => importPosition()}>{$t('emptyState.import')}</button>
             {:else}
                 <button type="button" class="empty-btn primary" onclick={() => openDatabase()}>{$t('emptyState.openDatabase')}</button>
+            {/if}
+            {#if extra && !clear && $databasePathStore}
+                <button type="button" class="empty-btn" data-testid="empty-extra" onclick={extra.onClick}>{extra.label}</button>
             {/if}
         </span>
     {/if}

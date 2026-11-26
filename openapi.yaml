@@ -6473,6 +6473,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/positions.sheet:
+    post:
+      operationId: positions.sheet
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionSheetReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/matchSheetResp"
   /v1/positions.similar:
     post:
       operationId: positions.similar
@@ -10819,9 +10836,18 @@ components:
           format: int64
         created:
           type: boolean
+    positionSheetReq:
+      type: object
+      properties:
+        options:
+          $ref: "#/components/schemas/printsheet_PositionsOptions"
+          nullable: true
     printsheet_MatchOptions:
       type: object
       description: "Opaque: see the Go type printsheet.MatchOptions (defined outside internal/server, not expanded here)."
+    printsheet_PositionsOptions:
+      type: object
+      description: "Opaque: see the Go type printsheet.PositionsOptions (defined outside internal/server, not expanded here)."
     publicIDResp:
       type: object
       properties:

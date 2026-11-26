@@ -45,6 +45,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `study` - The study backlog: your unhandled blunders across every import, and the "studied" mark
 - `collection` - Manage collections (list, show, create, rename, delete, export)
 - `archive` - Print matches as QR codes on A4 sheets, or import them back from the page or a scan
+- `sheet` - Print a search, a collection or a list of positions in ArkID, one line each
 - `document` - Read a PDF's diagrams into a relevé, check one, or import its positions into a collection
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `stats` - Statistics computed apart from list --type stats (recurring)
@@ -952,6 +953,28 @@ are not archived: they are computed again after the import. Matches go through
 the ordinary import — an import batch, and a match already in the library, from
 the same archive or another format, counts as a duplicate. `import --type match
 --file page.html` reads an archive page the same way.
+
+## Sheet Command
+
+Print a list of positions to study away from the computer, on a real board: the
+whole result of a search, a collection (a living one through its query) or a
+list of ids, one line a position.
+
+```bash
+./blunderDB sheet --db <file> (--query <q> | --collection <id> | --ids <ids>) [--output list.html] [options]
+```
+
+Each line gives the number, the ArkID, the pips of the player on roll and of the
+opponent (to check the board once set up), then the analysis: the best play in
+bold, the second one and its loss in thousandths (−45 for 0.045, on the scale
+the analysis is stored in), the chances of winning and of a gammon in percent;
+for a cube decision, the right action and what the two others lose. The document
+runs over as many numbered pages as it takes, header and legend on each. With
+`--verso`, each page of positions is followed by a page of answers under the
+same numbers: printed on both sides, the front is a quiz. `--comments` prints the
+positions' comments whole, on the answers' side with `--verso`. At most 3000
+positions a file: a longer list is refused rather than cut. Nothing is written
+to the library; the daemon's route is `positions.sheet`.
 
 ## Document Command
 
@@ -4683,7 +4706,8 @@ HTML file a browser prints or saves as PDF: header, transcription with ? and ??
 at the library's thresholds, and apart the positions to review written in ArkID,
 numbered in the transcription. The body shrinks from 9 to 5.5 pt to fit one page;
 the positions go overleaf when they still do not, and on further sheets when the
-overleaf is full: no position is ever cut. At most 100 matches a file.
+overleaf is full; a comment longer than a sheet goes on over the next: nothing is
+ever cut off. At most 100 matches a file.
 Nothing is written to the library.
 
 Options:
@@ -5304,6 +5328,50 @@ Examples:
 
   # Filters no flag exposes: a move pattern, a comment tag, an analysis date
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
+```
+
+### `blunderdb sheet`
+
+```
+Usage: blunderdb sheet --db FILE (--query Q | --collection ID | --ids IDS) [options]
+
+Write a printable list of positions as one self-contained HTML file a browser
+prints or saves as PDF: one line a position — number, ArkID, pips of the player
+on roll and of the opponent — then its analysis: best play in bold, another and
+its loss in thousandths, the chances of winning and of a gammon; for a cube
+decision, the right action and what the others lose. The whole list is printed,
+on as many numbered pages as it takes, header and legend on each; a comment
+longer than a page goes on over the next: nothing is ever cut off. With --verso
+each page of positions is followed by its answers. At most 3000 positions;
+a longer list is refused. Nothing is written to the library.
+
+Options:
+  -analysis
+    	Write each position's short analysis on its line (default true)
+  -collection int
+    	Print this collection; a living one is resolved by its query
+  -comments
+    	Print the positions' comments, whole (overleaf with --verso) (default true)
+  -db string
+    	Path to the database file (required)
+  -expanded
+    	Write the ArkIDs in their developed form
+  -ids string
+    	Print these comma-separated position ids, in this order
+  -lang string
+    	Sheet language: fr, en, de, el, es, fi, it, ja, ru (default "en")
+  -output string
+    	HTML file to write (default: standard output)
+  -query string
+    	Print the result of this search, in the command bar's grammar (see search --query-help)
+  -title string
+    	Title of every page (default: the query, the collection's name)
+  -verso
+    	Print the analyses overleaf, under the same numbers
+
+Examples:
+  blunderdb sheet --db database.db --query 'E>80' --lang fr --output blunders.html
+  blunderdb sheet --db database.db --collection 3 --verso --comments=false
 ```
 
 ### `blunderdb stats biases`

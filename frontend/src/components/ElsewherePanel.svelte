@@ -21,6 +21,7 @@
     import { logger } from '../utils/logger.js';
     import { openDatabaseInNewGroup } from '../services/databaseService.js';
     import { libraryDrag } from '../utils/libraryDrag.js';
+    import { openIdsPrint } from '../services/positionSheetService.js';
     import { renderPositionSVG } from '../services/diagramService.js';
     import { t } from '../i18n';
 
@@ -28,6 +29,9 @@
     const THUMB_HEIGHT = 96;
 
     let others = $derived($groupIdsStore.filter((id) => id !== $activeGroupId));
+    // The Basket's positions of the library on screen: the only ones its
+    // print can read, the others living in another library.
+    let basketHere = $derived($transferBasketStore.filter((i) => i.kind === 'position' && i.group === $activeGroupId).map((i) => i.id));
     // An empty base shows the empty board (positionStore.js): no checker, nothing to compare.
     let hasPosition = $derived(!!$databasePathStore && !!$positionStore?.board?.points?.some((p) => p.checkers > 0));
 
@@ -341,6 +345,11 @@
                 >
                 {#if $transferBasketStore.length > 0}
                     <button type="button" class="link" data-testid="transfer-lot-empty" onclick={() => emptyBasket()}>{$t('transfer.emptyBasket')}</button>
+                {/if}
+                {#if basketHere.length > 0}
+                    <button type="button" class="link" data-testid="transfer-lot-print" title={$t('positionSheet.basketTip')} onclick={() => openIdsPrint(basketHere, $t('positionSheet.basketTitle'))}
+                        >{$t('positionSheet.basket')}</button
+                    >
                 {/if}
             </header>
             {#if $transferBasketStore.length === 0}

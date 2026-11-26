@@ -305,6 +305,20 @@ func readFileCapped(filePath string) (*FileDialogResponse, error) {
 	}, nil
 }
 
+// OpenPaperArchiveDialog opens a multi-file selection dialog for paper
+// archives: the exported page, or scans and photographs of its sheets.
+// Images go here rather than through OpenPositionFilesDialog, where a PNG is
+// a board screenshot to capture.
+func (a *App) OpenPaperArchiveDialog() ([]string, error) {
+	return runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Import a Paper Archive",
+		Filters: []runtime.FileFilter{
+			{DisplayName: "Paper archive (*.html, *.png, *.jpg)", Pattern: "*.html;*.htm;*.png;*.jpg;*.jpeg"},
+			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
+		},
+	})
+}
+
 // OpenPositionFilesDialog opens a multi-file selection dialog for position and match files.
 func (a *App) OpenPositionFilesDialog() ([]string, error) {
 	return runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{

@@ -16,16 +16,28 @@ papier par codes QR. Issues #984 à #987.
   `match sheet`, route `/v1/matches.sheet`, action « Imprimer… » du panneau Match et sa
   boîte d'options. Le code de réimport est l'archive papier du match, dessinée et
   embarquée : la feuille enregistrée se réimporte comme une page d'archive.
+- #987 listes de positions : `printsheet.BuildPositions` (source `ids` | `query` |
+  `collection`, plafond `MaxPositions` = 3000 refusé par `storage.ErrInvalid`),
+  `Database.PositionSheetHTML`, commande `sheet`, route `/v1/positions.sheet` (dans
+  `heavyRoute`), mise en page `data-fill` du script (pages numérotées, recto positions /
+  verso réponses par paire). Interface : « Imprimer la liste… » (menu du plateau, liste
+  parcourue entière), « Imprimer… » d'une collection, « Imprimer les positions » du
+  panier ; boîte « Archive papier… » du menu d'un match (export match / liste /
+  bibliothèque, import d'un fichier, d'un scan ou d'une photo). Une entrée plus haute
+  qu'une feuille se poursuit sur la suivante, coupée à un mot de son commentaire ; une
+  entrée longue commence sur la page en cours, et la suite d'une réponse au verso occupe le
+  recto suivant plutôt que de le laisser vide. L'ArkID garde sa largeur (`.de .nt`
+  `flex: none`), l'analyse passe à la ligne. Import d'archive papier aussi par la liste des
+  matchs vide et la commande `import_archive` (`iar`).
+- Rendu des feuilles tenu par `frontend/tests/e2e/print-sheet.spec.js` (CI e2e) sur les
+  fixtures que `TestPrintFixtures` écrit (`-update-fixtures` après un changement de rendu).
 
 ## À faire, dans l'ordre
 
-1. #987 listes de positions imprimables, et entrées d'interface de l'archive papier. Le
-   mécanisme est prêt : `printsheet.Document` / `Sheet`, les classes `.pl`, `.pe`, `.ref`,
-   `.nt`, `.qrb`, et le bloc `data-verso` que le script passe au verso.
-
-Les deux issues citent la maquette par un chemin local : elle est ici,
-`tasks/ark-impression/maquette-feuille.html` (données factices). Elle porte l'encodeur de
-référence, les trois documents (Match, Positions, Archive) et leurs options.
+1. #987 point 5 : code de réimport des listes de positions (voir l'écart ci-dessous). La
+   pagination se décide dans le navigateur ; le code par page demande soit une pagination
+   côté Go, soit des codes par tranche fixe que le script place sur la page de leur
+   première position. À trancher avant d'écrire le codec.
 
 ## Décisions
 
@@ -42,7 +54,9 @@ référence, les trois documents (Match, Positions, Archive) et leurs options.
 - Tous les matchs tiennent sur une page A4 ; 251 coups imprimés en médiane, 756 au plus.
 - Corps d'environ 8 pt pour un match en 7 ou 9 points, 6,5 pt en 11 ou 13 ; plancher 5,5 pt.
 - ArkID : 29 caractères en médiane, 34 au plus.
-- Listes : environ 160 positions par face avec analyse, 300 sans.
+- Listes : environ 160 positions par face avec analyse, 300 sans. Mesuré au corps 5,5 pt
+  (Chromium de Playwright, fixtures de `TestPrintFixtures`) : 172 et 171 par face avec
+  l'analyse sur la ligne, 345 sans.
 - Codec d'archive (prototype Python) : 201 octets par match en médiane. Le codec Go n'a pas
   été mesuré sur cette base.
 
@@ -56,3 +70,13 @@ référence, les trois documents (Match, Positions, Archive) et leurs options.
 - Feuille de match : l'ajustement du corps est fait par le navigateur (script) ; il n'est
   pas mesuré par un test, ni sur la base de 298 matchs. L'interface n'a pas de sélection
   multiple : le lot imprime les matchs que la liste affiche.
+- Listes de positions : pas de code de réimport. Le codec d'archive ne porte que des
+  matchs ; chaque ArkID imprimé se réimporte déjà (`positions.fromArkID`, coller dans
+  l'interface). Un code QR de positions demande un nouveau type de trame.
+- Le panier n'imprime que ses positions de la bibliothèque affichée ; celles des autres
+  bibliothèques ouvertes sont ignorées.
+- Le titre proposé de la liste parcourue est le nom de la collection active, sinon la
+  dernière recherche : il peut se tromper quand les deux existent, et la boîte le laisse
+  corriger. La mise en page des listes (paires recto verso, découpe d'une entrée) est
+  faite par le script dans le navigateur ; le test e2e la contrôle sur des fixtures, pas sur
+  une base réelle.
