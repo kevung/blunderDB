@@ -96,8 +96,11 @@ func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, o
 	// À la racine d'un chercheur parallèle, les 21 lancers vont dans une
 	// file combinée ; ailleurs, un lancer par emplacement, sur plusieurs
 	// cœurs à partir de splitDepth, accumulés après la barrière en index de
-	// lancer croissant : terme pour terme la boucle sérielle.
-	if level == 0 && s.parallel() {
+	// lancer croissant : terme pour terme la boucle sérielle. Sous
+	// splitDepth, même à la racine, la passe parallèle coûte plus que
+	// l'arbre qu'elle partage : un chercheur bâti pour plus de plis,
+	// interrogé moins profond, cherche en série.
+	if level == 0 && depth >= splitDepth && s.parallel() {
 		return s.probsAtRootParallel(pos, depth, state, owner)
 	}
 

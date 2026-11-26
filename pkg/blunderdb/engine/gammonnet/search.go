@@ -593,10 +593,11 @@ func (s *Searcher) deepen(out []Candidate, searched, depth, level int, owner Cub
 	// À la racine, tous les candidats partent dans une seule file
 	// (deepenGroups) : une barrière par décision. Plus bas, à partir de
 	// splitDepth, un candidat par tâche (parallel.go) ; ailleurs la boucle
-	// sérielle. Chaque tâche n'écrit que l'équité de son candidat, et le tri
-	// suit la barrière : terme pour terme identique.
+	// sérielle, comme sous splitDepth à la racine. Chaque tâche n'écrit que
+	// l'équité de son candidat, et le tri suit la barrière : terme pour terme
+	// identique.
 	switch {
-	case level == 0 && s.parallel():
+	case level == 0 && depth >= splitDepth && s.parallel():
 		if !s.deepenGroups([][]Candidate{out[:searched]}, depth, theirs, theirOwner) {
 			return false
 		}

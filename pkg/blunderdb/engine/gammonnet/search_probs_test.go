@@ -215,3 +215,65 @@ func probsBenchPosition() (Position, error) {
 	dp.PlayerOnRoll = domain.White
 	return FromDomain(&dp)
 }
+
+// TestShallowQueryOnDeepParallelSearcherIsBitIdentical asks a searcher built
+// for 2 ply a 1-ply question — the roll map's market check does — serially
+// and on several workers: below splitDepth the root searches serially, lends
+// no work, and its five floats match the serial searcher's to the bit, as do
+// the plays of a full search whose staged root passes through 1 ply.
+func TestShallowQueryOnDeepParallelSearcherIsBitIdentical(t *testing.T) {
+	p := openingPosition(t)
+
+	serial, err := NewSearcher(DefaultConfig(2))
+	if err != nil {
+		t.Fatal(err)
+	}
+	wantProbs, ok := serial.probsAt(&p, 1, 0, serial.matchState(), serial.cfg.CubeOwner)
+	if !ok {
+		t.Fatal("serial probsAt refused")
+	}
+	want := make([]Candidate, MaxPlays)
+	pw := p
+	nw0, err := serial.Plays(&pw, 3, 1, want)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, nw := range []int{2, runtime.NumCPU(), 64} {
+		t.Run(fmt.Sprintf("workers=%d", nw), func(t *testing.T) {
+			par, err := NewSearcher(DefaultConfig(2))
+			if err != nil {
+				t.Fatal(err)
+			}
+			par = par.WithWorkers(nw)
+			pp := p
+			got, ok := par.probsAt(&pp, 1, 0, par.matchState(), par.cfg.CubeOwner)
+			if !ok {
+				t.Fatal("parallel probsAt refused")
+			}
+			for i := range wantProbs {
+				if math.Float32bits(got[i]) != math.Float32bits(wantProbs[i]) {
+					t.Fatalf("output %d: serial %.17g, parallel %.17g", i, wantProbs[i], got[i])
+				}
+			}
+			if l := par.lent; l != 0 {
+				t.Fatalf("a 1-ply probsAt lent %v of helper time; it should search serially", l)
+			}
+			out := make([]Candidate, MaxPlays)
+			pg := p
+			n, err := par.Plays(&pg, 3, 1, out)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if n != nw0 {
+				t.Fatalf("%d candidates serial, %d parallel", nw0, n)
+			}
+			for i := 0; i < n; i++ {
+				if out[i].Play.Result != want[i].Play.Result ||
+					math.Float64bits(out[i].Equity) != math.Float64bits(want[i].Equity) {
+					t.Fatalf("candidate %d differs from the serial search", i)
+				}
+			}
+		})
+	}
+}
