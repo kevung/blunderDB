@@ -3,7 +3,7 @@
     // attente et terminées (registre de tâches, ADR-0115).
     import Modal from './Modal.svelte';
     import { t } from '../i18n';
-    import { jobsStore, runningJobs, waitingJobs, endedJobs, allPaused, pauseJob, resumeJob, cancelJob, removeJob, moveJob, toggleAllPaused } from '../stores/jobsStore.js';
+    import { jobsStore, coresStore, runningJobs, waitingJobs, endedJobs, allPaused, pauseJob, resumeJob, cancelJob, removeJob, moveJob, toggleAllPaused } from '../stores/jobsStore.js';
     import { fileImportMinimizedStore, showFileImportModalStore } from '../stores/importModalStore.js';
     import { tabGroupsStore, groupColorIndex, activateGroup, activeGroupId } from '../stores/libraryGroupStore.js';
 
@@ -53,6 +53,9 @@
 <Modal open={visible} onclose={onClose} size="large" label={$t('calculs.title')}>
     <h2 class="modal-title">{$t('calculs.title')}</h2>
     <div class="head" data-testid="jobs-head">
+        {#if $coresStore}
+            <span class="cores" data-testid="jobs-cores"><span class="n">{$t('calculs.cores')}</span> {$coresStore.used} / {$coresStore.total}</span>
+        {/if}
         <button type="button" data-testid="jobs-pause-all" disabled={$runningJobs.length + $waitingJobs.length === 0} onclick={() => toggleAllPaused()}>
             {$allPaused ? $t('calculs.resumeAll') : $t('calculs.pauseAll')}
         </button>
@@ -66,7 +69,10 @@
                     {#each list as job (job.id)}
                         {@const pct = percent(job)}
                         <li class="row" data-testid="job-row" data-job-id={job.id} data-state={job.state}>
-                            <span class="kind">{kindLabel(job)}</span>
+                            <span class="kind"
+                                >{kindLabel(job)}{#if job.state === 'running' && job.yielded}
+                                    <span class="yielded" data-testid="job-yielded">{$t('calculs.yielded')}</span>{/if}</span
+                            >
                             <span class="object" title={objectLabel(job)}>{objectLabel(job)}</span>
                             {#if job.library > 0}
                                 <span class="library" style="--group-color: var(--group-color-{groupColorIndex(job.library)})" title={libraryName(job.library)} data-testid="job-library">
@@ -133,8 +139,17 @@
 <style>
     .head {
         display: flex;
+        align-items: center;
         gap: var(--space-2);
         margin-bottom: var(--space-2);
+    }
+    .cores {
+        font-variant-numeric: tabular-nums;
+    }
+    .yielded {
+        display: block;
+        font-size: var(--font-size-small);
+        font-style: italic;
     }
     h3 {
         margin: var(--space-2) 0 var(--space-1);

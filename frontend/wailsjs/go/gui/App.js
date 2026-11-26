@@ -202,6 +202,10 @@ export function IsDirectory(arg1) {
   return window['go']['gui']['App']['IsDirectory'](arg1);
 }
 
+export function JobCores() {
+  return window['go']['gui']['App']['JobCores']();
+}
+
 export function LegalMoves(arg1) {
   return window['go']['gui']['App']['LegalMoves'](arg1);
 }

@@ -15,7 +15,7 @@ vi.mock('../../wailsjs/go/database/Database.js', async () => {
         ListPositionIDs: vi.fn(() => Promise.resolve([]))
     });
 });
-vi.mock('../../wailsjs/go/gui/App.js', () => ({ ListJobs: vi.fn(() => Promise.resolve([])) }));
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ ListJobs: vi.fn(() => Promise.resolve([])), JobCores: vi.fn(() => Promise.resolve(null)) }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({ EventsOn: vi.fn(() => () => {}) }));
 const processCommand = vi.fn();
 vi.mock('../commandProcessor.js', () => ({ processCommand: (/** @type {any[]} */ ...a) => processCommand(...a) }));

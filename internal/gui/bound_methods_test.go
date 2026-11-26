@@ -45,6 +45,7 @@ var boundAppMethods = []string{
 	"CancelGammonNetBatch",
 	"CancelJob",
 	"ListJobs",
+	"JobCores",
 	"MoveJob",
 	"PauseJob",
 	"RemoveJob",

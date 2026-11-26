@@ -16,7 +16,7 @@
     import { activeGroupId, noteGroupJob, libraryWritten } from '../stores/groupActivityStore.js';
     import { positionsStore, matchContextStore, positionStore as boardPositionStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
-    import { jobsProgress, runningJobs, waitingJobs, startJobsFeed } from '../stores/jobsStore.js';
+    import { jobsProgress, runningJobs, waitingJobs, yieldedJobs, startJobsFeed } from '../stores/jobsStore.js';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
     import { maintenanceStore, maintenanceEndedStore, startMatchStatsFill, dropMatchStatsFill } from '../stores/maintenanceStore.js';
     import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/database/Database.js';
@@ -386,6 +386,7 @@
     {#if $runningJobs.length + $waitingJobs.length > 0}
         <button type="button" class="jobs-chip" data-testid="jobs-chip" onclick={() => openModal(MODAL.JOBS)}>
             {$t('calculs.chip', { running: $runningJobs.length, waiting: $waitingJobs.length })}
+            {#if $yieldedJobs.length > 0}<span class="jobs-chip-yielded" data-testid="jobs-chip-yielded">· {$t('calculs.yielded')}</span>{/if}
             <progress class="jobs-chip-bar" value={$jobsProgress ?? undefined} max="1" aria-label={$t('calculs.progress')}></progress>
         </button>
     {/if}
@@ -567,6 +568,10 @@
 
     .jobs-chip-bar {
         width: 6em;
+    }
+
+    .jobs-chip-yielded {
+        font-style: italic;
     }
 
     .position-info {
