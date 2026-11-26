@@ -29,7 +29,9 @@ un videau possédé dont la valeur n'était pas lue.
    contrôler. Un second état intermédiaire doublerait ce chemin sans recouper davantage.
 3. **Un videau dessiné seul, à face vierge, est le videau centré** quand le document le dessine
    ainsi, au même endroit (hauteur et côté du champ), à côté d'au moins trois diagrammes ; une
-   seule face vierge peut être un chiffre perdu au scan, elle laisse un doute. Un videau possédé
+   seule face vierge peut être un chiffre perdu au scan, elle laisse un doute ; de même quand un
+   autre diagramme imprime à ce même endroit une valeur autre que 64 (face non vierge, non lue
+   64) : la face vierge y est un chiffre peut-être perdu, jamais un « centré ». Un videau possédé
    montre toujours sa valeur. La face est vierge quand aucun pixel de l'intérieur n'est plus
    sombre que son papier de 30 % du contraste entre ce papier et l'encre de son propre contour :
    un chiffre pâle sur un scan délavé reste une marque. Deux carrés dont un vierge, ou un carré
