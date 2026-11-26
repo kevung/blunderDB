@@ -280,6 +280,37 @@ Décision ouverte, à l'utilisateur : faire de « 15 + 15 sans doute » un état
 (compte complet), distinct de sûr, acceptable en bloc après échantillon. Ne vaut pas pour une fin
 de partie avec pions sortis.
 
+### Épreuve à l'aveugle sur trois styles jamais vus (2026-11-28) — banc, `JOURNAL.md` E1-E3
+
+Code gelé, 25 pages à diagramme tirées au hasard par livre, un passage, vérité à l'œil.
+
+| Livre | Présents | Trouvés | Sûres | Sûres fausses | À vérifier exactes / fausses |
+|---|---|---|---|---|---|
+| Olsen | 25 | 25 | 25 | 0 | 0 / 0 |
+| Mochizuki | 27 | 5 | 0 | 0 | 3 / 1 (+ 1 incertaine fausse) |
+| Kageyama (Endgame) | 51 | 51 | 0 | 0 | 49 / 1 (+ 1 incertaine fausse) |
+
+- La sûreté a tenu sur trois livres neufs. Les deux échecs sont de rendement, pas de justesse :
+  un cadre inédit non localisé (Mochizuki : cadre extérieur portant videau et sortie, une boîte
+  par moitié) ; des pips imprimés ailleurs que là où on les cherche (Kageyama : dans la rangée de
+  numérotation, au droit de la barre) ou dessinés dans l'image sans couche texte (Mochizuki).
+- Corrigé ensuite, sans valeur par livre, mais découvert sur ces livres : Kageyama 0 → 80 sûres
+  sur le livre ; Mochizuki 5 → 24 trouvés sur 27 ; demi-plateau signalé comme doute ; videau et
+  dés détectés par leur forme, valeur non lue. Non-régressions tenues (Deep Cube 1 498 sûres,
+  0 fausse ; Trice, Woolsey, Robertie inchangés).
+- « 15 + 15 sans doute » : 48 exactes sur 48 ici.
+- Leçon pour la calibration (§2 bis, Replis) : les deux gestes qui auraient débloqué ces livres
+  sont « encadrer un plateau » et « montrer où sont les pips », pas le pas d'empilement.
+- Il ne reste aucun livre de développement neuf : la prochaine mesure consomme la réserve.
+
+Avant d'ouvrir la réserve : lire les chiffres dans l'image (pips, videau) ; le repli assisté ;
+la décision sur l'état « 15 + 15 sans doute ».
+
+Portage en Go : entrées = image de page en gris (150 à 300 dpi) et couche texte positionnée si
+elle existe ; opérations en boucles simples, aucune bibliothèque d'image. Hors Go aujourd'hui : le
+rendu de page (pour un scan, composer les images de la page : JPEG en bibliothèque standard,
+CCITT G4 par `golang.org/x/image/ccitt`, rien pour JBIG2) et le texte OCR invisible positionné.
+
 ## Décisions de l'utilisateur (2026-11-25)
 
 - Recommandations suivies : rendu PDF, premier périmètre, ADR neuf.
