@@ -88,6 +88,60 @@ func ComputeCubeMatrixMET(ctx context.Context, pos domain.Position, met *engine.
 // leave cells uncalled only when ctx has ended or by returning an error.
 type CellExec func(n int, cell func(i int, s *Searcher)) error
 
+// mapDepths are the depths a map is filled at, shallow to deep, each phase
+// replacing the previous one's answers: 0-ply for an immediate whole map,
+// 1-ply because a whole map costs only a few times the 0-ply one, then ply.
+func mapDepths(ply int) []int {
+	depths := []int{0}
+	for d := 1; d <= ply; d++ {
+		if d == 1 || d == ply {
+			depths = append(depths, d)
+		}
+	}
+	return depths
+}
+
+// mapDeepWidth is how many cells a deep phase (depth >= 2) searches at once.
+// A depth-2 search forks onto the idle cores of the budget (parallel.go), so
+// a few cells at a time finish one after another, in the phase's order, about
+// as fast in total as every cell at once finishing together at the end.
+var mapDeepWidth = 4
+
+// runMapPhase runs the n cells of one map phase through exec, in index order,
+// ctx checked before each cell. A shallow phase hands exec every cell; a deep
+// one hands it mapDeepWidth units, each taking the next cell in order as it
+// frees, so cell i starts no later than cell i+1 and the cores a unit does
+// not use go to its searches' forks.
+func runMapPhase(ctx context.Context, exec CellExec, n, depth int, cell func(i int, s *Searcher)) error {
+	if depth < 2 {
+		return exec(n, func(i int, s *Searcher) {
+			if ctx.Err() != nil {
+				return
+			}
+			// exec's searchers are built for the map's own depth and fork
+			// from 2 ply; a shallow cell searches serially, as a searcher
+			// built for its depth would (CoresFor): its root's parallel
+			// passes cost a 2-ply search for a 1-ply answer.
+			if s != nil && s.team != nil {
+				t := s.team
+				s.team = nil
+				defer func() { s.team = t }()
+			}
+			cell(i, s)
+		})
+	}
+	var next atomic.Int64
+	return exec(min(max(mapDeepWidth, 1), n), func(_ int, s *Searcher) {
+		for ctx.Err() == nil {
+			i := int(next.Add(1) - 1)
+			if i >= n {
+				return
+			}
+			cell(i, s)
+		}
+	})
+}
+
 // ComputeCubeMatrixExec is ComputeCubeMatrixMET with the cells run by exec,
 // for a caller that shares its cores between several computations.
 func ComputeCubeMatrixExec(ctx context.Context, pos domain.Position, met *engine.MET, matchLength, ply, pruneK int, exec CellExec) (CubeMatrix, error) {
@@ -186,7 +240,10 @@ func cubeMatrixCell(pos domain.Position, met *engine.MET, awayOnRoll, awayOppone
 			cell.Refused, cell.Reason = true, err.Error()
 			return cell
 		}
-	} else if err := s.Reconfigure(cfg); err != nil {
+	}
+	// A fresh searcher too: it is built for money, and the cell's score is
+	// in cfg.
+	if err := s.Reconfigure(cfg); err != nil {
 		cell.Refused, cell.Reason = true, err.Error()
 		return cell
 	}
