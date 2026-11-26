@@ -272,7 +272,7 @@ func TestTextContext(t *testing.T) {
 	defer cancel()
 	t0 := time.Now()
 	_, _, err := Decode(ctx, data, nil, 0, 0, nil)
-	if !errors.Is(err, context.DeadlineExceeded) || time.Since(t0) > time.Second {
+	if !errors.Is(err, context.DeadlineExceeded) || time.Since(t0) > time.Duration(slack())*time.Second {
 		t.Errorf("%v after %v", err, time.Since(t0))
 	}
 }

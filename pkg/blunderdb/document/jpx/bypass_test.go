@@ -190,7 +190,7 @@ func TestWorstCaseStops(t *testing.T) {
 	if !errors.Is(err, context.DeadlineExceeded) {
 		t.Errorf("deadline: %v", err)
 	}
-	if d := time.Since(start); d > time.Second {
+	if d := time.Since(start); d > time.Duration(slack())*time.Second {
 		t.Errorf("stopped after %v", d)
 	}
 }

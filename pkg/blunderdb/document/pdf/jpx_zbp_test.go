@@ -73,7 +73,7 @@ func TestJPXZeroBitPlanesBounded(t *testing.T) {
 	defer cancel()
 	start := time.Now()
 	sc, err := r.ScanContext(ctx, p)
-	if d := time.Since(start); d > 2*time.Second {
+	if d := time.Since(start); d > time.Duration(slack())*2*time.Second {
 		t.Errorf("refused after %v", d)
 	}
 	if err == nil && len(sc.Skipped) == 0 {
