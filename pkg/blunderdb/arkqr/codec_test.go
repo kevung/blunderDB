@@ -177,17 +177,21 @@ func degenerateMatch(t *testing.T) Match {
 // TestDecodeDamaged feeds the decoder truncated and altered streams: it
 // refuses or decodes something, and never panics or loops.
 func TestDecodeDamaged(t *testing.T) {
-	data, err := Encode(Match{Doc: loadCorpus(t)[0].doc})
-	if err != nil {
-		t.Fatal(err)
-	}
-	for cut := 0; cut < len(data); cut += 7 {
-		_, _ = Decode(data[:cut])
-	}
-	for i := 1; i < len(data); i += 5 {
-		bad := append([]byte(nil), data...)
-		bad[i] ^= 0x5a
-		_, _ = Decode(bad)
+	for _, m := range []Match{{Doc: loadCorpus(t)[0].doc}, timedMatch(t)} {
+		for v := byte(1); v <= FormatVersion; v++ {
+			data, err := encodeVersion(m, v)
+			if err != nil {
+				t.Fatal(err)
+			}
+			for cut := 0; cut < len(data); cut += 7 {
+				_, _ = Decode(data[:cut])
+			}
+			for i := 1; i < len(data); i += 5 {
+				bad := append([]byte(nil), data...)
+				bad[i] ^= 0x5a
+				_, _ = Decode(bad)
+			}
+		}
 	}
 	if _, err := Decode([]byte{FormatVersion + 1, 1, 2}); err == nil {
 		t.Fatal("a later format version decoded")

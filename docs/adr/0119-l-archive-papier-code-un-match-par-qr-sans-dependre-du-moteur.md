@@ -146,3 +146,57 @@ codes, et à 150 dpi aucune feuille dense n'est relue. Le module de la page d'ar
 4. Le code de réimport d'une liste imprimée (`printsheet`, module de 0,33 mm, lu à 300 dpi)
    n'est pas concerné.
 
+
+## Amendement — le format 2 des matchs
+
+Mesuré sur la bibliothèque de l'utilisateur (298 matchs, `arkqr/external_test.go`), le
+format 1 coûte 365 octets en médiane (348 pour un 7 points), non les 201 du prototype : le
+prototype ne comptait ni l'en-tête ni les repères vidéo. Les octets allaient aux dés (un
+quart, incompressibles), aux repères vidéo de quinze matchs filmés (un quart), aux chaînes de
+l'en-tête à huit bits l'octet, au nom du programme écrit en entier (30 octets), aux Elo en
+flottants bruts. Le format 2 (`FormatVersion` = 2, `arkqr/model2.go`) garde les modèles du
+format 1 et ajoute :
+
+1. **Les dés selon le plateau** : un lancer qui ne laisse aucun coup est 32 fois moins probable
+   pour un coup joué, 32 fois plus pour une danse ; aucun n'est exclu, une transcription qui
+   contredit le plateau se code encore. Le plateau de départ d'un coup se lit donc avant ses dés.
+2. **Le genre d'Action selon la barre** : la danse n'est probable que si le lanceur attendu a
+   un pion à la barre ; deux tables adaptatives, partant de celle du format 1.
+3. **Les repères vidéo par leur écart** : un lancer est lu où finit l'Action précédente, après
+   la décision de videau ; un coup finit après sa décision. Seul l'écart se code, sous une loi
+   adaptative de sa longueur (tout entier de 64 bits se code, sans le débordement de la forme
+   d'Elias du format 1).
+4. **Le texte** : une chaîne déjà écrite dans le match se nomme par son rang (le transcripteur
+   est souvent le joueur 1) ; une autre s'écrit octet par octet sous une loi adaptative choisie
+   par la classe de l'octet précédent, partant d'une loi a priori des lettres. Le nom du
+   programme commence par un préfixe connu (`eXtreme Gammon, file format ` …), un Elo entier
+   s'écrit comme son écart à 1500 ou au premier, une date comme son jour depuis 2000.
+
+Mesures (format 1 → format 2) :
+
+| | Format 1 | Format 2 |
+|---|---|---|
+| Total, 298 matchs | 148 084 octets | 97 539 octets (−34 %) |
+| Médiane | 365 | 275 (−25 %) |
+| Médiane, 151 matchs en 7 points | 348 | 255 |
+| 9e décile | 550 | 450 |
+| Codes, feuilles A4 | 402 codes, 58 feuilles | 374 codes, 43 feuilles |
+| Matchs par feuille | 5,1 | 6,9 |
+
+Le rang du coup joué reste au softmax du format 1 : faire varier sa température de ±50 %
+coûte de 1 à 16 % de plus, il est déjà à son optimum (1,74 bit par coup).
+
+**Une archive imprimée se relit toujours.** `Decode` lit tout format de 1 à `FormatVersion`,
+le code de chaque version restant derrière son numéro ; `testdata/golden_v1.json` et
+`golden_v2.json` figent les trames que chaque version écrit, et `TestDecodeGolden` les relit
+et vérifie que l'encodeur de chaque version les réécrit à l'octet près. Une version nouvelle
+ajoute son fichier, n'en réécrit aucun. Le budget de symboles du décodeur (garde contre une
+trame abîmée) passe de 64 à 4 096 par octet au format 2 : un modèle adaptatif code une longue
+suite d'un même octet en une fraction de bit chacun.
+
+**Vitesse.** L'exploration des coups légaux ne copie plus de tranche par nœud, garde ses tables
+d'un lancer à l'autre et ne revisite pas, sur un double, un plateau déjà exploré à la même
+profondeur ; `TestPlaysMatchReference` la recoupe, étapes comprises, avec l'exploration simple
+sur 2,8 millions de lancers. Décodage du corpus de test : −59 % à −73 % de temps selon la
+charge, −93 % d'octets alloués, −98 % d'allocations. L'encodage n'en gagne que ses
+allocations (−24 %) : il passe l'essentiel de son temps dans `transcript.Replay`.
