@@ -59,7 +59,7 @@ func (cli *CLI) printDocumentUsage() {
 	fmt.Fprintln(cli.stdout(), "page, label and state (sure, to-verify, uncertain).")
 	fmt.Fprintln(cli.stdout())
 	fmt.Fprintln(cli.stdout(), "Sub-commands:")
-	fmt.Fprintln(cli.stdout(), "  analyze  Read the diagrams of a PDF into a relevé; nothing is written to a database")
+	fmt.Fprintln(cli.stdout(), "  analyze  Read the diagrams of a PDF or of page images into a relevé; nothing is written")
 	fmt.Fprintln(cli.stdout(), "  check    Validate a relevé and count its entries; nothing is written")
 	fmt.Fprintln(cli.stdout(), "  import   Import the positions of a relevé into a collection named after the document")
 	fmt.Fprintln(cli.stdout())
@@ -118,23 +118,27 @@ func readReleve(path string) (*document.Releve, error) {
 }
 
 func (cli *CLI) runDocumentAnalyze(args []string) error {
-	fs := cli.documentFileFlagSet("analyze", "<file.pdf>",
-		"Read the diagrams of a PDF into a relevé, in the document's order, each with its page,\n"+
+	fs := cli.documentFileFlagSet("analyze", "<file.pdf|page-images-folder|page.png>",
+		"Read the diagrams of a document into a relevé, in the document's order, each with its page,\n"+
 			"label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own\n"+
 			"cross-checks hold (15 checkers a side, the printed pip counts of both players), to-verify\n"+
-			"or uncertain otherwise, with the doubt named. Only diagrams drawn with eXtreme Gammon's\n"+
-			"board font (XG's PDF prints) are read; any other PDF is refused. Nothing is written to a\n"+
-			"database: check the relevé, then import it with 'blunderdb document import'.",
+			"or uncertain otherwise, with the doubt named. A PDF is read when its diagrams are drawn\n"+
+			"with eXtreme Gammon's board font (XG's PDF prints); a scanned book is read from its pages\n"+
+			"as images (a folder of PNG or JPEG files, one a page, in the order of their names),\n"+
+			"by the structure of each diagram. A page image has no text layer: its entries are never\n"+
+			"sure. Nothing is written to a database: check the relevé, then import it with\n"+
+			"'blunderdb document import'.",
 		"blunderdb document analyze book.pdf -o releve.json",
+		"blunderdb document analyze pages/ -o releve.json --title \"My book\"",
 		"blunderdb document analyze book.pdf -o releve.json --title \"My book\" --author \"Its author\"")
 	output := fs.String("o", "", "Write the relevé to this file (default: standard output)")
-	title := fs.String("title", "", "Title of the document (default: the PDF's metadata, else the file name)")
+	title := fs.String("title", "", "Title of the document (default: the PDF's metadata, else the file or folder name)")
 	author := fs.String("author", "", "Author of the document (default: the PDF's metadata)")
-	path, err := documentFileFlags(fs, args, "PDF")
+	path, err := documentFileFlags(fs, args, "document")
 	if err != nil {
 		return err
 	}
-	r, err := document.AnalyzePDFFile(path, document.AnalyzeOptions{Title: *title, Author: *author})
+	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: *title, Author: *author})
 	if err != nil {
 		return err
 	}
