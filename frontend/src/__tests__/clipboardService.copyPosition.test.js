@@ -64,12 +64,12 @@ describe('copyPosition', () => {
         analysisStore.update((a) => ({
             ...a,
             analysisType: 'CheckerMove',
-            checkerAnalysis: {
+            checkerAnalysis: /** @type {any} */ ({
                 moves: [
                     { index: 0, move: '24/23 13/10', analysisDepth: '4-ply', equity: 0.123, equityError: undefined },
                     { index: 1, move: '24/21 13/12', analysisDepth: '4-ply', equity: 0.1, equityError: 0.023 }
                 ]
-            }
+            })
         }));
 
         copyPosition();
@@ -108,7 +108,7 @@ describe('copyPosition on a scratch board', () => {
             ...a,
             xgid: 'XGID-FROM-A-DIFFERENT-POSITION',
             analysisType: 'CheckerMove',
-            checkerAnalysis: { moves: [{ index: 0, move: '24/23 13/10', analysisDepth: '4-ply', equity: 0.123 }] }
+            checkerAnalysis: /** @type {any} */ ({ moves: [{ index: 0, move: '24/23 13/10', analysisDepth: '4-ply', equity: 0.123 }] })
         }));
     });
 

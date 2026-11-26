@@ -36,6 +36,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
 import { jobsStore, coresStore, yieldedJobs, startJobsFeed, runningJobs, waitingJobs, endedJobs, jobsProgress } from '../stores/jobsStore.js';
 import JobsModal from '../components/JobsModal.svelte';
 
+/** @param {Record<string, any>} [over] */
 const job = (over) => ({ id: 1, kind: 'rollout', label: 'Position 3', library: 1, priority: 'requested', state: 'running', done: 2, total: 8, position: 0, pausable: true, cancelable: true, ...over });
 
 const JOBS = [
@@ -58,12 +59,12 @@ afterEach(() => {
 describe('jobsStore', () => {
     test('les événements jobs:* alimentent le registre', async () => {
         jobsStore.set([]);
-        mocks.ListJobs.mockResolvedValueOnce([job({ id: 9 })]);
+        /** @type {any} */ (mocks.ListJobs).mockResolvedValueOnce([job({ id: 9 })]);
         const stop = startJobsFeed();
         await waitFor(() => expect(get(jobsStore).map((j) => j.id)).toEqual([9]));
         mocks.handlers['jobs:changed'](job({ id: 9, done: 5 }));
         mocks.handlers['jobs:changed'](job({ id: 10 }));
-        expect(get(jobsStore).find((j) => j.id === 9).done).toBe(5);
+        expect(get(jobsStore).find((j) => j.id === 9)?.done).toBe(5);
         mocks.handlers['jobs:removed']({ id: 9 });
         expect(get(jobsStore).map((j) => j.id)).toEqual([10]);
         stop();
@@ -81,7 +82,8 @@ describe('jobsStore', () => {
 describe('jobsStore, courses', () => {
     test('une tâche retirée pendant ListJobs ne revient pas', async () => {
         jobsStore.set([]);
-        let answer;
+        /** @type {(v: any) => void} */
+        let answer = () => {};
         mocks.ListJobs.mockReturnValueOnce(new Promise((resolve) => (answer = resolve)));
         const stop = startJobsFeed();
         mocks.handlers['jobs:removed']({ id: 9 });
@@ -93,7 +95,8 @@ describe('jobsStore, courses', () => {
 
 describe('jobsStore, cœurs et cession', () => {
     test('jobs:cores remplace la lecture initiale, plus ancienne', async () => {
-        let resolve;
+        /** @type {(v: any) => void} */
+        let resolve = () => {};
         mocks.JobCores.mockReturnValueOnce(new Promise((r) => (resolve = r)));
         const stop = startJobsFeed();
         mocks.handlers['jobs:cores']({ used: 5, total: 8 });
@@ -117,7 +120,7 @@ describe('JobsModal', () => {
         expect((await findByTestId('jobs-cores')).textContent).toContain('3 / 8');
         const marks = getAllByTestId('job-yielded');
         expect(marks).toHaveLength(1);
-        expect(marks[0].closest('[data-testid="job-row"]').dataset.jobId).toBe('1');
+        expect(/** @type {HTMLElement} */ (marks[0].closest('[data-testid="job-row"]')).dataset.jobId).toBe('1');
     });
 
     test('une tâche en attente mise en pause se reprend', async () => {
@@ -156,8 +159,8 @@ describe('JobsModal', () => {
         const { findAllByTestId } = render(JobsModal, { props: { visible: true, onClose: vi.fn() } });
         const ups = await findAllByTestId('job-up');
         const downs = await findAllByTestId('job-down');
-        expect(ups[0].disabled).toBe(true);
-        expect(downs[1].disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement} */ (ups[0]).disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement} */ (downs[1]).disabled).toBe(true);
         await fireEvent.click(ups[1]);
         expect(mocks.MoveJob).toHaveBeenCalledWith(3, 0);
         await fireEvent.click(downs[0]);
