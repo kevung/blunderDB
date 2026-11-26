@@ -842,7 +842,7 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchS
 // came up.
 func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState, owner CubeOwner, cands []Candidate) (float64, bool) {
 	if s.yieldTo != nil {
-		s.yieldTo.yield()
+		s.yieldTo.yield(s.stopDone())
 	}
 	if s.stopped() {
 		return 0, false
@@ -1095,7 +1095,8 @@ func (s *Searcher) WithCores(c *Cores) *Searcher {
 // YieldsTo makes the searcher a background one: at each roll, while c is
 // claimed (Cores.Claim), the goroutine running it parks and lends its token to
 // the claimant, then goes on where it stopped. The goroutine that starts a
-// search must hold a token of c (Cores.HoldBackground). nil never yields. The
+// search must hold a token of c (Cores.HoldBackground). A parked search wakes
+// when its BindContext context ends, and unwinds as cancelled. nil never yields. The
 // answer is unchanged, bit for bit: parking only delays the next roll.
 func (s *Searcher) YieldsTo(c *Cores) *Searcher {
 	s.yieldTo = c

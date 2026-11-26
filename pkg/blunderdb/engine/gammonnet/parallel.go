@@ -48,7 +48,9 @@ package gammonnet
 // roll and lend it their tokens until it ends.
 
 import (
+	"context"
 	"runtime"
+	"slices"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -59,20 +61,28 @@ import (
 // A visible computation outranks the batches on the cores themselves
 // (ADR-0120): while one claims the budget (Claim), a background goroutine
 // (one that took its token with HoldBackground and searches with YieldsTo)
-// parks at its next roll and lends its token to the claimant; it takes it
-// back, without queueing, the moment the last claim ends, so its search
-// resumes where it stopped and nothing computed is lost.
+// parks at its next roll and lends its token to the claimant. Once the last
+// claim has ended and the claimants have given back every token they took
+// beyond the budget, the parked goroutines take theirs back together, without
+// queueing, and their searches resume where they stopped: nothing computed is
+// lost and the budget is never exceeded.
+//
+// The background never takes a token while a claim is open, nor while parked
+// goroutines are waiting to resume: so the background alone never holds more
+// than the budget, and the resumption only waits for claimants, which never
+// wait for the background.
 type Cores struct {
 	mu  sync.Mutex
 	cap int
 	// held tokens are taken; parked of them belong to goroutines parked
-	// behind the current claim and are lent: held-parked is what runs.
+	// behind a claim and are lent: held-parked is what runs.
 	held, parked int
 	// waiters queue for a token in arrival order; one that yields waits
 	// out a claim in place, without losing its turn to those behind it.
 	waiters []*coreWaiter
 	claims  int
-	// lift is closed when the last claim ends, waking every parked goroutine.
+	// lift is closed when the parked goroutines resume; nil while none is
+	// parked and no claim is open.
 	lift chan struct{}
 	// claimed mirrors claims > 0 for the roll checkpoint's lock-free read.
 	claimed atomic.Bool
@@ -101,31 +111,65 @@ func ProcessCores() *Cores { return processCores() }
 // Hold blocks until a token is free and takes it, in arrival order, for a job
 // that keeps a core busy on its own (one server request, a cell of a visible
 // map). release gives it back; call it once.
-func (c *Cores) Hold() (release func()) { return c.acquire(false) }
+func (c *Cores) Hold() (release func()) {
+	release, _ = c.acquire(context.Background(), false)
+	return release
+}
 
 // HoldBackground is Hold for a goroutine that yields to visible computations
-// (one position of a batch): while a claim is open it is not served, so a
-// batch starts no position on a core the claimant was lent.
-func (c *Cores) HoldBackground() (release func()) { return c.acquire(true) }
+// (one position of a batch): it is not served while a claim is open or parked
+// goroutines wait to resume, so a batch starts no position on a core the
+// claimant was lent. It gives up once ctx is done and returns ctx's error,
+// holding nothing.
+func (c *Cores) HoldBackground(ctx context.Context) (release func(), err error) {
+	return c.acquire(ctx, true)
+}
 
-func (c *Cores) acquire(background bool) func() {
+func (c *Cores) acquire(ctx context.Context, background bool) (func(), error) {
 	c.mu.Lock()
 	w := &coreWaiter{ready: make(chan struct{}), background: background}
 	c.waiters = append(c.waiters, w)
 	c.grantLocked()
 	c.mu.Unlock()
-	<-w.ready
+	select {
+	case <-w.ready:
+	case <-ctx.Done():
+		c.mu.Lock()
+		if i := slices.Index(c.waiters, w); i >= 0 {
+			c.waiters = slices.Delete(c.waiters, i, i+1)
+			c.mu.Unlock()
+			return nil, ctx.Err()
+		}
+		c.mu.Unlock()
+		c.give() // granted meanwhile: hand it on
+		return nil, ctx.Err()
+	}
 	c.signal()
 	var once sync.Once
-	return func() { once.Do(c.give) }
+	return func() { once.Do(c.give) }, nil
 }
 
-// grantLocked hands free tokens to the waiters in order, passing over the
-// background ones while a claim is open.
+// backgroundBarredLocked reports that the background may take no token: a
+// claim is open, or parked goroutines are still to resume.
+func (c *Cores) backgroundBarredLocked() bool { return c.claims > 0 || c.parked > 0 }
+
+// grantLocked resumes the parked goroutines once no claim is open and the
+// claimants are back within the budget, then hands free tokens to the
+// waiters in order, passing over the background ones while they are barred.
+// While goroutines wait to resume, nobody else is served: the tokens freeing
+// up are theirs.
 func (c *Cores) grantLocked() {
+	if c.claims == 0 && c.parked > 0 {
+		if c.held > c.cap {
+			return
+		}
+		c.parked = 0
+		close(c.lift)
+		c.lift = nil
+	}
 	kept := c.waiters[:0]
 	for _, w := range c.waiters {
-		if c.held-c.parked < c.cap && (!w.background || c.claims == 0) {
+		if c.held-c.parked < c.cap && (!w.background || !c.backgroundBarredLocked()) {
 			c.held++
 			close(w.ready)
 			continue
@@ -139,10 +183,10 @@ func (c *Cores) grantLocked() {
 // Claim gives the computation on screen precedence over the background until
 // release (once; later calls do nothing): background goroutines park at their
 // next roll and their tokens go to the claimant's forks and Holds. Claims
-// stack; the background resumes when the last one is released.
+// stack; the background resumes after the last one is released.
 func (c *Cores) Claim() (release func()) {
 	c.mu.Lock()
-	if c.claims == 0 {
+	if c.lift == nil {
 		c.lift = make(chan struct{})
 	}
 	c.claims++
@@ -155,11 +199,11 @@ func (c *Cores) Claim() (release func()) {
 			c.claims--
 			if c.claims == 0 {
 				c.claimed.Store(false)
-				// Every parked goroutine takes its token back at once.
-				c.parked = 0
-				close(c.lift)
-				c.grantLocked()
+				if c.parked == 0 {
+					c.lift = nil
+				}
 			}
+			c.grantLocked()
 			c.mu.Unlock()
 			c.signal()
 		})
@@ -167,10 +211,11 @@ func (c *Cores) Claim() (release func()) {
 }
 
 // yield parks a background goroutine that holds a token while a claim is
-// open. Its token stays counted as held, lent until the claim ends: on waking
-// it needs none, so a parked helper can never wait for a token the fork that
-// lent it holds.
-func (c *Cores) yield() {
+// open, until the parked goroutines resume or done (its search's context)
+// fires. Its token stays counted as held, lent meanwhile: on resuming it
+// takes no token, so a parked helper never waits for one the fork that lent
+// it holds. Woken by done, it runs only to unwind its cancelled search.
+func (c *Cores) yield(done <-chan struct{}) {
 	if !c.claimed.Load() {
 		return
 	}
@@ -184,7 +229,17 @@ func (c *Cores) yield() {
 	c.grantLocked()
 	c.mu.Unlock()
 	c.signal()
-	<-lift
+	select {
+	case <-lift:
+	case <-done:
+		c.mu.Lock()
+		if c.lift == lift {
+			c.parked--
+			c.grantLocked()
+		}
+		c.mu.Unlock()
+		c.signal()
+	}
 }
 
 // Cap is the number of tokens of the budget, fixed when it was made (for
@@ -213,10 +268,11 @@ func (c *Cores) signal() {
 }
 
 // tryTake never waits and never overtakes a waiter: tokens are granted the
-// moment they free up, so a free token has no eligible waiter.
-func (c *Cores) tryTake() bool {
+// moment they free up, so a free token has no eligible waiter. A background
+// fork (one whose searcher yields) takes none while the background is barred.
+func (c *Cores) tryTake(background bool) bool {
 	c.mu.Lock()
-	if c.held-c.parked >= c.cap {
+	if c.held-c.parked >= c.cap || (c.claims == 0 && c.parked > 0) || (background && c.backgroundBarredLocked()) {
 		c.mu.Unlock()
 		return false
 	}
@@ -361,7 +417,7 @@ func (s *Searcher) fork(n int, task func(w *Searcher, k int) bool) bool {
 		}
 	}
 	for !failed.Load() {
-		for int64(n)-next.Load() > active.Load()+1 && t.cores.tryTake() {
+		for int64(n)-next.Load() > active.Load()+1 && t.cores.tryTake(s.yieldTo != nil) {
 			active.Add(1)
 			h := t.borrow(s)
 			wg.Add(1)
