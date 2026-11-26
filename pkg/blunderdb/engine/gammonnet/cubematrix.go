@@ -112,7 +112,7 @@ var mapDeepWidth = 4
 // runMapPhase runs the n cells of one map phase through exec, one cell per
 // call, ctx checked before each; exec takes them in index order, the map's
 // order.
-func runMapPhase(ctx context.Context, exec CellExec, n, depth int, cell func(i int, s *Searcher)) error {
+func runMapPhase(ctx context.Context, exec CellExec, n int, cell func(i int, s *Searcher)) error {
 	return exec(n, func(i int, s *Searcher) {
 		if ctx.Err() != nil {
 			return

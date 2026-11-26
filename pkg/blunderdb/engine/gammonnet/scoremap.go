@@ -99,7 +99,7 @@ func ComputeScoreMap(ctx context.Context, pos domain.Position, met *engine.MET, 
 
 	var mu sync.Mutex
 	phase := func(depth int) error {
-		err := runMapPhase(ctx, exec, len(order), depth, func(k int, s *Searcher) {
+		err := runMapPhase(ctx, exec, len(order), func(k int, s *Searcher) {
 			idx := order[k]
 			onRoll, opponent := idx/matchLength+1, idx%matchLength+1
 			var cell ScoreMapCell

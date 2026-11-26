@@ -216,38 +216,43 @@ func probsBenchPosition() (Position, error) {
 	return FromDomain(&dp)
 }
 
-// TestShallowQueryOnDeepParallelSearcherIsBitIdentical asks a searcher built
-// for 2 ply a 1-ply question — the roll map's market check does — serially
-// and on several workers: below splitDepth the root searches serially, lends
-// no work, and its five floats match the serial searcher's to the bit, as do
-// the plays of a full search whose staged root passes through 1 ply.
+// TestShallowQueryOnDeepParallelSearcherIsBitIdentical holds the two root
+// fan-outs to splitDepth. probsAt asked at 1 ply on a searcher built for 2 —
+// the roll map's market check — and a 1-ply Plays, whose root deepens its
+// candidates at 1 ply, must search serially on any worker count: no helper
+// time lent, and the five floats and the ranked plays match the serial
+// searcher's to the bit.
 func TestShallowQueryOnDeepParallelSearcherIsBitIdentical(t *testing.T) {
 	p := openingPosition(t)
 
-	serial, err := NewSearcher(DefaultConfig(2))
+	serial2, err := NewSearcher(DefaultConfig(2))
 	if err != nil {
 		t.Fatal(err)
 	}
-	wantProbs, ok := serial.probsAt(&p, 1, 0, serial.matchState(), serial.cfg.CubeOwner)
+	wantProbs, ok := serial2.probsAt(&p, 1, 0, serial2.matchState(), serial2.cfg.CubeOwner)
 	if !ok {
 		t.Fatal("serial probsAt refused")
 	}
+	serial1, err := NewSearcher(DefaultConfig(1))
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := make([]Candidate, MaxPlays)
 	pw := p
-	nw0, err := serial.Plays(&pw, 3, 1, want)
+	nWant, err := serial1.Plays(&pw, 3, 1, want)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	for _, nw := range []int{2, runtime.NumCPU(), 64} {
 		t.Run(fmt.Sprintf("workers=%d", nw), func(t *testing.T) {
-			par, err := NewSearcher(DefaultConfig(2))
+			par2, err := NewSearcher(DefaultConfig(2))
 			if err != nil {
 				t.Fatal(err)
 			}
-			par = par.WithWorkers(nw)
+			par2 = par2.WithWorkers(nw)
 			pp := p
-			got, ok := par.probsAt(&pp, 1, 0, par.matchState(), par.cfg.CubeOwner)
+			got, ok := par2.probsAt(&pp, 1, 0, par2.matchState(), par2.cfg.CubeOwner)
 			if !ok {
 				t.Fatal("parallel probsAt refused")
 			}
@@ -256,23 +261,32 @@ func TestShallowQueryOnDeepParallelSearcherIsBitIdentical(t *testing.T) {
 					t.Fatalf("output %d: serial %.17g, parallel %.17g", i, wantProbs[i], got[i])
 				}
 			}
-			if l := par.lent; l != 0 {
+			if l := par2.lent; l != 0 {
 				t.Fatalf("a 1-ply probsAt lent %v of helper time; it should search serially", l)
 			}
-			out := make([]Candidate, MaxPlays)
-			pg := p
-			n, err := par.Plays(&pg, 3, 1, out)
+
+			par1, err := NewSearcher(DefaultConfig(1))
 			if err != nil {
 				t.Fatal(err)
 			}
-			if n != nw0 {
-				t.Fatalf("%d candidates serial, %d parallel", nw0, n)
+			par1 = par1.WithWorkers(nw)
+			out := make([]Candidate, MaxPlays)
+			pg := p
+			n, err := par1.Plays(&pg, 3, 1, out)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if n != nWant {
+				t.Fatalf("%d candidates serial, %d parallel", nWant, n)
 			}
 			for i := 0; i < n; i++ {
 				if out[i].Play.Result != want[i].Play.Result ||
 					math.Float64bits(out[i].Equity) != math.Float64bits(want[i].Equity) {
 					t.Fatalf("candidate %d differs from the serial search", i)
 				}
+			}
+			if l := par1.lent; l != 0 {
+				t.Fatalf("a 1-ply Plays lent %v of helper time; its root should deepen serially", l)
 			}
 		})
 	}

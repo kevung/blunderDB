@@ -104,7 +104,7 @@ func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, p
 	phase := func(depth int) error {
 		job.cfg = cfg
 		job.cfg.Ply = depth
-		err := runMapPhase(ctx, exec, NumRolls, depth, func(i int, s *Searcher) {
+		err := runMapPhase(ctx, exec, NumRolls, func(i int, s *Searcher) {
 			row, err := job.row(ctx, i, s, pruneK)
 			mu.Lock()
 			defer mu.Unlock()

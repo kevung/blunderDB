@@ -209,7 +209,7 @@ func TestLocalExec_DeepMapIsNarrow(t *testing.T) {
 	var mu sync.Mutex
 	calls := map[int]int{}
 	running, peak := 0, 0
-	err := runMapPhase(context.Background(), LocalExec(0, 2, 0), 30, 2, func(i int, _ *Searcher) {
+	err := runMapPhase(context.Background(), LocalExec(0, 2, 0), 30, func(i int, _ *Searcher) {
 		mu.Lock()
 		calls[i]++
 		running++
