@@ -29,8 +29,12 @@ fermeture d'une bibliothèque énumérait les tâches à la main.
    progression fait/total, rang dans la file. Toute tâche finit dans un état final sur tous
    les chemins, panique comprise : sa bibliothèque passe alors à la suivante. Les 32 dernières
    tâches finies restent listées jusqu'à leur retrait.
-2. **Trois priorités de calcul.** *Visible* : ce qui est à l'écran ; le registre en offre
-   l'entrée (`beginVisibleComputation`), aucun calcul ne l'appelle encore. *Demandé* : un
+2. **Trois priorités de calcul.** *Visible* : ce qui est à l'écran — l'évaluation au repos
+   du panneau, la carte des jets, la carte des scores (qui tient lieu de matrice de videau).
+   Chacun entre par `beginVisibleComputation` en prenant la case des recherches interactives
+   (`beginInteractiveSearch`) et en sort dans tous les chemins, fin, annulation, remplacement,
+   erreur ou panique ; un calcul visible n'en préempte jamais un autre, le plus récent
+   remplace seulement le précédent. *Demandé* : un
    rollout, un import, un transfert. *Fond* : réanalyse, maintenance, remplissage. Une tâche de
    calcul cède, à ses points de contrôle (`Job.Checkpoint`), à un calcul de priorité supérieure
    en cours et non en pause : le lot gammonNet avant chaque position, le rollout entre deux
@@ -83,8 +87,8 @@ fermeture d'une bibliothèque énumérait les tâches à la main.
 - Le démon garde `analyses.queueStatus` et son registre d'imports inchangés ; le registre du
   bureau n'y est pas exposé, faute de contrat commun (un tenant n'est pas un groupe). Suivi
   dans `tasks/BACKLOG.md`.
-- Le lot gammonNet guette la recherche au repos du panneau d'évaluation par `gnEvalCancel`
-  (`waitForInteractiveEvaluation`), qui n'entre pas par `beginVisibleComputation`.
+- Le lot gammonNet et le rollout cèdent aux calculs visibles par leur seul point de contrôle :
+  plus de sondage de la recherche du panneau, ni de lot réduit en cœurs à son démarrage.
 - Une tâche en pause qui tient la bibliothèque bloque la file derrière elle, sauf préemption
   (§4) : la reprendre ou l'annuler la libère.
 

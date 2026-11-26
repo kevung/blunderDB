@@ -26,9 +26,6 @@ import (
 // from that library (libraries.go), so it keeps analysing it when another
 // group comes on screen.
 
-// gnYieldPoll is how often a yielding batch rechecks the live evaluation.
-const gnYieldPoll = 50 * time.Millisecond
-
 // batchRun is the work of one batch, on the library handle it is given.
 // ctx carries the batch's task (taskFrom), at whose checkpoint the batch
 // yields before each position.
@@ -51,18 +48,16 @@ func taskFrom(ctx context.Context) *batchTask {
 }
 
 // batchYield is the yield a batch's loop calls before each position: the
-// task's checkpoint (pause, every computation that outranks it, a requested
-// task waiting for the library, which stops the run), then the live
-// evaluation the panel runs.
+// task's checkpoint — pause, every computation that outranks it (the visible
+// ones on screen among them), a requested task waiting for the library,
+// which stops the run.
 func (a *App) batchYield(ctx context.Context) func() {
 	t := taskFrom(ctx)
 	return func() {
 		if t != nil && errors.Is(t.job.Checkpoint(ctx), jobs.ErrPreempted) {
 			t.preempted.Store(true)
 			t.preempt()
-			return
 		}
-		a.waitForInteractiveEvaluation()
 	}
 }
 
@@ -89,7 +84,7 @@ func (a *App) QueueGammonNetBatchIn(group, ply, pruneK, candidates int) {
 
 func (a *App) missingBatch(ply, pruneK, candidates int) batchRun {
 	return func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
-		return db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
+		return db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, goruntime.NumCPU(),
 			a.batchYield(ctx), onProgress)
 	}
 }
@@ -98,7 +93,7 @@ func (a *App) missingBatch(ply, pruneK, candidates int) batchRun {
 // is entirely its own but stale: another EngineVersion, or another depth.
 func (a *App) StartGammonNetStaleBatch(ply, pruneK, candidates int) {
 	a.runGammonNetBatch(0, ply, jobs.GammonNetStale, func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
-		return db.AnalyzeStaleGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
+		return db.AnalyzeStaleGammonNet(ctx, ply, pruneK, candidates, goruntime.NumCPU(),
 			a.batchYield(ctx), onProgress)
 	})
 }
@@ -108,25 +103,9 @@ func (a *App) StartGammonNetStaleBatch(ply, pruneK, candidates int) {
 // sets depth.
 func (a *App) StartGammonNetMatchBatch(matchID int64, ply, pruneK, candidates int) {
 	a.runGammonNetBatch(0, ply, jobs.GammonNetMatch, func(ctx context.Context, db *database.Database, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
-		return db.AnalyzeMatchWithGammonNet(ctx, matchID, ply, pruneK, candidates, a.effectiveBatchJobs(),
+		return db.AnalyzeMatchWithGammonNet(ctx, matchID, ply, pruneK, candidates, goruntime.NumCPU(),
 			a.batchYield(ctx), onProgress)
 	})
-}
-
-// effectiveBatchJobs lowers the batch's goroutine count when a live search is
-// already running, so the two never ask for 2×NumCPU; it only shortens the
-// window before waitForInteractiveEvaluation takes over.
-func (a *App) effectiveBatchJobs() int {
-	a.gnEvalMu.Lock()
-	busy := a.gnEvalCancel != nil
-	a.gnEvalMu.Unlock()
-	if !busy {
-		return goruntime.NumCPU()
-	}
-	if n := goruntime.NumCPU() / 4; n > 1 {
-		return n
-	}
-	return 1
 }
 
 // runGammonNetBatch is the shell every batch shares: run does the work, this
@@ -271,24 +250,6 @@ func (a *App) cancelGammonNetBatch() <-chan struct{} {
 		a.gnBatchCancel = nil
 	}
 	return a.gnBatchDone
-}
-
-// waitForInteractiveEvaluation blocks each batch goroutine, before each
-// position, while the Eval panel's at-rest search runs: the batch gives way
-// within `jobs` positions. That search does not enter the registry as a
-// visible computation (beginVisibleComputation), so it is watched through
-// gnEvalCancel; once it enters, the task's checkpoint holds the batch and
-// this wait has nothing left to see.
-func (a *App) waitForInteractiveEvaluation() {
-	for {
-		a.gnEvalMu.Lock()
-		busy := a.gnEvalCancel != nil
-		a.gnEvalMu.Unlock()
-		if !busy {
-			return
-		}
-		time.Sleep(gnYieldPoll)
-	}
 }
 
 // stopBackgroundJobs, shutdown's first step, cancels every job and waits (up
