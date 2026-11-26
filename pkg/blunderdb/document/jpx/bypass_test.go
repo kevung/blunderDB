@@ -196,7 +196,7 @@ func TestWorstCaseStops(t *testing.T) {
 }
 
 // BenchmarkWorstCase reports the cost a pixel of the coded data that costs
-// the most: the budgets' comments state it (about 1.2 µs).
+// the most: the budgets' comments state it (about 1.1 µs).
 func BenchmarkWorstCase(b *testing.B) {
 	const a = 512
 	data := hostile("cpu", a)

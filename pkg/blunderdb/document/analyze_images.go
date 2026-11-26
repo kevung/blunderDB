@@ -240,9 +240,10 @@ type imageFiles struct {
 	jpx   jpx.Budget
 }
 
-// MaxJPXPixels bounds the pixels a document decodes from JPEG 2000 files:
-// their coded data costs at worst about 1.2 µs a pixel, some eighty minutes
-// for the whole budget, so the caller's cancellation is the real bound.
+// MaxJPXPixels bounds the pixels a document decodes from JPEG 2000 files.
+// Their costliest coded data measured takes about 1.1 µs a pixel, some
+// seventy minutes for the whole budget: AnalyzeOptions.Context, read
+// within each decode, is the real bound.
 const MaxJPXPixels = 4_000_000_000
 
 func (f *imageFiles) Len() int { return len(f.paths) }

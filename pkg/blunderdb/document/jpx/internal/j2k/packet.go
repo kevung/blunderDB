@@ -157,7 +157,7 @@ func (d *tileDecoder) decodePacket(c, r, p, layer int) error {
 		for bi := range res.bands {
 			pb := res.prec[p][bi]
 			for cbIdx, cb := range pb.cbs {
-				contrib, err := d.readCBHeader(br, pb, cb, cbIdx, layer, termAll)
+				contrib, err := d.readCBHeader(br, pb, cb, cbIdx, layer, termAll, res.bands[bi].mb)
 				if err != nil {
 					return err
 				}
@@ -196,7 +196,7 @@ func (d *tileDecoder) decodePacket(c, r, p, layer int) error {
 	return nil
 }
 
-func (d *tileDecoder) readCBHeader(br *bitReader, pb *precBand, cb *codeblock, cbIdx, layer int, termAll bool) (*cbContribution, error) {
+func (d *tileDecoder) readCBHeader(br *bitReader, pb *precBand, cb *codeblock, cbIdx, layer int, termAll bool, mb int) (*cbContribution, error) {
 	// Inclusion.
 	if !cb.seenIncl {
 		incl, err := pb.incl.decode(br, cbIdx, int32(layer)+1)
@@ -218,7 +218,14 @@ func (d *tileDecoder) readCBHeader(br *bitReader, pb *precBand, cb *codeblock, c
 
 	// Zero bit-planes on first inclusion.
 	if !cb.seenIncl {
+		// A code-block has at most mb bit-planes, all of them possibly
+		// zero: a larger count is malformed, and reading on would let the
+		// packet header's bits alone set the work (each threshold rewalks
+		// the tag tree).
 		for k := int32(1); ; k++ {
+			if k > int32(mb)+1 {
+				return nil, errFormat("more zero bit-planes than the band has")
+			}
 			ok, err := pb.zbps.decode(br, cbIdx, k)
 			if err != nil {
 				return nil, err

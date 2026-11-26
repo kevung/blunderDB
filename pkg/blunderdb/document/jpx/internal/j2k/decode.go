@@ -51,8 +51,9 @@ func (im *Image) Tiles() int { return len(im.cs.tiles) }
 // Reversible is true when the main coding style names the 5/3 transform.
 func (im *Image) Reversible() bool { return im.cs.cod.cp.transform == 1 }
 
-// Decode decodes the image, checking ctx between packets and between
-// code-blocks, the units whose cost the headers do not bound.
+// Decode decodes the image, reading ctx before each tile, each packet and
+// each code-block's decoding: the units whose cost the headers do not
+// bound. A tile's inverse transform runs unchecked.
 func (im *Image) Decode(ctx context.Context) (image.Image, error) {
 	return decodeImage(ctx, im.cs, im.meta)
 }

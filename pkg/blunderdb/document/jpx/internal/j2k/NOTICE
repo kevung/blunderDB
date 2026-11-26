@@ -10,5 +10,6 @@ Changes made in blunderDB:
   pass over the headers, the bounds the jpx package documents (components,
   pixels, tiles, tile-parts, precinct and code-block sizes, high-throughput
   JPEG 2000, JP2 palette and channel boxes, marker order and lengths);
-- decoding checks a context between packets and between code-blocks;
+- decoding checks a context before each tile, packet and code-block, and a
+  count of zero bit-planes is bounded by the band's bit-planes;
 - the tests read the library's reference images through Parse.

@@ -15,9 +15,15 @@
 //   - a header the parser cannot read in one pass: a SIZ anywhere but at
 //     byte 2, a SOD in the main header, a SOT in a tile-part header.
 //
-// What the headers cannot bound, the coded data, is bounded by the caller:
-// a Budget of pixels per document, and a context checked between packets
-// and between code-blocks.
+// The coded data is bounded where it is read: a count of zero bit-planes by
+// the band's bit-planes, coding passes by 109, so that the costliest data
+// measured, every code-block with all its passes, takes about 1.1 µs a
+// pixel. Over a document it is bounded by the caller: a Budget of pixels,
+// and a context, read before each tile, each packet and each code-block's
+// decoding. The work between two reads is unchecked: one packet header (at
+// most every code-block of a precinct), one code-block, or the structure,
+// inverse transform and colour conversion of one tile, some 0.2 s for a
+// tile of 12 Mpx in three components.
 //
 // Nothing is registered with the image package, so no other reader in the
 // process (a screen capture, a position image, an archive sheet) reaches the
