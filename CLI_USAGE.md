@@ -958,8 +958,13 @@ the same archive or another format, counts as a duplicate. `import --type match
 Import the positions a document shows — a book, an article, a web page — from
 its *relevé*: a JSON file that lists them in the document's order, each with its
 page, label, position (an XGID: checkers, cube, player on roll, dice, score and
-match length) and state (`sure`, `to-verify` or `uncertain`), and whether a
-person has verified it. Only positions enter the database: no image and no text
+match length) and two certainties: its checkers (`sure`, `to-verify` or
+`uncertain`, with `complete` for fifteen checkers a side read with no doubt) and
+its context (`read`, `default`, `to-verify` or `uncertain`), and whether a
+person has verified it. An entry is `sure` only when its checkers are and its
+context is certified: read, or under the document's default context
+(`document.defaults`) once a person set `"confirmed": true` on it. A relevé of
+format version 1 (one `state` per entry) is still read. Only positions enter the database: no image and no text
 of the author.
 
 ```bash
@@ -968,9 +973,9 @@ of the author.
 
 **Sub-commands:**
 - `check <releve.json>` - Validate the relevé (format, ranks from 1 with no gap,
-  legal positions, unknown fields refused) and count its entries by state;
-  nothing is written. `--format json` prints the counts as JSON
-- `import <releve.json> --db <file> [--collection <name>] [--force]` - Import the
+  legal positions, unknown fields refused) and count its entries by state and by
+  how their context is known; nothing is written. `--format json` prints the counts as JSON
+- `import <releve.json> --db <file> [--collection <name>] [--accept-complete] [--force]` - Import the
   positions into a collection named after the document (or `--collection`), in
   the document's order
 
@@ -980,13 +985,16 @@ comment, so it stays readable outside the collection. Each position is saved as
 a position brought in on its own. A position the document shows twice belongs to
 the collection once, at its first appearance, and its comment lists every
 reference. An entry neither `sure` nor verified refuses the whole import unless
-`--force`; a refused import writes nothing. Importing the same relevé again adds
+`--force`; `--accept-complete` accepts as a whole the entries of fifteen
+checkers a side read with no doubt whose context is certified. A refused import
+writes nothing. Importing the same relevé again adds
 nothing. The daemon serves the import as `/v1/documents.importReleve`.
 
 **Examples:**
 ```bash
 ./blunderDB document check releve.json
 ./blunderDB document import --db database.db releve.json
+./blunderDB document import --db database.db releve.json --accept-complete
 ./blunderDB document import --db database.db releve.json --collection "My book" --force
 ```
 
@@ -3296,8 +3304,9 @@ Examples:
 ```
 Usage: blunderdb document check [options] <releve.json>
 
-Validate a relevé (format, ranks, legal positions) and count its entries by state.
-Nothing is read from or written to a database.
+Validate a relevé (format, ranks, legal positions; version 1 is still read) and count its
+entries by state and by how their context is known. Nothing is read from or written to a
+database.
 
 Options:
   -format string
@@ -3315,10 +3324,15 @@ Usage: blunderdb document import [options] <releve.json>
 
 Import the positions of a relevé, in the document's order, into a collection named after
 the document (its title, author and edition as description; each position's page and
-label as a comment). An entry neither sure nor verified refuses the import unless --force;
-a refused import writes nothing. Importing the same relevé again adds nothing.
+label as a comment). An entry is sure when its checkers are and its context is certified:
+read, or under the document's defaults once "confirmed" is set on them. An entry neither
+sure nor verified refuses the import unless --force; --accept-complete accepts as a whole
+the entries of 15 + 15 checkers read with no doubt whose context is certified. A refused
+import writes nothing. Importing the same relevé again adds nothing.
 
 Options:
+  -accept-complete
+    	Import the entries of 15 + 15 checkers read with no doubt whose context is certified
   -collection string
     	Name of the collection (default: the document's title)
   -db string
@@ -3330,6 +3344,7 @@ Options:
 
 Examples:
   blunderdb document import --db database.db releve.json
+  blunderdb document import --db database.db releve.json --accept-complete
   blunderdb document import --db database.db releve.json --collection "My book" --force
 ```
 

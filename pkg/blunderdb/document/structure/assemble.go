@@ -878,12 +878,12 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		if t, m := read.text, read.image; printed == nil && t != nil && m != nil {
 			add("pips", 0, "pips text/image", "printed pips read %d and %d in the text layer, %d and %d in the image: the two disagree", t[0], t[1], m[0], m[1])
 		} else if printed == nil {
-			add("pips", 0, "", "no printed pip count was found next to the diagram")
+			add("pips", 0, "", NoPipsReason)
 		} else {
 			add("pips", 0, "", "pips read %d (bottom) and %d (top), printed %d and %d", pc[upper], pc[1-upper], printed[0], printed[1])
 		}
 		if assumed {
-			add("orientation", 0, "", "the direction of play is assumed (no printed pips confirm it): checkers taken to move toward the side with the fewer pips")
+			add("orientation", 0, "", AssumedDirectionReason)
 		}
 		for _, k := range []int{upper, 1 - upper} {
 			if n[k] < 15 {

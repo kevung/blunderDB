@@ -128,7 +128,7 @@ flowchart LR
     SCAN --> STRUCT
     IMAGES["page images\n(PNG, JPEG)"] --> STRUCT["document/structure\n(profile, then reading,\npips read in the image)"]
     STRUCT --> CHECK
-    CHECK --> RELEVE[("Relevé JSON\nstates, doubts, verified")]
+    CHECK --> RELEVE[("Relevé JSON\ncheckers, context, doubts, verified")]
     RELEVE --> PERSON["a person reads,\ncorrects, verifies"]
     PERSON --> IMPORT["document.Import\n(one transaction)"]
     IMPORT --> STORAGE3[("Storage: Collection,\nindividually imported positions,\none comment each")]
@@ -157,15 +157,23 @@ flowchart LR
   unless every figure is clear; their place learned by a vote over the document); when the two
   sources give different pips, neither is taken and the entry says so. The structure reader
   certifies checkers only: the cube, dice, player on roll and score are not read, so its entry
-  is never sure — to verify with `document.ContextDoubt`, counted apart as *checkers confirmed*
-  when the pips hold (`Entry.CheckersConfirmed`). A page is decoded, read and dropped; no image is kept. Nothing is
+  carries `document.ContextDoubt` and the document's default context (`Source.Defaults`, the
+  XGID's tail), or a context to verify when a cube or dice is drawn; it is never sure until a
+  person confirms the defaults, counted apart as *checkers confirmed* when the pips hold
+  (`Releve.CheckersConfirmed`) and as *complete* when fifteen checkers a side were read with no
+  doubt and no pips (`Entry.Complete`). A page is decoded, read and dropped; no image is kept. Nothing is
   written. Only the CLI and the desktop's façade read a document; the daemon does not.
-- **The Relevé** (`document/releve.go`): `Decode` is strict (unknown fields, gapless ranks,
-  legal XGID) so a hand edit cannot slip a bad position in; `Summarize` (`summary.go`) counts
-  states, entries with checkers confirmed and repeated positions for `document check`.
+- **The Relevé** (`document/releve.go`, format version 2): each entry carries two certainties,
+  `Checkers` and `Context`, and its state is derived (`Releve.StateOf`): sure only when the
+  checkers are sure and the context is read or under confirmed defaults. `Decode` is strict
+  (unknown fields, gapless ranks, legal XGID, an entry under the defaults carrying them) so a
+  hand edit cannot slip a bad position in, and turns a version 1 Relevé into version 2
+  (`Upgrade`); `Summarize` (`summary.go`) counts states, contexts, entries with checkers
+  confirmed, complete ones and repeated positions for `document check`.
 - **Import** (`document/import.go`): `Database.ImportDocumentReleve`, `blunderdb document
   import` and `POST /v1/documents.importReleve` all call `document.Import`. It refuses the
-  whole Relevé if an entry is neither sure nor verified (unless forced), then in one transaction
+  whole Relevé if an entry is neither sure nor verified (unless forced; complete entries with a
+  certified context pass with `AcceptComplete`), then in one transaction
   saves each position as individually imported (ADR-0001, identified by its Zobrist hash),
   adds the new ones to the Collection in the document's order and keeps one reference comment
   per position, found again by its prefix so a second import changes nothing. Images and the

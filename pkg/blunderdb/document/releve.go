@@ -19,26 +19,50 @@ import (
 // is refused by name rather than half-read.
 const Format = "blunderdb-releve"
 
-// Version is the version of the Relevé format this package reads and writes.
-// A Relevé of a newer version is refused: its fields would be dropped.
-const Version = 1
+// Version is the version of the Relevé format this package writes. Version 2
+// gives each entry two certainties, its checkers and its context, and the
+// document a default context a person confirms once (Source.Defaults);
+// version 1 gave one state for the whole reading and is still read: Decode
+// turns it into version 2. A Relevé of a newer version is refused: its fields
+// would be dropped.
+const Version = 2
 
 // ErrInvalid is the refusal of a malformed Relevé. It matches
 // storage.ErrInvalid, so the daemon answers it with a 400.
 var ErrInvalid = fmt.Errorf("document: invalid relevé: %w", storage.ErrInvalid)
 
 // State is how far a reading of one diagram can be trusted (ADR-0108 rule 5).
+// In version 2 it is the certainty of an entry's checkers (Entry.Checkers),
+// and the state of the entry as a whole follows from its checkers and its
+// context (Releve.StateOf).
 type State string
 
 const (
-	// Sure — an independent cross-check confirmed the reading: the checkers
-	// and the context (cube, dice, player on roll, score) the XGID gives. A
-	// reader that does not read the context never claims it.
+	// Sure — an independent cross-check confirmed the reading. An entry is
+	// sure only when its checkers are and its context is certified: read,
+	// or under the document's defaults once a person confirmed them.
 	Sure State = "sure"
 	// ToVerify — the reading holds together but nothing confirmed it.
 	ToVerify State = "to-verify"
 	// Uncertain — the reading is known to be incomplete or contradicted.
 	Uncertain State = "uncertain"
+)
+
+// ContextState is how an entry's context — cube, dice, player on roll,
+// score — is known.
+type ContextState string
+
+const (
+	// ContextRead — read from the diagram's own print and cross-checked.
+	ContextRead ContextState = "read"
+	// ContextDefault — not read: the position carries the document's default
+	// context (Source.Defaults), certified once a person confirms it.
+	ContextDefault ContextState = "default"
+	// ContextToVerify — neither read nor under the defaults: a cube or dice
+	// drawn and not read, a score not found.
+	ContextToVerify ContextState = "to-verify"
+	// ContextUncertain — the context read contradicts itself.
+	ContextUncertain ContextState = "uncertain"
 )
 
 // Releve is the reading of one document.
@@ -59,6 +83,48 @@ type Source struct {
 	// to the file it was read from; empty for a web page.
 	SHA256  string   `json:"sha256,omitempty"`
 	Profile *Profile `json:"profile,omitempty"`
+	// Defaults is the context of every entry whose context is "default".
+	Defaults *Defaults `json:"defaults,omitempty"`
+}
+
+// Defaults is the context a document's diagrams share when they do not print
+// it: a person who confirms it once certifies the context of every entry
+// under it, and only the exceptions a reader detected (a cube off the
+// centre, dice drawn) are left to verify one by one.
+type Defaults struct {
+	// Context is the XGID after its board: cube, cube owner, player on roll,
+	// dice, scores, Crawford, match length, cube limit
+	// ("0:0:1:00:0:0:0:0:10": a centred cube, no dice, the bottom player on
+	// roll, money play). Every entry under the defaults carries it.
+	Context string `json:"context"`
+	// Description says it in words, for the person who confirms it.
+	Description string `json:"description,omitempty"`
+	// Confirmed is set by a person who checked that the document's diagrams
+	// follow the defaults. It covers the context only, never Direction.
+	Confirmed bool `json:"confirmed"`
+	// Direction is the direction of play a reader assumed for want of
+	// printed pips to vote for one; nil when the pips decided it.
+	Direction *Direction `json:"direction,omitempty"`
+}
+
+// Direction is a document's direction of play as a reader assumed it. A
+// wrong guess exchanges the players of every position read under it, so
+// while it stands unconfirmed no complete entry is accepted, whatever doubts
+// it carries; a person confirms it on its own.
+type Direction struct {
+	// Home is the side of the bottom player's home board: "left" or "right".
+	Home        string `json:"home"`
+	Description string `json:"description,omitempty"`
+	// Confirmed is set by a person who checked the direction on the
+	// document's diagrams.
+	Confirmed bool `json:"confirmed"`
+}
+
+// StructureDefaults is the context a reader that does not read it writes: a
+// centred cube, no dice, the bottom player on roll, money play.
+var StructureDefaults = Defaults{
+	Context:     "0:0:1:00:0:0:0:0:10",
+	Description: "centred cube, no dice, the bottom player on roll, money play",
 }
 
 // Profile is how the document draws its diagrams, fixed on the first one and
@@ -88,10 +154,22 @@ type Entry struct {
 	// whose diagram could not be read as a legal position: the entry keeps
 	// the diagram's place, and the import refuses it until a person fills
 	// the position in.
-	Position string          `json:"position"`
-	State    State           `json:"state"`
-	Doubts   []capture.Doubt `json:"doubts,omitempty"`
-	Rect     *Rect           `json:"rect,omitempty"`
+	Position string `json:"position"`
+	// Checkers is the certainty of the checkers' reading.
+	Checkers State `json:"checkers,omitempty"`
+	// Complete is a reading of fifteen checkers a side with no doubt that no
+	// cross-check confirmed: right on every measure so far, it is a state
+	// between to verify and sure that an import accepts as a whole only on
+	// request (ImportOptions.AcceptComplete). A position with checkers borne
+	// off is never complete.
+	Complete bool `json:"complete,omitempty"`
+	// Context is how the cube, dice, player on roll and score are known.
+	Context ContextState `json:"context,omitempty"`
+	// State is the one certainty of a version 1 entry; Decode turns it into
+	// Checkers and Context, and a version 2 entry has none.
+	State  State           `json:"state,omitempty"`
+	Doubts []capture.Doubt `json:"doubts,omitempty"`
+	Rect   *Rect           `json:"rect,omitempty"`
 	// Verified is set when a person has compared the reading with the
 	// diagram and accepted it.
 	Verified bool `json:"verified"`
@@ -107,11 +185,10 @@ type Rect struct {
 	H float64 `json:"h"`
 }
 
-// CheckersConfirmed reports an entry read by its structure whose checkers
-// the printed pip counts confirmed: it is to verify, carries ContextDoubt,
-// and its other doubts, if any, are about a cube or dice drawn and not read.
-// What is left to verify is the context: cube, dice, player on roll, score.
-func (e Entry) CheckersConfirmed() bool {
+// checkersConfirmedV1 is a version 1 entry read by its structure whose
+// checkers the printed pips confirmed: to verify, with ContextDoubt and no
+// doubt but about a cube or dice drawn and not read.
+func (e Entry) checkersConfirmedV1() bool {
 	if e.State != ToVerify || e.Position == "" {
 		return false
 	}
@@ -127,8 +204,80 @@ func (e Entry) CheckersConfirmed() bool {
 	return found
 }
 
-// Importable reports whether the entry may be imported without forcing.
-func (e Entry) Importable() bool { return e.State == Sure || e.Verified }
+// ContextCertified reports whether the entry's context is read, or under
+// the document's defaults once a person confirmed them.
+func (r *Releve) ContextCertified(e Entry) bool {
+	switch e.Context {
+	case ContextRead:
+		return true
+	case ContextDefault:
+		return r.Document.Defaults != nil && r.Document.Defaults.Confirmed
+	}
+	return false
+}
+
+// StateOf is the state of the entry as a whole: uncertain when its checkers
+// or its context are, or when it has no position; sure only when its
+// checkers are and its context is certified; to verify otherwise.
+func (r *Releve) StateOf(e Entry) State {
+	if r.Version < 2 {
+		return e.State
+	}
+	switch {
+	case e.Position == "" || e.Checkers == Uncertain || e.Context == ContextUncertain:
+		return Uncertain
+	case e.Checkers == Sure && r.ContextCertified(e):
+		return Sure
+	}
+	return ToVerify
+}
+
+// CheckersConfirmed reports an entry whose checkers a cross-check confirmed
+// and whose context alone is left to verify.
+func (r *Releve) CheckersConfirmed(e Entry) bool {
+	if r.Version < 2 {
+		return e.checkersConfirmedV1()
+	}
+	return e.Position != "" && e.Checkers == Sure && r.StateOf(e) == ToVerify
+}
+
+// DirectionCertified reports whether the entry's direction of play is
+// certain. The document says it, not the entry's doubts, which a hand can
+// strip: it is certain when the document's direction was voted by printed
+// pips (no defaults direction), when a person confirmed the defaults
+// direction, or when the entry's own printed pips agreed with its checkers
+// (checkers sure), which a reversed direction would have contradicted.
+func (r *Releve) DirectionCertified(e Entry) bool {
+	d := r.Document.Defaults
+	if d == nil || d.Direction == nil || d.Direction.Confirmed {
+		return true
+	}
+	return e.Checkers == Sure
+}
+
+// assumedDirectionMark is what a reader appends to the profile's numbering
+// when no printed pips voted for the direction of play.
+const assumedDirectionMark = "(direction of play assumed)"
+
+func profileAssumesDirection(p *Profile) bool {
+	return p != nil && strings.Contains(p.Numbering, assumedDirectionMark)
+}
+
+// CompleteCertified reports an entry that is neither sure nor verified but
+// whose fifteen checkers a side were read with no doubt, its context and its
+// direction of play certified: what ImportOptions.AcceptComplete accepts as
+// a whole.
+func (r *Releve) CompleteCertified(e Entry) bool {
+	return r.Version >= 2 && e.Complete && !e.Verified && r.StateOf(e) == ToVerify &&
+		e.Checkers == ToVerify && r.ContextCertified(e) && r.DirectionCertified(e)
+}
+
+// Importable reports whether the entry may be imported without forcing:
+// sure or verified, or complete with its context certified when
+// acceptComplete.
+func (r *Releve) Importable(e Entry, acceptComplete bool) bool {
+	return e.Verified || r.StateOf(e) == Sure || (acceptComplete && r.CompleteCertified(e))
+}
 
 // Reference is the entry's place in the document as a person cites it:
 // "p. 146, Problem 191", or "p. 146" when the diagram has no label.
@@ -141,7 +290,8 @@ func (e Entry) Reference() string {
 }
 
 // Decode reads a Relevé and validates it. Unknown fields, trailing data and
-// every rule of Validate are refusals.
+// every rule of Validate are refusals. A version 1 Relevé is returned as
+// version 2 (Upgrade).
 func Decode(data []byte) (*Releve, error) {
 	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.DisallowUnknownFields()
@@ -155,7 +305,88 @@ func Decode(data []byte) (*Releve, error) {
 	if err := r.Validate(); err != nil {
 		return nil, err
 	}
-	return &r, nil
+	return r.Upgrade(), nil
+}
+
+// Upgrade returns a valid Relevé as version 2: r itself when it is already,
+// else a copy whose entries carry two certainties. A version 1 sure entry
+// has its checkers sure and its context read. An entry a structure reader
+// left with ContextDoubt keeps its checkers confirmed when they were, and
+// its context is under StructureDefaults, unconfirmed, when its position
+// carries them and no cube or dice was drawn. Any other entry has its
+// checkers in its old state and its context to verify: version 1 did not
+// say which part of the reading a doubt was about.
+func (r *Releve) Upgrade() *Releve {
+	if r.Version >= 2 {
+		return r
+	}
+	u := *r
+	u.Version = Version
+	u.Entries = make([]Entry, len(r.Entries))
+	defaults := false
+	for i, e := range r.Entries {
+		v1 := e.State
+		confirmed := e.checkersConfirmedV1()
+		e.State = ""
+		e.Checkers, e.Context = v1, ContextToVerify
+		switch {
+		case v1 == Sure:
+			e.Context = ContextRead
+		case hasDoubt(e.Doubts, ContextDoubt):
+			if confirmed {
+				e.Checkers = Sure
+			}
+			if !drawnContext(e.Doubts) && positionContext(e.Position) == StructureDefaults.Context {
+				e.Context = ContextDefault
+				defaults = true
+			}
+		}
+		u.Entries[i] = e
+	}
+	direction := profileAssumesDirection(u.Document.Profile)
+	for _, e := range u.Entries {
+		direction = direction || hasDoubt(e.Doubts, AssumedDirectionDoubt)
+	}
+	if (defaults || direction) && u.Document.Defaults == nil {
+		d := StructureDefaults
+		u.Document.Defaults = &d
+	}
+	if direction {
+		home := "right"
+		if p := u.Document.Profile; p != nil && p.Home != "" {
+			home = p.Home
+		}
+		u.Document.Defaults.Direction = assumedDirection(home)
+	}
+	return &u
+}
+
+func hasDoubt(ds []capture.Doubt, want capture.Doubt) bool {
+	for _, d := range ds {
+		if d == want {
+			return true
+		}
+	}
+	return false
+}
+
+// drawnContext reports a doubt about a cube or dice drawn and not read.
+func drawnContext(ds []capture.Doubt) bool {
+	for _, d := range ds {
+		if contextField[d.Field] && d != ContextDoubt {
+			return true
+		}
+	}
+	return false
+}
+
+// positionContext is the XGID after its board, "" when there is none.
+func positionContext(xgid string) string {
+	s := strings.TrimPrefix(strings.TrimSpace(xgid), "XGID=")
+	if _, ctx, ok := strings.Cut(s, ":"); ok {
+		return ctx
+	}
+	return ""
 }
 
 // Encode validates the Relevé and writes it as indented JSON.
@@ -179,7 +410,7 @@ func (r *Releve) Validate() error {
 		return bad("format %q, want %q", r.Format, Format)
 	}
 	if r.Version < 1 || r.Version > Version {
-		return bad("version %d, this program reads version %d", r.Version, Version)
+		return bad("version %d, this program reads versions 1 to %d", r.Version, Version)
 	}
 	d := r.Document
 	if strings.TrimSpace(d.Title) == "" {
@@ -198,6 +429,25 @@ func (r *Releve) Validate() error {
 			return bad("profile bottom %q, want black or white", p.Bottom)
 		}
 	}
+	if df := d.Defaults; df != nil {
+		if r.Version < 2 {
+			return bad("version 1 has no defaults")
+		}
+		if _, err := ParsePosition("XGID=" + startingBoard + ":" + df.Context); err != nil {
+			return bad("defaults context %q is not the end of an XGID after its board", df.Context)
+		}
+		if dir := df.Direction; dir != nil {
+			if dir.Home != "left" && dir.Home != "right" {
+				return bad("defaults direction home %q, want left or right", dir.Home)
+			}
+			if p := d.Profile; p != nil && p.Home != "" && p.Home != dir.Home {
+				return bad("defaults direction home %q, the profile says %q", dir.Home, p.Home)
+			}
+		}
+	}
+	if r.Version >= 2 && profileAssumesDirection(d.Profile) && (d.Defaults == nil || d.Defaults.Direction == nil) {
+		return bad("the profile says the direction of play is assumed, but the document has no defaults direction")
+	}
 	if len(r.Entries) == 0 {
 		return bad("no entry")
 	}
@@ -205,7 +455,7 @@ func (r *Releve) Validate() error {
 		if e.Rank != i+1 {
 			return bad("entry %d has rank %d: ranks run from 1 with no gap", i+1, e.Rank)
 		}
-		if err := e.validate(); err != nil {
+		if err := r.validateEntry(e); err != nil {
 			return bad("rank %d: %v", e.Rank, err)
 		}
 		if i > 0 && e.Page < r.Entries[i-1].Page {
@@ -215,33 +465,89 @@ func (r *Releve) Validate() error {
 	return nil
 }
 
-func (e Entry) validate() error {
+// startingBoard is a legal board a defaults context is checked on.
+const startingBoard = "-b----E-C---eE---c-e----B-"
+
+func (r *Releve) validateEntry(e Entry) error {
 	if e.Page < 1 {
 		return fmt.Errorf("page %d", e.Page)
-	}
-	switch e.State {
-	case Sure, ToVerify, Uncertain:
-	default:
-		return fmt.Errorf("state %q, want sure, to-verify or uncertain", e.State)
-	}
-	if e.State == Sure && len(e.Doubts) > 0 {
-		return fmt.Errorf("a sure entry has no doubt")
 	}
 	for _, d := range e.Doubts {
 		if strings.TrimSpace(d.Field) == "" {
 			return fmt.Errorf("a doubt names no field")
 		}
 	}
+	if r.Version < 2 {
+		if e.Checkers != "" || e.Context != "" || e.Complete {
+			return fmt.Errorf("version 1 has no checkers, context or complete: it has one state")
+		}
+		switch e.State {
+		case Sure, ToVerify, Uncertain:
+		default:
+			return fmt.Errorf("state %q, want sure, to-verify or uncertain", e.State)
+		}
+		if e.State == Sure && len(e.Doubts) > 0 {
+			return fmt.Errorf("a sure entry has no doubt")
+		}
+	} else if err := r.validateCertainties(e); err != nil {
+		return err
+	}
 	if r := e.Rect; r != nil {
 		if r.X < 0 || r.Y < 0 || r.W <= 0 || r.H <= 0 || r.X+r.W > 1 || r.Y+r.H > 1 {
 			return fmt.Errorf("rect %+v is not inside the page (fractions of its size)", *r)
 		}
 	}
-	if e.Position == "" && e.State == Uncertain && !e.Verified {
+	if e.Position == "" && r.StateOf(e) == Uncertain && !e.Verified {
 		return nil // a diagram that could not be read: listed, never importable as is
 	}
 	_, err := ParsePosition(e.Position)
 	return err
+}
+
+// validateCertainties holds a version 2 entry's checkers and context to what
+// they claim: sure checkers carry no doubt but about the context, a context
+// read carries none about it, a context under the defaults carries them.
+func (r *Releve) validateCertainties(e Entry) error {
+	if e.State != "" {
+		return fmt.Errorf("state %q: version 2 has none, the state follows from checkers and context", e.State)
+	}
+	switch e.Checkers {
+	case Sure, ToVerify, Uncertain:
+	default:
+		return fmt.Errorf("checkers %q, want sure, to-verify or uncertain", e.Checkers)
+	}
+	switch e.Context {
+	case ContextRead, ContextDefault, ContextToVerify, ContextUncertain:
+	default:
+		return fmt.Errorf("context %q, want read, default, to-verify or uncertain", e.Context)
+	}
+	for _, d := range e.Doubts {
+		switch {
+		case !contextField[d.Field] && e.Checkers == Sure:
+			return fmt.Errorf("a doubt on %q: checkers sure have none", d.Field)
+		case e.Complete && !completeLead(d):
+			return fmt.Errorf("a doubt on %q (%s): a complete entry has none but an absent pip count and an assumed direction", d.Field, d.Reason)
+		case contextField[d.Field] && e.Context == ContextRead:
+			return fmt.Errorf("a doubt on %q: a context read has none", d.Field)
+		case contextField[d.Field] && d != ContextDoubt && e.Context == ContextDefault:
+			return fmt.Errorf("a doubt on %q: an entry under the defaults has a cube and dice as they say", d.Field)
+		}
+	}
+	if e.Complete && e.Checkers != ToVerify {
+		return fmt.Errorf("checkers %s are not complete: complete is a state of checkers to verify", e.Checkers)
+	}
+	if hasDoubt(e.Doubts, AssumedDirectionDoubt) && (r.Document.Defaults == nil || r.Document.Defaults.Direction == nil) {
+		return fmt.Errorf("the direction of play is assumed, but the document has no defaults direction")
+	}
+	if e.Context == ContextDefault && e.Position != "" {
+		if r.Document.Defaults == nil {
+			return fmt.Errorf("context default, but the document has no defaults")
+		}
+		if got := positionContext(e.Position); got != r.Document.Defaults.Context {
+			return fmt.Errorf("context default, but the position ends %q, not the defaults %q", got, r.Document.Defaults.Context)
+		}
+	}
+	return nil
 }
 
 // ParsePosition reads an entry's XGID strictly: domain.DecodeXGID forgives

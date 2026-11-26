@@ -10,6 +10,7 @@
     let { visible = false, onClose } = $props();
 
     // Libellé court de chaque genre de tâche ; le registre envoie le code.
+    /** @type {Record<string, string>} */
     const KIND_KEYS = {
         'gammonnet-missing': 'calculs.kind.gammonnet',
         'gammonnet-stale': 'calculs.kind.gammonnet',
@@ -50,6 +51,73 @@
     }
 </script>
 
+{#snippet group(/** @type {string} */ id, /** @type {string} */ title, /** @type {import('../stores/jobsStore.js').JobInfo[]} */ list)}
+    {#if list.length > 0}
+        <section data-testid="jobs-{id}">
+            <h3>{title} <span class="n">{list.length}</span></h3>
+            <ul class="list">
+                {#each list as job (job.id)}
+                    {@const pct = percent(job)}
+                    <li class="row" data-testid="job-row" data-job-id={job.id} data-state={job.state}>
+                        <span class="kind"
+                            >{kindLabel(job)}{#if job.state === 'running' && job.yielded}
+                                <span class="yielded" data-testid="job-yielded">{$t('calculs.yielded')}</span>{/if}</span
+                        >
+                        <span class="object" title={objectLabel(job)}>{objectLabel(job)}</span>
+                        {#if job.library > 0}
+                            <span class="library" style="--group-color: var(--group-color-{groupColorIndex(job.library)})" title={libraryName(job.library)} data-testid="job-library">
+                                <span class="chip"></span><span class="name">{libraryName(job.library)}</span>
+                            </span>
+                        {:else}
+                            <span></span>
+                        {/if}
+                        <progress class="bar" value={pct ?? undefined} max="100" aria-label={$t('calculs.progress')}></progress>
+                        {#if job.total > 0}
+                            <button type="button" class="count" data-testid="job-count" onclick={() => showLibrary(job.library)}>{job.done} / {job.total}</button>
+                        {:else}
+                            <span class="count">{job.done > 0 ? job.done : ''}</span>
+                        {/if}
+                        <span class="actions">
+                            {#if id === 'running'}
+                                {#if job.state === 'paused'}
+                                    <button type="button" data-testid="job-resume" onclick={() => resumeJob(job.id)}>{$t('calculs.resume')}</button>
+                                {:else if job.pausable}
+                                    <button type="button" data-testid="job-pause" onclick={() => pauseJob(job.id)}>{$t('calculs.pause')}</button>
+                                {/if}
+                                {#if job.kind === 'import' && $fileImportMinimizedStore}
+                                    <button
+                                        type="button"
+                                        data-testid="job-show"
+                                        onclick={() => {
+                                            fileImportMinimizedStore.set(false);
+                                            showFileImportModalStore.set(true);
+                                            onClose?.();
+                                        }}>{$t('calculs.show')}</button
+                                    >
+                                {/if}
+                                {#if job.cancelable}
+                                    <button type="button" data-testid="job-cancel" onclick={() => cancelJob(job.id)}>{$t('calculs.cancel')}</button>
+                                {/if}
+                            {:else if id === 'waiting'}
+                                {#if job.state === 'paused'}
+                                    <span class="end" data-testid="job-paused">{$t('calculs.pause')}</span>
+                                    <button type="button" data-testid="job-resume" onclick={() => resumeJob(job.id)}>{$t('calculs.resume')}</button>
+                                {/if}
+                                <button type="button" data-testid="job-up" disabled={job.position <= 1} onclick={() => moveJob(job.id, job.position - 2)}>{$t('calculs.moveUp')}</button>
+                                <button type="button" data-testid="job-down" disabled={isLast(job)} onclick={() => moveJob(job.id, job.position)}>{$t('calculs.moveDown')}</button>
+                                <button type="button" data-testid="job-remove" onclick={() => removeJob(job.id)}>{$t('calculs.remove')}</button>
+                            {:else}
+                                <span class="end" data-testid="job-end">{$t(`calculs.end_${job.state}`)}</span>
+                                <button type="button" data-testid="job-remove" onclick={() => removeJob(job.id)}>{$t('calculs.remove')}</button>
+                            {/if}
+                        </span>
+                    </li>
+                {/each}
+            </ul>
+        </section>
+    {/if}
+{/snippet}
+
 <Modal open={visible} onclose={onClose} size="large" label={$t('calculs.title')}>
     <h2 class="modal-title">{$t('calculs.title')}</h2>
     <div class="head" data-testid="jobs-head">
@@ -60,73 +128,6 @@
             {$allPaused ? $t('calculs.resumeAll') : $t('calculs.pauseAll')}
         </button>
     </div>
-
-    {#snippet group(id, title, list)}
-        {#if list.length > 0}
-            <section data-testid="jobs-{id}">
-                <h3>{title} <span class="n">{list.length}</span></h3>
-                <ul class="list">
-                    {#each list as job (job.id)}
-                        {@const pct = percent(job)}
-                        <li class="row" data-testid="job-row" data-job-id={job.id} data-state={job.state}>
-                            <span class="kind"
-                                >{kindLabel(job)}{#if job.state === 'running' && job.yielded}
-                                    <span class="yielded" data-testid="job-yielded">{$t('calculs.yielded')}</span>{/if}</span
-                            >
-                            <span class="object" title={objectLabel(job)}>{objectLabel(job)}</span>
-                            {#if job.library > 0}
-                                <span class="library" style="--group-color: var(--group-color-{groupColorIndex(job.library)})" title={libraryName(job.library)} data-testid="job-library">
-                                    <span class="chip"></span><span class="name">{libraryName(job.library)}</span>
-                                </span>
-                            {:else}
-                                <span></span>
-                            {/if}
-                            <progress class="bar" value={pct ?? undefined} max="100" aria-label={$t('calculs.progress')}></progress>
-                            {#if job.total > 0}
-                                <button type="button" class="count" data-testid="job-count" onclick={() => showLibrary(job.library)}>{job.done} / {job.total}</button>
-                            {:else}
-                                <span class="count">{job.done > 0 ? job.done : ''}</span>
-                            {/if}
-                            <span class="actions">
-                                {#if id === 'running'}
-                                    {#if job.state === 'paused'}
-                                        <button type="button" data-testid="job-resume" onclick={() => resumeJob(job.id)}>{$t('calculs.resume')}</button>
-                                    {:else if job.pausable}
-                                        <button type="button" data-testid="job-pause" onclick={() => pauseJob(job.id)}>{$t('calculs.pause')}</button>
-                                    {/if}
-                                    {#if job.kind === 'import' && $fileImportMinimizedStore}
-                                        <button
-                                            type="button"
-                                            data-testid="job-show"
-                                            onclick={() => {
-                                                fileImportMinimizedStore.set(false);
-                                                showFileImportModalStore.set(true);
-                                                onClose?.();
-                                            }}>{$t('calculs.show')}</button
-                                        >
-                                    {/if}
-                                    {#if job.cancelable}
-                                        <button type="button" data-testid="job-cancel" onclick={() => cancelJob(job.id)}>{$t('calculs.cancel')}</button>
-                                    {/if}
-                                {:else if id === 'waiting'}
-                                    {#if job.state === 'paused'}
-                                        <span class="end" data-testid="job-paused">{$t('calculs.pause')}</span>
-                                        <button type="button" data-testid="job-resume" onclick={() => resumeJob(job.id)}>{$t('calculs.resume')}</button>
-                                    {/if}
-                                    <button type="button" data-testid="job-up" disabled={job.position <= 1} onclick={() => moveJob(job.id, job.position - 2)}>{$t('calculs.moveUp')}</button>
-                                    <button type="button" data-testid="job-down" disabled={isLast(job)} onclick={() => moveJob(job.id, job.position)}>{$t('calculs.moveDown')}</button>
-                                    <button type="button" data-testid="job-remove" onclick={() => removeJob(job.id)}>{$t('calculs.remove')}</button>
-                                {:else}
-                                    <span class="end" data-testid="job-end">{$t(`calculs.end_${job.state}`)}</span>
-                                    <button type="button" data-testid="job-remove" onclick={() => removeJob(job.id)}>{$t('calculs.remove')}</button>
-                                {/if}
-                            </span>
-                        </li>
-                    {/each}
-                </ul>
-            </section>
-        {/if}
-    {/snippet}
 
     {#if $jobsStore.length === 0}
         <p class="empty" data-testid="jobs-empty">{$t('calculs.empty')}</p>

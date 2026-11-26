@@ -401,6 +401,7 @@
         <span
             class="position-info"
             data-testid="position-counter"
+            data-position-id={$boardPositionStore?.id ?? undefined}
             title={$t('transfer.dragPosition')}
             use:libraryDrag={() => ($boardPositionStore?.id ? { group: $activeGroupId, kind: 'position', id: $boardPositionStore.id, label: `#${$boardPositionStore.id}` } : null)}
             >{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span

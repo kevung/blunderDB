@@ -1738,6 +1738,7 @@ export namespace document {
 	    newPositions: number;
 	    added: number;
 	    repeated: number;
+	    complete: number;
 	    forced: number;
 	
 	    static createFrom(source: any = {}) {
@@ -1754,6 +1755,7 @@ export namespace document {
 	        this.newPositions = source["newPositions"];
 	        this.added = source["added"];
 	        this.repeated = source["repeated"];
+	        this.complete = source["complete"];
 	        this.forced = source["forced"];
 	    }
 	}

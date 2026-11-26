@@ -4,10 +4,14 @@
 //
 // A Relevé is a JSON file a person can read and edit. Its header names the
 // document (title, author, edition or URL, the SHA-256 of the source file, the
-// profile its diagrams are drawn with); each Entry gives one diagram's rank,
-// page, chapter, label, position, state (sure, to verify, uncertain), the
+// profile its diagrams are drawn with, its default context); each Entry gives
+// one diagram's rank, page, chapter, label, position, two certainties — its
+// checkers (sure, to verify, uncertain; complete when fifteen a side were read
+// with no doubt) and its context (read, default, to verify, uncertain) — the
 // doubts the reading left, the diagram's rectangle on the page and whether a
-// person has verified it. The position is an XGID, the encoding the rest of
+// person has verified it. Its state follows from the two (Releve.StateOf): sure
+// only when the checkers are and the context is certified, read or under the
+// document's defaults once a person confirmed them (Defaults.Confirmed). The position is an XGID, the encoding the rest of
 // the repository already reads and writes (domain.DecodeXGID): it carries the
 // checkers, the cube, the player on roll, the dice, the score and the match
 // length in one string, so none of them can disagree with another field.
@@ -30,12 +34,13 @@
 // when there is one and in the image itself; when the two disagree, the
 // entry's checkers are not confirmed. The dice are never read: a reading's
 // XGID always says "no dice"; from an image the cube is centred, the bottom
-// player on roll and the game a money game. Since none of these is read, an
-// entry read by its structure is never sure: it carries ContextDoubt, and
-// when the printed pips confirm its checkers that doubt is its only one, with
-// a drawn cube off the centre or drawn dice (Entry.CheckersConfirmed,
-// Summary.CheckersConfirmed). A person verifies its cube, dice, player on
-// roll and score against the diagram and marks it verified.
+// player on roll and the game a money game: StructureDefaults, the document's
+// default context, unconfirmed. Since none of these is read, an entry read by
+// its structure carries ContextDoubt and is never sure until a person
+// confirms the defaults; a cube drawn off the centre or drawn dice leave its
+// context to verify even then (Releve.CheckersConfirmed,
+// Summary.CheckersConfirmed). A person verifies such an entry's cube, dice,
+// player on roll and score against the diagram and marks it verified.
 //
 // Only Import writes, and only what a Relevé allows: positions, each as a
 // position brought in on its own, in one Collection named after the document,
@@ -43,8 +48,10 @@
 // description and each position's reference ("p. 146, Problem 191") as a
 // comment. No image, no rectangle and no text of the author enter the
 // database. An entry neither sure nor verified refuses the whole import
-// unless the caller forces it, an entry with no position is refused even
-// then, and a refused import writes nothing (one transaction). The daemon
+// unless the caller forces it, or accepts complete entries whose context is
+// certified and whose direction of play is not an unconfirmed supposition
+// (Defaults.Direction, ImportOptions.AcceptComplete); an entry with no position is
+// refused even then, and a refused import writes nothing (one transaction). The daemon
 // imports a Relevé; it never reads a document.
 //
 // A reader of another kind of document plugs in by returning a Relevé that

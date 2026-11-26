@@ -379,9 +379,11 @@ match to read; the archive's codes are for a machine), export (an export is a fi
 **Relevé** (code: `document.Releve`):
 The reading of one document — a book, an article, a web page the user brought — as a JSON
 file a person can read: the document's title, author, edition or URL, the fingerprint of
-its file and the profile its diagrams are drawn with, then one entry per diagram in the
-document's order (rank, page, chapter, label, position as an XGID, state *sure*, *to
-verify* or *uncertain*, doubts, the diagram's rectangle, verified or not). Reading a
+its file, the profile its diagrams are drawn with and its default context, then one entry
+per diagram in the document's order (rank, page, chapter, label, position as an XGID, the
+certainty of its checkers and of its context, complete or not, doubts, the diagram's
+rectangle, verified or not). Format version 2; a version 1 Relevé, with one state per
+entry, is still read. Reading a
 document writes nothing; only importing a Relevé does, into one Collection named after the
 document, and only its positions and their references: no image, no text of the author
 (ADR-0117). A Relevé carries the progress of its verification, so a book is checked over
@@ -390,19 +392,47 @@ place with no position, uncertain, and the import refuses it until a person fill
 _Avoid_: transcript (a Transcription is typed in front of a board), scan, capture (a capture
 is one screen image of a program's board), OCR result, extraction, report
 
-**State of an entry** (code: `document.State`):
+**State of an entry** (code: `document.State`, `document.Releve.StateOf`):
 How far the reading of one diagram can be trusted: *sure* (an independent cross-check
 confirmed it), *to verify* (it holds together, nothing confirmed it) or *uncertain* (known
-incomplete or contradicted). Sure covers the whole position, checkers and context (cube, dice,
-player on roll, score). An entry is importable when it is sure or a person has verified it;
-any other entry refuses the whole import unless forced.
+incomplete or contradicted). An entry carries two certainties, its checkers
+(`Entry.Checkers`, a State) and its context (`Entry.Context`); its state follows from them:
+sure only when its checkers are sure and its context is certified, uncertain when either is.
+An entry is importable when it is sure or a person has verified it; any other entry refuses
+the whole import unless forced, a complete one aside.
 _Avoid_: confidence, score, status, flag
 
-**Checkers confirmed** (interface: *pions confirmés*; code: `document.Entry.CheckersConfirmed`):
-An entry to verify whose checkers the printed pips confirmed while its context was not read:
-a scanned page's entry, carrying the doubt *context not read* (`document.ContextDoubt`) and no
-doubt on its checkers. What is left to verify is its cube, dice, player on roll and score.
-_Avoid_: sure checkers, half-sure, partially sure
+**Context of an entry** (interface: *contexte*; code: `document.ContextState`):
+The cube, dice, player on roll and score of a diagram, as against its checkers: *read* (from
+the print, cross-checked), *default* (the document's default context), *to verify* (a cube or
+dice drawn and not read, a score not found) or *uncertain*. It is *certified* when read, or
+default once the default context is confirmed.
+_Avoid_: metadata, header, situation
+
+**Default context** (interface: *contexte par défaut*; code: `document.Defaults`):
+The context a document's diagrams share when they do not print it — for a scanned book, a
+centred cube, no dice, the bottom player on roll, money play — carried once in the Relevé's
+header and confirmed once by a person (`confirmed`), which certifies the context of every
+entry under it. A direction of play assumed for want of printed pips is a default too
+(`Defaults.Direction`), confirmed on its own. Only the exceptions a reader detected are then left to verify one by one.
+_Avoid_: assumption, preset, template
+
+**Complete reading** (interface: *15 + 15 sans doute*; code: `document.Entry.Complete`):
+A reading of fifteen checkers a side with no doubt that no cross-check confirmed — a diagram
+without printed pips; its only doubts beside the context are the absent pips and, for a
+document no printed pips voted on, the assumed direction of play. Printed pips that disagree
+are a doubt on the checkers: such a reading is never complete. An assumed direction is a
+default of the document (`document.Direction`) with a confirmation of its own: until a person
+confirms it, no complete entry carrying it is accepted. Exact on every measure so far, it is a state between to verify and
+sure: an import accepts complete entries whose context is certified as a whole, on request
+(`ImportOptions.AcceptComplete`), never by default. A position with checkers borne off is
+never complete.
+_Avoid_: probably sure, almost sure
+
+**Checkers confirmed** (interface: *pions confirmés*; code: `document.Releve.CheckersConfirmed`):
+An entry to verify whose checkers are sure — the printed pips confirmed them — while its
+context is not certified: what is left to verify is its cube, dice, player on roll and score.
+_Avoid_: half-sure, partially sure
 
 **Cross-check** (interface: *recoupement*; code: the checks of `document.AnalyzePDF` and of
 `structure.Read`):

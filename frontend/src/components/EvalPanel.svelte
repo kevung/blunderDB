@@ -581,6 +581,12 @@
 {#snippet evalHeader(/** @type {boolean} */ withBadges)}
     <PanelHeader title={$t('tabbedPanel.eval')}>
         {#if withBadges}
+            <!-- In the strip, not on a line of its own: the panel must not scroll at its default size. -->
+            <div class="view-switch" role="group" aria-label={$t('maps.view.label')}>
+                {#each [EVAL_VIEW.DECISION, EVAL_VIEW.SCORES, EVAL_VIEW.ROLLS] as view (view)}
+                    <button type="button" aria-pressed={$evalViewStore === view} onclick={() => evalViewStore.set(view)}>{$t(VIEW_LABELS[view])}</button>
+                {/each}
+            </div>
             {#if data.race}
                 {#if displayRace?.exactWin}
                     <span class="badge badge-composite" title={$t('epc.race.exactAndEvaluatedTooltip')}>
@@ -656,12 +662,6 @@
         <div class="eval-content" oncontextmenu={handleContentContextMenu}>
             <!-- The strip, a full-width line on top (ADR-0020 rule 8): a badge qualifies the numbers below. -->
             {@render evalHeader(true)}
-
-            <div class="view-switch" role="group" aria-label={$t('maps.view.label')}>
-                {#each [EVAL_VIEW.DECISION, EVAL_VIEW.SCORES, EVAL_VIEW.ROLLS] as view (view)}
-                    <button type="button" aria-pressed={$evalViewStore === view} onclick={() => evalViewStore.set(view)}>{$t(VIEW_LABELS[view])}</button>
-                {/each}
-            </div>
 
             {#if $evalViewStore === EVAL_VIEW.SCORES}
                 <ScoreMapView active={isActive} />
@@ -767,7 +767,6 @@
     .view-switch {
         display: flex;
         gap: 0;
-        padding: var(--space-1) var(--space-2) 0;
     }
     .view-switch button {
         padding: 2px var(--space-3);

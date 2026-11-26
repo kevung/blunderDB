@@ -68,7 +68,7 @@ export async function copyXGID() {
 /** Copies the GNUbg ID, "<Position ID>:<Match ID>", which GNU Backgammon loads with `set gnubgid`. */
 export async function copyGnubgID() {
     try {
-        await writeTextToClipboard(await GnubgID(get(positionStore)));
+        await writeTextToClipboard(await GnubgID(/** @type {any} */ (get(positionStore))));
         setStatusBarMessage(tMsg('status.gnubgIdCopied'));
     } catch (err) {
         logger.error('Error copying the GNUbg ID:', err);
@@ -79,7 +79,7 @@ export async function copyGnubgID() {
 /** Copies the ArkID, blunderDB's readable notation of the position (canonical compact form). */
 export async function copyArkID() {
     try {
-        await writeTextToClipboard(await ArkID(get(positionStore), false));
+        await writeTextToClipboard(await ArkID(/** @type {any} */ (get(positionStore)), false));
         setStatusBarMessage(tMsg('status.arkIdCopied'));
     } catch (err) {
         logger.error('Error copying the ArkID:', err);

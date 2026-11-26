@@ -192,7 +192,7 @@ describe('StatusBar — réactivité', () => {
         const { container } = render(StatusBar);
         await tick();
 
-        commandHistoryStore.set(['cmd_new', 'cmd_old']);
+        /** @type {any} */ (commandHistoryStore).set(['cmd_new', 'cmd_old']);
         await tick();
 
         const input = container.querySelector('.command-input');
@@ -223,7 +223,7 @@ describe('StatusBar — réactivité', () => {
     });
 
     test('puce Calculs : une seule, avec les comptes, et un clic ouvre le panneau', async () => {
-        const job = { kind: 'rollout', label: 'x', library: 0, priority: 'requested', done: 1, total: 4, position: 0, pausable: true, cancelable: true };
+        const job = { yielded: false, kind: 'rollout', label: 'x', library: 0, priority: 'requested', done: 1, total: 4, position: 0, pausable: true, cancelable: true };
         jobsStore.set([
             { ...job, id: 1, state: 'running' },
             { ...job, id: 2, state: 'waiting', position: 1 }

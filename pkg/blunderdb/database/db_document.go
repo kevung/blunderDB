@@ -10,8 +10,10 @@ import (
 // ImportDocumentReleve imports the Relevé of a document (package document,
 // ADR-0117), given as its JSON text, into the Collection named collection —
 // the document's title when empty. An entry neither sure nor verified refuses
-// the import unless force; a refused import writes nothing.
-func (d *Database) ImportDocumentReleve(releveJSON string, collection string, force bool) (document.ImportResult, error) {
+// the import unless force, or acceptComplete for an entry of fifteen checkers
+// a side read with no doubt whose context is certified; a refused import
+// writes nothing.
+func (d *Database) ImportDocumentReleve(releveJSON string, collection string, acceptComplete, force bool) (document.ImportResult, error) {
 	r, err := document.Decode([]byte(releveJSON))
 	if err != nil {
 		return document.ImportResult{}, err
@@ -21,7 +23,7 @@ func (d *Database) ImportDocumentReleve(releveJSON string, collection string, fo
 	if d.db == nil {
 		return document.ImportResult{}, fmt.Errorf("no database is currently open")
 	}
-	return document.Import(context.Background(), d.store, "", r, document.ImportOptions{Collection: collection, Force: force})
+	return document.Import(context.Background(), d.store, "", r, document.ImportOptions{Collection: collection, AcceptComplete: acceptComplete, Force: force})
 }
 
 // AnalyzeDocument reads the diagrams of the document at path (package
