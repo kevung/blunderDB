@@ -9,6 +9,8 @@ import (
 	"io"
 	"regexp"
 	"strconv"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/jpx"
 )
 
 var (
@@ -42,6 +44,10 @@ type Limits struct {
 	MaxObjects int
 	// MaxGlyphs is the most glyphs one page may draw.
 	MaxGlyphs int
+	// MaxJPXPixels is the sum of the pixels of the JPEG 2000 images the
+	// reader decodes: a decode cannot be cancelled, so its work is bounded
+	// before it starts.
+	MaxJPXPixels int64
 }
 
 // DefaultLimits are generous for a book of a thousand pages and stop a
@@ -53,6 +59,9 @@ var DefaultLimits = Limits{
 	MaxPages:      20000,
 	MaxObjects:    4 << 20,
 	MaxGlyphs:     1 << 20,
+	// A scanned book of about 150 pages at 6 Mpx: a decode takes about a
+	// second a 6 Mpx page, and cannot be cancelled.
+	MaxJPXPixels: 1_000_000_000,
 }
 
 type xrefEntry struct {
@@ -74,6 +83,7 @@ type Reader struct {
 	fonts     map[int]*Font
 	objStm    map[int][]byte
 	pages     []Page
+	jpx       jpx.Budget
 }
 
 // Open reads the cross-reference and the trailer of a PDF file. The data is
@@ -91,7 +101,7 @@ func Open(data []byte, lim Limits) (r *Reader, err error) {
 	if !bytes.Contains(head, []byte("%PDF-")) {
 		return nil, ErrNotPDF
 	}
-	r = &Reader{data: data, lim: lim, cache: map[int]Object{}, resolving: map[int]bool{}, fonts: map[int]*Font{}, objStm: map[int][]byte{}}
+	r = &Reader{data: data, lim: lim, cache: map[int]Object{}, resolving: map[int]bool{}, fonts: map[int]*Font{}, objStm: map[int][]byte{}, jpx: jpx.Budget{Left: lim.MaxJPXPixels}}
 	if err := r.readXref(); err != nil || r.rootDict() == nil {
 		r.xref, r.trailer = nil, nil
 		r.cache = map[int]Object{}

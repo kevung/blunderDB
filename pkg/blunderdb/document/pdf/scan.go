@@ -10,7 +10,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/d-fuji/jpeg2000"
+	"github.com/kevung/blunderdb/pkg/blunderdb/document/jpx"
 
 	"golang.org/x/image/ccitt"
 )
@@ -24,8 +24,8 @@ var (
 	// drawn with lines) is not rendered.
 	ErrNoPageImage = errors.New("pdf: the page draws no image (a page drawn with vectors is not rendered)")
 	// ErrImageCodec: an image of the page is compressed with JBIG2, which
-	// this reader does not decode.
-	ErrImageCodec = errors.New("pdf: an image of the page is compressed with JBIG2, which is not decoded; give the pages as images (PNG or JPEG files)")
+	// this reader does not decode, or in JPEG 2000 beyond what it takes.
+	ErrImageCodec = errors.New("pdf: an image of the page is compressed with JBIG2, which is not decoded, or in a JPEG 2000 this reader refuses; give the pages as images (PNG or JPEG files)")
 )
 
 const (
@@ -74,7 +74,7 @@ type imageDraw struct {
 // page or more (MinScanDPI to MaxScanDPI); and gives the words of its text,
 // visible or not, in the image's pixels. A text the reader cannot map to
 // Unicode gives no word. A page without any image is ErrNoPageImage; an
-// image compressed with JBIG2 or JPEG 2000 is ErrImageCodec. Images are
+// image compressed with JBIG2 is ErrImageCodec. Images are
 // decoded one at a time and dropped once painted.
 func (r *Reader) Scan(p Page) (sc *Scan, err error) {
 	defer func() {
@@ -140,7 +140,8 @@ func (r *Reader) Scan(p Page) (sc *Scan, err error) {
 		out.Image.Pix[i] = 255
 	}
 	budget := maxPainted * W * H
-	var codecErr error
+	var codecErr, refused error
+	painted := 0
 	for _, d := range in.draws {
 		pic, why, err := r.picture(d)
 		if errors.Is(err, ErrImageCodec) {
@@ -149,8 +150,12 @@ func (r *Reader) Scan(p Page) (sc *Scan, err error) {
 		}
 		if err != nil {
 			out.Skipped = append(out.Skipped, err.Error())
+			if errors.Is(err, jpx.ErrUnsupported) || errors.Is(err, jpx.ErrBudget) {
+				refused = err
+			}
 			continue
 		}
+		painted++
 		if why != "" {
 			out.Skipped = append(out.Skipped, why)
 		}
@@ -160,6 +165,11 @@ func (r *Reader) Scan(p Page) (sc *Scan, err error) {
 	}
 	if codecErr != nil {
 		return nil, codecErr
+	}
+	if refused != nil && painted == 0 {
+		// A page left blank by a refusal would read as a page without
+		// diagram: it is named as unread instead.
+		return nil, fmt.Errorf("%w: %w", ErrImageCodec, refused)
 	}
 	out.Words = words(in.out, dev)
 	return out, nil
@@ -309,7 +319,7 @@ func (r *Reader) samples(s *Stream, res Dict, stencil bool) (*plane, error) {
 	case "JBIG2Decode":
 		return nil, fmt.Errorf("%w (%s)", ErrImageCodec, codec)
 	case "JPXDecode":
-		return jpxPlane(data, r.lim.MaxStreamSize)
+		return r.jpxPlane(data, dict, w, h, stencil)
 	case "DCTDecode", "DCT":
 		return jpegPlane(data, r.lim.MaxStreamSize)
 	case "CCITTFaxDecode", "CCF":
@@ -392,21 +402,54 @@ func jpegPlane(data []byte, most int) (*plane, error) {
 	return greyPlane(img), nil
 }
 
-// jpxPlane decodes a JPEG 2000 image (a JP2 file or a bare codestream, as a
-// PDF stores it) to grey. The decoder is pure Go, so the daemon reads it too.
-func jpxPlane(data []byte, most int) (*plane, error) {
-	cfg, err := jpeg2000.DecodeConfig(bytes.NewReader(data))
+// jpxPlane decodes a JPEG 2000 image to grey. The image dictionary decides
+// what the codestream cannot: an Indexed colour space, an embedded alpha
+// (SMaskInData) or a Decode array this reader cannot honour is refused, the
+// image skipped and named, rather than read wrongly. BitsPerComponent is
+// ignored for this filter, as the PDF standard says.
+func (r *Reader) jpxPlane(data []byte, dict Dict, w, h int, stencil bool) (*plane, error) {
+	if stencil {
+		return nil, malformed("a JPEG 2000 stencil mask")
+	}
+	if n := r.num(dict["SMaskInData"]); n != 0 {
+		return nil, fmt.Errorf("%w: JPEG 2000 with an embedded alpha (SMaskInData %d)", jpx.ErrUnsupported, int(n))
+	}
+	if isIndexed(r, dict["ColorSpace"]) {
+		return nil, fmt.Errorf("%w: JPEG 2000 in an Indexed colour space", jpx.ErrUnsupported)
+	}
+	img, info, err := jpx.Decode(data, w, h, &r.jpx)
 	if err != nil {
-		return nil, malformed("jpeg 2000: %v", err)
+		return nil, err
 	}
-	if cfg.Width <= 0 || cfg.Height <= 0 || cfg.Width > most/cfg.Height {
-		return nil, fmt.Errorf("%w: a JPEG 2000 image of %d×%d pixels", ErrTooLarge, cfg.Width, cfg.Height)
+	pl := greyPlane(img)
+	if a, ok := r.Resolve(dict["Decode"]).(Array); ok {
+		if len(a) != 2*info.Components {
+			return nil, malformed("a Decode array of %d numbers for %d components", len(a), info.Components)
+		}
+		d0, d1 := r.num(a[0]), r.num(a[1])
+		for k := 1; k < info.Components; k++ {
+			if r.num(a[2*k]) != d0 || r.num(a[2*k+1]) != d1 {
+				return nil, fmt.Errorf("%w: JPEG 2000 with a Decode array that differs by component", jpx.ErrUnsupported)
+			}
+		}
+		if d0 != 0 || d1 != 1 {
+			for i, v := range pl.p {
+				x := d0 + float64(v)/255*(d1-d0)
+				pl.p[i] = uint8(min(max(x, 0), 1)*255 + 0.5)
+			}
+		}
 	}
-	img, err := jpeg2000.Decode(bytes.NewReader(data))
-	if err != nil {
-		return nil, malformed("jpeg 2000: %v", err)
+	return pl, nil
+}
+
+func isIndexed(r *Reader, cs Object) bool {
+	switch v := r.Resolve(cs).(type) {
+	case Name:
+		return v == "Indexed" || v == "I"
+	case Array:
+		return len(v) > 0 && isIndexed(r, v[0])
 	}
-	return greyPlane(img), nil
+	return false
 }
 
 // greyPlane reduces a decoded image to one grey sample a pixel.
@@ -421,6 +464,13 @@ func greyPlane(img image.Image) *plane {
 	case *image.YCbCr:
 		for y := 0; y < pl.h; y++ {
 			copy(pl.p[y*pl.w:(y+1)*pl.w], m.Y[y*m.YStride:y*m.YStride+pl.w])
+		}
+	case *image.NRGBA:
+		for y := 0; y < pl.h; y++ {
+			for x := 0; x < pl.w; x++ {
+				p := m.Pix[y*m.Stride+4*x:]
+				pl.p[y*pl.w+x] = uint8((299*uint32(p[0]) + 587*uint32(p[1]) + 114*uint32(p[2])) / 1000)
+			}
 		}
 	case *image.CMYK:
 		for i := 0; i < pl.w*pl.h; i++ {
