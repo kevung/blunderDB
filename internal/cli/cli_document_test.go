@@ -2,10 +2,14 @@ package cli
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/capture"
+	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 )
 
 const exampleReleve = "pkg/blunderdb/document/testdata/releve-exemple.json"
@@ -73,6 +77,56 @@ func TestCLI_DocumentCheckAndImport(t *testing.T) {
 	if err := cli.Run([]string{"document", "import", "--db", dbPath, "--collection", "Autre", "--force", unverified}); err != nil {
 		t.Errorf("forced import: %v", err)
 	}
+}
+
+// An entry a scan's reader confirmed by its checkers is counted apart and
+// refuses the import until a person verifies its context.
+func TestCLI_DocumentContextNotRead(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	r, err := document.Decode(mustRead(t, exampleReleve))
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Entries[0].State, r.Entries[0].Doubts = document.ToVerify, []capture.Doubt{document.ContextDoubt}
+	if !r.Entries[0].CheckersConfirmed() {
+		t.Fatal("the entry is not taken as checkers confirmed")
+	}
+	path := filepath.Join(t.TempDir(), "scan.json")
+	write := func() {
+		data, err := r.Encode()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, data, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write()
+	out := captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", path}) })
+	if !strings.Contains(out, "sure 2, to verify 2") || !strings.Contains(out, "Checkers:   1 confirmed") || !strings.Contains(out, "Unverified: rank 1") {
+		t.Errorf("check:\n%s", out)
+	}
+	err = cli.Run([]string{"document", "import", "--db", dbPath, path})
+	if !errors.Is(err, document.ErrUnverified) || !strings.Contains(err.Error(), "check its cube, dice, player on roll and score") || !strings.Contains(err.Error(), `"verified": true`) {
+		t.Errorf("import of an unread context: %v", err)
+	}
+	if cols, _ := cli.db.GetAllCollections(); len(cols) != 0 {
+		t.Errorf("a refused import wrote a collection: %+v", cols)
+	}
+	r.Entries[0].Verified = true
+	write()
+	if err := cli.Run([]string{"document", "import", "--db", dbPath, path}); err != nil {
+		t.Errorf("import once verified: %v", err)
+	}
+}
+
+func mustRead(t *testing.T, path string) []byte {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return data
 }
 
 // document analyze reads a PDF's diagrams into a relevé that document check

@@ -758,8 +758,8 @@ func colourName(k int) string {
 	return "light"
 }
 
-// judge gives one diagram its board, state and named doubts. Sure only when
-// the printed pips agree on both sides, no side has more than fifteen
+// judge gives one diagram its board, state and named doubts. Confirmed only
+// when the printed pips agree on both sides, no side has more than fifteen
 // checkers and nothing is in doubt; a stack deduced from the pips is sure
 // only when its side then has fifteen checkers.
 func judge(rd *boardReading, cl classes, home0 string, upper int, order string, assumed bool, printed *[2]int, read pipsRead) Diagram {
@@ -845,7 +845,7 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 	if max(n[0], n[1]) > 15 {
 		state = Uncertain
 	} else if okPips && pieceDoubts == 0 && (!solved || fifteen) {
-		state = Sure
+		state = Confirmed
 	}
 	d := Diagram{
 		Page:      rd.page,
@@ -893,7 +893,7 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 			}
 		}
 	}
-	if state == Sure && len(doubts) > 0 {
+	if state == Confirmed && len(doubts) > 0 {
 		state = ToVerify
 	}
 	// How stacks were counted, when it is not one by one: on an entry to
@@ -901,7 +901,7 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 	for i, h := range a.how {
 		fam := map[string]string{"length": "joined", "share": "top/bottom joined"}[h.kind]
 		families = append(families, fam)
-		if state != Sure {
+		if state != Confirmed {
 			j := a.howJ[i]
 			if h.kind == "length" {
 				doubts = append(doubts, capture.Doubt{Field: "point", Point: idx(h.side == 0, j), Reason: fmt.Sprintf("a dark stack counted by its length: %d checkers, %d seen one by one", h.to, h.from)})

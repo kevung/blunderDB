@@ -181,7 +181,7 @@ func TestMeasureScans(t *testing.T) {
 			}
 			count := func(m map[[2]int]Diagram) (sure, checkers int) {
 				for _, d := range m {
-					if d.State == Sure {
+					if d.State == Confirmed {
 						sure++
 					}
 					if d.CheckersSure {
@@ -212,7 +212,7 @@ func TestMeasureScans(t *testing.T) {
 			}
 			t.Logf("%s: %d pages in %v (%v a page, composing %v a page), peak RSS %s, %d unread", book, len(list), el.Round(time.Second),
 				(el / time.Duration(2*len(list))).Round(time.Millisecond), (scanTime / time.Duration(2*len(list))).Round(time.Millisecond), peakRSS(), len(res.Unread))
-			t.Logf("%s: %d diagrams (prototype %d), %d same board; sure / sure checkers: text %d/%d (prototype %d), image %d/%d (prototype %d), both %d/%d; contradictions %d",
+			t.Logf("%s: %d diagrams (prototype %d), %d same board; checkers confirmed / sure checkers: text %d/%d (prototype %d), image %d/%d (prototype %d), both %d/%d; contradictions %d",
 				book, len(both), len(protoText), same, ts, tc, pSure(protoText), is, ic, pSure(protoImage), bs, bc, contra)
 			if len(res.Unread) > 0 {
 				t.Logf("%s: unread %v", book, res.Unread[:min(5, len(res.Unread))])

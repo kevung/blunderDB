@@ -399,7 +399,7 @@ func TestSyntheticBook(t *testing.T) {
 		t.Fatalf("%d diagrams, want %d", len(res.Diagrams), len(want))
 	}
 	for i, d := range res.Diagrams {
-		if d.Board != want[i] || d.State != Sure {
+		if d.Board != want[i] || d.State != Confirmed {
 			t.Errorf("diagram %d (page %d): want %s sure, got %s", i+1, d.Page+1, want[i], describe(d))
 		}
 		if !d.Complete {
@@ -434,7 +434,7 @@ func TestSyntheticUnconfirmed(t *testing.T) {
 		t.Fatalf("%d diagrams, want %d", len(res.Diagrams), len(want))
 	}
 	for i, d := range res.Diagrams {
-		if d.State == Sure {
+		if d.State == Confirmed {
 			t.Errorf("diagram %d sure without printed pips: %s", i+1, describe(d))
 		}
 		// The direction of play is a supposition here: the board may come
@@ -490,7 +490,7 @@ func TestSyntheticDeducedStack(t *testing.T) {
 		t.Fatal(err)
 	}
 	d := res.Diagrams[len(res.Diagrams)-1]
-	if d.Board != full.board() || d.State != Sure {
+	if d.Board != full.board() || d.State != Confirmed {
 		t.Errorf("want %s sure (deduced), got %s", full.board(), describe(d))
 	}
 	if !strings.Contains(strings.Join(d.Families, ","), "short high stack") {

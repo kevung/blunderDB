@@ -9,7 +9,10 @@ type Summary struct {
 	Sure      int    `json:"sure"`
 	ToVerify  int    `json:"toVerify"`
 	Uncertain int    `json:"uncertain"`
-	Verified  int    `json:"verified"`
+	// CheckersConfirmed counts the entries to verify whose checkers the
+	// printed pips confirmed, their context alone left to verify.
+	CheckersConfirmed int `json:"checkersConfirmed"`
+	Verified          int `json:"verified"`
 	// Unverified lists the ranks that refuse an import unless it is forced.
 	Unverified []int `json:"unverified"`
 	// Positions counts the distinct positions, by the Zobrist hash the
@@ -28,6 +31,9 @@ func Summarize(r *Releve) Summary {
 			s.Sure++
 		case ToVerify:
 			s.ToVerify++
+			if e.CheckersConfirmed() {
+				s.CheckersConfirmed++
+			}
 		case Uncertain:
 			s.Uncertain++
 		}

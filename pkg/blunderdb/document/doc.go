@@ -28,10 +28,14 @@
 // by their structure and learns the document's style from the document. The
 // printed pip counts that confirm its entries are read in the text layer
 // when there is one and in the image itself; when the two disagree, the
-// entry is not sure. The dice are
-// never read: a reading's XGID always says "no dice"; from an image the cube
-// is centred, the bottom player on roll and the game a money game, each drawn
-// cube off the centre and drawn dice named as a doubt.
+// entry's checkers are not confirmed. The dice are never read: a reading's
+// XGID always says "no dice"; from an image the cube is centred, the bottom
+// player on roll and the game a money game. Since none of these is read, an
+// entry read by its structure is never sure: it carries ContextDoubt, and
+// when the printed pips confirm its checkers that doubt is its only one, with
+// a drawn cube off the centre or drawn dice (Entry.CheckersConfirmed,
+// Summary.CheckersConfirmed). A person verifies its cube, dice, player on
+// roll and score against the diagram and marks it verified.
 //
 // Only Import writes, and only what a Relevé allows: positions, each as a
 // position brought in on its own, in one Collection named after the document,

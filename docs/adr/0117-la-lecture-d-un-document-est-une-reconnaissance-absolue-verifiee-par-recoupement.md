@@ -20,7 +20,10 @@ partage.
    règle 3 : la position est lue sans candidats. Elle ne devient sûre que si un recoupement
    indépendant du lecteur la confirme (aujourd'hui : quinze pions par camp et pips imprimés ;
    la légende et le coup de la solution ne sont pas lus) ; jamais par l'équité ni l'avis du moteur (ADR-0108 règle 4). Dans le doute,
-   « à vérifier ».
+   « à vérifier ». Ces recoupements ne confirment que les pions : « sûre » couvre aussi le
+   videau, les dés, le trait et le score, et une entrée dont le lecteur ne lit pas ce contexte
+   (le lecteur de structure, sur un scan) n'est jamais sûre ; ses pions confirmés, elle reste
+   « à vérifier » avec le doute « contexte non lu ».
 2. **La lecture peut se faire hors de la webview**, contrairement à l'ADR-0108 règle 2 : un
    diagramme d'imprimerie se lit en Go pur (`document/pdf` pour le fichier, la table de glyphes de `document` pour le
    diagramme), sans CGO ni modèle

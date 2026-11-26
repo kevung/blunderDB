@@ -100,7 +100,7 @@ func TestMeasureStructure(t *testing.T) {
 				states[d.State]++
 			}
 			t.Logf("%s: %d pages in %v (%v a page), profile %+v", book, len(pageList), el.Round(time.Second), (el / time.Duration(len(pageList))).Round(time.Millisecond), res.Profile)
-			t.Logf("%s: %d diagrams, sure %d, to verify %d, uncertain %d, rejected %d", book, len(res.Diagrams), states[Sure], states[ToVerify], states[Uncertain], res.Rejected)
+			t.Logf("%s: %d diagrams, checkers confirmed %d, to verify %d, uncertain %d, rejected %d", book, len(res.Diagrams), states[Confirmed], states[ToVerify], states[Uncertain], res.Rejected)
 			if vol > 0 {
 				compareTruth(t, vol, got, truth)
 			} else {
@@ -167,7 +167,7 @@ func compareTruth(t *testing.T, vol int, got map[[2]int]Diagram, truth map[[2]in
 		if d.CheckersSure {
 			checkersSure++
 		}
-		if d.State == Sure {
+		if d.State == Confirmed {
 			sure++
 			if d.Board != want {
 				sureWrong++
@@ -190,7 +190,7 @@ var explained = map[string]map[[2]int]struct{ board, why string }{
 	},
 }
 
-var protoState = map[string]State{"sur": Sure, "a_verifier": ToVerify, "incertain": Uncertain}
+var protoState = map[string]State{"sur": Confirmed, "a_verifier": ToVerify, "incertain": Uncertain}
 
 // compareProto counts the differences with the prototype's relevé; a
 // reading sure here that the prototype did not call sure is an error.
@@ -220,7 +220,7 @@ func compareProto(t *testing.T, book string, got map[[2]int]Diagram, path string
 	}
 	onlyGo, onlyProto, sameBoard, sameState := 0, 0, 0, 0
 	trans := map[string]int{}
-	names := map[State]string{Sure: "sure", ToVerify: "to-verify", Uncertain: "uncertain"}
+	names := map[State]string{Confirmed: "checkers confirmed", ToVerify: "to-verify", Uncertain: "uncertain"}
 	for k, d := range got {
 		p, ok := proto[k]
 		if !ok {
@@ -234,15 +234,15 @@ func compareProto(t *testing.T, book string, got map[[2]int]Diagram, path string
 		}
 		gs := d.State
 		if d.CheckersSure {
-			gs = Sure
+			gs = Confirmed
 		}
 		if gs == ps {
 			sameState++
 		} else {
 			trans[names[ps]+"→"+names[gs]]++
-			if x, ok := explained[book][k]; ok && gs == Sure && x.board == d.Board {
+			if x, ok := explained[book][k]; ok && gs == Confirmed && x.board == d.Board {
 				t.Logf("%s p%d r%d: sure here, %s in the prototype, explained: %s", book, k[0], k[1], p.Etat, x.why)
-			} else if gs == Sure {
+			} else if gs == Confirmed {
 				t.Errorf("%s p%d r%d: sure here, %s in the prototype (%s against %s)", book, k[0], k[1], p.Etat, d.Board, p.Board)
 			} else {
 				t.Logf("%s p%d r%d: %s → %s (%s against %s) %v", book, k[0], k[1], p.Etat, names[d.State], d.Board, p.Board, d.Doubts)
@@ -262,7 +262,7 @@ func compareProto(t *testing.T, book string, got map[[2]int]Diagram, path string
 		}
 	}
 	for _, d := range got {
-		if d.CheckersSure && d.State != Sure {
+		if d.CheckersSure && d.State != Confirmed {
 			unreadHeld++
 		}
 	}

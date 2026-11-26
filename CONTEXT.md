@@ -393,9 +393,16 @@ is one screen image of a program's board), OCR result, extraction, report
 **State of an entry** (code: `document.State`):
 How far the reading of one diagram can be trusted: *sure* (an independent cross-check
 confirmed it), *to verify* (it holds together, nothing confirmed it) or *uncertain* (known
-incomplete or contradicted). An entry is importable when it is sure or a person has verified
-it; any other entry refuses the whole import unless forced.
+incomplete or contradicted). Sure covers the whole position, checkers and context (cube, dice,
+player on roll, score). An entry is importable when it is sure or a person has verified it;
+any other entry refuses the whole import unless forced.
 _Avoid_: confidence, score, status, flag
+
+**Checkers confirmed** (interface: *pions confirmés*; code: `document.Entry.CheckersConfirmed`):
+An entry to verify whose checkers the printed pips confirmed while its context was not read:
+a scanned page's entry, carrying the doubt *context not read* (`document.ContextDoubt`) and no
+doubt on its checkers. What is left to verify is its cube, dice, player on roll and score.
+_Avoid_: sure checkers, half-sure, partially sure
 
 **Cross-check** (interface: *recoupement*; code: the checks of `document.AnalyzePDF` and of
 `structure.Read`):

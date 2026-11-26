@@ -131,7 +131,7 @@ func TestPipsReadInImage(t *testing.T) {
 		if d.ImagePips == nil || d.TextPips != nil {
 			t.Errorf("diagram %d: pips from the image %v, from the text %v", i+1, d.ImagePips, d.TextPips)
 		}
-		if d.State == Sure {
+		if d.State == Confirmed {
 			sure++
 		}
 	}
@@ -174,7 +174,7 @@ func TestPipsTextImageDisagree(t *testing.T) {
 			named = true
 		}
 	}
-	if d.State == Sure || d.CheckersSure || !named {
+	if d.State == Confirmed || d.CheckersSure || !named {
 		t.Errorf("text and image disagree, yet %s", describe(d))
 	}
 }

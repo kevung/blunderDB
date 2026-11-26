@@ -106,12 +106,16 @@ type Pages interface {
 	Page(i int) (Page, error)
 }
 
-// State is how far a diagram's reading can be trusted.
+// State is how far a diagram's checkers can be trusted. The reader never
+// reads the cube's value or owner, the dice, the player on roll or the
+// score, so no state says anything of them.
 type State int
 
 const (
 	ToVerify State = iota
-	Sure
+	// Confirmed — the printed pip counts confirm the checkers and nothing
+	// drawn (cube off the centre, dice) is left unread.
+	Confirmed
 	Uncertain
 )
 

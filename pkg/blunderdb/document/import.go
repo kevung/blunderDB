@@ -55,6 +55,25 @@ func Unverified(r *Releve) []int {
 	return ranks
 }
 
+// contextUnread reports whether one of the ranks carries ContextDoubt.
+func contextUnread(r *Releve, ranks []int) bool {
+	want := map[int]bool{}
+	for _, k := range ranks {
+		want[k] = true
+	}
+	for _, e := range r.Entries {
+		if !want[e.Rank] {
+			continue
+		}
+		for _, d := range e.Doubts {
+			if d == ContextDoubt {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // Description is the Collection's description for the document: its title,
 // author, edition and URL, one per line.
 func (s Source) Description() string {
@@ -92,7 +111,11 @@ func Import(ctx context.Context, st storage.Storage, scope string, r *Releve, op
 	}
 	unverified := Unverified(r)
 	if len(unverified) > 0 && !opts.Force {
-		return ImportResult{}, fmt.Errorf("%w: rank %s; verify them, or force the import", ErrUnverified, joinInts(unverified))
+		how := "verify them"
+		if contextUnread(r, unverified) {
+			how = "verify them (read from a scan, an entry's checkers at most are certified: check its cube, dice, player on roll and score against the diagram, then set \"verified\": true)"
+		}
+		return ImportResult{}, fmt.Errorf("%w: rank %s; %s, or force the import", ErrUnverified, joinInts(unverified), how)
 	}
 	name := strings.TrimSpace(opts.Collection)
 	if name == "" {

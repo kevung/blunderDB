@@ -155,11 +155,14 @@ flowchart LR
   (`structure/numbers.go`: isolated numbers read figure by figure against the document's
   numbering, an embedded set of eight typefaces and the figures already read, abstaining
   unless every figure is clear; their place learned by a vote over the document); when the two
-  sources give different pips, neither is taken and the entry says so. A page is decoded, read and dropped; no image is kept. Nothing is
+  sources give different pips, neither is taken and the entry says so. The structure reader
+  certifies checkers only: the cube, dice, player on roll and score are not read, so its entry
+  is never sure — to verify with `document.ContextDoubt`, counted apart as *checkers confirmed*
+  when the pips hold (`Entry.CheckersConfirmed`). A page is decoded, read and dropped; no image is kept. Nothing is
   written. Only the CLI and the desktop's façade read a document; the daemon does not.
 - **The Relevé** (`document/releve.go`): `Decode` is strict (unknown fields, gapless ranks,
   legal XGID) so a hand edit cannot slip a bad position in; `Summarize` (`summary.go`) counts
-  states and repeated positions for `document check`.
+  states, entries with checkers confirmed and repeated positions for `document check`.
 - **Import** (`document/import.go`): `Database.ImportDocumentReleve`, `blunderdb document
   import` and `POST /v1/documents.importReleve` all call `document.Import`. It refuses the
   whole Relevé if an entry is neither sure nor verified (unless forced), then in one transaction

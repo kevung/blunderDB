@@ -125,18 +125,26 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 }
 
 func structureEntry(d structure.Diagram, rank int) Entry {
-	e := Entry{Rank: rank, Page: d.Page + 1, Doubts: d.Doubts}
-	switch d.State {
-	case structure.Sure:
-		e.State = Sure
-	case structure.Uncertain:
+	// The reader certifies the checkers only: the XGID's cube, dice, player
+	// on roll and score are defaults, and a cube drawn in the middle may be
+	// owned, so no entry it gives is ever sure.
+	e := Entry{Rank: rank, Page: d.Page + 1, State: ToVerify, Doubts: []capture.Doubt{ContextDoubt}}
+	if d.CheckersSure {
+		// The other doubts of a reading whose checkers the pips confirm are
+		// leads for checking checkers: only the drawn context stays.
+		for _, x := range d.Doubts {
+			if contextField[x.Field] {
+				e.Doubts = append(e.Doubts, x)
+			}
+		}
+	} else {
+		e.Doubts = append(e.Doubts, d.Doubts...)
+	}
+	if d.State == structure.Uncertain {
 		e.State = Uncertain
-	default:
-		e.State = ToVerify
 	}
 	if d.Board != "" {
-		// The cube, the dice, the player on roll and the score are not read:
-		// a centred cube, no dice, the bottom player on roll, money play.
+		// A centred cube, no dice, the bottom player on roll, money play.
 		xgid := "XGID=" + d.Board + ":0:0:1:00:0:0:0:0:10"
 		if _, err := ParsePosition(xgid); err == nil {
 			e.Position = xgid
@@ -271,6 +279,15 @@ func imageDPI(data []byte) float64 {
 	}
 	return 0
 }
+
+// ContextDoubt is the doubt every entry read by its structure carries: its
+// checkers may be confirmed, its cube, dice, player on roll and score are
+// not read. Its field and reason never change, so a Relevé is searched by
+// them.
+var ContextDoubt = capture.Doubt{Field: "context", Reason: "context not read: cube, dice, player on roll, score"}
+
+// contextField names the doubts about what surrounds the checkers.
+var contextField = map[string]bool{"context": true, "cube": true, "dice": true}
 
 func doubtPosition(err error) capture.Doubt {
 	return capture.Doubt{Field: "position", Reason: err.Error()}

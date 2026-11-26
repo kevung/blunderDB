@@ -31,7 +31,9 @@ var ErrInvalid = fmt.Errorf("document: invalid relevé: %w", storage.ErrInvalid)
 type State string
 
 const (
-	// Sure — an independent cross-check confirmed the reading.
+	// Sure — an independent cross-check confirmed the reading: the checkers
+	// and the context (cube, dice, player on roll, score) the XGID gives. A
+	// reader that does not read the context never claims it.
 	Sure State = "sure"
 	// ToVerify — the reading holds together but nothing confirmed it.
 	ToVerify State = "to-verify"
@@ -103,6 +105,26 @@ type Rect struct {
 	Y float64 `json:"y"`
 	W float64 `json:"w"`
 	H float64 `json:"h"`
+}
+
+// CheckersConfirmed reports an entry read by its structure whose checkers
+// the printed pip counts confirmed: it is to verify, carries ContextDoubt,
+// and its other doubts, if any, are about a cube or dice drawn and not read.
+// What is left to verify is the context: cube, dice, player on roll, score.
+func (e Entry) CheckersConfirmed() bool {
+	if e.State != ToVerify || e.Position == "" {
+		return false
+	}
+	found := false
+	for _, d := range e.Doubts {
+		switch {
+		case d == ContextDoubt:
+			found = true
+		case !contextField[d.Field] || d.Field == ContextDoubt.Field:
+			return false
+		}
+	}
+	return found
 }
 
 // Importable reports whether the entry may be imported without forcing.

@@ -86,7 +86,7 @@ func TestScannedPDF(t *testing.T) {
 	}
 	sure := 0
 	for _, d := range res.Diagrams {
-		if d.State == Sure {
+		if d.State == Confirmed {
 			sure++
 		}
 	}

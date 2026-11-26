@@ -3,6 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"sort"
 	"strings"
@@ -161,9 +162,18 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 	out := cli.stdout()
 	fmt.Fprintf(out, "Document:   %s\n", s.Title)
 	fmt.Fprintf(out, "Entries:    %d (sure %d, to verify %d, uncertain %d)\n", s.Entries, s.Sure, s.ToVerify, s.Uncertain)
+	printCheckersConfirmed(out, s)
 	fmt.Fprintf(out, "Positions:  %d distinct, %d repeated\n", s.Positions, s.Repeated)
 	fmt.Fprintf(out, "Relevé:     %s\n", *output)
 	return nil
+}
+
+// printCheckersConfirmed names the entries a scan's reader confirmed by
+// their checkers only, so they are not taken for sure ones.
+func printCheckersConfirmed(out io.Writer, s document.Summary) {
+	if s.CheckersConfirmed > 0 {
+		fmt.Fprintf(out, "Checkers:   %d confirmed by the printed pips; cube, dice, player on roll and score to verify\n", s.CheckersConfirmed)
+	}
 }
 
 func (cli *CLI) runDocumentCheck(args []string) error {
@@ -187,6 +197,7 @@ func (cli *CLI) runDocumentCheck(args []string) error {
 	out := cli.stdout()
 	fmt.Fprintf(out, "Document:   %s\n", s.Title)
 	fmt.Fprintf(out, "Entries:    %d (sure %d, to verify %d, uncertain %d; verified %d)\n", s.Entries, s.Sure, s.ToVerify, s.Uncertain, s.Verified)
+	printCheckersConfirmed(out, s)
 	fmt.Fprintf(out, "Positions:  %d distinct, %d repeated\n", s.Positions, s.Repeated)
 	if len(s.Unverified) > 0 {
 		fmt.Fprintf(out, "Unverified: rank %s (import refused without --force)\n", joinRanks(s.Unverified))
