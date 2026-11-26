@@ -134,8 +134,10 @@ describe('RollMapView', () => {
         expect(sent).toHaveLength(21);
         expect([ply, focus, sentTag]).toEqual([2, -1, tag]);
 
+        // marked only once the replies stand at the map's depth
         handlers['gammonnet-rolls:prefetched']({ tag, index: 0, ply: 1 });
-        handlers['gammonnet-rolls:prefetched']({ tag: tag + 99, index: 1, ply: 1 });
+        handlers['gammonnet-rolls:prefetched']({ tag, index: 2, ply: 2 });
+        handlers['gammonnet-rolls:prefetched']({ tag: tag + 99, index: 1, ply: 2 });
         await Promise.resolve();
         expect(container.querySelectorAll('tbody tr.ready')).toHaveLength(1);
 

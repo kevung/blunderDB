@@ -324,9 +324,12 @@ plus bas, pour que **Réponses** s'affiche aussitôt : les réponses aux 21 jets
 Le jet sélectionné passe en premier. Ce calcul cède les cœurs au calcul
 affiché et aux autres calculs visibles, et s'arrête dès qu'on quitte la carte
 ou qu'on descend une autre branche ; sélectionner un autre jet le réoriente
-sans refaire ce qui est déjà calculé. Un jet dont les réponses sont prêtes
-porte un « › » dans le tableau et un trait sous sa case. Une carte ainsi
-préparée est, au bit près, celle qu'un calcul direct donnerait.
+sans refaire les profondeurs déjà achevées, mais une profondeur interrompue en
+cours de route est perdue et reprend du début. Un jet dont les réponses sont
+prêtes à la profondeur réglée porte un « › » dans le tableau et un trait sous
+sa case ; aux autres, **Réponses** affiche aussitôt le 1-ply et raffine
+ensuite. Une carte ainsi préparée est, au bit près, celle qu'un calcul direct
+donnerait.
 
 .. _panneau_reference:
 

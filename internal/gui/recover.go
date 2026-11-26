@@ -20,6 +20,12 @@ func recoverBackground(ctx context.Context, label string) {
 	if r == nil {
 		return
 	}
+	reportPanic(ctx, label, r)
+}
+
+// reportPanic is recoverBackground's report of r, for a goroutine whose
+// recover happens elsewhere (gammonnet.NewPrefetcher's onPanic).
+func reportPanic(ctx context.Context, label string, r any) {
 	slog.Error("panic recovered in background job",
 		"job", label,
 		"panic", r,

@@ -49,9 +49,10 @@ type PrefetchFunc func(index, ply int)
 
 // Prefetcher computes PrefetchRequests one at a time into a MapCache.
 type Prefetcher struct {
-	cache *MapCache
-	scope string
-	exec  PrefetchExec
+	cache   *MapCache
+	scope   string
+	exec    PrefetchExec
+	onPanic func(any)
 
 	mu      sync.Mutex
 	key     prefetchKey
@@ -66,9 +67,11 @@ type PrefetchExec func(ctx context.Context, ply, pruneK int) CellExec
 
 // NewPrefetcher computes into cache under scope, each child's phases run by
 // exec — BackgroundExec on the desktop, so that the computation on screen
-// keeps its cores.
-func NewPrefetcher(cache *MapCache, scope string, exec PrefetchExec) *Prefetcher {
-	return &Prefetcher{cache: cache, scope: scope, exec: exec}
+// keeps its cores. onPanic receives a panic of a request's goroutine — its
+// search, its executor's workers, its PrefetchFunc — which then ends that
+// request alone; nil lets the panic through.
+func NewPrefetcher(cache *MapCache, scope string, exec PrefetchExec, onPanic func(any)) *Prefetcher {
+	return &Prefetcher{cache: cache, scope: scope, exec: exec, onPanic: onPanic}
 }
 
 type prefetchKey struct {
@@ -102,13 +105,23 @@ func (p *Prefetcher) Start(ctx context.Context, req PrefetchRequest, onChild Pre
 	p.key, p.running, p.cancel, p.done = key, true, cancel, done
 	go func() {
 		defer close(done)
-		defer cancel()
+		defer func() {
+			cancel()
+			p.mu.Lock()
+			if p.done == done {
+				p.running = false
+			}
+			p.mu.Unlock()
+		}()
+		defer func() {
+			if r := recover(); r != nil {
+				if p.onPanic == nil {
+					panic(r)
+				}
+				p.onPanic(r)
+			}
+		}()
 		p.run(ctx, req, onChild)
-		p.mu.Lock()
-		if p.done == done {
-			p.running = false
-		}
-		p.mu.Unlock()
 	}()
 	return done
 }
@@ -193,7 +206,10 @@ func (p *Prefetcher) run(ctx context.Context, req PrefetchRequest, onChild Prefe
 // taking its token with HoldBackground for one cell at a time, its searcher
 // parking at each roll while a visible computation claims cores. A claim
 // therefore stops it from starting cells and parks the ones it runs; ctx
-// ending while it waits for a token ends the phase with nothing more run.
+// ending while it waits for a token ends the phase with nothing more run. A
+// worker whose searcher cannot be built runs nothing and the phase returns
+// why; a panic in a worker is raised again on the caller's goroutine, once
+// the others have stopped.
 func BackgroundExec(cores *Cores, workers int) PrefetchExec {
 	if workers <= 0 {
 		workers = max(cores.Cap(), 1)
@@ -202,17 +218,33 @@ func BackgroundExec(cores *Cores, workers int) PrefetchExec {
 		return func(n int, cell func(int, *Searcher)) error {
 			var mu sync.Mutex
 			next := 0
+			var failed error
+			var panicked any
 			var wg sync.WaitGroup
 			for range min(workers, n) {
 				wg.Go(func() {
+					defer func() {
+						if r := recover(); r != nil {
+							mu.Lock()
+							if panicked == nil {
+								panicked = r
+							}
+							next = n // the others take no further cell
+							mu.Unlock()
+						}
+					}()
 					searcher, err := NewBatchSearcher(ply, pruneK)
 					if err != nil {
-						searcher = nil
-					} else {
-						searcher.YieldsTo(cores)
-						if CoresFor(ply) != nil {
-							searcher.WithCores(cores)
+						mu.Lock()
+						if failed == nil {
+							failed = err
 						}
+						mu.Unlock()
+						return
+					}
+					searcher.YieldsTo(cores)
+					if CoresFor(ply) != nil {
+						searcher.WithCores(cores)
 					}
 					for {
 						mu.Lock()
@@ -226,13 +258,21 @@ func BackgroundExec(cores *Cores, workers int) PrefetchExec {
 						if err != nil {
 							return
 						}
-						cell(i, searcher)
-						release()
+						func() {
+							defer release()
+							cell(i, searcher)
+						}()
 					}
 				})
 			}
 			wg.Wait()
-			return ctx.Err()
+			if panicked != nil {
+				panic(panicked)
+			}
+			if err := ctx.Err(); err != nil {
+				return err
+			}
+			return failed
 		}
 	}
 }

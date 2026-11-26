@@ -281,6 +281,11 @@ func (a *App) stopGroupJobs(group int, grace time.Duration) {
 	if (group == 0 || group == a.shownGroup()) && a.db != nil {
 		a.db.StopMaintenance(deadline)
 	}
+	// The roll map prefetch writes no library and is not waited for; it is
+	// stopped with the library on screen, whose table it values its maps by.
+	if group == 0 || group == a.shownGroup() {
+		a.CancelRollMapPrefetch()
+	}
 }
 
 // shownGroup is the group on screen, read without libs.mu.

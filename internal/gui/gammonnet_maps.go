@@ -104,7 +104,8 @@ func (a *App) CancelRollMapPrefetch() {
 
 func (a *App) rollMapPrefetcher() *gammonnet.Prefetcher {
 	a.gnPrefetchOnce.Do(func() {
-		a.gnPrefetch = gammonnet.NewPrefetcher(gammonnet.Maps(), "", gammonnet.BackgroundExec(gammonnet.ProcessCores(), 0))
+		a.gnPrefetch = gammonnet.NewPrefetcher(gammonnet.Maps(), "", gammonnet.BackgroundExec(gammonnet.ProcessCores(), 0),
+			func(r any) { reportPanic(a.ctx, "gammonNet roll map prefetch", r) })
 	})
 	return a.gnPrefetch
 }

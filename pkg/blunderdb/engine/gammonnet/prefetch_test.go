@@ -2,14 +2,13 @@ package gammonnet
 
 import (
 	"context"
+	"runtime"
 	"sync"
 	"sync/atomic"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
-
-func localPrefetchExec(_ context.Context, ply, pruneK int) CellExec { return LocalExec(0, ply, pruneK) }
 
 // prefetchParent is the opening's 1-ply map: the rows a prefetch descends.
 func prefetchParent(t *testing.T) (domain.Position, []RollMapRow) {
@@ -31,20 +30,22 @@ func childOf(t *testing.T, pos domain.Position, r RollMapRow) domain.Position {
 	return child
 }
 
-// The oracle: a descent after a prefetch is served without a search and is,
-// bit for bit, the map computed fresh — every child at 0 and 1 ply, the child
-// looked at at 2 ply, and no other child past 1 ply.
+// The oracle, on the desktop's executor: a descent after a prefetch is served
+// without a search and is, bit for bit, the map computed fresh — every child
+// at 0 and 1 ply, the child looked at at 2 ply, and no other child past 1 ply;
+// a child not looked at, asked at 2 ply as the display asks it, replays its
+// held phase and searches only the 2-ply one.
 func TestPrefetcher_DescentIsTheFreshMapBitForBit(t *testing.T) {
 	pos, rows := prefetchParent(t)
 	const focus = 4
-	// The 2-ply child is the slow part; under the race detector the 1-ply
-	// prefetch exercises the same paths.
+	// The 2-ply children are the slow part; the 1-ply prefetch exercises the
+	// same paths.
 	ply := 2
-	if raceEnabled {
+	if raceEnabled || testing.Short() {
 		ply = 1
 	}
 	cache := NewMapCache(DefaultMapCacheBytes)
-	p := NewPrefetcher(cache, "", localPrefetchExec)
+	p := NewPrefetcher(cache, "", BackgroundExec(ProcessCores(), 0), nil)
 	var mu sync.Mutex
 	held := map[[2]int]bool{}
 	<-p.Start(context.Background(), PrefetchRequest{Pos: pos, Rows: rows, Ply: ply, Focus: focus}, func(i, ply int) {
@@ -89,6 +90,32 @@ func TestPrefetcher_DescentIsTheFreshMapBitForBit(t *testing.T) {
 			}
 		}
 	}
+	if ply < 2 {
+		return
+	}
+
+	other := childOf(t, pos, rows[(focus+1)%NumRolls])
+	var phases atomic.Int32
+	var plies []int
+	got, err := cache.RollMap(context.Background(), "", other, nil, 2, 0, countingExec(2, 0, &phases), func(_ int, r RollMapRow) {
+		plies = append(plies, r.Ply)
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if phases.Load() != 1 {
+		t.Fatalf("%d phases searched for a prefetched child, want only the 2-ply one", phases.Load())
+	}
+	if len(plies) != 2*NumRolls || plies[0] != 1 || plies[NumRolls-1] != 1 || plies[NumRolls] != 2 {
+		t.Fatalf("rows arrived at plies %v, want the held 1-ply phase, then 2-ply", plies)
+	}
+	fresh, err := ComputeRollMap(context.Background(), other, nil, 2, 0, LocalExec(0, 2, 0), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !sameRollMap(got, fresh) {
+		t.Fatal("a 2-ply descent on a prefetched child differs from the fresh map")
+	}
 }
 
 // gatedExec holds every phase until gate is closed, and counts them.
@@ -108,7 +135,7 @@ func TestPrefetcher_IdenticalRequestsInFlightRunOnce(t *testing.T) {
 	pos, rows := prefetchParent(t)
 	gate := make(chan struct{})
 	var phases atomic.Int32
-	p := NewPrefetcher(NewMapCache(DefaultMapCacheBytes), "", gatedExec(gate, &phases))
+	p := NewPrefetcher(NewMapCache(DefaultMapCacheBytes), "", gatedExec(gate, &phases), nil)
 	req := PrefetchRequest{Pos: pos, Rows: rows, Ply: 1, Focus: -1}
 	first := p.Start(context.Background(), req, nil)
 	again := req
@@ -131,7 +158,7 @@ func TestPrefetcher_NewBranchCancelsTheRunningOne(t *testing.T) {
 	gate := make(chan struct{})
 	var phases atomic.Int32
 	cache := NewMapCache(DefaultMapCacheBytes)
-	p := NewPrefetcher(cache, "", gatedExec(gate, &phases))
+	p := NewPrefetcher(cache, "", gatedExec(gate, &phases), nil)
 	var old atomic.Int32
 	first := p.Start(context.Background(), PrefetchRequest{Pos: pos, Rows: rows, Ply: 1, Focus: -1}, func(int, int) { old.Add(1) })
 
@@ -156,29 +183,61 @@ func TestPrefetcher_NewBranchCancelsTheRunningOne(t *testing.T) {
 	}
 }
 
-// While a visible computation claims the cores, the background starts no
-// cell; once the claim is released, it runs them all.
+// While a visible computation claims the cores, the background, started and
+// waiting for its tokens, runs no cell; released, it runs them all. A phase
+// cancelled while it waits runs nothing and says so.
 func TestBackgroundExec_YieldsToAClaim(t *testing.T) {
 	cores := NewCores(2)
 	release := cores.Claim()
-	ctx, cancel := context.WithCancel(context.Background())
 	var ran atomic.Int32
 	done := make(chan error)
 	go func() {
-		done <- BackgroundExec(cores, 2)(ctx, 0, 0)(5, func(int, *Searcher) { ran.Add(1) })
+		done <- BackgroundExec(cores, 2)(context.Background(), 0, 0)(5, func(int, *Searcher) { ran.Add(1) })
 	}()
-	cancel()
-	if err := <-done; err == nil {
-		t.Fatal("a phase cancelled while waiting for a token reported no error")
+	// Both workers are running and queued behind the claim, free tokens
+	// notwithstanding.
+	for queued := 0; queued < 2; runtime.Gosched() {
+		cores.mu.Lock()
+		queued = len(cores.waiters)
+		cores.mu.Unlock()
 	}
 	if ran.Load() != 0 {
 		t.Fatalf("%d cells ran under a claim", ran.Load())
 	}
 	release()
-	if err := BackgroundExec(cores, 2)(context.Background(), 0, 0)(5, func(int, *Searcher) { ran.Add(1) }); err != nil {
+	if err := <-done; err != nil {
 		t.Fatal(err)
 	}
 	if ran.Load() != 5 {
 		t.Fatalf("%d cells ran once the claim ended, want 5", ran.Load())
+	}
+
+	release = cores.Claim()
+	defer release()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if err := BackgroundExec(cores, 2)(ctx, 0, 0)(5, func(int, *Searcher) { ran.Add(1) }); err == nil {
+		t.Fatal("a phase cancelled while waiting for a token reported no error")
+	}
+	if ran.Load() != 5 {
+		t.Fatal("a cancelled phase ran cells")
+	}
+}
+
+// A panic in a worker reaches the caller of the phase, and the Prefetcher
+// hands it to onPanic: the request ends, the process does not.
+func TestPrefetcher_PanicGoesToOnPanic(t *testing.T) {
+	pos, rows := prefetchParent(t)
+	boom := func(ctx context.Context, ply, pruneK int) CellExec {
+		exec := BackgroundExec(NewCores(2), 2)(ctx, ply, pruneK)
+		return func(n int, cell func(int, *Searcher)) error {
+			return exec(n, func(int, *Searcher) { panic("boom") })
+		}
+	}
+	got := make(chan any, 1)
+	p := NewPrefetcher(NewMapCache(DefaultMapCacheBytes), "", boom, func(r any) { got <- r })
+	<-p.Start(context.Background(), PrefetchRequest{Pos: pos, Rows: rows, Ply: 1, Focus: -1}, nil)
+	if r := <-got; r != "boom" {
+		t.Fatalf("onPanic got %v", r)
 	}
 }

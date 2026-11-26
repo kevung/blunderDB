@@ -32,7 +32,8 @@
     let marketOnly = $state(false);
     let selected = $state(-1);
     let others = $state(/** @type {Array<any> | null} */ (null));
-    // ready[i] is the depth the replies to row i are prefetched to.
+    // ready[i] is the depth the replies to row i are prefetched to; a row is marked once they
+    // stand at the map's own depth, the one a descent shows.
     let ready = $state(/** @type {Array<number>} */ (Array(ROLL_COUNT).fill(-1)));
     let pruneK = 0;
     let tag = nextMapTag();
@@ -249,7 +250,7 @@
                 <tbody>
                     {#each visible as row (row.index)}
                         {@const dev = row.equity - stats.average}
-                        <tr class:selected={selected === row.index} class:pending={row.ply < targetPly} class:ready={ready[row.index] >= 0} onclick={() => pick(row)}>
+                        <tr class:selected={selected === row.index} class:pending={row.ply < targetPly} class:ready={ready[row.index] >= targetPly} onclick={() => pick(row)}>
                             <td class="roll">{rollLabel(row)}</td>
                             <td class="move">{row.dance ? $t('maps.rolls.dance') : row.move}</td>
                             <td class="num">{row.equity.toFixed(3)}</td>
@@ -275,7 +276,7 @@
                                 class="cell"
                                 class:lost={row.marketLost}
                                 class:pending={row.ply < targetPly}
-                                class:ready={ready[row.index] >= 0}
+                                class:ready={ready[row.index] >= targetPly}
                                 class:selected={selected === row.index}
                                 style={shade(row.equity)}
                                 onclick={() => pick(row)}
