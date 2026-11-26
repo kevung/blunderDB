@@ -24,6 +24,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/training"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
 )
 
 // App struct
@@ -51,8 +52,12 @@ type App struct {
 	gnEvalCancel context.CancelFunc
 	// gnEvalSeq names the search gnEvalCancel belongs to, so a finishing
 	// search clears only its own.
-	gnEvalSeq  uint64
-	gnLivePool gammonNetLivePool
+	gnEvalSeq uint64
+	// gnRollMapSeq and gnScoreMapSeq name the search each map last started,
+	// so its Cancel stops that one and never the panel's. Guarded by gnEvalMu.
+	gnRollMapSeq  uint64
+	gnScoreMapSeq uint64
+	gnLivePool    gammonNetLivePool
 
 	// gnBatchMu/gnBatchCancel: the same for the batch (gammonnet_batch.go).
 	gnBatchMu     sync.Mutex
@@ -103,6 +108,9 @@ type App struct {
 	libs libraryGroups
 	// imports are the imports running on borrowed handles (import_files.go).
 	imports backgroundImports
+	// jobs lists every durable task and queues those that write a library
+	// one at a time (jobs.go, ADR-0115).
+	jobs *jobs.Registry
 	// paneCopy is the session's history of position copies between
 	// libraries that can be taken back (CopyPositionToGroup).
 	paneCopy paneCopies
@@ -115,6 +123,8 @@ const blunderCountReadyEvent = "library:blunder-count-ready"
 // NewApp creates a new App application struct.
 func NewApp(db *database.Database) *App {
 	a := &App{db: db}
+	a.jobs = jobs.New(func(name string, payload any) { a.emitBatch(name, payload) })
+	a.imports.reg = a.jobs
 	a.mcp.engine.db = db
 	a.display.engine.db = db
 	if db != nil {
@@ -134,6 +144,7 @@ func NewApp(db *database.Database) *App {
 		})
 		database.SetOpenGuard(db, a.refuseHeldLibrary)
 		database.SetMatchStatsFillReport(db, a.matchStatsFillReport())
+		database.SetTaskTracker(db, a.trackDirectTask)
 		database.SetBlunderCountReady(db, func() {
 			if a.ctx != nil {
 				runtime.EventsEmit(a.ctx, blunderCountReadyEvent)

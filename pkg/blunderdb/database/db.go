@@ -127,6 +127,9 @@ type Database struct {
 	recount blunderRecount
 	// statsFill is the background match_stats fill (match_stats_fill.go).
 	statsFill matchStatsFill
+	// tracker lists the durable work the desktop calls directly on this
+	// handle (task_tracker.go); nil outside the desktop.
+	tracker atomic.Pointer[TaskTracker]
 }
 
 // ErrDatabaseChanged refuses a background job's write once another database

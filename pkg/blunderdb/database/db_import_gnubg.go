@@ -34,7 +34,13 @@ func (d *Database) ImportGnuBGMatchFromText(content string) (int64, error) {
 // ImportGnuBGMatch imports a match from a GnuBG file (SGF, MAT, or TXT format),
 // delegating to the shared ingest pipeline (ingest.MapGnuBG → ingest.WriteMatch)
 // — the same path the headless server uses.
+// The desktop's task tracker lists it (TaskTracker).
 func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
+	return tracked(d, TaskImport, filePath, d.CancelImport, func() (int64, error) { return d.importGnuBGMatch(filePath) })
+}
+
+// importGnuBGMatch is ImportGnuBGMatch without the tracker.
+func (d *Database) importGnuBGMatch(filePath string) (int64, error) {
 	ctx, done := d.beginCancellableImport()
 	defer done()
 

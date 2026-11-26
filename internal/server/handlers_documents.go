@@ -18,7 +18,7 @@ type documentImportReleveReq struct {
 	Force bool `json:"force"`
 }
 
-// documentRoutes serve the import of a document's Relevé (ADR-0115). Reading a
+// documentRoutes serve the import of a document's Relevé (ADR-0117). Reading a
 // document is not served: the daemon receives the Relevé a desktop produced.
 func (s *Server) documentRoutes() []route {
 	return []route{

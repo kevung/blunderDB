@@ -12,7 +12,7 @@ import (
 
 // runDocument handles the document command: the Relevé of a document — the
 // positions a book, an article or a web page shows, in its order — checked or
-// imported into a Collection (ADR-0115).
+// imported into a Collection (ADR-0117).
 func (cli *CLI) runDocument(args []string) error {
 	if len(args) < 1 {
 		cli.printDocumentUsage()

@@ -614,7 +614,13 @@ func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual 
 }
 
 // CommitImportDatabase performs the actual import within a transaction (ACID)
+// The desktop's task tracker lists it (TaskTracker).
 func (d *Database) CommitImportDatabase(importPath string) (map[string]interface{}, error) {
+	return tracked(d, TaskImport, importPath, d.CancelImport, func() (map[string]interface{}, error) { return d.commitImportDatabase(importPath) })
+}
+
+// commitImportDatabase is CommitImportDatabase without the tracker.
+func (d *Database) commitImportDatabase(importPath string) (map[string]interface{}, error) {
 	return d.CommitImportDatabaseCapped(importPath, 0)
 }
 

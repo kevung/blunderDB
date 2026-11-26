@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 00:48+0100\n"
+"POT-Creation-Date: 2026-11-26 01:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -325,6 +325,24 @@ msgid "Verdict de videau d'une position à chaque score d'un match."
 msgstr "マッチの各スコアにおける、ポジションのキューブの判定。"
 
 #: ../../source/cli.rst:1
+msgid "rolls"
+msgstr "rolls"
+
+#: ../../source/cli.rst:1
+msgid "Les 21 jets d'une position : meilleur coup, équité, marché perdu."
+msgstr "ポジションの 21 通りの出目：最善手、エクイティ、失ったマーケット。"
+
+#: ../../source/cli.rst:1
+msgid "scoremap"
+msgstr "scoremap"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Meilleur coup ou verdict de videau d'une position à chaque score d'un "
+"match."
+msgstr "ポジションの最善手またはキューブ判定を、マッチの各スコアで示します。"
+
+#: ../../source/cli.rst:1
 msgid "rollout"
 msgstr "ロールアウト"
 
@@ -544,41 +562,41 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "サーバーモードと PostgreSQL への移行：\\ :ref:`headless` を参照。"
 
-#: ../../source/cli.rst:124
+#: ../../source/cli.rst:126
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
 msgstr "各コマンドは ``--help`` オプションで詳細なヘルプを表示できます。"
 
-#: ../../source/cli.rst:138
+#: ../../source/cli.rst:140
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:141
+#: ../../source/cli.rst:143
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:150
+#: ../../source/cli.rst:152
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:157
+#: ../../source/cli.rst:159
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:169
+#: ../../source/cli.rst:171
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:171
+#: ../../source/cli.rst:173
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:172
+#: ../../source/cli.rst:174
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:174
+#: ../../source/cli.rst:176
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
 

@@ -1,6 +1,6 @@
 // Package document holds the Relevé of a document — the positions a book, an
 // article or a web page shows, in the order it shows them — and its import
-// into a Collection (ADR-0115).
+// into a Collection (ADR-0117).
 //
 // A Relevé is a JSON file a person can read and edit. Its header names the
 // document (title, author, edition or URL, the SHA-256 of the source file, the

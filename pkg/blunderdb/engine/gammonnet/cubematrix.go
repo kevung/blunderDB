@@ -52,10 +52,10 @@ type CubeMatrix struct {
 	Cells []CubeMatrixCell `json:"cells"`
 }
 
-// CubeMatrixLengths are the match lengths the interface offers. Three, not a
-// free number: the grid is read by eye, and 9×9 is already at the edge of what
-// fits beside a board.
-var CubeMatrixLengths = []int{5, 7, 9}
+// CubeMatrixLengths are the match lengths the cube matrix and the score map
+// offer: the odd ones, as matches are played, up to the 15 points of the
+// longest common format. DefaultMapMatchLength is where they open.
+var CubeMatrixLengths = []int{3, 5, 7, 9, 11, 13, 15}
 
 // ComputeCubeMatrix evaluates pos's cube decision at every away × away score
 // of a matchLength-point match.

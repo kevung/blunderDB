@@ -8,7 +8,7 @@ import (
 )
 
 // ImportDocumentReleve imports the Relevé of a document (package document,
-// ADR-0115), given as its JSON text, into the Collection named collection —
+// ADR-0117), given as its JSON text, into the Collection named collection —
 // the document's title when empty. An entry neither sure nor verified refuses
 // the import unless force; a refused import writes nothing.
 func (d *Database) ImportDocumentReleve(releveJSON string, collection string, force bool) (document.ImportResult, error) {

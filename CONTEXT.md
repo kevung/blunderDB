@@ -365,7 +365,7 @@ document's order (rank, page, chapter, label, position as an XGID, state *sure*,
 verify* or *uncertain*, doubts, the diagram's rectangle, verified or not). Reading a
 document writes nothing; only importing a Relevé does, into one Collection named after the
 document, and only its positions and their references: no image, no text of the author
-(ADR-0115). A Relevé carries the progress of its verification, so a book is checked over
+(ADR-0117). A Relevé carries the progress of its verification, so a book is checked over
 several sittings.
 _Avoid_: transcript (a Transcription is typed in front of a board), scan, capture (a capture
 is one screen image of a program's board), OCR result, extraction, report

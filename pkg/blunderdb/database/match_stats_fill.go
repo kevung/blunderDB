@@ -36,6 +36,9 @@ type matchStatsFillRun struct {
 	// desktop reports; a run ended by the file changing is reported to no
 	// one, since the screen already shows the next library.
 	byUser bool
+	// ended is the tracker's end of this fill (MatchStatsFillReport.Begin),
+	// nil for none.
+	ended func(err error)
 }
 
 // MatchStatsFillReport receives a background fill's events. Progress gets the
@@ -45,6 +48,12 @@ type matchStatsFillRun struct {
 type MatchStatsFillReport struct {
 	Progress func(done, total int)
 	End      func(filled int, err error)
+	// Begin, when set, is told of each fill as it starts, with stop, which
+	// ends that fill alone as CancelMaintenance would. The fill reports its
+	// progress to the returned progress too, and calls ended exactly once,
+	// on every path: also when the file changed under it, which End is not
+	// told.
+	Begin func(stop func()) (progress func(done, total int), ended func(err error))
 }
 
 // SetMatchStatsFillReport registers the desktop's report of the background
@@ -83,13 +92,36 @@ func (d *Database) FillMatchStatsInBackground() bool {
 	ctx, cancel := context.WithCancel(context.Background())
 	run := &matchStatsFillRun{gen: d.generation, cancel: cancel, done: make(chan struct{})}
 	d.statsFill.running = run
-	go d.runMatchStatsFill(ctx, run, len(missing), *d.statsFill.report)
+	report := *d.statsFill.report
+	if report.Begin != nil {
+		stop := func() {
+			d.statsFill.mu.Lock()
+			run.byUser = true
+			d.statsFill.mu.Unlock()
+			run.cancel()
+		}
+		progress, ended := report.Begin(stop)
+		run.ended = ended
+		if shown := report.Progress; progress != nil {
+			report.Progress = func(done, total int) {
+				progress(done, total)
+				if shown != nil {
+					shown(done, total)
+				}
+			}
+		}
+	}
+	go d.runMatchStatsFill(ctx, run, len(missing), report)
 	return true
 }
 
 func (d *Database) runMatchStatsFill(ctx context.Context, run *matchStatsFillRun, total int, report MatchStatsFillReport) {
 	defer close(run.done)
 	defer run.cancel()
+	ended := errTaskPanicked
+	if run.ended != nil {
+		defer func() { run.ended(ended) }()
+	}
 	filled := 0
 	// The caller holds mu for reading, and keep is asked under that hold.
 	keep := func() bool { return d.generation == run.gen && !d.readOnly }
@@ -107,11 +139,14 @@ func (d *Database) runMatchStatsFill(ctx context.Context, run *matchStatsFillRun
 		d.statsFill.running = nil
 	}
 	d.statsFill.mu.Unlock()
+	ended = err
 	switch {
 	case err == nil:
 	case byUser:
 		err = context.Canceled
+		ended = err
 	case errors.Is(err, ErrDatabaseChanged), ctx.Err() != nil:
+		ended = context.Canceled
 		return
 	default:
 		slog.Warn("background match statistics fill failed", "err", err)

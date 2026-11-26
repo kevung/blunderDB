@@ -2218,7 +2218,6 @@ export namespace domain {
 		    return a;
 		}
 	}
-	
 	export class CheckerStep {
 	    from: number;
 	    to: number;
@@ -5713,6 +5712,45 @@ export namespace ingest {
 
 }
 
+export namespace jobs {
+	
+	export class Info {
+	    id: number;
+	    kind: string;
+	    label: string;
+	    library: number;
+	    priority: string;
+	    state: string;
+	    done: number;
+	    total: number;
+	    error?: string;
+	    position: number;
+	    pausable: boolean;
+	    cancelable: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Info(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.kind = source["kind"];
+	        this.label = source["label"];
+	        this.library = source["library"];
+	        this.priority = source["priority"];
+	        this.state = source["state"];
+	        this.done = source["done"];
+	        this.total = source["total"];
+	        this.error = source["error"];
+	        this.position = source["position"];
+	        this.pausable = source["pausable"];
+	        this.cancelable = source["cancelable"];
+	    }
+	}
+
+}
+
 export namespace main {
 	
 	export class AssistantSettings {
@@ -5871,6 +5909,7 @@ export namespace main {
 	    gammonnet_prune_k?: number;
 	    gammonnet_candidates?: number;
 	    gammonnet_auto_analyze?: boolean;
+	    map_match_length?: number;
 	    check_for_updates?: boolean;
 	    theme?: string;
 	    watch_folder?: boolean;
@@ -5925,6 +5964,7 @@ export namespace main {
 	        this.gammonnet_prune_k = source["gammonnet_prune_k"];
 	        this.gammonnet_candidates = source["gammonnet_candidates"];
 	        this.gammonnet_auto_analyze = source["gammonnet_auto_analyze"];
+	        this.map_match_length = source["map_match_length"];
 	        this.check_for_updates = source["check_for_updates"];
 	        this.theme = source["theme"];
 	        this.watch_folder = source["watch_folder"];

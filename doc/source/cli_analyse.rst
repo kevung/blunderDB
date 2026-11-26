@@ -350,6 +350,108 @@ Sortie ``text`` : une grille dont les lignes sont les points restant à faire
 au joueur au trait, les colonnes ceux de l'adversaire, puis la légende des
 sigles ``ND`` / ``DT`` / ``DP`` / ``TG`` et la raison de chaque case refusée.
 
+.. _cli_scoremap:
+
+scoremap — Carte des scores
+---------------------------
+
+Généralise la :ref:`matrice du videau <cli_cubematrix>` : donne la **meilleure
+décision** d'une position à tous les scores d'un match. Avec dés, chaque case
+*away × away* porte le meilleur coup, son équité, le deuxième coup et l'écart
+entre les deux : on voit à quels scores le coup change. Sans dés, la case porte
+le verdict de videau, comme ``cubematrix``. Calcul pur : aucune base de données
+n'est ouverte.
+
+.. code-block:: bash
+
+   ./blunderdb scoremap [options] '<XGID|OGID>'
+
+**Options:**
+
+* ``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : ``text``).
+* ``--match-length`` — Longueur du match, toute valeur impaire de 3 à 15
+  (défaut : 9).
+* ``--ply`` — Profondeur de recherche de chaque case, de 0 à 2 (défaut : 2).
+* ``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage
+  (défaut : 12).
+* ``--jobs`` — Recherches menées en parallèle (défaut : une par cœur).
+
+Le score de la position est remplacé par la grille ; son **videau** est
+conservé. Une case où ce videau ne peut pas se trouver — il supposerait le
+double d'un joueur à qui la mise précédente donnait déjà le match — est marquée
+non évaluable plutôt que recentrée. Avec dés, une case à 1-away contre plus est
+la partie Crawford, la première jouée à ce score (``crawford`` vaut ``true`` en
+JSON, ``C`` en texte) ; une case de videau reste post-Crawford, comme dans
+``cubematrix``, puisque le videau est mort pendant la partie Crawford. Les
+équités sont normalisées.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Le 31 d'ouverture à tous les scores d'un match en 9 points
+   ./blunderdb scoremap 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:6:4:0:9:10'
+
+   # Grille d'un match en 5 points à 0 ply, pour un script
+   ./blunderdb scoremap --match-length 5 --ply 0 --format json '<XGID>'
+
+Sortie ``text`` : avec dés, une ligne par case (score, équité, meilleur coup,
+écart, deuxième coup) ; sans dés, la grille de ``cubematrix``.
+
+.. _cli_rolls:
+
+rolls — Carte des jets
+----------------------
+
+Donne, pour une position où le joueur au trait n'a pas encore lancé, ce que
+fait **chacun des 21 jets** : le meilleur coup, l'équité du joueur après ce
+coup et, quand il a accès au videau, si le jet lui fait **perdre le marché**.
+Calcul pur : aucune base de données n'est ouverte, la position arrive par son
+XGID ou son OGID. Les dés de la position sont ignorés.
+
+.. code-block:: bash
+
+   ./blunderdb rolls [options] '<XGID|OGID>'
+
+**Options:**
+
+* ``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : ``text``).
+* ``--ply`` — Profondeur de recherche de chaque jet, de 0 à 2 (défaut : 2).
+* ``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage
+  (défaut : 12).
+* ``--jobs`` — Recherches menées en parallèle (défaut : une par cœur).
+* ``--roll`` — Joue d'abord ce jet (par exemple ``31``) : la carte est alors
+  celle des réponses de l'adversaire.
+* ``--move`` — Avec ``--roll`` : le coup joué, n'importe quel coup légal, pas
+  forcément le meilleur ; vide pour un jet qui danse.
+
+L'équité suit l'échelle des autres évaluations : points de money en money,
+équité normalisée à un score de match. Le poids d'un jet est 1 sur 36 pour un
+double, 2 sur 36 sinon. La moyenne pondérée des 21 lignes, videau non tourné,
+est une recherche un ply plus profonde menée avec les mêmes réglages : à
+``--ply 0`` ou ``1``, l'équité de la position à 1 ou 2 ply, que la carte
+décompose jet par jet ; à ``--ply 2``, une recherche à 3 ply avec les filtres
+du 2 ply, qui n'est pas le niveau 3 ply publié du moteur.
+
+Un jet **perd le marché** quand, après ce jet et le meilleur coup, un double du
+joueur serait refusé : la décision de videau du joueur, lue sur la position que
+l'adversaire va lancer, est « double, passe » ou « trop bon ». Cette décision
+est cherchée un ply moins profond que le jet. La colonne est vide quand le
+joueur n'a pas accès au videau (videau adverse, partie Crawford).
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Les 21 jets de l'ouverture
+   ./blunderdb rolls 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
+
+   # Les réponses de l'adversaire à 31 joué 8/5 6/5
+   ./blunderdb rolls --roll 31 --move '8/5 6/5' '<XGID>'
+
+Sortie ``text`` : une ligne par jet (jet, poids sur 36, équité, marché
+``kept`` / ``lost``, meilleur coup), puis la moyenne.
+
 capture — Position depuis une capture d'écran
 ----------------------------------------------
 

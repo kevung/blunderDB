@@ -58,6 +58,10 @@ export function CancelGammonNetBatch() {
   return window['go']['gui']['App']['CancelGammonNetBatch']();
 }
 
+export function CancelJob(arg1) {
+  return window['go']['gui']['App']['CancelJob'](arg1);
+}
+
 export function CancelLibraryImport(arg1) {
   return window['go']['gui']['App']['CancelLibraryImport'](arg1);
 }
@@ -70,8 +74,16 @@ export function CancelMaintenance() {
   return window['go']['gui']['App']['CancelMaintenance']();
 }
 
+export function CancelRollMap() {
+  return window['go']['gui']['App']['CancelRollMap']();
+}
+
 export function CancelRollout() {
   return window['go']['gui']['App']['CancelRollout']();
+}
+
+export function CancelScoreMap() {
+  return window['go']['gui']['App']['CancelScoreMap']();
 }
 
 export function CancelVideoRepair(arg1) {
@@ -210,6 +222,10 @@ export function LibraryGroupHolding(arg1) {
   return window['go']['gui']['App']['LibraryGroupHolding'](arg1);
 }
 
+export function ListJobs() {
+  return window['go']['gui']['App']['ListJobs']();
+}
+
 export function ListLibraryGroups() {
   return window['go']['gui']['App']['ListLibraryGroups']();
 }
@@ -220,6 +236,10 @@ export function LooksLikePositionID(arg1) {
 
 export function MediaURL(arg1) {
   return window['go']['gui']['App']['MediaURL'](arg1);
+}
+
+export function MoveJob(arg1, arg2) {
+  return window['go']['gui']['App']['MoveJob'](arg1, arg2);
 }
 
 export function OpenBearoffFileDialog() {
@@ -306,6 +326,10 @@ export function PauseBearoffGeneration() {
   return window['go']['gui']['App']['PauseBearoffGeneration']();
 }
 
+export function PauseJob(arg1) {
+  return window['go']['gui']['App']['PauseJob'](arg1);
+}
+
 export function PickIdentityFile() {
   return window['go']['gui']['App']['PickIdentityFile']();
 }
@@ -342,8 +366,16 @@ export function ReleaseMedia(arg1) {
   return window['go']['gui']['App']['ReleaseMedia'](arg1);
 }
 
+export function RemoveJob(arg1) {
+  return window['go']['gui']['App']['RemoveJob'](arg1);
+}
+
 export function RepairVideoMux(arg1) {
   return window['go']['gui']['App']['RepairVideoMux'](arg1);
+}
+
+export function ResumeJob(arg1) {
+  return window['go']['gui']['App']['ResumeJob'](arg1);
 }
 
 export function RolloutPresets() {
@@ -414,6 +446,14 @@ export function StartMaintenance(arg1) {
   return window['go']['gui']['App']['StartMaintenance'](arg1);
 }
 
+export function StartRollMap(arg1, arg2, arg3, arg4) {
+  return window['go']['gui']['App']['StartRollMap'](arg1, arg2, arg3, arg4);
+}
+
+export function StartRollMapAfterPlay(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+  return window['go']['gui']['App']['StartRollMapAfterPlay'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+}
+
 export function StartRollout(arg1) {
   return window['go']['gui']['App']['StartRollout'](arg1);
 }
@@ -424,6 +464,10 @@ export function StartRolloutFiltered(arg1, arg2) {
 
 export function StartRolloutIDs(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartRolloutIDs'](arg1, arg2, arg3);
+}
+
+export function StartScoreMap(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['gui']['App']['StartScoreMap'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function StartTournamentDisplay(arg1) {
