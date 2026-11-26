@@ -204,37 +204,41 @@ Formats : #993 (JPEG 2000 : Woolsey, Magriel 1976) et #997 (JBIG2 : Magriel 1976
 Lecteur de structure seul (`TestMeasureContextOnPages`, `document/measure_reglage_test.go`) :
 chaque livre scanné est lu sur ses seules pages de réglage (`tirage.json`), aucune page de
 réserve n'est composée. Avant = `main` à 071775534. Deep Cube (police XG) ne passe pas par ce
-lecteur et n'est pas affecté. Règles : ADR-0121.
+lecteur et n'est pas affecté. Règles : ADR-0121, après revue (attribution des mots et des
+carrés au plateau le plus proche, face vierge attestée sur trois diagrammes, aspect jugé
+contre l'étirement des pions, seuil de face vierge relatif au contraste du carré).
 
-| Livre | Diag. | videau lu | doutes videau | dés lus | doutes dés |
-|---|---:|---|---|---|---|
-| 501 Problems (Robertie) | 359 | 0 → 271 | 242 → 88 | 0 → 0 | 0 → 0 |
-| Boot Camp (Trice) | 179 | 65 → 65 | 79 → 6 | 0 → 0 | 0 → 0 |
-| Cube Like a Boss | 230 | 61 → 61 | 53 → 53 | 0 → 0 | 0 → 0 |
-| Endgame Technique | 248 | 189 → 189 | 59 → 59 | 0 → 6 | 80 → 74 |
-| Masterclass | 173 | 3 → 3 | 43 → 43 | 1 → 46 | 90 → 45 |
-| Opening Concepts 2017 | 240 | 6 → 6 | 1 → 1 | 1 → 4 | 49 → 46 |
-| Back Checker Strategy | 217 | 41 → 41 | 2 → 2 | 0 → 0 | 29 → 29 |
-| Classic Backgammon Revisited | 126 | 47 → 47 | 13 → 9 | 0 → 0 | 0 → 0 |
-| Opening Concepts (Kageyama, Herrera) | 100 | 1 → 1 | 22 → 5 | 0 → 0 | 20 → 20 |
-| Magriel & Roberts | 441 | 0 → 10 | 15 → 10 | 0 → 0 | 5 → 5 |
-| Jacoby & Crawford | 65 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 |
-| Woolsey, Encyclopedia | 142 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 |
-| **Total** | | 413 → 694 | 529 → 276 | 2 → 56 | 273 → 219 |
+| Livre | Diag. | videau lu | doutes videau | dés lus | doutes dés | trait lu |
+|---|---:|---|---|---|---|---|
+| 501 Problems (Robertie) | 359 | 0 → 256 | 242 → 103 | 0 → 0 | 0 → 1 | 0 → 0 |
+| Boot Camp (Trice) | 179 | 65 → 65 | 79 → 5 | 0 → 0 | 0 → 0 | 0 → 0 |
+| Cube Like a Boss | 230 | 61 → 61 | 53 → 53 | 0 → 0 | 0 → 0 | 0 → 0 |
+| Endgame Technique | 248 | 189 → 189 | 59 → 59 | 0 → 3 | 80 → 77 | 52 → 52 |
+| Masterclass | 173 | 3 → 3 | 43 → 43 | 1 → 42 | 90 → 49 | 88 → 88 |
+| Opening Concepts 2017 | 240 | 6 → 6 | 1 → 1 | 1 → 4 | 49 → 46 | 21 → 21 |
+| Back Checker Strategy | 217 | 41 → 41 | 2 → 2 | 0 → 0 | 29 → 29 | 6 → 6 |
+| Classic Backgammon Revisited | 126 | 47 → 51 | 13 → 5 | 0 → 0 | 0 → 0 | 0 → 0 |
+| Opening Concepts (Kageyama, Herrera) | 100 | 1 → 1 | 22 → 5 | 0 → 0 | 20 → 20 | 18 → 18 |
+| Magriel & Roberts | 441 | 0 → 5 | 15 → 11 | 0 → 0 | 5 → 5 | 0 → 0 |
+| Jacoby & Crawford | 65 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 |
+| Woolsey, Encyclopedia | 142 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 |
+| **Total** | | 413 → 678 | 529 → 287 | 2 → 49 | 273 → 227 | 185 → 185 |
 
-- **Videau vierge** (501 Problems, Magriel et Roberts) : un carré seul sans aucune marque est le
-  videau centré, où qu'il soit dessiné. Vérifié à l'œil sur 501 Problems p. 21 et sur Magriel
-  et Roberts p. 105.
-- **Carré cherché plus loin et plus large** (Boot Camp 77 → 2 « none is found », Opening
-  Concepts 21 → 4, 501 Problems 85 → 88 restants) : un « 64 » au milieu trouvé mais non lu ne
-  laisse pas de doute, il reste sous le défaut. Le rapport largeur/hauteur 1,75 n'est motivé que
-  par 501 Problems (scan étiré).
+- **Aucune lecture perdue** : videau, dés et trait lus ne baissent sur aucun livre.
+- **Videau vierge** (501 Problems, Magriel et Roberts) : lu centré seulement là où le document
+  dessine un carré seul vierge au même endroit à côté d'au moins trois diagrammes. Magriel et
+  Roberts : 5 lus, 2 faces vierges isolées laissées en doute. Vérifié à l'œil sur 501 Problems
+  p. 21 et sur Magriel et Roberts p. 105.
+- **Aspect et attribution des carrés** : les piles de pions sortis de Classic
+  Revisited ne passent plus pour un second videau. Les 4 nouvelles lectures (p. 165, 179,
+  183 et 185) ont été vérifiées à l'œil : un 2 du côté de son propriétaire. 501 Problems
+  garde 103 carrés non trouvés.
+- **Carré cherché plus loin** (Boot Camp 77 → 2 « none is found », Opening Concepts 21 → 4) :
+  un « 64 » au milieu trouvé mais non lu ne laisse pas de doute, il reste sous le défaut.
 - **Doute qui nomme pourquoi** : chiffres non reconnus, valeur qui n'est pas celle d'un videau,
-  ou aucun chiffre trouvé (clair sur foncé, ou trop petit : Masterclass, Cube Like a Boss).
+  aucun chiffre trouvé (clair sur foncé, ou trop petit), ou face vierge isolée.
 - **Dés** : confirmés par un jet nommé (« rolls a 65 ») ou un coup écrit (« 2/0 2/1 »,
-  « 6/5*(2) »). Vérifié à l'œil : Masterclass p. 26 et p. 183, Endgame p. 17, p. 138 et
-  p. 213. Les contradictions d'Endgame (1 → 4) viennent de la légende du diagramme voisin
-  (« After 8/2 7/2 ») : elles restent des doutes.
-- Restent : 501 Problems 88 carrés non trouvés (trait gris clair), Cube Like a Boss 53 videaux
-  clair sur foncé hors du cadre cherché, dés non comptés (« N dice drawn »), du ressort de la
-  localisation.
+  « 6/5*(2) »), du texte attribué à ce diagramme, deux fois si le texte cite plusieurs jets.
+  Vérifié à l'œil : Masterclass p. 26 et p. 183, Endgame p. 17, p. 138 et p. 213.
+- Restent : Cube Like a Boss 53 videaux clair sur foncé hors du cadre cherché, dés non comptés
+  (« N dice drawn »), du ressort de la localisation.

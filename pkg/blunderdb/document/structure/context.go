@@ -144,7 +144,7 @@ func unreadCube(rd *boardReading, k int) string {
 }
 
 // readContext reads the diagram's context and names what it leaves unread.
-func readContext(rd *boardReading, d *Diagram, words []Word, prof Profile) {
+func readContext(rd *boardReading, d *Diagram, words []Word, prof Profile, env contextEnv) {
 	var doubts []capture.Doubt
 	add := func(field, family, format string, a ...any) {
 		doubts = append(doubts, capture.Doubt{Field: field, Reason: fmt.Sprintf(format, a...)})
@@ -153,8 +153,8 @@ func readContext(rd *boardReading, d *Diagram, words []Word, prof Profile) {
 		}
 	}
 	c := &d.Context
-	readCube(rd, d, words, prof, c, add)
-	readDice(rd, words, prof, c, add)
+	readCube(rd, d, words, prof, env, c, add)
+	readDice(rd, words, prof, env, c, add)
 	readScore(rd, d, words, c, add)
 	if len(rd.dice) == 0 && c.CubeRead && c.CubeOwner == -1 {
 		c.Turn = -1
@@ -167,7 +167,7 @@ func readContext(rd *boardReading, d *Diagram, words []Word, prof Profile) {
 	d.Doubts = append(d.Doubts, doubts...)
 }
 
-func readCube(rd *boardReading, d *Diagram, words []Word, prof Profile, c *Context, add func(string, string, string, ...any)) {
+func readCube(rd *boardReading, d *Diagram, words []Word, prof Profile, env contextEnv, c *Context, add func(string, string, string, ...any)) {
 	type found struct {
 		val   int
 		place string
@@ -208,9 +208,16 @@ func readCube(rd *boardReading, d *Diagram, words []Word, prof Profile, c *Conte
 	if len(fs) == 0 {
 		// A bare face, alone, is the centred cube: an owned cube always
 		// shows its value, and neither the square nor the text layer
-		// prints one. Some documents draw it so, wherever it stands.
+		// prints one. One bare square could be a figure the scan lost, so
+		// it is read only where the document draws it so, at that place,
+		// beside at least two other diagrams.
 		if len(rd.cubes) == 1 && rd.cubes[0].blank {
-			c.Cube, c.CubeOwner, c.CubeRead = 1, 0, true
+			k := rd.squareKey(rd.cubes[0])
+			if env.bare[k] >= 3 {
+				c.Cube, c.CubeOwner, c.CubeRead = 1, 0, true
+				return
+			}
+			add("cube", "cube drawn", "a cube with a bare face is drawn on the %s side, a drawing the document repeats beside %d other diagrams only: not read, the position says centred", rd.cubes[0].place, max(0, env.bare[k]-1))
 			return
 		}
 		bare := 0
@@ -257,7 +264,7 @@ func readCube(rd *boardReading, d *Diagram, words []Word, prof Profile, c *Conte
 	}
 }
 
-func readDice(rd *boardReading, words []Word, prof Profile, c *Context, add func(string, string, string, ...any)) {
+func readDice(rd *boardReading, words []Word, prof Profile, env contextEnv, c *Context, add func(string, string, string, ...any)) {
 	if len(rd.dice) == 0 {
 		return
 	}
@@ -289,23 +296,43 @@ func readDice(rd *boardReading, words []Word, prof Profile, c *Context, add func
 	// The dice: confirmed by the text layer beside the diagram.
 	X0, Y0, X1, Y1 := float64(rd.bbox.x0), float64(rd.bbox.y0), float64(rd.bbox.x1), float64(rd.bbox.y1)
 	p := rd.fieldPoint()
+	// A word nearer another diagram of the page is that diagram's.
 	near := func(w Word) bool {
 		cx, cy := (w.X0+w.X1)/2, (w.Y0+w.Y1)/2
-		return cx >= X0-8*p && cx <= X1+8*p && cy >= Y0-4*p && cy <= Y1+4*p
+		if cx < X0-8*p || cx > X1+8*p || cy < Y0-4*p || cy > Y1+4*p {
+			return false
+		}
+		own := rd.fieldDistance(cx, cy)
+		for _, o := range env.others {
+			if o.fieldDistance(cx, cy) < own {
+				return false
+			}
+		}
+		return true
 	}
 	said := textRolls(words, near)
 	same := func(s [2]int) bool {
 		return s == c.Dice || s == [2]int{c.Dice[1], c.Dice[0]}
 	}
-	agree := false
+	// One citation agreeing suffices when the text names one roll; when it
+	// names several, the counted one must be cited twice.
+	agree, distinct := 0, map[[2]int]bool{}
 	for _, s := range said {
-		agree = agree || same(s)
+		if same(s) {
+			agree++
+		}
+		if s[0] > s[1] {
+			s = [2]int{s[1], s[0]}
+		}
+		distinct[s] = true
 	}
 	switch {
-	case agree:
+	case agree >= 2 || (agree == 1 && len(distinct) == 1):
 		c.DiceRead = true
 	case len(said) == 0:
 		add("dice", "dice drawn", "dice %d-%d counted in the image, no text confirms them", c.Dice[0], c.Dice[1])
+	case agree == 1:
+		add("dice", "dice drawn", "dice %d-%d counted in the image, cited once beside other rolls: not confirmed", c.Dice[0], c.Dice[1])
 	default:
 		add("dice", "dice drawn", "dice %d-%d counted in the image, the text says otherwise", c.Dice[0], c.Dice[1])
 	}
@@ -510,4 +537,89 @@ func missingCubes(rds []*boardReading, ds []Diagram) {
 			d.State = ToVerify
 		}
 	}
+}
+
+// contextEnv is what the context of one diagram is read against: the other
+// diagrams of its page, which claim the words and squares nearer to them,
+// and how many diagrams of the document draw a lone bare cube at each
+// place (squareKey).
+type contextEnv struct {
+	others []*boardReading
+	bare   map[string]int
+}
+
+// fieldDistance is the distance from (x, y), in the page's pixels, to the
+// diagram's field; 0 inside it.
+func (rd *boardReading) fieldDistance(x, y float64) float64 {
+	f := rd.field
+	dx := max(f[0]-x, 0, x-f[3])
+	dy := max(f[4]-y, 0, y-f[5])
+	return math.Hypot(dx, dy)
+}
+
+// squareKey is where a cube is drawn: its height and its side of the field.
+func (rd *boardReading) squareKey(s square) string {
+	cx := (s.x0 + s.x1) / 2
+	side := "bar"
+	switch {
+	case cx < rd.field[0]:
+		side = "left"
+	case cx > rd.field[3]:
+		side = "right"
+	}
+	return s.place + " " + side
+}
+
+// keepSquares judges the squares found about each diagram, before any is
+// read: a square nearer another diagram of its page is that diagram's, and
+// one whose aspect, the stretch the document's checkers measure taken out,
+// is not square (0.75 to 1.33) is no cube nor die. stretch is the checkers'
+// width over their height, 1 when they are round.
+func keepSquares(rds []*boardReading, stretch float64) {
+	byPage := map[int][]*boardReading{}
+	for _, rd := range rds {
+		byPage[rd.page] = append(byPage[rd.page], rd)
+	}
+	keep := func(rd *boardReading, sqs []square) []square {
+		var out []square
+		for _, s := range sqs {
+			if a := s.aspect / stretch; a < 0.75 || a > 1.33 {
+				continue
+			}
+			cx, cy := (s.x0+s.x1)/2, (s.y0+s.y1)/2
+			own, mine := rd.fieldDistance(cx, cy), true
+			for _, o := range byPage[rd.page] {
+				if o != rd && o.fieldDistance(cx, cy) < own {
+					mine = false
+				}
+			}
+			if mine {
+				out = append(out, s)
+			}
+		}
+		return out
+	}
+	for _, rd := range rds {
+		rd.cubes, rd.dice = keep(rd, rd.cubes), keep(rd, rd.dice)
+	}
+}
+
+// contextEnvs gives each diagram its contextEnv.
+func contextEnvs(rds []*boardReading) []contextEnv {
+	bare := map[string]int{}
+	for _, rd := range rds {
+		if len(rd.cubes) == 1 && rd.cubes[0].blank {
+			bare[rd.squareKey(rd.cubes[0])]++
+		}
+	}
+	out := make([]contextEnv, len(rds))
+	for i, rd := range rds {
+		out[i].bare = bare
+		for _, o := range rds {
+			if o != rd && o.page == rd.page {
+				out[i].others = append(out[i].others, o)
+			}
+		}
+	}
+	return out
 }

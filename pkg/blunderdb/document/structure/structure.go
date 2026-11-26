@@ -353,6 +353,11 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 			slots, voters = s, v
 		}
 	}
+	stretch := 1.0
+	if geo.rx > 0.03 && geo.ry > 0.03 {
+		stretch = (geo.rx - 0.03) / (geo.ry - 0.03)
+	}
+	keepSquares(rds, stretch)
 	img := make([]*[2]int, len(rds))
 	for i, rd := range rds {
 		img[i] = imagePips(rd.numbers, rd.bbox, slots)
@@ -360,8 +365,9 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 		rd.numbers = nil
 	}
 	ds, prof := releve(rds, words, img, "")
+	envs := contextEnvs(rds)
 	for i := range ds {
-		readContext(rds[i], &ds[i], words[rds[i].page], prof)
+		readContext(rds[i], &ds[i], words[rds[i].page], prof, envs[i])
 	}
 	missingCubes(rds, ds)
 	if inspectSources != nil {

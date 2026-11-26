@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 23:29+0100\n"
+"POT-Creation-Date: 2026-11-26 23:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -486,32 +486,37 @@ msgid ""
 "dans la couche texte — deux sources présentes doivent concorder — et "
 "cohérente avec sa place : 64 au milieu est centré, 2 à 64 en haut ou en "
 "bas appartient au joueur de ce côté ; un carré seul à la face vierge est "
-"le videau centré, où qu'il soit dessiné, puisqu'un videau possédé porte "
-"sa valeur ;"
+"le videau centré quand le document le dessine ainsi, au même endroit, à "
+"côté d'au moins trois diagrammes, puisqu'un videau possédé porte sa "
+"valeur ;"
 msgstr ""
 "куб — по его значению, прочитанному в его квадрате (цифры документа) "
 "или в текстовом слое (два имеющихся источника должны совпадать), и "
 "согласованному с его положением: 64 посередине означает куб по центру,"
 " от 2 до 64 вверху или внизу принадлежит игроку этой стороны; одинокий"
-" квадрат с пустой гранью — это куб по центру, где бы он ни был "
-"нарисован, поскольку куб, которым владеют, несёт своё значение;"
+" квадрат с пустой гранью — это куб по центру, когда документ рисует "
+"его так, в том же месте, рядом по меньшей мере с тремя диаграммами, "
+"поскольку куб, которым владеют, несёт своё значение;"
 
-#: ../../source/cli_document.rst:230
+#: ../../source/cli_document.rst:231
 msgid ""
 "les dés, comptés sur l'image et confirmés par le texte voisin : un jet "
 "nommé (« to play 41 », « rolls a 65 ») ou un coup écrit dont chaque pas "
-"est un dé (« 2/0 2/1 », « 8/5(2) 6/3(2) ») ; le trait, par la couleur des"
-" dés et leur moitié du plateau (la droite pour le joueur du bas), qui "
-"doivent désigner le même joueur ;"
+"est un dé (« 2/0 2/1 », « 8/5(2) 6/3(2) »), cité deux fois si le texte "
+"nomme plusieurs jets ; un mot plus proche d'un autre diagramme est à "
+"celui-ci ; le trait, par la couleur des dés et leur moitié du plateau (la"
+" droite pour le joueur du bas), qui doivent désigner le même joueur ;"
 msgstr ""
 "кости — подсчитанные на изображении и подтверждённые соседним текстом:"
 " названный бросок (\"to play 41\", \"rolls a 65\") или записанный ход,"
-" каждый шаг которого — одна кость (\"2/0 2/1\", \"8/5(2) 6/3(2)\"); "
-"очередь хода — по цвету костей и по той половине доски, где они лежат "
-"(правая для нижнего игрока), причём обе подсказки должны указывать на "
-"одного и того же игрока;"
+" каждый шаг которого — одна кость (\"2/0 2/1\", \"8/5(2) 6/3(2)\"), "
+"приведённый дважды, если текст называет несколько бросков; слово, "
+"расположенное ближе к другой диаграмме, относится к ней; очередь хода "
+"— по цвету костей и по той половине доски, где они лежат (правая для "
+"нижнего игрока), причём обе подсказки должны указывать на одного и "
+"того же игрока;"
 
-#: ../../source/cli_document.rst:235
+#: ../../source/cli_document.rst:237
 msgid ""
 "le score, par le bandeau de la couche texte (``score:``, ``pip:``, ``7 "
 "point match``), chaque score attribué au joueur dont il porte les pips."
@@ -519,7 +524,7 @@ msgstr ""
 "счёт — по заголовку текстового слоя (``score:``, ``pip:``, ``7 point "
 "match``), причём каждый счёт приписывается игроку, чьи пипы он несёт."
 
-#: ../../source/cli_document.rst:238
+#: ../../source/cli_document.rst:240
 msgid ""
 "Une entrée dont tout le contexte est lu est ``\"context\": \"read\"``. Un"
 " videau introuvable n'est jamais pris pour centré : ce qui n'est pas lu "
@@ -557,7 +562,7 @@ msgstr ""
 "никогда. ``analyze`` и ``check`` считают записи по контексту, а отдельно "
 "— те, у которых заверены только фишки:"
 
-#: ../../source/cli_document.rst:261
+#: ../../source/cli_document.rst:263
 msgid ""
 "Pour une entrée dont le contexte reste à vérifier, on ouvre le livre à la"
 " page de l'entrée, on compare au diagramme le videau (valeur et "
@@ -571,11 +576,11 @@ msgstr ""
 "чей ход, и счёт, при необходимости исправляют эти поля XGID, затем "
 "помечают ``\"verified\": true``."
 
-#: ../../source/cli_document.rst:269
+#: ../../source/cli_document.rst:271
 msgid "Le contexte par défaut"
 msgstr "Контекст по умолчанию"
 
-#: ../../source/cli_document.rst:271
+#: ../../source/cli_document.rst:273
 msgid ""
 "Le contexte par défaut d'un livre scanné est celui qu'écrit la lecture : "
 "videau centré, pas de dés, joueur du bas au trait, partie libre. Il "
@@ -585,7 +590,7 @@ msgstr ""
 "чтение: куб по центру, без костей, ход нижнего игрока, свободная партия. "
 "Он указан в заголовке relevé:"
 
-#: ../../source/cli_document.rst:283
+#: ../../source/cli_document.rst:285
 msgid ""
 "``context`` est la fin du XGID après le plateau ; toute entrée "
 "``default`` la porte. Quand les diagrammes du document suivent ce "
@@ -611,11 +616,11 @@ msgstr ""
 "напечатанный в изображении без текстового слоя, или очередь хода, "
 "заданная текстом, не видны."
 
-#: ../../source/cli_document.rst:297
+#: ../../source/cli_document.rst:299
 msgid "Le défaut appris sur le document"
 msgstr "Значение по умолчанию, выученное из документа"
 
-#: ../../source/cli_document.rst:299
+#: ../../source/cli_document.rst:301
 msgid ""
 "La lecture apprend sur le document quels champs du contexte il imprime à "
 "côté de ses diagrammes : le videau, les dés (avec le joueur au trait) ou "
@@ -626,7 +631,7 @@ msgstr ""
 "своими диаграммами: куб, кости (с игроком, чей ход) или счёт, прочитанные"
 " рядом как минимум с третью диаграмм. Оно называет их в ``printed``:"
 
-#: ../../source/cli_document.rst:312
+#: ../../source/cli_document.rst:314
 msgid ""
 "Un champ imprimé est la lecture de chaque entrée, que la lecture a "
 "certifiée ; le contexte par défaut ne couvre que les autres. Dans un "
@@ -649,7 +654,7 @@ msgstr ""
 "document prints its score beside its diagrams, none is read here: it is "
 "not taken as money play``). ``analyze`` и ``check`` показывают выученное:"
 
-#: ../../source/cli_document.rst:326
+#: ../../source/cli_document.rst:328
 msgid ""
 "Rien n'est gardé d'un document à l'autre. Un relevé sans ``printed`` "
 "garde la règle stricte : tout champ lu hors du défaut laisse le contexte "
@@ -659,11 +664,11 @@ msgstr ""
 "``printed`` сохраняет строгое правило: любое поле, прочитанное вне "
 "значения по умолчанию, оставляет контекст на проверку."
 
-#: ../../source/cli_document.rst:332
+#: ../../source/cli_document.rst:334
 msgid "Quinze et quinze sans doute"
 msgstr "Пятнадцать и пятнадцать без сомнений"
 
-#: ../../source/cli_document.rst:334
+#: ../../source/cli_document.rst:336
 msgid ""
 "Un diagramme sans pips imprimés n'a pas de recoupement : ses pions "
 "restent ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils "
@@ -688,7 +693,7 @@ msgstr ""
 " полной. Позиция, из которой фишки уже сняты, тоже никогда не бывает "
 "полной."
 
-#: ../../source/cli_document.rst:345
+#: ../../source/cli_document.rst:347
 msgid ""
 "Le sens de jeu supposé est lui aussi un défaut du document, avec sa "
 "propre confirmation : un sens faux échangerait les joueurs de toutes les "
@@ -700,7 +705,7 @@ msgstr ""
 " во всех позициях, прочитанных под ним. Оно указано в контексте по "
 "умолчанию, под ключом ``direction``:"
 
-#: ../../source/cli_document.rst:357
+#: ../../source/cli_document.rst:359
 msgid ""
 "Confirmer le contexte ne le confirme pas. On le contrôle sur quelques "
 "diagrammes, puis on écrit ``\"confirmed\": true`` dans ``direction``."
@@ -708,7 +713,7 @@ msgstr ""
 "Подтверждение контекста его не подтверждает. Его проверяют на нескольких "
 "диаграммах, затем записывают ``\"confirmed\": true`` в ``direction``."
 
-#: ../../source/cli_document.rst:360
+#: ../../source/cli_document.rst:362
 msgid ""
 "``import --accept-complete`` accepte en bloc les entrées complètes dont "
 "le contexte est certifié (lu, ou sous le contexte par défaut confirmé) et"
@@ -723,7 +728,7 @@ msgstr ""
 "``check`` их считает и отдельно считает те, которые задерживает "
 "неподтверждённое направление:"
 
-#: ../../source/cli_document.rst:376
+#: ../../source/cli_document.rst:378
 msgid ""
 "L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
 " checkers read with no doubt``). Une entrée complète dont le contexte "
@@ -735,7 +740,7 @@ msgstr ""
 "заверен или предполагаемое направление игры которой не подтверждено, "
 "по-прежнему отклоняется; сообщение об ошибке говорит подтвердить его."
 
-#: ../../source/cli_document.rst:381
+#: ../../source/cli_document.rst:383
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
@@ -769,7 +774,7 @@ msgstr ""
 "без прочитанных пипов остаётся ``to-verify`` (``no printed pip count was "
 "found next to the diagram``)."
 
-#: ../../source/cli_document.rst:395
+#: ../../source/cli_document.rst:397
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
@@ -783,7 +788,7 @@ msgstr ""
 "около тридцати диаграмм, прочитанных с пятнадцатью фишками на сторону, "
 "чтобы выучить это место."
 
-#: ../../source/cli_document.rst:400
+#: ../../source/cli_document.rst:402
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -801,7 +806,7 @@ msgstr ""
 "снятые фишки, посчитанные по разности, кубик удвоения, нарисованный не в "
 "центре, нарисованные кости."
 
-#: ../../source/cli_document.rst:407
+#: ../../source/cli_document.rst:409
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
@@ -813,11 +818,11 @@ msgstr ""
 " чей ход (нижний), доска снятия (сторона, нарисованная менее чем с "
 "пятнадцатью фишками, остальные сняла)."
 
-#: ../../source/cli_document.rst:413
+#: ../../source/cli_document.rst:415
 msgid "Pourquoi l'import refuse"
 msgstr "Почему импорт отказывает"
 
-#: ../../source/cli_document.rst:415
+#: ../../source/cli_document.rst:417
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -828,7 +833,7 @@ msgstr ""
 " в коллекцию, передаётся при экспорте. Поэтому импорт отклоняет **весь** "
 "relevé, ничего не записав, называет ранги и говорит, что делать:"
 
-#: ../../source/cli_document.rst:423
+#: ../../source/cli_document.rst:425
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -836,7 +841,7 @@ msgstr ""
 "Когда записи находятся под неподтверждённым контекстом по умолчанию или "
 "полные без ``--accept-complete``, сообщение говорит и об этом:"
 
-#: ../../source/cli_document.rst:430
+#: ../../source/cli_document.rst:432
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -846,11 +851,11 @@ msgstr ""
 " как есть; импорт тогда сообщает, сколько записей он провёл принудительно"
 " (``Forced: 3 entries neither sure nor verified``)."
 
-#: ../../source/cli_document.rst:437
+#: ../../source/cli_document.rst:439
 msgid "Le repli"
 msgstr "Сворачивание"
 
-#: ../../source/cli_document.rst:439
+#: ../../source/cli_document.rst:441
 msgid ""
 "Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
 "``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
@@ -867,7 +872,7 @@ msgstr ""
 "умолчанию. ``check`` называет эти ранги, и сообщение об ошибке предлагает"
 " такое сворачивание:"
 
-#: ../../source/cli_document.rst:450
+#: ../../source/cli_document.rst:452
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
@@ -891,11 +896,11 @@ msgstr ""
 " Даже с ``--force`` запись без позиции отвергается: её нужно заполнить "
 "или убрать."
 
-#: ../../source/cli_document.rst:461
+#: ../../source/cli_document.rst:463
 msgid "Ce qui entre en base"
 msgstr "Что попадает в базу"
 
-#: ../../source/cli_document.rst:463
+#: ../../source/cli_document.rst:465
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -909,7 +914,7 @@ msgstr ""
 "которая у неё уже есть, не дублируется (``new in the library`` считает "
 "те, которых ей не хватало)."
 
-#: ../../source/cli_document.rst:469
+#: ../../source/cli_document.rst:471
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -922,7 +927,7 @@ msgstr ""
 "получает недостающие ей позиции и сохраняет своё описание, если оно есть;"
 " динамическая коллекция (заданная запросом) отклоняется."
 
-#: ../../source/cli_document.rst:473
+#: ../../source/cli_document.rst:475
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -930,7 +935,7 @@ msgstr ""
 "Каждая позиция несёт **комментарий** со своей ссылкой, после названия "
 "документа: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:476
+#: ../../source/cli_document.rst:478
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -940,11 +945,11 @@ msgstr ""
 " текста автора. Прерванный или отклонённый импорт ничего не записывает: "
 "это одна транзакция."
 
-#: ../../source/cli_document.rst:480
+#: ../../source/cli_document.rst:482
 msgid "Une position répétée"
 msgstr "Повторяющаяся позиция"
 
-#: ../../source/cli_document.rst:482
+#: ../../source/cli_document.rst:484
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -956,11 +961,11 @@ msgstr ""
 "каждую ссылку: ``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` "
 "считает эти повторы."
 
-#: ../../source/cli_document.rst:488
+#: ../../source/cli_document.rst:490
 msgid "Réimporter"
 msgstr "Повторный импорт"
 
-#: ../../source/cli_document.rst:490
+#: ../../source/cli_document.rst:492
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -972,11 +977,11 @@ msgstr ""
 "ссылкой переписывается, только если его ссылки изменились, и никогда не "
 "удваивается. Поэтому импорт можно продолжить после исправления relevé."
 
-#: ../../source/cli_document.rst:496
+#: ../../source/cli_document.rst:498
 msgid "Le démon"
 msgstr "Демон"
 
-#: ../../source/cli_document.rst:498
+#: ../../source/cli_document.rst:500
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

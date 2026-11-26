@@ -20,26 +20,30 @@ un videau possédé dont la valeur n'était pas lue.
 1. **Les dés comptés sont lus seulement si le texte voisin du diagramme les confirme** : un
    jet nommé derrière un verbe (« to play 41 », « rolls a 65 », « rolled 55 ») ou un coup écrit
    dont chaque pas dépense un dé (« 2/0 2/1 » vaut 2-1, « 8/5(2) 6/3(2) » vaut 3-3). Un coup
-   dont un pas dépense deux dés (« 13/6 ») ne dit aucun jet. Il suffit qu'un des jets ou coups
-   cités concorde avec le compte : la prose cite aussi d'autres jets (le précédent, celui de
-   l'adversaire). S'ils discordent tous, le doute dit que le texte contredit l'image.
+   dont un pas dépense deux dés (« 13/6 ») ne dit aucun jet. Un mot plus proche du champ d'un
+   autre diagramme de la page appartient à celui-ci. Si le texte ne cite qu'un jet, une
+   citation concordante suffit ; s'il en cite plusieurs (la prose cite aussi le jet précédent,
+   celui de l'adversaire), le jet compté doit y être cité deux fois. Sinon, un doute nommé.
 2. **Pas de certification « complète » du contexte.** Le repli (`--fallback`) la tient déjà :
    la position importée porte les dés comptés, et le commentaire de référence demande de les
    contrôler. Un second état intermédiaire doublerait ce chemin sans recouper davantage.
-3. **Un videau dessiné seul, à face vierge, est le videau centré**, où qu'il soit placé. Un videau
-   possédé montre toujours sa valeur. La face est vierge quand aucun pixel de l'intérieur n'atteint
-   la moitié de l'encre, et ni le carré ni la couche texte ne portent de valeur. Deux carrés dont
-   un vierge laissent un doute.
+3. **Un videau dessiné seul, à face vierge, est le videau centré** quand le document le dessine
+   ainsi, au même endroit (hauteur et côté du champ), à côté d'au moins trois diagrammes ; une
+   seule face vierge peut être un chiffre perdu au scan, elle laisse un doute. Un videau possédé
+   montre toujours sa valeur. La face est vierge quand aucun pixel de l'intérieur n'est plus
+   sombre que son papier de 30 % du contraste entre ce papier et l'encre de son propre contour :
+   un chiffre pâle sur un scan délavé reste une marque. Deux carrés dont un vierge, ou un carré
+   plus proche du champ d'un autre diagramme, ne sont pas lus.
 4. **Ces règles valent pour tout document** : aucune ne nomme un livre ni n'est calée sur une
-   mise en page. Le carré d'un videau est cherché à 2,5 points du champ au plus. Il peut être
-   plus large que haut (jusqu'à 1,75), parce qu'un scan peut être étiré en largeur. Un dé, lui,
-   reste carré.
+   mise en page. Le carré d'un videau est cherché à 2,5 points du champ au plus. Un carré, dé
+   ou videau, est jugé carré (0,75 à 1,33) une fois retiré l'étirement que mesurent les pions
+   du document (largeur sur hauteur) ; un scan étiré l'est pour tout ce qu'il imprime.
 
 ## Conséquences
 
-- Mesure sur les pages de réglage (`tasks/mesure-import-document-2026-11.md`) : videau lu sur
-  501 Problems 0 → 271, sur Magriel et Roberts 0 → 10 ; dés lus sur Masterclass 1 → 46, Endgame
-  0 → 6, Opening Concepts 2017 1 → 4 ; aucun livre ne perd une lecture.
+- Mesure sur les pages de réglage (`tasks/mesure-import-document-2026-11.md`), douze livres
+  scannés : videau lu 413 → 678 (501 Problems 0 → 256), dés lus 2 → 49 (Masterclass 1 → 42) ;
+  aucun livre ne perd une lecture.
 - Le risque résiduel d'une lecture fausse des dés suppose qu'un compte faux égale exactement
   un jet ou un coup cité près du diagramme.
 - Rejeté : lire les dés sur leur seul motif de points (une seule source) ; exiger un seul jet
