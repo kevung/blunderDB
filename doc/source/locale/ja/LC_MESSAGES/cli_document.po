@@ -1,0 +1,358 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-26 02:33+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_document.rst:4
+msgid "Importer les positions d'un document"
+msgstr "ドキュメントの局面をインポートする"
+
+#: ../../source/cli_document.rst:7
+msgid "À quoi cela sert"
+msgstr "用途"
+
+#: ../../source/cli_document.rst:9
+msgid ""
+"Un ouvrage que l'on possède — livre de problèmes, recueil, article — "
+"montre des positions en diagrammes, dans un ordre qui est celui de "
+"l'étude. La commande ``document`` les range dans une collection de la "
+"base, dans cet ordre, pour les réétudier avec le reste de la "
+"bibliothèque. Elle ne fonctionne qu'en ligne de commande ; il n'y a pas "
+"d'écran correspondant."
+msgstr ""
+"所有している書籍(問題集、選集、記事)は、学習の順序に沿って局面を図で示しています。\\ ``document`` \\ "
+"コマンドは、それらをその順序でデータベースのコレクションに収めるので、ライブラリの残りと一緒に復習できます。コマンドラインでのみ動作し、対応する画面はありません。"
+
+#: ../../source/cli_document.rst:15
+msgid ""
+"Le travail passe par un fichier intermédiaire, le **relevé** : un fichier"
+" JSON qui liste les positions lues dans le document. On le relit, on le "
+"corrige si besoin, puis on l'importe. Lire un document n'écrit rien en "
+"base ; seul l'import d'un relevé écrit."
+msgstr ""
+"作業は中間ファイルである\\ **relevé**\\ "
+"(ドキュメントから拾い出した一覧)を介して行います。これは、ドキュメントから読み取った局面を一覧にした JSON "
+"ファイルです。読み返し、必要なら修正してから、インポートします。ドキュメントを読んでもデータベースには何も書き込まれず、relevé "
+"をインポートしたときだけ書き込まれます。"
+
+#: ../../source/cli_document.rst:21
+msgid "Ce qui est lu, ce qui est refusé"
+msgstr "読み取られるもの、拒否されるもの"
+
+#: ../../source/cli_document.rst:23
+msgid ""
+"``document analyze`` lit les PDF dont les diagrammes sont dessinés avec "
+"la police de plateau d'eXtreme Gammon (les PDF imprimés par XG) : chaque "
+"diagramme y est du texte, que la commande décode exactement, glyphe par "
+"glyphe. Tout autre PDF est refusé :"
+msgstr ""
+"\\ ``document analyze`` \\ は、図が eXtreme Gammon のボード用フォントで描かれた PDF(XG "
+"が出力した PDF)を読み取ります。そこでは各図がテキストであり、コマンドはそれをグリフ単位で正確にデコードします。それ以外の PDF "
+"は拒否されます。"
+
+#: ../../source/cli_document.rst:32
+msgid ""
+"Un fichier qui n'est pas un PDF, un PDF chiffré ou plus gros que 512 Mio "
+"est refusé aussi, avec un message qui le dit."
+msgstr "PDF でないファイル、暗号化された PDF、512 MiB を超える PDF も、その旨のメッセージとともに拒否されます。"
+
+#: ../../source/cli_document.rst:36
+msgid "Le parcours en trois commandes"
+msgstr "3 つのコマンドによる流れ"
+
+#: ../../source/cli_document.rst:44
+msgid ""
+"``analyze`` lit le PDF et écrit le relevé (sans ``-o``, il l'écrit sur la"
+" sortie standard). Il résume ce qu'il a trouvé :"
+msgstr ""
+"\\ ``analyze`` \\ は PDF を読み取り、relevé を書き出します(``-o`` "
+"を付けない場合は標準出力に書き出します)。見つけた内容を要約します。"
+
+#: ../../source/cli_document.rst:54
+msgid ""
+"Le titre et l'auteur viennent des métadonnées du PDF, à défaut le titre "
+"est le nom du fichier ; ``--title`` et ``--author`` les remplacent. Le "
+"chapitre de chaque entrée vient des signets du PDF."
+msgstr ""
+"タイトルと著者は PDF のメタデータから取得され、なければタイトルはファイル名になります。\\ ``--title`` \\ と \\ "
+"``--author`` \\ で置き換えられます。各エントリの章は PDF のしおりから取得されます。"
+
+#: ../../source/cli_document.rst:58
+msgid ""
+"``check`` valide le relevé et compte ses entrées, sans lire ni écrire de "
+"base. ``--format json`` donne les mêmes comptes en JSON :"
+msgstr ""
+"\\ ``check`` \\ は relevé を検証してエントリ数を数えます。データベースの読み書きは行いません。\\ ``--format "
+"json`` \\ で同じ集計を JSON で得られます。"
+
+#: ../../source/cli_document.rst:68
+msgid "``import`` écrit les positions dans la collection :"
+msgstr "\\ ``import`` \\ は局面をコレクションに書き込みます。"
+
+#: ../../source/cli_document.rst:75
+msgid ""
+"``--collection`` choisit un autre nom que le titre du document. Si le "
+"fichier de base n'existe pas, il est créé."
+msgstr "\\ ``--collection`` \\ で、ドキュメントのタイトルとは別の名前を選べます。データベースファイルが存在しない場合は作成されます。"
+
+#: ../../source/cli_document.rst:79
+msgid "Le relevé"
+msgstr "relevé"
+
+#: ../../source/cli_document.rst:81
+msgid ""
+"Le relevé est un fichier JSON lisible, que l'on peut ouvrir dans un "
+"éditeur de texte. L'en-tête (``document``) donne le titre, l'auteur, "
+"l'édition ou l'adresse du document, l'empreinte SHA-256 du fichier lu et "
+"le profil de ses diagrammes. Puis chaque diagramme est une entrée, dans "
+"l'ordre du document :"
+msgstr ""
+"relevé は、テキストエディタで開ける読みやすい JSON "
+"ファイルです。ヘッダ(``document``)には、ドキュメントのタイトル、著者、版またはアドレス、読み取ったファイルの SHA-256 "
+"フィンガープリント、図のプロファイルが入っています。その後、各図がドキュメントの順序でエントリになります。"
+
+#: ../../source/cli_document.rst:86
+msgid "``rank`` — son rang, de 1 sans trou ;"
+msgstr "\\ ``rank`` \\ — 順位。1 から欠番なく振られます。"
+
+#: ../../source/cli_document.rst:87
+msgid ""
+"``page``, ``chapter`` et ``label`` — sa page, le chapitre des signets et "
+"le nom que le document lui donne (« Problem 191 ») quand il est imprimé "
+"au-dessus ;"
+msgstr ""
+"\\ ``page``\\ 、\\ ``chapter``\\ 、\\ ``label`` \\ — "
+"ページ、しおりの章、および図の上に印刷されている場合にドキュメントが付ける名前(「Problem 191」)。"
+
+#: ../../source/cli_document.rst:89
+msgid ""
+"``position`` — la position, en XGID : pions, videau, trait, dés, score et"
+" longueur du match en une seule chaîne ;"
+msgstr ""
+"\\ ``position`` \\ — 局面を XGID で表したもの。駒、キューブ、手番、サイコロ、スコア、マッチの長さが 1 "
+"つの文字列に収められます。"
+
+#: ../../source/cli_document.rst:91
+msgid "``state`` — son état, avec ``doubts``, les doutes nommés de la lecture ;"
+msgstr "\\ ``state`` \\ — 状態。読み取りの名前付きの疑義である\\ ``doubts``\\ を伴います。"
+
+#: ../../source/cli_document.rst:92
+msgid ""
+"``rect`` — où le diagramme se trouve sur la page, en fraction de sa "
+"taille, pour le retrouver dans le PDF ;"
+msgstr "\\ ``rect`` \\ — 図がページ上のどこにあるかを、ページの大きさに対する割合で表したもの。PDF 内で見つけ直すために使います。"
+
+#: ../../source/cli_document.rst:94
+msgid ""
+"``verified`` — ``true`` quand une personne a comparé la lecture au "
+"diagramme."
+msgstr "\\ ``verified`` \\ — 読み取りを人が図と見比べたとき\\ ``true``\\ になります。"
+
+#: ../../source/cli_document.rst:96
+msgid ""
+"On relit un relevé en ouvrant le PDF à la page de l'entrée. On y corrige "
+"la position (le XGID), on marque ``\"verified\": true`` une entrée "
+"contrôlée, on retire une entrée en renumérotant les rangs. Un relevé se "
+"vérifie en plusieurs séances : ``verified`` reste dans le fichier. "
+"``check`` refuse un relevé dont un champ est inconnu, dont les rangs ont "
+"un trou, dont une page recule, dont un XGID n'est pas une position "
+"légale, ou d'un format plus récent que le programme. Une entrée ``sure`` "
+"n'a aucun doute."
+msgstr ""
+"relevé は、エントリのページで PDF を開いて見直します。そこで局面(XGID)を修正し、確認済みのエントリに\\ "
+"``\"verified\": true``\\ を付け、エントリを削除するときは順位を振り直します。relevé は複数回に分けて検証でき、\\"
+" ``verified`` \\ はファイルに残ります。\\ ``check`` \\ は、未知のフィールドがある relevé、順位に欠番がある"
+" relevé、ページが後戻りしている relevé、XGID が合法な局面でない relevé、プログラムより新しい形式の relevé "
+"を拒否します。\\ ``sure`` \\ のエントリに疑義はありません。"
+
+#: ../../source/cli_document.rst:105
+msgid "Les trois états"
+msgstr "3 つの状態"
+
+#: ../../source/cli_document.rst:107
+msgid "``sure``"
+msgstr "``sure``"
+
+#: ../../source/cli_document.rst:108
+msgid ""
+"Les recoupements du diagramme tiennent : chaque camp compte quinze pions "
+"(sur les points, sur la barre et dans le plateau de sortie), et les pips "
+"calculés d'après la position égalent les pips imprimés des deux joueurs. "
+"Le score et la longueur du match sont ceux que le PDF imprime à côté."
+msgstr ""
+"図の突き合わせが成立しています。各サイドの駒は 15 "
+"個(ポイント上、バー上、ベアオフ用トレイ内)で、局面から計算したピップ数が両プレイヤーの印刷されたピップ数と一致します。スコアとマッチの長さは、PDF"
+" が横に印刷しているものです。"
+
+#: ../../source/cli_document.rst:113
+msgid "``to-verify``"
+msgstr "``to-verify``"
+
+#: ../../source/cli_document.rst:114
+msgid ""
+"La lecture tient, mais rien ne la confirme : un pip imprimé diffère du "
+"pip calculé, ou le diagramme montre ce que les impressions de référence "
+"n'ont jamais montré — pile de plus de 9 pions, pions numérotés sur la "
+"barre, plus de deux pions blancs ou de trois noirs sur la barre, videau "
+"du côté du joueur du haut ou au-delà de 8, joueur du haut au trait, pas "
+"de marque de trait, joueur noir en bas, jeu de Crawford, joueur à un "
+"point de la victoire (la partie de Crawford et les suivantes ne se "
+"distinguent pas), glyphes de la police que la table ne lit pas. Ces cas "
+"sont lus mais jamais déclarés sûrs."
+msgstr ""
+"読み取りは成立していますが、それを裏づけるものがありません。印刷されたピップ数が計算したピップ数と異なる場合、または図が基準の印刷物に一度も現れなかったものを示している場合です。たとえば、9"
+" 個を超える駒の山、バー上の番号付きの駒、バー上に白が 2 個を超えるか黒が 3 個を超える駒、上側のプレイヤー側または 8 "
+"を超える位置のキューブ、上側のプレイヤーの手番、手番の印がない、黒のプレイヤーが下側にある、クロフォードゲーム、勝利まで 1 "
+"ポイントのプレイヤー(クロフォードゲームとそれ以降は区別できません)、表が読み取れないフォントのグリフ、などです。これらのケースは読み取られますが、確実とは宣言されません。"
+
+#: ../../source/cli_document.rst:123
+msgid "``uncertain``"
+msgstr "``uncertain``"
+
+#: ../../source/cli_document.rst:124
+msgid ""
+"La lecture est contredite ou incomplète : un glyphe inconnu, un camp qui "
+"ne compte pas quinze pions et dont les pips ne correspondent pas, un "
+"cadre abîmé. Un diagramme dont on ne tire aucune position légale garde sa"
+" place dans le relevé, sans position (``\"position\": \"\"``)."
+msgstr ""
+"読み取りが矛盾しているか不完全です。未知のグリフ、駒が 15 "
+"個でなくピップ数も一致しないサイド、損傷した枠などです。合法な局面が得られない図は、局面なし(``\"position\": \"\"``)で "
+"relevé に位置を保ちます。"
+
+#: ../../source/cli_document.rst:129
+msgid ""
+"Une entrée est **importable** quand elle est ``sure`` ou vérifiée. Les "
+"doutes qu'elle porte disent quoi contrôler, par exemple :"
+msgstr ""
+"エントリは、\\ ``sure`` \\ であるか検証済みであるとき、**インポート可能**\\ "
+"です。エントリが持つ疑義は、何を確認すべきかを示します。例:"
+
+#: ../../source/cli_document.rst:136
+msgid "Le dé n'est pas lu : l'analyse écrit toujours « pas de dés » (``00``)."
+msgstr "サイコロは読み取られません。解析は常に「サイコロなし」(``00``)と書き込みます。"
+
+#: ../../source/cli_document.rst:139
+msgid "Pourquoi l'import refuse"
+msgstr "インポートが拒否する理由"
+
+#: ../../source/cli_document.rst:141
+msgid ""
+"Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
+" une collection se partage à l'export. L'import refuse donc **tout** le "
+"relevé, avant d'écrire quoi que ce soit, et nomme les rangs :"
+msgstr ""
+"\\ ``sure`` \\ "
+"でも検証済みでもないエントリは信頼できず、コレクションに入ったものはエクスポート時に共有されます。そのため、インポートは何かを書き込む前に "
+"relevé の\\ **全体**\\ を拒否し、順位を示します。"
+
+#: ../../source/cli_document.rst:149
+msgid ""
+"On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
+"tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
+" entries neither sure nor verified``). Même avec ``--force``, une entrée "
+"sans position est refusée : il faut la renseigner ou la retirer."
+msgstr ""
+"これらのエントリを検証するか、\\ ``--force`` \\ を付けて relevé "
+"をそのままインポートします。その場合、インポートは強制したエントリ数を表示します(``Forced: 3 entries neither sure"
+" nor verified``)。\\ ``--force`` \\ "
+"を付けても、局面のないエントリは拒否されます。記入するか削除する必要があります。"
+
+#: ../../source/cli_document.rst:155
+msgid "Ce qui entre en base"
+msgstr "データベースに入るもの"
+
+#: ../../source/cli_document.rst:157
+msgid ""
+"Seules les positions entrent, dans l'ordre du document, dans une "
+"collection au nom du document (ou de ``--collection``). Chaque position "
+"entre comme une position apportée seule, et la bibliothèque la reconnaît "
+"par son identité : une position qu'elle a déjà n'est pas dupliquée (``new"
+" in the library`` compte celles qui lui manquaient)."
+msgstr ""
+"局面だけが、ドキュメントの順序で、ドキュメント名(または\\ ``--collection``\\ "
+"の名前)のコレクションに入ります。各局面は単独で持ち込まれた局面として入り、ライブラリはその同一性で局面を認識します。すでに持っている局面は重複しません(``new"
+" in the library`` \\ は、足りなかった局面の数です)。"
+
+#: ../../source/cli_document.rst:163
+msgid ""
+"La **description** de la collection porte le titre, l'auteur, l'édition "
+"et l'adresse du document, un par ligne. Une collection existante du même "
+"nom reçoit les positions qui lui manquent et garde sa description si elle"
+" en a une ; une collection dynamique (définie par une requête) est "
+"refusée."
+msgstr ""
+"コレクションの\\ **説明**\\ には、ドキュメントのタイトル、著者、版、アドレスが 1 行に 1 "
+"つずつ入ります。同名の既存コレクションは足りない局面を受け取り、説明があればそれを保持します。ダイナミックコレクション(クエリで定義されたもの)は拒否されます。"
+
+#: ../../source/cli_document.rst:167
+msgid ""
+"Chaque position porte un **commentaire** qui donne sa référence, après le"
+" titre du document : ``Mon livre — p. 146, Problem 191``."
+msgstr ""
+"各局面には、ドキュメントのタイトルに続けて参照を示す\\ **コメント**\\ が付きます。\\ ``Mon livre — p. 146, "
+"Problem 191``"
+
+#: ../../source/cli_document.rst:170
+msgid ""
+"Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
+"l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
+"transaction."
+msgstr "それ以外のものは決して入りません。画像も、矩形も、著者のテキストも入りません。中断または拒否されたインポートは何も書き込みません。インポートは単一のトランザクションです。"
+
+#: ../../source/cli_document.rst:174
+msgid "Une position répétée"
+msgstr "繰り返される局面"
+
+#: ../../source/cli_document.rst:176
+msgid ""
+"Quand le document montre deux fois la même position, elle n'entre qu'une "
+"fois dans la collection, à sa première apparition. Son commentaire cite "
+"chaque référence : ``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` "
+"compte ces répétitions."
+msgstr ""
+"ドキュメントが同じ局面を 2 回示す場合、その局面は最初の出現位置でコレクションに 1 回だけ入ります。そのコメントはすべての参照を挙げます。\\"
+" ``Mon livre — p. 2, Problem 1; p. 4``\\ 。\\ ``repeated`` \\ はこの繰り返しの数です。"
+
+#: ../../source/cli_document.rst:182
+msgid "Réimporter"
+msgstr "再インポート"
+
+#: ../../source/cli_document.rst:184
+msgid ""
+"Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
+"dans la collection (``added to the collection: 0``), et le commentaire de"
+" référence est réécrit seulement si ses références ont changé, jamais "
+"doublé. On peut donc reprendre un import après avoir corrigé le relevé."
+msgstr ""
+"同じ relevé を再インポートしても何も追加されません。新しい局面はなく、コレクションにも何も入らず(``added to the "
+"collection: 0``)、参照コメントは参照が変わった場合にのみ書き直され、二重にはなりません。したがって、relevé "
+"を修正した後でインポートをやり直せます。"
+
+#: ../../source/cli_document.rst:190
+msgid "Le démon"
+msgstr "デーモン"
+
+#: ../../source/cli_document.rst:192
+msgid ""
+"Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
+"avec les mêmes règles ; il n'analyse aucun PDF (voir :ref:`headless`)."
+msgstr ""
+"\\ ``serve`` \\ デーモンは、同じ規則で\\ ``/v1/documents.importReleve``\\ の下で relevé"
+" をインポートします。PDF の解析は行いません(:ref:`headless` を参照)。"

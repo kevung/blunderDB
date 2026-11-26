@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 01:56+0100\n"
+"POT-Creation-Date: 2026-11-26 02:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -34,10 +34,10 @@ msgid ""
 msgstr "Δημιουργεί ένα νέο αρχείο βάσης δεδομένων με προαιρετικά μεταδεδομένα."
 
 #: ../../source/cli_import_export.rst:15 ../../source/cli_import_export.rst:42
-#: ../../source/cli_import_export.rst:329
-#: ../../source/cli_import_export.rst:453
-#: ../../source/cli_import_export.rst:521
-#: ../../source/cli_import_export.rst:547
+#: ../../source/cli_import_export.rst:298
+#: ../../source/cli_import_export.rst:422
+#: ../../source/cli_import_export.rst:490
+#: ../../source/cli_import_export.rst:516
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
@@ -462,100 +462,29 @@ msgstr "document — Ανάγνωση και εισαγωγή των θέσεω�
 
 #: ../../source/cli_import_export.rst:279
 msgid ""
-"Range dans une collection les positions d'un livre, d'un article ou d'une"
-" page web, dans l'ordre du document, à partir de son **relevé** : un "
-"fichier JSON qui les liste, chacune avec sa page, son libellé, sa "
-"position (un XGID : pions, videau, trait, dés, score et longueur du "
-"match), son état (``sure``, ``to-verify`` ou ``uncertain``) et le fait "
-"qu'une personne l'a vérifiée ou non. Seules les positions entrent en base"
-" : ni image, ni texte de l'auteur."
+"Range dans une collection, dans l'ordre du document, les positions d'un "
+"PDF imprimé par eXtreme Gammon, en trois commandes (``analyze``, "
+"``check``, ``import``) autour d'un **relevé** JSON. Voir "
+":ref:`cli_document`."
 msgstr ""
-"Τακτοποιεί σε μια συλλογή τις θέσεις ενός βιβλίου, ενός άρθρου ή μιας "
-"ιστοσελίδας, με τη σειρά του εγγράφου, από το **relevé** του: ένα αρχείο "
-"JSON που τις απαριθμεί, κάθε μία με τη σελίδα, την ετικέτα, τη θέση της "
-"(ένα XGID: πούλια, κύβος, παίκτης που παίζει, ζάρια, σκορ και μήκος "
-"αγώνα), την κατάστασή της (``sure``, ``to-verify`` ή ``uncertain``) και "
-"το αν την έχει ελέγξει κάποιο πρόσωπο. Μόνο οι θέσεις μπαίνουν στη βάση: "
-"ούτε εικόνα ούτε κείμενο του συγγραφέα."
+"Τοποθετεί σε μια συλλογή, με τη σειρά του εγγράφου, τις θέσεις ενός PDF "
+"που τυπώθηκε από το eXtreme Gammon, με τρεις εντολές (``analyze``, "
+"``check``, ``import``) γύρω από ένα **relevé** JSON. Βλ. "
+":ref:`cli_document`."
 
-#: ../../source/cli_import_export.rst:293
-msgid ""
-"``analyze`` produit ce relevé à partir d'un PDF, sans rien écrire en "
-"base. Il lit les diagrammes qu'eXtreme Gammon imprime en PDF avec sa "
-"police de plateau : chaque diagramme est décodé exactement depuis ses "
-"glyphes, et le score, la longueur du match et les pips sont lus dans le "
-"texte imprimé à côté. Une entrée est ``sure`` quand chaque camp compte "
-"quinze pions et que les pips calculés égalent les pips imprimés des deux "
-"joueurs ; sinon elle est ``to-verify``, ou ``uncertain`` si le diagramme "
-"est mal formé, avec le doute nommé. Ce que les impressions de référence "
-"n'ont jamais montré est lu mais laissé ``to-verify`` : pile de plus de 9 "
-"pions, plus de deux pions blancs ou de trois noirs sur la barre, videau "
-"du côté du joueur du haut ou au-delà de 8, dés, joueur du haut au trait. "
-"Le titre et l'auteur viennent des métadonnées du PDF (``--title`` et "
-"``--author`` les remplacent), le chapitre de ses signets. Un PDF sans "
-"diagramme en police de plateau — diagramme dessiné, image ou page scannée"
-" — est refusé (« no diagram readable by its glyphs »)."
-msgstr ""
-"Το ``analyze`` παράγει αυτό το relevé από ένα PDF, χωρίς να γράψει τίποτα"
-" στη βάση. Διαβάζει τα διαγράμματα που το eXtreme Gammon τυπώνει σε PDF "
-"με τη γραμματοσειρά ταμπλό του: κάθε διάγραμμα αποκωδικοποιείται "
-"επακριβώς από τα γλυφά του, και το σκορ, το μήκος του αγώνα και τα pips "
-"διαβάζονται από το κείμενο που είναι τυπωμένο δίπλα. Μια εγγραφή είναι "
-"``sure`` όταν κάθε πλευρά έχει δεκαπέντε πούλια και τα υπολογισμένα pips "
-"ισούνται με τα τυπωμένα pips και των δύο παικτών· διαφορετικά είναι ``to-"
-"verify``, ή ``uncertain`` αν το διάγραμμα είναι κακοσχηματισμένο, με την "
-"αμφιβολία να κατονομάζεται. Ό,τι δεν έχουν δείξει ποτέ τα τυπωμένα υλικά "
-"αναφοράς διαβάζεται αλλά μένει ``to-verify``: στοίβα με περισσότερα από 9"
-" πούλια, περισσότερα από δύο λευκά ή τρία μαύρα πούλια στη μπάρα, κύβος "
-"στην πλευρά του πάνω παίκτη ή πάνω από 8, ζάρια, ο πάνω παίκτης στη σειρά"
-" του. Ο τίτλος και ο συγγραφέας προέρχονται από τα μεταδεδομένα του PDF "
-"(τα ``--title`` και ``--author`` τα αντικαθιστούν), το κεφάλαιο από τους "
-"σελιδοδείκτες του. Ένα PDF χωρίς διάγραμμα στη γραμματοσειρά ταμπλό — "
-"σχεδιασμένο διάγραμμα, εικόνα ή σαρωμένη σελίδα — απορρίπτεται («no "
-"diagram readable by its glyphs»)."
-
-#: ../../source/cli_import_export.rst:308
-msgid ""
-"``check`` valide le relevé (format, rangs continus depuis 1, positions "
-"légales, champs inconnus refusés) et compte ses entrées par état, sans "
-"rien écrire. ``import`` crée la collection au nom du document (ou "
-"``--collection``) ; sa description porte le titre, l'auteur et l'édition "
-"(ou l'URL), et chaque position porte sa référence (« p. 146, Problem 191 "
-"») en commentaire, lisible hors de la collection. Une position que le "
-"document montre deux fois n'y entre qu'une fois, à sa première "
-"apparition, et son commentaire cite chaque référence. Une entrée ni "
-"``sure`` ni vérifiée fait refuser tout l'import, sauf ``--force`` ; un "
-"import refusé n'écrit rien. Réimporter le même relevé n'ajoute rien. Le "
-"démon sert l'import sous ``/v1/documents.importReleve`` ; il n'analyse "
-"aucun PDF."
-msgstr ""
-"Το ``check`` επικυρώνει το relevé (μορφή, συνεχείς αύξοντες αριθμοί από "
-"το 1, νόμιμες θέσεις, άγνωστα πεδία απορρίπτονται) και μετρά τις εγγραφές"
-" του ανά κατάσταση, χωρίς να γράψει τίποτα. Το ``import`` δημιουργεί τη "
-"συλλογή με το όνομα του εγγράφου (ή ``--collection``)· η περιγραφή της "
-"φέρει τον τίτλο, τον συγγραφέα και την έκδοση (ή το URL), και κάθε θέση "
-"φέρει την αναφορά της («σ. 146, Problem 191») ως σχόλιο, αναγνώσιμο και "
-"εκτός της συλλογής. Μια θέση που το έγγραφο δείχνει δύο φορές μπαίνει "
-"μόνο μία φορά, στην πρώτη εμφάνισή της, και το σχόλιό της αναφέρει κάθε "
-"αναφορά. Μια εγγραφή που δεν είναι ούτε ``sure`` ούτε ελεγμένη κάνει "
-"ολόκληρη την εισαγωγή να απορριφθεί, εκτός αν δοθεί ``--force``· μια "
-"απορριφθείσα εισαγωγή δεν γράφει τίποτα. Η επανεισαγωγή του ίδιου relevé "
-"δεν προσθέτει τίποτα. Ο δαίμονας εξυπηρετεί την εισαγωγή στη διεύθυνση "
-"``/v1/documents.importReleve``. Δεν αναλύει κανένα PDF."
-
-#: ../../source/cli_import_export.rst:321
+#: ../../source/cli_import_export.rst:290
 msgid "export — Exporter des données"
 msgstr "export — Εξαγωγή δεδομένων"
 
-#: ../../source/cli_import_export.rst:323
+#: ../../source/cli_import_export.rst:292
 msgid "Exporte le contenu de la base vers des fichiers."
 msgstr "Εξάγει το περιεχόμενο της βάσης σε αρχεία."
 
-#: ../../source/cli_import_export.rst:331
+#: ../../source/cli_import_export.rst:300
 msgid "``--db`` — Base source (obligatoire)."
 msgstr "``--db`` — Βάση προέλευσης (υποχρεωτικό)."
 
-#: ../../source/cli_import_export.rst:332
+#: ../../source/cli_import_export.rst:301
 msgid ""
 "``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
 "``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
@@ -565,7 +494,7 @@ msgstr ""
 "``mat`` (εξαγωγή ενός ή περισσότερων αγώνων σε μεταγραφή Jellyfish "
 "``.mat``) (υποχρεωτικό)."
 
-#: ../../source/cli_import_export.rst:335
+#: ../../source/cli_import_export.rst:304
 msgid ""
 "``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
 "utilisé avec ``--dir``)."
@@ -573,7 +502,7 @@ msgstr ""
 "``--file`` — Αρχείο εξόδου (υποχρεωτικό, εκτός από το ``--type mat`` που "
 "χρησιμοποιείται με το ``--dir``)."
 
-#: ../../source/cli_import_export.rst:337
+#: ../../source/cli_import_export.rst:306
 msgid ""
 "``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
 "(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
@@ -583,27 +512,27 @@ msgstr ""
 "αγώνες, ένα αρχείο ανά αγώνα· χωρίς ``--match-ids``, εξάγονται όλοι οι "
 "αγώνες)."
 
-#: ../../source/cli_import_export.rst:340
+#: ../../source/cli_import_export.rst:309
 msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
 msgstr "``--analysis`` — Συμπερίληψη των αναλύσεων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:341
+#: ../../source/cli_import_export.rst:310
 msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
 msgstr "``--comments`` — Συμπερίληψη των σχολίων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:342
+#: ../../source/cli_import_export.rst:311
 msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
 msgstr "``--filters`` — Συμπερίληψη της βιβλιοθήκης φίλτρων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:343
+#: ../../source/cli_import_export.rst:312
 msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
 msgstr "``--played-moves`` — Συμπερίληψη των παιγμένων κινήσεων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:344
+#: ../../source/cli_import_export.rst:313
 msgid "``--matches`` — Inclure les matchs (défaut: oui)."
 msgstr "``--matches`` — Συμπερίληψη των αγώνων (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:345
+#: ../../source/cli_import_export.rst:314
 msgid ""
 "``--transcriptions`` — Inclure le brouillon de transcription de chaque "
 "match exporté (défaut: oui)."
@@ -611,7 +540,7 @@ msgstr ""
 "``--transcriptions`` — Συμπερίληψη του πρόχειρου απομαγνητοφώνησης κάθε "
 "εξαγόμενου αγώνα (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:347
+#: ../../source/cli_import_export.rst:316
 msgid ""
 "``--aliases`` — Inclure les alias de joueurs et d'événements que les "
 "matchs exportés écrivent, pour que la fusion de joueurs les suive "
@@ -621,19 +550,19 @@ msgstr ""
 "γράφουν οι εξαγόμενοι αγώνες, ώστε η συγχώνευση παικτών να τους ακολουθεί"
 " (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:349
+#: ../../source/cli_import_export.rst:318
 msgid "``--collections`` — Inclure les collections (défaut: oui)."
 msgstr "``--collections`` — Συμπερίληψη των συλλογών (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:350
+#: ../../source/cli_import_export.rst:319
 msgid "``--tournaments`` — Inclure les tournois (défaut: oui)."
 msgstr "``--tournaments`` — Συμπερίληψη των τουρνουά (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:351
+#: ../../source/cli_import_export.rst:320
 msgid "``--decks`` — Inclure les paquets Anki (défaut: oui)."
 msgstr "``--decks`` — Συμπερίληψη των τραπουλών Anki (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:352
+#: ../../source/cli_import_export.rst:321
 msgid ""
 "``--lessons`` — Inclure les leçons, avec les collections et les positions"
 " que leurs étapes montrent (défaut: oui)."
@@ -641,7 +570,7 @@ msgstr ""
 "``--lessons`` — Συμπερίληψη των μαθημάτων, με τις συλλογές και τις θέσεις"
 " που δείχνουν τα βήματά τους (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:354
+#: ../../source/cli_import_export.rst:323
 msgid ""
 "``--anki-history`` — Emporter l'historique de révision des paquets "
 "exportés : l'état de chaque carte et le journal de ses révisions (défaut:"
@@ -651,7 +580,7 @@ msgstr ""
 "τραπουλών: της κατάστασης κάθε κάρτας και του αρχείου καταγραφής των "
 "επαναλήψεών της (προεπιλογή: ναι)."
 
-#: ../../source/cli_import_export.rst:356
+#: ../../source/cli_import_export.rst:325
 msgid ""
 "``--collection-ids`` — IDs de collections à exporter (séparés par des "
 "virgules, vide = toutes)."
@@ -659,7 +588,7 @@ msgstr ""
 "``--collection-ids`` — IDs συλλογών προς εξαγωγή (χωρισμένα με κόμματα, "
 "κενό = όλες)."
 
-#: ../../source/cli_import_export.rst:358
+#: ../../source/cli_import_export.rst:327
 msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
@@ -667,7 +596,7 @@ msgstr ""
 "``--match-ids`` — IDs αγώνων προς εξαγωγή (χωρισμένα με κόμματα, κενό = "
 "όλα)."
 
-#: ../../source/cli_import_export.rst:359
+#: ../../source/cli_import_export.rst:328
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules, vide = tous)."
@@ -675,7 +604,7 @@ msgstr ""
 "``--tournament-ids`` — IDs τουρνουά προς εξαγωγή (χωρισμένα με κόμματα, "
 "κενό = όλα)."
 
-#: ../../source/cli_import_export.rst:361
+#: ../../source/cli_import_export.rst:330
 msgid ""
 "``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions "
 "(séparés par des virgules, vide = tous)."
@@ -683,7 +612,7 @@ msgstr ""
 "``--deck-ids`` — IDs των τράπουλων Anki που εξάγονται μαζί με τις θέσεις "
 "τους (χωρισμένα με κόμματα, κενό = όλες)."
 
-#: ../../source/cli_import_export.rst:363
+#: ../../source/cli_import_export.rst:332
 msgid ""
 "``--lesson-ids`` — IDs de leçons à exporter (séparés par des virgules, "
 "vide = toutes)."
@@ -691,7 +620,7 @@ msgstr ""
 "``--lesson-ids`` — IDs των μαθημάτων προς εξαγωγή (χωρισμένα με κόμματα, "
 "κενό = όλα)."
 
-#: ../../source/cli_import_export.rst:366
+#: ../../source/cli_import_export.rst:335
 msgid ""
 "``--password`` — Enveloppe le résultat dans un conteneur chiffré "
 "(``.dbx``)."
@@ -699,7 +628,7 @@ msgstr ""
 "``--password`` — Τυλίγει το αποτέλεσμα σε κρυπτογραφημένο κοντέινερ "
 "(``.dbx``)."
 
-#: ../../source/cli_import_export.rst:367
+#: ../../source/cli_import_export.rst:336
 msgid ""
 "``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
 "fichier exporté (voir :ref:`diffusion_controlee`)."
@@ -707,7 +636,7 @@ msgstr ""
 "``--watermark`` — Γράφει μια **υπογεγραμμένη** δήλωση προέλευσης στο "
 "εξαγόμενο αρχείο (βλ. :ref:`diffusion_controlee`)."
 
-#: ../../source/cli_import_export.rst:369
+#: ../../source/cli_import_export.rst:338
 msgid ""
 "``--watermark-note`` — Texte libre associé au filigrane (conditions "
 "d'usage, contact) ; utilisé avec ``--watermark``."
@@ -715,7 +644,7 @@ msgstr ""
 "``--watermark-note`` — Ελεύθερο κείμενο συνδεδεμένο με το υδατογράφημα "
 "(όροι χρήσης, επικοινωνία)· χρησιμοποιείται μαζί με το ``--watermark``."
 
-#: ../../source/cli_import_export.rst:371
+#: ../../source/cli_import_export.rst:340
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document "
 "résumant l'export: chemin, taille en octets, nombres)."
@@ -723,7 +652,7 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` (ένα "
 "έγγραφο που συνοψίζει την εξαγωγή: διαδρομή, μέγεθος σε bytes, πλήθη)."
 
-#: ../../source/cli_import_export.rst:373
+#: ../../source/cli_import_export.rst:342
 msgid ""
 "``--incremental`` — Avec ``--type database`` : n'exporte que ce qui est "
 "entré dans la bibliothèque depuis le dernier export incrémental vers le "
@@ -742,7 +671,7 @@ msgstr ""
 "απορρίπτεται: το υπάρχον αρχείο περιέχει το προηγούμενο δέλτα, που ο "
 "άλλος υπολογιστής ίσως δεν έχει ακόμη συγχωνεύσει."
 
-#: ../../source/cli_import_export.rst:380
+#: ../../source/cli_import_export.rst:349
 msgid ""
 "``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, "
 "à la place du dossier de destination."
@@ -750,7 +679,7 @@ msgstr ""
 "``--sync-cursor`` — Με ``--incremental``: όνομα του σημαδιού που "
 "διαβάζεται και προωθείται, στη θέση του φακέλου προορισμού."
 
-#: ../../source/cli_import_export.rst:382
+#: ../../source/cli_import_export.rst:351
 msgid ""
 "``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille "
 "par famille, ce que l'export écrirait, sans écrire de fichier (``--file``"
@@ -766,7 +695,7 @@ msgstr ""
 "παγωμένες και οι τράπουλες «recherche» των οποίων η πηγή θα έχανε ένα "
 "μέρος. Με άλλον τύπο, η επιλογή απορρίπτεται."
 
-#: ../../source/cli_import_export.rst:388
+#: ../../source/cli_import_export.rst:357
 msgid ""
 "``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des "
 "identifiants derrière un compte : ``positions``, ``comments`` (les "
@@ -785,7 +714,7 @@ msgstr ""
 "``filters``. Τα ``--offset`` και ``--limit`` επιλέγουν τη σελίδα (έως "
 "1000 αναγνωριστικά)."
 
-#: ../../source/cli_import_export.rst:394
+#: ../../source/cli_import_export.rst:363
 msgid ""
 "``--type database`` exporte toute la bibliothèque, comme l'export du "
 "serveur et comme la fenêtre d'export quand la liste affichée est la "
@@ -812,12 +741,12 @@ msgstr ""
 "εξάγονται όλοι οι αγώνες. Το ``--type matches`` μεταφέρει επίσης το "
 "πρόχειρο κάθε αγώνα."
 
-#: ../../source/cli_import_export.rst:403
-#: ../../source/cli_import_export.rst:488
+#: ../../source/cli_import_export.rst:372
+#: ../../source/cli_import_export.rst:457
 msgid "**Exemples:**"
 msgstr "**Παραδείγματα:**"
 
-#: ../../source/cli_import_export.rst:426
+#: ../../source/cli_import_export.rst:395
 msgid ""
 "Un filigrane est signé avec l'identité d'émetteur locale (voir la "
 "commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
@@ -841,11 +770,11 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
 "mark-origin-and-nothing-else.md>`__."
 
-#: ../../source/cli_import_export.rst:438
+#: ../../source/cli_import_export.rst:407
 msgid "transfer — Copier d'une bibliothèque à une autre"
 msgstr "transfer — Αντιγραφή από μια βιβλιοθήκη σε άλλη"
 
-#: ../../source/cli_import_export.rst:440
+#: ../../source/cli_import_export.rst:409
 msgid ""
 "Copie une partie d'une bibliothèque dans une autre, sans fichier "
 "intermédiaire à manipuler. La sélection est celle de ``export --type "
@@ -865,7 +794,7 @@ msgstr ""
 "διπλασιάζεται. Η αντιγραφή από το Α στο Β και μετά από το Β στο Α δεν "
 "δημιουργεί επομένως κανένα διπλότυπο."
 
-#: ../../source/cli_import_export.rst:455
+#: ../../source/cli_import_export.rst:424
 msgid ""
 "``--from`` — Bibliothèque source (obligatoire ; elle doit exister et être"
 " au schéma de cette version de blunderDB). Une bibliothèque plus ancienne"
@@ -879,7 +808,7 @@ msgstr ""
 "αυτήν: ανοίξτε την μία φορά στο blunderDB. Μια νεότερη βιβλιοθήκη "
 "απορρίπτεται επίσης: ενημερώστε το blunderDB."
 
-#: ../../source/cli_import_export.rst:460
+#: ../../source/cli_import_export.rst:429
 msgid ""
 "``--to`` — Bibliothèque de destination (obligatoire ; créée si elle "
 "n'existe pas). Elle ne peut pas être la source."
@@ -887,7 +816,7 @@ msgstr ""
 "``--to`` — Βιβλιοθήκη προορισμού (υποχρεωτικό· δημιουργείται αν δεν "
 "υπάρχει). Δεν μπορεί να είναι η προέλευση."
 
-#: ../../source/cli_import_export.rst:462
+#: ../../source/cli_import_export.rst:431
 msgid ""
 "``--analysis``, ``--comments``, ``--played-moves``, ``--matches``, "
 "``--transcriptions``, ``--aliases``, ``--collections``, "
@@ -900,7 +829,7 @@ msgstr ""
 "επιλογή με τιμή ``false`` αφαιρεί την οικογένειά της (προεπιλογή: ναι για"
 " όλες)."
 
-#: ../../source/cli_import_export.rst:466
+#: ../../source/cli_import_export.rst:435
 msgid ""
 "``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
 "ids``, ``--lesson-ids`` — Une liste d'IDs de la source restreint sa "
@@ -912,7 +841,7 @@ msgstr ""
 "οικογένειά της σε αυτά τα στοιχεία και την περιλαμβάνει. Ένα ID που η "
 "προέλευση δεν περιέχει είναι σφάλμα, και δεν αντιγράφεται τίποτα."
 
-#: ../../source/cli_import_export.rst:470
+#: ../../source/cli_import_export.rst:439
 msgid ""
 "``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la "
 "source et ce que la destination en a pris)."
@@ -920,7 +849,7 @@ msgstr ""
 "``--format`` — ``text`` (προεπιλογή) ή ``json`` (ό,τι διαβάστηκε από την "
 "προέλευση και ό,τι πήρε από αυτήν ο προορισμός)."
 
-#: ../../source/cli_import_export.rst:473
+#: ../../source/cli_import_export.rst:442
 msgid ""
 "**Quelles positions partent.** Sans liste d'IDs, toutes les positions de "
 "la source partent, rangées ou non. Dès qu'une liste d'IDs est donnée, "
@@ -942,7 +871,7 @@ msgstr ""
 "(όνομα, ημερομηνία, τόπος), αλλά όχι τους άλλους αγώνες αυτού του "
 "τουρνουά· με το ``--tournaments=false``, φτάνει χωρίς τουρνουά."
 
-#: ../../source/cli_import_export.rst:482
+#: ../../source/cli_import_export.rst:451
 msgid ""
 "Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal "
 "d'import, ni métadonnée de la source ; la destination garde les siennes, "
@@ -957,7 +886,7 @@ msgstr ""
 "Anki δεν αντιγράφονται: μια τράπουλα φτάνει χωρίς ιστορικό, και μια "
 "τράπουλα με το ίδιο όνομα που υπάρχει ήδη κρατά το δικό της."
 
-#: ../../source/cli_import_export.rst:503
+#: ../../source/cli_import_export.rst:472
 msgid ""
 "Le serveur offre le même transfert entre deux tenants, tiré par le tenant"
 " qui reçoit (voir :ref:`mode_headless_transfert`)."
@@ -965,11 +894,11 @@ msgstr ""
 "Ο διακομιστής προσφέρει την ίδια μεταφορά μεταξύ δύο tenants, που τραβά ο"
 " tenant που λαμβάνει (βλ. :ref:`mode_headless_transfert`)."
 
-#: ../../source/cli_import_export.rst:507
+#: ../../source/cli_import_export.rst:476
 msgid "identity — Identité d'émetteur"
 msgstr "identity — Ταυτότητα εκδότη"
 
-#: ../../source/cli_import_export.rst:509
+#: ../../source/cli_import_export.rst:478
 msgid ""
 "Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
 "signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
@@ -983,19 +912,19 @@ msgstr ""
 "πρόσωπο, όχι σε μια βάση δεδομένων: ό,τι σημαίνετε φέρει ένα και μόνο "
 "δημόσιο αποτύπωμα."
 
-#: ../../source/cli_import_export.rst:523
+#: ../../source/cli_import_export.rst:492
 msgid "``--name`` — Change le nom affiché de l'identité."
 msgstr "``--name`` — Αλλάζει το εμφανιζόμενο όνομα της ταυτότητας."
 
-#: ../../source/cli_import_export.rst:524
+#: ../../source/cli_import_export.rst:493
 msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
 msgstr "``--export`` — Εξάγει την ταυτότητα σε αρχείο ``.bdbid``."
 
-#: ../../source/cli_import_export.rst:525
+#: ../../source/cli_import_export.rst:494
 msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
 msgstr "``--import`` — Εισάγει μια ταυτότητα από αρχείο ``.bdbid``."
 
-#: ../../source/cli_import_export.rst:526
+#: ../../source/cli_import_export.rst:495
 msgid ""
 "``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
 "exporté/importé (l'identité locale, elle, est volontairement non "
@@ -1005,7 +934,7 @@ msgstr ""
 "εξαγόμενο/εισαγόμενο αρχείο (η τοπική ταυτότητα παραμένει σκόπιμα "
 "απροστάτευτη)."
 
-#: ../../source/cli_import_export.rst:528
+#: ../../source/cli_import_export.rst:497
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom, "
 "empreinte, chemin de stockage)."
@@ -1013,7 +942,7 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` (όνομα, "
 "αποτύπωμα, διαδρομή αποθήκευσης)."
 
-#: ../../source/cli_import_export.rst:531
+#: ../../source/cli_import_export.rst:500
 msgid ""
 "Le fichier exporté permet à quiconque le détient de signer en votre nom —"
 " ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
@@ -1025,11 +954,11 @@ msgstr ""
 "σημασμένα αρχεία διατηρούν το όνομα με το οποίο σφραγίστηκαν και "
 "εξακολουθούν να επαληθεύονται."
 
-#: ../../source/cli_import_export.rst:537
+#: ../../source/cli_import_export.rst:506
 msgid "open — Ouvrir un fichier protégé"
 msgstr "open — Άνοιγμα προστατευμένου αρχείου"
 
-#: ../../source/cli_import_export.rst:539
+#: ../../source/cli_import_export.rst:508
 msgid ""
 "Transforme un fichier protégé par mot de passe (``.dbx``) en base "
 "ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
@@ -1039,15 +968,15 @@ msgstr ""
 "βάση. Ο κωδικός ζητείται μία μόνο φορά· έπειτα πρόκειται για κανονικό "
 "αρχείο."
 
-#: ../../source/cli_import_export.rst:549
+#: ../../source/cli_import_export.rst:518
 msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
 msgstr "``--db`` — Το αρχείο ``.dbx`` προς άνοιγμα (υποχρεωτικό)."
 
-#: ../../source/cli_import_export.rst:550
+#: ../../source/cli_import_export.rst:519
 msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
 msgstr "``--password`` — Ο κωδικός του κοντέινερ (υποχρεωτικό)."
 
-#: ../../source/cli_import_export.rst:551
+#: ../../source/cli_import_export.rst:520
 msgid ""
 "``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
 "extension ``.db``)."
@@ -1055,7 +984,7 @@ msgstr ""
 "``--file`` — Διαδρομή εξόδου για τη συνηθισμένη βάση (προεπιλογή: ίδιο "
 "όνομα, κατάληξη ``.db``)."
 
-#: ../../source/cli_import_export.rst:554
+#: ../../source/cli_import_export.rst:523
 msgid ""
 "Ce que le mot de passe protège : le *transport* du fichier — la copie "
 "égarée dans un dossier de téléchargements, la pièce jointe envoyée par "
@@ -1068,3 +997,153 @@ msgstr ""
 "Όχι τη βάση: όποιος έλαβε τον κωδικό μπορεί να την ανοίξει. Η κεφαλίδα "
 "του κοντέινερ είναι σε καθαρό κείμενο, ώστε το ``blunderdb info`` να "
 "διαβάζει την προέλευση ενός προστατευμένου αρχείου χωρίς τον κωδικό του."
+
+#~ msgid ""
+#~ "Range dans une collection les positions"
+#~ " d'un livre, d'un article ou d'une"
+#~ " page web, dans l'ordre du document,"
+#~ " à partir de son **relevé** : "
+#~ "un fichier JSON qui les liste, "
+#~ "chacune avec sa page, son libellé, "
+#~ "sa position (un XGID : pions, "
+#~ "videau, trait, dés, score et longueur"
+#~ " du match), son état (``sure``, "
+#~ "``to-verify`` ou ``uncertain``) et le "
+#~ "fait qu'une personne l'a vérifiée ou "
+#~ "non. Seules les positions entrent en "
+#~ "base : ni image, ni texte de "
+#~ "l'auteur."
+#~ msgstr ""
+#~ "Τακτοποιεί σε μια συλλογή τις θέσεις "
+#~ "ενός βιβλίου, ενός άρθρου ή μιας "
+#~ "ιστοσελίδας, με τη σειρά του εγγράφου,"
+#~ " από το **relevé** του: ένα αρχείο"
+#~ " JSON που τις απαριθμεί, κάθε μία "
+#~ "με τη σελίδα, την ετικέτα, τη θέση"
+#~ " της (ένα XGID: πούλια, κύβος, "
+#~ "παίκτης που παίζει, ζάρια, σκορ και "
+#~ "μήκος αγώνα), την κατάστασή της "
+#~ "(``sure``, ``to-verify`` ή ``uncertain``) "
+#~ "και το αν την έχει ελέγξει κάποιο"
+#~ " πρόσωπο. Μόνο οι θέσεις μπαίνουν στη"
+#~ " βάση: ούτε εικόνα ούτε κείμενο του"
+#~ " συγγραφέα."
+
+#~ msgid ""
+#~ "``analyze`` produit ce relevé à partir"
+#~ " d'un PDF, sans rien écrire en "
+#~ "base. Il lit les diagrammes qu'eXtreme"
+#~ " Gammon imprime en PDF avec sa "
+#~ "police de plateau : chaque diagramme "
+#~ "est décodé exactement depuis ses "
+#~ "glyphes, et le score, la longueur "
+#~ "du match et les pips sont lus "
+#~ "dans le texte imprimé à côté. Une"
+#~ " entrée est ``sure`` quand chaque "
+#~ "camp compte quinze pions et que "
+#~ "les pips calculés égalent les pips "
+#~ "imprimés des deux joueurs ; sinon "
+#~ "elle est ``to-verify``, ou ``uncertain``"
+#~ " si le diagramme est mal formé, "
+#~ "avec le doute nommé. Ce que les"
+#~ " impressions de référence n'ont jamais "
+#~ "montré est lu mais laissé ``to-"
+#~ "verify`` : pile de plus de 9 "
+#~ "pions, plus de deux pions blancs "
+#~ "ou de trois noirs sur la barre,"
+#~ " videau du côté du joueur du "
+#~ "haut ou au-delà de 8, dés, "
+#~ "joueur du haut au trait. Le titre"
+#~ " et l'auteur viennent des métadonnées "
+#~ "du PDF (``--title`` et ``--author`` les"
+#~ " remplacent), le chapitre de ses "
+#~ "signets. Un PDF sans diagramme en "
+#~ "police de plateau — diagramme dessiné,"
+#~ " image ou page scannée — est "
+#~ "refusé (« no diagram readable by "
+#~ "its glyphs »)."
+#~ msgstr ""
+#~ "Το ``analyze`` παράγει αυτό το relevé"
+#~ " από ένα PDF, χωρίς να γράψει "
+#~ "τίποτα στη βάση. Διαβάζει τα διαγράμματα"
+#~ " που το eXtreme Gammon τυπώνει σε "
+#~ "PDF με τη γραμματοσειρά ταμπλό του: "
+#~ "κάθε διάγραμμα αποκωδικοποιείται επακριβώς από"
+#~ " τα γλυφά του, και το σκορ, το"
+#~ " μήκος του αγώνα και τα pips "
+#~ "διαβάζονται από το κείμενο που είναι "
+#~ "τυπωμένο δίπλα. Μια εγγραφή είναι "
+#~ "``sure`` όταν κάθε πλευρά έχει δεκαπέντε"
+#~ " πούλια και τα υπολογισμένα pips "
+#~ "ισούνται με τα τυπωμένα pips και "
+#~ "των δύο παικτών· διαφορετικά είναι "
+#~ "``to-verify``, ή ``uncertain`` αν το "
+#~ "διάγραμμα είναι κακοσχηματισμένο, με την "
+#~ "αμφιβολία να κατονομάζεται. Ό,τι δεν "
+#~ "έχουν δείξει ποτέ τα τυπωμένα υλικά "
+#~ "αναφοράς διαβάζεται αλλά μένει ``to-"
+#~ "verify``: στοίβα με περισσότερα από 9"
+#~ " πούλια, περισσότερα από δύο λευκά ή"
+#~ " τρία μαύρα πούλια στη μπάρα, κύβος"
+#~ " στην πλευρά του πάνω παίκτη ή "
+#~ "πάνω από 8, ζάρια, ο πάνω παίκτης"
+#~ " στη σειρά του. Ο τίτλος και ο"
+#~ " συγγραφέας προέρχονται από τα μεταδεδομένα"
+#~ " του PDF (τα ``--title`` και "
+#~ "``--author`` τα αντικαθιστούν), το κεφάλαιο"
+#~ " από τους σελιδοδείκτες του. Ένα PDF"
+#~ " χωρίς διάγραμμα στη γραμματοσειρά ταμπλό"
+#~ " — σχεδιασμένο διάγραμμα, εικόνα ή "
+#~ "σαρωμένη σελίδα — απορρίπτεται («no "
+#~ "diagram readable by its glyphs»)."
+
+#~ msgid ""
+#~ "``check`` valide le relevé (format, "
+#~ "rangs continus depuis 1, positions "
+#~ "légales, champs inconnus refusés) et "
+#~ "compte ses entrées par état, sans "
+#~ "rien écrire. ``import`` crée la "
+#~ "collection au nom du document (ou "
+#~ "``--collection``) ; sa description porte "
+#~ "le titre, l'auteur et l'édition (ou "
+#~ "l'URL), et chaque position porte sa "
+#~ "référence (« p. 146, Problem 191 "
+#~ "») en commentaire, lisible hors de "
+#~ "la collection. Une position que le "
+#~ "document montre deux fois n'y entre "
+#~ "qu'une fois, à sa première apparition,"
+#~ " et son commentaire cite chaque "
+#~ "référence. Une entrée ni ``sure`` ni "
+#~ "vérifiée fait refuser tout l'import, "
+#~ "sauf ``--force`` ; un import refusé "
+#~ "n'écrit rien. Réimporter le même relevé"
+#~ " n'ajoute rien. Le démon sert "
+#~ "l'import sous ``/v1/documents.importReleve`` ; "
+#~ "il n'analyse aucun PDF."
+#~ msgstr ""
+#~ "Το ``check`` επικυρώνει το relevé "
+#~ "(μορφή, συνεχείς αύξοντες αριθμοί από το"
+#~ " 1, νόμιμες θέσεις, άγνωστα πεδία "
+#~ "απορρίπτονται) και μετρά τις εγγραφές "
+#~ "του ανά κατάσταση, χωρίς να γράψει "
+#~ "τίποτα. Το ``import`` δημιουργεί τη "
+#~ "συλλογή με το όνομα του εγγράφου "
+#~ "(ή ``--collection``)· η περιγραφή της "
+#~ "φέρει τον τίτλο, τον συγγραφέα και "
+#~ "την έκδοση (ή το URL), και κάθε"
+#~ " θέση φέρει την αναφορά της («σ. "
+#~ "146, Problem 191») ως σχόλιο, αναγνώσιμο"
+#~ " και εκτός της συλλογής. Μια θέση "
+#~ "που το έγγραφο δείχνει δύο φορές "
+#~ "μπαίνει μόνο μία φορά, στην πρώτη "
+#~ "εμφάνισή της, και το σχόλιό της "
+#~ "αναφέρει κάθε αναφορά. Μια εγγραφή που"
+#~ " δεν είναι ούτε ``sure`` ούτε "
+#~ "ελεγμένη κάνει ολόκληρη την εισαγωγή να"
+#~ " απορριφθεί, εκτός αν δοθεί ``--force``·"
+#~ " μια απορριφθείσα εισαγωγή δεν γράφει "
+#~ "τίποτα. Η επανεισαγωγή του ίδιου relevé"
+#~ " δεν προσθέτει τίποτα. Ο δαίμονας "
+#~ "εξυπηρετεί την εισαγωγή στη διεύθυνση "
+#~ "``/v1/documents.importReleve``. Δεν αναλύει κανένα"
+#~ " PDF."

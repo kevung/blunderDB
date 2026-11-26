@@ -9,7 +9,9 @@
 // audited for it. A PDF here is a file a person downloaded: the reader never
 // trusts it. The file, each decoded stream and the sum of decoded streams have
 // size limits, nesting and indirection have depth limits, every loop over the
-// file's own structure has a bound or a visited set, and a malformed file is
+// file's own structure has a bound or a visited set, DefaultLimits fixing the
+// sizes (a file of 512 MiB, a stream of 64 MiB, 20 000 pages, one million
+// glyphs), and a malformed file is
 // an error (ErrMalformed and its kin), never a panic — every exported entry
 // point recovers, and FuzzOpen holds the reader to it.
 //
