@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 01:12+0100\n"
+"POT-Creation-Date: 2026-11-26 01:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -299,9 +299,11 @@ msgstr "document"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Vérifie le relevé d'un document ou importe ses positions dans une "
-"collection."
-msgstr "Ελέγχει το relevé ενός εγγράφου ή εισάγει τις θέσεις του σε μια συλλογή."
+"Lit les diagrammes d'un PDF dans un relevé, vérifie un relevé ou importe "
+"ses positions dans une collection."
+msgstr ""
+"Διαβάζει τα διαγράμματα ενός PDF σε ένα relevé, ελέγχει ένα relevé ή "
+"εισάγει τις θέσεις του σε μια συλλογή."
 
 #: ../../source/cli.rst:1
 msgid "anki"

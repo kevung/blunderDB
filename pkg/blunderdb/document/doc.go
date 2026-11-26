@@ -12,7 +12,15 @@
 // checkers, the cube, the player on roll, the dice, the score and the match
 // length in one string, so none of them can disagree with another field.
 //
-// Reading a document produces a Relevé and writes nothing. Only Import writes,
+// Reading a document produces a Relevé and writes nothing. AnalyzePDF reads
+// the diagrams a PDF draws as text with eXtreme Gammon's board font (XG's PDF
+// prints): each diagram is decoded exactly from its glyphs (xgboard.go holds
+// the table) and is sure only when the print's own cross-checks hold —
+// fifteen checkers a side, the printed pip counts of both players — and
+// nothing in it lies beyond what the table was proven on. A PDF without such
+// a diagram is refused (ErrNoGlyphDiagram). Package pdf is the reader.
+//
+// Only Import writes,
 // and only what a Relevé allows: positions, each as a position brought in on
 // its own, in one Collection named after the document, with the document's
 // title, author and edition as the Collection's description and each

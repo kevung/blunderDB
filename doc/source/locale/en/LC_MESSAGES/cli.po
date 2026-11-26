@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 01:12+0100\n"
+"POT-Creation-Date: 2026-11-26 01:56+0100\n"
 "PO-Revision-Date: 2026-04-20 17:00+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -287,9 +287,11 @@ msgstr "document"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Vérifie le relevé d'un document ou importe ses positions dans une "
-"collection."
-msgstr "Checks a document's relevé, or imports its positions into a collection."
+"Lit les diagrammes d'un PDF dans un relevé, vérifie un relevé ou importe "
+"ses positions dans une collection."
+msgstr ""
+"Reads the diagrams of a PDF into a relevé, checks a relevé, or imports "
+"its positions into a collection."
 
 #: ../../source/cli.rst:1
 msgid "anki"

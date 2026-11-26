@@ -273,8 +273,8 @@ seul un lot où rien n'a été reconnu sort en erreur.
      "positions_imported": 341
    }
 
-document — Importer les positions d'un document
------------------------------------------------
+document — Lire et importer les positions d'un document
+-------------------------------------------------------
 
 Range dans une collection les positions d'un livre, d'un article ou d'une page
 web, dans l'ordre du document, à partir de son **relevé** : un fichier JSON qui
@@ -285,9 +285,25 @@ Seules les positions entrent en base : ni image, ni texte de l'auteur.
 
 .. code-block:: bash
 
+   ./blunderdb document analyze livre.pdf -o releve.json
    ./blunderdb document check releve.json
    ./blunderdb document import --db base.db releve.json
    ./blunderdb document import --db base.db releve.json --collection "Mon livre" --force
+
+``analyze`` produit ce relevé à partir d'un PDF, sans rien écrire en base. Il
+lit les diagrammes qu'eXtreme Gammon imprime en PDF avec sa police de plateau :
+chaque diagramme est décodé exactement depuis ses glyphes, et le score, la
+longueur du match et les pips sont lus dans le texte imprimé à côté. Une entrée
+est ``sure`` quand chaque camp compte quinze pions et que les pips calculés
+égalent les pips imprimés des deux joueurs ; sinon elle est ``to-verify``, ou
+``uncertain`` si le diagramme est mal formé, avec le doute nommé. Ce que les
+impressions de référence n'ont jamais montré est lu mais laissé ``to-verify`` :
+pile de plus de 9 pions, plus de deux pions blancs ou de trois noirs sur la
+barre, videau du côté du joueur du haut ou au-delà de 8, dés, joueur du haut au
+trait. Le titre et l'auteur viennent des métadonnées du PDF (``--title`` et
+``--author`` les remplacent), le chapitre de ses signets. Un PDF sans diagramme
+en police de plateau — diagramme dessiné, image ou page scannée — est refusé
+(« no diagram readable by its glyphs »).
 
 ``check`` valide le relevé (format, rangs continus depuis 1, positions légales,
 champs inconnus refusés) et compte ses entrées par état, sans rien écrire.
@@ -298,7 +314,8 @@ hors de la collection. Une position que le document montre deux fois n'y entre
 qu'une fois, à sa première apparition, et son commentaire cite chaque
 référence. Une entrée ni ``sure`` ni vérifiée fait refuser tout l'import, sauf
 ``--force`` ; un import refusé n'écrit rien. Réimporter le même relevé n'ajoute
-rien. Le démon sert l'import sous ``/v1/documents.importReleve``.
+rien. Le démon sert l'import sous ``/v1/documents.importReleve`` ; il n'analyse
+aucun PDF.
 
 export — Exporter des données
 ------------------------------

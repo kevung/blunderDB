@@ -44,7 +44,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `lesson` - Manage lessons (ordered steps showing collections and positions; export them)
 - `study` - The study backlog: your unhandled blunders across every import, and the "studied" mark
 - `collection` - Manage collections (list, show, create, rename, delete, export)
-- `document` - Check a document's relevé, or import its positions into a collection
+- `document` - Read a PDF's diagrams into a relevé, check one, or import its positions into a collection
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `stats` - Statistics computed apart from list --type stats (recurring)
 - `training` - The Training journal (sessions, missed positions)
@@ -3102,6 +3102,31 @@ Options:
 Examples:
   # Delete match with ID 1
   blunderdb delete --db database.db --type match --id 1 --confirm
+```
+
+### `blunderdb document analyze`
+
+```
+Usage: blunderdb document analyze [options] <file.pdf>
+
+Read the diagrams of a PDF into a relevé, in the document's order, each with its page,
+label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own
+cross-checks hold (15 checkers a side, the printed pip counts of both players), to-verify
+or uncertain otherwise, with the doubt named. Only diagrams drawn with eXtreme Gammon's
+board font (XG's PDF prints) are read; any other PDF is refused. Nothing is written to a
+database: check the relevé, then import it with 'blunderdb document import'.
+
+Options:
+  -author string
+    	Author of the document (default: the PDF's metadata)
+  -o string
+    	Write the relevé to this file (default: standard output)
+  -title string
+    	Title of the document (default: the PDF's metadata, else the file name)
+
+Examples:
+  blunderdb document analyze book.pdf -o releve.json
+  blunderdb document analyze book.pdf -o releve.json --title "My book" --author "Its author"
 ```
 
 ### `blunderdb document check`
