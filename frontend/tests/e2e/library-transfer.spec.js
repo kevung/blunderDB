@@ -49,8 +49,8 @@ async function drag(page, from, to) {
 const headerA = (page) => page.locator('[data-testid="library-group"][data-group-id="1"]');
 
 test('the displayed position dragged onto the other group is copied there, in the background', async ({ page }) => {
-    // A counter that reads 0 / 0 carries nothing: the drag needs the position to be on the board.
-    await expect(page.getByTestId('position-counter')).not.toHaveText(/^0 \//);
+    // The drag carries the position on the board, which arrives after the counter reads 1 / 1.
+    await expect(page.getByTestId('position-counter')).toHaveAttribute('data-position-id', /\d+/);
     await drag(page, page.getByTestId('position-counter'), headerA(page));
 
     await expect(headerA(page).locator('[data-testid="library-group-badge"]')).toHaveAttribute('data-state', 'done');
