@@ -14,14 +14,16 @@ type Code struct {
 }
 
 // Geometry of an A4 sheet folded in four, in millimetres. The quadrants
-// leave a white gutter on both fold lines: no code straddles a fold.
+// leave a white gutter on both fold lines: no code straddles a fold. A module
+// of 0.6 mm is 4.7 pixels at 200 dpi, which a household scan reads; at 0.5 mm
+// (four pixels) a slight rotation or noise loses codes (ADR-0119).
 const (
 	pageW, pageH = 210.0, 297.0
 	margin       = 8.0
 	gutter       = 12.0
 	quadW        = (pageW - 2*margin - gutter) / 2
 	quadH        = (pageH - 2*margin - gutter) / 2
-	moduleMM     = 0.5
+	moduleMM     = 0.6
 	codeGap      = 3.0
 	labelH       = 6.5
 )
@@ -38,7 +40,7 @@ type placed struct {
 // without reading a code. origin, when set, is printed at the foot of each
 // sheet (the producer's watermark).
 func Page(title, origin string, codes []Code) ([]byte, error) {
-	sheets, err := layout(codes)
+	sheets, err := layout(codes, moduleMM)
 	if err != nil {
 		return nil, err
 	}
@@ -124,9 +126,9 @@ func SVG(f Frame, moduleMM float64) (svg string, side float64, err error) {
 		n, n, side, side, n, n, svgPath(mods)), side, nil
 }
 
-// layout places the codes: rows inside a quadrant, quadrants in reading
-// order, a new sheet after the fourth.
-func layout(codes []Code) ([][4][]placed, error) {
+// layout places the codes, mod millimetres a module: rows inside a quadrant,
+// quadrants in reading order, a new sheet after the fourth.
+func layout(codes []Code, mod float64) ([][4][]placed, error) {
 	var sheets [][4][]placed
 	var cur [4][]placed
 	q, x, y, rowH := 0, 0.0, 0.0, 0.0
@@ -135,7 +137,7 @@ func layout(codes []Code) ([][4][]placed, error) {
 		if err != nil {
 			return nil, err
 		}
-		side := min(quadW, float64(len(mods))*moduleMM)
+		side := min(quadW, float64(len(mods))*mod)
 		h := side + labelH
 		if x > 0 && x+side > quadW {
 			x, y, rowH = 0, y+rowH+codeGap, 0
