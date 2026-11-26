@@ -217,6 +217,12 @@ les tâches en cours et en attente qui peuvent l'être (certaines ne se mettent
 pas en pause), puis les reprend toutes. ÉCHAP ferme le
 panneau.
 
+En tête du panneau, « Cœurs 3 / 8 » compte les cœurs que les calculs du moteur
+occupent sur ceux de la machine. Une tâche en cours marquée *Cède* attend à son
+point de contrôle qu'un calcul plus prioritaire finisse — l'évaluation à
+l'écran, ou un rollout demandé devant une analyse de fond — puis reprend
+d'elle-même ; la puce Calculs porte la même marque.
+
 L'onglet **Anki** porte un **badge** quand des cartes sont à réviser, tous
 paquets confondus. Ce chiffre est la raison d'ouvrir l'onglet ; il n'a donc
 rien à faire derrière lui. Zéro n'affiche rien : un badge qui dit « 0 » est du

@@ -3736,6 +3736,8 @@
         "moveDown": "Giù",
         "remove": "Rimuovi",
         "pauseAll": "Tutto in pausa",
+        "cores": "Core",
+        "yielded": "Cede",
         "resumeAll": "Riprendi tutto",
         "progress": "Avanzamento",
         "empty": "Nessun calcolo",

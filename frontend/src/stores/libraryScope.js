@@ -227,6 +227,7 @@ export const REFUSED = [
 export const OUTSIDE = [
     // The registry of tasks lists every library's, each row carrying its own library.
     'jobsStore',
+    'coresStore',
     // The lot, the protections and the copies to take back name rows and groups of every library at once:
     // the desktop's memory, kept across a switch, never a library's.
     'transferBasketStore',

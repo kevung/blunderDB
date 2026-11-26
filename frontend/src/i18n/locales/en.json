@@ -3736,6 +3736,8 @@
         "moveDown": "Down",
         "remove": "Remove",
         "pauseAll": "Pause all",
+        "cores": "Cores",
+        "yielded": "Yielding",
         "resumeAll": "Resume all",
         "progress": "Progress",
         "empty": "No jobs",
