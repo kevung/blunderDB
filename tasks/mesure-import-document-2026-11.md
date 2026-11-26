@@ -242,3 +242,13 @@ Opening Concepts 2017) : aucune entrée changée, ni d'état ni de position.
 - Essai écarté : n'étendre une pile sombre par sa longueur qu'à partir d'un pion vu un à un.
   Il retirait les piles fantômes mais faisait tomber Cube Like a Boss de 157 à 78 sûrs et
   Masterclass de 50 à 23 : des pions sombres jointifs n'ont souvent aucun bord visible.
+
+### Après revue (plateau durci)
+
+Videau chevauchant la bande : bande non lue ; barres d'épaisseur et de pas réguliers, rectangles
+creux refusés ; course coupée par la séparation des rangées écartée ; un plateau qui porte des
+barres doit faire quinze même quand le camp en a quinze dessinés (doute nommé sinon, pips ou
+non). Mesure de réglage, tous livres : seuls Endgame et Masterclass changent. Endgame
+11/80/153/4 → 7/65/172/4 (1 entrée gagnée, 16 complètes et 4 sûres perdues par un plateau lu
+à tort à côté d'un camp de quinze) ; Masterclass 50/71/36/16 → 49/71/37/16 (p. 144). Ouvert :
+ces lectures de plateau à tort (p. 61, 116, 131) — dégradation à résorber avant fusion.

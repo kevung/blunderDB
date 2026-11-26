@@ -843,7 +843,12 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 	tray[upper], tray[1-upper] = rd.trays[1], rd.trays[0]
 	// fifteen: the side's checkers drawn, with those its tray shows, make
 	// fifteen — two counts read apart.
-	fifteenOf := func(k int) bool { return n[k] == 15 || tray[k] > 0 && n[k]+tray[k] == 15 }
+	fifteenOf := func(k int) bool {
+		if tray[k] > 0 {
+			return n[k]+tray[k] == 15
+		}
+		return n[k] == 15
+	}
 	var okPips bool
 	switch {
 	case printed == nil:
@@ -888,13 +893,23 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 			add("orientation", 0, "", AssumedDirectionReason)
 		}
 		for _, k := range []int{upper, 1 - upper} {
-			if n[k] < 15 && tray[k] > 0 && !fifteenOf(k) {
-				add("checkers", 0, "", "the %s player (%s) has %d checkers drawn and %d in its tray: they do not make fifteen", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k], tray[k])
-			} else if n[k] < 15 && !fifteenOf(k) {
+			if tray[k] > 0 {
+				continue
+			}
+			if n[k] < 15 {
 				add("checkers", 0, "", "the %s player (%s) has %d checkers drawn: the other %d are taken as borne off, the tray is not read", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k], 15-n[k])
 			} else if n[k] > 15 {
 				add("checkers", 0, "", "the %s player (%s) has %d checkers drawn, more than fifteen", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k])
 			}
+		}
+	}
+	// A tray whose bars do not make fifteen with the side's checkers is a
+	// contradiction, named whatever the pips say.
+	trayOff := false
+	for _, k := range []int{upper, 1 - upper} {
+		if tray[k] > 0 && !fifteenOf(k) {
+			trayOff = true
+			add("checkers", 0, "", "the %s player (%s) has %d checkers drawn and %d in its tray: they do not make fifteen", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k], tray[k])
 		}
 	}
 	if state == Confirmed && len(doubts) > 0 {
@@ -920,7 +935,7 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		}
 	}
 	d.State, d.Doubts, d.Families = state, doubts, families
-	d.CheckersSure = max(n[0], n[1]) <= 15 && okPips && pieceDoubts == 0 && (!solved || fifteen)
+	d.CheckersSure = max(n[0], n[1]) <= 15 && okPips && pieceDoubts == 0 && (!solved || fifteen) && !trayOff
 	return d
 }
 

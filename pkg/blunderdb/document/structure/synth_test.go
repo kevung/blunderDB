@@ -163,6 +163,9 @@ type drawOpts struct {
 	// checkers as thin bars; trayExtra bars more than borne off.
 	tray      bool
 	trayExtra int
+	// trayCube draws a cube in the top tray's box; trayHollow draws the
+	// borne-off checkers as hollow rectangles.
+	trayCube, trayHollow bool
 	// darkFill is the dark checkers' grey, 0.2 when unset.
 	darkFill float64
 }
@@ -256,12 +259,30 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 			}
 			c.rect(x0, ya, x1, yb, 0)
 			c.rect(x0+2, ya+2, x1-2, yb-2, 1)
+			if o.trayHollow {
+				for k := 0; k < off; k++ {
+					y := yb - 12 - k*12
+					if row == 0 {
+						y = ya + 4 + k*12
+					}
+					c.rect(x0+4, y, x1-4, y+8, 0)
+					c.rect(x0+6, y+2, x1-6, y+6, 1)
+				}
+				continue
+			}
 			for k := 0; k < off; k++ {
 				y := yb - 6 - k*7
 				if row == 0 {
 					y = ya + 4 + k*7
 				}
 				c.rect(x0+4, y, x1-4, y+3, 0)
+			}
+			if o.trayCube && row == 0 {
+				side := int(0.9 * p)
+				cx := (x0+x1)/2 - side/2
+				cy := yb - side - 6
+				c.rect(cx, cy, cx+side, cy+side, 0)
+				c.rect(cx+2, cy+2, cx+side-2, cy+side-2, 1)
 			}
 		}
 	}

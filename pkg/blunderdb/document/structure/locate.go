@@ -452,7 +452,7 @@ func locate(g *raster, dpi float64) []zone {
 				rawInk := hysteresis(raw)
 				z.digits = labelDigits(rawInk, r0, c0, fb)
 				z.cubes, z.dice = squares(raw, rawInk, r0, c0, fb, X0, Y0)
-				z.trays = trays(rawInk, r0, c0, fb)
+				z.trays = trays(rawInk, r0, c0, fb, z.cubes, X0, Y0)
 				z.field = [6]float64{float64(X0 + c0 + fb.a), float64(X0 + c0 + fb.b), float64(X0 + c0 + fb.c),
 					float64(X0 + c0 + fb.d), float64(Y0 + r0 + fb.y0), float64(Y0 + r0 + fb.y1)}
 			}
@@ -683,9 +683,12 @@ func readingOrder(zs []zone, W int) []zone {
 // (the field's edge and the board's, or a box of its own), on the side of
 // either row. A bar is a run of rows inked across the band, thinner than 0.4
 // point, away from the band's own ends; a run thicker is a divider or a
-// stack whose bars touch. A row's tray is read only when exactly one band
-// beside it holds bars; 0 is "not read", never "empty".
-func trays(ink *mask, oy, ox int, f frame) [2]int {
+// stack whose bars touch. The bars must also look like checkers seen
+// edge-on: of one thickness, at one pitch, and not the edges of hollow
+// rectangles (two bars joined at both ends by side strokes). A band that a
+// square (a cube) overlaps is not read. A row's tray is read only when
+// exactly one band beside it holds bars; 0 is "not read", never "empty".
+func trays(ink *mask, oy, ox int, f frame, cubes []square, px, py int) [2]int {
 	p := f.pointWidth()
 	var out [2]int
 	mid := (f.y0 + f.y1) / 2
@@ -754,14 +757,31 @@ func trays(ink *mask, oy, ox int, f frame) [2]int {
 				// A run at an end of the band holds its border, as thick as
 				// its vertical strokes, and a bar only beyond that.
 				wt := max(l.hi-l.lo, r.hi-r.lo) + 1
-				bars, run := 0, 0
+				covered := false
+				for _, q := range cubes {
+					qx0, qx1, qy0, qy1 := q.x0-float64(px), q.x1-float64(px), q.y0-float64(py), q.y1-float64(py)
+					if qx1 >= float64(l.lo) && qx0 <= float64(r.hi) && qy1 >= float64(y0) && qy0 <= float64(y1) {
+						covered = true
+					}
+				}
+				if covered {
+					found += 2
+					continue
+				}
+				var bs []trayBar
+				run := 0
 				end := func(y int) {
-					n := run
-					if y-run <= y0+2 || y >= y1-2 {
+					n, edge := run, y-run <= y0+2 || y >= y1-2
+					// A run cut by the split between the rows is a divider
+					// or a stack across it, not a bar of this row.
+					if row == 0 && y >= yb-2 || row == 1 && y-run <= ya+2 {
+						n = 0
+					}
+					if edge && n > 0 {
 						n -= wt + 1
 					}
 					if n > 0 && float64(n) < 0.4*p {
-						bars++
+						bs = append(bs, trayBar{y - n, n, edge})
 					}
 					run = 0
 				}
@@ -779,10 +799,15 @@ func trays(ink *mask, oy, ox int, f frame) [2]int {
 					}
 				}
 				end(y1)
-				if bars > 0 {
-					found++
-					count = bars
+				if len(bs) == 0 {
+					continue
 				}
+				if !edgeOnBars(ink, bs, x0, x1) {
+					found += 2
+					continue
+				}
+				found++
+				count = len(bs)
 			}
 		}
 		if found == 1 {
@@ -790,4 +815,54 @@ func trays(ink *mask, oy, ox int, f frame) [2]int {
 		}
 	}
 	return out
+}
+
+// edgeOnBars tells bars that are checkers seen edge-on: one thickness, one
+// pitch, and no two of them joined at both ends by side strokes, which would
+// make them the edges of hollow rectangles.
+// trayBar is a bar of a tray: its first row and its thickness.
+type trayBar struct {
+	y, h int
+	edge bool // merged with the band's border: its thickness is an estimate
+}
+
+func edgeOnBars(ink *mask, bs []trayBar, x0, x1 int) bool {
+	hs, pitches := []float64{}, []float64{}
+	for i, b := range bs {
+		if !b.edge {
+			hs = append(hs, float64(b.h))
+		}
+		if i > 0 && !b.edge && !bs[i-1].edge {
+			pitches = append(pitches, float64(b.y-bs[i-1].y))
+		}
+	}
+	same := func(v []float64) bool {
+		m := median(append([]float64(nil), v...))
+		for _, x := range v {
+			if math.Abs(x-m) > max(1, 0.35*m) {
+				return false
+			}
+		}
+		return true
+	}
+	if len(hs) > 0 && !same(hs) || len(pitches) > 1 && !same(pitches) {
+		return false
+	}
+	for i := 1; i < len(bs); i++ {
+		a, b := bs[i-1], bs[i]
+		ya, yb := a.y+a.h, b.y
+		if yb-ya < 2 {
+			continue
+		}
+		sides := 0
+		for y := ya; y < yb; y++ {
+			if (ink.at(x0, y) || ink.at(x0+1, y)) && (ink.at(x1-1, y) || ink.at(x1-2, y)) {
+				sides++
+			}
+		}
+		if float64(sides) >= 0.7*float64(yb-ya) {
+			return false
+		}
+	}
+	return true
 }

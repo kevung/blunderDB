@@ -26,10 +26,14 @@ func endgamePos(r *rand.Rand, bOff, tOff int) synthPos {
 }
 
 func trayBook(t *testing.T, extra int) (memPages, []string) {
+	return trayBookWith(t, drawOpts{p: 36, numbering: true, tray: true}, extra)
+}
+
+func trayBookWith(t *testing.T, base drawOpts, extra int) (memPages, []string) {
 	r := rand.New(rand.NewSource(5))
 	var pages []synthPage
 	for i := 0; i < 5; i++ {
-		o := drawOpts{p: 36, numbering: true, tray: true}
+		o := base
 		o2 := o
 		o2.trayExtra = extra
 		pages = append(pages, synthPage{pos: []synthPos{endgamePos(r, 1+i, 3), endgamePos(r, 0, 2+i)}, opts: []drawOpts{o, o2}})
@@ -115,6 +119,35 @@ func TestHollowClasses(t *testing.T) {
 	for i, d := range res.Diagrams {
 		if d.State != Uncertain || d.Board != "" || len(d.Doubts) == 0 || d.Doubts[0].Reason != HollowReason {
 			t.Errorf("diagram %d: %s", i+1, describe(d))
+		}
+	}
+}
+
+// TestTrayNotMistaken: a cube drawn in a tray's box, and checkers borne off
+// drawn as hollow rectangles, are not counted as bars: the tray is not read
+// and no entry is complete by it.
+func TestTrayNotMistaken(t *testing.T) {
+	for _, o := range []drawOpts{
+		{p: 36, numbering: true, tray: true, trayCube: true},
+		{p: 36, numbering: true, tray: true, trayHollow: true},
+	} {
+		src, _ := trayBookWith(t, o, 0)
+		res, err := Read(context.Background(), src)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for i, d := range res.Diagrams {
+			if i < 6 {
+				continue
+			}
+			for _, x := range d.Doubts {
+				if strings.Contains(x.Reason, "in its tray") {
+					t.Errorf("cube %v hollow %v, diagram %d: %+v", o.trayCube, o.trayHollow, i+1, x)
+				}
+			}
+			if o.trayHollow && d.Complete {
+				t.Errorf("hollow, diagram %d: complete by a tray of hollow rectangles: %s", i+1, describe(d))
+			}
 		}
 	}
 }
