@@ -34,9 +34,10 @@ type AnalyzeOptions struct {
 	// Warn, when set, receives what the analysis passed over and why (the
 	// pages of a scanned PDF that could not be composed).
 	Warn func(string) `json:"-"`
-	// Context, when set, stops the reading of page images: a scanned
-	// document's decoding is checked against it between packets of coded
-	// data. Nil is context.Background.
+	// Context stops the reading of page images: a scanned document's
+	// decoding is checked against it between packets and code-blocks.
+	// Every caller gives one (CancelImport, Ctrl-C); nil, for a test, is
+	// context.Background.
 	Context context.Context `json:"-"`
 }
 

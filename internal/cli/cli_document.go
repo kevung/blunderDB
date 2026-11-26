@@ -1,13 +1,16 @@
 package cli
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"io"
 	"os"
+	"os/signal"
 	"slices"
 	"sort"
 	"strings"
+	"syscall"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 )
@@ -145,7 +148,10 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 		return err
 	}
 	warn := func(s string) { fmt.Fprintln(os.Stderr, "blunderdb document analyze:", s) }
-	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: *title, Author: *author, Warn: warn})
+	// Ctrl-C stops a scanned book's decoding between code-blocks.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: *title, Author: *author, Warn: warn, Context: ctx})
 	if err != nil {
 		return err
 	}

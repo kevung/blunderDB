@@ -47,8 +47,8 @@ type Limits struct {
 	MaxGlyphs int
 	// MaxJPXPixels is the sum of the pixels of the JPEG 2000 images the
 	// reader decodes: the coded data, which no header bounds, costs at
-	// worst about 1.5 µs a pixel, so this bounds a document's work before
-	// any decode starts, whatever the caller's deadline.
+	// worst about 1.2 µs a pixel; a context bounds a decode in progress,
+	// this the work of a caller that gives none.
 	MaxJPXPixels int64
 }
 
@@ -61,10 +61,10 @@ var DefaultLimits = Limits{
 	MaxPages:      20000,
 	MaxObjects:    4 << 20,
 	MaxGlyphs:     1 << 20,
-	// At worst about 1.5 µs a pixel: some five minutes of a hostile
-	// document's decoding. A page is decoded twice by the structure
-	// reader, and spends its pixels twice.
-	MaxJPXPixels: 200_000_000,
+	// A scanned book of 140 pages at 10 Mpx with room to spare. At worst
+	// the coded data costs about 1.2 µs a pixel, some eighty minutes for
+	// the whole budget: the caller's cancellation is the real bound.
+	MaxJPXPixels: 4_000_000_000,
 }
 
 type xrefEntry struct {

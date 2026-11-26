@@ -2,6 +2,7 @@ package document
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"errors"
 	"hash/crc32"
@@ -449,5 +450,41 @@ func TestAnalyzeFilePNGNamedJP2(t *testing.T) {
 	}
 	if decoded.Load() {
 		t.Error("a registered JPEG 2000 decoder is reached")
+	}
+}
+
+// errAfter is a context whose Err reports a cancellation from its n-th
+// call on: a document's decoding is stopped in its course.
+type errAfter struct {
+	context.Context
+	calls, n int
+}
+
+func (c *errAfter) Err() error {
+	if c.calls++; c.calls >= c.n {
+		return context.Canceled
+	}
+	return nil
+}
+
+// A document of JPEG 2000 pages is stopped by its context while a page is
+// decoded, not once the document is read.
+func TestAnalyzeFileCancelledInJPEG2000(t *testing.T) {
+	jp2, err := os.ReadFile("testdata/jpx/p001.jp2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	for _, name := range []string{"p001.jp2", "p002.jp2", "p003.jp2"} {
+		if err := os.WriteFile(filepath.Join(dir, name), jp2, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	ctx := &errAfter{Context: context.Background(), n: 20}
+	if _, err := AnalyzeFile(dir, AnalyzeOptions{Context: ctx}); !errors.Is(err, context.Canceled) {
+		t.Errorf("a cancelled document: %v", err)
+	}
+	if ctx.calls != ctx.n {
+		t.Errorf("%d checks of the context after its cancellation", ctx.calls-ctx.n)
 	}
 }

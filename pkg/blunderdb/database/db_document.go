@@ -34,7 +34,10 @@ func (d *Database) ImportDocumentReleve(releveJSON string, collection string, ac
 // back. title and author replace the document's own metadata when not empty. It reads and writes no database: a document is
 // analysed on the person's machine, then its Relevé is verified and imported.
 func (d *Database) AnalyzeDocument(path, title, author string) (string, error) {
-	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: title, Author: author})
+	// A scanned book takes minutes to decode: CancelImport stops it.
+	ctx, done := d.beginCancellableImport()
+	defer done()
+	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: title, Author: author, Context: ctx})
 	if err != nil {
 		return "", err
 	}
