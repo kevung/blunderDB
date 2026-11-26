@@ -48,8 +48,8 @@ type Limits struct {
 	MaxGlyphs int
 	// MaxJPXPixels is the sum of the pixels of the JPEG 2000 images the
 	// reader decodes, spent before each decode. The costliest coded data
-	// measured, every code-block with all its passes, takes about 1.1 µs a
-	// pixel; a count of zero bit-planes is bounded by the band's, so the
+	// measured, every code-block with all its passes, takes about 0.2 µs a
+	// pixel on one core; a count of zero bit-planes is bounded by the band's, so the
 	// packet headers cannot cost more. The context of ScanContext stops a
 	// decode in progress (see package jpx for where it is read).
 	MaxJPXPixels int64
@@ -70,7 +70,7 @@ var DefaultLimits = Limits{
 	MaxObjects:    4 << 20,
 	MaxGlyphs:     1 << 20,
 	// A scanned book of 140 pages at 10 Mpx with room to spare. At about
-	// 1.1 µs a pixel at worst, the whole budget is some seventy minutes:
+	// 0.2 µs a pixel at worst, the whole budget is some quarter of an hour:
 	// the caller's cancellation is the real bound, not this.
 	MaxJPXPixels: 4_000_000_000,
 	// A mask at 360 dpi is some 8.5 Mpx, decoded in about 0.2 s: two

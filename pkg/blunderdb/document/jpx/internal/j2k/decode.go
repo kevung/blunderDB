@@ -164,6 +164,9 @@ func decodeImage(ctx context.Context, cs *codestream, meta *jp2Meta) (image.Imag
 
 		tc0 := d.comps[0]
 		tw, th := tc0.w(), tc0.h()
+		if fastTile(img, planes, siz, tw, th, tc0.x0-imgX0, tc0.y0-imgY0) {
+			continue
+		}
 		// Per-component scaling from its bit depth to the output depth.
 		scale := make([]func(int32) int64, nc)
 		for c := 0; c < nc; c++ {
@@ -202,6 +205,54 @@ func decodeImage(ctx context.Context, cs *codestream, meta *jp2Meta) (image.Imag
 		}
 	}
 	return img, nil
+}
+
+// fastTile writes the samples of a tile of 8-bit grey or RGB to img, as
+// the general loop of decodeImage would, through a table of the scaling to
+// 8 bits; it reports false for the other layouts.
+func fastTile(img image.Image, planes [][]int32, siz *sizInfo, tw, th, ox, oy int) bool {
+	var luts [3][]uint8
+	for c := range planes {
+		depth := siz.comps[c].depth
+		if c >= len(luts) || depth > 16 {
+			return false
+		}
+		inMax := int64(1)<<uint(depth) - 1
+		lut := make([]uint8, inMax+1)
+		for v := range lut {
+			lut[v] = uint8((int64(v)*255 + inMax/2) / inMax)
+		}
+		luts[c] = lut
+	}
+	switch m := img.(type) {
+	case *image.Gray:
+		if len(planes) != 1 {
+			return false
+		}
+		lut := luts[0]
+		for y := 0; y < th; y++ {
+			src := planes[0][y*tw : (y+1)*tw]
+			dst := m.Pix[(oy+y)*m.Stride+ox:][:tw]
+			for x, v := range src {
+				dst[x] = lut[v]
+			}
+		}
+		return true
+	case *image.NRGBA:
+		if len(planes) != 3 {
+			return false
+		}
+		for y := 0; y < th; y++ {
+			r, g, b := planes[0][y*tw:(y+1)*tw], planes[1][y*tw:(y+1)*tw], planes[2][y*tw:(y+1)*tw]
+			dst := m.Pix[(oy+y)*m.Stride+4*ox:][:4*tw]
+			for x := range r {
+				p := dst[4*x : 4*x+4]
+				p[0], p[1], p[2], p[3] = luts[0][r[x]], luts[1][g[x]], luts[2][b[x]], 255
+			}
+		}
+		return true
+	}
+	return false
 }
 
 // tileSamples applies the inverse component transform and DC level
