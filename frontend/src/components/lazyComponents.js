@@ -82,7 +82,6 @@ export const panels = lazyRegistry({
 
 /** Keyed by the MODAL id that opens each one, plus the three opened by their own store. */
 export const modals = lazyRegistry({
-    cubeMatrix: () => import('./CubeMatrixModal.svelte'),
     tags: () => import('./TagsModal.svelte'),
     lessonEditor: () => import('./LessonEditorModal.svelte'),
     goToPosition: () => import('./GoToPositionModal.svelte'),

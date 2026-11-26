@@ -41,6 +41,8 @@
     import {
         GetGammonNetDisplayPly,
         SaveGammonNetDisplayPly,
+        GetMapMatchLength,
+        SaveMapMatchLength,
         GetGammonNetAnalysisPly,
         SaveGammonNetAnalysisPly,
         GetGammonNetPruneK,
@@ -520,6 +522,8 @@
     // gammonNet (ADR-0011, ADR-0013): displayPly for the live panel, analysisPly
     // for what the batch writes. Loaded when the tab becomes visible.
     let gnDisplayPly = $state(2);
+    let mapMatchLength = $state(9);
+    const MAP_MATCH_LENGTHS = [3, 5, 7, 9, 11, 13, 15];
     let gnAnalysisPly = $state(2);
     let gnPruneK = $state(12);
     let gnCandidates = $state(10);
@@ -592,9 +596,15 @@
                 GetGammonNetCandidates(),
                 GetGammonNetAutoAnalyze()
             ]);
+            mapMatchLength = await GetMapMatchLength();
         } catch (error) {
             logger.error('Error loading gammonNet settings:', error);
         }
+    }
+
+    function onMapMatchLengthChange(/** @type {Event & { currentTarget: HTMLSelectElement }} */ event) {
+        mapMatchLength = Number(event.currentTarget.value);
+        SaveMapMatchLength(mapMatchLength).catch((error) => logger.error('Error saving score map match length:', error));
     }
 
     $effect(() => {
@@ -945,6 +955,14 @@
                     </select>
                 </div>
                 <p class="setting-note">{$t('config.gammonnetDisplayPlyNote')}</p>
+                <div class="setting-row">
+                    <label for="config-map-match-length">{$t('maps.config.defaultMatch')}</label>
+                    <select id="config-map-match-length" class="setting-select" value={mapMatchLength} onchange={onMapMatchLengthChange}>
+                        {#each MAP_MATCH_LENGTHS as n (n)}
+                            <option value={n}>{n}</option>
+                        {/each}
+                    </select>
+                </div>
                 <div class="setting-row">
                     <label for="config-gn-analysis-ply">{$t('config.gammonnetAnalysisPly')}</label>
                     <select id="config-gn-analysis-ply" class="setting-select" value={gnAnalysisPly} onchange={onGnAnalysisPlyChange}>

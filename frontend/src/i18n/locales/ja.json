@@ -1205,24 +1205,6 @@
         "title": "警告",
         "confirmTitle": "確認"
     },
-    "cubeMatrix": {
-        "title": "キューブ判断のマトリクス",
-        "computing": "計算中…",
-        "depth": "{ply}プライ",
-        "points": "{n} 点",
-        "axes": "行：手番側の残り必要点／列：相手の残り必要点",
-        "glyphNoDouble": "ND",
-        "glyphDoubleTake": "DT",
-        "glyphDoublePass": "DP",
-        "glyphTooGood": "TG",
-        "legendNoDouble": "ダブルしない",
-        "legendDoubleTake": "ダブル、テイク",
-        "legendDoublePass": "ダブル、パス",
-        "legendTooGood": "トゥーグッド",
-        "legendRefused": "評価不可",
-        "currentScore": "ポジションのスコア",
-        "note": "ポジション自身のスコアは各セルのスコアに置き換わりますが、キューブはそのままです。グリッドはクロフォード後のものです。クロフォードゲーム中はキューブを使えません。"
-    },
     "merge": {
         "canonicalName": "正規名:",
         "filterPlaceholder": "プレイヤーを絞り込み…",
@@ -3008,7 +2990,8 @@
             "m": "最後に見たマッチに戻る",
             "met": "マッチエクイティ表",
             "reference": "参照データ：MET、テイクポイント、ギャモン価値、Neil",
-            "cm": "キューブマトリクス",
+            "sm": "スコアマップ",
+            "jets": "ロールマップ",
             "tags": "タグ一覧",
             "train": "トレーニング",
             "duel": "ボットとデュエル",
@@ -3677,5 +3660,72 @@
         "copyTournamentTo": "トーナメントを {base} へコピー",
         "addToLot": "ロットに追加",
         "addToCollection": "コレクション {name} に追加"
+    },
+    "maps": {
+        "view": {
+            "label": "表示",
+            "decision": "判断",
+            "scores": "スコア",
+            "rolls": "ロール"
+        },
+        "rolls": {
+            "roll": "ロール",
+            "move": "手",
+            "equity": "エクイティ",
+            "gap": "差",
+            "market": "マーケット",
+            "marketTip": "マーケット喪失: このロールの後ではダブルがパスされる",
+            "average": "平均",
+            "best": "最良",
+            "worst": "最悪",
+            "spread": "標準偏差",
+            "dance": "ダンス",
+            "replies": "応手",
+            "other": "別の手…",
+            "start": "開始",
+            "me": "自分",
+            "him": "相手",
+            "myRolls": "自分のロール",
+            "hisRolls": "相手のロール",
+            "trail": "経路",
+            "progress": "{ply}-ply: {n} / {total}",
+            "computing": "計算中",
+            "error": "エラー"
+        },
+        "scores": {
+            "me": "自分",
+            "opponent": "相手",
+            "match": "{n}ポイントマッチ",
+            "evaluate": "評価",
+            "best": "最良",
+            "second": "次善",
+            "progress": "{ply}-ply: {n} / {total}",
+            "legend": "手",
+            "close": "閉じる",
+            "refused": "拒否",
+            "crawford": "クロフォード",
+            "error": "エラー"
+        },
+        "verdict": {
+            "short": {
+                "no_double": "ND",
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
+            },
+            "long": {
+                "no_double": "ノーダブル",
+                "double_take": "ダブル/テイク",
+                "double_pass": "ダブル/パス",
+                "too_good": "トゥーグッド"
+            }
+        },
+        "menu": {
+            "replies": "応手",
+            "scores": "スコアマップ"
+        },
+        "config": {
+            "defaultMatch": "既定のマッチ"
+        }
     }
 }

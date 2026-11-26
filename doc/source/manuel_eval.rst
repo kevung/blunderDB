@@ -230,51 +230,72 @@ celles utilisées en mode édition (7 partout, dés 3-1), pour rester
 cohérentes avec ce que le panneau affiche par défaut. *Position de départ*,
 dans le même menu, pose les pions d'une partie neuve sur ces mêmes valeurs.
 
-.. _eval_matrice_videau:
+.. _eval_cartes:
 
-Matrice du videau
-~~~~~~~~~~~~~~~~~
+Cartes des scores et des jets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Une décision de videau n'est pas une propriété du damier. Les mêmes pions,
-le même compte de pips, se doublent à 2-away/4-away et ne se doublent pas à
-4-away/2-away ; un joueur qui a appris la réponse money n'a appris qu'une
-case d'une grille. Le panneau Eval montre la case que la position porte ; la
-**matrice du videau** montre la grille entière.
+Un sélecteur à trois segments en tête du panneau choisit sa vue : **Décision**
+(le panneau décrit plus haut), **Scores** et **Jets**. Seule la vue affichée
+calcule : les cartes et l'évaluation au repos partagent un seul créneau de
+calcul, lancer l'une annule l'autre, et chaque changement de vue relance le
+calcul de la vue qui apparaît. Dans les deux cartes, un résultat d'abord
+affiché en 0-ply est affiné à la profondeur d'affichage configurée ; la
+progression s'écrit « 2-ply : n / N ». Changer de position dans l'application
+annule le calcul en cours.
 
-La commande ``cm`` l'ouvre sur la position affichée. Chaque case donne le
-verdict à un score : la ligne est le nombre de points qu'il reste à faire au
-joueur au trait, la colonne celui qu'il reste à faire à son adversaire. Les
-quatre verdicts s'écrivent *PD* (pas de double), *DP* (double, prend), *DR*
-(double, refuse) et *TB* (trop bon) ; une case que le moteur refuse porte un
-point d'interrogation et dit pourquoi au survol, qui donne aussi les trois
-équités de la case. Trois longueurs de match sont proposées : 5, 7 et 9
-points.
+**Carte des scores.** Une décision de videau n'est pas une propriété du
+damier : les mêmes pions, le même compte de pips, se doublent à 2-away/4-away
+et ne se doublent pas à 4-away/2-away. La vue Scores montre la décision de la
+position à tous les scores d'un match de N points (N impair, de 3 à 15). La
+ligne est le nombre de points qu'il reste à faire au joueur au trait
+(*Moi*), la colonne celui de son adversaire (*Adversaire*) ; la dernière
+ligne et la dernière colonne sont le 1-away. Avec des dés, elles sont la
+partie Crawford, repérée par « C » ; sans dés, elles sont post-Crawford, le
+videau étant mort dans la partie Crawford. Une position post-Crawford n'est
+donc jamais encadrée sur une case Crawford.
 
-La case du score que la position porte réellement est encadrée, et ses deux
-en-têtes de ligne et de colonne soulignés : la lecture part de là, « ma case,
-et autour d'elle ». Elle l'est dès que les deux scores *away* de la position
-tiennent dans la grille affichée ; changer de longueur la déplace ou la
-retire. Une position money, la partie Crawford, ou un *away* au-delà de la
-grille n'en désignent aucune : il n'y a pas de case à montrer, et en montrer
-une approchante serait faux.
+Avec des dés, chaque case porte la lettre du meilleur coup à ce score (A le
+plus fréquent de la grille, puis B, C…) et son équité en dessous. Les trois
+premiers coups ont chacun une couleur ; à partir du quatrième, un groupe gris
+garde sa lettre. La teinte est plus forte quand la marge sur le deuxième coup
+est large (0,050 et plus), et « ≈ » marque une marge sous 0,010. Sans dés, la
+case dit le verdict de videau — *ND* (pas de double), *D/T* (double, prend),
+*D/P* (double, passe), *TG* (trop bon) — avec les mêmes teintes ; la marge
+d'un double est la plus petite de celle entre doubler et ne pas doubler et de
+celle entre prendre et passer. Le score de
+la position est encadré ; une case encore à 0-ply est en pointillé. La
+légende à droite a un bouton par coup (lettre, notation, nombre de scores) :
+un clic met ses cases en évidence. Le survol d'une case montre son coup sur
+le plateau. Un clic sur une case ouvre un volet avec le score, les deux
+meilleurs coups et leurs équités, et **Évaluer**, qui bascule la vue Décision
+à ce score ; une case où la position est impossible n'a pas **Évaluer**. Le sélecteur *Match en N* choisit la longueur ; sa valeur par
+défaut se règle dans la configuration, onglet gammonNet.
 
-Le score de la position est remplacé par celui de chaque case ; son
-**videau**, lui, est conservé. La grille répond à « à quel score
-retournerais-je *ce* videau », pas à ce que ferait une position centrée. Elle
-est post-Crawford d'un bout à l'autre : pendant la partie Crawford le videau
-n'est pas en jeu, et une colonne de « vous ne pouvez pas doubler » ne dirait
-rien de la position.
+Les commandes ``sm`` et ``cm`` ouvrent cette vue. Elle remplace l'ancienne
+matrice du videau, dont la grille se calcule toujours hors de l'interface avec
+la commande :ref:`cubematrix <cli_cubematrix>` de la ligne de commande.
 
-Chaque case est une recherche à part entière. Le moteur tient compte du score
-— il ne joue pas la même partie à 2-away qu'à 7-away —, donc une seule
-recherche relue à travers des équités de match différentes serait fausse
-exactement là où le score compte. La grille arrive d'abord en 0-ply, puis se
-recalcule à la profondeur d'affichage configurée une fois la fenêtre au
-repos : la même escalade que le reste du panneau, pour une grille de 9 points
-qui coûte environ une seconde et demie.
+**Carte des jets.** La vue Jets évalue les 21 jets de la position, dés
+ignorés : pour chacun, le meilleur coup, l'équité du joueur au trait après
+l'avoir joué, et son écart à la **moyenne** (la moyenne des équités pondérée
+par les chances du jet sur 36). Le tableau se trie par colonne ; la grille
+6×6 colore chaque jet de l'orange (moins bon) au bleu (meilleur) en passant
+par un gris neutre, avec l'écart écrit dans la case. Le **marché perdu**
+compte les jets après lesquels un double serait refusé : double/passe, ou trop
+bon pour être joué ; la ligne et la case portent « D/P » et un cadre, et le
+compte « n/36 » filtre les lignes d'un clic. Il n'existe que si le joueur peut
+doubler. L'en-tête donne aussi le meilleur et le pire jet, et l'écart-type.
 
-La même grille se calcule hors de l'interface, avec la commande
-:ref:`cubematrix <cli_cubematrix>` de la ligne de commande.
+Le fil d'Ariane (« Départ › moi 6-4 24/14 › lui 5-2 13/8 24/22 › Mes jets »)
+dit d'où vient la position évaluée, et le plateau le suit ; chaque maillon
+remonte. Sur un jet sélectionné, **Réponses** joue son meilleur coup et affiche
+les 21 réponses suivantes, **Autre coup…** fait choisir un autre coup légal
+de ce jet. La profondeur est sans limite. Changer la position d'une autre
+façon remet le fil à zéro. Le menu contextuel d'un coup candidat (Analyse ou
+Évaluation) offre *Réponses adverses*, qui ouvre cette vue sur la position
+après ce coup (grisé quand la notation du coup peut mener à plusieurs
+plateaux), et *Carte des scores*. La commande ``jets`` ouvre la vue.
 
 .. _panneau_reference:
 

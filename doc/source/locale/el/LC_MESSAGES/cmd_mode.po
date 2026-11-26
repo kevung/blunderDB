@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 02:39+0100\n"
+"POT-Creation-Date: 2026-11-26 00:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -188,16 +188,31 @@ msgstr ""
 "Kazaross-XG2."
 
 #: ../../source/cmd_mode.rst:1
-msgid "cm"
-msgstr "cm"
+msgid "sm, cm"
+msgstr "sm, cm"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre la matrice du videau : le verdict de la position courante à tous "
-"les scores d'un match de 5, 7 ou 9 points."
+"Ouvre la vue Scores du panneau Eval : la décision de la position courante"
+" à tous les scores d'un match de 3 à 15 points (voir :ref:`eval_cartes`)."
+" ``cm`` est l'ancien nom de la matrice du videau, conservé."
 msgstr ""
-"Ανοίγει τη μήτρα του κύβου: την ετυμηγορία της τρέχουσας θέσης σε κάθε "
-"σκορ ενός αγώνα 5, 7 ή 9 πόντων."
+"Ανοίγει την προβολή Σκορ του πίνακα Eval: την απόφαση της τρέχουσας θέσης"
+" σε όλα τα σκορ ενός αγώνα 3 έως 15 πόντων (βλ. :ref:`eval_cartes`). Το "
+"``cm`` είναι το παλιό όνομα του πίνακα του κύβου, που διατηρείται."
+
+#: ../../source/cmd_mode.rst:1
+msgid "jets"
+msgstr "jets"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la vue Jets du panneau Eval : le meilleur coup et l'équité des 21 "
+"jets de la position, et leurs réponses (voir :ref:`eval_cartes`)."
+msgstr ""
+"Ανοίγει την προβολή Ζαριές του πίνακα Eval: την καλύτερη κίνηση και το "
+"equity των 21 ζαριών της θέσης, και τις απαντήσεις τους (βλ. "
+":ref:`eval_cartes`)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tags"
@@ -299,7 +314,7 @@ msgstr ""
 "συγκεντρώνει τους πίνακες των κύβων 1, 2 και 4: αυτές οι τρεις εντολές "
 "ανοίγουν την ίδια καρτέλα."
 
-#: ../../source/cmd_mode.rst:47
+#: ../../source/cmd_mode.rst:48
 msgid "Positions et navigation"
 msgstr "Θέσεις και πλοήγηση"
 
@@ -528,7 +543,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Πλοήγηση στον τελευταίο αγώνα που επισκεφθήκατε."
 
-#: ../../source/cmd_mode.rst:78
+#: ../../source/cmd_mode.rst:79
 msgid "Édition et recherche"
 msgstr "Επεξεργασία και αναζήτηση"
 
@@ -574,11 +589,11 @@ msgstr ""
 "Αναζήτηση ανάμεσα στις εμφανιζόμενες θέσεις: τρέχοντα αποτελέσματα, "
 "ανοιχτή συλλογή ή αγώνας υπό επισκόπηση."
 
-#: ../../source/cmd_mode.rst:94
+#: ../../source/cmd_mode.rst:95
 msgid "Filtres de recherche"
 msgstr "Φίλτρα αναζήτησης"
 
-#: ../../source/cmd_mode.rst:96
+#: ../../source/cmd_mode.rst:97
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -594,7 +609,7 @@ msgstr ""
 "(δείτε :ref:`cli`)· μια παύλα σημαίνει φίλτρο που το εκφράζει μόνο η "
 "γραμματική."
 
-#: ../../source/cmd_mode.rst:103
+#: ../../source/cmd_mode.rst:104
 msgid ""
 "Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -614,7 +629,7 @@ msgstr ""
 "εντολών, όπου δεν υπάρχει ταμπλό, τα διακριτικά αυτά συγκρίνονται με κενό"
 " ταμπλό· εκεί πρέπει να χρησιμοποιούνται οι επιλογές της τρίτης στήλης."
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:113
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -624,7 +639,7 @@ msgstr ""
 "ταξινομεί το αποτέλεσμα κατά αύξουσα απόσταση από μια θέση-στόχο, και όλα"
 " τα άλλα διακριτικά περιορίζουν το σύνολο που κατατάσσεται έτσι."
 
-#: ../../source/cmd_mode.rst:116
+#: ../../source/cmd_mode.rst:117
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -635,11 +650,11 @@ msgstr ""
 "κόστισαν τουλάχιστον ένα δέκατο του πόντου, αφού ένας πόντος αξίζει 1000 "
 "χιλιοστά."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid "Deux recherches complètes :"
 msgstr "Δύο πλήρεις αναζητήσεις:"
 
-#: ../../source/cmd_mode.rst:122
+#: ../../source/cmd_mode.rst:123
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -648,7 +663,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — πάνω από 30 pips καθυστέρηση, μεταξύ 40 % και 60 "
 "% πιθανότητες νίκης, κανένα σχόλιο."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -2007,7 +2022,7 @@ msgstr ""
 " μια αστερισμένη μορφή (``like42*``) που δεν υπάρχει πια. Δείτε "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:249
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -2026,11 +2041,11 @@ msgstr ""
 "και ετικετών: δεν εμφανίζεται σε καμία τιμή, και το ``ma1;2`` δεν είναι "
 "διακριτικό (γράψτε ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:253
+#: ../../source/cmd_mode.rst:254
 msgid "Transcrire depuis un terminal"
 msgstr "Μεταγραφή από τερματικό"
 
-#: ../../source/cmd_mode.rst:255
+#: ../../source/cmd_mode.rst:256
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -2050,7 +2065,7 @@ msgstr ""
 "είναι δική της συνεδρία, χωρίς ``sessionId`` και χωρίς αναίρεση από τη "
 "μία κλήση στην άλλη."
 
-#: ../../source/cmd_mode.rst:266
+#: ../../source/cmd_mode.rst:267
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 
@@ -2291,3 +2306,17 @@ msgstr "Διαγράφει το ιστορικό εντολών."
 #~ "τουρνουά, συλλογές, σχόλια, τράπουλα Anki, "
 #~ "αναλύσεις) για την εξερεύνηση του "
 #~ "εργαλείου."
+
+#~ msgid "cm"
+#~ msgstr "cm"
+
+#~ msgid ""
+#~ "Ouvre la matrice du videau : le"
+#~ " verdict de la position courante à"
+#~ " tous les scores d'un match de "
+#~ "5, 7 ou 9 points."
+#~ msgstr ""
+#~ "Ανοίγει τη μήτρα του κύβου: την "
+#~ "ετυμηγορία της τρέχουσας θέσης σε κάθε"
+#~ " σκορ ενός αγώνα 5, 7 ή 9 "
+#~ "πόντων."

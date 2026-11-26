@@ -1205,24 +1205,6 @@
         "title": "Avertissement",
         "confirmTitle": "Confirmation"
     },
-    "cubeMatrix": {
-        "title": "Matrice du videau",
-        "computing": "calcul en cours…",
-        "depth": "{ply}-ply",
-        "points": "{n} pts",
-        "axes": "lignes : points restants au joueur au trait ; colonnes : points restants à l'adversaire",
-        "glyphNoDouble": "PD",
-        "glyphDoubleTake": "DP",
-        "glyphDoublePass": "DR",
-        "glyphTooGood": "TB",
-        "legendNoDouble": "pas de double",
-        "legendDoubleTake": "double, prise",
-        "legendDoublePass": "double, refus",
-        "legendTooGood": "trop bon",
-        "legendRefused": "non évaluable",
-        "currentScore": "score de la position",
-        "note": "Le score de la position est remplacé par celui de chaque case ; son videau, lui, est conservé. La grille est post-Crawford : pendant la partie Crawford le videau n'est pas en jeu."
-    },
     "merge": {
         "canonicalName": "Nom canonique :",
         "filterPlaceholder": "Filtrer les joueurs…",
@@ -3008,7 +2990,8 @@
             "m": "Revenir au dernier match visité",
             "met": "Table d'équité de match",
             "reference": "Données de référence : MET, points de prise, valeurs du gammon, Neil",
-            "cm": "Matrice du videau",
+            "sm": "Carte des scores",
+            "jets": "Carte des jets",
             "tags": "Vocabulaire de tags",
             "train": "Entraînement",
             "duel": "Duel contre le Bot",
@@ -3677,5 +3660,72 @@
         "copyTournamentTo": "Copier le tournoi vers {base}",
         "addToLot": "Ajouter au lot",
         "addToCollection": "Ajouter à la collection {name}"
+    },
+    "maps": {
+        "view": {
+            "label": "Vue",
+            "decision": "Décision",
+            "scores": "Scores",
+            "rolls": "Jets"
+        },
+        "rolls": {
+            "roll": "Jet",
+            "move": "Coup",
+            "equity": "Équité",
+            "gap": "Écart",
+            "market": "Marché",
+            "marketTip": "Marché perdu : un videau serait refusé après ce jet",
+            "average": "Moyenne",
+            "best": "Meilleur",
+            "worst": "Pire",
+            "spread": "Écart-type",
+            "dance": "Danse",
+            "replies": "Réponses",
+            "other": "Autre coup…",
+            "start": "Départ",
+            "me": "moi",
+            "him": "lui",
+            "myRolls": "Mes jets",
+            "hisRolls": "Ses jets",
+            "trail": "Fil",
+            "progress": "{ply}-ply : {n} / {total}",
+            "computing": "Calcul",
+            "error": "Erreur"
+        },
+        "scores": {
+            "me": "Moi",
+            "opponent": "Adversaire",
+            "match": "Match en {n}",
+            "evaluate": "Évaluer",
+            "best": "Meilleur",
+            "second": "Second",
+            "progress": "{ply}-ply : {n} / {total}",
+            "legend": "Coups",
+            "close": "Fermer",
+            "refused": "Refusé",
+            "crawford": "Crawford",
+            "error": "Erreur"
+        },
+        "verdict": {
+            "short": {
+                "no_double": "ND",
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
+            },
+            "long": {
+                "no_double": "Pas de double",
+                "double_take": "Double/Prise",
+                "double_pass": "Double/Passe",
+                "too_good": "Trop bon"
+            }
+        },
+        "menu": {
+            "replies": "Réponses adverses",
+            "scores": "Carte des scores"
+        },
+        "config": {
+            "defaultMatch": "Match par défaut"
+        }
     }
 }

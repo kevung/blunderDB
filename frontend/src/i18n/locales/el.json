@@ -1205,24 +1205,6 @@
         "title": "Προειδοποίηση",
         "confirmTitle": "Επιβεβαίωση"
     },
-    "cubeMatrix": {
-        "title": "Μήτρα του κύβου",
-        "computing": "υπολογισμός…",
-        "depth": "{ply}-ply",
-        "points": "{n} πόντοι",
-        "axes": "γραμμές: πόντοι που χρειάζεται ακόμη ο παίκτης στη σειρά· στήλες: πόντοι που χρειάζεται ακόμη ο αντίπαλος",
-        "glyphNoDouble": "ΧΔ",
-        "glyphDoubleTake": "ΔΑ",
-        "glyphDoublePass": "ΔΠ",
-        "glyphTooGood": "ΠΚ",
-        "legendNoDouble": "χωρίς διπλασιασμό",
-        "legendDoubleTake": "διπλασιασμός, αποδοχή",
-        "legendDoublePass": "διπλασιασμός, πάσο",
-        "legendTooGood": "πολύ καλό",
-        "legendRefused": "μη αξιολογήσιμο",
-        "currentScore": "το σκορ της θέσης",
-        "note": "Το σκορ της θέσης αντικαθίσταται από εκείνο κάθε κελιού· ο κύβος της διατηρείται. Το πλέγμα είναι μετά το Crawford: στο παιχνίδι Crawford ο κύβος δεν παίζει."
-    },
     "merge": {
         "canonicalName": "Κανονικό όνομα:",
         "filterPlaceholder": "Φιλτράρισμα παικτών…",
@@ -3008,7 +2990,8 @@
             "m": "Επιστροφή στον τελευταίο αγώνα",
             "met": "Πίνακας ισοτιμίας αγώνα",
             "reference": "Δεδομένα αναφοράς: MET, σημεία αποδοχής, αξίες γκάμον, Neil",
-            "cm": "Μήτρα του κύβου",
+            "sm": "Χάρτης σκορ",
+            "jets": "Χάρτης ζαριών",
             "tags": "Λεξιλόγιο ετικετών",
             "train": "Εξάσκηση",
             "duel": "Μονομαχία με το Bot",
@@ -3677,5 +3660,72 @@
         "copyTournamentTo": "Αντιγραφή του τουρνουά προς {base}",
         "addToLot": "Προσθήκη στην παρτίδα",
         "addToCollection": "Προσθήκη στη συλλογή {name}"
+    },
+    "maps": {
+        "view": {
+            "label": "Προβολή",
+            "decision": "Απόφαση",
+            "scores": "Σκορ",
+            "rolls": "Ζαριές"
+        },
+        "rolls": {
+            "roll": "Ζαριά",
+            "move": "Κίνηση",
+            "equity": "Equity",
+            "gap": "Διαφορά",
+            "market": "Αγορά",
+            "marketTip": "Χαμένη αγορά: μετά από αυτή τη ζαριά ένα διπλασιασμός θα απορριπτόταν",
+            "average": "Μέσος όρος",
+            "best": "Καλύτερη",
+            "worst": "Χειρότερη",
+            "spread": "Τυπ. απόκλιση",
+            "dance": "Χορός",
+            "replies": "Απαντήσεις",
+            "other": "Άλλη κίνηση…",
+            "start": "Αφετηρία",
+            "me": "εγώ",
+            "him": "αυτός",
+            "myRolls": "Οι ζαριές μου",
+            "hisRolls": "Οι ζαριές του",
+            "trail": "Διαδρομή",
+            "progress": "{ply}-ply: {n} / {total}",
+            "computing": "Υπολογισμός",
+            "error": "Σφάλμα"
+        },
+        "scores": {
+            "me": "Εγώ",
+            "opponent": "Αντίπαλος",
+            "match": "Αγώνας {n}",
+            "evaluate": "Αξιολόγηση",
+            "best": "Καλύτερη",
+            "second": "Δεύτερη",
+            "progress": "{ply}-ply: {n} / {total}",
+            "legend": "Κινήσεις",
+            "close": "Κλείσιμο",
+            "refused": "Απορρίφθηκε",
+            "crawford": "Crawford",
+            "error": "Σφάλμα"
+        },
+        "verdict": {
+            "short": {
+                "no_double": "ND",
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
+            },
+            "long": {
+                "no_double": "Χωρίς διπλασιασμό",
+                "double_take": "Διπλασιασμός/Πάσο",
+                "double_pass": "Διπλασιασμός/Απόρριψη",
+                "too_good": "Πολύ καλό"
+            }
+        },
+        "menu": {
+            "replies": "Απαντήσεις",
+            "scores": "Χάρτης σκορ"
+        },
+        "config": {
+            "defaultMatch": "Προεπιλεγμένος αγώνας"
+        }
     }
 }

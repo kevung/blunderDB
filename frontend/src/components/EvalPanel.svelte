@@ -27,6 +27,11 @@
     import { rolloutStore } from '../stores/rolloutStore.js';
     import { toggleRollout, cancelRollout, ensureRolloutEvents, syncRolloutStatus, rolloutOnBoard } from '../services/rolloutService.js';
     import { analysisMenuItems } from '../services/analysisMenu.js';
+    import { evalViewStore, rollTrailStore, EVAL_VIEW } from '../stores/mapStore.js';
+    import { seedSignature, trailPosition } from '../services/mapService.js';
+    import { VIEW_LABELS } from '../utils/scoreMap.js';
+    import RollMapView from './RollMapView.svelte';
+    import ScoreMapView from './ScoreMapView.svelte';
     import { exportBoardImage } from '../services/clipboardService.js';
     import { rolloutsByMove, cubeRollouts } from '../utils/rolloutRows.js';
     import { clickSelection, contextSelection, selectedPlays } from '../utils/moveSelection.js';
@@ -121,11 +126,43 @@
     $effect(() => {
         const signature = positionSignature; // tracked: the position
         const active = isActive; // tracked: is the Eval tab even shown
+        const view = $evalViewStore; // tracked: only the view on screen computes
         if (!signature || !active) return;
         untrack(() => {
-            runEvaluationEscalation();
+            if (view === EVAL_VIEW.DECISION) runEvaluationEscalation();
+            else stopEvaluation();
         });
     });
+
+    // The roll map's trail leads the board: a change of position it did not make ends it. Armed
+    // once the board has reached the trail's end, so the move that gets it there is not a change.
+    let trailArmedFor = '';
+    $effect(() => {
+        const signature = positionSignature;
+        const trail = $rollTrailStore;
+        untrack(() => {
+            if (!trail.steps.length) {
+                trailArmedFor = '';
+                return;
+            }
+            const expected = seedSignature(trailPosition(trail));
+            if (signature === expected) trailArmedFor = expected;
+            else if (trailArmedFor === expected) {
+                trailArmedFor = '';
+                rollTrailStore.set({ root: null, steps: [] });
+            }
+        });
+    });
+
+    // The maps take the search slot the at-rest evaluation holds: leave it, and drop its answers.
+    function stopEvaluation() {
+        evalGeneration += 1;
+        if (evalRestTimer) {
+            clearTimeout(evalRestTimer);
+            evalRestTimer = null;
+        }
+        CancelEvaluationAtRest().catch(() => {});
+    }
 
     // Leaving the tab clears the selected-move arrow, as AnalysisPanel does.
     $effect(
@@ -337,7 +374,7 @@
     /** Right-click elsewhere in the panel: the selection, or the whole position. Défi keeps its answer hidden. */
     /** @param {MouseEvent} event */
     function handleContentContextMenu(event) {
-        if (event.defaultPrevented || maskedDecision) return;
+        if (event.defaultPrevented || maskedDecision || $evalViewStore !== EVAL_VIEW.DECISION) return;
         openPanelMenu(event);
     }
 
@@ -620,7 +657,17 @@
             <!-- The strip, a full-width line on top (ADR-0020 rule 8): a badge qualifies the numbers below. -->
             {@render evalHeader(true)}
 
-            {#if nothingYet}
+            <div class="view-switch" role="group" aria-label={$t('maps.view.label')}>
+                {#each [EVAL_VIEW.DECISION, EVAL_VIEW.SCORES, EVAL_VIEW.ROLLS] as view (view)}
+                    <button type="button" aria-pressed={$evalViewStore === view} onclick={() => evalViewStore.set(view)}>{$t(VIEW_LABELS[view])}</button>
+                {/each}
+            </div>
+
+            {#if $evalViewStore === EVAL_VIEW.SCORES}
+                <ScoreMapView active={isActive} />
+            {:else if $evalViewStore === EVAL_VIEW.ROLLS}
+                <RollMapView active={isActive} />
+            {:else if nothingYet}
                 <!-- The race facts (EPC, pips) do not wait for the engine: only its part is empty. -->
                 {#if data.bottomEPC || data.topEPC}
                     <div class="top-row">
@@ -717,6 +764,30 @@
 </section>
 
 <style>
+    .view-switch {
+        display: flex;
+        gap: 0;
+        padding: var(--space-1) var(--space-2) 0;
+    }
+    .view-switch button {
+        padding: 2px var(--space-3);
+        border: 1px solid var(--color-border);
+        background: var(--color-surface);
+        color: var(--color-text);
+        cursor: pointer;
+    }
+    .view-switch button:first-child {
+        border-radius: var(--radius) 0 0 var(--radius);
+    }
+    .view-switch button:last-child {
+        border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .view-switch button[aria-pressed='true'] {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+        color: var(--color-surface);
+        font-weight: 700;
+    }
     .eval-panel {
         /* Interface chrome is not text to copy; fields below opt back in. */
         user-select: none;

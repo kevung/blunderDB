@@ -39,18 +39,6 @@ func (a *App) StartRollMap(pos domain.Position, ply, pruneK, tag int) {
 	a.startRollMap(pos, ply, pruneK, tag)
 }
 
-// StartRollMapAfterPlay is StartRollMap on the position pos reaches once
-// played with die1-die2 and move (any legal play, the best or not), the
-// opponent on roll: the replies to that play. move is empty for a dance.
-func (a *App) StartRollMapAfterPlay(pos domain.Position, die1, die2 int, move string, ply, pruneK, tag int) {
-	after, err := gammonnet.PositionAfterPlay(pos, die1, die2, move)
-	if err != nil {
-		a.emitBatch("gammonnet-rolls:error", map[string]any{"tag": tag, "message": err.Error()})
-		return
-	}
-	a.startRollMap(after, ply, pruneK, tag)
-}
-
 func (a *App) startRollMap(pos domain.Position, ply, pruneK, tag int) {
 	if err := gammonnet.ValidateMapPly(ply); err != nil {
 		a.emitBatch("gammonnet-rolls:error", map[string]any{"tag": tag, "message": err.Error()})

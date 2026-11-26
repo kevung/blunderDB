@@ -1205,24 +1205,6 @@
         "title": "Advertencia",
         "confirmTitle": "Confirmación"
     },
-    "cubeMatrix": {
-        "title": "Matriz del cubo",
-        "computing": "calculando…",
-        "depth": "{ply}-ply",
-        "points": "{n} pts",
-        "axes": "filas: puntos que aún necesita el jugador en turno; columnas: puntos que aún necesita el adversario",
-        "glyphNoDouble": "ND",
-        "glyphDoubleTake": "DT",
-        "glyphDoublePass": "DP",
-        "glyphTooGood": "DB",
-        "legendNoDouble": "no doblar",
-        "legendDoubleTake": "doblar, tomar",
-        "legendDoublePass": "doblar, pasar",
-        "legendTooGood": "demasiado bueno",
-        "legendRefused": "no evaluable",
-        "currentScore": "marcador de la posición",
-        "note": "El marcador propio de la posición se sustituye por el de cada casilla; su cubo se conserva. La cuadrícula es posterior a Crawford: durante la partida Crawford el cubo no está en juego."
-    },
     "merge": {
         "canonicalName": "Nombre canónico:",
         "filterPlaceholder": "Filtrar jugadores…",
@@ -3008,7 +2990,8 @@
             "m": "Volver al último match visitado",
             "met": "Tabla de equidad de match",
             "reference": "Datos de referencia: MET, puntos de toma, valores del gammon, Neil",
-            "cm": "Matriz del cubo",
+            "sm": "Mapa de marcadores",
+            "jets": "Mapa de tiradas",
             "tags": "Vocabulario de etiquetas",
             "train": "Entrenamiento",
             "duel": "Duelo contra el Bot",
@@ -3677,5 +3660,72 @@
         "copyTournamentTo": "Copiar el torneo a {base}",
         "addToLot": "Añadir al lote",
         "addToCollection": "Añadir a la colección {name}"
+    },
+    "maps": {
+        "view": {
+            "label": "Vista",
+            "decision": "Decisión",
+            "scores": "Marcadores",
+            "rolls": "Tiradas"
+        },
+        "rolls": {
+            "roll": "Tirada",
+            "move": "Jugada",
+            "equity": "Equity",
+            "gap": "Diferencia",
+            "market": "Mercado",
+            "marketTip": "Mercado perdido: tras esta tirada un doble sería rechazado",
+            "average": "Media",
+            "best": "Mejor",
+            "worst": "Peor",
+            "spread": "Desv. típica",
+            "dance": "Baile",
+            "replies": "Respuestas",
+            "other": "Otra jugada…",
+            "start": "Inicio",
+            "me": "yo",
+            "him": "él",
+            "myRolls": "Mis tiradas",
+            "hisRolls": "Sus tiradas",
+            "trail": "Ruta",
+            "progress": "{ply}-ply: {n} / {total}",
+            "computing": "Calculando",
+            "error": "Error"
+        },
+        "scores": {
+            "me": "Yo",
+            "opponent": "Rival",
+            "match": "Partida a {n}",
+            "evaluate": "Evaluar",
+            "best": "Mejor",
+            "second": "Segunda",
+            "progress": "{ply}-ply: {n} / {total}",
+            "legend": "Jugadas",
+            "close": "Cerrar",
+            "refused": "Rechazado",
+            "crawford": "Crawford",
+            "error": "Error"
+        },
+        "verdict": {
+            "short": {
+                "no_double": "ND",
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
+            },
+            "long": {
+                "no_double": "Sin doble",
+                "double_take": "Doble/Acepta",
+                "double_pass": "Doble/Rechaza",
+                "too_good": "Demasiado bueno"
+            }
+        },
+        "menu": {
+            "replies": "Respuestas",
+            "scores": "Mapa de marcadores"
+        },
+        "config": {
+            "defaultMatch": "Partida por defecto"
+        }
     }
 }

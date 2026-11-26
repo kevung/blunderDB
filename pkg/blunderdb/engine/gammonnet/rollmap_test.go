@@ -247,3 +247,39 @@ func TestRollMap_TwoPlyAverageIsThreePlyWithTheTwoPlyConfig(t *testing.T) {
 		t.Fatalf("2-ply average %.12f, 3-ply search with the 2-ply config %.12f", m.Average, want)
 	}
 }
+
+// Two plays of one shape may leave different boards: with 4-1 and a white
+// blot on 2, "6/5 5/1" and "6/2* 2/1" both move a checker from 6 to 1, the
+// second hitting. The replies must be computed on the board the play leaves.
+func TestPositionAfterPlay_TheHitIsPlayed(t *testing.T) {
+	pos := *en41(2)
+	quiet, err := PositionAfterPlay(pos, 4, 1, "6/5 5/1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	hit, err := PositionAfterPlay(pos, 4, 1, "6/2* 2/1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if quiet.Board.Points[2].Checkers != 1 || quiet.Board.Points[2].Color != domain.White {
+		t.Errorf("6/5 5/1 removed the blot on 2: %+v", quiet.Board.Points[2])
+	}
+	if hit.Board.Points[2].Checkers != 0 && hit.Board.Points[2].Color == domain.White {
+		t.Errorf("6/2* 2/1 left the blot on 2: %+v", hit.Board.Points[2])
+	}
+	if domain.SameBoard(quiet.Board, hit.Board) {
+		t.Fatal("a hit and a quiet play left the same board")
+	}
+}
+
+// The notation is read as blunderDB writes it, every hit starred: a hit left
+// unstarred, or a star on a point holding no blot, names no play and is
+// refused rather than mapped to the nearest play of the same shape.
+func TestPositionAfterPlay_RefusesAMisreadHit(t *testing.T) {
+	pos := *en41(2)
+	for _, move := range []string{"6/2 2/1", "6/5* 5/1"} {
+		if _, err := PositionAfterPlay(pos, 4, 1, move); err == nil {
+			t.Errorf("%q was accepted", move)
+		}
+	}
+}

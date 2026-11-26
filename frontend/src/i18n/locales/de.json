@@ -1205,24 +1205,6 @@
         "title": "Warnung",
         "confirmTitle": "Bestätigung"
     },
-    "cubeMatrix": {
-        "title": "Dopplerwürfel-Matrix",
-        "computing": "wird berechnet…",
-        "depth": "{ply}-Ply",
-        "points": "{n} Pkt.",
-        "axes": "Zeilen: Punkte, die der Spieler am Zug noch braucht; Spalten: Punkte, die der Gegner noch braucht",
-        "glyphNoDouble": "KD",
-        "glyphDoubleTake": "DA",
-        "glyphDoublePass": "DP",
-        "glyphTooGood": "ZG",
-        "legendNoDouble": "kein Doppel",
-        "legendDoubleTake": "Doppel, Annahme",
-        "legendDoublePass": "Doppel, Pass",
-        "legendTooGood": "zu gut",
-        "legendRefused": "nicht bewertbar",
-        "currentScore": "Punktestand der Position",
-        "note": "Der Punktestand der Position wird durch den jeder Zelle ersetzt; ihr Dopplerwürfel bleibt erhalten. Das Raster gilt nach Crawford: während des Crawford-Spiels ist der Würfel nicht im Spiel."
-    },
     "merge": {
         "canonicalName": "Kanonischer Name:",
         "filterPlaceholder": "Spieler filtern…",
@@ -3008,7 +2990,8 @@
             "m": "Zurück zum zuletzt besuchten Match",
             "met": "Match-Equity-Tabelle",
             "reference": "Referenzdaten: MET, Take-Points, Gammon-Werte, Neil",
-            "cm": "Doppelwürfel-Matrix",
+            "sm": "Stände-Karte",
+            "jets": "Wurf-Karte",
             "tags": "Tag-Verzeichnis",
             "train": "Training",
             "duel": "Duell gegen den Bot",
@@ -3677,5 +3660,72 @@
         "copyTournamentTo": "Turnier kopieren nach {base}",
         "addToLot": "Zum Los hinzufügen",
         "addToCollection": "Zur Sammlung {name} hinzufügen"
+    },
+    "maps": {
+        "view": {
+            "label": "Ansicht",
+            "decision": "Entscheidung",
+            "scores": "Stände",
+            "rolls": "Würfe"
+        },
+        "rolls": {
+            "roll": "Wurf",
+            "move": "Zug",
+            "equity": "Equity",
+            "gap": "Abstand",
+            "market": "Markt",
+            "marketTip": "Markt verloren: Nach diesem Wurf würde ein Doppeln abgelehnt",
+            "average": "Mittel",
+            "best": "Bester",
+            "worst": "Schlechtester",
+            "spread": "Streuung",
+            "dance": "Tanz",
+            "replies": "Antworten",
+            "other": "Anderer Zug…",
+            "start": "Start",
+            "me": "ich",
+            "him": "er",
+            "myRolls": "Meine Würfe",
+            "hisRolls": "Seine Würfe",
+            "trail": "Pfad",
+            "progress": "{ply}-ply: {n} / {total}",
+            "computing": "Rechnet",
+            "error": "Fehler"
+        },
+        "scores": {
+            "me": "Ich",
+            "opponent": "Gegner",
+            "match": "Match auf {n}",
+            "evaluate": "Bewerten",
+            "best": "Bester",
+            "second": "Zweiter",
+            "progress": "{ply}-ply: {n} / {total}",
+            "legend": "Züge",
+            "close": "Schließen",
+            "refused": "Abgelehnt",
+            "crawford": "Crawford",
+            "error": "Fehler"
+        },
+        "verdict": {
+            "short": {
+                "no_double": "ND",
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
+            },
+            "long": {
+                "no_double": "Kein Doppel",
+                "double_take": "Doppel/Annahme",
+                "double_pass": "Doppel/Passen",
+                "too_good": "Zu gut"
+            }
+        },
+        "menu": {
+            "replies": "Antworten",
+            "scores": "Stände-Karte"
+        },
+        "config": {
+            "defaultMatch": "Standard-Match"
+        }
     }
 }

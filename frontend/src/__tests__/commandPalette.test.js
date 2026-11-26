@@ -79,12 +79,12 @@ describe('the other sources', () => {
         expect(first('blitz rates')?.id).toBe('filter:10');
     });
 
-    test('a description finds its command: "matrice" is the cube matrix', () => {
+    test('a description finds its command: "scores" is the score map', () => {
         const fr = buildPaletteItems({ translate: (key) => key.split('.').reduce((/** @type {any} */ o, k) => o?.[k], /** @type {any} */ (LOCALES).fr) ?? key });
-        const hit = rankPaletteItems(fr, 'matrice videau')[0]?.item;
-        expect(hit?.id).toBe('command:cm');
+        const hit = rankPaletteItems(fr, 'carte scores')[0]?.item;
+        expect(hit?.id).toBe('command:sm');
         // The example manuel.rst gives, verbatim.
-        expect(rankPaletteItems(fr, 'mtrc')[0]?.item.id).toBe('command:cm');
+        expect(rankPaletteItems(fr, 'crsc')[0]?.item.id).toBe('command:sm');
     });
 
     test('at rest, pinned filters come first and matches last, newest first', () => {
