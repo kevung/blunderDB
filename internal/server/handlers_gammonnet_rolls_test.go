@@ -40,26 +40,34 @@ func TestGammonNetRolls(t *testing.T) {
 	}
 }
 
-// The daemon's maps are cached per tenant: a tenant asking again is served,
-// another tenant asking the same is searched, and learns nothing from it.
-func TestGammonNetRolls_CachePerTenant(t *testing.T) {
-	ts := newTestServer(t)
+// The daemon's maps are cached per tenant, rolls and scores alike: a tenant
+// asking again is served, another tenant asking the same is searched, and
+// learns nothing from it.
+func TestGammonNetMaps_CachePerTenant(t *testing.T) {
 	zero := 0
-	req := rollsReq{XGID: rollsXGID, Ply: &zero, PruneK: 5}
-	ask := func(tenant string) int {
-		t.Helper()
-		r := postAsTenant(t, ts, tenant, "/v1/gammonnet.rolls", req)
-		r.Body.Close()
-		if r.StatusCode != http.StatusOK {
-			t.Fatalf("tenant %s: status %d", tenant, r.StatusCode)
+	for path, req := range map[string]any{
+		"/v1/gammonnet.rolls":    rollsReq{XGID: rollsXGID, Ply: &zero, PruneK: 5},
+		"/v1/gammonnet.scoreMap": scoreMapReq{XGID: "XGID=-b----E-C---eE---c-e----B-:0:0:1:31:6:4:0:9:10", MatchLength: 3, Ply: &zero},
+	} {
+		ts, srv := newTestServerAndHandler(t)
+		srv.maps = gammonnet.NewMapCache(gammonnet.DefaultMapCacheBytes)
+		ask := func(tenant string) int {
+			t.Helper()
+			r := postAsTenant(t, ts, tenant, path, req)
+			r.Body.Close()
+			if r.StatusCode != http.StatusOK {
+				t.Fatalf("%s tenant %s: status %d", path, tenant, r.StatusCode)
+			}
+			return srv.maps.Len()
 		}
-		return gammonnet.Maps().Len()
-	}
-	first := ask("1")
-	if again := ask("1"); again != first {
-		t.Fatalf("the same tenant asking again added %d entries", again-first)
-	}
-	if other := ask("2"); other != first+1 {
-		t.Fatalf("another tenant added %d entries, want its own one", other-first)
+		if first := ask("1"); first != 1 {
+			t.Fatalf("%s: %d entries after the first map, want 1", path, first)
+		}
+		if again := ask("1"); again != 1 {
+			t.Fatalf("%s: the same tenant asking again left %d entries, want 1", path, again)
+		}
+		if other := ask("2"); other != 2 {
+			t.Fatalf("%s: %d entries after another tenant, want its own: 2", path, other)
+		}
 	}
 }

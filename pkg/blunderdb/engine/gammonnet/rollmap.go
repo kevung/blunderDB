@@ -115,9 +115,14 @@ func (c *MapCache) RollMap(ctx context.Context, scope string, pos domain.Positio
 
 	var mu sync.Mutex
 	var firstErr error
+	// answered counts the rows this phase searched: a phase short of a row
+	// (a search stopped without ctx ending, a cell the executor skipped)
+	// still returns its rows, but is not kept.
+	var answered int
 	phase := func(depth int) error {
 		job.cfg = cfg
 		job.cfg.Ply = depth
+		answered = 0
 		err := runMapPhase(ctx, exec, NumRolls, func(i int, s *Searcher) {
 			row, err := job.row(ctx, i, s, pruneK)
 			mu.Lock()
@@ -128,6 +133,7 @@ func (c *MapCache) RollMap(ctx context.Context, scope string, pos domain.Positio
 				}
 				return
 			}
+			answered++
 			m.Rows[i] = row
 			if onRow != nil {
 				onRow(i, row)
@@ -160,7 +166,9 @@ func (c *MapCache) RollMap(ctx context.Context, scope string, pos domain.Positio
 		if err := phase(depth); err != nil {
 			return m, err
 		}
-		c.putRows(keyAt(depth), m.Rows)
+		if answered == NumRolls {
+			c.putRows(keyAt(depth), m.Rows)
+		}
 	}
 	// Ascending roll index, in float64: the order the search sums in.
 	for i, r := range job.rolls {

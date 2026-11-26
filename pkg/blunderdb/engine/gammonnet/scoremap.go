@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -106,7 +107,12 @@ func (c *MapCache) ScoreMap(ctx context.Context, scope string, pos domain.Positi
 	order := scoreMapOrder(&pos, matchLength)
 
 	var mu sync.Mutex
+	// answered counts the cells this phase searched to an answer: a phase
+	// short of one (a cell the executor skipped, a refusal that is only a
+	// stopped search) still returns its cells, but is not kept.
+	var answered int
 	phase := func(depth int) error {
+		answered = 0
 		err := runMapPhase(ctx, exec, len(order), func(k int, s *Searcher) {
 			idx := order[k]
 			onRoll, opponent := idx/matchLength+1, idx%matchLength+1
@@ -121,6 +127,9 @@ func (c *MapCache) ScoreMap(ctx context.Context, scope string, pos domain.Positi
 			}
 			mu.Lock()
 			defer mu.Unlock()
+			if !refusedByCancel(cell) {
+				answered++
+			}
 			m.Cells[idx] = cell
 			if onCell != nil {
 				onCell(idx, cell)
@@ -152,9 +161,18 @@ func (c *MapCache) ScoreMap(ctx context.Context, scope string, pos domain.Positi
 		if err := phase(depth); err != nil {
 			return m, err
 		}
-		c.putCells(keyAt(depth), m.Cells)
+		if answered == len(order) {
+			c.putCells(keyAt(depth), m.Cells)
+		}
 	}
 	return m, nil
+}
+
+// refusedByCancel says a refused cell's reason is a search that was stopped,
+// not the engine declining the score: the cell is no answer. The refusal
+// keeps only the error's text, which a wrapped ErrCanceled always contains.
+func refusedByCancel(cell ScoreMapCell) bool {
+	return cell.Refused && strings.Contains(cell.Reason, ErrCanceled.Error())
 }
 
 // scoreMapOrder is the order cells are searched in: the position's own score

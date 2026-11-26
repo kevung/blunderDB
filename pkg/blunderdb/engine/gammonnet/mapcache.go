@@ -3,15 +3,15 @@ package gammonnet
 import (
 	"container/list"
 	"sync"
+	"unsafe"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // MapCache keeps the phases of roll and score maps already computed, so that
-// the same question is answered without a search: a map asked again, a map at
-// a depth an earlier, deeper map passed through, or a map computed ahead of
-// the user (the next roll's) before it is asked.
+// the same question is answered without a search: a map asked again, or a map
+// at a depth an earlier, deeper map passed through.
 //
 // A phase is kept under everything its values depend on, and nothing else is
 // trusted to coincide:
@@ -137,7 +137,7 @@ func (c *MapCache) putRows(k mapKey, rows []RollMapRow) {
 	if c == nil {
 		return
 	}
-	cost := int64(256)
+	cost := entryOverhead(k)
 	for _, r := range rows {
 		cost += 96 + int64(len(r.Move))
 	}
@@ -148,11 +148,18 @@ func (c *MapCache) putCells(k mapKey, cells []ScoreMapCell) {
 	if c == nil {
 		return
 	}
-	cost := int64(256)
+	cost := entryOverhead(k)
 	for _, x := range cells {
 		cost += 192 + int64(len(x.Move)+len(x.SecondMove)+len(x.Reason)+len(x.Verdict))
 	}
 	c.put(&mapEntry{key: k, cells: cloneCells(cells), cost: cost})
+}
+
+// entryOverhead is what an entry costs besides its rows or cells: the key,
+// held twice (in the index and in the entry), its scope, the list element and
+// the map slot.
+func entryOverhead(k mapKey) int64 {
+	return 2*int64(unsafe.Sizeof(k)+uintptr(len(k.scope))) + 128
 }
 
 func (c *MapCache) get(k mapKey) (*mapEntry, bool) {

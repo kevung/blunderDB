@@ -2,7 +2,9 @@ package gammonnet
 
 import (
 	"context"
+	"fmt"
 	"math"
+	"slices"
 	"sync/atomic"
 	"testing"
 
@@ -227,7 +229,11 @@ func TestMapCache_CancelledPhaseIsNotKept(t *testing.T) {
 // The budget bounds the cache: old entries go first.
 func TestMapCache_BudgetEvictsTheLeastRecentlyUsed(t *testing.T) {
 	pos := decodeXGIDForTest(t, openingXGID)
-	cache := NewMapCache(4096)
+	one := NewMapCache(DefaultMapCacheBytes)
+	if _, err := one.RollMap(context.Background(), "a", pos, nil, 0, 0, LocalExec(0, 0, 0), nil); err != nil {
+		t.Fatal(err)
+	}
+	cache := NewMapCache(3 * one.used)
 	ctx := context.Background()
 	scopes := []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 	for _, s := range scopes {
@@ -253,4 +259,89 @@ func keyRollConfig(t *testing.T, pos domain.Position) SearchConfig {
 		t.Fatal(err)
 	}
 	return job.cfg
+}
+
+// skippingExec runs every cell but the first: a phase short of an answer.
+func skippingExec(n int, cell func(int, *Searcher)) error {
+	for i := 1; i < n; i++ {
+		cell(i, nil)
+	}
+	return nil
+}
+
+// A phase short of a row or a cell returns what it has, but is not kept.
+func TestMapCache_IncompletePhaseIsNotKept(t *testing.T) {
+	ctx := context.Background()
+	cache := NewMapCache(DefaultMapCacheBytes)
+	if _, err := cache.RollMap(ctx, "", decodeXGIDForTest(t, openingXGID), nil, 0, 0, skippingExec, nil); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := cache.ScoreMap(ctx, "", decodeXGIDForTest(t, scoreMapCheckerXGID), nil, 3, 0, 0, skippingExec, nil); err != nil {
+		t.Fatal(err)
+	}
+	if n := cache.Len(); n != 0 {
+		t.Fatalf("%d incomplete phases kept, want none", n)
+	}
+
+	stopped := ScoreMapCell{}
+	stopped.Refused, stopped.Reason = true, fmt.Errorf("rank: %w", ErrCanceled).Error()
+	declined := ScoreMapCell{}
+	declined.Refused, declined.Reason = true, ErrNotEvaluable.Error()
+	if !refusedByCancel(stopped) || refusedByCancel(declined) {
+		t.Fatal("refusedByCancel does not tell a stopped search from a refusal")
+	}
+}
+
+// A map handed out shares nothing with the cache: changing it changes no
+// later answer.
+func TestMapCache_ServedMapsAreCopies(t *testing.T) {
+	ctx := context.Background()
+	cache := NewMapCache(DefaultMapCacheBytes)
+
+	rollPos := decodeXGIDForTest(t, ownedCubeMatchXGID)
+	computed, err := cache.RollMap(ctx, "", rollPos, nil, 0, 0, LocalExec(0, 0, 0), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	served, err := cache.RollMap(ctx, "", rollPos, nil, 0, 0, refusingExec(t), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if served.Rows[0].MarketLost == nil {
+		t.Fatal("the fixture has no market to lose")
+	}
+	want := *served.Rows[0].MarketLost
+	*computed.Rows[0].MarketLost = !want
+	*served.Rows[0].MarketLost = !want
+	again, err := cache.RollMap(ctx, "", rollPos, nil, 0, 0, refusingExec(t), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if *again.Rows[0].MarketLost != want {
+		t.Fatal("changing a roll map handed out changed the cache")
+	}
+
+	scorePos := decodeXGIDForTest(t, scoreMapCheckerXGID)
+	first, err := cache.ScoreMap(ctx, "", scorePos, nil, 3, 0, 0, LocalExec(0, 0, 0), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	k := slices.IndexFunc(first.Cells, func(c ScoreMapCell) bool { return c.Gap != nil })
+	if k < 0 {
+		t.Fatal("the fixture has no cell with two plays")
+	}
+	gap := *first.Cells[k].Gap
+	*first.Cells[k].Gap = gap + 1
+	second, err := cache.ScoreMap(ctx, "", scorePos, nil, 3, 0, 0, refusingExec(t), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	*second.Cells[k].Gap = gap + 2
+	third, err := cache.ScoreMap(ctx, "", scorePos, nil, 3, 0, 0, refusingExec(t), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if math.Float64bits(*third.Cells[k].Gap) != math.Float64bits(gap) {
+		t.Fatal("changing a score map handed out changed the cache")
+	}
 }
