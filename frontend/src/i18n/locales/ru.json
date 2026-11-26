@@ -1043,7 +1043,6 @@
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet анализирует: {done}/{total}",
         "batchProgressAt": "gammonNet анализирует {depth}: {done}/{total}",
-        "batchCancel": "Отмена",
         "batchDone": "gammonNet: проанализировано {evaluated}, отклонено {refused}, не удалось {failed}",
         "batchWaiting": "gammonNet ждёт: выполняется {job}",
         "batchFailed": "gammonNet: анализ не выполнен — {error}",
@@ -1482,8 +1481,6 @@
         "durationEstimated": "решение {time}, оценка: до следующего броска, включая сбор костей"
     },
     "status": {
-        "importChip": "Идёт импорт: {percent} %",
-        "importChipShow": "Показать",
         "boardAnalysisCopied": "Изображение доски + анализа скопировано в буфер обмена",
         "boardSvgNotFound": "SVG доски не найден",
         "boardElementNotFound": "Элемент доски не найден",
@@ -3007,7 +3004,8 @@
             "gv1": "Ценность гаммона, куб на 1",
             "gv2": "Ценность гаммона, куб на 2",
             "gv4": "Ценность гаммона, куб на 4",
-            "clear": "Очистить историю команд"
+            "clear": "Очистить историю команд",
+            "jobs": "Расчёты"
         }
     },
     "assistant": {
@@ -3726,6 +3724,39 @@
         },
         "config": {
             "defaultMatch": "Матч по умолчанию"
+        }
+    },
+    "calculs": {
+        "title": "Расчёты",
+        "chip": "Расчёты · {running} идут · {waiting} ждут",
+        "running": "Идут",
+        "waiting": "Ждут",
+        "ended": "Завершены",
+        "pause": "Пауза",
+        "resume": "Продолжить",
+        "cancel": "Отмена",
+        "moveUp": "Вверх",
+        "moveDown": "Вниз",
+        "remove": "Убрать",
+        "pauseAll": "Всё на паузу",
+        "resumeAll": "Продолжить всё",
+        "progress": "Ход",
+        "empty": "Нет расчётов",
+        "show": "Показать",
+        "end_done": "Готово",
+        "end_cancelled": "Отменено",
+        "end_error": "Ошибка",
+        "kind": {
+            "gammonnet": "gammonNet",
+            "rollout": "Ролаут",
+            "rolloutBatch": "Ролауты",
+            "maintenance": "Обслуживание",
+            "import": "Импорт",
+            "repair": "Починка",
+            "transfer": "Перенос",
+            "bearoff": "Бэроф",
+            "sync": "Синхр.",
+            "other": "Другое"
         }
     }
 }

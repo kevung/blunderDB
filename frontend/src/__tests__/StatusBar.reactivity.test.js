@@ -24,15 +24,16 @@ vi.mock('../../wailsjs/go/database/Database.js', async () => {
 // (no real Wails runtime), so both need the same per-file mock every other
 // EventsOn-consuming component test already uses (see EvalPanelEvalEffect.test.js).
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    CancelGammonNetBatch: vi.fn(() => Promise.resolve(undefined))
+    ListJobs: vi.fn(() => Promise.resolve([]))
 }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
     EventsOn: vi.fn(() => () => {})
 }));
 
 // ── Stores ──────────────────────────────────────────────────────────────────
-import { statusBarTextStore, currentPositionIndexStore, showCommandInputStore, commandTextStore } from '../stores/uiStore.js';
+import { activeModal, MODAL, statusBarTextStore, currentPositionIndexStore, showCommandInputStore, commandTextStore } from '../stores/uiStore.js';
 import { positionsStore, matchContextStore } from '../stores/positionStore.js';
+import { jobsStore } from '../stores/jobsStore.js';
 import { commandHistoryStore } from '../stores/commandHistoryStore.js';
 
 // ── Wails mock functions (accessibles après le mock hoisted) ─────────────────
@@ -212,5 +213,22 @@ describe('StatusBar — réactivité', () => {
         const message = container.querySelector('.info-message');
         expect(must(message).getAttribute('role')).toBe('status');
         expect(must(message).getAttribute('aria-live')).toBe('polite');
+    });
+
+    test('puce Calculs : une seule, avec les comptes, et un clic ouvre le panneau', async () => {
+        const job = { kind: 'rollout', label: 'x', library: 0, priority: 'requested', done: 1, total: 4, position: 0, pausable: true, cancelable: true };
+        jobsStore.set([
+            { ...job, id: 1, state: 'running' },
+            { ...job, id: 2, state: 'waiting', position: 1 }
+        ]);
+        render(StatusBar);
+        await tick();
+        const chip = screen.getByTestId('jobs-chip');
+        expect(chip.textContent).toContain('1');
+        await fireEvent.click(chip);
+        expect(get(activeModal)).toBe(MODAL.JOBS);
+        jobsStore.set([]);
+        await tick();
+        expect(screen.queryByTestId('jobs-chip')).toBeNull();
     });
 });

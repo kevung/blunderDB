@@ -1,8 +1,7 @@
 <script>
-    import { gammonNetBatchLabel } from '../utils/gammonNetBatchLabel.js';
     import { busyMessage } from '../utils/busyMessage.js';
     import { onDestroy, tick } from 'svelte';
-    import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore';
+    import { openModal, MODAL, statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore';
     import { libraryCountsStore, refreshLibraryCounts, formatCount } from '../stores/libraryCountsStore.js';
     import { listBlunderCountStore, refreshListBlunderCount } from '../stores/listBlunderCountStore.js';
     import { processCommand } from '../commandProcessor.js';
@@ -13,14 +12,14 @@
     import { watchImportNoticeStore } from '../stores/watchStore.js';
     import { transcriptionResumeStore, refreshTranscriptionResume, resumeTranscriptionAnalysis, dismissTranscriptionResume } from '../services/transcriptionSave.js';
     import { transcriptionPromptStore, transcriptionNoticeStore } from '../stores/transcriptionStore.js';
-    import { showFileImportModalStore, fileImportModeStore, fileImportMinimizedStore, fileImportProgressStore, fileImportGroupStore } from '../stores/importModalStore.js';
+    import { showFileImportModalStore, fileImportModeStore } from '../stores/importModalStore.js';
     import { activeGroupId, noteGroupJob, libraryWritten } from '../stores/groupActivityStore.js';
     import { positionsStore, matchContextStore, positionStore as boardPositionStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
+    import { jobsProgress, runningJobs, waitingJobs, startJobsFeed } from '../stores/jobsStore.js';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
     import { maintenanceStore, maintenanceEndedStore, startMatchStatsFill, dropMatchStatsFill } from '../stores/maintenanceStore.js';
     import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/database/Database.js';
-    import { CancelGammonNetBatch, CancelMaintenance } from '../../wailsjs/go/gui/App.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
     import { t, tMsg, resolveStatusMessage } from '../i18n';
     import { getCommandSuggestions } from '../commandVocabulary.js';
@@ -160,12 +159,6 @@
 
     // gammonNet batch (ADR-0013): a bounded, visible job, shown and cancelled
     // here since the status bar is always mounted.
-    // A batch runs attached to its library group: its chip shows while that group is on screen,
-    // and the group's header carries a badge while it is not.
-    let gammonNetBatch = $derived($gammonNetBatchStore && (!$gammonNetBatchStore.group || $gammonNetBatchStore.group === $activeGroupId) ? $gammonNetBatchStore : null);
-    // A minimised import shows its chip in its own group only.
-    let importChipHere = $derived(!$fileImportGroupStore || $fileImportGroupStore === $activeGroupId);
-
     const unsubGammonNetBatch = [
         EventsOn('gammonnet-batch:progress', (p) => {
             noteGroupJob(p?.group, 'running', 'batch');
@@ -195,10 +188,10 @@
         // forgotten their count: the counter reads it again when it is back.
         EventsOn('library:blunder-count-ready', () => refreshLibraryCounts())
     ];
+    onDestroy(startJobsFeed());
     onDestroy(() => unsubGammonNetBatch.forEach((off) => off && off()));
 
     // A maintenance pass (ADR-0088): its progress and its cancel live here, as the batch's.
-    let maintenance = $derived($maintenanceStore);
     /** @param {string} kind */
     const maintenanceOp = (kind) => $t(`maintenance.line_${String(kind ?? '').replace('.', '_')}`);
     /** @param {() => void} report */
@@ -229,13 +222,6 @@
         if (!loaded) dropMatchStatsFill();
     });
     onDestroy(unsubStatsFillClose);
-    let maintenanceLabel = $derived(
-        maintenance ? `${maintenanceOp(maintenance.kind)} ${maintenance.total > 0 ? `${maintenance.done}/${maintenance.total}` : maintenance.done > 0 ? maintenance.done : '…'}` : ''
-    );
-
-    function cancelGammonNetBatch() {
-        CancelGammonNetBatch();
-    }
 
     export function focusInput() {
         showCommandInputStore.set(true);
@@ -340,23 +326,7 @@
         <!-- Live region on this span only: the rest of the bar is not status announcements. -->
         <span class="info-message" role="status" aria-live="polite" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
     {/if}
-    <!-- Un import réduit continue derrière cette pastille ; elle rouvre la fenêtre. -->
-    {#if $fileImportMinimizedStore && $fileImportModeStore === 'importing' && importChipHere}
-        <span class="watch-import-chip" data-testid="import-chip">
-            {$t('status.importChip', {
-                percent: $fileImportProgressStore && $fileImportProgressStore.bytesTotal > 0 ? Math.round(($fileImportProgressStore.bytesRead / $fileImportProgressStore.bytesTotal) * 100) : 0
-            })}
-            <button
-                type="button"
-                class="watch-import-action"
-                onclick={() => {
-                    fileImportMinimizedStore.set(false);
-                    showFileImportModalStore.set(true);
-                }}>{$t('status.importChipShow')}</button
-            >
-        </span>
-    {/if}
-    <!-- Les copies de la session se reprennent d'ici, de la plus récente à la plus ancienne. -->
+    de la session se reprennent d'ici, de la plus récente à la plus ancienne. -->
     {#if $transferHistoryStore.length > dismissedCopies}
         {@const last = $transferHistoryStore[$transferHistoryStore.length - 1]}
         <span class="watch-import-chip" data-testid="transfer-undo-chip">
@@ -412,17 +382,12 @@
     {#if $duelHoldsBoardStore}
         <span class="duel-chip"><DuelClocks duel={$duelStore.state} compact /></span>
     {/if}
-    {#if gammonNetBatch}
-        <span class="gammonnet-batch-chip" title={gammonNetBatchLabel($t, gammonNetBatch)}>
-            {gammonNetBatchLabel($t, gammonNetBatch)}
-            <button type="button" class="gammonnet-batch-cancel" onclick={cancelGammonNetBatch}>{$t('eval.batchCancel')}</button>
-        </span>
-    {/if}
-    {#if maintenance}
-        <span class="gammonnet-batch-chip" data-testid="maintenance-chip" title={maintenanceLabel}>
-            {maintenanceLabel}
-            <button type="button" class="gammonnet-batch-cancel" onclick={() => CancelMaintenance()}>{$t('eval.batchCancel')}</button>
-        </span>
+    <!-- Toutes les tâches de fond en une puce ; un clic ouvre le panneau Calculs. -->
+    {#if $runningJobs.length + $waitingJobs.length > 0}
+        <button type="button" class="jobs-chip" data-testid="jobs-chip" onclick={() => openModal(MODAL.JOBS)}>
+            {$t('calculs.chip', { running: $runningJobs.length, waiting: $waitingJobs.length })}
+            <progress class="jobs-chip-bar" value={$jobsProgress ?? undefined} max="1" aria-label={$t('calculs.progress')}></progress>
+        </button>
     {/if}
     {#if $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
         <span class="position-info">{$t('statusBar.move')} {checkerCountUpTo[$matchContextStore.currentIndex] ?? 0}/{checkerMoves.length}</span>
@@ -579,28 +544,29 @@
         line-height: 22px;
     }
 
-    .gammonnet-batch-chip {
+    .jobs-chip {
         display: flex;
         align-items: center;
         gap: 6px;
         padding: 0 10px;
         flex-shrink: 0;
+        background: none;
+        border: none;
+        border-left: 1px solid var(--color-border);
         font-variant-numeric: tabular-nums;
         color: var(--color-text-muted);
         font-size: var(--font-size-small);
-        border-left: 1px solid var(--color-border);
         line-height: 22px;
         white-space: nowrap;
+        cursor: pointer;
     }
 
-    .gammonnet-batch-cancel {
-        background: none;
-        border: none;
-        padding: 0;
+    .jobs-chip:hover {
         color: var(--color-primary);
-        text-decoration: underline;
-        cursor: pointer;
-        font-size: var(--font-size-small);
+    }
+
+    .jobs-chip-bar {
+        width: 6em;
     }
 
     .position-info {

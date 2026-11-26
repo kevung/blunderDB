@@ -49,6 +49,7 @@ Position
    "CTRL-G", "Afficher les métadonnées de la position."
    "b", "Mettre la position affichée sur la Pile (collection « à revoir plus tard »), ou l'en retirer."
    "MAJ-B", "Mettre la position affichée dans le lot du panneau Autres bases, à copier vers une autre base, ou l'en retirer."
+   "Clic sur la puce Calculs de la barre d'état", "Ouvrir le panneau Calculs (aussi ``jobs``) : les tâches de fond en cours, en attente et terminées. ÉCHAP le ferme."
    "Double-clic hors du plateau", "Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les modes."
    "Clic droit hors du plateau (édition, Eval)", "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, ou *Position de départ*, puis les actions qui valent pour un brouillon (copier, évaluer, enregistrer)."
    "Clic droit sur le plateau ou sur une ligne de liste ; MENU, MAJ-F10 sur la ligne focalisée", "Ouvrir le menu contextuel de la position, du match, du tournoi ou de la collection (voir :ref:`menu contextuel <menu_contextuel_actions>`). HAUT/BAS parcourent un niveau, DROITE ouvre un sous-menu sur sa première action, GAUCHE y revient, ÉCHAP ferme le sous-menu puis le menu."

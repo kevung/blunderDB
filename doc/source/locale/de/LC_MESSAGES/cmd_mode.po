@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 00:48+0100\n"
+"POT-Creation-Date: 2026-11-26 02:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -348,6 +348,18 @@ msgstr ""
 " den Papierkorb und bleibt dreißig Tage rückgängig zu machen."
 
 #: ../../source/cmd_mode.rst:1
+msgid "jobs, calculs"
+msgstr "jobs, calculs"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre le panneau Calculs : les tâches de fond en cours, en attente et "
+"terminées de toutes les bibliothèques."
+msgstr ""
+"Öffnet das Berechnungen-Panel: die Hintergrundaufgaben aller "
+"Bibliotheken, laufend, wartend und beendet."
+
+#: ../../source/cmd_mode.rst:1
 msgid "trash"
 msgstr "trash"
 
@@ -544,7 +556,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigiert zum zuletzt besuchten Match."
 
-#: ../../source/cmd_mode.rst:79
+#: ../../source/cmd_mode.rst:80
 msgid "Édition et recherche"
 msgstr "Bearbeitung und Suche"
 
@@ -590,11 +602,11 @@ msgstr ""
 "Unter den angezeigten Stellungen suchen: aktuelle Ergebnisse, geöffnete "
 "Sammlung oder durchgesehenes Match."
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:96
 msgid "Filtres de recherche"
 msgstr "Suchfilter"
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:98
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -610,7 +622,7 @@ msgstr ""
 ":ref:`cli`); ein Gedankenstrich zeigt einen Filter an, den nur die "
 "Grammatik ausdrückt."
 
-#: ../../source/cmd_mode.rst:104
+#: ../../source/cmd_mode.rst:105
 msgid ""
 "Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -630,7 +642,7 @@ msgstr ""
 "werden diese Token mit einem leeren Brett verglichen; dort sind die "
 "Optionen der dritten Spalte zu verwenden."
 
-#: ../../source/cmd_mode.rst:113
+#: ../../source/cmd_mode.rst:114
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -640,7 +652,7 @@ msgstr ""
 "das Ergebnis nach aufsteigender Entfernung zu einer Zielstellung, und "
 "alle anderen Token schränken die so geordnete Menge ein."
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -651,11 +663,11 @@ msgstr ""
 "ein Zehntel Punkt gekostet haben, wobei ein Punkt 1000 Tausendsteln "
 "entspricht."
 
-#: ../../source/cmd_mode.rst:121
+#: ../../source/cmd_mode.rst:122
 msgid "Deux recherches complètes :"
 msgstr "Zwei vollständige Suchen:"
 
-#: ../../source/cmd_mode.rst:123
+#: ../../source/cmd_mode.rst:124
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -664,7 +676,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — mehr als 30 Pips Rückstand, zwischen 40 % und 60 "
 "% Gewinnchance, kein Kommentar."
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:126
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -2031,7 +2043,7 @@ msgstr ""
 "Würfen wird die Suche abgelehnt, ebenso eine Sternform (``like42*``), die"
 " nicht mehr existiert. Siehe :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -2050,11 +2062,11 @@ msgstr ""
 "Listen von Kennungen und Tags: Es kommt in keinem Wert vor, und ``ma1;2``"
 " ist kein Token (``ma1 ma2`` schreiben)."
 
-#: ../../source/cmd_mode.rst:254
+#: ../../source/cmd_mode.rst:255
 msgid "Transcrire depuis un terminal"
 msgstr "Von einem Terminal aus transkribieren"
 
-#: ../../source/cmd_mode.rst:256
+#: ../../source/cmd_mode.rst:257
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -2074,7 +2086,7 @@ msgstr ""
 "eine eigene Sitzung, ohne ``sessionId`` und ohne Rückgängigmachen von "
 "einem Aufruf zum nächsten."
 
-#: ../../source/cmd_mode.rst:267
+#: ../../source/cmd_mode.rst:268
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 

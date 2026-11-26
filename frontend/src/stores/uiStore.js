@@ -76,6 +76,7 @@ export const MODAL = {
     CONFIG: 'config',
     TRASH: 'trash',
     RESUME_BATCH: 'resumeBatch',
+    JOBS: 'jobs',
     LOG: 'log',
     CONTACT_SHEET: 'contactSheet'
 };

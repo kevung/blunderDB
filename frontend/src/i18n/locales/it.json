@@ -1043,7 +1043,6 @@
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet sta analizzando: {done}/{total}",
         "batchProgressAt": "gammonNet sta analizzando {depth}: {done}/{total}",
-        "batchCancel": "Annulla",
         "batchDone": "gammonNet: {evaluated} analizzata/e, {refused} rifiutata/e, {failed} fallita/e",
         "batchWaiting": "gammonNet in attesa: {job} in corso",
         "batchFailed": "gammonNet: analisi non eseguita — {error}",
@@ -1482,8 +1481,6 @@
         "durationEstimated": "decisione {time}, stimata: fino al tiro successivo, raccolta dei dadi compresa"
     },
     "status": {
-        "importChip": "Importazione in corso: {percent} %",
-        "importChipShow": "Mostra",
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",
         "boardSvgNotFound": "SVG del board non trovato",
         "boardElementNotFound": "Elemento del board non trovato",
@@ -3007,7 +3004,8 @@
             "gv1": "Valori di gammon, cubo a 1",
             "gv2": "Valori di gammon, cubo a 2",
             "gv4": "Valori di gammon, cubo a 4",
-            "clear": "Cancella la cronologia dei comandi"
+            "clear": "Cancella la cronologia dei comandi",
+            "jobs": "Calcoli"
         }
     },
     "assistant": {
@@ -3726,6 +3724,39 @@
         },
         "config": {
             "defaultMatch": "Match predefinito"
+        }
+    },
+    "calculs": {
+        "title": "Calcoli",
+        "chip": "Calcoli · {running} in corso · {waiting} in attesa",
+        "running": "In corso",
+        "waiting": "In attesa",
+        "ended": "Terminati",
+        "pause": "Pausa",
+        "resume": "Riprendi",
+        "cancel": "Annulla",
+        "moveUp": "Su",
+        "moveDown": "Giù",
+        "remove": "Rimuovi",
+        "pauseAll": "Tutto in pausa",
+        "resumeAll": "Riprendi tutto",
+        "progress": "Avanzamento",
+        "empty": "Nessun calcolo",
+        "show": "Mostra",
+        "end_done": "Fatto",
+        "end_cancelled": "Annullato",
+        "end_error": "Errore",
+        "kind": {
+            "gammonnet": "gammonNet",
+            "rollout": "Rollout",
+            "rolloutBatch": "Rollouts",
+            "maintenance": "Manutenzione",
+            "import": "Importazione",
+            "repair": "Riparazione",
+            "transfer": "Trasferimento",
+            "bearoff": "Bearoff",
+            "sync": "Sync",
+            "other": "Altro"
         }
     }
 }

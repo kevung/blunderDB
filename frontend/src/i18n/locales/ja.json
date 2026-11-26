@@ -1043,7 +1043,6 @@
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet 解析中: {done}/{total}",
         "batchProgressAt": "gammonNet 解析中 {depth}: {done}/{total}",
-        "batchCancel": "キャンセル",
         "batchDone": "gammonNet: {evaluated} 件解析、{refused} 件却下、{failed} 件失敗",
         "batchWaiting": "gammonNet 待機中：{job}を実行中",
         "batchFailed": "gammonNet：解析を実行できません — {error}",
@@ -1482,8 +1481,6 @@
         "durationEstimated": "判断 {time}（推定：次のロールまで、ダイスを拾う時間を含む）"
     },
     "status": {
-        "importChip": "インポート中：{percent} %",
-        "importChipShow": "表示",
         "boardAnalysisCopied": "ボードと分析の画像をクリップボードにコピーしました",
         "boardSvgNotFound": "ボードのSVGが見つかりません",
         "boardElementNotFound": "ボード要素が見つかりません",
@@ -3007,7 +3004,8 @@
             "gv1": "ギャモン値（キューブ 1）",
             "gv2": "ギャモン値（キューブ 2）",
             "gv4": "ギャモン値（キューブ 4）",
-            "clear": "コマンド履歴を消去"
+            "clear": "コマンド履歴を消去",
+            "jobs": "計算"
         }
     },
     "assistant": {
@@ -3726,6 +3724,39 @@
         },
         "config": {
             "defaultMatch": "既定のマッチ"
+        }
+    },
+    "calculs": {
+        "title": "計算",
+        "chip": "計算 · 実行中 {running} · 待機中 {waiting}",
+        "running": "実行中",
+        "waiting": "待機中",
+        "ended": "完了",
+        "pause": "一時停止",
+        "resume": "再開",
+        "cancel": "キャンセル",
+        "moveUp": "上へ",
+        "moveDown": "下へ",
+        "remove": "削除",
+        "pauseAll": "すべて一時停止",
+        "resumeAll": "すべて再開",
+        "progress": "進捗",
+        "empty": "計算なし",
+        "show": "表示",
+        "end_done": "完了",
+        "end_cancelled": "キャンセル済み",
+        "end_error": "エラー",
+        "kind": {
+            "gammonnet": "gammonNet",
+            "rollout": "ロールアウト",
+            "rolloutBatch": "ロールアウト一括",
+            "maintenance": "メンテナンス",
+            "import": "インポート",
+            "repair": "修復",
+            "transfer": "転送",
+            "bearoff": "ベアオフ",
+            "sync": "同期",
+            "other": "その他"
         }
     }
 }

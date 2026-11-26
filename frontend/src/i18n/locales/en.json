@@ -1043,7 +1043,6 @@
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analyzing: {done}/{total}",
         "batchProgressAt": "gammonNet analyzing {depth}: {done}/{total}",
-        "batchCancel": "Cancel",
         "batchDone": "gammonNet: {evaluated} analyzed, {refused} refused, {failed} failed",
         "batchWaiting": "gammonNet waiting: {job} in progress",
         "batchFailed": "gammonNet: analysis not run — {error}",
@@ -1482,8 +1481,6 @@
         "durationEstimated": "decision {time}, estimated: up to the next roll, picking up the dice included"
     },
     "status": {
-        "importChip": "Importing: {percent}%",
-        "importChipShow": "Show",
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",
         "boardSvgNotFound": "Board SVG not found",
         "boardElementNotFound": "Board element not found",
@@ -3007,7 +3004,8 @@
             "gv1": "Gammon values, cube at 1",
             "gv2": "Gammon values, cube at 2",
             "gv4": "Gammon values, cube at 4",
-            "clear": "Clear the command history"
+            "clear": "Clear the command history",
+            "jobs": "Jobs panel"
         }
     },
     "assistant": {
@@ -3726,6 +3724,39 @@
         },
         "config": {
             "defaultMatch": "Default match"
+        }
+    },
+    "calculs": {
+        "title": "Jobs",
+        "chip": "Jobs · {running} running · {waiting} waiting",
+        "running": "Running",
+        "waiting": "Waiting",
+        "ended": "Finished",
+        "pause": "Pause",
+        "resume": "Resume",
+        "cancel": "Cancel",
+        "moveUp": "Up",
+        "moveDown": "Down",
+        "remove": "Remove",
+        "pauseAll": "Pause all",
+        "resumeAll": "Resume all",
+        "progress": "Progress",
+        "empty": "No jobs",
+        "show": "Show",
+        "end_done": "Done",
+        "end_cancelled": "Cancelled",
+        "end_error": "Error",
+        "kind": {
+            "gammonnet": "gammonNet",
+            "rollout": "Rollout",
+            "rolloutBatch": "Rollouts",
+            "maintenance": "Maintenance",
+            "import": "Import",
+            "repair": "Repair",
+            "transfer": "Transfer",
+            "bearoff": "Bearoff",
+            "sync": "Sync",
+            "other": "Other"
         }
     }
 }

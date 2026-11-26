@@ -193,9 +193,28 @@ suivantes:
   décompte. Le lien lance la recherche, qui donne le compte exact.
   Les deux nombres de blunders sont des liens distincts : le premier lance la sous-recherche ``ss E>`` dans la liste à l'écran, le second la recherche dans toute la bibliothèque ; quand seul le total s'affiche, il n'y a qu'un lien.
 
+* la **puce Calculs** — « Calculs · 2 en cours · 1 en attente » — avec une barre
+  de progression globale, tant qu'une tâche de fond court ou attend : analyse
+  gammonNet, rollout, maintenance, import, réparation, transfert, tables de
+  bearoff, synchronisation. Un clic (ou la commande ``jobs``) ouvre le panneau
+  Calculs.
+
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
    nombre de positions indiqué dans la barre d'état correspond au nombre de
    positions filtrées.
+
+.. _manuel_calculs:
+
+Le panneau **Calculs** range les tâches de toutes les bibliothèques en trois
+groupes : *En cours*, *En attente*, *Terminés*. Chaque ligne donne le genre de
+la tâche, son objet, la bibliothèque qui la porte (pastille de la couleur de son
+groupe), une barre de progression et le compteur « fait / total », qui ouvre la
+bibliothèque de la tâche. Une tâche en cours se met en *Pause* (et se
+*Reprend*) ou s'*Annule* ; une tâche d'import réduite se rouvre par *Afficher*.
+Une tâche en attente *Monte*, *Descend* dans la file de sa bibliothèque ou se
+*Retire* ; une tâche terminée se *Retire* de la liste. *Tout en pause* arrête
+les tâches en cours et en attente, puis les reprend toutes. ÉCHAP ferme le
+panneau.
 
 L'onglet **Anki** porte un **badge** quand des cartes sont à réviser, tous
 paquets confondus. Ce chiffre est la raison d'ouvrir l'onglet ; il n'a donc
