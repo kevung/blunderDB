@@ -7,6 +7,7 @@
   and services imported below, never through props.
 -->
 <script>
+    import PositionPrintModal from './PositionPrintModal.svelte';
     import { activeModal, MODAL, closeModal } from '../stores/uiStore.js';
     import {
         showImportProgressModalStore,
@@ -97,6 +98,7 @@
     <Modal visible={$activeModal === MODAL.CONTACT_SHEET} onClose={() => closeModal()} />
 {/if}
 
+<PositionPrintModal />
 <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />
 <WarningModal
     message={$confirmModalStore?.message || ''}

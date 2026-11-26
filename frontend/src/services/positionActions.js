@@ -4,6 +4,7 @@
  * board's menu and a position row's menu (the row is displayed first) both build from here.
  */
 
+import { openBrowsedListPrint } from './positionSheetService.js';
 import { get } from 'svelte/store';
 import { tick } from 'svelte';
 import { positionStore } from '../stores/positionStore';
@@ -84,6 +85,7 @@ export function positionContext({ displayPosition = () => get(positionStore), po
             copyXGID: () => copyXGID(),
             copyGnubgID: () => copyGnubgID(),
             copyArkID: () => copyArkID(),
+            printList: () => openBrowsedListPrint(),
             copyPositionText: () => copyPosition(),
             copyImageWithAnalysis: () => copyBoardWithAnalysisImage(),
             saveImageSVG: () => exportBoardImage('svg'),

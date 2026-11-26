@@ -289,6 +289,8 @@ export function ExportDatabaseCtx(arg1:context.Context,arg2:domain.ExportOptions
 
 export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
 
+export function ExportPaperArchive(arg1:Array<number>,arg2:string,arg3:string):Promise<ingest.ArchiveExport>;
+
 export function ExportTranscriptionMAT(arg1:number,arg2:string):Promise<void>;
 
 export function FillMatchStatsInBackground():Promise<boolean>;
@@ -460,6 +462,8 @@ export function ImportLessonMarkdown(arg1:string):Promise<Array<number>>;
 export function ImportMET(arg1:string):Promise<domain.MatchEquityTable>;
 
 export function ImportOGXMMatch(arg1:string):Promise<number>;
+
+export function ImportPaperArchive(arg1:Array<string>):Promise<database.PaperArchiveImport>;
 
 export function ImportReport(arg1:number):Promise<domain.ImportBatch>;
 
@@ -658,6 +662,8 @@ export function PlayerRanking(arg1:database.StatsFilter,arg2:number):Promise<Arr
 export function PlayerRankingCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:number):Promise<Array<storage.RankedPlayer>>;
 
 export function PositionListFields(arg1:Array<number>):Promise<Array<storage.PositionListFields>>;
+
+export function PositionSheetHTML(arg1:printsheet.PositionSource,arg2:printsheet.PositionsOptions):Promise<string>;
 
 export function PositionsToRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<Array<domain.Position>>;
 

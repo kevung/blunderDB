@@ -86,6 +86,7 @@ export const CATALOG = {
         { id: 'copyXGID', label: 'actions.copyXGID', group: 'copy' },
         { id: 'copyGnubgID', label: 'actions.copyGnubgID', group: 'copy' },
         { id: 'copyArkID', label: 'actions.copyArkID', group: 'copy' },
+        { id: 'printList', label: 'positionSheet.menuList', group: 'copy', when: (c) => !!c.dbOpen },
         { id: 'copyPositionText', label: 'actions.copyPositionText', group: 'copy', shortcut: 'Ctrl+C' },
         { id: 'copyImageWithAnalysis', label: 'board.menu.copyImageWithAnalysis', group: 'copy', when: notSearch },
         { id: 'saveImageSVG', label: 'board.menu.saveImageSVG', group: 'copy' },
@@ -130,6 +131,7 @@ export const CATALOG = {
         { id: 'open', label: 'actions.openMatch', group: null, top: true },
         { id: 'exportMat', label: 'match.exportMat', group: 'copy' },
         { id: 'print', label: 'matchSheet.menu', group: 'copy' },
+        { id: 'archive', label: 'paperArchive.menu', group: 'copy' },
         { id: 'editTranscription', label: 'match.editTranscription', group: 'manage' },
         { id: 'swapPlayers', label: 'match.swapPlayers', group: 'manage' },
         { id: 'edit', label: 'common.edit', group: 'manage' },
@@ -145,6 +147,7 @@ export const CATALOG = {
     ],
     collection: [
         { id: 'open', label: 'actions.openCollection', group: null, top: true },
+        { id: 'print', label: 'positionSheet.menu', group: 'copy' },
         { id: 'edit', label: 'common.edit', group: 'manage' },
         { id: 'trash', label: 'actions.trash', group: 'manage' }
     ]

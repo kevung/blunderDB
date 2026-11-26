@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import { MatchSheetHTML } from '../../wailsjs/go/database/Database.js';
-import { SaveBoardImageDialog, SaveBoardSVG, OpenLocalPage } from '../../wailsjs/go/gui/App.js';
+import { saveAndOpenPage } from './printService.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { language, tMsg } from '../i18n';
@@ -44,22 +44,7 @@ export async function printMatchSheet(matchIds, options) {
         setStatusBarMessage(tMsg('matchSheet.failed', { err }));
         return null;
     }
-    try {
-        const path = await SaveBoardImageDialog('html', sheetFilename(matchIds));
-        if (!path) return null;
-        await SaveBoardSVG(path, html);
-        setStatusBarMessage(tMsg('matchSheet.saved', { path }));
-        try {
-            await OpenLocalPage(path);
-        } catch (err) {
-            logger.error('could not open the match sheet:', err);
-        }
-        return path;
-    } catch (err) {
-        logger.error('could not save the match sheet:', err);
-        setStatusBarMessage(tMsg('matchSheet.failed', { err }));
-        return null;
-    }
+    return saveAndOpenPage(html, sheetFilename(matchIds), { saved: 'matchSheet.saved', failed: 'matchSheet.failed' });
 }
 
 /** @param {number[]} matchIds */

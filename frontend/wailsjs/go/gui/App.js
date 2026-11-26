@@ -6,6 +6,10 @@ export function ActivateLibraryGroup(arg1) {
   return window['go']['gui']['App']['ActivateLibraryGroup'](arg1);
 }
 
+export function ArkID(arg1, arg2) {
+  return window['go']['gui']['App']['ArkID'](arg1, arg2);
+}
+
 export function AssistantAsk(arg1) {
   return window['go']['gui']['App']['AssistantAsk'](arg1);
 }
@@ -178,10 +182,6 @@ export function GetTournamentDisplayStatus() {
   return window['go']['gui']['App']['GetTournamentDisplayStatus']();
 }
 
-export function ArkID(arg1, arg2) {
-  return window['go']['gui']['App']['ArkID'](arg1, arg2);
-}
-
 export function GnubgID(arg1) {
   return window['go']['gui']['App']['GnubgID'](arg1);
 }
@@ -288,6 +288,10 @@ export function OpenLogsFolder() {
 
 export function OpenMETDialog() {
   return window['go']['gui']['App']['OpenMETDialog']();
+}
+
+export function OpenPaperArchiveDialog() {
+  return window['go']['gui']['App']['OpenPaperArchiveDialog']();
 }
 
 export function OpenPositionFilesDialog() {

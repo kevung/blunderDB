@@ -17,6 +17,7 @@
     import ManagePlayersModal from './ManagePlayersModal.svelte';
     import MatchSheet from './MatchSheet.svelte';
     import MatchPrintModal from './MatchPrintModal.svelte';
+    import PaperArchiveModal from './PaperArchiveModal.svelte';
     import { clampSheetWidth, rememberedSheetShare, rememberSheetShare } from '../utils/matchSheet.js';
     import { resizable } from '../utils/resizeHandle.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
@@ -64,6 +65,8 @@
     let selectedMatch = $state(null);
     /** The match the print dialog was opened on, null while it is closed. @type {number|null} */
     let printMatchId = $state(null);
+    /** The match the paper archive dialog was opened on, null while it is closed. @type {number|null} */
+    let archiveMatchId = $state(null);
     // The « Autres bases » panel speaks of the match the user selected: noted on the gesture, not
     // on selectedMatch, which hiding the tab and restoring the last visited match also move.
     /** @param {any} match */
@@ -594,6 +597,7 @@
                                       open: () => handleDoubleClick(match),
                                       exportMat: () => exportMatchMat(match),
                                       print: () => (printMatchId = match.id),
+                                      archive: () => (archiveMatchId = match.id),
                                       editTranscription: () => editMatchTranscription(match.id),
                                       swapPlayers: () => swapMatchPlayers(match, undefined),
                                       edit: () => startEditMatch(match, undefined),
@@ -774,6 +778,15 @@
     listedTotal={matchTotal}
     listAll={async () => (await matchListStore.allRows()).map((/** @type {Match} */ m) => m.id)}
     onclose={() => (printMatchId = null)}
+/>
+
+<PaperArchiveModal
+    open={archiveMatchId !== null}
+    matchId={archiveMatchId}
+    listedTotal={matchTotal}
+    listAll={async () => (await matchListStore.allRows()).map((/** @type {Match} */ m) => m.id)}
+    onimported={() => matchListStore.reload()}
+    onclose={() => (archiveMatchId = null)}
 />
 
 <style>

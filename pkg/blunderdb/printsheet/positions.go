@@ -147,7 +147,7 @@ func ResolvePositions(ctx context.Context, s storage.Storage, scope string, src 
 			return nil, "", fmt.Errorf("unknown token(s) in the query: %s: %w", strings.Join(unknown, ", "), storage.ErrInvalid)
 		}
 		if err := searchquery.Refusal(diags); err != nil {
-			return nil, "", fmt.Errorf("%v: %w", err, storage.ErrInvalid)
+			return nil, "", fmt.Errorf("%w: %w", err, storage.ErrInvalid)
 		}
 		title = strings.TrimSpace(src.Query)
 		if ids, err = s.Search().FindIDs(ctx, scope, filters, storage.ListOpts{Limit: MaxPositions + 1}); err != nil {
