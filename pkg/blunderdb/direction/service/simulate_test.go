@@ -8,7 +8,6 @@ import (
 	"math"
 	"reflect"
 	"runtime"
-	"runtime/debug"
 	"runtime/metrics"
 	"slices"
 	"strings"
@@ -304,13 +303,22 @@ func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 		return fmt.Sprintf(`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":%d,"qualifiers":1%s}]}`, size, more)
 	}
 	const refusal = "matches a phase"
-	// The live heap the collector marked, not HeapAlloc: HeapAlloc counts the garbage not yet
-	// collected, up to twice the live heap at the default GOGC, and how much of it a sampler
-	// sees depends on how fast the machine runs against its collector. A tight GOGC marks
-	// often enough for the peak to be seen; the live heap is never above what the run holds.
-	defer debug.SetGCPercent(debug.SetGCPercent(10))
+	// What a run holds is weighed by a full collection inside the run, between two of its
+	// events, while its goroutine, the only one allocating, waits: the heap the collector then
+	// marks is the run's, with no garbage. A sampler beside the run, or the live heap of the
+	// collections the pacer starts, also marks what the run allocates during the mark, an amount
+	// set by the cores the collector gets and so by the machine. The run holds the most near its
+	// end, where its matches have piled up; a weighing every few events sees it within a stride.
+	const stride = 64
 	live := []metrics.Sample{{Name: "/gc/heap/live:bytes"}}
-	liveHeap := func() uint64 { metrics.Read(live); return live[0].Value.Uint64() }
+	liveHeap := func() uint64 { runtime.GC(); metrics.Read(live); return live[0].Value.Uint64() }
+	var peak uint64
+	events := 0
+	service.ObserveSimulation(t, func() {
+		if events++; events%stride == 0 {
+			peak = max(peak, liveHeap())
+		}
+	})
 	for name, tc := range map[string]struct {
 		config, players string
 		refused, heavy  bool
@@ -347,27 +355,10 @@ func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 			}
 			continue
 		}
-		runtime.GC()
 		base := liveHeap()
-		peak := base
-		stop, sampled := make(chan struct{}), make(chan struct{})
-		go func() {
-			defer close(sampled)
-			tick := time.NewTicker(time.Millisecond)
-			defer tick.Stop()
-			for {
-				select {
-				case <-stop:
-					return
-				case <-tick.C:
-					peak = max(peak, liveHeap())
-				}
-			}
-		}()
+		peak, events = base, 0
 		_, err := service.Simulate(context.Background(), req)
-		close(stop)
-		<-sampled
-		grew := (max(peak, liveHeap()) - base) >> 20
+		grew := (peak - base) >> 20
 		t.Logf("%s: %d MiB of live heap (%v)", name, grew, err)
 		if err != nil && !errors.Is(err, service.ErrSimulationTooHeavy) {
 			t.Errorf("%s: %v; want an answer, or too heavy", name, err)
@@ -378,8 +369,8 @@ func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 		if heavy := errors.Is(err, service.ErrSimulationTooHeavy); heavy != tc.heavy {
 			t.Errorf("%s: too heavy %v (%v); want %v, counted on its first run", name, heavy, err, tc.heavy)
 		}
-		if grew > 16 {
-			t.Errorf("%s: held %d MiB of live heap; want 16 at most", name, grew)
+		if grew > 8 {
+			t.Errorf("%s: held %d MiB of live heap; want 8 at most", name, grew)
 		}
 	}
 }

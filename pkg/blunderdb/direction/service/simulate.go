@@ -90,6 +90,11 @@ var ErrSimulationTooHeavy = fmt.Errorf("direction: this format is too heavy to s
 // the first run, as a failed run at another.
 var errRunTooHeavy = errors.New("direction: run past its cost")
 
+// simulateObserve, nil outside the tests, is called on every event of a simulated run, in the
+// goroutine that plays it: a test weighs there what the run holds while nothing else allocates,
+// which no sampler running beside it can do on every machine.
+var simulateObserve func()
+
 // simulateMaxMinutes bounds the length a simulated tournament may have and still be
 // answered: past a year the figure says a break or a length is mistyped, and the end would
 // leave the dates RFC 3339 writes.
@@ -229,6 +234,9 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 		r := sim.Run(cfg, players, sim.Options{Seed: req.Seed + int64(i), Start: start, MaxSteps: simulateMaxSteps,
 			MinPerPoint: cfg.MinPerPoint, Search: search,
 			Hook: func(s *tournoi.State, _ tournoi.Event) error {
+				if simulateObserve != nil {
+					simulateObserve()
+				}
 				peak = max(peak, len(s.Running()))
 				if cost += eventCost(cfg, s); cost+int(search.Used)*simulateSearchStepCost > most {
 					return errRunTooHeavy
