@@ -13,6 +13,7 @@
     import { gridCells, playGroups, cellKey, cellMargin, tint, positionCell, positionAtScore, VERDICTS, VERDICT_LABELS } from '../utils/scoreMap.js';
     import { signed } from '../utils/rollMap.js';
     import { logger } from '../utils/logger.js';
+    import { nextMapTag } from '../utils/mapTag.js';
     import { t } from '../i18n';
 
     let { active = true } = $props();
@@ -28,7 +29,7 @@
     let targetPly = $state(MAX_PLY);
     let focus = $state(/** @type {string | null} */ (null));
     let detail = $state(/** @type {any} */ (null));
-    let tag = 0;
+    let tag = nextMapTag();
 
     let request = $derived(JSON.stringify([$positionStore, matchLength]));
 
@@ -38,14 +39,14 @@
         if (!on || !key) return;
         untrack(start);
         return () => {
-            tag++;
+            tag = nextMapTag();
             CancelScoreMap().catch(() => {});
             selectedMoveStore.set(null);
         };
     });
 
     async function start() {
-        const mine = ++tag;
+        const mine = (tag = nextMapTag());
         cells = Array(matchLength * matchLength).fill(null);
         decision = '';
         error = '';
@@ -92,7 +93,7 @@
         ];
     });
     onDestroy(() => {
-        tag++;
+        tag = nextMapTag();
         off.forEach((f) => f && f());
         CancelScoreMap().catch(() => {});
         selectedMoveStore.set(null);
@@ -134,7 +135,10 @@
     /** @param {any} cell */
     const dimmed = (cell) => focus !== null && cellKey(cell, kind) !== focus;
     /** @param {any} cell */
-    const isHere = (cell) => !!here && cell.awayOnRoll === here.mine && cell.awayOpponent === here.theirs;
+    const isHere = (cell) => !!here && cell.awayOnRoll === here.mine && cell.awayOpponent === here.theirs && !!cell.crawford === here.crawford;
+    // The 1-away lines are the Crawford game in a checker map only: a cube cell is post-Crawford.
+    /** @param {number} away */
+    const crawfordMark = (away) => (away === 1 && kind === 'checker' ? ' C' : '');
     /** @param {any} cell */
     const close = (cell) => tint(cellMargin(cell, kind)) === 'close';
 
@@ -183,14 +187,14 @@
                     <tr>
                         <th class="corner">{$t('maps.scores.me')} ↓ · {$t('maps.scores.opponent')} →</th>
                         {#each grid[0] ?? [] as _, j (j)}
-                            <th scope="col">{axisLabel(matchLength - j)}{matchLength - j === 1 ? ' C' : ''}</th>
+                            <th scope="col">{axisLabel(matchLength - j)}{crawfordMark(matchLength - j)}</th>
                         {/each}
                     </tr>
                 </thead>
                 <tbody>
                     {#each grid as line, i (i)}
                         <tr>
-                            <th scope="row">{axisLabel(matchLength - i)}{matchLength - i === 1 ? ' C' : ''}</th>
+                            <th scope="row">{axisLabel(matchLength - i)}{crawfordMark(matchLength - i)}</th>
                             {#each line as cell, j (j)}
                                 {#if cell}
                                     <td>
@@ -261,7 +265,9 @@
                                 <div>{$t('maps.scores.second')} {detail.secondMove} <span class="num">{detail.secondEquity?.toFixed(3)}</span></div>
                             {/if}
                         {/if}
-                        <button type="button" class="evaluate" onclick={() => evaluateAt(detail)}>{$t('maps.scores.evaluate')}</button>
+                        {#if !detail.refused}
+                            <button type="button" class="evaluate" onclick={() => evaluateAt(detail)}>{$t('maps.scores.evaluate')}</button>
+                        {/if}
                     </div>
                 {/if}
             </div>

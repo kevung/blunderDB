@@ -11,11 +11,14 @@ export const COLOURED_PLAYS = 3;
 
 export const VERDICTS = ['no_double', 'double_take', 'double_pass', 'too_good'];
 
-/** The equity of a cube cell's best option and its margin over the next one.
+/** How close a cube cell's verdict is: the gap between not doubling and doubling and, when the
+ * verdict is a double, the opponent's gap between taking and passing too, the smaller of the two.
  * @param {any} cell */
 export function cubeMargin(cell) {
     const doubling = Math.min(cell.doubleTake, cell.doublePass);
-    return Math.abs(cell.noDouble - doubling);
+    const toDouble = Math.abs(cell.noDouble - doubling);
+    if (cell.noDouble > doubling) return toDouble;
+    return Math.min(toDouble, Math.abs(cell.doubleTake - cell.doublePass));
 }
 
 /** The cell's margin over its runner-up, null when it has none (a lone legal play, a refusal).
@@ -71,7 +74,9 @@ export function gridCells(cells, length) {
     return rows;
 }
 
-/** The away pair the position stands on, null at money.
+/** The away pair the position stands on, null at money. crawford says the position is the
+ * Crawford game (one side 1-away, stored as 1), as a cell's own flag: a post-Crawford position
+ * is never the Crawford cell.
  * @param {any} position @param {number} length */
 export function positionCell(position, length) {
     const score = position?.score ?? [-1, -1];
@@ -80,7 +85,8 @@ export function positionCell(position, length) {
     const mine = pointsAway(score[onRoll]);
     const theirs = pointsAway(score[1 - onRoll]);
     if (!(mine >= 1 && theirs >= 1) || mine > length || theirs > length) return null;
-    return { mine, theirs };
+    const crawford = mine === 1 ? theirs > 1 && score[onRoll] === 1 : theirs === 1 && score[1 - onRoll] === 1;
+    return { mine, theirs, crawford };
 }
 
 /** The stored away score of a cell: 1-away is 1 in the Crawford game, 0 after it.

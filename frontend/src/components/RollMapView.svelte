@@ -5,13 +5,14 @@
     // own evaluation, so a newer start supersedes the last.
     import { onMount, onDestroy, untrack } from 'svelte';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
-    import { StartRollMap, StartRollMapAfterPlay, CancelRollMap, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+    import { StartRollMap, CancelRollMap, LegalMoves } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetDisplayPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
     import { positionStore } from '../stores/positionStore';
     import { rollTrailStore } from '../stores/mapStore.js';
     import { descend, climbTo } from '../services/mapService.js';
     import { ROLL_COUNT, rollStats, sortRows, deviationScale, signed, rollLabel, rollIndex } from '../utils/rollMap.js';
-    import { canonicalMove } from '../utils/moveNotation.js';
+    import { positionAfterPlay } from '../utils/moveNotation.js';
+    import { nextMapTag } from '../utils/mapTag.js';
     import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
 
@@ -28,13 +29,13 @@
     let marketOnly = $state(false);
     let selected = $state(-1);
     let others = $state(/** @type {Array<any> | null} */ (null));
-    let tag = 0;
+    let tag = nextMapTag();
 
     let trail = $derived($rollTrailStore);
     let last = $derived(trail.steps.length ? trail.steps[trail.steps.length - 1] : null);
     let shown = $derived(last ? last.after : $positionStore);
-    // What the map is of: the position, or the play that led to it.
-    let request = $derived(JSON.stringify(last ? [last.before, last.die1, last.die2, last.move] : [$positionStore]));
+    // What the map is of: the board on screen, the trail's last one when it has a play.
+    let request = $derived(JSON.stringify(shown));
 
     $effect(() => {
         const key = request;
@@ -42,13 +43,13 @@
         if (!on || !key) return;
         untrack(start);
         return () => {
-            tag++;
+            tag = nextMapTag();
             CancelRollMap().catch(() => {});
         };
     });
 
     async function start() {
-        const mine = ++tag;
+        const mine = (tag = nextMapTag());
         rows = Array(ROLL_COUNT).fill(null);
         done = null;
         error = '';
@@ -64,10 +65,8 @@
         }
         if (mine !== tag) return;
         targetPly = ply;
-        const step = last;
         try {
-            if (step) await StartRollMapAfterPlay(step.before, step.die1, step.die2, step.move, ply, pruneK, mine);
-            else await StartRollMap(/** @type {any} */ ($positionStore), ply, pruneK, mine);
+            await StartRollMap(/** @type {any} */ (shown), ply, pruneK, mine);
         } catch (e) {
             if (mine === tag) error = String(e);
         }
@@ -94,7 +93,7 @@
         ];
     });
     onDestroy(() => {
-        tag++;
+        tag = nextMapTag();
         off.forEach((f) => f && f());
         CancelRollMap().catch(() => {});
     });
@@ -143,24 +142,31 @@
         if (row) descend(row.die1, row.die2, row.move ?? '');
     }
 
+    /** @param {any} board */
+    const boardKey = (board) => JSON.stringify([(board?.points ?? []).map((/** @type {any} */ p) => (p.checkers ? [p.color, p.checkers] : 0)), board?.bearoff ?? []]);
+
+    /** The legal plays of the selected roll but its best one, told apart by the board they leave. */
     async function chooseOther() {
         const row = selectedRow;
-        if (!row) return;
-        if (row.dance) return;
+        if (!row || row.dance) return;
+        const asked = request;
+        const rolled = { ...shown, dice: [row.die1, row.die2] };
+        const best = row.move ? positionAfterPlay(rolled, row.die1, row.die2, row.move) : null;
+        const bestKey = best ? boardKey(best.board) : null;
+        let plays = [];
         try {
-            const pruneK = await GetGammonNetPruneK();
-            const result = await EvaluatePositionImmediate({ ...shown, dice: [row.die1, row.die2] }, pruneK, 64);
-            others = (result?.moves ?? []).map((/** @type {any} */ m) => m.move).filter((/** @type {string} */ m) => canonicalMove(m) !== canonicalMove(row.move ?? ''));
+            plays = (await LegalMoves(/** @type {any} */ (rolled))) ?? [];
         } catch (e) {
             logger.error('roll map: legal plays:', e);
-            others = [];
         }
+        if (asked !== request || selectedRow !== row) return;
+        others = plays.filter((/** @type {any} */ p) => boardKey(p.result?.board) !== bestKey);
     }
 
-    /** @param {string} move */
-    function playOther(move) {
+    /** @param {any} play a domain.LegalPlay */
+    function playOther(play) {
         const row = selectedRow;
-        if (row) descend(row.die1, row.die2, move);
+        if (row) descend(row.die1, row.die2, play.notation, play.result?.board);
     }
 
     /** One link of the trail: who played, the roll and its play. */
@@ -268,8 +274,8 @@
             </div>
             {#if others}
                 <ul class="others">
-                    {#each others as move (move)}
-                        <li><button type="button" onclick={() => playOther(move)}>{move}</button></li>
+                    {#each others as play, i (i)}
+                        <li><button type="button" onclick={() => playOther(play)}>{play.notation}</button></li>
                     {/each}
                 </ul>
             {/if}

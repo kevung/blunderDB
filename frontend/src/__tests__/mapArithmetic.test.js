@@ -90,6 +90,10 @@ describe('score map arithmetic', () => {
         expect(tint(0.2)).toBe('strong');
         expect(tint(null)).toBe('strong');
         expect(cellMargin({ noDouble: 0.5, doubleTake: 0.7, doublePass: 1 }, 'cube')).toBeCloseTo(0.2, 10);
+        // a double whose take and pass are close is a close cell, however clear the double
+        expect(cellMargin({ noDouble: 0.2, doubleTake: 0.995, doublePass: 1 }, 'cube')).toBeCloseTo(0.005, 10);
+        // not doubling: the take/pass gap does not count
+        expect(cellMargin({ noDouble: 0.5, doubleTake: 0.4, doublePass: 0.41 }, 'cube')).toBeCloseTo(0.1, 10);
     });
     test('the grid closes on the 1-away lines', () => {
         const cells = Array.from({ length: 9 }, (_, i) => ({ awayOnRoll: Math.floor(i / 3) + 1, awayOpponent: (i % 3) + 1 }));
@@ -99,12 +103,22 @@ describe('score map arithmetic', () => {
     });
     test('the position stands on its own score and a cell becomes a score again', () => {
         const pos = opening();
-        expect(positionCell(pos, 9)).toEqual({ mine: 5, theirs: 3 });
+        expect(positionCell(pos, 9)).toEqual({ mine: 5, theirs: 3, crawford: false });
         expect(positionCell({ ...pos, score: [-1, -1] }, 9)).toBeNull();
         expect(rawAway(1, true)).toBe(1);
         expect(rawAway(1, false)).toBe(0);
         const at = positionAtScore(pos, { awayOnRoll: 4, awayOpponent: 1, crawford: true });
         expect(at.score).toEqual([4, 1]);
         expect(at.player_on_roll).toBe(0);
+    });
+    test('the Crawford game and post-Crawford stand on different cells', () => {
+        const pos = opening();
+        // on roll 1-away in the Crawford game (stored 1), opponent 3-away
+        expect(positionCell({ ...pos, score: [1, 3] }, 9)).toEqual({ mine: 1, theirs: 3, crawford: true });
+        // the same distances after the Crawford game (stored 0)
+        expect(positionCell({ ...pos, score: [0, 3] }, 9)).toEqual({ mine: 1, theirs: 3, crawford: false });
+        expect(positionCell({ ...pos, score: [3, 1] }, 9)).toEqual({ mine: 3, theirs: 1, crawford: true });
+        // DMP is never the Crawford game
+        expect(positionCell({ ...pos, score: [0, 0] }, 9)).toEqual({ mine: 1, theirs: 1, crawford: false });
     });
 });

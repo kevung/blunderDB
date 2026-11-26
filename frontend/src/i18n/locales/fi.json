@@ -3708,10 +3708,10 @@
         },
         "verdict": {
             "short": {
-                "no_double": "ET",
-                "double_take": "T/H",
-                "double_pass": "T/P",
-                "too_good": "LH"
+                "no_double": "ND",
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
             },
             "long": {
                 "no_double": "Ei tuplausta",

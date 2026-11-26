@@ -83,4 +83,51 @@ describe('ScoreMapView', () => {
         await Promise.resolve();
         expect(container.querySelector('[role="alert"]').textContent).toContain('nope');
     });
+
+    test('a view mounted anew takes no answer meant for the one it replaced', async () => {
+        const first = render(ScoreMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartScoreMap).toHaveBeenCalledTimes(1));
+        const old = app.StartScoreMap.mock.calls[0][4];
+        first.unmount();
+        const { container } = render(ScoreMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartScoreMap).toHaveBeenCalledTimes(2));
+        expect(app.StartScoreMap.mock.calls[1][4]).toBeGreaterThan(old);
+        cells(3).forEach((cell, index) => handlers['gammonnet-scoremap:cell']({ tag: old, index, cell }));
+        await Promise.resolve();
+        expect(container.querySelectorAll('.cell:not(.blank)')).toHaveLength(0);
+    });
+
+    test('an impossible cell opens its detail without Evaluate', async () => {
+        const { container, queryByText } = render(ScoreMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartScoreMap).toHaveBeenCalled());
+        const tag = app.StartScoreMap.mock.calls.at(-1)[4];
+        cells(3).forEach((cell, index) => handlers['gammonnet-scoremap:cell']({ tag, index, cell: { ...cell, refused: true, reason: 'unreachable' } }));
+        await Promise.resolve();
+        await fireEvent.click(container.querySelector('.cell:not(.blank)'));
+        expect(container.querySelector('.detail')).not.toBeNull();
+        expect(queryByText(/^Évaluer|^Evaluate/)).toBeNull();
+    });
+
+    test('a cube map marks no Crawford line and frames no post-Crawford score on a Crawford cell', async () => {
+        positionStore.set({ ...emptyPosition(), score: [0, 3], dice: [0, 0] });
+        const { container } = render(ScoreMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartScoreMap).toHaveBeenCalled());
+        const tag = app.StartScoreMap.mock.calls.at(-1)[4];
+        const cube = cells(3).map((c) => ({ ...c, crawford: false, verdict: 'no_double', noDouble: 0.1, doubleTake: 0.3, doublePass: 1, move: undefined }));
+        cube.forEach((cell, index) => handlers['gammonnet-scoremap:cell']({ tag, index, cell }));
+        await Promise.resolve();
+        expect([...container.querySelectorAll('th')].some((th) => th.textContent.includes('C'))).toBe(false);
+        expect(container.querySelectorAll('.cell.here')).toHaveLength(1);
+    });
+
+    test('a post-Crawford position is not framed on the Crawford cell of a checker map', async () => {
+        positionStore.set({ ...emptyPosition(), score: [0, 3], dice: [3, 1] });
+        const { container } = render(ScoreMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartScoreMap).toHaveBeenCalled());
+        const tag = app.StartScoreMap.mock.calls.at(-1)[4];
+        cells(3).forEach((cell, index) => handlers['gammonnet-scoremap:cell']({ tag, index, cell }));
+        await Promise.resolve();
+        expect(container.querySelectorAll('.cell.here')).toHaveLength(0);
+        expect([...container.querySelectorAll('th[scope="row"]')].some((th) => th.textContent.includes('C'))).toBe(true);
+    });
 });

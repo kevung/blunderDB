@@ -250,22 +250,26 @@ et ne se doublent pas à 4-away/2-away. La vue Scores montre la décision de la
 position à tous les scores d'un match de N points (N impair, de 3 à 15). La
 ligne est le nombre de points qu'il reste à faire au joueur au trait
 (*Moi*), la colonne celui de son adversaire (*Adversaire*) ; la dernière
-ligne et la dernière colonne sont le 1-away, repéré par « C » : ses cases
-Crawford sont celles de la partie Crawford, les autres sont post-Crawford.
+ligne et la dernière colonne sont le 1-away. Avec des dés, elles sont la
+partie Crawford, repérée par « C » ; sans dés, elles sont post-Crawford, le
+videau étant mort dans la partie Crawford. Une position post-Crawford n'est
+donc jamais encadrée sur une case Crawford.
 
 Avec des dés, chaque case porte la lettre du meilleur coup à ce score (A le
 plus fréquent de la grille, puis B, C…) et son équité en dessous. Les trois
 premiers coups ont chacun une couleur ; à partir du quatrième, un groupe gris
 garde sa lettre. La teinte est plus forte quand la marge sur le deuxième coup
 est large (0,050 et plus), et « ≈ » marque une marge sous 0,010. Sans dés, la
-case dit le verdict de videau — *PD* (pas de double), *DP* (double, prend),
-*DR* (double, refuse), *TB* (trop bon) — avec les mêmes teintes. Le score de
+case dit le verdict de videau — *ND* (pas de double), *D/T* (double, prend),
+*D/P* (double, passe), *TG* (trop bon) — avec les mêmes teintes ; la marge
+d'un double est la plus petite de celle entre doubler et ne pas doubler et de
+celle entre prendre et passer. Le score de
 la position est encadré ; une case encore à 0-ply est en pointillé. La
 légende à droite a un bouton par coup (lettre, notation, nombre de scores) :
 un clic met ses cases en évidence. Le survol d'une case montre son coup sur
 le plateau. Un clic sur une case ouvre un volet avec le score, les deux
 meilleurs coups et leurs équités, et **Évaluer**, qui bascule la vue Décision
-à ce score. Le sélecteur *Match en N* choisit la longueur ; sa valeur par
+à ce score ; une case où la position est impossible n'a pas **Évaluer**. Le sélecteur *Match en N* choisit la longueur ; sa valeur par
 défaut se règle dans la configuration, onglet gammonNet.
 
 Les commandes ``sm`` et ``cm`` ouvrent cette vue. Elle remplace l'ancienne
@@ -286,11 +290,12 @@ doubler. L'en-tête donne aussi le meilleur et le pire jet, et l'écart-type.
 Le fil d'Ariane (« Départ › moi 6-4 24/14 › lui 5-2 13/8 24/22 › Mes jets »)
 dit d'où vient la position évaluée, et le plateau le suit ; chaque maillon
 remonte. Sur un jet sélectionné, **Réponses** joue son meilleur coup et affiche
-les 21 réponses suivantes, **Autre coup…** en fait choisir un autre. La
-profondeur est sans limite. Changer la position d'une autre façon remet le fil
-à zéro. Le menu contextuel d'un coup candidat (Analyse ou Évaluation) offre
-*Réponses adverses*, qui ouvre cette vue sur la position après ce coup, et
-*Carte des scores*. La commande ``jets`` ouvre la vue.
+les 21 réponses suivantes, **Autre coup…** fait choisir un autre coup légal
+de ce jet. La profondeur est sans limite. Changer la position d'une autre
+façon remet le fil à zéro. Le menu contextuel d'un coup candidat (Analyse ou
+Évaluation) offre *Réponses adverses*, qui ouvre cette vue sur la position
+après ce coup (grisé quand la notation du coup peut mener à plusieurs
+plateaux), et *Carte des scores*. La commande ``jets`` ouvre la vue.
 
 .. _panneau_reference:
 

@@ -37,26 +37,30 @@ export function openRollReplies(position, move) {
     return true;
 }
 
-/** Descend: play move on the roll die1-die2 of the trail's position.
- * @param {number} die1 @param {number} die2 @param {string} move */
-export function descend(die1, die2, move) {
+/** Descend: play move on the roll die1-die2 of the trail's position. board, when given, is the
+ * board the play leaves, as LegalMoves returns it: the notation is then a label only, never
+ * resolved again.
+ * @param {number} die1 @param {number} die2 @param {string} move @param {any} [board] */
+export function descend(die1, die2, move, board) {
     const trail = get(rollTrailStore);
     const before = trail.steps.length ? trailPosition(trail) : get(positionStore);
-    const after = positionAfterPlay({ ...before, dice: [die1, die2] }, die1, die2, move);
+    const after = positionAfterPlay({ ...before, dice: [die1, die2] }, die1, die2, board ? '' : move);
     if (!after) return false;
+    if (board) after.board = JSON.parse(JSON.stringify(board));
     const root = trail.root ?? JSON.parse(JSON.stringify(before));
     rollTrailStore.set({ root, steps: [...trail.steps, { die1, die2, move, before: { ...before, dice: [die1, die2] }, after }] });
     sendPositionToEval(after);
     return true;
 }
 
-/** Climb back to the n-th link of the trail (0 is the start).
+/** Climb back to the n-th link of the trail (0 is the start, where the trail ends: a later
+ * descent starts from the board as it then is).
  * @param {number} n */
 export function climbTo(n) {
     const trail = get(rollTrailStore);
     if (n >= trail.steps.length) return;
     const steps = trail.steps.slice(0, n);
-    rollTrailStore.set({ root: trail.root, steps });
+    rollTrailStore.set({ root: steps.length ? trail.root : null, steps });
     sendPositionToEval(steps.length ? steps[steps.length - 1].after : trail.root);
 }
 

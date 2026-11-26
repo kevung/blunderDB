@@ -3709,9 +3709,9 @@
         "verdict": {
             "short": {
                 "no_double": "ND",
-                "double_take": "D/A",
-                "double_pass": "D/R",
-                "too_good": "TB"
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
             },
             "long": {
                 "no_double": "Sin doble",

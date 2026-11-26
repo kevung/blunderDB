@@ -6,9 +6,8 @@ import { get } from 'svelte/store';
 const handlers = vi.hoisted(() => /** @type {Record<string, (e: any) => void>} */ ({}));
 const app = vi.hoisted(() => ({
     StartRollMap: vi.fn().mockResolvedValue(undefined),
-    StartRollMapAfterPlay: vi.fn().mockResolvedValue(undefined),
     CancelRollMap: vi.fn().mockResolvedValue(undefined),
-    EvaluatePositionImmediate: vi.fn().mockResolvedValue({ moves: [{ move: '24/14' }, { move: '13/7 13/9' }] })
+    LegalMoves: vi.fn()
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => app);
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
@@ -105,12 +104,60 @@ describe('RollMapView', () => {
         expect(get(rollTrailStore).steps).toHaveLength(1);
         expect(get(rollTrailStore).steps[0]).toMatchObject({ die1: 4, die2: 6, move: '24/14' });
         expect(sendPositionToEval).toHaveBeenCalled();
-        await vi.waitFor(() => expect(app.StartRollMapAfterPlay).toHaveBeenCalled());
-        expect(app.StartRollMapAfterPlay.mock.calls[0].slice(1, 4)).toEqual([4, 6, '24/14']);
+        // the replies are computed on the board the trail shows, never on a notation resolved again
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalledTimes(2));
+        const after = get(rollTrailStore).steps[0].after;
+        expect(app.StartRollMap.mock.calls[1][0]).toEqual(after);
+        expect(after.player_on_roll).toBe(1);
+        expect(after.dice).toEqual([0, 0]);
+        expect(after.board.points[24].checkers).toBe(1);
+        expect(after.board.points[14]).toEqual({ checkers: 1, color: 0 });
         // the trail reads: start, my play, his rolls
         expect(container.querySelectorAll('.trail .crumb')).toHaveLength(3);
         // climbing back
         await fireEvent.click(container.querySelector('.trail .crumb'));
         expect(get(rollTrailStore).steps).toHaveLength(0);
+    });
+
+    test('a view mounted anew takes no answer meant for the one it replaced', async () => {
+        const first = render(RollMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalledTimes(1));
+        const old = app.StartRollMap.mock.calls[0][3];
+        first.unmount();
+        const { container } = render(RollMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalledTimes(2));
+        expect(app.StartRollMap.mock.calls[1][3]).toBeGreaterThan(old);
+        await feed(old);
+        expect(container.querySelectorAll('tbody tr')).toHaveLength(0);
+        await feed(app.StartRollMap.mock.calls[1][3]);
+        expect(container.querySelectorAll('tbody tr')).toHaveLength(21);
+    });
+
+    test('another play lists the legal plays but the best, told apart by their board', async () => {
+        const board = (from, to) => {
+            const b = JSON.parse(JSON.stringify(opening().board));
+            b.points[from] = { checkers: b.points[from].checkers - 1, color: 0 };
+            b.points[to] = { checkers: b.points[to].checkers + 1, color: 0 };
+            return b;
+        };
+        // the best play under another spelling, and one other play
+        app.LegalMoves.mockResolvedValue([
+            { notation: '24/18 18/14', result: { board: board(24, 14) } },
+            { notation: '13/7 13/9', result: { board: board(13, 9) } }
+        ]);
+        const { container, getByText, findByText } = render(RollMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalled());
+        await feed(app.StartRollMap.mock.calls[0][3]);
+        const row = [...container.querySelectorAll('tbody tr')].find((r) => r.querySelector('.roll').textContent === '4-6');
+        await fireEvent.click(row);
+        await fireEvent.click(getByText(/^Autre coup|^Other play/));
+        await findByText('13/7 13/9');
+        expect(container.querySelectorAll('.others li')).toHaveLength(1);
+        expect(app.LegalMoves.mock.calls[0][0].dice).toEqual([4, 6]);
+        await fireEvent.click(getByText('13/7 13/9'));
+        const step = get(rollTrailStore).steps[0];
+        expect(step.move).toBe('13/7 13/9');
+        expect(step.after.board.points[9]).toEqual({ checkers: 1, color: 0 });
+        expect(step.after.player_on_roll).toBe(1);
     });
 });

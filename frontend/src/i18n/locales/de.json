@@ -3708,10 +3708,10 @@
         },
         "verdict": {
             "short": {
-                "no_double": "KD",
-                "double_take": "D/A",
+                "no_double": "ND",
+                "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "ZG"
+                "too_good": "TG"
             },
             "long": {
                 "no_double": "Kein Doppel",

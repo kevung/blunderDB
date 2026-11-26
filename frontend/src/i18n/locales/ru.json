@@ -3708,10 +3708,10 @@
         },
         "verdict": {
             "short": {
-                "no_double": "НД",
-                "double_take": "Д/П",
-                "double_pass": "Д/О",
-                "too_good": "СХ"
+                "no_double": "ND",
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
             },
             "long": {
                 "no_double": "Без удвоения",

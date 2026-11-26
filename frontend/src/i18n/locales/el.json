@@ -3708,10 +3708,10 @@
         },
         "verdict": {
             "short": {
-                "no_double": "ΧΔ",
-                "double_take": "Δ/Π",
-                "double_pass": "Δ/Α",
-                "too_good": "ΠΚ"
+                "no_double": "ND",
+                "double_take": "D/T",
+                "double_pass": "D/P",
+                "too_good": "TG"
             },
             "long": {
                 "no_double": "Χωρίς διπλασιασμό",
