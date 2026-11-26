@@ -237,3 +237,62 @@ sous le noir numéroté) ; le nombre imprimé à côté du plateau de sortie l'e
 Seuils de forme (anneau couvrant 85 % des rayons, moins de 35 % d'encre juste au-delà ; intérieur
 noir à partir de 60 %, blanc sous 35 %) choisis sur les deux polices du livre et vérifiés sur des
 glyphes synthétiques.
+
+## Effet de #999 et #1001 (réglage seulement)
+
+Lecteur de structure seul (`TestMeasureContextOnPages`, `document/measure_reglage_test.go`) :
+chaque livre scanné est lu sur ses seules pages de réglage (`tirage.json`), aucune page de
+réserve n'est composée. Avant = `main` à 071775534. Deep Cube (police XG) ne passe pas par ce
+lecteur et n'est pas affecté. Règles : ADR-0121, après revue (attribution des mots et des
+carrés au plateau le plus proche, face vierge attestée sur trois diagrammes, aspect jugé
+contre l'étirement des pions, seuil de face vierge relatif au contraste du carré).
+
+| Livre | Diag. | videau lu | doutes videau | dés lus | doutes dés | trait lu |
+|---|---:|---|---|---|---|---|
+| 501 Problems (Robertie) | 359 | 0 → 256 | 242 → 103 | 0 → 0 | 0 → 1 | 0 → 0 |
+| Boot Camp (Trice) | 179 | 65 → 65 | 79 → 5 | 0 → 0 | 0 → 0 | 0 → 0 |
+| Cube Like a Boss | 230 | 61 → 61 | 53 → 53 | 0 → 0 | 0 → 0 | 0 → 0 |
+| Endgame Technique | 248 | 189 → 189 | 59 → 59 | 0 → 3 | 80 → 77 | 52 → 52 |
+| Masterclass | 173 | 3 → 3 | 43 → 43 | 1 → 42 | 90 → 49 | 88 → 88 |
+| Opening Concepts 2017 | 240 | 6 → 6 | 1 → 1 | 1 → 4 | 49 → 46 | 21 → 21 |
+| Back Checker Strategy | 217 | 41 → 41 | 2 → 2 | 0 → 0 | 29 → 29 | 6 → 6 |
+| Classic Backgammon Revisited | 126 | 47 → 51 | 13 → 5 | 0 → 0 | 0 → 0 | 0 → 0 |
+| Opening Concepts (Kageyama, Herrera) | 100 | 1 → 1 | 22 → 5 | 0 → 0 | 20 → 20 | 18 → 18 |
+| Magriel & Roberts | 441 | 0 → 5 | 15 → 11 | 0 → 0 | 5 → 5 | 0 → 0 |
+| Jacoby & Crawford | 65 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 |
+| Woolsey, Encyclopedia | 142 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 | 0 → 0 |
+| **Total** | | 413 → 678 | 529 → 287 | 2 → 49 | 273 → 227 | 185 → 185 |
+
+- **Aucune lecture perdue** : videau, dés et trait lus ne baissent sur aucun livre.
+- **Videau vierge** (501 Problems, Magriel et Roberts) : lu centré seulement là où le document
+  dessine un carré seul vierge au même endroit à côté d'au moins trois diagrammes. Magriel et
+  Roberts : 5 lus, 2 faces vierges isolées laissées en doute. Vérifié à l'œil sur 501 Problems
+  p. 21 et sur Magriel et Roberts p. 105.
+- **Aspect et attribution des carrés** : les piles de pions sortis de Classic
+  Revisited ne passent plus pour un second videau. Les 4 nouvelles lectures (p. 165, 179,
+  183 et 185) ont été vérifiées à l'œil : un 2 du côté de son propriétaire. 501 Problems
+  garde 103 carrés non trouvés.
+- **Carré cherché plus loin** (Boot Camp 77 → 2 « none is found », Opening Concepts 21 → 4) :
+  un « 64 » au milieu trouvé mais non lu ne laisse pas de doute, il reste sous le défaut.
+- **Doute qui nomme pourquoi** : chiffres non reconnus, valeur qui n'est pas celle d'un videau,
+  aucun chiffre trouvé (clair sur foncé, ou trop petit), ou face vierge isolée.
+- **Dés** : confirmés par un jet nommé (« rolls a 65 ») ou un coup écrit (« 2/0 2/1 »,
+  « 6/5*(2) »), du texte attribué à ce diagramme, deux fois si le texte cite plusieurs jets.
+  Vérifié à l'œil : Masterclass p. 26 et p. 183, Endgame p. 17, p. 138 et p. 213.
+- Restent : Cube Like a Boss 53 videaux clair sur foncé hors du cadre cherché, dés non comptés
+  (« N dice drawn »), du ressort de la localisation.
+
+### Garde de la face vierge (réglage seulement)
+
+Règle ajoutée : une face vierge n'est lue centrée que si le document n'imprime jamais, à la même
+place (hauteur et côté du champ) sur un autre diagramme, un videau dont la face n'est pas vierge
+et n'est pas lue 64 ; sinon doute nommé (« where N other diagrams print a value »). Même banc
+(`TestMeasureContextOnPages`, `tirage.json`, pages de réglage seulement), lecteur à 56176ce81.
+
+- Les douze livres scannés donnent exactement les comptes de la colonne « après » du tableau
+  ci-dessus (videau lu 678, doutes videau 287, dés lus 49) : aucune lecture perdue, aucune
+  gagnée.
+- La garde ne se déclenche sur aucun diagramme du réglage : là où ces livres dessinent un
+  videau vierge (501 Problems, Magriel et Roberts), aucun autre diagramme n'imprime de valeur à
+  la même place. Elle vaut pour les documents inconnus, où un chiffre perdu au scan ferait
+  sinon lire « centré » à tort.
