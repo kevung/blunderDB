@@ -84,6 +84,9 @@ func (a *App) ImportFiles(paths []string, background bool) (ImportFilesSummary, 
 	if a.db == nil {
 		return ImportFilesSummary{}, fmt.Errorf("no database is currently open")
 	}
+	// A dropped HTML file that is not an archive page is passed over, as a
+	// folder walk passes it over.
+	paths = ingest.KeepImportable(paths)
 	if !background {
 		group := a.activeGroup()
 		job := a.jobs.Start(jobs.Spec{Kind: jobs.Import, Library: group, Priority: jobs.Requested, Cancel: a.db.CancelImport})
@@ -129,6 +132,7 @@ func (a *App) ImportFiles(paths []string, background bool) (ImportFilesSummary, 
 // a borrowed handle and in a batch of its own named source: what a watched
 // folder brings in for a group the user has left.
 func (a *App) ImportFilesIn(group int, paths []string, source string) (ImportFilesSummary, error) {
+	paths = ingest.KeepImportable(paths)
 	a.libs.mu.Lock()
 	group, lent, err := a.borrowLibraryLocked(group)
 	if err != nil {

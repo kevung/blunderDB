@@ -186,7 +186,7 @@ func (w *Watcher) scan() (map[string]fileState, error) {
 			continue
 		}
 		path := filepath.Join(w.dir, e.Name())
-		if !ingest.IsImportable(path) && !ingest.IsLibraryFile(path) {
+		if !ingest.IsImportableFile(path) && !ingest.IsLibraryFile(path) {
 			continue
 		}
 		info, err := e.Info()

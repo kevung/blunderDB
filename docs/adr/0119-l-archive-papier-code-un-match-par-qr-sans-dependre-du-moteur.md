@@ -49,7 +49,11 @@ ses poids ou son générateur de coups ont changé.
    déjà en base, de la même archive ou d'un autre format (hachage canonique), est un doublon.
    L'archive vit sur le contrat de stockage (`ingest/archive.go`) : la base (CLI, interface),
    le démon (`/v1/exports.archive`, `/v1/imports.archive`) et l'import par lot (une page
-   `.html` dans `mapFile`, donc le glisser-déposer) la lisent et l'écrivent de la même façon.
+   `.html` dans `mapFile`, donc le glisser-déposer et le dossier surveillé) la lisent et
+   l'écrivent de la même façon. Un `.html` qui n'est pas une page d'archive est écarté à la
+   collecte (`ingest.IsImportableFile`, qui regarde le contenu) : un dossier où des exports
+   HTML voisinent avec les matchs n'est pas une liste de fichiers refusés. Les images de scan
+   ne passent que par `archive import` et `/v1/imports.archive`.
 8. **Règles d'export et ADR-0007** : la vidéo ne sort que par son URL
    (`issuance.CarriedVideoSource`) ; aucune métadonnée de la bibliothèque n'est copiée : l'archive
    porte des matchs, pas une base, et rien n'y entre par exclusion (la liste

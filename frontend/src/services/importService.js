@@ -954,7 +954,7 @@ async function finishImportBatch(batchID) {
 }
 
 // Extensions the backend pipeline reads without help from the frontend.
-const PIPELINE_EXTENSIONS = ['.xg', '.xgp', '.bgf', '.ogxm', '.sgf', '.mat'];
+const PIPELINE_EXTENSIONS = ['.xg', '.xgp', '.bgf', '.ogxm', '.sgf', '.mat', '.html', '.htm'];
 
 // appendErrors adds to the list in place: copying it at every failure is
 // quadratic over a folder of thousands of broken files.
@@ -1394,7 +1394,7 @@ export async function classifyDroppedFiles(paths) {
                 dbFiles.push(p);
             } else if (['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
                 captures.push(p);
-            } else if (['txt', 'xg', 'xgp', 'sgf', 'mat', 'bgf', 'ogxm'].includes(ext)) {
+            } else if (['txt', 'xg', 'xgp', 'sgf', 'mat', 'bgf', 'ogxm', 'html', 'htm'].includes(ext)) {
                 importFiles.push(p);
             } else {
                 unsupported.push(p);

@@ -147,6 +147,21 @@ describe('le dossier surveillé', () => {
         expect(StopFolderWatch).toHaveBeenCalled();
     });
 
+    test("une page d'archive d'un groupe non affiché part en fond, comme un match", async () => {
+        await initFolderWatch();
+        groupIdsStore.set([1, 2]);
+        activeGroupId.set(2);
+        try {
+            await emitFiles({ group: 1, files: ['/matches/archive.html', '/matches/vieux.HTM'] });
+            expect(ImportFilesIn).toHaveBeenCalledWith(1, ['/matches/archive.html', '/matches/vieux.HTM'], '2 files');
+            expect(importedBatches).toEqual([]);
+        } finally {
+            groupIdsStore.set([1]);
+            activeGroupId.set(1);
+            groupActivityStore.set(new Map());
+        }
+    });
+
     test("les fichiers d'un groupe non affiché vont à sa bibliothèque, en fond ; une base attend son retour", async () => {
         await initFolderWatch();
         groupIdsStore.set([1, 2]);

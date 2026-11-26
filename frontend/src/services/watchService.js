@@ -22,7 +22,7 @@ const pending = new Map();
 // Ce que le pipeline lit seul, sans l'interface : importé en fond dans un groupe
 // non affiché. Le reste (une base à fusionner, un texte de position) attend que
 // son groupe revienne à l'écran.
-const BACKGROUND_EXTENSIONS = ['.xg', '.xgp', '.bgf', '.ogxm', '.sgf', '.mat'];
+const BACKGROUND_EXTENSIONS = ['.xg', '.xgp', '.bgf', '.ogxm', '.sgf', '.mat', '.html', '.htm'];
 
 /**
  * Démarre l'écoute et, si configurée et qu'une base est ouverte, la

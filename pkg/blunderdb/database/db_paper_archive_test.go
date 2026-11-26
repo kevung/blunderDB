@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/arkqr"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
@@ -194,5 +195,52 @@ func TestPaperArchiveRoundTrip_MoneySession(t *testing.T) {
 	}
 	if got, err := batch.GetMatchByID(outs[0].MatchID); err != nil || !got.MatchDate.Equal(at) || got.HasJacoby == nil || !*got.HasJacoby {
 		t.Fatalf("pipeline match: %+v (%v)", got, err)
+	}
+}
+
+// The batch pipeline over a folder of a .mat, an archive page and an HTML
+// file of another program: two matches, nothing refused.
+func TestPaperArchive_BatchPassesOverOtherHTML(t *testing.T) {
+	t.Parallel()
+	src := newTestDB(t)
+	if _, err := src.ImportGnuBGMatch(filepath.Join("testdata", "test.mat")); err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	if _, err := src.ExportPaperArchive(nil, filepath.Join(dir, "archive.html"), ""); err != nil {
+		t.Fatal(err)
+	}
+	mat, err := os.ReadFile(filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "charlot.mat"), mat, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	foreign := filepath.Join(dir, "charlot.html")
+	if err := os.WriteFile(foreign, []byte("<!doctype html><p>Game 1</p>"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	files, err := ingest.CollectFiles(dir, true)
+	if err != nil || len(files) != 2 {
+		t.Fatalf("collected %v (%v), want the .mat and the archive page", files, err)
+	}
+	// A list that names the foreign page — a drop — loses it the same way.
+	if kept := ingest.KeepImportable(append(files, foreign)); len(kept) != 2 {
+		t.Fatalf("kept %v", kept)
+	}
+	dst := newTestDB(t)
+	outs, err := dst.ImportFiles(files, ImportFilesOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, o := range outs {
+		if o.Status != ingest.FileImported {
+			t.Fatalf("%s: %s %s", o.Path, o.Status, o.Error)
+		}
+	}
+	if ms, err := dst.GetAllMatches(); err != nil || len(ms) != 2 {
+		t.Fatalf("%d matches (%v)", len(ms), err)
 	}
 }
