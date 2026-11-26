@@ -303,17 +303,17 @@ msgstr ""
 
 #: ../../source/historique.rst:61
 msgid ""
-"Voir :ref:`cli_arkid`, :ref:`archive_papier_interface`, "
-":ref:`feuille_match`, :ref:`liste_imprimable`, "
+"Voir :ref:`cli_arkid`, :ref:`panneau_matchs`, "
+":ref:`liste_imprimable`, "
 ":ref:`assistant_import_document`, :ref:`cli_document`, "
 ":ref:`eval_cartes`, :ref:`cli_scoremap`, :ref:`cli_rolls` et "
-":ref:`manuel_calculs`."
+":ref:`manuel_interface`."
 msgstr ""
-"Vedere :ref:`cli_arkid`, :ref:`archive_papier_interface`, "
-":ref:`feuille_match`, :ref:`liste_imprimable`, "
+"Vedere :ref:`cli_arkid`, :ref:`panneau_matchs`, "
+":ref:`liste_imprimable`, "
 ":ref:`assistant_import_document`, :ref:`cli_document`, "
 ":ref:`eval_cartes`, :ref:`cli_scoremap`, :ref:`cli_rolls` e "
-":ref:`manuel_calculs`."
+":ref:`manuel_interface`."
 
 #: ../../source/historique.rst:64
 msgid "0.59.0 (2026-11-21)"

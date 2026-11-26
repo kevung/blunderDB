@@ -58,7 +58,7 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 - **Les cartes se calculent en fond et se gardent** : un cache garde les cartes des jets et des scores, un précalcul en fond prépare celles du jet suivant, et le calcul affiché passe devant les autres sur les cœurs de la machine.
 - **Panneau Calculs** : une puce unique de la barre d'état résume les tâches de fond (analyses, rollouts, imports, maintenance, transferts) ; son panneau les range en cours, en attente et terminées, par bibliothèque, avec pause, annulation, priorité et le compte des cœurs utilisés. Un travail demandé pendant un autre prend sa place dans la file de la bibliothèque.
 - **Corrections notables** : l'ouverture d'une base tenue par une autre instance est refusée en le disant, et la bibliothèque vide n'est pas touchée ; une couche texte OCR invisible ne passe plus pour la police de plateau d'eXtreme Gammon.
-- Voir :ref:`cli_arkid`, :ref:`archive_papier_interface`, :ref:`feuille_match`, :ref:`liste_imprimable`, :ref:`assistant_import_document`, :ref:`cli_document`, :ref:`eval_cartes`, :ref:`cli_scoremap`, :ref:`cli_rolls` et :ref:`manuel_calculs`.
+- Voir :ref:`cli_arkid`, :ref:`panneau_matchs`, :ref:`liste_imprimable`, :ref:`assistant_import_document`, :ref:`cli_document`, :ref:`eval_cartes`, :ref:`cli_scoremap`, :ref:`cli_rolls` et :ref:`manuel_interface`.
 
 0.59.0 (2026-11-21)
 -------------------
