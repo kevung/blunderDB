@@ -22,6 +22,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/applog"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/training"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/jobs"
@@ -61,6 +62,10 @@ type App struct {
 	gnRollMapSeq  uint64
 	gnScoreMapSeq uint64
 	gnLivePool    gammonNetLivePool
+	// gnPrefetch computes the roll maps one roll below the one on screen
+	// (gammonnet_maps.go); built on first use.
+	gnPrefetchOnce sync.Once
+	gnPrefetch     *gammonnet.Prefetcher
 
 	// gnBatchMu/gnBatchCancel: the same for the batch (gammonnet_batch.go).
 	gnBatchMu     sync.Mutex

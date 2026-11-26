@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"slices"
 	"sort"
-	"strings"
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -40,6 +39,10 @@ type ScoreMapCell struct {
 	SecondMove   string   `json:"secondMove,omitempty"`
 	SecondEquity *float64 `json:"secondEquity,omitempty"`
 	Gap          *float64 `json:"gap,omitempty"`
+	// stopped says the refusal is a search that was stopped, not the engine
+	// declining the score: the cell is no answer. Carried apart from Reason,
+	// whose text only describes it.
+	stopped bool
 }
 
 // ScoreMap is the grid of one position at one match length.
@@ -127,7 +130,7 @@ func (c *MapCache) ScoreMap(ctx context.Context, scope string, pos domain.Positi
 			}
 			mu.Lock()
 			defer mu.Unlock()
-			if !refusedByCancel(cell) {
+			if !cell.stopped {
 				answered++
 			}
 			m.Cells[idx] = cell
@@ -166,13 +169,6 @@ func (c *MapCache) ScoreMap(ctx context.Context, scope string, pos domain.Positi
 		}
 	}
 	return m, nil
-}
-
-// refusedByCancel says a refused cell's reason is a search that was stopped,
-// not the engine declining the score: the cell is no answer. The refusal
-// keeps only the error's text, which a wrapped ErrCanceled always contains.
-func refusedByCancel(cell ScoreMapCell) bool {
-	return cell.Refused && strings.Contains(cell.Reason, ErrCanceled.Error())
 }
 
 // scoreMapOrder is the order cells are searched in: the position's own score
@@ -236,6 +232,7 @@ func refusedCell(onRoll, opponent, depth int, err error) ScoreMapCell {
 	c := ScoreMapCell{Ply: depth}
 	c.AwayOnRoll, c.AwayOpponent = onRoll, opponent
 	c.Refused, c.Reason = true, err.Error()
+	c.stopped = IsCanceled(err)
 	return c
 }
 

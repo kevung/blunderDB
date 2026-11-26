@@ -283,12 +283,12 @@ func TestMapCache_IncompletePhaseIsNotKept(t *testing.T) {
 		t.Fatalf("%d incomplete phases kept, want none", n)
 	}
 
-	stopped := ScoreMapCell{}
-	stopped.Refused, stopped.Reason = true, fmt.Errorf("rank: %w", ErrCanceled).Error()
-	declined := ScoreMapCell{}
-	declined.Refused, declined.Reason = true, ErrNotEvaluable.Error()
-	if !refusedByCancel(stopped) || refusedByCancel(declined) {
-		t.Fatal("refusedByCancel does not tell a stopped search from a refusal")
+	stopped := refusedCell(1, 1, 0, fmt.Errorf("rank: %w", ErrCanceled))
+	declined := refusedCell(1, 1, 0, ErrNotEvaluable)
+	// A refusal that only quotes the cancellation's text is still a refusal.
+	quoting := refusedCell(1, 1, 0, fmt.Errorf("%w: %s", ErrNotEvaluable, ErrCanceled.Error()))
+	if !stopped.stopped || declined.stopped || quoting.stopped {
+		t.Fatal("a stopped search is not told from a refusal")
 	}
 }
 

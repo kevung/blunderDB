@@ -78,6 +78,10 @@ export function CancelRollMap() {
   return window['go']['gui']['App']['CancelRollMap']();
 }
 
+export function CancelRollMapPrefetch() {
+  return window['go']['gui']['App']['CancelRollMapPrefetch']();
+}
+
 export function CancelRollout() {
   return window['go']['gui']['App']['CancelRollout']();
 }
@@ -344,6 +348,10 @@ export function PickTranscriptionFile() {
 
 export function PickTranscriptionVideo() {
   return window['go']['gui']['App']['PickTranscriptionVideo']();
+}
+
+export function PrefetchRollMaps(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['gui']['App']['PrefetchRollMaps'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
 export function QueueGammonNetBatch(arg1, arg2, arg3) {

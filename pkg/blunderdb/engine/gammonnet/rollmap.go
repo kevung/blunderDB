@@ -94,6 +94,13 @@ func ComputeRollMap(ctx context.Context, pos domain.Position, met *engine.MET, p
 // onRow instead of searched, and every phase this call completes is kept. A
 // nil c caches nothing.
 func (c *MapCache) RollMap(ctx context.Context, scope string, pos domain.Position, met *engine.MET, ply, pruneK int, exec CellExec, onRow RollMapRowFunc) (RollMap, error) {
+	return c.rollMap(ctx, scope, pos, met, ply, pruneK, ply, exec, onRow)
+}
+
+// rollMap is RollMap stopped after the phase at upTo: the phases a ply-deep
+// map passes through, under the very keys it will look them up by, so that a
+// map prefetched to a shallower depth serves the one later asked at ply.
+func (c *MapCache) rollMap(ctx context.Context, scope string, pos domain.Position, met *engine.MET, ply, pruneK, upTo int, exec CellExec, onRow RollMapRowFunc) (RollMap, error) {
 	if IsResponsePosition(&pos) {
 		return RollMap{}, fmt.Errorf("%w: a take/pass decision has no rolls", ErrNotEvaluable)
 	}
@@ -163,6 +170,9 @@ func (c *MapCache) RollMap(ctx context.Context, scope string, pos domain.Positio
 		}
 	}
 	for _, depth := range depths[start:] {
+		if depth > upTo {
+			break
+		}
 		if err := phase(depth); err != nil {
 			return m, err
 		}

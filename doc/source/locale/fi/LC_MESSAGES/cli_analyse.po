@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 02:50+0100\n"
+"POT-Creation-Date: 2026-11-26 16:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/cli_analyse.rst:4
 msgid "Analyse et moteur"
@@ -60,7 +60,7 @@ msgstr ""
 #: ../../source/cli_analyse.rst:253 ../../source/cli_analyse.rst:294
 #: ../../source/cli_analyse.rst:320 ../../source/cli_analyse.rst:351
 #: ../../source/cli_analyse.rst:401 ../../source/cli_analyse.rst:448
-#: ../../source/cli_analyse.rst:503 ../../source/cli_analyse.rst:630
+#: ../../source/cli_analyse.rst:507 ../../source/cli_analyse.rst:634
 msgid "**Options:**"
 msgstr "**Valitsimet:**"
 
@@ -519,8 +519,8 @@ msgstr ""
 #: ../../source/cli_analyse.rst:233 ../../source/cli_analyse.rst:268
 #: ../../source/cli_analyse.rst:298 ../../source/cli_analyse.rst:326
 #: ../../source/cli_analyse.rst:371 ../../source/cli_analyse.rst:420
-#: ../../source/cli_analyse.rst:474 ../../source/cli_analyse.rst:518
-#: ../../source/cli_analyse.rst:587 ../../source/cli_analyse.rst:651
+#: ../../source/cli_analyse.rst:474 ../../source/cli_analyse.rst:522
+#: ../../source/cli_analyse.rst:591 ../../source/cli_analyse.rst:655
 msgid "**Exemples:**"
 msgstr "**Esimerkkejä:**"
 
@@ -864,11 +864,21 @@ msgstr ""
 "``text``-tuloste: yksi rivi heittoa kohti (heitto, paino 36:sta, equity, "
 "markkina ``kept`` / ``lost``, paras siirto), sitten keskiarvo."
 
-#: ../../source/cli_analyse.rst:488
+#: ../../source/cli_analyse.rst:487
+msgid ""
+"La commande ne calcule que la carte demandée : le processus s'arrête avec"
+" sa réponse, et le précalcul en fond des réponses, propre à l'application"
+" de bureau, n'y aurait rien à servir."
+msgstr ""
+"Komento laskee vain pyydetyn kartan: prosessi päättyy vastaukseensa, eikä"
+" työpöytäsovellukselle ominaisella vastausten taustaesilaskennalla olisi "
+"siellä mitään tarjottavaa."
+
+#: ../../source/cli_analyse.rst:492
 msgid "capture — Position depuis une capture d'écran"
 msgstr "capture — Asema kuvakaappauksesta"
 
-#: ../../source/cli_analyse.rst:490
+#: ../../source/cli_analyse.rst:494
 msgid ""
 "Lit la position que montre une capture d'écran d'un plateau eXtreme "
 "Gammon (thème par défaut) : pions, barre, pions sortis (ce qui manque à "
@@ -888,7 +898,7 @@ msgstr ""
 " arvata: piilossa oleva nuoli, pino joka on korkeampi kuin viisi "
 "nappulaa, jotka XG piirtää vierekkäin, lukukelvottomat nopat."
 
-#: ../../source/cli_analyse.rst:505
+#: ../../source/cli_analyse.rst:509
 msgid ""
 "``--format`` — Format de sortie : ``text``, ``json``, ``xgid`` ou "
 "``arkid`` (défaut : ``text``)."
@@ -896,7 +906,7 @@ msgstr ""
 "``--format`` — Tulostusmuoto: ``text``, ``json``, ``xgid`` tai ``arkid`` "
 "(oletus: ``text``)."
 
-#: ../../source/cli_analyse.rst:506
+#: ../../source/cli_analyse.rst:510
 msgid ""
 "``--db`` et ``--save`` — Enregistre la position dans la base comme "
 "position individuelle."
@@ -904,7 +914,7 @@ msgstr ""
 "``--db`` ja ``--save`` — Tallentaa position tietokantaan yksittäisenä "
 "asemana."
 
-#: ../../source/cli_analyse.rst:508
+#: ../../source/cli_analyse.rst:512
 msgid ""
 "``--score`` — Le score, que la capture ne montre pas : ``money``, ou les "
 "scores Away des deux joueurs, celui du joueur 1 (en bas) d'abord, par "
@@ -914,7 +924,7 @@ msgstr ""
 "molempien pelaajien Away-pisteet, pelaajan 1 (alhaalla) ensin, "
 "esimerkiksi ``2a/5a``."
 
-#: ../../source/cli_analyse.rst:511
+#: ../../source/cli_analyse.rst:515
 msgid ""
 "``--turn`` — Le camp au trait, ``1`` (en bas) ou ``2`` (en haut), quand "
 "aucun dé ne le montre."
@@ -922,7 +932,7 @@ msgstr ""
 "``--turn`` — Vuorossa oleva pelaaja, ``1`` (alhaalla) tai ``2`` "
 "(ylhäällä), kun mikään noppa ei näytä sitä."
 
-#: ../../source/cli_analyse.rst:513
+#: ../../source/cli_analyse.rst:517
 msgid ""
 "``--force`` — Enregistre malgré les doutes de la lecture, une fois le "
 "plateau vérifié. Il ne remplace ni ``--score`` ni ``--turn`` : ``--save``"
@@ -934,7 +944,7 @@ msgstr ""
 "``--save`` kieltäytyy niin kauan kuin pistetilannetta tai vuoroa ilman "
 "noppia ei ole annettu, ja nimeää puuttuvan valitsimen."
 
-#: ../../source/cli_analyse.rst:527
+#: ../../source/cli_analyse.rst:531
 #, no-python-brace-format
 msgid ""
 "Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec "
@@ -947,11 +957,11 @@ msgstr ""
 "suuremman kuvan pienentämisen sijaan ja lukee vain kaksi kuvaa "
 "kerrallaan."
 
-#: ../../source/cli_analyse.rst:532
+#: ../../source/cli_analyse.rst:536
 msgid "bearoff — Bases de sortie"
 msgstr "bearoff — Bearoff-tietokannat"
 
-#: ../../source/cli_analyse.rst:534
+#: ../../source/cli_analyse.rst:538
 msgid ""
 "Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien "
 "n'est embarqué : une table est calculée ici et vérifiée contre "
@@ -966,7 +976,7 @@ msgstr ""
 "tietokannan kanssa — bearoff-taulukko on aritmetiikkaa pelistä, ei "
 "kenenkään asemista — joten yksikään ei ota ``--db``."
 
-#: ../../source/cli_analyse.rst:547
+#: ../../source/cli_analyse.rst:551
 msgid ""
 "Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
 "two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
@@ -977,7 +987,7 @@ msgstr ""
 " kahdeksan pisteen yksipuoliselle taulukolle (pelkkä ``os`` tarkoittaa "
 "``os6``)."
 
-#: ../../source/cli_analyse.rst:551
+#: ../../source/cli_analyse.rst:555
 msgid ""
 "Les deux familles ne répondent pas à la même question. Une table **deux "
 "faces** élargit le domaine où la probabilité de gain et le verdict de "
@@ -990,7 +1000,7 @@ msgstr ""
 "ovat tarkkoja; **yksipuolinen** laajentaa sitä, kuinka kaukana kotoa "
 "nappula saa olla ilman että EPC vaikenee (enintään kymmenen pistettä)."
 
-#: ../../source/cli_analyse.rst:556
+#: ../../source/cli_analyse.rst:560
 msgid ""
 "**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
 "commencer, puis affiche le pourcentage et le temps restant mesuré."
@@ -999,11 +1009,11 @@ msgstr ""
 "aloitusta, sitten näyttää prosenttiosuuden ja mitatun jäljellä olevan "
 "ajan."
 
-#: ../../source/cli_analyse.rst:559
+#: ../../source/cli_analyse.rst:563
 msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
 msgstr "``--ts`` — Laskettava kaksipuolinen alue, esimerkiksi ``6x9``."
 
-#: ../../source/cli_analyse.rst:560
+#: ../../source/cli_analyse.rst:564
 msgid ""
 "``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
 "et un seul des deux est requis."
@@ -1011,21 +1021,21 @@ msgstr ""
 "``--os`` — Laskettava yksipuolinen alue pisteiden määränä: 6–12. Näistä "
 "kahdesta tarvitaan täsmälleen yksi."
 
-#: ../../source/cli_analyse.rst:562
+#: ../../source/cli_analyse.rst:566
 msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
 msgstr "``--cores`` — Käytettävät ytimet (oletus: kaikki paitsi yksi)."
 
-#: ../../source/cli_analyse.rst:563
+#: ../../source/cli_analyse.rst:567
 msgid ""
 "``--data-dir`` — Où écrire (défaut : le dossier de données de "
 "l'application)."
 msgstr "``--data-dir`` — Minne kirjoitetaan (oletus: sovelluksen datakansio)."
 
-#: ../../source/cli_analyse.rst:564
+#: ../../source/cli_analyse.rst:568
 msgid "``--quiet`` — Pas de ligne de progression."
 msgstr "``--quiet`` — Ei edistymisriviä."
 
-#: ../../source/cli_analyse.rst:566
+#: ../../source/cli_analyse.rst:570
 msgid ""
 "**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
 " la table et la même commande relancée reprend là où elle s'était "
@@ -1041,7 +1051,7 @@ msgstr ""
 "jatkon pois. Vain kaksipuolinen ajo menee tauolle; yksipuolinen on "
 "peräkkäinen eikä ``--cores`` hyödytä sitä."
 
-#: ../../source/cli_analyse.rst:573
+#: ../../source/cli_analyse.rst:577
 msgid ""
 "**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
 "machine — et dit lesquels sont déjà présents, avec leur verdict, et "
@@ -1053,7 +1063,7 @@ msgstr ""
 "tauolla oleva ajo. ``--format json`` skriptiä varten, ``--cores`` arvion "
 "oletuksen muuttamiseen."
 
-#: ../../source/cli_analyse.rst:578
+#: ../../source/cli_analyse.rst:582
 msgid ""
 "**verify.** Répond ``verified`` (les mêmes octets que la référence), "
 "``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
@@ -1066,7 +1076,7 @@ msgstr ""
 " Päättyy virheeseen viimeisessä tapauksessa: tämä komento on tehty "
 "skriptiin pantavaksi."
 
-#: ../../source/cli_analyse.rst:583
+#: ../../source/cli_analyse.rst:587
 msgid ""
 "**delete.** Retire la table, la reprise en attente et les débris d'un "
 "calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
@@ -1076,11 +1086,11 @@ msgstr ""
 " Oletusalue lasketaan uudelleen sovelluksen seuraavalla käynnistyksellä; "
 "laajempaa ei."
 
-#: ../../source/cli_analyse.rst:607
+#: ../../source/cli_analyse.rst:611
 msgid "openingbook — Quel coup à ce score ?"
 msgstr "openingbook — Mikä siirto tällä pistetilanteella?"
 
-#: ../../source/cli_analyse.rst:609
+#: ../../source/cli_analyse.rst:613
 msgid ""
 "L'exercice *Ouverture* du panneau Entraînement (voir "
 ":ref:`panneau_entrainement`) en ligne de commande : le coup d'ouverture "
@@ -1096,11 +1106,11 @@ msgstr ""
 "siirto on oikea (ks. :ref:`metrique_livre_ouverture`). Tietokantaa ei "
 "lueta eikä kirjoiteta."
 
-#: ../../source/cli_analyse.rst:615
+#: ../../source/cli_analyse.rst:619
 msgid "**openingbook status** — Le nombre de lignes du livre et ses scores."
 msgstr "**openingbook status** — Kirjan rivien lukumäärä ja sen pistetilanteet."
 
-#: ../../source/cli_analyse.rst:621
+#: ../../source/cli_analyse.rst:625
 msgid ""
 "**openingbook question** — Tire une question : le jet d'ouverture et le "
 "score, avec le XGID de la position d'ouverture ; avec ``--roll second``, "
@@ -1114,7 +1124,7 @@ msgstr ""
 "tasoissa oleva avaussiirto jättää, sekä tämän siirron ja vastausaseman "
 "XGID:n."
 
-#: ../../source/cli_analyse.rst:632
+#: ../../source/cli_analyse.rst:636
 msgid ""
 "``--roll first|second`` — Le jet posé : ``first`` (l'ouverture, par "
 "défaut) ou ``second`` (la réponse)."
@@ -1122,7 +1132,7 @@ msgstr ""
 "``--roll first|second`` — Pelattava heitto: ``first`` (avaus, oletus) tai"
 " ``second`` (vastaus)."
 
-#: ../../source/cli_analyse.rst:633
+#: ../../source/cli_analyse.rst:637
 msgid ""
 "``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2`` "
 "(le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), "
@@ -1132,7 +1142,7 @@ msgstr ""
 "``4-2`` (vastaaja 4 pisteessä, aloittaja 2:ssa), ``1-2`` (Crawford-peli),"
 " ``1-1`` (DMP, kaksoisottelupiste), ``money``."
 
-#: ../../source/cli_analyse.rst:635
+#: ../../source/cli_analyse.rst:639
 msgid ""
 "``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de "
 "réponse à tirer (``31,65``) ; ``--reply`` avec ``--roll second`` "
@@ -1142,11 +1152,11 @@ msgstr ""
 "vastausheitot (``31,65``); ``--reply`` vain ``--roll second``-valitsimen "
 "kanssa."
 
-#: ../../source/cli_analyse.rst:636
+#: ../../source/cli_analyse.rst:640
 msgid "``--seed <n>`` — Tirage reproductible (0 = au hasard)."
 msgstr "``--seed <n>`` — Toistettavissa oleva arvonta (0 = satunnainen)."
 
-#: ../../source/cli_analyse.rst:637
+#: ../../source/cli_analyse.rst:641
 msgid ""
 "``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du"
 " livre embarqué."
@@ -1154,11 +1164,11 @@ msgstr ""
 "``--book <fichier>`` — ``.jsonl``- tai ``.jsonl.gz``-kirja upotetun "
 "kirjan sijaan."
 
-#: ../../source/cli_analyse.rst:638
+#: ../../source/cli_analyse.rst:642
 msgid "``--format text|json`` — Format de sortie."
 msgstr "``--format text|json`` — Tulostusmuoto."
 
-#: ../../source/cli_analyse.rst:640
+#: ../../source/cli_analyse.rst:644
 #, no-python-format
 msgid ""
 "**openingbook answer** — Juge un coup et affiche chaque candidat contre "

@@ -1,11 +1,14 @@
 <script>
     // The roll map: the 21 rolls of a position, best play and equity of each. The position is the
     // one the trail leads to; descending plays a roll's best play (or another) and shows the
-    // replies. Only the view on screen computes: the map shares one search slot with the panel's
-    // own evaluation, so a newer start supersedes the last.
+    // replies. Only the view on screen computes in the foreground: the map shares one search slot
+    // with the panel's own evaluation, so a newer start supersedes the last. Once the map is done,
+    // the maps one roll below it are prefetched in the background (every reply at 0 then 1 ply,
+    // the row selected at the map's depth), so that descending answers at once; leaving the map
+    // cancels that prefetch.
     import { onMount, onDestroy, untrack } from 'svelte';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
-    import { StartRollMap, CancelRollMap, LegalMoves } from '../../wailsjs/go/gui/App.js';
+    import { StartRollMap, CancelRollMap, PrefetchRollMaps, CancelRollMapPrefetch, LegalMoves } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetDisplayPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
     import { positionStore } from '../stores/positionStore';
     import { rollTrailStore } from '../stores/mapStore.js';
@@ -29,6 +32,9 @@
     let marketOnly = $state(false);
     let selected = $state(-1);
     let others = $state(/** @type {Array<any> | null} */ (null));
+    // ready[i] is the depth the replies to row i are prefetched to.
+    let ready = $state(/** @type {Array<number>} */ (Array(ROLL_COUNT).fill(-1)));
+    let pruneK = 0;
     let tag = nextMapTag();
 
     let trail = $derived($rollTrailStore);
@@ -45,8 +51,22 @@
         return () => {
             tag = nextMapTag();
             CancelRollMap().catch(() => {});
+            CancelRollMapPrefetch().catch(() => {});
         };
     });
+
+    // The prefetch follows the row selected: its replies alone go past 1 ply.
+    $effect(() => {
+        const map = done;
+        const focus = selected;
+        if (!map || !active) return;
+        untrack(() => prefetch(map, focus));
+    });
+
+    /** @param {any} map @param {number} focus */
+    function prefetch(map, focus) {
+        PrefetchRollMaps(/** @type {any} */ (shown), map.rows ?? [], targetPly, pruneK, focus, tag).catch((/** @type {any} */ e) => logger.error('roll map prefetch:', e));
+    }
 
     async function start() {
         const mine = (tag = nextMapTag());
@@ -55,8 +75,9 @@
         error = '';
         selected = -1;
         others = null;
+        ready = Array(ROLL_COUNT).fill(-1);
         let ply = MAX_PLY;
-        let pruneK = 0;
+        pruneK = 0;
         try {
             ply = Math.min(MAX_PLY, Math.max(0, await GetGammonNetDisplayPly()));
             pruneK = await GetGammonNetPruneK();
@@ -85,6 +106,10 @@
                 done = e.map;
                 (e.map?.rows ?? []).forEach((/** @type {any} */ row, /** @type {number} */ i) => (rows[i] = { ...row, index: i }));
             }),
+            EventsOn('gammonnet-rolls:prefetched', (e) => {
+                if (e?.tag !== tag) return;
+                ready[e.index] = Math.max(ready[e.index], e.ply);
+            }),
             EventsOn('gammonnet-rolls:cancelled', () => {}),
             EventsOn('gammonnet-rolls:error', (e) => {
                 if (e?.tag !== tag) return;
@@ -96,6 +121,7 @@
         tag = nextMapTag();
         off.forEach((f) => f && f());
         CancelRollMap().catch(() => {});
+        CancelRollMapPrefetch().catch(() => {});
     });
 
     let present = $derived(rows.filter(Boolean));
@@ -223,7 +249,7 @@
                 <tbody>
                     {#each visible as row (row.index)}
                         {@const dev = row.equity - stats.average}
-                        <tr class:selected={selected === row.index} class:pending={row.ply < targetPly} onclick={() => pick(row)}>
+                        <tr class:selected={selected === row.index} class:pending={row.ply < targetPly} class:ready={ready[row.index] >= 0} onclick={() => pick(row)}>
                             <td class="roll">{rollLabel(row)}</td>
                             <td class="move">{row.dance ? $t('maps.rolls.dance') : row.move}</td>
                             <td class="num">{row.equity.toFixed(3)}</td>
@@ -249,6 +275,7 @@
                                 class="cell"
                                 class:lost={row.marketLost}
                                 class:pending={row.ply < targetPly}
+                                class:ready={ready[row.index] >= 0}
                                 class:selected={selected === row.index}
                                 style={shade(row.equity)}
                                 onclick={() => pick(row)}
@@ -384,6 +411,11 @@
     .rows tr.pending td {
         color: var(--color-text-muted);
     }
+    /* The replies to this roll are prefetched: descending answers at once. */
+    .rows tr.ready td.roll::after {
+        content: ' ›';
+        color: var(--color-text-muted);
+    }
     .num {
         text-align: right;
         font-family: var(--font-family-mono);
@@ -457,6 +489,9 @@
     .cell.pending {
         border-style: dashed;
         border-color: var(--color-text-muted);
+    }
+    .cell.ready {
+        box-shadow: inset 0 -2px 0 var(--color-text-muted);
     }
     .cell.selected {
         outline: 2px solid var(--color-primary);

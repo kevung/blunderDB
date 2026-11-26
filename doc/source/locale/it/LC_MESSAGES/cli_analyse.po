@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 02:50+0100\n"
+"POT-Creation-Date: 2026-11-26 16:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/cli_analyse.rst:4
 msgid "Analyse et moteur"
@@ -60,7 +60,7 @@ msgstr ""
 #: ../../source/cli_analyse.rst:253 ../../source/cli_analyse.rst:294
 #: ../../source/cli_analyse.rst:320 ../../source/cli_analyse.rst:351
 #: ../../source/cli_analyse.rst:401 ../../source/cli_analyse.rst:448
-#: ../../source/cli_analyse.rst:503 ../../source/cli_analyse.rst:630
+#: ../../source/cli_analyse.rst:507 ../../source/cli_analyse.rst:634
 msgid "**Options:**"
 msgstr "**Opzioni:**"
 
@@ -527,8 +527,8 @@ msgstr ""
 #: ../../source/cli_analyse.rst:233 ../../source/cli_analyse.rst:268
 #: ../../source/cli_analyse.rst:298 ../../source/cli_analyse.rst:326
 #: ../../source/cli_analyse.rst:371 ../../source/cli_analyse.rst:420
-#: ../../source/cli_analyse.rst:474 ../../source/cli_analyse.rst:518
-#: ../../source/cli_analyse.rst:587 ../../source/cli_analyse.rst:651
+#: ../../source/cli_analyse.rst:474 ../../source/cli_analyse.rst:522
+#: ../../source/cli_analyse.rst:591 ../../source/cli_analyse.rst:655
 msgid "**Exemples:**"
 msgstr "**Esempi:**"
 
@@ -882,11 +882,21 @@ msgstr ""
 "Output ``text``: una riga per tiro (tiro, peso su 36, equity, mercato "
 "``kept`` / ``lost``, mossa migliore), poi la media."
 
-#: ../../source/cli_analyse.rst:488
+#: ../../source/cli_analyse.rst:487
+msgid ""
+"La commande ne calcule que la carte demandée : le processus s'arrête avec"
+" sa réponse, et le précalcul en fond des réponses, propre à l'application"
+" de bureau, n'y aurait rien à servir."
+msgstr ""
+"Il comando calcola solo la mappa richiesta: il processo termina con la "
+"sua risposta, e il precalcolo in background delle risposte, proprio "
+"dell'applicazione desktop, non vi avrebbe nulla da servire."
+
+#: ../../source/cli_analyse.rst:492
 msgid "capture — Position depuis une capture d'écran"
 msgstr "capture — Posizione da uno screenshot"
 
-#: ../../source/cli_analyse.rst:490
+#: ../../source/cli_analyse.rst:494
 msgid ""
 "Lit la position que montre une capture d'écran d'un plateau eXtreme "
 "Gammon (thème par défaut) : pions, barre, pions sortis (ce qui manque à "
@@ -906,7 +916,7 @@ msgstr ""
 " dubbio, mai indovinato: freccia nascosta, pila più alta delle cinque "
 "pedine che XG disegna affiancate, dadi illeggibili."
 
-#: ../../source/cli_analyse.rst:505
+#: ../../source/cli_analyse.rst:509
 msgid ""
 "``--format`` — Format de sortie : ``text``, ``json``, ``xgid`` ou "
 "``arkid`` (défaut : ``text``)."
@@ -914,7 +924,7 @@ msgstr ""
 "``--format`` — Formato di output: ``text``, ``json``, ``xgid`` o "
 "``arkid`` (predefinito: ``text``)."
 
-#: ../../source/cli_analyse.rst:506
+#: ../../source/cli_analyse.rst:510
 msgid ""
 "``--db`` et ``--save`` — Enregistre la position dans la base comme "
 "position individuelle."
@@ -922,7 +932,7 @@ msgstr ""
 "``--db`` e ``--save`` — Salva la posizione nel database come posizione "
 "individuale."
 
-#: ../../source/cli_analyse.rst:508
+#: ../../source/cli_analyse.rst:512
 msgid ""
 "``--score`` — Le score, que la capture ne montre pas : ``money``, ou les "
 "scores Away des deux joueurs, celui du joueur 1 (en bas) d'abord, par "
@@ -932,7 +942,7 @@ msgstr ""
 "oppure i punteggi Away dei due giocatori, prima quello del giocatore 1 "
 "(in basso), per esempio ``2a/5a``."
 
-#: ../../source/cli_analyse.rst:511
+#: ../../source/cli_analyse.rst:515
 msgid ""
 "``--turn`` — Le camp au trait, ``1`` (en bas) ou ``2`` (en haut), quand "
 "aucun dé ne le montre."
@@ -940,7 +950,7 @@ msgstr ""
 "``--turn`` — Il giocatore di turno, ``1`` (in basso) o ``2`` (in alto), "
 "quando nessun dado lo mostra."
 
-#: ../../source/cli_analyse.rst:513
+#: ../../source/cli_analyse.rst:517
 msgid ""
 "``--force`` — Enregistre malgré les doutes de la lecture, une fois le "
 "plateau vérifié. Il ne remplace ni ``--score`` ni ``--turn`` : ``--save``"
@@ -952,7 +962,7 @@ msgstr ""
 "``--save`` rifiuta finché il punteggio, o il turno senza dadi, non è "
 "fornito, e nomina l'opzione mancante."
 
-#: ../../source/cli_analyse.rst:527
+#: ../../source/cli_analyse.rst:531
 #, no-python-brace-format
 msgid ""
 "Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec "
@@ -965,11 +975,11 @@ msgstr ""
 "di uno schermo 4K invece di ridurla, e legge solo due immagini alla "
 "volta."
 
-#: ../../source/cli_analyse.rst:532
+#: ../../source/cli_analyse.rst:536
 msgid "bearoff — Bases de sortie"
 msgstr "bearoff — Basi di bearoff"
 
-#: ../../source/cli_analyse.rst:534
+#: ../../source/cli_analyse.rst:538
 msgid ""
 "Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien "
 "n'est embarqué : une table est calculée ici et vérifiée contre "
@@ -984,7 +994,7 @@ msgstr ""
 "base di dati — una tabella di bearoff è aritmetica sul gioco, non sulle "
 "posizioni di qualcuno — quindi nessuno prende ``--db``."
 
-#: ../../source/cli_analyse.rst:547
+#: ../../source/cli_analyse.rst:551
 msgid ""
 "Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
 "two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
@@ -994,7 +1004,7 @@ msgstr ""
 " due lati con nove pedine per giocatore, ``os8`` per la tabella a un lato"
 " su otto punti (``os`` da solo vale ``os6``)."
 
-#: ../../source/cli_analyse.rst:551
+#: ../../source/cli_analyse.rst:555
 msgid ""
 "Les deux familles ne répondent pas à la même question. Une table **deux "
 "faces** élargit le domaine où la probabilité de gain et le verdict de "
@@ -1007,7 +1017,7 @@ msgstr ""
 "del cubo sono esatti; una tabella a **un lato** amplia la distanza a cui "
 "una pedina può trovarsi senza che l'EPC taccia (fino a dieci punti)."
 
-#: ../../source/cli_analyse.rst:556
+#: ../../source/cli_analyse.rst:560
 msgid ""
 "**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
 "commencer, puis affiche le pourcentage et le temps restant mesuré."
@@ -1015,11 +1025,11 @@ msgstr ""
 "**generate.** Dichiara la dimensione, la memoria e il tempo stimato prima"
 " di iniziare, poi mostra la percentuale e il tempo rimanente misurato."
 
-#: ../../source/cli_analyse.rst:559
+#: ../../source/cli_analyse.rst:563
 msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
 msgstr "``--ts`` — Dominio a due lati da calcolare, per esempio ``6x9``."
 
-#: ../../source/cli_analyse.rst:560
+#: ../../source/cli_analyse.rst:564
 msgid ""
 "``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
 "et un seul des deux est requis."
@@ -1027,11 +1037,11 @@ msgstr ""
 "``--os`` — Dominio a un lato da calcolare, in numero di punti: da 6 a 12."
 " È richiesto esattamente uno dei due."
 
-#: ../../source/cli_analyse.rst:562
+#: ../../source/cli_analyse.rst:566
 msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
 msgstr "``--cores`` — Core da usare (predefinito: tutti tranne uno)."
 
-#: ../../source/cli_analyse.rst:563
+#: ../../source/cli_analyse.rst:567
 msgid ""
 "``--data-dir`` — Où écrire (défaut : le dossier de données de "
 "l'application)."
@@ -1039,11 +1049,11 @@ msgstr ""
 "``--data-dir`` — Dove scrivere (predefinito: la cartella dati "
 "dell'applicazione)."
 
-#: ../../source/cli_analyse.rst:564
+#: ../../source/cli_analyse.rst:568
 msgid "``--quiet`` — Pas de ligne de progression."
 msgstr "``--quiet`` — Nessuna riga di avanzamento."
 
-#: ../../source/cli_analyse.rst:566
+#: ../../source/cli_analyse.rst:570
 msgid ""
 "**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
 " la table et la même commande relancée reprend là où elle s'était "
@@ -1059,7 +1069,7 @@ msgstr ""
 " il passaggio a due lati si mette in pausa; quello a un lato è "
 "sequenziale e ``--cores`` non gli serve."
 
-#: ../../source/cli_analyse.rst:573
+#: ../../source/cli_analyse.rst:577
 msgid ""
 "**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
 "machine — et dit lesquels sont déjà présents, avec leur verdict, et "
@@ -1071,7 +1081,7 @@ msgstr ""
 "hanno un calcolo in pausa. ``--format json`` per uno script, ``--cores`` "
 "per cambiare l'ipotesi della stima."
 
-#: ../../source/cli_analyse.rst:578
+#: ../../source/cli_analyse.rst:582
 msgid ""
 "**verify.** Répond ``verified`` (les mêmes octets que la référence), "
 "``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
@@ -1083,7 +1093,7 @@ msgstr ""
 "dominio) o ``corrupt`` (il file si contraddice). Esce con errore "
 "nell'ultimo caso: questo comando è fatto per stare in uno script."
 
-#: ../../source/cli_analyse.rst:583
+#: ../../source/cli_analyse.rst:587
 msgid ""
 "**delete.** Retire la table, la reprise en attente et les débris d'un "
 "calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
@@ -1093,11 +1103,11 @@ msgstr ""
 "calcolo morto. Un dominio predefinito viene ricalcolato al prossimo avvio"
 " dell'applicazione; uno più ampio no."
 
-#: ../../source/cli_analyse.rst:607
+#: ../../source/cli_analyse.rst:611
 msgid "openingbook — Quel coup à ce score ?"
 msgstr "openingbook — Quale mossa a questo punteggio?"
 
-#: ../../source/cli_analyse.rst:609
+#: ../../source/cli_analyse.rst:613
 msgid ""
 "L'exercice *Ouverture* du panneau Entraînement (voir "
 ":ref:`panneau_entrainement`) en ligne de commande : le coup d'ouverture "
@@ -1113,11 +1123,11 @@ msgstr ""
 "alla pari (tied) con la migliore è giusta (vedi "
 ":ref:`metrique_livre_ouverture`). Nessuna base viene letta né scritta."
 
-#: ../../source/cli_analyse.rst:615
+#: ../../source/cli_analyse.rst:619
 msgid "**openingbook status** — Le nombre de lignes du livre et ses scores."
 msgstr "**openingbook status** — Il numero di righe del libro e i suoi punteggi."
 
-#: ../../source/cli_analyse.rst:621
+#: ../../source/cli_analyse.rst:625
 msgid ""
 "**openingbook question** — Tire une question : le jet d'ouverture et le "
 "score, avec le XGID de la position d'ouverture ; avec ``--roll second``, "
@@ -1131,7 +1141,7 @@ msgstr ""
 "pari con la migliore a quel punteggio, con quella mossa e l'XGID della "
 "posizione di risposta."
 
-#: ../../source/cli_analyse.rst:632
+#: ../../source/cli_analyse.rst:636
 msgid ""
 "``--roll first|second`` — Le jet posé : ``first`` (l'ouverture, par "
 "défaut) ou ``second`` (la réponse)."
@@ -1139,7 +1149,7 @@ msgstr ""
 "``--roll first|second`` — Il tiro da giocare: ``first`` (l'apertura, "
 "predefinito) o ``second`` (la risposta)."
 
-#: ../../source/cli_analyse.rst:633
+#: ../../source/cli_analyse.rst:637
 msgid ""
 "``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2`` "
 "(le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), "
@@ -1149,7 +1159,7 @@ msgstr ""
 "(chi risponde a 4 punti, chi apre a 2), ``1-2`` (partita Crawford), "
 "``1-1`` (il DMP, double match point), ``money``."
 
-#: ../../source/cli_analyse.rst:635
+#: ../../source/cli_analyse.rst:639
 msgid ""
 "``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de "
 "réponse à tirer (``31,65``) ; ``--reply`` avec ``--roll second`` "
@@ -1158,11 +1168,11 @@ msgstr ""
 "``--opening <liste>``, ``--reply <liste>`` — Tiri d'apertura o di "
 "risposta da estrarre (``31,65``); ``--reply`` solo con ``--roll second``."
 
-#: ../../source/cli_analyse.rst:636
+#: ../../source/cli_analyse.rst:640
 msgid "``--seed <n>`` — Tirage reproductible (0 = au hasard)."
 msgstr "``--seed <n>`` — Estrazione riproducibile (0 = a caso)."
 
-#: ../../source/cli_analyse.rst:637
+#: ../../source/cli_analyse.rst:641
 msgid ""
 "``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du"
 " livre embarqué."
@@ -1170,11 +1180,11 @@ msgstr ""
 "``--book <fichier>`` — Un libro ``.jsonl`` o ``.jsonl.gz`` al posto del "
 "libro integrato."
 
-#: ../../source/cli_analyse.rst:638
+#: ../../source/cli_analyse.rst:642
 msgid "``--format text|json`` — Format de sortie."
 msgstr "``--format text|json`` — Formato di output."
 
-#: ../../source/cli_analyse.rst:640
+#: ../../source/cli_analyse.rst:644
 #, no-python-format
 msgid ""
 "**openingbook answer** — Juge un coup et affiche chaque candidat contre "

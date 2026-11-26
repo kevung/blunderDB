@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 02:50+0100\n"
+"POT-Creation-Date: 2026-11-26 16:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/cli_analyse.rst:4
 msgid "Analyse et moteur"
@@ -58,7 +58,7 @@ msgstr ""
 #: ../../source/cli_analyse.rst:253 ../../source/cli_analyse.rst:294
 #: ../../source/cli_analyse.rst:320 ../../source/cli_analyse.rst:351
 #: ../../source/cli_analyse.rst:401 ../../source/cli_analyse.rst:448
-#: ../../source/cli_analyse.rst:503 ../../source/cli_analyse.rst:630
+#: ../../source/cli_analyse.rst:507 ../../source/cli_analyse.rst:634
 msgid "**Options:**"
 msgstr "**オプション：**"
 
@@ -455,8 +455,8 @@ msgstr ""
 #: ../../source/cli_analyse.rst:233 ../../source/cli_analyse.rst:268
 #: ../../source/cli_analyse.rst:298 ../../source/cli_analyse.rst:326
 #: ../../source/cli_analyse.rst:371 ../../source/cli_analyse.rst:420
-#: ../../source/cli_analyse.rst:474 ../../source/cli_analyse.rst:518
-#: ../../source/cli_analyse.rst:587 ../../source/cli_analyse.rst:651
+#: ../../source/cli_analyse.rst:474 ../../source/cli_analyse.rst:522
+#: ../../source/cli_analyse.rst:591 ../../source/cli_analyse.rst:655
 msgid "**Exemples:**"
 msgstr "**例：**"
 
@@ -761,11 +761,18 @@ msgstr ""
 "``text`` 出力：出目ごとに 1 行（出目、36 分の重み、エクイティ、マーケット ``kept`` / "
 "``lost``、最善手）、続いて平均です。"
 
-#: ../../source/cli_analyse.rst:488
+#: ../../source/cli_analyse.rst:487
+msgid ""
+"La commande ne calcule que la carte demandée : le processus s'arrête avec"
+" sa réponse, et le précalcul en fond des réponses, propre à l'application"
+" de bureau, n'y aurait rien à servir."
+msgstr "このコマンドは要求されたマップだけを計算します。プロセスは応答とともに終了するため、デスクトップアプリケーション固有のバックグラウンドでの応手の事前計算は、ここでは提供する対象がありません。"
+
+#: ../../source/cli_analyse.rst:492
 msgid "capture — Position depuis une capture d'écran"
 msgstr "capture — スクリーンショットからの局面"
 
-#: ../../source/cli_analyse.rst:490
+#: ../../source/cli_analyse.rst:494
 msgid ""
 "Lit la position que montre une capture d'écran d'un plateau eXtreme "
 "Gammon (thème par défaut) : pions, barre, pions sortis (ce qui manque à "
@@ -782,7 +789,7 @@ msgstr ""
 "画面（3840×2160）より大きい画像は、読み取りの前に縮小されます。スコアは読み取りません。読み取りで判断できないものは疑義として一覧表示され、推測されることはありません。隠れた矢印、XG"
 " が横に並べて描く 5 個を超える積み上げ、判読できないダイスなどです。"
 
-#: ../../source/cli_analyse.rst:505
+#: ../../source/cli_analyse.rst:509
 msgid ""
 "``--format`` — Format de sortie : ``text``, ``json``, ``xgid`` ou "
 "``arkid`` (défaut : ``text``)."
@@ -790,13 +797,13 @@ msgstr ""
 "``--format`` — 出力形式:\\ ``text``\\ 、\\ ``json``\\ 、\\ ``xgid``\\ または\\ "
 "``arkid``\\ (既定:\\ ``text``\\ )。"
 
-#: ../../source/cli_analyse.rst:506
+#: ../../source/cli_analyse.rst:510
 msgid ""
 "``--db`` et ``--save`` — Enregistre la position dans la base comme "
 "position individuelle."
 msgstr "``--db`` と ``--save`` — 局面を個別の局面としてデータベースに保存します。"
 
-#: ../../source/cli_analyse.rst:508
+#: ../../source/cli_analyse.rst:512
 msgid ""
 "``--score`` — Le score, que la capture ne montre pas : ``money``, ou les "
 "scores Away des deux joueurs, celui du joueur 1 (en bas) d'abord, par "
@@ -805,13 +812,13 @@ msgstr ""
 "``--score`` — キャプチャに写らないスコア。\\ ``money``\\ "
 "、または両プレイヤーのアウェイスコアで、プレイヤー1（下側）を先に書きます。例: ``2a/5a``"
 
-#: ../../source/cli_analyse.rst:511
+#: ../../source/cli_analyse.rst:515
 msgid ""
 "``--turn`` — Le camp au trait, ``1`` (en bas) ou ``2`` (en haut), quand "
 "aucun dé ne le montre."
 msgstr "``--turn`` — ダイスが写っていないときの手番。\\ ``1``\\ （下側）または ``2``\\ （上側）。"
 
-#: ../../source/cli_analyse.rst:513
+#: ../../source/cli_analyse.rst:517
 msgid ""
 "``--force`` — Enregistre malgré les doutes de la lecture, une fois le "
 "plateau vérifié. Il ne remplace ni ``--score`` ni ``--turn`` : ``--save``"
@@ -822,7 +829,7 @@ msgstr ""
 "``--turn``\\ の代わりにはなりません。スコア、またはダイスがないときの手番が指定されるまで ``--save``\\ "
 "は拒否し、足りないオプションを示します。"
 
-#: ../../source/cli_analyse.rst:527
+#: ../../source/cli_analyse.rst:531
 #, no-python-brace-format
 msgid ""
 "Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec "
@@ -833,11 +840,11 @@ msgstr ""
 "デーモンも同じ読み取りを提供します：``POST /v1/positions.fromImage`` に ``{\"data\": "
 "\"<base64 の画像>\"}`` を渡します。4K 画面より大きい画像は縮小せずに拒否し、同時に読み取る画像は2枚までです。"
 
-#: ../../source/cli_analyse.rst:532
+#: ../../source/cli_analyse.rst:536
 msgid "bearoff — Bases de sortie"
 msgstr "bearoff — ベアオフ・データベース"
 
-#: ../../source/cli_analyse.rst:534
+#: ../../source/cli_analyse.rst:538
 msgid ""
 "Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien "
 "n'est embarqué : une table est calculée ici et vérifiée contre "
@@ -851,7 +858,7 @@ msgstr ""
 "ベアオフの表はゲームについての算術であって、誰かの局面についてのものではないからです — したがって \\ ``--db``\\  "
 "を取るものはありません。"
 
-#: ../../source/cli_analyse.rst:547
+#: ../../source/cli_analyse.rst:551
 msgid ""
 "Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
 "two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
@@ -860,7 +867,7 @@ msgstr ""
 "領域は ``makebearoff``\\  と同じ書き方です。1 人あたり 9 個の駒の両面表なら \\ ``6x9``\\ 、八点の片面表なら"
 " \\ ``os8``\\ （\\ ``os``\\  だけなら \\ ``os6``\\  と同じ）。"
 
-#: ../../source/cli_analyse.rst:551
+#: ../../source/cli_analyse.rst:555
 msgid ""
 "Les deux familles ne répondent pas à la même question. Une table **deux "
 "faces** élargit le domaine où la probabilité de gain et le verdict de "
@@ -871,37 +878,37 @@ msgstr ""
 "二つの系統は同じ問いに答えるものではありません。**両面** の表は、勝率とキューブ判定が厳密になる範囲を広げます。**片面** の表は、EPC "
 "が黙らずに済む駒の距離を広げます（最大十点）。"
 
-#: ../../source/cli_analyse.rst:556
+#: ../../source/cli_analyse.rst:560
 msgid ""
 "**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
 "commencer, puis affiche le pourcentage et le temps restant mesuré."
 msgstr "**generate.** 開始前に大きさ・必要メモリ・推定時間を示し、そのあと進捗率と実測の残り時間を表示します。"
 
-#: ../../source/cli_analyse.rst:559
+#: ../../source/cli_analyse.rst:563
 msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
 msgstr "``--ts``\\  — 計算する両面領域。例えば \\ ``6x9``\\ 。"
 
-#: ../../source/cli_analyse.rst:560
+#: ../../source/cli_analyse.rst:564
 msgid ""
 "``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
 "et un seul des deux est requis."
 msgstr "``--os``\\  — 計算する片面領域を点数で指定します。6 から 12。二つのうち、ちょうど一方が必要です。"
 
-#: ../../source/cli_analyse.rst:562
+#: ../../source/cli_analyse.rst:566
 msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
 msgstr "``--cores``\\  — 使うコア数（既定：1 つを除く全部）。"
 
-#: ../../source/cli_analyse.rst:563
+#: ../../source/cli_analyse.rst:567
 msgid ""
 "``--data-dir`` — Où écrire (défaut : le dossier de données de "
 "l'application)."
 msgstr "``--data-dir``\\  — 書き込み先（既定：アプリケーションのデータフォルダー）。"
 
-#: ../../source/cli_analyse.rst:564
+#: ../../source/cli_analyse.rst:568
 msgid "``--quiet`` — Pas de ligne de progression."
 msgstr "``--quiet``\\  — 進捗行を出しません。"
 
-#: ../../source/cli_analyse.rst:566
+#: ../../source/cli_analyse.rst:570
 msgid ""
 "**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
 " la table et la même commande relancée reprend là où elle s'était "
@@ -915,7 +922,7 @@ msgstr ""
 "分の算術は書き留める価値があります。\\ ``bearoff delete``\\  "
 "は待機中の再開を捨てます。一時停止できるのは両面の走査だけです。片面の走査は逐次的で、\\ ``--cores``\\  は役に立ちません。"
 
-#: ../../source/cli_analyse.rst:573
+#: ../../source/cli_analyse.rst:577
 msgid ""
 "**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
 "machine — et dit lesquels sont déjà présents, avec leur verdict, et "
@@ -926,7 +933,7 @@ msgstr ""
 "どれがすでに存在するか（判定つき）、どれに一時停止中の計算があるかを述べます。スクリプト用には \\ ``--format json``\\ "
 "、推定の前提を変えるには \\ ``--cores``\\  を使います。"
 
-#: ../../source/cli_analyse.rst:578
+#: ../../source/cli_analyse.rst:582
 msgid ""
 "**verify.** Répond ``verified`` (les mêmes octets que la référence), "
 "``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
@@ -937,7 +944,7 @@ msgstr ""
 "（形は正しいが、その領域の指紋が登録されていない）、\\ ``corrupt``\\ "
 "（ファイルが自分自身と矛盾する）のいずれかを返します。最後の場合はエラーで終了します。このコマンドはスクリプトに置くために作られています。"
 
-#: ../../source/cli_analyse.rst:583
+#: ../../source/cli_analyse.rst:587
 msgid ""
 "**delete.** Retire la table, la reprise en attente et les débris d'un "
 "calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
@@ -946,11 +953,11 @@ msgstr ""
 "**delete.** "
 "表、待機中の再開、死んだ計算の残骸を取り除きます。既定の領域はアプリケーションの次回起動で再計算されますが、より広い領域はされません。"
 
-#: ../../source/cli_analyse.rst:607
+#: ../../source/cli_analyse.rst:611
 msgid "openingbook — Quel coup à ce score ?"
 msgstr "openingbook — このスコアでどの手か"
 
-#: ../../source/cli_analyse.rst:609
+#: ../../source/cli_analyse.rst:613
 msgid ""
 "L'exercice *Ouverture* du panneau Entraînement (voir "
 ":ref:`panneau_entrainement`) en ligne de commande : le coup d'ouverture "
@@ -964,11 +971,11 @@ msgstr ""
 "roll）を、内蔵のオープニングブックから出題し、そのブックに照らして判定します。最善手と同等（tied）の手はすべて正解です（:ref:`metrique_livre_ouverture`"
 " を参照）。データベースの読み書きは行いません。"
 
-#: ../../source/cli_analyse.rst:615
+#: ../../source/cli_analyse.rst:619
 msgid "**openingbook status** — Le nombre de lignes du livre et ses scores."
 msgstr "**openingbook status** — ブックの行数とそのスコア。"
 
-#: ../../source/cli_analyse.rst:621
+#: ../../source/cli_analyse.rst:625
 msgid ""
 "**openingbook question** — Tire une question : le jet d'ouverture et le "
 "score, avec le XGID de la position d'ouverture ; avec ``--roll second``, "
@@ -980,7 +987,7 @@ msgstr ""
 "とともに示します。``--roll second`` "
 "を付けると、そのスコアでの最善と同等のオープニングの後の局面での返しのロールを、その手と返しの局面の XGID とともに示します。"
 
-#: ../../source/cli_analyse.rst:632
+#: ../../source/cli_analyse.rst:636
 msgid ""
 "``--roll first|second`` — Le jet posé : ``first`` (l'ouverture, par "
 "défaut) ou ``second`` (la réponse)."
@@ -988,7 +995,7 @@ msgstr ""
 "``--roll first|second`` — 出題するロール。\\ ``first``\\ （オープニング、既定）または\\ "
 "``second``\\ （返し）。"
 
-#: ../../source/cli_analyse.rst:633
+#: ../../source/cli_analyse.rst:637
 msgid ""
 "``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2`` "
 "(le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), "
@@ -997,7 +1004,7 @@ msgstr ""
 "``--score <liste>`` — 出題するスコア（カンマ区切り）: ``4-2``\\ （応答側が4ポイント、オープナーが2）、\\ "
 "``1-2``\\ （クロフォードゲーム）、\\ ``1-1``\\ （DMP、ダブルマッチポイント）、\\ ``money``\\ 。"
 
-#: ../../source/cli_analyse.rst:635
+#: ../../source/cli_analyse.rst:639
 msgid ""
 "``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de "
 "réponse à tirer (``31,65``) ; ``--reply`` avec ``--roll second`` "
@@ -1006,21 +1013,21 @@ msgstr ""
 "``--opening <liste>``、``--reply <liste>`` — "
 "出題するオープニングまたは返しのロール（``31,65``）。``--reply`` は ``--roll second`` と併用する場合のみ。"
 
-#: ../../source/cli_analyse.rst:636
+#: ../../source/cli_analyse.rst:640
 msgid "``--seed <n>`` — Tirage reproductible (0 = au hasard)."
 msgstr "``--seed <n>`` — 再現できる抽選（0 = ランダム）。"
 
-#: ../../source/cli_analyse.rst:637
+#: ../../source/cli_analyse.rst:641
 msgid ""
 "``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du"
 " livre embarqué."
 msgstr "``--book <fichier>`` — 内蔵のブックの代わりに ``.jsonl`` または ``.jsonl.gz`` のブックを使います。"
 
-#: ../../source/cli_analyse.rst:638
+#: ../../source/cli_analyse.rst:642
 msgid "``--format text|json`` — Format de sortie."
 msgstr "``--format text|json`` — 出力形式。"
 
-#: ../../source/cli_analyse.rst:640
+#: ../../source/cli_analyse.rst:644
 #, no-python-format
 msgid ""
 "**openingbook answer** — Juge un coup et affiche chaque candidat contre "

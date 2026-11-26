@@ -1530,6 +1530,15 @@ légal, vide pour une danse), la position est d'abord jouée et la réponse port
 sur les jets de l'adversaire. ``ply`` va de 0 à 2 (2 par défaut). Rien n'est lu
 dans le tenant hors sa table d'équités, rien n'y est écrit.
 
+Le démon ne précalcule pas en fond les réponses d'une carte des jets, comme le
+fait l'application de bureau : chaque carte est une requête, calculée sur les
+workers d'analyse partagés et imputée au quota du tenant qui la demande. Un
+calcul en fond survivrait à la requête, sans calcul affiché auquel céder ses
+cœurs, et consommerait le quota d'un tenant pour des cartes qu'il n'a pas
+demandées. Le client qui veut descendre vite demande lui-même les cartes
+suivantes, ``ply`` 0 ou 1 d'abord : le cache des cartes du tenant les sert
+ensuite, et une carte plus profonde reprend à la dernière profondeur connue.
+
 ``gammonnet.scoreMap`` donne la meilleure décision d'une position nue
 (``position`` ou ``xgid``) à chaque score d'un match de ``matchLength`` points
 (impair, de 3 à 15, 9 par défaut) : avec dés, par case, le meilleur coup, son

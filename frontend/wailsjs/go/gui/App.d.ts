@@ -47,6 +47,8 @@ export function CancelMaintenance():Promise<void>;
 
 export function CancelRollMap():Promise<void>;
 
+export function CancelRollMapPrefetch():Promise<void>;
+
 export function CancelRollout():Promise<void>;
 
 export function CancelScoreMap():Promise<void>;
@@ -180,6 +182,8 @@ export function PickIdentityFile():Promise<domain.IdentityFilePick>;
 export function PickTranscriptionFile():Promise<string>;
 
 export function PickTranscriptionVideo():Promise<string>;
+
+export function PrefetchRollMaps(arg1:domain.Position,arg2:Array<any>,arg3:number,arg4:number,arg5:number,arg6:number):Promise<void>;
 
 export function QueueGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
