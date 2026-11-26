@@ -41,9 +41,11 @@ package gammonnet
 // waits for a token, so a fork nested inside a task can never deadlock however
 // deep the tree. The process-wide budget (ProcessCores) is shared by every
 // search that runs at once: a batch job holds one token per position it
-// searches (Cores.Hold), and the tail of the batch, the live panel or a lone
-// server request picks up whatever tokens are idle. Nothing ever asks for more
-// goroutines than the budget, whatever stacks.
+// searches (Cores.HoldBackground), and the tail of the batch, the live panel
+// or a lone server request picks up whatever tokens are idle. Nothing ever asks
+// for more goroutines than the budget, whatever stacks. A computation on screen
+// claims the budget (Cores.Claim): the batch's goroutines park at their next
+// roll and lend it their tokens until it ends.
 
 import (
 	"runtime"
@@ -53,18 +55,42 @@ import (
 )
 
 // Cores is a budget of goroutines that searches may run on at once.
+//
+// A visible computation outranks the batches on the cores themselves
+// (ADR-0120): while one claims the budget (Claim), a background goroutine
+// (one that took its token with HoldBackground and searches with YieldsTo)
+// parks at its next roll and lends its token to the claimant; it takes it
+// back, without queueing, the moment the last claim ends, so its search
+// resumes where it stopped and nothing computed is lost.
 type Cores struct {
-	tokens chan struct{}
+	mu  sync.Mutex
+	cap int
+	// held tokens are taken; parked of them belong to goroutines parked
+	// behind the current claim and are lent: held-parked is what runs.
+	held, parked int
+	// waiters queue for a token in arrival order; one that yields waits
+	// out a claim in place, without losing its turn to those behind it.
+	waiters []*coreWaiter
+	claims  int
+	// lift is closed when the last claim ends, waking every parked goroutine.
+	lift chan struct{}
+	// claimed mirrors claims > 0 for the roll checkpoint's lock-free read.
+	claimed atomic.Bool
 	// changed holds one pending signal once a token was taken or given
 	// back, so a display follows the budget without polling it.
 	changed chan struct{}
+}
+
+type coreWaiter struct {
+	ready      chan struct{}
+	background bool
 }
 
 // NewCores is a budget of n tokens, for a component that must stay within a
 // core count of its own (the server's AnalysisWorkers); everything else shares
 // ProcessCores.
 func NewCores(n int) *Cores {
-	return &Cores{tokens: make(chan struct{}, max(n, 0)), changed: make(chan struct{}, 1)}
+	return &Cores{cap: max(n, 0), changed: make(chan struct{}, 1)}
 }
 
 var processCores = sync.OnceValue(func() *Cores { return NewCores(runtime.GOMAXPROCS(0)) })
@@ -72,22 +98,106 @@ var processCores = sync.OnceValue(func() *Cores { return NewCores(runtime.GOMAXP
 // ProcessCores is the budget the whole process shares: GOMAXPROCS tokens.
 func ProcessCores() *Cores { return processCores() }
 
-// Hold blocks until a token is free and takes it, for a job that keeps a core
-// busy on its own (a batch goroutine searching one position). release gives
-// it back; call it once.
-func (c *Cores) Hold() (release func()) {
-	c.tokens <- struct{}{}
+// Hold blocks until a token is free and takes it, in arrival order, for a job
+// that keeps a core busy on its own (one server request, a cell of a visible
+// map). release gives it back; call it once.
+func (c *Cores) Hold() (release func()) { return c.acquire(false) }
+
+// HoldBackground is Hold for a goroutine that yields to visible computations
+// (one position of a batch): while a claim is open it is not served, so a
+// batch starts no position on a core the claimant was lent.
+func (c *Cores) HoldBackground() (release func()) { return c.acquire(true) }
+
+func (c *Cores) acquire(background bool) func() {
+	c.mu.Lock()
+	w := &coreWaiter{ready: make(chan struct{}), background: background}
+	c.waiters = append(c.waiters, w)
+	c.grantLocked()
+	c.mu.Unlock()
+	<-w.ready
 	c.signal()
 	var once sync.Once
 	return func() { once.Do(c.give) }
 }
 
+// grantLocked hands free tokens to the waiters in order, passing over the
+// background ones while a claim is open.
+func (c *Cores) grantLocked() {
+	kept := c.waiters[:0]
+	for _, w := range c.waiters {
+		if c.held-c.parked < c.cap && (!w.background || c.claims == 0) {
+			c.held++
+			close(w.ready)
+			continue
+		}
+		kept = append(kept, w)
+	}
+	clear(c.waiters[len(kept):])
+	c.waiters = kept
+}
+
+// Claim gives the computation on screen precedence over the background until
+// release (once; later calls do nothing): background goroutines park at their
+// next roll and their tokens go to the claimant's forks and Holds. Claims
+// stack; the background resumes when the last one is released.
+func (c *Cores) Claim() (release func()) {
+	c.mu.Lock()
+	if c.claims == 0 {
+		c.lift = make(chan struct{})
+	}
+	c.claims++
+	c.claimed.Store(true)
+	c.mu.Unlock()
+	var once sync.Once
+	return func() {
+		once.Do(func() {
+			c.mu.Lock()
+			c.claims--
+			if c.claims == 0 {
+				c.claimed.Store(false)
+				// Every parked goroutine takes its token back at once.
+				c.parked = 0
+				close(c.lift)
+				c.grantLocked()
+			}
+			c.mu.Unlock()
+			c.signal()
+		})
+	}
+}
+
+// yield parks a background goroutine that holds a token while a claim is
+// open. Its token stays counted as held, lent until the claim ends: on waking
+// it needs none, so a parked helper can never wait for a token the fork that
+// lent it holds.
+func (c *Cores) yield() {
+	if !c.claimed.Load() {
+		return
+	}
+	c.mu.Lock()
+	if c.claims == 0 {
+		c.mu.Unlock()
+		return
+	}
+	lift := c.lift
+	c.parked++
+	c.grantLocked()
+	c.mu.Unlock()
+	c.signal()
+	<-lift
+}
+
 // Cap is the number of tokens of the budget, fixed when it was made (for
 // ProcessCores, GOMAXPROCS at first use, whatever it has become since).
-func (c *Cores) Cap() int { return cap(c.tokens) }
+func (c *Cores) Cap() int { return c.cap }
 
-// InUse is the number of tokens taken at this instant.
-func (c *Cores) InUse() int { return len(c.tokens) }
+// InUse is the number of tokens running at this instant: a token lent by a
+// parked goroutine counts once, for the claimant that uses it.
+func (c *Cores) InUse() int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.held - c.parked
+}
 
 // Changed receives once after the tokens taken have changed, however many
 // changes happened since it was last read: a reader that reads InUse after
@@ -102,18 +212,25 @@ func (c *Cores) signal() {
 	}
 }
 
+// tryTake never waits and never overtakes a waiter: tokens are granted the
+// moment they free up, so a free token has no eligible waiter.
 func (c *Cores) tryTake() bool {
-	select {
-	case c.tokens <- struct{}{}:
-		c.signal()
-		return true
-	default:
+	c.mu.Lock()
+	if c.held-c.parked >= c.cap {
+		c.mu.Unlock()
 		return false
 	}
+	c.held++
+	c.mu.Unlock()
+	c.signal()
+	return true
 }
 
 func (c *Cores) give() {
-	<-c.tokens
+	c.mu.Lock()
+	c.held--
+	c.grantLocked()
+	c.mu.Unlock()
 	c.signal()
 }
 
@@ -152,6 +269,7 @@ func (t *team) borrow(s *Searcher) *Searcher {
 	h.cfg = s.cfg
 	h.cache = s.cache
 	h.stop = s.stop
+	h.yieldTo = s.yieldTo
 	h.matchStates, h.hasMatchState = s.matchStates, s.hasMatchState
 	return h
 }

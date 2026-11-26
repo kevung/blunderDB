@@ -1,6 +1,7 @@
 # Un ordonnanceur unique et une file par bibliothèque pour les tâches durables
 
-Statut : acceptée. Amende ADR-0088 §5 au bureau seulement : une opération demandée pendant
+Statut : acceptée ; §2 amendé par ADR-0120 (un calcul visible réquisitionne les cœurs du lot).
+Amende ADR-0088 §5 au bureau seulement : une opération demandée pendant
 qu'une autre tient la bibliothèque y attend son tour ; le refus reste la règle du démon et de la
 CLI.
 Voir aussi : ADR-0013 (règle 2 : écrire est une tâche bornée et visible), ADR-0060 (rollout),

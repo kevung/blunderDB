@@ -233,6 +233,7 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 				searcher = nil
 			} else {
 				defer searcher.BindContext(ctx)()
+				searcher.YieldsTo(gammonnet.ProcessCores())
 			}
 
 			for {
@@ -254,8 +255,10 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 
 				// One token of the process budget per position: the batch
 				// lends its searchers only the cores it leaves idle — its
-				// tail, a match shorter than the machine is wide.
-				release := gammonnet.HoldCore()
+				// tail, a match shorter than the machine is wide. A visible
+				// computation's claim parks the search at its next roll and
+				// takes the token over until it ends.
+				release := gammonnet.ProcessCores().HoldBackground()
 				analysis, err := evaluateOnePositionWithGammonNet(positionsByID[id], id, searcher, met, ply, pruneK, candidates)
 				release()
 				if gammonnet.IsCanceled(err) {
