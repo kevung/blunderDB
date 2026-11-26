@@ -150,6 +150,32 @@ et ``blunderdb events alias``.
   ne sont pas ouvertes. Seuls les rollouts que blunderDB produit
   (:ref:`rollouts`) sont stockés, à côté de l'analyse.
 
+.. _assistant_import_document:
+
+L'assistant d'import de l'interface
+-----------------------------------
+
+La commande ``import_document`` (``idoc``, :doc:`cmd_mode`) ou le bouton **Importer un
+document…** de la liste des collections vide ouvre l'assistant : on choisit un PDF, une
+image de page ou un relevé ``.json`` déjà lu. L'assistant appelle les mêmes fonctions que
+``document analyze``, ``check`` et ``import`` et n'applique aucune règle de plus
+(:ref:`cli_document`).
+
+* **Défauts et sens de jeu** : le contexte par défaut du document et le sens de jeu
+  supposé sont décrits. Un seul bouton les confirme pour tout le document, après
+  contrôle sur quelques diagrammes ; rien n'est confirmé sans ce geste.
+* **Entrées à vérifier** : la liste donne, pour chaque entrée que l'import refuserait
+  en l'état, sa page, son étiquette, son état et la note qui nomme les champs à
+  comparer au diagramme. Celles que les choix en cours ne couvrent pas sont en gras.
+* **Entrées complètes** : la case équivaut à ``--accept-complete``.
+* **Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une fois les
+  défauts confirmés.
+* **Collection** : vide, elle prend le titre du document.
+
+Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; l'assistant n'offre
+pas ``--force``. Pendant la lecture et l'import, **Annuler** et la fermeture sont
+suspendus. Le bilan donne le nombre de positions ajoutées et répétées.
+
 .. _panneau_metadata:
 
 Panneau Métadonnées

@@ -322,6 +322,18 @@ func (a *App) OpenPaperArchiveDialog() ([]string, error) {
 	})
 }
 
+// OpenDocumentDialog asks for a document to import: a PDF, a page image or the
+// Relevé already read from one.
+func (a *App) OpenDocumentDialog() (string, error) {
+	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Import a Document",
+		Filters: []runtime.FileFilter{
+			{DisplayName: "Document (*.pdf, *.png, *.jpg, *.json)", Pattern: "*.pdf;*.png;*.jpg;*.jpeg;*.json"},
+			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
+		},
+	})
+}
+
 // OpenPositionFilesDialog opens a multi-file selection dialog for position and match files.
 func (a *App) OpenPositionFilesDialog() ([]string, error) {
 	return runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{

@@ -3068,7 +3068,8 @@
             "gv2": "ギャモン値（キューブ 2）",
             "gv4": "ギャモン値（キューブ 4）",
             "clear": "コマンド履歴を消去",
-            "jobs": "計算"
+            "jobs": "計算",
+            "import_document": "文書を読み込む"
         }
     },
     "assistant": {
@@ -3824,5 +3825,45 @@
             "sync": "同期",
             "other": "その他"
         }
+    },
+    "documentImport": {
+        "title": "文書を取り込む",
+        "reading": "文書を読み取っています…",
+        "failed": "文書の取り込みに失敗しました: {err}",
+        "summary": "{title}: {entries} 件(確実 {sure}、要確認 {toVerify}、不確か {uncertain})",
+        "defaults": "文書の既定値",
+        "defaultsConfirmed": "確認済み。",
+        "defaultsAsk": "いくつかの図で既定値を確かめ、文書全体について一度確認してください。",
+        "direction": "プレイの向き: {description}。",
+        "directionConfirmed": "確認済み。",
+        "directionAsk": "要確認。",
+        "confirm": "既定値とプレイの向きを確認",
+        "acceptComplete": "15 + 15 個を疑いなく読み取った項目を受け入れる({n})",
+        "fallback": "読み取れない場合は局面が持つ文脈で取り込む({n})。確認すべき欄は参照に記載",
+        "collection": "コレクション",
+        "review": "確認する項目({n})",
+        "reviewNone": "確認する項目はありません。",
+        "refused": "順位 {ranks} の取り込みは拒否されました。確認、受け入れ、または代替を使ってください。",
+        "run": "取り込む",
+        "imported": "コレクション {collection}: {added} 局面を追加、{repeated} 件は重複",
+        "importedDetail": "{entries} 件、異なる局面 {positions}(新規 {fresh})。完全: {complete}、代替: {fallback}",
+        "state": {
+            "sure": "確実",
+            "to-verify": "要確認",
+            "uncertain": "不確か"
+        },
+        "check": "図と照合: {fields}",
+        "field": {
+            "cube": "キューブ",
+            "dice": "ダイス",
+            "score": "スコア",
+            "turn": "手番",
+            "context": "文脈(キューブ、ダイス、手番、スコア)",
+            "checkers": "チェッカー",
+            "orientation": "プレイの向き",
+            "pips": "ピップ数",
+            "diagram": "図の読み取り"
+        },
+        "importMenu": "文書を読み込む…"
     }
 }

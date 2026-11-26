@@ -3068,7 +3068,8 @@
             "gv2": "Gammon-arvot, kuutio 2:ssa",
             "gv4": "Gammon-arvot, kuutio 4:ssä",
             "clear": "Tyhjennä komentohistoria",
-            "jobs": "Laskennat"
+            "jobs": "Laskennat",
+            "import_document": "Tuo asiakirja"
         }
     },
     "assistant": {
@@ -3824,5 +3825,45 @@
             "sync": "Sync",
             "other": "Muu"
         }
+    },
+    "documentImport": {
+        "title": "Tuo asiakirja",
+        "reading": "Luetaan asiakirjaa…",
+        "failed": "Asiakirjan tuonti epäonnistui: {err}",
+        "summary": "{title}: {entries} merkintää (varmoja {sure}, tarkistettavia {toVerify}, epävarmoja {uncertain})",
+        "defaults": "Asiakirjan oletukset",
+        "defaultsConfirmed": "Vahvistettu.",
+        "defaultsAsk": "Tarkista oletukset muutamasta kaaviosta ja vahvista ne kerran koko asiakirjalle.",
+        "direction": "Pelisuunta: {description}.",
+        "directionConfirmed": "Vahvistettu.",
+        "directionAsk": "Vahvistettava.",
+        "confirm": "Vahvista oletukset ja pelisuunta",
+        "acceptComplete": "Hyväksy merkinnät, joissa 15 + 15 nappulaa luettu epäilyksittä ({n})",
+        "fallback": "Tuo aseman mukanaan tuomalla kontekstilla, kun sitä ei ole luettu ({n}); tarkistettavat kentät on nimetty viitteessä",
+        "collection": "Kokoelma",
+        "review": "Tarkistettavat merkinnät ({n})",
+        "reviewNone": "Ei tarkistettavia merkintöjä.",
+        "refused": "Tuonti evätään sijalle {ranks}: vahvista, hyväksy tai käytä varamenettelyä.",
+        "run": "Tuo",
+        "imported": "Kokoelma {collection}: {added} asemaa lisätty, {repeated} toistuvaa",
+        "importedDetail": "{entries} merkintää, {positions} eri asemaa ({fresh} uutta); täydelliset: {complete}, varamenettely: {fallback}",
+        "state": {
+            "sure": "varma",
+            "to-verify": "tarkistettava",
+            "uncertain": "epävarma"
+        },
+        "check": "Vertaa kaavioon: {fields}",
+        "field": {
+            "cube": "tuplauskuutio",
+            "dice": "nopat",
+            "score": "pistetilanne",
+            "turn": "vuorossa oleva",
+            "context": "konteksti (kuutio, nopat, vuoro, pistetilanne)",
+            "checkers": "nappulat",
+            "orientation": "pelisuunta",
+            "pips": "pipmäärät",
+            "diagram": "kaavion luku"
+        },
+        "importMenu": "Tuo asiakirja…"
     }
 }

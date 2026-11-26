@@ -3068,7 +3068,8 @@
             "gv2": "Gammon-Werte, Würfel auf 2",
             "gv4": "Gammon-Werte, Würfel auf 4",
             "clear": "Befehlsverlauf löschen",
-            "jobs": "Berechnungen"
+            "jobs": "Berechnungen",
+            "import_document": "Dokument importieren"
         }
     },
     "assistant": {
@@ -3824,5 +3825,45 @@
             "sync": "Sync",
             "other": "Sonstige"
         }
+    },
+    "documentImport": {
+        "title": "Dokument importieren",
+        "reading": "Dokument wird gelesen…",
+        "failed": "Dokumentimport fehlgeschlagen: {err}",
+        "summary": "{title}: {entries} Einträge (sicher {sure}, zu prüfen {toVerify}, unsicher {uncertain})",
+        "defaults": "Standardwerte des Dokuments",
+        "defaultsConfirmed": "Bestätigt.",
+        "defaultsAsk": "Prüfen Sie diese Werte an einigen Diagrammen und bestätigen Sie sie einmal für das ganze Dokument.",
+        "direction": "Spielrichtung: {description}.",
+        "directionConfirmed": "Bestätigt.",
+        "directionAsk": "Zu bestätigen.",
+        "confirm": "Standardwerte und Spielrichtung bestätigen",
+        "acceptComplete": "Einträge mit 15 + 15 zweifelsfrei gelesenen Steinen akzeptieren ({n})",
+        "fallback": "Mit dem Kontext der Stellung importieren, wenn er nicht gelesen ist ({n}); zu prüfende Felder stehen in der Referenz",
+        "collection": "Sammlung",
+        "review": "Zu prüfende Einträge ({n})",
+        "reviewNone": "Kein Eintrag zu prüfen.",
+        "refused": "Der Import wird für Rang {ranks} abgelehnt: bestätigen, akzeptieren oder Rückfall verwenden.",
+        "run": "Importieren",
+        "imported": "Sammlung {collection}: {added} Stellungen hinzugefügt, {repeated} wiederholt",
+        "importedDetail": "{entries} Einträge, {positions} verschiedene Stellungen ({fresh} neu); vollständig: {complete}, Rückfall: {fallback}",
+        "state": {
+            "sure": "sicher",
+            "to-verify": "zu prüfen",
+            "uncertain": "unsicher"
+        },
+        "check": "Mit dem Diagramm vergleichen: {fields}",
+        "field": {
+            "cube": "Doppelwürfel",
+            "dice": "Würfel",
+            "score": "Spielstand",
+            "turn": "Spieler am Zug",
+            "context": "Kontext (Doppelwürfel, Würfel, Spieler am Zug, Spielstand)",
+            "checkers": "Steine",
+            "orientation": "Spielrichtung",
+            "pips": "Pipcounts",
+            "diagram": "Lesen des Diagramms"
+        },
+        "importMenu": "Dokument importieren…"
     }
 }

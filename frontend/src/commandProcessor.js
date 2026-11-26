@@ -98,6 +98,8 @@ export function processCommand(command) {
         callbacks.onImportDatabase?.();
     } else if (command === 'import_archive' || command === 'iar') {
         callbacks.onImportPaperArchive?.();
+    } else if (command === 'import_document' || command === 'idoc') {
+        callbacks.onImportDocument?.();
     } else if (command === 'export_db' || command === 'edb') {
         callbacks.onExportDatabase?.();
     } else if (command.startsWith('import ')) {

@@ -78,7 +78,8 @@ export const MODAL = {
     RESUME_BATCH: 'resumeBatch',
     JOBS: 'jobs',
     LOG: 'log',
-    CONTACT_SHEET: 'contactSheet'
+    CONTACT_SHEET: 'contactSheet',
+    DOCUMENT_IMPORT: 'documentImport'
 };
 
 // ── Panel identifiers (can be open simultaneously) ──

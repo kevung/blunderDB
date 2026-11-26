@@ -206,8 +206,8 @@ func printCertainties(out io.Writer, s document.Summary) {
 func (cli *CLI) runDocumentCheck(args []string) error {
 	fs := cli.documentFlagSet("check",
 		"Validate a relevé (format, ranks, legal positions; version 1 is still read) and count its\n"+
-			"entries by state and by how their context is known. Nothing is read from or written to a\n"+
-			"database.",
+			"entries by state and by how their context is known, then list the entries to review, each with\n"+
+			"the fields to check against its diagram. Nothing is read from or written to a database.",
 		"blunderdb document check releve.json",
 		"blunderdb document check releve.json --format json")
 	format := fs.String("format", "text", "Output format: text or json")
@@ -220,8 +220,12 @@ func (cli *CLI) runDocumentCheck(args []string) error {
 		return err
 	}
 	s := document.Summarize(r)
+	review := document.Review(r, document.ImportOptions{})
 	if *format == "json" {
-		return cli.printJSON(s)
+		return cli.printJSON(struct {
+			document.Summary
+			Review []document.ReviewItem `json:"review"`
+		}{s, review.Items})
 	}
 	out := cli.stdout()
 	fmt.Fprintf(out, "Document:   %s\n", s.Title)
@@ -245,6 +249,12 @@ func (cli *CLI) runDocumentCheck(args []string) error {
 		fmt.Fprintf(out, "Fallback:   rank %s imported with --fallback under the context its position carries, the fields to check named in its reference\n", joinRanks(s.Fallback))
 	case len(s.FallbackComplete) > 0:
 		fmt.Fprintf(out, "Fallback:   rank %s imported with --fallback --accept-complete under the context its position carries, the fields to check named in its reference\n", joinRanks(s.FallbackComplete))
+	}
+	if len(review.Items) > 0 {
+		fmt.Fprintln(out, "Review:")
+		for _, it := range review.Items {
+			fmt.Fprintf(out, "  rank %d, %s, %s: %s\n", it.Rank, it.Reference, it.State, it.Note)
+		}
 	}
 	return nil
 }

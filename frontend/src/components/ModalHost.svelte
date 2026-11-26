@@ -97,6 +97,10 @@
     {@const Modal = $loaded.contactSheet}
     <Modal visible={$activeModal === MODAL.CONTACT_SHEET} onClose={() => closeModal()} />
 {/if}
+{#if $loaded.documentImport}
+    {@const Modal = $loaded.documentImport}
+    <Modal visible={$activeModal === MODAL.DOCUMENT_IMPORT} />
+{/if}
 
 <PositionPrintModal />
 <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />

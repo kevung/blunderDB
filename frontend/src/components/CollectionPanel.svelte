@@ -806,6 +806,7 @@
                 rowAttrs={(collection) =>
                     libraryDragAttrs(() => (collectionEdit.isEditing(collection.id) ? null : { group: $activeGroupId, kind: 'collection', id: collection.id, label: collection.name }))}
                 emptyText={$t('collection.empty')}
+                emptyExtra={{ label: $t('documentImport.importMenu'), onClick: () => import('../services/documentImportService.js').then((m) => m.startDocumentImport()) }}
                 emptyActions
                 emptyAction={{ label: $t('collection.newButton'), onClick: () => (creating = true) }}
             >

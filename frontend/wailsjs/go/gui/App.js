@@ -254,6 +254,10 @@ export function OpenDirectionOutputDialog() {
   return window['go']['gui']['App']['OpenDirectionOutputDialog']();
 }
 
+export function OpenDocumentDialog() {
+  return window['go']['gui']['App']['OpenDocumentDialog']();
+}
+
 export function OpenExportApkgDialog(arg1) {
   return window['go']['gui']['App']['OpenExportApkgDialog'](arg1);
 }

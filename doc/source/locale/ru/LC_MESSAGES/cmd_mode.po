@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:46+0100\n"
+"POT-Creation-Date: 2026-11-26 15:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -96,11 +96,26 @@ msgstr "import_archive, iar"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Importe une archive papier de matchs : la page HTML exportée, ou des "
-"scans et des photos de ses feuilles (voir "
-":ref:`panneau_matchs`)."
+"scans et des photos de ses feuilles (voir :ref:`panneau_matchs`)."
 msgstr ""
 "Импортирует бумажный архив матчей: экспортированную HTML-страницу или "
 "сканы и фотографии её листов (см. :ref:`panneau_matchs`)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "import_document, idoc"
+msgstr "import_document, idoc"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre l'assistant d'import de document : un PDF, une image de page ou un "
+"relevé, les défauts et le sens de jeu confirmés une fois, les entrées à "
+"vérifier, puis l'import dans une collection (voir "
+":ref:`assistant_import_document`)."
+msgstr ""
+"Открывает мастер импорта документа: PDF, изображение страницы или relevé,"
+" однократно подтверждённые значения по умолчанию и направление игры, "
+"записи к проверке, затем импорт в коллекцию (см. "
+":ref:`assistant_import_document`)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "export_db, edb"
@@ -324,7 +339,7 @@ msgstr ""
 "объединяет таблицы для куба 1, 2 и 4: эти три команды открывают одну и ту"
 " же вкладку."
 
-#: ../../source/cmd_mode.rst:49
+#: ../../source/cmd_mode.rst:50
 msgid "Positions et navigation"
 msgstr "Позиции и навигация"
 
@@ -563,7 +578,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Навигация по последнему просмотренному матчу."
 
-#: ../../source/cmd_mode.rst:81
+#: ../../source/cmd_mode.rst:82
 msgid "Édition et recherche"
 msgstr "Редактирование и поиск"
 
@@ -608,11 +623,11 @@ msgstr ""
 "Искать среди показанных позиций: текущие результаты, открытая коллекция "
 "или просматриваемый матч."
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:98
 msgid "Filtres de recherche"
 msgstr "Фильтры поиска"
 
-#: ../../source/cmd_mode.rst:99
+#: ../../source/cmd_mode.rst:100
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -627,7 +642,7 @@ msgstr ""
 "``search``, делающий то же самое (см. :ref:`cli`); тире отмечает фильтр, "
 "который выражает только грамматика."
 
-#: ../../source/cmd_mode.rst:106
+#: ../../source/cmd_mode.rst:107
 msgid ""
 "Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -646,7 +661,7 @@ msgstr ""
 "(``xD65``). В командной строке, где доски нет, эти токены сравниваются с "
 "пустой доской; там нужно применять флаги из третьего столбца."
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -656,7 +671,7 @@ msgstr ""
 "располагает результат по возрастанию расстояния до целевой позиции, а все"
 " остальные токены сужают упорядоченное таким образом множество."
 
-#: ../../source/cmd_mode.rst:119
+#: ../../source/cmd_mode.rst:120
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -666,11 +681,11 @@ msgstr ""
 " из таблицы ниже: ``E>100`` оставляет ходы, стоившие не менее одной "
 "десятой очка, поскольку очко равно 1000 тысячных."
 
-#: ../../source/cmd_mode.rst:123
+#: ../../source/cmd_mode.rst:124
 msgid "Deux recherches complètes :"
 msgstr "Два полных поиска:"
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:126
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -679,7 +694,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — отставание более 30 пипов, шансы на выигрыш от 40"
 " % до 60 %, без комментария."
 
-#: ../../source/cmd_mode.rst:127
+#: ../../source/cmd_mode.rst:128
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -2017,7 +2032,7 @@ msgstr ""
 "звёздочкой (``like42*``), которой больше нет. См. "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:252
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -2036,11 +2051,11 @@ msgstr ""
 "встречается ни в одном значении, и ``ma1;2`` не является токеном (пишите "
 "``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:256
+#: ../../source/cmd_mode.rst:257
 msgid "Transcrire depuis un terminal"
 msgstr "Запись из терминала"
 
-#: ../../source/cmd_mode.rst:258
+#: ../../source/cmd_mode.rst:259
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -2060,7 +2075,7 @@ msgstr ""
 "отдельная сессия, без ``sessionId`` и без отмены от одного вызова к "
 "другому."
 
-#: ../../source/cmd_mode.rst:269
+#: ../../source/cmd_mode.rst:270
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 

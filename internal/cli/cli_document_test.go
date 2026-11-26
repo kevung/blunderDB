@@ -66,8 +66,12 @@ func TestCLI_DocumentCheckAndImport(t *testing.T) {
 		t.Fatal(err)
 	}
 	out = captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", unverified}) })
-	if !strings.Contains(out, "Unverified: rank 2") {
+	if !strings.Contains(out, "Unverified: rank 2") || !strings.Contains(out, "Review:\n  rank 2, p. ") {
 		t.Errorf("check of an unverified entry:\n%s", out)
+	}
+	out = captureOut(t, cli, func() { _ = cli.Run([]string{"document", "check", "--format", "json", unverified}) })
+	if !strings.Contains(out, `"review": [`) || !strings.Contains(out, `"rank": 2`) || !strings.Contains(out, `"held": true`) {
+		t.Errorf("json check lists no review:\n%s", out)
 	}
 	if err := cli.Run([]string{"document", "import", "--db", dbPath, "--collection", "Autre", unverified}); err == nil {
 		t.Error("an unverified entry was imported without --force")

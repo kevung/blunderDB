@@ -9,8 +9,8 @@ Importer les positions d'un document
 Un ouvrage que l'on possède — livre de problèmes, recueil, article — montre des
 positions en diagrammes, dans un ordre qui est celui de l'étude. La commande
 ``document`` les range dans une collection de la base, dans cet ordre, pour les
-réétudier avec le reste de la bibliothèque. Elle ne fonctionne qu'en ligne de
-commande ; il n'y a pas d'écran correspondant.
+réétudier avec le reste de la bibliothèque. L'interface a le même chemin dans un
+assistant (:ref:`assistant_import_document`) ; la ligne de commande est décrite ici.
 
 Le travail passe par un fichier intermédiaire, le **relevé** : un fichier JSON
 qui liste les positions lues dans le document. On le relit, on le corrige si
@@ -66,7 +66,9 @@ Le parcours en trois commandes
    de chaque entrée vient des signets du PDF.
 
 2. ``check`` valide le relevé et compte ses entrées, sans lire ni écrire de
-   base. ``--format json`` donne les mêmes comptes en JSON :
+   base. Il liste aussi, après le décompte, les entrées à vérifier (rang, page,
+   état et champs à comparer au diagramme) ; ``--format json`` donne les mêmes
+   comptes et la même liste (``review``) en JSON :
 
    .. code-block:: text
 
@@ -75,6 +77,8 @@ Le parcours en trois commandes
       Context:    read 5, default 0, to verify 1
       Positions:  5 distinct, 1 repeated
       Unverified: rank 4, 5, 6 (import refused without --force)
+      Review:
+        rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
 
 3. ``import`` écrit les positions dans la collection :
 
