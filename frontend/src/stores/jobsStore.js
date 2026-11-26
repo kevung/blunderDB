@@ -50,13 +50,15 @@ function upsert(job) {
 
 /** Loads the registry, then follows its events. Returns the function that stops following. */
 export function startJobsFeed() {
+    /** @type {Set<number>} */
+    const removed = new Set();
     const offs = [
         EventsOn('jobs:changed', (/** @type {JobInfo} */ job) => job && upsert(job)),
-        EventsOn('jobs:removed', (/** @type {{id: number}} */ e) => e && jobsStore.update(($jobs) => $jobs.filter((j) => j.id !== e.id)))
+        EventsOn('jobs:removed', (/** @type {{id: number}} */ e) => e && (removed.add(e.id), jobsStore.update(($jobs) => $jobs.filter((j) => j.id !== e.id))))
     ];
     ListJobs().then(
-        // An event received before the list is newer than the list: it stays.
-        (list) => (list || []).forEach((job) => get(jobsStore).some((j) => j.id === job.id) || upsert(job)),
+        // An event received before the list is newer than the list: a change stays, a removal holds.
+        (list) => (list || []).forEach((job) => removed.has(job.id) || get(jobsStore).some((j) => j.id === job.id) || upsert(job)),
         (error) => logger.error('could not list the tasks:', error)
     );
     return () => offs.forEach((off) => off && off());

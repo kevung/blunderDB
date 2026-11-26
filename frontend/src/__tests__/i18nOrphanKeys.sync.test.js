@@ -46,7 +46,7 @@ const DYNAMIC_PREFIXES = [
     'maintenance.hint_', // MaintenanceSettings.svelte: same
     'maintenance.outcome_', // MaintenanceSettings.svelte: a journal row's outcome
     'calculs.end_', // JobsModal.svelte: the end state the registry sends
-    'jobs.', // utils/busyMessage.js, gammonNetBatchLabel.js: the job code Go sends (database.BusyError)
+    'jobs.', // utils/busyMessage.js: the job code Go sends (database.BusyError)
     'board.scene.',
     'report.', // the document's labels are read by the Go report generator (pkg/blunderdb/report), which labels_test.go holds to this catalogue
     'search.filters.',

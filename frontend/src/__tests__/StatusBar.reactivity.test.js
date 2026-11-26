@@ -215,6 +215,12 @@ describe('StatusBar — réactivité', () => {
         expect(must(message).getAttribute('aria-live')).toBe('polite');
     });
 
+    test('aucun reste de commentaire dans le texte de la barre', async () => {
+        const { container } = render(StatusBar);
+        await tick();
+        expect(container.textContent).not.toContain('-->');
+    });
+
     test('puce Calculs : une seule, avec les comptes, et un clic ouvre le panneau', async () => {
         const job = { kind: 'rollout', label: 'x', library: 0, priority: 'requested', done: 1, total: 4, position: 0, pausable: true, cancelable: true };
         jobsStore.set([

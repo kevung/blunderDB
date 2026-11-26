@@ -75,7 +75,28 @@ describe('jobsStore', () => {
     });
 });
 
+describe('jobsStore, courses', () => {
+    test('une tâche retirée pendant ListJobs ne revient pas', async () => {
+        jobsStore.set([]);
+        let answer;
+        mocks.ListJobs.mockReturnValueOnce(new Promise((resolve) => (answer = resolve)));
+        const stop = startJobsFeed();
+        mocks.handlers['jobs:removed']({ id: 9 });
+        answer([job({ id: 9 }), job({ id: 10 })]);
+        await waitFor(() => expect(get(jobsStore).map((j) => j.id)).toEqual([10]));
+        stop();
+    });
+});
+
 describe('JobsModal', () => {
+    test('une tâche en attente mise en pause se reprend', async () => {
+        jobsStore.set([job({ id: 2, state: 'paused', position: 1, pausable: false })]);
+        const { findByTestId } = render(JobsModal, { props: { visible: true, onClose: vi.fn() } });
+        await findByTestId('job-paused');
+        await fireEvent.click(await findByTestId('job-resume'));
+        expect(mocks.ResumeJob).toHaveBeenCalledWith(2);
+    });
+
     test('monte les trois groupes avec leurs lignes', async () => {
         const { findByTestId, getAllByTestId } = render(JobsModal, { props: { visible: true, onClose: vi.fn() } });
         await findByTestId('jobs-running');

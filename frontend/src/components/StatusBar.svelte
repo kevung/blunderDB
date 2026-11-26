@@ -326,7 +326,7 @@
         <!-- Live region on this span only: the rest of the bar is not status announcements. -->
         <span class="info-message" role="status" aria-live="polite" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
     {/if}
-    de la session se reprennent d'ici, de la plus récente à la plus ancienne. -->
+    <!-- Les copies de la session se reprennent d'ici, de la plus récente à la plus ancienne. -->
     {#if $transferHistoryStore.length > dismissedCopies}
         {@const last = $transferHistoryStore[$transferHistoryStore.length - 1]}
         <span class="watch-import-chip" data-testid="transfer-undo-chip">

@@ -103,6 +103,10 @@
                                         <button type="button" data-testid="job-cancel" onclick={() => cancelJob(job.id)}>{$t('calculs.cancel')}</button>
                                     {/if}
                                 {:else if id === 'waiting'}
+                                    {#if job.state === 'paused'}
+                                        <span class="end" data-testid="job-paused">{$t('calculs.pause')}</span>
+                                        <button type="button" data-testid="job-resume" onclick={() => resumeJob(job.id)}>{$t('calculs.resume')}</button>
+                                    {/if}
                                     <button type="button" data-testid="job-up" disabled={job.position <= 1} onclick={() => moveJob(job.id, job.position - 2)}>{$t('calculs.moveUp')}</button>
                                     <button type="button" data-testid="job-down" disabled={isLast(job)} onclick={() => moveJob(job.id, job.position)}>{$t('calculs.moveDown')}</button>
                                     <button type="button" data-testid="job-remove" onclick={() => removeJob(job.id)}>{$t('calculs.remove')}</button>

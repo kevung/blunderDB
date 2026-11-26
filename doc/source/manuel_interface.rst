@@ -213,7 +213,8 @@ bibliothèque de la tâche. Une tâche en cours se met en *Pause* (et se
 *Reprend*) ou s'*Annule* ; une tâche d'import réduite se rouvre par *Afficher*.
 Une tâche en attente *Monte*, *Descend* dans la file de sa bibliothèque ou se
 *Retire* ; une tâche terminée se *Retire* de la liste. *Tout en pause* arrête
-les tâches en cours et en attente, puis les reprend toutes. ÉCHAP ferme le
+les tâches en cours et en attente qui peuvent l'être (certaines ne se mettent
+pas en pause), puis les reprend toutes. ÉCHAP ferme le
 panneau.
 
 L'onglet **Anki** porte un **badge** quand des cartes sont à réviser, tous

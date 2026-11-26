@@ -62,7 +62,7 @@ test("a batch of the library left shows its progress on its group's header, not 
     await page.evaluate(() => window.__events['gammonnet-batch:progress']({ done: 3, total: 10, ply: 2, group: 1 }));
     const badge = page.locator('[data-testid="library-group"][data-group-id="1"] [data-testid="library-group-badge"]');
     await expect(badge).toHaveAttribute('data-state', 'running');
-    await expect(page.locator('.gammonnet-batch-chip')).toHaveCount(0);
+    await expect(page.getByTestId('jobs-chip')).toHaveCount(0);
 
     await page.evaluate(() => window.__events['gammonnet-batch:done']({ evaluated: 10, refused: 0, failed: 0, group: 1 }));
     await expect(badge).toHaveAttribute('data-state', 'done');
