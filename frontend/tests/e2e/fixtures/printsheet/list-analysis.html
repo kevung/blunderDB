@@ -44,7 +44,7 @@ body { --ink: #111; --soft: #555; --paper: #fff;
 .nt { font-family: var(--mono); font-size: .93em; font-weight: 600; white-space: nowrap; min-width: 34ch }
 .wh { color: var(--soft) } .cm { font-style: italic; white-space: pre-wrap }
 .pe > .cm { grid-column: 2 / -1 }
-.qrb { break-inside: avoid; display: flex; gap: 1.2em; align-items: flex-end; margin-top: .9em; color: var(--soft) }
+.qrb { break-inside: avoid; display: flex; flex-wrap: wrap; gap: 1.2em; align-items: flex-end; margin-top: .9em; color: var(--soft) }
 .qrb svg { flex: none; display: block; shape-rendering: crispEdges }
 .pe.cont > .cm::before, .de.cont > .cm:first-child::before { content: "… " }
 .dl { column-gap: 1.6em; column-rule: .3pt solid #aaa }
