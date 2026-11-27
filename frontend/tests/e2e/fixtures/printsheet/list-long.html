@@ -9,7 +9,7 @@ body { --ink: #111; --soft: #555; --paper: #fff;
 .sheet { position: relative; width: 210mm; height: 297mm; box-sizing: border-box; padding: 9mm 8mm; overflow: hidden;
   background: var(--paper); color: var(--ink); font-family: var(--cond); font-size: 7pt; line-height: 1.2;
   font-variant-numeric: tabular-nums; break-after: page; page-break-after: always }
-.doc:last-child .sheet:last-child { break-after: auto; page-break-after: auto }
+.doc:last-of-type .sheet:last-child { break-after: auto; page-break-after: auto }
 @media screen { body { background: #ddd } .sheet { margin: 8mm auto; box-shadow: 0 0 2mm #888 } }
 .mh { display: flex; justify-content: space-between; gap: 2em; align-items: flex-end; border-bottom: .6pt solid var(--ink); padding-bottom: .35em }
 .mt { font-size: 1.9em; font-weight: 600; line-height: 1.1 }
@@ -223,5 +223,7 @@ body { --ink: #111; --soft: #555; --paper: #fff;
       spill(doc, back, head);
     } else if (flow(s)) fit(s);
   });
+  // The signal a PDF renderer waits for: the layout is final.
+  document.documentElement.setAttribute('data-fitted', '');
 })();</script>
 </body></html>

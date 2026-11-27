@@ -4,6 +4,7 @@ import {domain} from '../models';
 import {gui} from '../models';
 import {assistant} from '../models';
 import {rollout} from '../models';
+import {ingest} from '../models';
 import {race} from '../models';
 import {training} from '../models';
 import {jobs} from '../models';
@@ -87,6 +88,8 @@ export function EvaluatePositionImmediate(arg1:domain.Position,arg2:number,arg3:
 
 export function ExportIssuerIdentity(arg1:string):Promise<string>;
 
+export function ExportPaperArchivePDF(arg1:Array<number>,arg2:string):Promise<ingest.ArchiveExport>;
+
 export function FolderWatchStatus():Promise<gui.WatchStatus>;
 
 export function GenerateBearoffQuestion(arg1:race.BearoffRequest):Promise<race.BearoffQuestion>;
@@ -110,6 +113,8 @@ export function ImportFiles(arg1:Array<string>,arg2:boolean):Promise<gui.ImportF
 export function ImportFilesIn(arg1:number,arg2:Array<string>,arg3:string):Promise<gui.ImportFilesSummary>;
 
 export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.IssuerIdentityInfo>;
+
+export function IsBlunderDBArchive(arg1:string):Promise<boolean>;
 
 export function IsDirectory(arg1:string):Promise<boolean>;
 
@@ -223,6 +228,8 @@ export function SetIssuerName(arg1:string):Promise<domain.IssuerIdentityInfo>;
 
 export function SetLibraryGroupLocked(arg1:number,arg2:boolean):Promise<void>;
 
+export function SheetPDFAvailable():Promise<boolean>;
+
 export function ShowAlert(arg1:string):Promise<void>;
 
 export function ShowQuestionDialog(arg1:string,arg2:string,arg3:Array<string>,arg4:string):Promise<string>;
@@ -278,6 +285,8 @@ export function ViewerCatalogOf(arg1:number):Promise<gui.ViewerCatalog>;
 export function ViewerShow(arg1:number,arg2:number):Promise<gui.ViewerItem>;
 
 export function ViewerSteps(arg1:number,arg2:gui.ViewerSource):Promise<Array<gui.ViewerStep>>;
+
+export function WriteSheetPDF(arg1:string,arg2:string):Promise<void>;
 
 export function YouTubeEmbedURL(arg1:string):Promise<string>;
 

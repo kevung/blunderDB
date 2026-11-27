@@ -413,7 +413,8 @@
         "exported": "Paperiarkisto tallennettu: {path} ({matches} ottelua, {codes} koodia, {skipped} jätetty pois)",
         "importing": "Luetaan paperiarkistoa…",
         "imported": "Paperiarkisto: {imported} ottelua tuotu, {duplicates} kaksoiskappaletta; {positions} asemaa tuotu, {knownPositions} jo kirjastossa, {missing} koodia puuttuu, {failed} epäonnistui",
-        "failed": "Paperiarkisto epäonnistui: {err}"
+        "failed": "Paperiarkisto epäonnistui: {err}",
+        "noPdfPayload": "Tämä PDF ei sisällä blunderDB-arkistoa: mitään ei tuotu"
     },
     "match": {
         "errorExportingMat": "Virhe ottelun viennissä",

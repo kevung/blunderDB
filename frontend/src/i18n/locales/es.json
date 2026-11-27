@@ -413,7 +413,8 @@
         "exported": "Archivo en papel guardado: {path} ({matches} partidas, {codes} códigos, {skipped} descartadas)",
         "importing": "Leyendo el archivo en papel…",
         "imported": "Archivo en papel: {imported} partidas importadas, {duplicates} duplicadas; {positions} posiciones importadas, {knownPositions} ya presentes, {missing} códigos faltantes, {failed} fallidas",
-        "failed": "Error en el archivo en papel: {err}"
+        "failed": "Error en el archivo en papel: {err}",
+        "noPdfPayload": "Este PDF no contiene ningún archivo de blunderDB: no se ha importado nada"
     },
     "match": {
         "errorExportingMat": "Error al exportar el partido",

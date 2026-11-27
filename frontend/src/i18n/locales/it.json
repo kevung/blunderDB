@@ -413,7 +413,8 @@
         "exported": "Archivio cartaceo salvato: {path} ({matches} match, {codes} codici, {skipped} esclusi)",
         "importing": "Lettura dell'archivio cartaceo…",
         "imported": "Archivio cartaceo: {imported} match importati, {duplicates} duplicati; {positions} posizioni importate, {knownPositions} già presenti, {missing} codici mancanti, {failed} non riusciti",
-        "failed": "Archivio cartaceo non riuscito: {err}"
+        "failed": "Archivio cartaceo non riuscito: {err}",
+        "noPdfPayload": "Questo PDF non contiene alcun archivio blunderDB: nulla è stato importato"
     },
     "match": {
         "errorExportingMat": "Errore durante l'esportazione del match",

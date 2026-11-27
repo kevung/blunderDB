@@ -56,12 +56,21 @@ async function load(releve, choices = get(documentImportStore)) {
     patch({ releve, summary, review, phase: 'review', error: '' });
 }
 
-/** Choisit un document (PDF, image ou Relevé .json), le lit et ouvre l'assistant. */
-export async function startDocumentImport() {
+/**
+ * Choisit un document (PDF, image ou Relevé .json), le lit et ouvre l'assistant.
+ * @param {string} [given] un document déjà choisi (un dépôt, Ctrl-I) : pas de boîte de choix
+ */
+export async function startDocumentImport(given = '') {
     let path = '';
     try {
-        path = (await OpenDocumentDialog()) || '';
+        path = given || (await OpenDocumentDialog()) || '';
         if (!path) return;
+        // A sheet or an archive blunderDB printed imports by its codes, not its diagrams.
+        const archive = await import('./paperArchiveService.js');
+        if (await archive.isBlunderDBArchive(path)) {
+            await archive.importPaperArchive([path]);
+            return;
+        }
         documentImportStore.set({ ...initialDocumentImport(), phase: 'reading', path });
         setBusy('reading');
         openModal(MODAL.DOCUMENT_IMPORT);

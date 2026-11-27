@@ -413,7 +413,8 @@
         "exported": "Paper archive saved: {path} ({matches} matches, {codes} codes, {skipped} left out)",
         "importing": "Reading the paper archive…",
         "imported": "Paper archive: {imported} matches imported, {duplicates} duplicates; {positions} positions imported, {knownPositions} already held, {missing} codes missing, {failed} failed",
-        "failed": "Paper archive failed: {err}"
+        "failed": "Paper archive failed: {err}",
+        "noPdfPayload": "This PDF carries no blunderDB archive: nothing imported"
     },
     "match": {
         "errorExportingMat": "Error exporting match",

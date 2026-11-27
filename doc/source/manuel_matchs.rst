@@ -67,8 +67,10 @@ fiche du match.
 
 **Imprimer…**, dans le menu contextuel d'un match de la liste ou le menu ⋯ de sa
 fiche, imprime le match sur une feuille A4, sans aucun diagramme. Une boîte
-d'options s'ouvre d'abord ; la feuille est ensuite enregistrée en fichier HTML
-autonome et ouverte dans le navigateur, qui l'imprime ou l'enregistre en PDF.
+d'options s'ouvre d'abord ; la feuille est ensuite enregistrée en PDF A4 et
+ouverte dans la visionneuse du système, d'où elle s'imprime. Sous Windows et
+macOS, faute de ce rendu, elle reste un fichier HTML autonome ouvert dans le
+navigateur.
 L'en-tête donne les joueurs, le score final, la longueur, l'évènement, la ronde,
 la date, le nombre de parties et de coups, puis pour chaque joueur son PR, ses
 erreurs, ses blunders et son temps quand le match en a un. La transcription
@@ -105,8 +107,8 @@ de la feuille. Les options de la boîte :
   positions sous leur entrée, jamais tronqués.
 - **ArkID développé** (décochée) : la forme développée plutôt que la compacte.
 - **Code de réimport** (cochée) : le code QR du match, celui de l'archive
-  papier, en fin de transcription ; le même contenu est embarqué dans le
-  fichier, qui se réimporte comme une page d'archive.
+  papier, en fin de transcription ; le même contenu est joint au PDF, qui se
+  réimporte comme une page d'archive.
 - **Les N matchs de la liste** : imprime d'un coup tous les matchs de la liste
   filtrée, y compris ceux que le défilement n'a pas encore chargés, une feuille
   par match dans un seul document. Une impression en prend 100 au plus :
@@ -114,26 +116,32 @@ de la feuille. Les options de la boîte :
   réduire.
 
 L'impression n'écrit rien dans la base. En ligne de commande : ``match sheet``
-(:doc:`cli_matchs`).
+(:doc:`cli_matchs`), qui écrit la page HTML.
 
 .. _archive_papier_interface:
 
 **Archive papier…**, dans le menu contextuel d'un match de la liste, ouvre la
 boîte de l'archive papier : des pages A4 de codes QR, sans texte, qui gardent
 les matchs sur papier. **Exporter…** écrit la page d'archive de ce match, des
-N matchs de la liste filtrée ou de toute la bibliothèque, l'enregistre en
-fichier HTML et l'ouvre dans le navigateur, qui l'imprime. **Importer…** lit
-une ou plusieurs pages d'archive : le fichier HTML exporté, ou des scans et des
-photos (PNG, JPEG) de ses feuilles, en nombre quelconque et dans n'importe quel
-ordre. Un scan à 200 ou 300 dpi se lit même plié, un peu de travers ou bruité ;
+N matchs de la liste filtrée ou de toute la bibliothèque, l'enregistre en PDF
+(en fichier HTML sous Windows et macOS) et l'ouvre, d'où il s'imprime.
+**Importer…** lit une ou plusieurs pages d'archive : le PDF ou le fichier HTML
+exporté, ou des scans et des photos (PNG, JPEG) de ses feuilles, en nombre
+quelconque et dans n'importe quel ordre. Un PDF imprimé par blunderDB — archive,
+feuille de match ou liste de positions avec codes de réimport — porte ses codes
+en fichier joint : il se relit sans lecture d'image. Glissé sur la fenêtre ou
+choisi par **Importer… (Ctrl+I)**, un tel PDF s'importe de même dans la base
+ouverte ; un autre PDF, un livre de positions par exemple, ouvre l'assistant
+d'import de document (:ref:`assistant_import_document`). Un scan à 200 ou 300 dpi se lit même plié, un peu de travers ou bruité ;
 à 150 dpi, le bruit et la perspective ne passent plus. Une photo se prend bien
 de face. Un code illisible est reconstruit par son code de parité quand c'est
 possible ; la barre d'état donne les matchs importés, les doublons et les codes
 manquants. Les matchs passent par l'import ordinaire, et les analyses sont
-recalculées ensuite. En ligne de commande : ``archive`` (:doc:`cli_import_export`).
+recalculées ensuite. En ligne de commande : ``archive`` (:doc:`cli_import_export`),
+dont l'export écrit la page HTML et l'import lit aussi le PDF.
 
 **Importer…** lit de la même façon les codes de réimport d'une liste de
-positions imprimée (:ref:`liste_imprimable`) : le fichier enregistré, ou les
+positions imprimée (:ref:`liste_imprimable`) : le PDF enregistré, ou les
 scans et photos de ses pages, même une seule. Les positions sont enregistrées
 une à une, comme une position apportée seule ; la barre d'état donne celles
 qui sont nouvelles et celles que la base avait déjà.

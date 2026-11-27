@@ -2718,8 +2718,9 @@ Examples:
 Usage: blunderdb archive import [options] <file>...
 
 Import the matches of paper archives: the exported HTML page (its embedded matches, no code
-reading), or scans and photographs of its sheets (PNG, JPEG), several codes an image, any
-number of images in any order. A lost code is rebuilt from its parity code. Matches go
+reading), a PDF the interface printed (an archive, a match sheet or a position list, its
+codes attached; any other PDF is refused), or scans and photographs of its sheets (PNG,
+JPEG), several codes an image, any number of images in any order. A lost code is rebuilt from its parity code. Matches go
 through the ordinary import: an import batch, and a match already held is a duplicate.
 The reimport codes of a printed position list (sheet --reimport-code) bring their
 positions back, each saved on its own.
@@ -2733,6 +2734,7 @@ Options:
 Examples:
   blunderdb archive import --db database.db archive.html
   blunderdb archive import --db database.db page1.jpg page2.jpg
+  blunderdb archive import --db database.db match-sheet.pdf
 ```
 
 ### `blunderdb arkid`

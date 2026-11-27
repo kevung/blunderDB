@@ -413,7 +413,8 @@
         "exported": "Бумажный архив сохранён: {path} ({matches} матчей, {codes} кодов, {skipped} пропущено)",
         "importing": "Чтение бумажного архива…",
         "imported": "Бумажный архив: импортировано {imported} матчей, {duplicates} дубликатов; импортировано {positions} позиций, {knownPositions} уже были, {missing} кодов отсутствует, {failed} с ошибкой",
-        "failed": "Ошибка бумажного архива: {err}"
+        "failed": "Ошибка бумажного архива: {err}",
+        "noPdfPayload": "Этот PDF не содержит архива blunderDB: ничего не импортировано"
     },
     "match": {
         "errorExportingMat": "Ошибка при экспорте матча",

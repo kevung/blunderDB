@@ -159,7 +159,10 @@ La commande ``import_document`` (``idoc``, :doc:`cmd_mode`) ou le bouton **Impor
 document…** de la liste des collections vide ouvre l'assistant : on choisit un PDF, une
 image de page ou un relevé ``.json`` déjà lu. L'assistant appelle les mêmes fonctions que
 ``document analyze``, ``check`` et ``import`` et n'applique aucune règle de plus
-(:ref:`cli_document`).
+(:ref:`cli_document`). Un fichier que blunderDB a produit — PDF ou page HTML
+d'archive papier, de feuille de match ou de liste de positions avec codes de
+réimport — ne passe pas par l'assistant : il s'importe directement par ses codes,
+comme par :ref:`Archive papier… <archive_papier_interface>`.
 
 * **Défauts et sens de jeu** : le contexte par défaut du document et le sens de jeu
   supposé sont décrits. Un seul bouton les confirme pour tout le document, après
