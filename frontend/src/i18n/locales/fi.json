@@ -3767,6 +3767,7 @@
             "close": "Sulje",
             "refused": "Hylätty",
             "crawford": "Crawford",
+            "postCrawford": "Crawford-jälkeinen",
             "error": "Virhe"
         },
         "verdict": {
@@ -3774,13 +3775,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "Ei tuplausta",
                 "double_take": "Tuplaus/Hyväksy",
                 "double_pass": "Tuplaus/Hylkää",
-                "too_good": "Liian hyvä"
+                "too_good": "Liian hyvä",
+                "dmp": "Ei kuutiota kaksoisottelupisteessä"
             }
         },
         "menu": {

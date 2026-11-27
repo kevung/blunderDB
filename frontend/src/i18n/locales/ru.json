@@ -3767,6 +3767,7 @@
             "close": "Закрыть",
             "refused": "Отказ",
             "crawford": "Кроуфорд",
+            "postCrawford": "после Крофорда",
             "error": "Ошибка"
         },
         "verdict": {
@@ -3774,13 +3775,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "Без удвоения",
                 "double_take": "Удвоение/Принять",
                 "double_pass": "Удвоение/Отказ",
-                "too_good": "Слишком хорошо"
+                "too_good": "Слишком хорошо",
+                "dmp": "Нет куба на двойном матч-пойнте"
             }
         },
         "menu": {

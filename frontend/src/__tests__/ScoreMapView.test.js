@@ -108,7 +108,7 @@ describe('ScoreMapView', () => {
         expect(queryByText(/^Évaluer|^Evaluate/)).toBeNull();
     });
 
-    test('a cube map marks no Crawford line and frames no post-Crawford score on a Crawford cell', async () => {
+    test('a cube map marks its 1-away lines post-Crawford, not Crawford, and frames no post-Crawford score on a Crawford cell', async () => {
         positionStore.set({ ...emptyPosition(), score: [0, 3], dice: [0, 0] });
         const { container } = render(ScoreMapView, { active: true });
         await vi.waitFor(() => expect(app.StartScoreMap).toHaveBeenCalled());
@@ -116,7 +116,10 @@ describe('ScoreMapView', () => {
         const cube = cells(3).map((c) => ({ ...c, crawford: false, verdict: 'no_double', noDouble: 0.1, doubleTake: 0.3, doublePass: 1, move: undefined }));
         cube.forEach((cell, index) => handlers['gammonnet-scoremap:cell']({ tag, index, cell }));
         await Promise.resolve();
-        expect([...container.querySelectorAll('th')].some((th) => th.textContent.includes('C'))).toBe(false);
+        const heads = [...container.querySelectorAll('th')].map((th) => th.textContent.trim());
+        expect(heads).toContain('1 PC');
+        expect(heads).not.toContain('1 C');
+        expect([...container.querySelectorAll('th[scope="col"]')].map((th) => th.textContent.trim())).toEqual(['1 PC', '2', '3']);
         expect(container.querySelectorAll('.cell.here')).toHaveLength(1);
     });
 

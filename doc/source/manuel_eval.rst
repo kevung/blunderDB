@@ -252,11 +252,12 @@ damier : les mêmes pions, le même compte de pips, se doublent à 2-away/4-away
 et ne se doublent pas à 4-away/2-away. La vue Scores montre la décision de la
 position à tous les scores d'un match de N points (N impair, de 3 à 15). La
 ligne est le nombre de points qu'il reste à faire au joueur au trait
-(*Moi*), la colonne celui de son adversaire (*Adversaire*) ; la dernière
-ligne et la dernière colonne sont le 1-away. Avec des dés, elles sont la
-partie Crawford, repérée par « C » ; sans dés, elles sont post-Crawford, le
-videau étant mort dans la partie Crawford. Une position post-Crawford n'est
-donc jamais encadrée sur une case Crawford.
+(*Moi*), la colonne celui de son adversaire (*Adversaire*) ; la première
+ligne et la première colonne sont le 1-away, comme dans la table du panneau
+Référence. Avec des dés, elles sont la partie Crawford, repérée par « C » ;
+sans dés, elles sont post-Crawford, repérées par « PC », le videau étant mort
+dans la partie Crawford. Une position post-Crawford n'est donc jamais encadrée
+sur une case Crawford.
 
 Avec des dés, chaque case porte la lettre du meilleur coup à ce score (A le
 plus fréquent de la grille, puis B, C…) et son équité en dessous. Les trois
@@ -266,7 +267,8 @@ est large (0,050 et plus), et « ≈ » marque une marge sous 0,010. Sans dés, 
 case dit le verdict de videau — *ND* (pas de double), *D/T* (double, prend),
 *D/P* (double, passe), *TG* (trop bon) — avec les mêmes teintes ; la marge
 d'un double est la plus petite de celle entre doubler et ne pas doubler et de
-celle entre prendre et passer. Le score de
+celle entre prendre et passer. La case 1-away/1-away, où le videau n'a
+aucune valeur, porte *DMP* (double match point). Le score de
 la position est encadré. La grille paraît aussitôt à 0-ply, puis à 1-ply si
 la profondeur réglée est plus grande ; à 2-ply, elle se raffine ensuite case
 par case en partant de ce score. Une case pas encore à la profondeur réglée

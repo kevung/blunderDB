@@ -94,12 +94,14 @@ describe('score map arithmetic', () => {
         expect(cellMargin({ noDouble: 0.2, doubleTake: 0.995, doublePass: 1 }, 'cube')).toBeCloseTo(0.005, 10);
         // not doubling: the take/pass gap does not count
         expect(cellMargin({ noDouble: 0.5, doubleTake: 0.4, doublePass: 0.41 }, 'cube')).toBeCloseTo(0.1, 10);
+        expect(cellMargin({ verdict: 'dmp', noDouble: 0, doubleTake: 0, doublePass: 0 }, 'cube')).toBeNull();
     });
-    test('the grid closes on the 1-away lines', () => {
+    test('the grid opens on the 1-away lines', () => {
         const cells = Array.from({ length: 9 }, (_, i) => ({ awayOnRoll: Math.floor(i / 3) + 1, awayOpponent: (i % 3) + 1 }));
         const grid = gridCells(cells, 3);
-        expect(grid[0][0]).toMatchObject({ awayOnRoll: 3, awayOpponent: 3 });
-        expect(grid[2][2]).toMatchObject({ awayOnRoll: 1, awayOpponent: 1 });
+        expect(grid[0][0]).toMatchObject({ awayOnRoll: 1, awayOpponent: 1 });
+        expect(grid[2][2]).toMatchObject({ awayOnRoll: 3, awayOpponent: 3 });
+        expect(grid[0][2]).toMatchObject({ awayOnRoll: 1, awayOpponent: 3 });
     });
     test('the position stands on its own score and a cell becomes a score again', () => {
         const pos = opening();
