@@ -137,9 +137,26 @@ jobs:
               # A failing `go list` inside $( ) would be swallowed and leave an
               # empty list: the step must fail instead of testing nothing.
               pkgs=$(go list ./pkg/...) || exit 1
-              pkgs=$(printf '%s\n' "$pkgs" | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/storage/sqlite$' | grep -v '/pkg/blunderdb/ingest$' | grep -v -E '/pkg/blunderdb/engine/(gammonnet|bearoffgen|rollout)$' | grep -v '/pkg/blunderdb/document/structure$')
+              pkgs=$(printf '%s\n' "$pkgs" | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/storage/sqlite$' | grep -v '/pkg/blunderdb/ingest$' | grep -v -E '/pkg/blunderdb/engine/(gammonnet|bearoffgen|rollout)$' | grep -v -E '/pkg/blunderdb/document(/|$)')
               test -n "$pkgs" || { echo "rest shard: empty package list" >&2; exit 1; }
               go test -timeout 1200s -race -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
+                $pkgs 2>&1 | tee test-output.txt
+          # The document family leaves `rest` for -coverpkg, not the race
+          # detector: its decoders and page composition run on goroutines
+          # (document/internal/parallel), so -race stays. What it cannot
+          # afford is rest's -coverpkg=./pkg/blunderdb/..., which puts atomic
+          # counters in document/structure's pixel loops beneath every page
+          # the document tests read: under -race the document package alone
+          # then passes its 1200 s, against 164 s with counters on its own
+          # statements only (GOMAXPROCS=2). Each package
+          # here counts its own statements; structure's are counted by the
+          # `structure` shard below.
+          - shard: document
+            run: |
+              pkgs=$(go list ./pkg/blunderdb/document/...) || exit 1
+              pkgs=$(printf '%s\n' "$pkgs" | grep -v '/pkg/blunderdb/document/structure$')
+              test -n "$pkgs" || { echo "document shard: empty package list" >&2; exit 1; }
+              go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic \
                 $pkgs 2>&1 | tee test-output.txt
           # document/structure leaves `rest` for the race detector and the
           # atomic counters: it is single-threaded pixel arithmetic (no
