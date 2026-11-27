@@ -158,6 +158,10 @@ export function ExportIssuerIdentity(arg1) {
   return window['go']['gui']['App']['ExportIssuerIdentity'](arg1);
 }
 
+export function ExportPaperArchivePDF(arg1, arg2) {
+  return window['go']['gui']['App']['ExportPaperArchivePDF'](arg1, arg2);
+}
+
 export function FolderWatchStatus() {
   return window['go']['gui']['App']['FolderWatchStatus']();
 }
@@ -204,6 +208,10 @@ export function ImportFilesIn(arg1, arg2, arg3) {
 
 export function ImportIssuerIdentity(arg1, arg2) {
   return window['go']['gui']['App']['ImportIssuerIdentity'](arg1, arg2);
+}
+
+export function IsBlunderDBArchive(arg1) {
+  return window['go']['gui']['App']['IsBlunderDBArchive'](arg1);
 }
 
 export function IsDirectory(arg1) {
@@ -430,6 +438,10 @@ export function SetLibraryGroupLocked(arg1, arg2) {
   return window['go']['gui']['App']['SetLibraryGroupLocked'](arg1, arg2);
 }
 
+export function SheetPDFAvailable() {
+  return window['go']['gui']['App']['SheetPDFAvailable']();
+}
+
 export function ShowAlert(arg1) {
   return window['go']['gui']['App']['ShowAlert'](arg1);
 }
@@ -540,6 +552,10 @@ export function ViewerShow(arg1, arg2) {
 
 export function ViewerSteps(arg1, arg2) {
   return window['go']['gui']['App']['ViewerSteps'](arg1, arg2);
+}
+
+export function WriteSheetPDF(arg1, arg2) {
+  return window['go']['gui']['App']['WriteSheetPDF'](arg1, arg2);
 }
 
 export function YouTubeEmbedURL(arg1) {

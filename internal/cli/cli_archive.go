@@ -121,13 +121,15 @@ func (cli *CLI) runArchiveExport(args []string) error {
 func (cli *CLI) runArchiveImport(args []string) error {
 	fs := cli.archiveFlagSet("import", "<file>...",
 		"Import the matches of paper archives: the exported HTML page (its embedded matches, no code\n"+
-			"reading), or scans and photographs of its sheets (PNG, JPEG), several codes an image, any\n"+
-			"number of images in any order. A lost code is rebuilt from its parity code. Matches go\n"+
+			"reading), a PDF the interface printed (an archive, a match sheet or a position list, its\n"+
+			"codes attached; any other PDF is refused), or scans and photographs of its sheets (PNG,\n"+
+			"JPEG), several codes an image, any number of images in any order. A lost code is rebuilt from its parity code. Matches go\n"+
 			"through the ordinary import: an import batch, and a match already held is a duplicate.\n"+
 			"The reimport codes of a printed position list (sheet --reimport-code) bring their\n"+
 			"positions back, each saved on its own.",
 		"blunderdb archive import --db database.db archive.html",
-		"blunderdb archive import --db database.db page1.jpg page2.jpg")
+		"blunderdb archive import --db database.db page1.jpg page2.jpg",
+		"blunderdb archive import --db database.db match-sheet.pdf")
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	format := fs.String("format", "text", "Output format: text or json")
 	if err := fs.Parse(args); err != nil {

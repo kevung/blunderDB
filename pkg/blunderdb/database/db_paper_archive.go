@@ -24,16 +24,27 @@ type PaperArchiveSkip = ingest.ArchiveSkip
 // origin, when set, is the producer's watermark line, printed at the foot of
 // each sheet.
 func (d *Database) ExportPaperArchive(matchIDs []int64, outPath, origin string) (*PaperArchiveExport, error) {
-	d.mu.RLock()
-	defer d.mu.RUnlock()
-	page, res, err := ingest.ExportArchive(context.Background(), d.store, "", matchIDs, origin)
+	page, res, err := PaperArchivePage(d, matchIDs, origin)
 	if err != nil {
 		return nil, err
 	}
 	if err := os.WriteFile(outPath, page, 0o644); err != nil {
 		return nil, err
 	}
-	return &res, nil
+	return res, nil
+}
+
+// PaperArchivePage is the page ExportPaperArchive writes, for a caller that
+// prints it rather than saving it. A function, not a method: the interface
+// binds every method of Database, and a page of bytes is not for the webview.
+func PaperArchivePage(d *Database, matchIDs []int64, origin string) ([]byte, *PaperArchiveExport, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	page, res, err := ingest.ExportArchive(context.Background(), d.store, "", matchIDs, origin)
+	if err != nil {
+		return nil, nil, err
+	}
+	return page, &res, nil
 }
 
 // PaperArchiveImport is what ImportPaperArchive read and wrote.
@@ -119,13 +130,16 @@ func (d *Database) ImportPaperArchive(paths []string) (*PaperArchiveImport, erro
 	return res, nil
 }
 
-// IsPaperArchivePage reports whether a file is an exported archive page, so
-// the ordinary import can hand it over.
+// IsPaperArchivePage reports whether a file is an exported archive page, or
+// a PDF printed by blunderDB (a sheet, a list, an archive), so the ordinary
+// import can hand it over. Any other PDF is not one: the import says so.
 func IsPaperArchivePage(path string) bool {
-	ext := strings.ToLower(filepath.Ext(path))
-	if ext != ".html" && ext != ".htm" {
-		return false
+	switch strings.ToLower(filepath.Ext(path)) {
+	case ".html", ".htm":
+		data, err := os.ReadFile(path)
+		return err == nil && arkqr.IsPage(data)
+	case ".pdf":
+		return true
 	}
-	data, err := os.ReadFile(path)
-	return err == nil && arkqr.IsPage(data)
+	return false
 }

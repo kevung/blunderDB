@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 16:13+0100\n"
+"POT-Creation-Date: 2026-11-28 00:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.19.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/manuel_partage.rst:4
 msgid "Import, origine et partage"
@@ -304,14 +304,21 @@ msgid ""
 "l'assistant : on choisit un PDF, une image de page ou un relevé ``.json``"
 " déjà lu. L'assistant appelle les mêmes fonctions que ``document "
 "analyze``, ``check`` et ``import`` et n'applique aucune règle de plus "
-"(:ref:`cli_document`)."
+"(:ref:`cli_document`). Un fichier que blunderDB a produit — PDF ou page "
+"HTML d'archive papier, de feuille de match ou de liste de positions avec "
+"codes de réimport — ne passe pas par l'assistant : il s'importe "
+"directement par ses codes, comme par :ref:`Archive papier… "
+"<archive_papier_interface>`."
 msgstr ""
-"``import_document`` "
-"コマンド(``idoc``、:doc:`cmd_mode`)、または空のコレクション一覧の\\ **文書を読み込む…**\\ ボタンでアシスタントを開きます。PDF、ページ画像、または読み取り済みの"
-" ``.json`` relevé を選びます。アシスタントは ``document analyze``、``check``、``import``"
-" と同じ関数を呼び、それ以外の規則は適用しません(:ref:`cli_document`)。"
+"``import_document`` コマンド(``idoc``、:doc:`cmd_mode`)、または空のコレクション一覧の\\ "
+"**文書を読み込む…**\\ ボタンでアシスタントを開きます。PDF、ページ画像、または読み取り済みの ``.json`` relevé "
+"を選びます。アシスタントは ``document analyze``、``check``、``import`` "
+"と同じ関数を呼び、それ以外の規則は適用しません(:ref:`cli_document`)。blunderDB "
+"が作成したファイル(紙アーカイブ、マッチシート、または再インポート用コード付きの局面リストの PDF もしくは HTML "
+"ページ)はアシスタントを通らず、:ref:`紙のアーカイブ… "
+"<archive_papier_interface>`\\ と同様にそのコードから直接インポートされます。"
 
-#: ../../source/manuel_partage.rst:164
+#: ../../source/manuel_partage.rst:167
 msgid ""
 "**Défauts et sens de jeu** : le contexte par défaut du document et le "
 "sens de jeu supposé sont décrits. Un seul bouton les confirme pour tout "
@@ -321,7 +328,7 @@ msgstr ""
 "**既定値とプレイの向き**: "
 "文書の既定の文脈と想定されるプレイの向きが示されます。いくつかの図を確かめたうえで、一つのボタンで文書全体について確認します。この操作なしには何も確認されません。"
 
-#: ../../source/manuel_partage.rst:167
+#: ../../source/manuel_partage.rst:170
 msgid ""
 "**Entrées à vérifier** : la liste donne, pour chaque entrée que l'import "
 "refuserait en l'état, sa page, son étiquette, son état et la note qui "
@@ -331,21 +338,21 @@ msgstr ""
 "**確認する項目**: "
 "そのままでは取り込みが拒否される項目ごとに、ページ、ラベル、状態、図と照合すべき欄を示す注記を一覧にします。現在の選択で扱われない項目は太字です。"
 
-#: ../../source/manuel_partage.rst:170
+#: ../../source/manuel_partage.rst:173
 msgid "**Entrées complètes** : la case équivaut à ``--accept-complete``."
 msgstr "**完全な項目**: チェックボックスは ``--accept-complete`` に相当します。"
 
-#: ../../source/manuel_partage.rst:171
+#: ../../source/manuel_partage.rst:174
 msgid ""
 "**Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une"
 " fois les défauts confirmés."
 msgstr "**代替**: チェックボックスは ``--fallback`` に相当し、既定値を確認した後にのみ選べます。"
 
-#: ../../source/manuel_partage.rst:173
+#: ../../source/manuel_partage.rst:176
 msgid "**Collection** : vide, elle prend le titre du document."
 msgstr "**コレクション**: 空のときは文書のタイトルになります。"
 
-#: ../../source/manuel_partage.rst:175
+#: ../../source/manuel_partage.rst:178
 msgid ""
 "Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; "
 "l'assistant n'offre pas ``--force``. Pendant la lecture et l'import, "
@@ -353,13 +360,14 @@ msgid ""
 "positions ajoutées et répétées."
 msgstr ""
 "項目が拒否されている間、\\ **取り込む**\\ ボタンは灰色のままです。アシスタントは ``--force`` "
-"を提供しません。読み取りと取り込みの間は、\\ **キャンセル**\\ と閉じる操作が無効です。結果には追加された局面数と重複した局面数が示されます。"
+"を提供しません。読み取りと取り込みの間は、\\ **キャンセル**\\ "
+"と閉じる操作が無効です。結果には追加された局面数と重複した局面数が示されます。"
 
-#: ../../source/manuel_partage.rst:182
+#: ../../source/manuel_partage.rst:185
 msgid "Panneau Métadonnées"
 msgstr "メタデータパネル"
 
-#: ../../source/manuel_partage.rst:184
+#: ../../source/manuel_partage.rst:187
 msgid ""
 "Le panneau **Métadonnées** (*CTRL-M*) affiche les informations générales "
 "de la base de données courante : *Utilisateur*, date de création "
@@ -372,7 +380,7 @@ msgstr ""
 "、作成日（\\ *作成*\\ ）、スキーマの *バージョン*\\ 、\\ *説明*\\ "
 "。ユーザー、日付、説明はその場で編集でき、欄を離れると保存されます。バージョンは読み取り専用です。コマンド ``meta`` からも開けます。"
 
-#: ../../source/manuel_partage.rst:190
+#: ../../source/manuel_partage.rst:193
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -381,11 +389,11 @@ msgstr ""
 "また、\\ **存在する場合に限り**\\ データベースの出所も表示します（\\ :ref:`diffusion_controlee`\\ "
 "を参照）。通常のデータベースではこの区画は表示されません。"
 
-#: ../../source/manuel_partage.rst:196
+#: ../../source/manuel_partage.rst:199
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "データベースの配布：出所とパスワード"
 
-#: ../../source/manuel_partage.rst:198
+#: ../../source/manuel_partage.rst:201
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -395,7 +403,7 @@ msgstr ""
 "ポジションのデータベースを配る指導者には、互いに独立した二つの仕組みがあります。どちらも任意で、\\ **エクスポート時**\\ "
 "に選びます。ファイルに出所を記載すること、そしてパスワードで保護することです。"
 
-#: ../../source/manuel_partage.rst:205
+#: ../../source/manuel_partage.rst:208
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -405,11 +413,11 @@ msgstr ""
 "どちらもファイルのその後を追跡しません。blunderDB は\\ **データベースを受け取った側では何も記録しません**\\ "
 "。記載のあるデータベースを開く操作は、ほかのどのデータベースを開く場合とまったく同じで、誰がいつ開いたのか、内容がどこから来たのかは、どこにも残りません。"
 
-#: ../../source/manuel_partage.rst:211
+#: ../../source/manuel_partage.rst:214
 msgid "Marquer une base de son origine"
 msgstr "データベースに出所を記載する"
 
-#: ../../source/manuel_partage.rst:213
+#: ../../source/manuel_partage.rst:216
 msgid ""
 "La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
 "nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
@@ -429,11 +437,11 @@ msgstr ""
 " **エクスポート…**\\ "
 "の後で選びます。名前を付けずにこの選択を閉じると、グリッドに戻ります。書き込みの間は進行状況が重なって表示され、ウィンドウは自動的に閉じ、結果はステータスバーに表示されます。"
 
-#: ../../source/manuel_partage.rst:225
+#: ../../source/manuel_partage.rst:228
 msgid "Neuf points méritent l'attention :"
 msgstr "注意すべき点が九つあります："
 
-#: ../../source/manuel_partage.rst:227
+#: ../../source/manuel_partage.rst:230
 msgid ""
 "**La portée** : depuis une liste — une recherche, une collection —, la "
 "ligne *Portée* choisit entre la *Liste courante* et *Toute la "
@@ -446,7 +454,7 @@ msgstr ""
 "のどちらかを選びます。現在のリストはそのポジションをエクスポートし、\\ *マッチ*\\ "
 "の行にはこれらのポジションがプレイされたマッチだけが表示されます。チェックを入れたマッチは、そのすべてのポジションとともに出力されます。ライブラリからは、範囲はライブラリです。"
 
-#: ../../source/manuel_partage.rst:232
+#: ../../source/manuel_partage.rst:235
 msgid ""
 "**Toute la bibliothèque** est l'export du serveur et de ``export --type "
 "database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
@@ -456,7 +464,7 @@ msgstr ""
 "**ライブラリ全体**\\ は、サーバーと ``export --type database`` "
 "のエクスポートです。すべてのファミリーが最初からチェックされ、Anki デッキは復習履歴付きで、進行中の書き起こしも残りとともに出力されます。"
 
-#: ../../source/manuel_partage.rst:236
+#: ../../source/manuel_partage.rst:239
 msgid ""
 "**La synchronisation** : avec *Toute la bibliothèque*, la ligne "
 "*Synchronisation* propose *Seulement ce qui est nouveau depuis le dernier"
@@ -470,7 +478,7 @@ msgstr ""
 "ボタンが表示されます。このときファイルは尋ねられません。そのフォルダーに新しい名前で書き込まれ、件数は新しいものの件数です（\\ "
 ":ref:`2台のマシンを同期する <synchroniser_deux_machines>`\\ を参照）。"
 
-#: ../../source/manuel_partage.rst:242
+#: ../../source/manuel_partage.rst:245
 msgid ""
 "**Un match part avec son brouillon de transcription**, sous la case "
 "*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
@@ -485,7 +493,7 @@ msgstr ""
 "のチェックボックスで、最初からチェックされています。トーナメントが持ち出すマッチも同様です。まだマッチを生成していない下書きは、ライブラリ全体とともにのみ出力されます。ローカルの動画にリンクされたマッチや書き起こしは、フォルダーを除いたファイル名だけを持ち出し、受け取る側が自分のコピー上で場所を指定し直します。Web"
 " リンクはそのまま出力されます。マッチのインポート元のファイルも、名前だけが出力されます。"
 
-#: ../../source/manuel_partage.rst:249
+#: ../../source/manuel_partage.rst:252
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
 "case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
@@ -495,7 +503,7 @@ msgstr ""
 "**マッチは、その選手とイベントの別名とともに出力されます**。最初からチェックされている\\ *別名*\\ "
 "のチェックボックスにより、選手の統合も引き継がれ、受け取る側は統合された選手を一人として読み取ります。エクスポートされるマッチの誰も指していない別名は、手元に残ります。"
 
-#: ../../source/manuel_partage.rst:253
+#: ../../source/manuel_partage.rst:256
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la liste "
 "arrive tronquée.** La liste des collections affiche, pour chacune, la "
@@ -514,7 +522,7 @@ msgstr ""
 " **固定されて出ます**\\ 。現時点でクエリが選ぶ一覧として届き、一覧では赤で「固定」と注記付きで示されます。\\ *+ その局面*\\ "
 "にチェックを入れると、ライブのまま保てます。"
 
-#: ../../source/manuel_partage.rst:262
+#: ../../source/manuel_partage.rst:265
 msgid ""
 "**Un tournoi part toujours avec ses matchs** : sans eux, le lien "
 "tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un "
@@ -528,7 +536,7 @@ msgstr ""
 "**トーナメントは常にそのマッチと一緒に書き出されます**: "
 "マッチがなければトーナメントとマッチの関連が存在せず、トーナメントは空の状態で届きます。トーナメントにチェックを入れると、マッチのボックスがオフでも他のマッチに限定されていても、そのマッチが一緒に書き出されます。運営（ジャーナル、ペア、テーブル、書き出されたマッチの紐付け）も一緒に書き出され、対戦会はそのトーナメントの一つが書き出された時点で書き出されます。運営の出力フォルダーは手元に残ります。運営はファイルを開くか、別のデータベースにインポートすると確認できます。"
 
-#: ../../source/manuel_partage.rst:270
+#: ../../source/manuel_partage.rst:273
 msgid ""
 "**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
 "case *avec mon historique* emporte en plus l'état de chaque carte et le "
@@ -539,7 +547,7 @@ msgstr ""
 "**Anki デッキはそのポジションとともに出力されます**。新しい学習用コピーとしてです。\\ *学習履歴を含める*\\ "
 "のチェックボックスは、さらに各カードの状態とその復習のログを持ち出します。バックアップや、別のマシンに移したデッキのためのものです。リストでは未チェック、ライブラリではチェック済みです。"
 
-#: ../../source/manuel_partage.rst:274
+#: ../../source/manuel_partage.rst:277
 msgid ""
 "**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
 "recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
@@ -550,7 +558,7 @@ msgstr ""
 "**保存されたフィルター**\\ "
 "はコンテンツではなくあなた自身の検索をエクスポートするもので、他人のデータベースでは役に立ちません。リストでは未チェックです。ポジション、マッチ、トーナメントを番号で指すフィルターは、ファイルのために番号が振り直されます。出力されないものを指している場合は、手元に残ります。"
 
-#: ../../source/manuel_partage.rst:280
+#: ../../source/manuel_partage.rst:283
 msgid ""
 "Les collections, leçons, transcriptions, paquets Anki, alias et tournois "
 "partent avec les dates de création et d'ajout qu'ils portent chez vous, "
@@ -559,7 +567,7 @@ msgstr ""
 "コレクション、レッスン、文字起こし、Anki "
 "デッキ、エイリアス、トーナメントは、エクスポート日ではなく、お手元で持っている作成日と追加日のまま書き出されます。"
 
-#: ../../source/manuel_partage.rst:284
+#: ../../source/manuel_partage.rst:287
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
 "le **fichier produit** ; ils sont préremplis depuis la base source."
@@ -567,11 +575,11 @@ msgstr ""
 "\\ *ユーザー*\\ 、\\ *説明*\\ 、\\ *作成日*\\ のフィールドは\\ **生成されたファイル**\\ "
 "を記述します。元のデータベースから事前に入力されています。"
 
-#: ../../source/manuel_partage.rst:287
+#: ../../source/manuel_partage.rst:290
 msgid "Cocher **Filigrane** fait apparaître deux champs :"
 msgstr "\\ **透かし**\\ にチェックを入れると、二つのフィールドが現れます。"
 
-#: ../../source/manuel_partage.rst:289
+#: ../../source/manuel_partage.rst:292
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -581,13 +589,13 @@ msgstr ""
 "**出所**\\ ：このファイルが何であり、どこから来たのかを、ご自身の言葉で記します。「Jean Dupont の講座 — "
 "2026年3月12日」。このフィールドは\\ **必須**\\ です。空の間は赤い枠で囲まれ、エクスポートボタンは無効のままです。"
 
-#: ../../source/manuel_partage.rst:292
+#: ../../source/manuel_partage.rst:295
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
 msgstr "**備考**\\ （任意） — 利用条件、連絡先、再配布しないでほしいという依頼など。"
 
-#: ../../source/manuel_partage.rst:295
+#: ../../source/manuel_partage.rst:298
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -600,7 +608,7 @@ msgstr ""
 "。配布されるファイルはごく普通の SQLite データベースであり、blunderDB "
 "は自由ソフトウェアだからです。記載は何かを禁じるものではなく、ファイルの出所を告げるだけです。"
 
-#: ../../source/manuel_partage.rst:301
+#: ../../source/manuel_partage.rst:304
 msgid ""
 "Les commentaires que vous avez écrits sont signés avec la même identité :"
 " le destinataire voit qu'ils viennent de vous, et s'ils ont été altérés "
@@ -613,11 +621,11 @@ msgstr ""
 " "
 "を参照）。すでに別の発行者の署名が付いたコメントは、その署名を保ちます。ステータスバーには、エクスポートの終了時に、署名されたコメントの件数が表示されます。マークなしのエクスポートでは何も署名されません。"
 
-#: ../../source/manuel_partage.rst:308
+#: ../../source/manuel_partage.rst:311
 msgid "Identité d'émetteur"
 msgstr "発行者の識別情報"
 
-#: ../../source/manuel_partage.rst:310
+#: ../../source/manuel_partage.rst:313
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -629,7 +637,7 @@ msgstr ""
 "で署名されます。これは初めてファイルに記載したときに自動で作られ、設定は不要です。データベースではなく人に属するので、あなたのすべてのファイルが\\"
 " ``A3F1-9C24-7B05-E1D8``\\ のような同じ公開フィンガープリントを持ちます。"
 
-#: ../../source/manuel_partage.rst:315
+#: ../../source/manuel_partage.rst:318
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -641,7 +649,7 @@ msgstr ""
 "``.bdbid``\\ ）として別のパソコンへ持ち運べ、必要ならパスフレーズで保護できます。\\ "
 "**このファイルがあればあなたの名前で署名できます。共有しないでください。**"
 
-#: ../../source/manuel_partage.rst:321
+#: ../../source/manuel_partage.rst:324
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -650,7 +658,7 @@ msgstr ""
 "設定（ツールバーの歯車アイコン）の\\ *発行者の識別情報*\\ タブには、名前とフィンガープリントが表示され、\\ *識別情報を保存…*\\ "
 "、\\ *識別情報を読み込む…*\\ 、\\ *再生成…*\\ が用意されています。"
 
-#: ../../source/manuel_partage.rst:327
+#: ../../source/manuel_partage.rst:330
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -660,24 +668,24 @@ msgstr ""
 "**再生成しても、何かが失効するわけではありません。**\\ "
 "記載には署名に使われた公開鍵が埋め込まれているため、それ自体でいつまでも検証できます。識別情報のファイルが漏れた場合、それを持つ人は古いフィンガープリントで署名し続けられ、その記載は有効なままです。"
 
-#: ../../source/manuel_partage.rst:332
+#: ../../source/manuel_partage.rst:335
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
 "destinataires."
 msgstr "漏洩のあとにあなたを守るのはソフトウェアではありません。新しいフィンガープリントを公表し、古いものはもう自分のものではないと配布先に伝えることです。"
 
-#: ../../source/manuel_partage.rst:336
+#: ../../source/manuel_partage.rst:339
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
 msgstr "再生成は現在の鍵を上書きします。blunderDB は置き換える前に保存するかどうかを尋ねます。"
 
-#: ../../source/manuel_partage.rst:340
+#: ../../source/manuel_partage.rst:343
 msgid "Protéger une base par un mot de passe"
 msgstr "データベースをパスワードで保護する"
 
-#: ../../source/manuel_partage.rst:342
+#: ../../source/manuel_partage.rst:345
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -686,7 +694,7 @@ msgstr ""
 "パスワードは伏せ字で入力します。保護されたファイルを開くときも同じです。目の形のアイコンは\\ **押している間だけ**\\ "
 "パスワードを表示し、離すとすぐにまた隠します。"
 
-#: ../../source/manuel_partage.rst:346
+#: ../../source/manuel_partage.rst:349
 msgid ""
 "Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
 "compris si le nom choisi dans la fenêtre d'enregistrement finit en "
@@ -699,7 +707,7 @@ msgstr ""
 "``.db`` で終わっていても同じです。開くには通常のデータベースを開く操作を使います。選択ウィンドウは ``.db`` と ``.dbx`` "
 "のどちらも受け付けます。blunderDB はそこでパスワードを求め、隣に通常のデータベースを作成します。その後は何も求められません。"
 
-#: ../../source/manuel_partage.rst:353
+#: ../../source/manuel_partage.rst:356
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -710,7 +718,7 @@ msgstr ""
 "ウィンドウでは\\ **開いたあとに保護ファイルを削除する**\\ "
 "ことも選べます。そうしなければ、同じ内容を二つの名前で持ち続けることになります。このチェックは既定では入っていません（渡すつもりなら保護ファイルは手元に残ります）。削除は開くことに成功したあとにだけ行われます。"
 
-#: ../../source/manuel_partage.rst:360
+#: ../../source/manuel_partage.rst:363
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -720,13 +728,13 @@ msgstr ""
 "パスワードが守るのはファイルの\\ **受け渡し**\\ "
 "であって、データベースそのものではありません。ダウンロードフォルダーに置き忘れたファイルや、誤って転送された添付ファイルを第三者が開くのを防ぎます。パスワードを教えた相手からは守れません。"
 
-#: ../../source/manuel_partage.rst:365
+#: ../../source/manuel_partage.rst:368
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
 msgstr "パスワードは\\ **開くたびに**\\ 検証されます。そのパソコンで以前に開いたことがあるファイルでも同じです。"
 
-#: ../../source/manuel_partage.rst:368
+#: ../../source/manuel_partage.rst:371
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -739,17 +747,17 @@ msgstr ""
 " （メモリ 64 MiB、3 パス、4 スレッド）で導出されます。ソルトはファイルごとに無作為です。GCM "
 "モードは全体を認証するため、誤ったパスワードはそれと判別され、暗号化ファイルの改変も同様に検出されます。壊れたデータベースが黙って開かれることはありません。"
 
-#: ../../source/manuel_partage.rst:375
+#: ../../source/manuel_partage.rst:378
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
 msgstr "保護ファイルのヘッダーは\\ **平文のまま**\\ です。出所はパスワードなしでも読めます。"
 
-#: ../../source/manuel_partage.rst:379
+#: ../../source/manuel_partage.rst:382
 msgid "Lire l'origine d'un fichier"
 msgstr "ファイルの出所を読む"
 
-#: ../../source/manuel_partage.rst:381
+#: ../../source/manuel_partage.rst:384
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -759,25 +767,25 @@ msgstr ""
 "アプリケーションでファイルを開き、\\ **メタデータ**\\ パネルを表示します（コマンド\\ ``meta``\\ "
 "）。パネルの先頭に読み取り専用の\\ **出所**\\ の区画が現れ、何が記載されたか、誰が、いつ、そして署名の状態が示されます。"
 
-#: ../../source/manuel_partage.rst:386
+#: ../../source/manuel_partage.rst:389
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "「✓ あなたが印を付けた」：ファイルにはあなたの印がそのまま残っています。"
 
-#: ../../source/manuel_partage.rst:388
+#: ../../source/manuel_partage.rst:391
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
 msgstr "「✓ 署名を検証しました」：記載は無傷で、別の鍵によるものです。作成者から伝えられたフィンガープリントと見比べてください。"
 
-#: ../../source/manuel_partage.rst:390
+#: ../../source/manuel_partage.rst:393
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "「⚠ 署名が無効です」：文書が改変されたか、偽造されています。"
 
-#: ../../source/manuel_partage.rst:392
+#: ../../source/manuel_partage.rst:395
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "通常のデータベースではこの区画は表示されません。"
 
-#: ../../source/manuel_partage.rst:394
+#: ../../source/manuel_partage.rst:397
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -790,11 +798,11 @@ msgstr ""
 "``--watermark``\\ と\\ ``--password``\\ 、および\\ ``identity``\\ と\\ "
 "``open``\\ については\\ ``CLI_USAGE.md``\\ を参照してください。"
 
-#: ../../source/manuel_partage.rst:403
+#: ../../source/manuel_partage.rst:406
 msgid "Publier une base pour d'autres"
 msgstr "データベースを他者に公開する"
 
-#: ../../source/manuel_partage.rst:405
+#: ../../source/manuel_partage.rst:408
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -807,26 +815,26 @@ msgstr ""
 "**いかなるサービスも提供しない**\\ ：リポジトリも、ホストされたカタログも、アカウントもない。これは設計から直接導かれる\\ "
 "：ファイルを受け取った側では何も記録されないのだから、たとえサービスがあったとしても報告するものが何もない。"
 
-#: ../../source/manuel_partage.rst:411
+#: ../../source/manuel_partage.rst:414
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
 msgstr "公開されたデータベースを他人が使えるものにするのは、すでに存在する四つの欄に尽きる\\ ："
 
-#: ../../source/manuel_partage.rst:414
+#: ../../source/manuel_partage.rst:417
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**ユーザー**\\ ——誰が構築したか。名前として挙げてほしい表記で書く。"
 
-#: ../../source/manuel_partage.rst:415
+#: ../../source/manuel_partage.rst:418
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
 "intermédiaire »."
 msgstr "**説明**\\ ——データベースの中身を、一覧に収まる一文で\\ ：「スコアでのキューブ判断 240 件、コメント付き、中級」。"
 
-#: ../../source/manuel_partage.rst:417
+#: ../../source/manuel_partage.rst:420
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -835,7 +843,7 @@ msgstr ""
 "**出所**\\ （透かしの）——このファイルが何であり、誰のために作られたか。受け取った側が\\ *メタデータ*\\ "
 "パネルで最初に読むものである。"
 
-#: ../../source/manuel_partage.rst:420
+#: ../../source/manuel_partage.rst:423
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -844,7 +852,7 @@ msgstr ""
 "**発行者の指紋**\\ ——ファイルの中ではなく、ファイルの傍らに公開する\\ "
 "：受け取った側はそれを照合して、そのファイルがあなたから来たものであり、あなたの名を騙る誰かからのものではないことを確かめる。"
 
-#: ../../source/manuel_partage.rst:424
+#: ../../source/manuel_partage.rst:427
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -853,7 +861,7 @@ msgstr ""
 "透かしなしで公開されたデータベースも完全に使える。ただ匿名であるというだけで、\\ *メタデータ*\\ パネルには\\ *出所*\\ "
 "の節が現れない。"
 
-#: ../../source/manuel_partage.rst:428
+#: ../../source/manuel_partage.rst:431
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"

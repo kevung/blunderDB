@@ -34,7 +34,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ImportDocumentReleve: vi.fn(async () => ({ collection: 'Livre', added: 2, repeated: 0, entries: 2, positions: 2, newPositions: 2, complete: 0, fallback: 1 })),
     GetAllCollections: vi.fn(async () => [])
 }));
-vi.mock('../../wailsjs/go/gui/App.js', () => ({ OpenDocumentDialog: vi.fn(async () => '/tmp/livre.pdf'), ReadFileContent: vi.fn() }));
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ OpenDocumentDialog: vi.fn(async () => '/tmp/livre.pdf'), ReadFileContent: vi.fn(), IsBlunderDBArchive: vi.fn(async () => false) }));
 
 import * as db from '../../wailsjs/go/database/Database.js';
 import { startDocumentImport, setChoice } from '../services/documentImportService.js';

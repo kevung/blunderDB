@@ -325,14 +325,16 @@ recalculent après l'import. Le tournoi n'est pas gardé : il se redéduit de
 l'évènement à l'import.
 
 ``import`` lit la page exportée (les matchs y sont aussi inscrits en clair,
-sans lecture optique) ou des images PNG et JPEG portant plusieurs codes, en
-nombre et dans un ordre quelconques. Les matchs passent par l'import
+sans lecture optique), le PDF qu'en imprime l'interface (archive, feuille de
+match ou liste de positions, codes en fichier joint ; un autre PDF est refusé)
+ou des images PNG et JPEG portant plusieurs codes, en nombre et dans un ordre
+quelconques. Les matchs passent par l'import
 ordinaire : un lot d'import, et un match déjà en base, de l'archive ou d'un
 autre format, est compté comme doublon. ``import --type match --file
 archive.html`` lit la page de la même façon, comme l'import par lot et le
 glisser-déposer de l'interface. Les codes illisibles et non reconstruits sont
 nommés par leur rang. En mode serveur, ``/v1/exports.archive`` rend la page et
-``/v1/imports.archive`` prend une page ou une image téléversée.
+``/v1/imports.archive`` prend une page, un PDF ou une image téléversés.
 
 ``import`` lit aussi les codes de réimport d'une liste de positions
 imprimée (``sheet --reimport-code``) : le fichier enregistré, ou les scans et

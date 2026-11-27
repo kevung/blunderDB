@@ -413,7 +413,8 @@
         "exported": "紙のアーカイブを保存しました：{path}（{matches} マッチ、{codes} コード、{skipped} 除外）",
         "importing": "紙のアーカイブを読み込み中…",
         "imported": "紙のアーカイブ：{imported} マッチをインポート、{duplicates} 重複、{positions} 局面をインポート、{knownPositions} は既存、{missing} コード欠落、{failed} 失敗",
-        "failed": "紙のアーカイブに失敗しました：{err}"
+        "failed": "紙のアーカイブに失敗しました：{err}",
+        "noPdfPayload": "この PDF には blunderDB のアーカイブが含まれていません。何もインポートされませんでした"
     },
     "match": {
         "errorExportingMat": "マッチのエクスポート中にエラーが発生しました",

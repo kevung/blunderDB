@@ -413,7 +413,8 @@
         "exported": "Papierarchiv gespeichert: {path} ({matches} Matches, {codes} Codes, {skipped} ausgelassen)",
         "importing": "Papierarchiv wird gelesen…",
         "imported": "Papierarchiv: {imported} Matches importiert, {duplicates} Duplikate; {positions} Stellungen importiert, {knownPositions} bereits vorhanden, {missing} Codes fehlen, {failed} fehlgeschlagen",
-        "failed": "Papierarchiv fehlgeschlagen: {err}"
+        "failed": "Papierarchiv fehlgeschlagen: {err}",
+        "noPdfPayload": "Dieses PDF enthält kein blunderDB-Archiv: nichts importiert"
     },
     "match": {
         "errorExportingMat": "Fehler beim Exportieren des Matches",

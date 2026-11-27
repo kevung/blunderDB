@@ -468,8 +468,15 @@ export async function importPosition() {
     /** @type {any} */
     let outcome = null;
     try {
-        const files = await OpenPositionFilesDialog();
-        if (!files || files.length === 0) return;
+        const chosen = await OpenPositionFilesDialog();
+        if (!chosen || chosen.length === 0) return;
+        const pdfs = chosen.filter((f) => f.toLowerCase().endsWith('.pdf'));
+        const files = chosen.filter((f) => !pdfs.includes(f));
+        if (pdfs.length > 0) {
+            const { importPDFs } = await import('./paperArchiveService.js');
+            await importPDFs(pdfs);
+        }
+        if (files.length === 0) return;
 
         if (files.length === 1) {
             outcome = await importSingleFile(files[0]);
@@ -1384,6 +1391,9 @@ export async function classifyDroppedFiles(paths) {
     const unsupported = [];
     /** @type {string[]} */
     const captures = [];
+    // A PDF is a sheet blunderDB printed (a paper archive) or a document.
+    /** @type {string[]} */
+    const archives = [];
     for (const p of paths) {
         const isDir = await IsDirectory(p);
         if (isDir) {
@@ -1394,6 +1404,8 @@ export async function classifyDroppedFiles(paths) {
                 dbFiles.push(p);
             } else if (['png', 'jpg', 'jpeg', 'gif'].includes(ext)) {
                 captures.push(p);
+            } else if (ext === 'pdf') {
+                archives.push(p);
             } else if (['txt', 'xg', 'xgp', 'sgf', 'mat', 'bgf', 'ogxm', 'html', 'htm'].includes(ext)) {
                 importFiles.push(p);
             } else {
@@ -1401,7 +1413,7 @@ export async function classifyDroppedFiles(paths) {
             }
         }
     }
-    return { dbFiles, importFiles, folders, unsupported, captures };
+    return { dbFiles, importFiles, folders, unsupported, captures, archives };
 }
 
 /** @param {string} dbPath */
@@ -1438,7 +1450,7 @@ export async function handleFileDrop(x, y, paths) {
 
     if (!paths || paths.length === 0) return;
 
-    const { dbFiles, importFiles, folders, unsupported, captures } = await classifyDroppedFiles(paths);
+    const { dbFiles, importFiles, folders, unsupported, captures, archives } = await classifyDroppedFiles(paths);
 
     // A screen capture needs no database: it only lands on the scratch board.
     if (captures.length > 0) {
@@ -1455,6 +1467,18 @@ export async function handleFileDrop(x, y, paths) {
 
     if (dbFiles.length > 0) {
         await handleDbFileDrop(dbFiles[0]);
+        if (importFiles.length === 0 && folders.length === 0 && archives.length === 0) return;
+    }
+
+    // A printed sheet goes to the paper archive import, another PDF to the
+    // document import.
+    if (archives.length > 0) {
+        if (!get(databasePathStore)) {
+            setStatusBarMessage(tMsg('status.noDbOpenedBeforeImport'));
+            return;
+        }
+        const { importPDFs } = await import('./paperArchiveService.js');
+        await importPDFs(archives);
         if (importFiles.length === 0 && folders.length === 0) return;
     }
 
@@ -1484,7 +1508,7 @@ export async function handleFileDrop(x, y, paths) {
         }
     }
 
-    if (dbFiles.length === 0 && allImportFiles.length === 0 && unsupported.length > 0) {
+    if (dbFiles.length === 0 && allImportFiles.length === 0 && archives.length === 0 && unsupported.length > 0) {
         const exts = [...new Set(unsupported.map((p) => '.' + p.split('.').pop()))].join(', ');
         setStatusBarMessage(tMsg('status.unsupportedFileType', { exts }));
     } else if (folders.length > 0 && allImportFiles.length === 0 && dbFiles.length === 0) {

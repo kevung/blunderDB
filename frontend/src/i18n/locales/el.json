@@ -413,7 +413,8 @@
         "exported": "Το αρχείο σε χαρτί αποθηκεύτηκε: {path} ({matches} αγώνες, {codes} κωδικοί, {skipped} παραλείφθηκαν)",
         "importing": "Ανάγνωση του αρχείου σε χαρτί…",
         "imported": "Αρχείο σε χαρτί: {imported} αγώνες εισήχθησαν, {duplicates} διπλότυπα· {positions} θέσεις εισήχθησαν, {knownPositions} υπήρχαν ήδη, {missing} κωδικοί λείπουν, {failed} απέτυχαν",
-        "failed": "Αποτυχία αρχείου σε χαρτί: {err}"
+        "failed": "Αποτυχία αρχείου σε χαρτί: {err}",
+        "noPdfPayload": "Αυτό το PDF δεν περιέχει αρχείο blunderDB: δεν εισήχθη τίποτα"
     },
     "match": {
         "errorExportingMat": "Σφάλμα κατά την εξαγωγή του αγώνα",
