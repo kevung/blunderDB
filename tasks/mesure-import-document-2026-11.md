@@ -247,20 +247,42 @@ Opening Concepts 2017) : aucune entrée changée, ni d'état ni de position.
 
 Deux règles générales. (1) Une flèche de coup est un trait droit, fin, oblique (ni à moins de
 8° d'une rangée ni à moins de 16° d'un côté de flèche), qui court seul sur le papier sur au
-moins 2,5 points (`structure/lines.go`) ; ses pixels fins sont repeints de la teinte de part et
-d'autre avant la lecture des pions : il ne ferme plus le contour d'un pion absent ni ne salit
-l'intérieur d'un pion réel ; là où il croise un contour il n'est plus fin et le contour reste.
-Une hachure ne passe pas : son trait voisin est à côté (« seul » exigé sur la moitié du trait)
-et la marche la quitte à chaque ligne. (2) Des nombres de quinze ou moins à côté du plateau
-peuvent être les pions sortis imprimés près du plateau : ils n'apprennent plus où le document
-imprime ses pips. Mesure de réglage, tous livres, avant `main` 8947fa0d5 : seul Masterclass
-change ; aucune entrée des douze autres livres ne change (ni état, ni position, ni pips).
-Masterclass 61 / 60 / 36 / 16 → 67 / 61 / 35 / 10 : pp. 91, 105, 154, 286 sûres (pips de
-l'image, plus contredits par les comptes du plateau) ; pp. 74, 100 sûres et 174, 186, 194
-complètes (pion fantôme fermé par une flèche retiré). Ouvert : une tête de flèche au pied d'une
-flèche fait encore un pion (pp. 58, 84, seize pions, incertaines, doute nommé) ; une flèche
-posée sur un pion le cache (p. 28, à vérifier, pips contraires nommés) ; une flèche horizontale
-ou verticale n'est pas reconnue.
+moins 2,5 points (`structure/lines.go`) ; seuls ses pixels à sa propre épaisseur, à deux pixels
+au moins d'un croisement, sont repeints de la teinte de part et d'autre avant la lecture des
+pions : il ne ferme plus le contour d'un pion absent ni ne salit l'intérieur d'un pion réel, et
+le contour qu'il croise reste. Une hachure ne passe pas : son trait voisin est à côté (« seul »
+exigé sur la moitié du trait) et la marche la quitte à chaque ligne. Plus court que 2,5 points,
+le côté d'une flèche dessinée en contour (Encyclopedia p. 35) se joint aux arcs des pions empilés
+dessus en un trait oblique, et le repeindre ouvre leurs contours (un pion de trop) : essayé à
+1,8 point, écarté. (2) Des nombres de quinze ou moins à côté du plateau peuvent être les pions
+sortis imprimés près du plateau : ils n'apprennent plus où le document imprime ses pips.
+
+Mesure de réglage, tous livres, `main` b7cdacfc3 contre la branche `feat/doc-masterclass`, sûrs
+/ complets / à vérifier / incertains : seul Masterclass change, 61 / 60 / 36 / 16 → 66 / 64 /
+32 / 11 ; aucune entrée des douze autres livres ne change (ni état, ni position, ni pips).
+Gagnées : pp. 91, 105, 154, 286 sûres (pips de l'image, plus contredits par les comptes du
+plateau) ; p. 100 sûre et pp. 43, 52, 186, 194, 250 complètes (pion fantôme fermé par une flèche
+retiré) ; p. 40 passe d'incertaine à vérifier. Perdues : pp. 58 et 84 deviennent incertaines
+(seize pions, doute nommé) : une tête de flèche au pied d'une flèche du plateau fait un pion.
+Aucune entrée sûre fausse.
+
+Limite nommée : seule une flèche sur papier blanc est retirée, pas une flèche posée sur une
+flèche du plateau remplie de gris (là, le gris de part et d'autre est de l'encre et le trait est
+laissé) ; une flèche posée sur un pion le cache encore (p. 28, à vérifier, pips contraires
+nommés) ; une flèche horizontale ou verticale n'est pas reconnue. Sur le livre synthétique fléché
+(`TestArrowsReadEndToEnd`), 23 diagrammes sur 24 sont lus sûrs et exacts ; le 24e porte deux
+flèches dos à dos sur presque la même droite, chaque pointe dans le pion de l'autre : là où elles
+se recouvrent l'encre est plus large qu'un trait, aucune n'est retirée, et le diagramme reste un
+doute nommé (seule, chacune est retirée et le diagramme lu).
+
+Classe « 0 checkers drawn » de l'issue : 5 diagrammes avant (pp. 20 deux fois, 127, 147, 154),
+4 après. p. 154 devient sûre (pips 0 et 10 imprimés, recoupés). pp. 20 et 147 sont des
+diagrammes légitimes à un seul joueur, l'autre ayant ses quinze pions au plateau : doute nommé
+(« taken as borne off, the tray is not read »), jamais une lecture sûre faute de pips recoupés.
+p. 127 n'en est pas un : deux pions sombres sur la barre dessinés en un seul disque chiffré
+« 2 », non lus ; les pips imprimés (50) le contredisent, doute nommé. p. 18 (deux diagrammes à
+un seul joueur) est sûre, recoupée par les pips 0 imprimés. Le doute « a player has no checker
+left » ne se présente plus au réglage.
 
 ### Après revue (plateau durci)
 

@@ -35,8 +35,9 @@ Non fusionné :
 - #1008 (pips) : branche `feat/doc-pips2` (depuis cbeda8a51, sans 13a52008b) : garde par poids
   du trait, un rival n'étant excusé que par un gabarit appris du même poids ; le plateau de sortie
   vote de nouveau pour la place des pips. Sorties de réglage identiques. À revoir avant fusion.
-- #1004 (Masterclass) : diagnostiquée, pas commencée — flèches de coup et pions fantômes annotés
-  pris pour des pions ; comptes du plateau imprimés pris pour des pips.
+- #1004 (Masterclass) : branche `feat/doc-masterclass` — flèches de coup repeintes sur papier
+  blanc, comptes du plateau hors pips ; Masterclass 61/60/36/16 → 66/64/32/11, douze autres
+  livres inchangés. À revoir avant fusion ; limites dans `tasks/mesure-import-document-2026-11.md`.
 
 Suite de l'ancienne reprise ci-dessous (2026-11-30, date erronée, écrite le 2026-11-26).
 

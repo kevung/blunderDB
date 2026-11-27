@@ -55,7 +55,10 @@ func arrowStrokes(ink *mask, f frame, p float64) ([][]strokeSample, [][2]float64
 			}
 		}
 	}
-	minLen := 1.8 * p
+	// Shorter, a point's side drawn in outline joins the arcs of the
+	// checkers stacked over it into a slanted run, and painting it breaks
+	// their outlines.
+	minLen := 2.5 * p
 	maxThick := max(3, roundHalfEven(0.16*p))
 	maxGap := 1.1 * p
 	var out [][]strokeSample
