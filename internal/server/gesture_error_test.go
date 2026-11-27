@@ -28,6 +28,8 @@ func TestGestureError_FailureIsNotARefusal(t *testing.T) {
 		{"refusal", direction.Refusef("direction: table %d is taken", 3), http.StatusUnprocessableEntity, CodeRefused},
 		{"wrapped refusal", fmt.Errorf("rencontre: tournament 4: %w", direction.Refusef("direction: an entry needs a name")), http.StatusUnprocessableEntity, CodeRefused},
 		{"engine config", &tournoi.ConfigRefusal{}, http.StatusUnprocessableEntity, CodeRefused},
+		{"engine waiver", &tournoi.WaiverRefusal{Phase: 2, Reason: tournoi.RefusalStarted, Match: "m1"}, http.StatusUnprocessableEntity, CodeRefused},
+		{"engine waiver applied", direction.RefusedAs(direction.ReasonEngineRefused, &tournoi.WaiverRefusal{Phase: 2, Match: "m1"}), http.StatusUnprocessableEntity, CodeRefused},
 		{"finished", direction.ErrFinished, http.StatusUnprocessableEntity, CodeRefused},
 		{"nothing proposed", direction.ErrNothingProposed, http.StatusUnprocessableEntity, CodeRefused},
 		{"malformed", errNoTarget("tournamentId"), http.StatusBadRequest, CodeInvalid},

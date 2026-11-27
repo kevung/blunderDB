@@ -135,7 +135,8 @@ func (s *Server) writeStale(w http.ResponseWriter, ctx context.Context, scope st
 }
 
 // gestureError classes a gesture's failure. A refusal — the rules', the engine's, a malformed
-// configuration (direction.ErrRefused, *tournoi.ConfigRefusal) — answers 422 refused with its
+// configuration, a waiver of a side phase already played (direction.ErrRefused,
+// *tournoi.ConfigRefusal, *tournoi.WaiverRefusal) — answers 422 refused with its
 // message: the request was read, the rules turned it down. A request already marked invalid
 // (unreadable, a field missing) stays 400. A sentinel keeps its own code. Anything else is the
 // daemon's failure — a lost connection, a closed database — and stays one: a 500 whose message
@@ -145,7 +146,8 @@ func gestureError(err error) error {
 		return nil
 	}
 	var refusal *tournoi.ConfigRefusal
-	if (errors.Is(err, direction.ErrRefused) || errors.As(err, &refusal)) && !errors.Is(err, storage.ErrInvalid) {
+	var waiver *tournoi.WaiverRefusal
+	if (errors.Is(err, direction.ErrRefused) || errors.As(err, &refusal) || errors.As(err, &waiver)) && !errors.Is(err, storage.ErrInvalid) {
 		return gestureRefusal{err}
 	}
 	return err
