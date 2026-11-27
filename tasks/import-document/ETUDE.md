@@ -4,7 +4,45 @@
 (`JOURNAL.md` tient la reprise), copie poussée sur le dépôt privé `kevung/import-document-banc`
 (sans `texte/`, la prose extraite des livres, qui ne quitte pas le poste d'origine). Corpus : `~/bkgm/bibliotheque/livres` (17 PDF, 1 EPUB, 1 DOC).
 
-## REPRISE (2026-11-30) — à lire en premier
+## REPRISE (2026-11-27, lot #998-#1008) — à lire en premier
+
+Réserve : depuis #996, elle est tirée PAR PAGE (30 % de chaque livre). Le tirage est
+`~/bkgm/bancs/import-document/tirage.json` (lecture seule), reconstruit à l'identique par
+`scripts/tirage996.go` (math/rand/v2 PCG semé par sha256 du nom de base, une page de réserve si
+`Float64() < 0.3`, pages à partir de 1 ; les 42 pages citées dans les issues tombent toutes au
+réglage). Copie sur le dépôt privé du banc. Un ouvrier ne lit, ne rend ni ne mesure que des pages
+de réglage. Consigne de l'utilisateur : robustesse sur des documents inconnus, aucune règle propre
+à un livre, mesure sur tous les livres de réglage, doute nommé plutôt que lecture.
+
+Fusionné (chaque branche revue en vert, souvent après un ou deux renvois) :
+- #999, #1001 (ADR-0121) : videau vierge lu centré seulement s'il est dessiné ainsi au même
+  endroit sur au moins trois autres diagrammes et si aucune valeur n'y est imprimée ailleurs ;
+  carrés jugés après l'étirement mesuré sur les pions ; dés confirmés par deux citations du texte
+  le plus proche du plateau.
+- #1002, #1005 : légende lue dans l'image (`caption.go`, gabarits générés depuis dix polices
+  libres, reproductibles) ; un jet de légende sans dés dessinés reste un doute ; un score n'est
+  lu que recoupé par les pips imprimés.
+- #1003 : police de plateau Snowie lue par ses formes (`snowieboard.go`, `ttshape.go`), budget de
+  formes par document, police non lue signalée.
+- #998, #1000 : pions en lettres refusés avec un doute nommé ; plateau de sortie lu, mais il ne
+  rend jamais seul une entrée complète (décision de l'utilisateur) : pips imprimés concordants
+  exigés. Écart connu : un diagramme complété par le plateau ne vote plus pour l'emplacement des
+  pips (`learnPipSlots`), sans test.
+- Optimisations : codec de l'archive papier en format 2 (−34 % d'octets, format 1 toujours lu,
+  ADR-0119) ; décodeurs JPEG 2000 et PDF scannés environ 3,5 fois plus rapides, sortie identique.
+
+Non fusionné :
+- #1008 (pips) : branche `feat/doc-pips` poussée telle quelle, rouge après deux revues. Le premier
+  commit (garde `fairWin`) est sain, mais la garde ne tient plus quand la numérotation du document
+  a enseigné les dix chiffres ; la correction par poids du trait (13a52008b) crée une régression :
+  le « 2 » gras des polices lève la garde. Piste du relecteur : ne compter dans `like` que les
+  gabarits appris. Sondes dans la revue, à refaire en tests.
+- #1004 (Masterclass) : diagnostiquée, pas commencée — flèches de coup et pions fantômes annotés
+  pris pour des pions ; comptes du plateau imprimés pris pour des pips.
+
+Suite de l'ancienne reprise ci-dessous (2026-11-30, date erronée, écrite le 2026-11-26).
+
+### Reprise précédente
 
 État de `main` (poussé), tout fusionné, aucune branche ni worktree en attente : tranches 1 à
 4 — Relevé et import en Collection ; lecteur à glyphes (Deep Cube : 1 518 positions exactes,
