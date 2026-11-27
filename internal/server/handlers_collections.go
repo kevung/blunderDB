@@ -49,6 +49,14 @@ type movePositionReq struct {
 	PositionID       int64 `json:"positionId"`
 }
 
+// collectionCopyReq copies a whole collection: exactly one of ToCollectionID
+// (an existing collection) and Name (a new one) names the target.
+type collectionCopyReq struct {
+	FromCollectionID int64  `json:"fromCollectionId"`
+	ToCollectionID   int64  `json:"toCollectionId,omitempty"`
+	Name             string `json:"name,omitempty"`
+}
+
 type copyPositionReq struct {
 	ToCollectionID int64 `json:"toCollectionId"`
 	PositionID     int64 `json:"positionId"`
@@ -154,6 +162,12 @@ func (s *Server) collectionRoutes() []route {
 		{http.MethodPost, "/v1/collections.copyPosition", rpcVoid(func(ctx context.Context, scope string, req copyPositionReq) error {
 			return cs().CopyPosition(ctx, scope, req.ToCollectionID, req.PositionID)
 		})},
+		// Idempotent: a copy to a new name creates a collection, which a retry
+		// would create twice.
+		{http.MethodPost, "/v1/collections.copy", s.withIdempotency(rpc(func(ctx context.Context, scope string, req collectionCopyReq) (storage.CollectionCopyResult, error) {
+			return storage.CopyCollection(ctx, s.opts.Storage, scope, req.FromCollectionID,
+				storage.CollectionCopyTarget{ToID: req.ToCollectionID, Name: req.Name})
+		}))},
 		{http.MethodPost, "/v1/collections.positions", rpcStream(func(ctx context.Context, scope string, req collectionPositionsReq) iterPositions {
 			opts := storage.ListOpts{Limit: req.Limit, Offset: req.Offset}
 			filters, living, err := s.livingFilters(ctx, scope, req.CollectionID)

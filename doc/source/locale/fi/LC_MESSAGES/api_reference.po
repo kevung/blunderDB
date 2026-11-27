@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 10:12+0100\n"
+"POT-Creation-Date: 2026-11-27 23:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -42,17 +42,17 @@ msgstr ""
 "vastausmuodon kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos "
 "se on olemassa, maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
 
-#: ../../source/api_reference.rst:471
+#: ../../source/api_reference.rst:482
 msgid "Idempotence"
 msgstr "Idempotenssi"
 
-#: ../../source/api_reference.rst:473
+#: ../../source/api_reference.rst:484
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 59 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 60 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -65,7 +65,7 @@ msgstr ""
 "lukemisilla ei ole sivuvaikutuksia, ja ``positions.*``-kirjoitukset ovat "
 "vaikutukseltaan idempotentteja sisällön Zobrist-tiivisteen ansiosta — "
 "saman aseman tallentaminen kahdesti palauttaa saman rivin, ei koskaan "
-"kaksoiskappaletta. 59 menetelmää hyväksyy valinnaisen ``Idempotency-"
+"kaksoiskappaletta. 60 menetelmää hyväksyy valinnaisen ``Idempotency-"
 "Key``-otsakkeen: ne, joiden kaksi kutsua ovat kaksi erillistä vaikutusta,"
 " sekä ``positions.save``, jonka vastaus kertoo, loiko kutsu aseman "
 "(``created``), ja kertoisi sen väärin, jos kutsu toistettaisiin menetetyn"
@@ -74,11 +74,11 @@ msgstr ""
 " merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. Mikään muu "
 "menetelmä ei tarvitse tai hyväksy tätä otsaketta."
 
-#: ../../source/api_reference.rst:485
+#: ../../source/api_reference.rst:496
 msgid "Lectures conditionnelles"
 msgstr "Ehdolliset lukemiset"
 
-#: ../../source/api_reference.rst:487
+#: ../../source/api_reference.rst:498
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -90,11 +90,11 @@ msgstr ""
 "rungoton ``304``-vastaus niin kauan kuin mikään metodin lukema ei ole "
 "muuttunut — katso :ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:492
+#: ../../source/api_reference.rst:503
 msgid "Enregistrer et lire une analyse"
 msgstr "Analyysin tallentaminen ja lukeminen"
 
-#: ../../source/api_reference.rst:494
+#: ../../source/api_reference.rst:505
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -125,7 +125,7 @@ msgstr ""
 "sitä, ohittaa ``withPlayed``-kentän ja palauttaa analyysin ilman "
 "otteluiden siirtoja."
 
-#: ../../source/api_reference.rst:506
+#: ../../source/api_reference.rst:517
 msgid ""
 "``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
 "chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
@@ -150,7 +150,7 @@ msgstr ""
 "useita syvyyksiä (XG rollouttaa parhaat siirtonsa ja arvioi muut "
 "matalammin). Uudelleen tuotu lähde korvaa oman merkintänsä."
 
-#: ../../source/api_reference.rst:517
+#: ../../source/api_reference.rst:528
 msgid ""
 "Quand ``allCheckerAnalyses`` est absent et que les coups de "
 "``checkerAnalysis`` portent plusieurs ``analysisEngine``, la position a "
@@ -166,11 +166,11 @@ msgstr ""
 "enää tiedetä. Lähdettä ei silloin ole saatavilla, eikä uusi tuonti "
 "rakenna sitä uudelleen."
 
-#: ../../source/api_reference.rst:524
+#: ../../source/api_reference.rst:535
 msgid "Lire les coups d'un match"
 msgstr "Ottelun siirtojen lukeminen"
 
-#: ../../source/api_reference.rst:526
+#: ../../source/api_reference.rst:537
 msgid ""
 "Chaque coup que rendent ``matches.moves`` et ``matches.movesByMatch`` est"
 " jugé par l'analyse enregistrée de sa position, sans qu'aucun moteur ne "
@@ -203,7 +203,7 @@ msgstr ""
 "nimi voi olla ristiriidassa sen mukana tulevien equity-arvojen kanssa. "
 "Yhtä suurella kustannuksella se on pelattu päätös."
 
-#: ../../source/api_reference.rst:540
+#: ../../source/api_reference.rst:551
 msgid ""
 "Sans analyse du type voulu, les trois champs sont absents. ``error_mp`` "
 "l'est aussi quand le coup joué ne figure pas parmi les candidats, alors "
@@ -215,7 +215,7 @@ msgstr ""
 "joukossa, kun taas ``best_move`` palautetaan. Usean ottelun saavuttama "
 "asema nimeää kussakin saman parhaan siirron."
 
-#: ../../source/api_reference.rst:544
+#: ../../source/api_reference.rst:555
 msgid ""
 "Un client affiche « mieux » seulement quand ``error_mp`` est présent et "
 "non nul ; il ne compare pas le coup joué à ``best_move`` ou "
@@ -227,11 +227,11 @@ msgstr ""
 "``best_cube_action``: saman siirron kaksi merkintätapaa voivat erota, ja "
 "kaksi yhtä arvokasta siirtoa maksavat molemmat 0."
 
-#: ../../source/api_reference.rst:550
+#: ../../source/api_reference.rst:561
 msgid "Repères d'une transcription"
 msgstr "Litteroinnin aikaleimat"
 
-#: ../../source/api_reference.rst:552
+#: ../../source/api_reference.rst:563
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -261,7 +261,7 @@ msgstr ""
 "paikallinen polku), tyhjä merkkijono irrottaa sen; ``set_header`` asettaa"
 " sen myös, kun sen otsake nimeää lähteen, mutta ei koskaan poista sitä."
 
-#: ../../source/api_reference.rst:564
+#: ../../source/api_reference.rst:575
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -277,7 +277,7 @@ msgstr ""
 " ilman toiminnan aikamerkkiä, mitattuna heitosta seuraavan toiminnon "
 "ensimmäiseen hetkeen."
 
-#: ../../source/api_reference.rst:570
+#: ../../source/api_reference.rst:581
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "
