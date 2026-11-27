@@ -378,20 +378,22 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		return false, "", nil
 	}
 	// Rare, the error is read from its two indexes, positionErrExpr split in its two
-	// branches. Common, the walk in id order meets its rows soon, on the joined analysis.
+	// branches. Common, the walk in id order meets its rows soon, probing analysis.
 	tenant, tenantArgs := s.DB.TenantFilter("an", scope)
 	own, ownArgs := s.DB.TenantFilter("", scope)
-	recheck := func() {
-		where.WriteString(" AND (" + positionErrExpr + cond + " OR " + s.DB.Bool("p.multi_played", true) + ")")
+	recheckWith := func(errExpr string) {
+		where.WriteString(" AND (" + errExpr + cond + " OR " + s.DB.Bool("p.multi_played", true) + ")")
 		*argsp = append(*argsp, bound...)
 	}
+	recheck := func() { recheckWith(s.probedErrExpr()) }
 	// From a blunder up, idx_analysis_blunder holds every candidate in id order, whatever
 	// the decision of the position: the threshold is written out for the planner to see
 	// that the partial index applies.
 	if eHasMin && eqMin >= blunderFloor {
 		n := strconv.Itoa(eqMin)
+		// The candidates are few and walked: the join stays, a walk carries no subquery.
 		if s.readsBlunderWindows(ctx, f) {
-			recheck()
+			recheckWith(positionErrExpr)
 			return true, n, nil
 		}
 		sub := "SELECT position_id FROM analysis WHERE " + own + " AND (best_move_equity_error >= " + n + " OR cube_error >= " + n + ")" +
@@ -417,7 +419,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		if err := s.narrowWithin(ctx, blunderListLimit, sub, append(append([]any{}, ownArgs...), ownArgs...), where, argsp, common); err != nil {
 			return true, "", err
 		}
-		recheck()
+		recheckWith(positionErrExpr)
 		return true, "", nil
 	}
 	branch := func(decision, col string) string {
@@ -432,6 +434,19 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		"SELECT * FROM (SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true) + stop + "multi"
 	subArgs := append(append(append(append(append([]any{}, tenantArgs...), bound...), tenantArgs...), bound...), ownArgs...)
 	return true, "", s.narrowToIDs(ctx, sub, subArgs, where, argsp, recheck)
+}
+
+// probedErrExpr is positionErrExpr read by one probe of analysis per position
+// on PostgreSQL. Joined, with a filter on position beside it, the planner
+// hashes the analysis of the whole tenant to keep a page; a scalar subquery
+// cannot be turned into a join, so the walk in id order stops at the page.
+// SQLite keeps the join, which its planner walks row by row anyway.
+func (s *SearchStore) probedErrExpr() string {
+	if s.DB.Name() == "sqlite" {
+		return positionErrExpr
+	}
+	return "(SELECT CASE WHEN p.decision_type = 1 THEN e.cube_error ELSE e.best_move_equity_error END" +
+		" FROM analysis e WHERE e.position_id = p.id" + andSameTenant(s.DB, "e", "p") + ")"
 }
 
 // blunderBranches: atomic so a test can turn the blunder windows off
