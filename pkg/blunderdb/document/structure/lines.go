@@ -5,9 +5,9 @@ import "math"
 // A move drawn as an arrow is a long thin straight stroke across the field.
 // Against the frame and a point's sides it can close the outline of a
 // checker that is not there, and through a checker it fills the inside of
-// one that is. Its pixels are painted over before the checkers are read,
-// where the stroke runs alone: where it crosses an outline the stroke is no
-// longer thin there and the outline is kept.
+// one that is. It is painted over before the checkers are read, where it
+// runs at its own width; where it crosses an outline it thickens, and the
+// outline is kept (see inpaintStrokes).
 
 // strokeSample is one pixel of a stroke and its thickness across it.
 type strokeSample struct {
@@ -55,7 +55,7 @@ func arrowStrokes(ink *mask, f frame, p float64) ([][]strokeSample, [][2]float64
 			}
 		}
 	}
-	minLen := 2.5 * p
+	minLen := 1.8 * p
 	maxThick := max(3, roundHalfEven(0.16*p))
 	maxGap := 1.1 * p
 	var out [][]strokeSample
@@ -113,7 +113,7 @@ func walkStroke(ink *mask, x0, y0, x1, y1 int, c, s, rho, diag float64, maxThick
 	}
 	var out [][]strokeSample
 	var run []strokeSample
-	var thin, blanks, alone float64
+	var thin, blanks, alone, off float64
 	blank, crossed := 0, 0.0
 	flush := func() {
 		// A drawn stroke leaves the ink only for a scan's dropped pixel; a
@@ -123,10 +123,13 @@ func walkStroke(ink *mask, x0, y0, x1, y1 int, c, s, rho, diag float64, maxThick
 		if thin >= minLen && blanks <= 0.08*thin && alone >= 0.5*thin {
 			out = append(out, run)
 		}
-		run, thin, blanks, alone, blank, crossed = nil, 0, 0, 0, 0, 0
+		run, thin, blanks, alone, blank, crossed, off = nil, 0, 0, 0, 0, 0, 0
 	}
 	for d := -diag; d <= diag; d++ {
-		px, py := float64(x0)+d*c+rho*nx, float64(y0)+d*s+rho*ny
+		// The walk follows the stroke it is on, two pixels aside at most:
+		// the vote's angle is a degree apart at most, a stroke's few pixels
+		// over its length, where a hatching's next line is farther.
+		px, py := float64(x0)+d*c+(rho+off)*nx, float64(y0)+d*s+(rho+off)*ny
 		if px < float64(x0) || px > float64(x1) || py < float64(y0) || py > float64(y1) {
 			if run != nil {
 				flush()
@@ -137,6 +140,7 @@ func walkStroke(ink *mask, x0, y0, x1, y1 int, c, s, rho, diag float64, maxThick
 		switch {
 		case ok && t <= maxThick:
 			run = append(run, strokeSample{cx, cy, t})
+			off = max(-2, min(2, off+max(-0.25, min(0.25, (cx-px)*nx+(cy-py)*ny))))
 			thin++
 			if isAlone {
 				alone++
@@ -167,36 +171,74 @@ func inkAt(m *mask, x, y float64) bool {
 	return xi >= 0 && yi >= 0 && xi < m.w && yi < m.h && m.at(xi, yi)
 }
 
-// inpaintStrokes paints the strokes' thin pixels over with the grey found on
-// either side of them, so neither the edges nor the inside of a checker see
-// the stroke.
-func inpaintStrokes(g *raster, strokes [][]strokeSample, dirs [][2]float64) {
-	at := func(x, y float64) (float32, bool) {
-		xi, yi := roundHalfEven(x), roundHalfEven(y)
-		if xi < 0 || yi < 0 || xi >= g.w || yi >= g.h {
-			return 0, false
-		}
-		return g.at(xi, yi), true
-	}
+// inpaintStrokes paints the strokes over with the grey found on either side
+// of them, so neither the edges nor the inside of a checker see the stroke.
+// Only the stroke itself is painted, where it runs at its own width: a
+// sample is left within two pixels of a crossing (where the stroke leaves
+// its line or thickens against another stroke; its two ends are its own),
+// or when the grey beside it is ink; and of the pixels around a sample, only those of the stroke's
+// width, or paper next to it, are painted. An outline the stroke crosses or
+// passes close to is kept.
+func inpaintStrokes(g *raster, ink *mask, strokes [][]strokeSample, dirs [][2]float64) {
+	const margin = 2
 	for k, st := range strokes {
-		nx, ny := -dirs[k][1], dirs[k][0]
-		for _, s := range st {
-			h := float64(s.t)/2 + 1
-			a, okA := at(s.x-(h+1.5)*nx, s.y-(h+1.5)*ny)
-			b, okB := at(s.x+(h+1.5)*nx, s.y+(h+1.5)*ny)
-			if !okA || !okB {
+		dx, dy := dirs[k][0], dirs[k][1]
+		nx, ny := -dy, dx
+		ts := make([]float64, len(st))
+		for i, s := range st {
+			ts[i] = float64(s.t)
+		}
+		own := median(ts) + 1
+		// ok: the sample runs at the stroke's width, the next one a pixel on.
+		ok := make([]bool, len(st))
+		for i, s := range st {
+			ok[i] = float64(s.t) <= own
+			if i+1 < len(st) && math.Hypot(st[i+1].x-s.x, st[i+1].y-s.y) > 1.5 {
+				ok[i] = false
+			}
+		}
+		for i, s := range st {
+			paint := true
+			for j := max(i-margin, 0); j <= min(i+margin, len(st)-1) && paint; j++ {
+				paint = (j == i+margin || ok[j]) && float64(st[j].t) <= own
+			}
+			if !paint {
 				continue
 			}
-			for o := -h; o <= h; o += 0.5 {
-				v := a + (b-a)*float32((o+h)/(2*h))
-				for _, d := range []float64{-0.5, 0, 0.5} {
-					x := roundHalfEven(s.x + o*nx + d*dirs[k][0])
-					y := roundHalfEven(s.y + o*ny + d*dirs[k][1])
-					if x >= 0 && y >= 0 && x < g.w && y < g.h {
-						g.p[y*g.w+x] = v
+			h := float64(s.t) / 2
+			ax, ay := s.x-(h+2)*nx, s.y-(h+2)*ny
+			bx, by := s.x+(h+2)*nx, s.y+(h+2)*ny
+			if !inBounds(g, ax, ay) || !inBounds(g, bx, by) || inkAt(ink, ax, ay) || inkAt(ink, bx, by) {
+				continue
+			}
+			a := g.at(roundHalfEven(ax), roundHalfEven(ay))
+			b := g.at(roundHalfEven(bx), roundHalfEven(by))
+			r := int(math.Ceil(h + 2))
+			cx, cy := roundHalfEven(s.x), roundHalfEven(s.y)
+			for yy := cy - r; yy <= cy+r; yy++ {
+				for xx := cx - r; xx <= cx+r; xx++ {
+					if xx < 0 || yy < 0 || xx >= g.w || yy >= g.h {
+						continue
 					}
+					ox, oy := float64(xx)-s.x, float64(yy)-s.y
+					along, across := ox*dx+oy*dy, ox*nx+oy*ny
+					if math.Abs(along) > 0.75 {
+						continue
+					}
+					// The stroke's own pixels, or the paper's grey beside it.
+					core := math.Abs(across) <= h+0.5
+					if !core && (math.Abs(across) > h+1.5 || ink.at(xx, yy)) {
+						continue
+					}
+					f := float32(min(max((across+h+2)/(2*h+4), 0), 1))
+					g.p[yy*g.w+xx] = a + (b-a)*f
 				}
 			}
 		}
 	}
+}
+
+func inBounds(g *raster, x, y float64) bool {
+	xi, yi := roundHalfEven(x), roundHalfEven(y)
+	return xi >= 0 && yi >= 0 && xi < g.w && yi < g.h
 }

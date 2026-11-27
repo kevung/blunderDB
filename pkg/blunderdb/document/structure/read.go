@@ -382,8 +382,9 @@ func readBoard(z zone, geo geometry) boardReading {
 	// and the top and bottom stacks are shared at the relevé.
 	nmax := trunc((float64(f.y1-f.y0)-2*ry)/step) + 1
 	out.n = nmax
-	sts, dirs := arrowStrokes(hysteresis(g), f, p)
-	inpaintStrokes(g, sts, dirs)
+	strokeInk := hysteresis(g)
+	sts, dirs := arrowStrokes(strokeInk, f, p)
+	inpaintStrokes(g, strokeInk, sts, dirs)
 	E := edgeMap(g)
 	for _, top := range []bool{true, false} {
 		for j := 0; j < 12; j++ {
