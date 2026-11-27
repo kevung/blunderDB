@@ -34,9 +34,9 @@ const analysisInsertSQL = `INSERT INTO analysis (
 	player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
 	player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
 	is_forced, is_close_cube,
-	analysis_engine, analysis_depth, creation_date
+	analysis_engine, analysis_depth, creation_date, best_move
 ) VALUES ($1,$2,$3, $4,$5,$6, $7,$8,$9, $10,$11,$12, $13,$14,
-	$15,$16,$17::timestamp AT TIME ZONE 'UTC')`
+	$15,$16,$17::timestamp AT TIME ZONE 'UTC', $18)`
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
 // same statement, so concurrent saves cannot insert two rows. Save checks the
@@ -60,6 +60,7 @@ ON CONFLICT (tenant_id, position_id) DO UPDATE SET
 	analysis_engine=excluded.analysis_engine,
 	analysis_depth=excluded.analysis_depth,
 	creation_date=excluded.creation_date,
+	best_move=excluded.best_move,
 	met_id=CASE WHEN excluded.analysis_engine LIKE 'gammonNet%' THEN analysis.met_id END
 WHERE analysis.tenant_id = excluded.tenant_id`
 
@@ -261,7 +262,7 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced != 0, c.IsCloseCube != 0,
-			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate))
+			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove)
 		if isForeignKeyViolation(err, "analysis_position_tenant_fkey") {
 			// The position was deleted after the ownership check: the same
 			// refusal requireOwned gives, without the driver's text.
@@ -456,6 +457,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 		cubeErr, bestMoveErr int64
 		bestMoveUnscored     bool
 		forced, closeCub     bool
+		bestMove             *string
 		// The position's columns its legal plays depend on.
 		state           []byte
 		por, d1, d2, dt *int64
@@ -471,7 +473,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 		if err := func() error {
 			rows, err := db.Query(ctx,
 				`SELECT a.id, a.tenant_id, a.position_id, a.data, `+sqlshared.TenantActionLabelOrEmptySQL("a.best_cube_action")+`, COALESCE(a.cube_error,0),
-				        COALESCE(a.best_move_equity_error,0), a.best_move_equity_error IS NULL, a.is_forced, a.is_close_cube,
+				        COALESCE(a.best_move_equity_error,0), a.best_move_equity_error IS NULL, a.is_forced, a.is_close_cube, a.best_move,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 				        (SELECT `+sqlshared.TenantActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
 				        `+sqlshared.PlayPositionColumns+`
@@ -484,7 +486,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.tenant, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
+				if err := rows.Scan(&r.id, &r.tenant, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.bestMove, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
 					return fmt.Errorf("postgres: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -517,7 +519,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			analyses[r.tenant][r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr,
 				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}
-			if stored.equal(c) {
+			if stored.equal(c) && r.bestMove != nil && *r.bestMove == c.BestMove {
 				continue
 			}
 			bestCube, err := actionCode(ctx, db, r.tenant, c.BestCubeAction)
@@ -526,9 +528,9 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			}
 			if _, err := db.Exec(ctx,
 				`UPDATE analysis SET best_cube_action=$1, cube_error=$2, best_move_equity_error=$3,
-				 is_forced=$4, is_close_cube=$5 WHERE id=$6 AND tenant_id=$7`,
+				 is_forced=$4, is_close_cube=$5, best_move=$8 WHERE id=$6 AND tenant_id=$7`,
 				bestCube, c.CubeError, c.BestMoveErrorArg(),
-				c.IsForced == 1, c.IsCloseCube == 1, r.id, r.tenant); err != nil {
+				c.IsForced == 1, c.IsCloseCube == 1, r.id, r.tenant, c.BestMove); err != nil {
 				return repaired, lastID, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}
 			repaired++
@@ -809,7 +811,7 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 				c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 				c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 				c.IsForced != 0, c.IsCloseCube != 0,
-				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate))
+				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove)
 			if slices.ContainsFunc(a.PlayedCubeActions, engine.IsResponseCubeAction) {
 				responses = append(responses, id)
 			}
@@ -847,7 +849,7 @@ var analysisBulkTypes = []string{
 	bulkBigint, bulkBigint, bulkBigint,
 	bulkBigint, bulkBigint, bulkBigint,
 	bulkBool, bulkBool,
-	bulkText, bulkInt, bulkTime,
+	bulkText, bulkInt, bulkTime, bulkText,
 }
 
 var analysisBulkInsertSQL = insertHead(analysisInsertSQL) + " " + unnestSelect(analysisBulkTypes)
@@ -882,7 +884,7 @@ func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []sto
 				c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 				c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 				c.IsForced != 0, c.IsCloseCube != 0,
-				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate),
+				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove,
 			}
 			if slices.ContainsFunc(it.Analysis.PlayedCubeActions, engine.IsResponseCubeAction) {
 				responses = append(responses, it.PositionID)

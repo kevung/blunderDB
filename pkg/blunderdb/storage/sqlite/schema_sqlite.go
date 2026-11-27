@@ -135,6 +135,10 @@ var schemaStatements = []string{
 		analysis_engine             TEXT,
 		analysis_depth              INTEGER,
 		creation_date               INTEGER,
+		-- engine.BestMove, which the move-pattern search narrows by. NULL is
+		-- "not derived yet" (a row written before the column, or by an older
+		-- binary): the search lets it through and decides on the blob.
+		best_move                   TEXT,
 		-- The match equity table the verdict was computed with (ADR-0068):
 		-- the id of a match_equity_table row (whose digest names the table),
 		-- NULL for the built-in Kazaross-XG2. An analysis whose table differs

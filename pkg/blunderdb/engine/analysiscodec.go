@@ -467,6 +467,8 @@ type AnalysisColumns struct {
 	// Provenance of the verdict the columns above come from (AnalysisProvenance).
 	AnalysisEngine string
 	AnalysisDepth  int64
+	// BestMove is the analysis.best_move column (BestMove).
+	BestMove string
 	// CreationDate is the blob's CreationDate in Unix seconds (UTC), 0 when
 	// unset; storage writes 0 as NULL.
 	CreationDate int64
@@ -748,6 +750,7 @@ func populateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 		return c
 	}
 	c.AnalysisEngine, c.AnalysisDepth, c.CreationDate = AnalysisProvenance(a)
+	c.BestMove = BestMove(a)
 	a = a.ColumnSource()
 
 	if dca := a.DoublingCubeAnalysis; dca != nil {
@@ -936,6 +939,17 @@ func CandidateMarksHits(moves []domain.CheckerMove) map[string]bool {
 		marks[m.AnalysisEngine] = marks[m.AnalysisEngine] || MarksHits(m.Move)
 	}
 	return marks
+}
+
+// BestMove is the best checker play of the analysis as stored, lower-cased,
+// "" when it is no checker analysis or has no candidate. The stored analysis
+// and not its ColumnSource: the move-pattern filter, which the column
+// narrows for in SQL, reads the stored one (searchfilter.AnalysisMatchesMovePattern).
+func BestMove(a *domain.PositionAnalysis) string {
+	if a == nil || a.AnalysisType != "CheckerMove" || a.CheckerAnalysis == nil || len(a.CheckerAnalysis.Moves) == 0 {
+		return ""
+	}
+	return strings.ToLower(a.CheckerAnalysis.Moves[0].Move)
 }
 
 // BestMoveErrorArg is BestMoveEquityError as a column value: nil (NULL) when

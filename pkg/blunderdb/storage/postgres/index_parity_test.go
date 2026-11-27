@@ -64,6 +64,8 @@ var postgresOnlyIndexes = []string{
 	"idx_position_structure",
 	// The covering indexes kept by SQLite, narrowed here (see above).
 	"idx_analysis_win1",
+	// The move-pattern search narrows by it under RLS; SQLite reads the joined row.
+	"idx_analysis_best_move",
 	"idx_analysis_win2",
 	// SQLite has no row-level security to read the tenant for.
 	"idx_move_game_position",
