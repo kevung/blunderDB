@@ -38,6 +38,14 @@ const analysisInsertSQL = `INSERT INTO analysis (
 ) VALUES ($1,$2,$3, $4,$5,$6, $7,$8,$9, $10,$11,$12, $13,$14,
 	$15,$16,$17::timestamp AT TIME ZONE 'UTC', $18)`
 
+// analysisBestMoveSQL writes best_move again after an upsert that rewrote
+// data with the same best play, which the analysis_best_move_stale trigger
+// (077) has set NULL. It does not touch data, so the trigger stays silent, and
+// in the upsert's transaction the journal collapses it into the same entry.
+const analysisBestMoveSQL = `UPDATE analysis a SET best_move = v.m
+  FROM unnest($2::bigint[], $3::text[]) AS v(pid, m)
+ WHERE a.tenant_id = $1 AND a.position_id = v.pid AND a.best_move IS NULL`
+
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
 // same statement, so concurrent saves cannot insert two rows. Save checks the
 // position is the tenant's first (requireOwned), so a foreign position with or
@@ -273,6 +281,11 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 		}
 		if tag.RowsAffected() == 0 {
 			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, storage.ErrNotFound)
+		}
+		if !fresh {
+			if _, err := tx.Exec(ctx, analysisBestMoveSQL, tenant, []int64{positionID}, []string{c.BestMove}); err != nil {
+				return fmt.Errorf("postgres: save analysis best move: %w", err)
+			}
 		}
 		// The moves played here are scored against the analysis just written.
 		if !fresh {
@@ -519,7 +532,9 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			analyses[r.tenant][r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr,
 				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}
-			if stored.equal(c) && r.bestMove != nil && *r.bestMove == c.BestMove {
+			// A NULL best move is not derived yet: runBestMoveBackfill owes it,
+			// not this pass, whose writes the journal reports.
+			if stored.equal(c) && (r.bestMove == nil || *r.bestMove == c.BestMove) {
 				continue
 			}
 			bestCube, err := actionCode(ctx, db, r.tenant, c.BestCubeAction)
@@ -783,6 +798,7 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 		}
 		b := &pgx.Batch{}
 		var responses []int64
+		moves := make([]string, 0, len(chunk))
 		for _, id := range chunk {
 			a := analyses[id]
 			c, err := s.prepare(ctx, tenant, id, a, &storage.PlayedActions{Position: plays[id]})
@@ -812,10 +828,12 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 				c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 				c.IsForced != 0, c.IsCloseCube != 0,
 				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove)
+			moves = append(moves, c.BestMove)
 			if slices.ContainsFunc(a.PlayedCubeActions, engine.IsResponseCubeAction) {
 				responses = append(responses, id)
 			}
 		}
+		b.Queue(analysisBestMoveSQL, tenant, chunk, moves)
 		res := bt.SendBatch(ctx, b)
 		for _, id := range chunk {
 			tag, err := res.Exec()
@@ -827,6 +845,10 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 				_ = res.Close()
 				return fmt.Errorf("postgres: save analysis for position %d: %w", id, storage.ErrNotFound)
 			}
+		}
+		if _, err := res.Exec(); err != nil {
+			_ = res.Close()
+			return fmt.Errorf("postgres: save analysis best move: %w", err)
 		}
 		if err := res.Close(); err != nil {
 			return fmt.Errorf("postgres: save analysis: %w", referenced(err))

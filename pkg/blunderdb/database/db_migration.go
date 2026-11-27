@@ -260,6 +260,9 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	if err := d.finishRederivedColumns(ctx); err != nil {
 		return err
 	}
+	if err := d.finishBestMoveBackfill(ctx); err != nil {
+		return err
+	}
 	// An older shape of match_stats rows is a schema repair, not a fill:
 	// readers would sum those rows as they stand. Missing rows are left to
 	// the readers that need them and to the stats.matches maintenance line

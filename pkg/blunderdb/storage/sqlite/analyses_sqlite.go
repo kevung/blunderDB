@@ -67,11 +67,11 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 	if err != nil {
 		return err
 	}
-	return s.write(ctx, positionID, a, c, nil)
+	return s.write(ctx, positionID, a, c, nil, nil)
 }
 
 var analysisMergeSelectSQL = `SELECT data, ` + sqlshared.ActionLabelSQL("best_cube_action") + `, cube_error, best_move_equity_error, is_forced, is_close_cube,
-	analysis_engine, analysis_depth, met_id
+	analysis_engine, analysis_depth, met_id, best_move
 	FROM analysis WHERE position_id = ?`
 
 const cubeResponseSQL = `UPDATE position SET is_cube_response = 1 WHERE id = ?`
@@ -99,9 +99,10 @@ func (s *analysisStore) mergeIn(ctx context.Context, positionID int64, played *s
 		storedEng sql.NullString
 		storedDep sql.NullInt64
 		storedMET sql.NullInt64
+		storedBM  sql.NullString
 	)
 	err := s.db.QueryRowContext(ctx, analysisMergeSelectSQL, positionID).
-		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube, &storedEng, &storedDep, &storedMET)
+		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube, &storedEng, &storedDep, &storedMET, &storedBM)
 	found := err == nil
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return false, fmt.Errorf("sqlite: load analysis for position %d: %w", positionID, err)
@@ -140,7 +141,10 @@ func (s *analysisStore) mergeIn(ctx context.Context, positionID int64, played *s
 	// The columns just read decide the match_stats invalidation: the import
 	// path pays no second read for it.
 	statsChanged := !found || statsColumnsDiffer(stored, storedEng, storedDep, storedMET, c)
-	return true, s.write(ctx, positionID, merged, c, &statsChanged)
+	// analysis_best_move_stale fires only on a stored row whose best move
+	// the upsert keeps.
+	rewrite := found && storedBM.Valid && storedBM.String == c.BestMove
+	return true, s.write(ctx, positionID, merged, c, &statsChanged, &rewrite)
 }
 
 // storedPlayedColumns are the stored columns that depend on the played
@@ -219,9 +223,9 @@ func positionOf(ctx context.Context, q execer, positionID int64, a *domain.Posit
 // write encodes a prepared analysis and upserts it with its columns.
 //
 // statsChanged says whether the write changes a column match_stats
-// summarises; nil when the caller has not read the stored row, and write
-// reads it.
-func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.PositionAnalysis, c engine.AnalysisColumns, statsChanged *bool) error {
+// summarises, and rewriteBestMove whether best_move must be written again
+// after the upsert; nil when the caller has not read the stored row.
+func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.PositionAnalysis, c engine.AnalysisColumns, statsChanged, rewriteBestMove *bool) error {
 	data, err := engine.EncodeAnalysisForStorage(a)
 	if err != nil {
 		return fmt.Errorf("sqlite: encode analysis: %w", err)
@@ -258,6 +262,15 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 			c.IsForced, c.IsCloseCube,
 			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove); err != nil {
 			return fmt.Errorf("sqlite: save analysis: %w", referenced(err))
+		}
+		// An upsert that kept the best play had it cleared by
+		// analysis_best_move_stale: it is written again. A fresh position had
+		// no analysis to update, so the trigger did not fire.
+		if rewriteBestMove != nil && *rewriteBestMove || rewriteBestMove == nil && !storage.IsFreshPosition(ctx, positionID) {
+			if _, err := tx.ExecContext(ctx, `UPDATE analysis SET best_move = ? WHERE position_id = ? AND best_move IS NULL`,
+				c.BestMove, positionID); err != nil {
+				return fmt.Errorf("sqlite: save analysis best move: %w", err)
+			}
 		}
 		// The moves played here are scored against the analysis just written.
 		if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{db: tx}.shared(), "", map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
@@ -596,7 +609,8 @@ func (l storedLabelColumns) equal(c engine.AnalysisColumns) bool {
 	createdEqual := !l.created.Valid && c.CreationDate == 0 || l.created.Valid && l.created.Int64 == c.CreationDate
 	return l.engine.Valid && l.engine.String == c.AnalysisEngine &&
 		l.depth.Valid && l.depth.Int64 == c.AnalysisDepth && createdEqual &&
-		l.bestMove.Valid && l.bestMove.String == c.BestMove
+		// NULL is "not derived yet", which BackfillBestMove owes, not a repair.
+		(!l.bestMove.Valid || l.bestMove.String == c.BestMove)
 }
 
 // repairLabel rewrites the columns an analysis describes itself with (rates,

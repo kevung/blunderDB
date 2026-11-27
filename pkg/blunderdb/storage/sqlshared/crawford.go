@@ -758,8 +758,19 @@ func mergeAnalysisInto(ctx context.Context, tx Execer, scope string, keepID, dup
 	utenant, uargs := tx.TenantFilter("", scope)
 	args := append([]any{keepID, encoded}, uargs...)
 	args = append(args, dupID)
-	_, err = tx.Exec(ctx,
-		`UPDATE analysis SET position_id = ?, data = ? WHERE `+utenant+` AND position_id = ?`, args...)
+	if _, err = tx.Exec(ctx,
+		`UPDATE analysis SET position_id = ?, data = ? WHERE `+utenant+` AND position_id = ?`, args...); err != nil {
+		return err
+	}
+	return WriteBestMove(ctx, tx, scope, keepID, engine.BestMove(&analysis))
+}
+
+// WriteBestMove writes analysis.best_move after a statement that rewrote data
+// alone, which the analysis_best_move_stale trigger answered by setting it NULL.
+func WriteBestMove(ctx context.Context, tx Execer, scope string, positionID int64, move string) error {
+	utenant, uargs := tx.TenantFilter("", scope)
+	args := append([]any{move}, uargs...)
+	_, err := tx.Exec(ctx, `UPDATE analysis SET best_move = ? WHERE `+utenant+` AND position_id = ?`, append(args, positionID)...)
 	return err
 }
 
@@ -786,8 +797,10 @@ func mergeRolloutsInto(ctx context.Context, tx Execer, scope string, keepID int6
 	}
 	utenant, uargs := tx.TenantFilter("", scope)
 	args := append([]any{encoded}, uargs...)
-	_, err = tx.Exec(ctx, `UPDATE analysis SET data = ? WHERE `+utenant+` AND position_id = ?`, append(args, keepID)...)
-	return err
+	if _, err = tx.Exec(ctx, `UPDATE analysis SET data = ? WHERE `+utenant+` AND position_id = ?`, append(args, keepID)...); err != nil {
+		return err
+	}
+	return WriteBestMove(ctx, tx, scope, keepID, engine.BestMove(&kept))
 }
 
 // raiseStickyMarks copies the duplicate's provenance and study marks onto the

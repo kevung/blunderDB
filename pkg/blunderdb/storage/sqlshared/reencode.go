@@ -17,20 +17,21 @@ func ReencodeAnalyses(ctx context.Context, db Execer, scope string, after int64,
 	}
 	tenant, targs := db.TenantFilter("a", scope)
 	args := append(targs, engine.BinaryBlobPrefix(), after, limit)
-	rows, err := db.Query(ctx, `SELECT a.position_id, a.data FROM analysis a
+	rows, err := db.Query(ctx, `SELECT a.position_id, a.data, a.best_move FROM analysis a
 		WHERE `+tenant+` AND a.data IS NOT NULL AND substr(a.data, 1, 1) <> ? AND a.position_id > ?
 		ORDER BY a.position_id LIMIT ?`, args...)
 	if err != nil {
 		return 0, 0, errf(db, "reencode analyses", err)
 	}
 	type row struct {
-		id   int64
-		data []byte
+		id       int64
+		data     []byte
+		bestMove *string
 	}
 	var page []row
 	for rows.Next() {
 		var r row
-		if err := rows.Scan(&r.id, &r.data); err != nil {
+		if err := rows.Scan(&r.id, &r.data, &r.bestMove); err != nil {
 			rows.Close()
 			return 0, 0, errf(db, "reencode analyses", err)
 		}
@@ -68,6 +69,12 @@ func ReencodeAnalyses(ctx context.Context, db Execer, scope string, after int64,
 			if _, err := tx.Exec(ctx, `UPDATE analysis SET data = ? WHERE `+utenant+` AND position_id = ?`,
 				append(args, r.id)...); err != nil {
 				return err
+			}
+			// The same analysis in other bytes: its best move stands.
+			if r.bestMove != nil {
+				if err := WriteBestMove(ctx, tx, scope, r.id, *r.bestMove); err != nil {
+					return err
+				}
 			}
 			rewritten++
 		}

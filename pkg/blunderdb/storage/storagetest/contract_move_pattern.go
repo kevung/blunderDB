@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
@@ -114,4 +115,39 @@ func RunMovePatternColumn(t *testing.T, s storage.Storage, exec sqlshared.Execer
 		t.Errorf("best_move after the pass %v, want 18/14 13/11", v)
 	}
 	check("derived by the pass")
+
+	// Saved again with the same best play, the row keeps its column.
+	if err := s.Analyses().Save(ctx, "", b, checker("18/14 13/11", "8/6 6/5")); err != nil {
+		t.Fatalf("Save analysis again: %v", err)
+	}
+	if v := stored(); v == nil || *v != "18/14 13/11" {
+		t.Errorf("best_move after the same play saved again %v, want 18/14 13/11", v)
+	}
+
+	// A binary older than the column rewrites the blob alone, with a new
+	// best play: the column must not keep naming the former one.
+	blob, err := engine.EncodeAnalysisForStorage(checker("24/20 6/5", "18/14 13/11"))
+	if err != nil {
+		t.Fatalf("encode analysis: %v", err)
+	}
+	if _, err := exec.Exec(ctx, `UPDATE analysis SET data = ? WHERE `+where, append([]any{blob}, whereArgs...)...); err != nil {
+		t.Fatalf("rewrite the blob alone: %v", err)
+	}
+	if v := stored(); v != nil {
+		t.Errorf("best_move after the blob alone was rewritten %q, want NULL", *v)
+	}
+	for _, tc := range []struct {
+		filter string
+		want   []int64
+	}{
+		{`m"24/20 6/5"`, []int64{b}},
+		{`m"18/14 13/11"`, nil},
+		{`m"13/11"`, []int64{bar}},
+	} {
+		got := searchIDs(t, s, domain.SearchFilters{MovePatternFilter: tc.filter})
+		slices.Sort(got)
+		if fmt.Sprint(got) != fmt.Sprint(tc.want) {
+			t.Errorf("after an older binary's write: %s found %v, want %v", tc.filter, got, tc.want)
+		}
+	}
 }

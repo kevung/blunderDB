@@ -1105,6 +1105,31 @@ func EnsureMultiPlayedTriggers(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
+// bestMoveStaleTrigger clears analysis.best_move when data is rewritten and
+// the column left as it was, as a binary older than 2.61 does: the column
+// could name the former best play and hide the row from a move-pattern
+// search. A writer that knows the column writes it again after (Save, vacuum).
+const bestMoveStaleTrigger = `CREATE TRIGGER IF NOT EXISTS analysis_best_move_stale AFTER UPDATE OF data ON analysis
+	WHEN NEW.best_move IS OLD.best_move AND NEW.best_move IS NOT NULL
+	BEGIN UPDATE analysis SET best_move = NULL WHERE id = NEW.id; END`
+
+// EnsureBestMoveTrigger creates analysis_best_move_stale where it is missing,
+// once analysis.best_move exists (the 2.61 step adds it and calls this).
+func EnsureBestMoveTrigger(ctx context.Context, db *sql.DB) error {
+	tables, err := objectNames(ctx, db, "table")
+	if err != nil || !tables["analysis"] {
+		return err
+	}
+	cols, err := columnNames(ctx, db, "analysis")
+	if err != nil || !cols["best_move"] {
+		return err
+	}
+	if _, err := db.ExecContext(ctx, bestMoveStaleTrigger); err != nil {
+		return fmt.Errorf("sqlite: best move trigger: %w", err)
+	}
+	return nil
+}
+
 // Bootstrap creates the full schema at domain.DatabaseVersion on a fresh
 // database and records the schema version. It is run by Open for an empty
 // database and by the Database wrapper's SetupDatabase. Every statement is
@@ -1120,6 +1145,9 @@ func Bootstrap(ctx context.Context, db *sql.DB) error {
 		return err
 	}
 	if err := EnsureMultiPlayedTriggers(ctx, db); err != nil {
+		return err
+	}
+	if err := EnsureBestMoveTrigger(ctx, db); err != nil {
 		return err
 	}
 	if err := EnsureObjectUUIDs(ctx, db); err != nil {
@@ -1191,6 +1219,9 @@ func EnsureSchema(ctx context.Context, db *sql.DB) error {
 		return err
 	}
 	if err := EnsureMultiPlayedTriggers(ctx, db); err != nil {
+		return err
+	}
+	if err := EnsureBestMoveTrigger(ctx, db); err != nil {
 		return err
 	}
 	have, err := indexNames(ctx, db)
