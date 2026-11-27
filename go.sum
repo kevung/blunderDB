@@ -83,8 +83,8 @@ github.com/kevung/bgfparser v1.2.0 h1:SzKAOsYw9W1UTqEvI9Zi1hffgVysySTJAKIc6aPJRa
 github.com/kevung/bgfparser v1.2.0/go.mod h1:MrNvTuq7aDXV51Z1ej3Mcyi4gjo+4oOc7dgyHZV5jG8=
 github.com/kevung/gnubgparser v1.7.1 h1:A92jHe4IoBhBbseINxbFPvrUPnesWnCQePJFmixLo8w=
 github.com/kevung/gnubgparser v1.7.1/go.mod h1:nG0xLpci44II/G0Alae6Q+y/4XkXT6mENXwwWz6Q9o8=
-github.com/kevung/nicomaque v0.10.0 h1:4AigV/XR4JlWbo7wqAMiolUSgx+EOY+NMan7Z0aRKq4=
-github.com/kevung/nicomaque v0.10.0/go.mod h1:qGXwFSIRykq8YMTxv7CZZt/TQVIeZWNXf4YsHkvsmbQ=
+github.com/kevung/nicomaque v0.12.0 h1:nV/ZWd79IWep745NtX2ea6QMXxokwITYnTHRMACeLCE=
+github.com/kevung/nicomaque v0.12.0/go.mod h1:qGXwFSIRykq8YMTxv7CZZt/TQVIeZWNXf4YsHkvsmbQ=
 github.com/kevung/ogxmparser v0.1.0 h1:7ya3wvpK9G4oMVxVfye02gL8y0xvC/MppS2Np6kjoxY=
 github.com/kevung/ogxmparser v0.1.0/go.mod h1:/dJb9x72gUskSoPs2EffQDhMvgaq8V5nQ+q3hkLz1oU=
 github.com/kevung/xgparser v1.5.1 h1:H8d8Uzsi1ZEWC/u1s0hvS13Lj1z3vQF3yquzfe37nyI=

@@ -149,8 +149,8 @@ func TestDirectionSimulate(t *testing.T) {
 	if err := json.Unmarshal(r.body, &got); err != nil || r.status != http.StatusOK {
 		t.Fatalf("directions.simulate: status %d, body %.300s (%v)", r.status, r.body, err)
 	}
-	if got.Runs != 10 || got.Matches == 0 || got.MinutesP50 <= 0 || got.EstimatedEnd == "" || got.PeakTables != 8 || len(got.Warnings) != 1 || got.Warnings[0] != service.SimulateWarnTablesExceeded {
-		t.Errorf("directions.simulate = %+v; want ten runs summarised, and the warning that six tables are fewer than the eight wanted", got)
+	if got.Runs != 10 || got.Matches == 0 || got.MinutesP50 <= 0 || got.EstimatedEnd == "" || got.PeakTables != 6 || len(got.Warnings) != 0 {
+		t.Errorf("directions.simulate = %+v; want ten runs summarised on the six tables of the request, without warning", got)
 	}
 	if again := send(t, ts, "1", "/v1/directions.simulate", body, "", ""); string(again.body) != string(r.body) {
 		t.Errorf("the same request answered\n%s\nthen\n%s", r.body, again.body)
@@ -166,8 +166,8 @@ func TestDirectionSimulate(t *testing.T) {
 		strings.Replace(body, `"lives":2`, `"lives":1000000000`, 1):               "lives is 0 to 100, not 1000000000",
 		`{}`: "empty configuration",
 	} {
-		if r := send(t, ts, "1", "/v1/directions.simulate", bad, "", ""); r.status != http.StatusBadRequest || !strings.Contains(string(r.body), want) {
-			t.Errorf("directions.simulate %.60s…: status %d, body %.200s; want 400 and %q", bad, r.status, r.body, want)
+		if r := send(t, ts, "1", "/v1/directions.simulate", bad, "", ""); r.status != http.StatusUnprocessableEntity || !strings.Contains(string(r.body), want) {
+			t.Errorf("directions.simulate %.60s…: status %d, body %.200s; want 422 and %q", bad, r.status, r.body, want)
 		}
 	}
 	huge := strings.Replace(body, `"name":"Open"`, `"name":"`+strings.Repeat("x", simulateMaxBodyBytes)+`"`, 1)
@@ -601,8 +601,8 @@ func TestDirectionGestures_RefusalIsInvalid(t *testing.T) {
 	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
 	v := f.versionOf(t, ts)
 	r := send(t, ts, "1", "/v1/directions.enterResult", f.body(`"matchId":"nope","winner":"aa"`), v, "")
-	if r.status != http.StatusBadRequest {
-		t.Errorf("unknown match: status %d, body %.200s; want 400", r.status, r.body)
+	if r.status != http.StatusUnprocessableEntity {
+		t.Errorf("unknown match: status %d, body %.200s; want 422", r.status, r.body)
 	}
 	if got := f.versionOf(t, ts); got != v {
 		t.Error("a refused gesture moved the version")
@@ -682,8 +682,8 @@ func TestDirectionGestures_SetTables(t *testing.T) {
 	if r := send(t, ts, "1", "/v1/directions.setTables", body, "", ""); r.status != http.StatusPreconditionRequired {
 		t.Errorf("without If-Match: status %d; want 428", r.status)
 	}
-	if r := send(t, ts, "1", "/v1/directions.setTables", body, f.versionOf(t, ts), ""); r.status != http.StatusBadRequest {
-		t.Errorf("attached event: status %d, body %.200s; want 400", r.status, r.body)
+	if r := send(t, ts, "1", "/v1/directions.setTables", body, f.versionOf(t, ts), ""); r.status != http.StatusUnprocessableEntity {
+		t.Errorf("attached event: status %d, body %.200s; want 422", r.status, r.body)
 	}
 	if err := f.svc.DetachFromRencontre(f.ctx, f.tournamentID); err != nil {
 		t.Fatal(err)
@@ -749,8 +749,8 @@ func TestDirectionGestures_AddParticipantKeepsGivenID(t *testing.T) {
 	before := len(ids())
 	v := f.versionOf(t, ts)
 	r = send(t, ts, "1", "/v1/directions.addParticipant", f.body(`"id":"FFBG-0042","name":"Someone Else"`), v, "")
-	if r.status != http.StatusBadRequest || len(ids()) != before || f.versionOf(t, ts) != v {
-		t.Errorf("addParticipant with a taken id: status %d, %d entries (was %d), body %.200s; want 400 and nothing written", r.status, len(ids()), before, r.body)
+	if r.status != http.StatusUnprocessableEntity || len(ids()) != before || f.versionOf(t, ts) != v {
+		t.Errorf("addParticipant with a taken id: status %d, %d entries (was %d), body %.200s; want 422 and nothing written", r.status, len(ids()), before, r.body)
 	}
 
 	r = send(t, ts, "1", "/v1/directions.addParticipant", f.body(`"name":"Grace Hopper"`), v, "")
@@ -821,8 +821,8 @@ func TestDirectionGestures_RoundGestures(t *testing.T) {
 		{"/v1/directions.startMatch", `"round":2,"a":"nobody","b":"none"`},
 	} {
 		v := f.versionOf(t, ts)
-		if r := send(t, ts, "1", c.path, f.body(c.extra), v, ""); r.status != http.StatusBadRequest {
-			t.Errorf("%s: status %d, body %.200s; want 400", c.path, r.status, r.body)
+		if r := send(t, ts, "1", c.path, f.body(c.extra), v, ""); r.status != http.StatusUnprocessableEntity {
+			t.Errorf("%s: status %d, body %.200s; want 422", c.path, r.status, r.body)
 		}
 	}
 }

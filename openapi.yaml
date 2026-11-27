@@ -1719,6 +1719,8 @@ paths:
               $ref: "#/components/schemas/directionNoteReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -1767,6 +1769,8 @@ paths:
               $ref: "#/components/schemas/directionAddPairReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -1815,6 +1819,8 @@ paths:
               $ref: "#/components/schemas/directionAddParticipantReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -1863,6 +1869,8 @@ paths:
               $ref: "#/components/schemas/directionSlotReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -1944,6 +1952,8 @@ paths:
               $ref: "#/components/schemas/directionPlayerRoundReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -1992,6 +2002,8 @@ paths:
               $ref: "#/components/schemas/directionPlayerRoundReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2040,6 +2052,8 @@ paths:
               $ref: "#/components/schemas/directionMatchReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2120,6 +2134,8 @@ paths:
               $ref: "#/components/schemas/directionGestureReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2168,6 +2184,8 @@ paths:
               $ref: "#/components/schemas/directionGestureReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2216,6 +2234,8 @@ paths:
               $ref: "#/components/schemas/directionProposalReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2264,6 +2284,8 @@ paths:
               $ref: "#/components/schemas/directionProposalsReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2312,6 +2334,8 @@ paths:
               $ref: "#/components/schemas/directionResultReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2386,6 +2410,8 @@ paths:
               $ref: "#/components/schemas/directionSlotReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2467,6 +2493,8 @@ paths:
               $ref: "#/components/schemas/directionForfeitReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2515,6 +2543,8 @@ paths:
               $ref: "#/components/schemas/directionPlayersReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2563,6 +2593,8 @@ paths:
               $ref: "#/components/schemas/directionResultReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2709,6 +2741,8 @@ paths:
               $ref: "#/components/schemas/directionPlayerRoundReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2855,6 +2889,8 @@ paths:
               $ref: "#/components/schemas/directionAbsentReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2903,6 +2939,8 @@ paths:
               $ref: "#/components/schemas/directionParticipantReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -2951,6 +2989,8 @@ paths:
               $ref: "#/components/schemas/directionMoveReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3094,6 +3134,8 @@ paths:
               $ref: "#/components/schemas/directionPlayerRoundReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3160,6 +3202,8 @@ paths:
               $ref: "#/components/schemas/directionParticipantReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3208,6 +3252,8 @@ paths:
               $ref: "#/components/schemas/directionGestureReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3256,6 +3302,8 @@ paths:
               $ref: "#/components/schemas/directionUpdatePairReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3304,6 +3352,8 @@ paths:
               $ref: "#/components/schemas/directionReplaceReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3352,6 +3402,8 @@ paths:
               $ref: "#/components/schemas/directionConfigReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3400,6 +3452,8 @@ paths:
               $ref: "#/components/schemas/directionTablesReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3562,6 +3616,8 @@ paths:
               $ref: "#/components/schemas/directionStartMatchReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3643,6 +3699,8 @@ paths:
               $ref: "#/components/schemas/directionSwapReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3724,6 +3782,8 @@ paths:
               $ref: "#/components/schemas/directionUpdatePairReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3772,6 +3832,8 @@ paths:
               $ref: "#/components/schemas/directionUpdateParticipantReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3820,6 +3882,8 @@ paths:
               $ref: "#/components/schemas/directionWithdrawReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -6621,6 +6685,8 @@ paths:
               $ref: "#/components/schemas/rencontreAttachReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -6695,6 +6761,8 @@ paths:
               $ref: "#/components/schemas/directionGestureReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -6857,6 +6925,8 @@ paths:
               $ref: "#/components/schemas/rencontreBreaksReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -6905,6 +6975,8 @@ paths:
               $ref: "#/components/schemas/rencontreRoomsReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -6953,6 +7025,8 @@ paths:
               $ref: "#/components/schemas/rencontreTableReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -7001,6 +7075,8 @@ paths:
               $ref: "#/components/schemas/rencontreTablesReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -7049,6 +7125,8 @@ paths:
               $ref: "#/components/schemas/rencontreGestureReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -7096,6 +7174,8 @@ paths:
               $ref: "#/components/schemas/rencontreUpdateReq"
       responses:
         "400":
+          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.
+        "422":
           $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -11873,7 +11953,7 @@ components:
           nullable: true
   responses:
     gestureRefused:
-      description: Bad Request — the gesture is refused and nothing was written. error.message is for a person; error.details.reason, when the refusal states one, is the stable code to branch on.
+      description: Unprocessable Entity — the gesture is refused and nothing was written. error.message is for a person; error.details.reason, when the refusal states one, is the stable code to branch on.
       content:
         application/json:
           schema:
@@ -11884,7 +11964,7 @@ components:
                 properties:
                   code:
                     type: string
-                    enum: [invalid]
+                    enum: [refused]
                   message:
                     type: string
                   details:

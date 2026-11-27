@@ -48,8 +48,8 @@ func TestSimulate_SameSeedSameAnswer(t *testing.T) {
 	if !(a.MinutesP10 > 0 && a.MinutesP10 <= a.MinutesP50 && a.MinutesP50 <= a.MinutesP90) {
 		t.Errorf("minutes = %v, %v, %v; want positive and ordered", a.MinutesP10, a.MinutesP50, a.MinutesP90)
 	}
-	if a.PeakTables != 16 || !slices.Contains(a.Warnings, service.SimulateWarnTablesExceeded) {
-		t.Errorf("peakTables = %d, warnings %v; want the 16 matches of a first round of 32, and the warning that 8 tables are fewer", a.PeakTables, a.Warnings)
+	if a.PeakTables != 8 || slices.Contains(a.Warnings, "tables_exceeded") {
+		t.Errorf("peakTables = %d, warnings %v; want the 8 tables of the room, the other matches waiting, and no warning", a.PeakTables, a.Warnings)
 	}
 	if a.MatchesPerPlayerMin < 2 || a.MatchesPerPlayerMax < a.MatchesPerPlayerMin {
 		t.Errorf("matches per player = %d to %d; want at least the two a player with two lives plays", a.MatchesPerPlayerMin, a.MatchesPerPlayerMax)
@@ -61,13 +61,20 @@ func TestSimulate_SameSeedSameAnswer(t *testing.T) {
 	}
 }
 
-// TestSimulate_TablesAndField: a room large enough raises no warning; a list of entries is
-// played as given, and no start means no estimated end.
+// TestSimulate_TablesAndField: the room's tables bound the simulation — a narrower room never
+// runs more matches at once and lasts at least as long; a list of entries is played as given,
+// and no start means no estimated end.
 func TestSimulate_TablesAndField(t *testing.T) {
 	wide := simulateReq("32")
 	wide.Tables = 16
-	if w, err := service.Simulate(context.Background(), wide); err != nil || w.PeakTables != 16 || len(w.Warnings) != 0 {
+	w, err := service.Simulate(context.Background(), wide)
+	if err != nil || w.PeakTables != 16 || len(w.Warnings) != 0 {
 		t.Errorf("on sixteen tables: %+v (%v); want a peak of 16 and no warning", w, err)
+	}
+	narrow := simulateReq("32")
+	narrow.Tables = 4
+	if n, err := service.Simulate(context.Background(), narrow); err != nil || n.PeakTables != 4 || len(n.Warnings) != 0 || n.MinutesP50 <= w.MinutesP50 {
+		t.Errorf("on four tables: %+v (%v); want a peak of 4, no warning, and a longer median than %.0f minutes on sixteen", n, err, w.MinutesP50)
 	}
 
 	list := simulateReq(`[{"id":"a","name":"A","rating":4},{"id":"b","name":"B"},{"id":"c","name":"C","rating":8},{"id":"d","name":"D"}]`)

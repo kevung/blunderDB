@@ -138,15 +138,15 @@ func checkConfirmProposals(t *testing.T, ts *httptest.Server, st storage.Storage
 	}
 	// With the fresh version, the list it read still names A's tables.
 	r := send(t, ts, tenant, path, b.body(listB), b.versionOf(t, ts), "")
-	if r.status != http.StatusBadRequest || reasonOf(t, r) != string(direction.ReasonTableTaken) {
-		t.Errorf("B on A's tables: status %d, body %.300s; want 400 with reason table_taken", r.status, r.body)
+	if r.status != http.StatusUnprocessableEntity || reasonOf(t, r) != string(direction.ReasonTableTaken) {
+		t.Errorf("B on A's tables: status %d, body %.300s; want 422 with reason table_taken", r.status, r.body)
 	}
 	if got := len(b.running(t)); got != 0 {
 		t.Errorf("%d matches of B launched by refused lists", got)
 	}
 	r = send(t, ts, tenant, path, b.body(`"actions":[]`), b.versionOf(t, ts), "")
-	if r.status != http.StatusBadRequest {
-		t.Errorf("an empty list: status %d; want 400", r.status)
+	if r.status != http.StatusUnprocessableEntity {
+		t.Errorf("an empty list: status %d; want 422", r.status)
 	}
 }
 
@@ -244,8 +244,8 @@ func checkConfirmProposalsRollsBack(t *testing.T, ts *httptest.Server, st storag
 	} {
 		blob, _ := json.Marshal(list)
 		r := send(t, ts, tenant, path, f.body(`"actions":`+string(blob)), version, "")
-		if r.status != http.StatusBadRequest || reasonOf(t, r) != string(want) {
-			t.Errorf("%s: status %d, body %.300s; want 400 with that reason", want, r.status, r.body)
+		if r.status != http.StatusUnprocessableEntity || reasonOf(t, r) != string(want) {
+			t.Errorf("%s: status %d, body %.300s; want 422 with that reason", want, r.status, r.body)
 		}
 		if got := f.versionOf(t, ts); got != version || events() != before {
 			t.Errorf("%s: %d events (were %d), version moved: %v", want, events(), before, got != version)
