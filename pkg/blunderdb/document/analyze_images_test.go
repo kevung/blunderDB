@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"slices"
+	"sync"
 	"sync/atomic"
 	"testing"
 
@@ -198,15 +199,38 @@ func TestAnalyzeFileImages(t *testing.T) {
 	}
 }
 
+// sansPips returns a fresh copy of the reading of testdata/sans-pips. The
+// reading is done once: it is the package's heaviest, and every test that
+// needs it mutates its own copy, decoded from the encoded relevé.
+var sansPips = func() func(*testing.T) *Releve {
+	var once sync.Once
+	var data []byte
+	var err error
+	return func(t *testing.T) *Releve {
+		t.Helper()
+		once.Do(func() {
+			var r *Releve
+			if r, err = AnalyzeFile("testdata/sans-pips", AnalyzeOptions{Title: "Sans pips"}); err == nil {
+				data, err = r.Encode()
+			}
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		r, err := Decode(data)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return r
+	}
+}()
+
 // A real reading of a book without printed pips: fifteen checkers a side
 // with no doubt are complete, under the defaults; once the defaults are
 // confirmed they pass an import accepting complete entries, the diagram with
 // a cube drawn on the top side aside.
 func TestAnalyzeCompleteWithoutPips(t *testing.T) {
-	r, err := AnalyzeFile("testdata/sans-pips", AnalyzeOptions{Title: "Sans pips"})
-	if err != nil {
-		t.Fatal(err)
-	}
+	r := sansPips(t)
 	if len(r.Entries) != 8 {
 		t.Fatalf("%d entries, want 8", len(r.Entries))
 	}
@@ -337,10 +361,7 @@ func TestLearnedDefaultsMatchScore(t *testing.T) {
 // confirmed, the one diagram whose cube is drawn and not read is offered the
 // fallback with complete entries accepted, instead of a refusal.
 func TestAnalyzeFallbackWithoutPips(t *testing.T) {
-	r, err := AnalyzeFile("testdata/sans-pips", AnalyzeOptions{Title: "Sans pips"})
-	if err != nil {
-		t.Fatal(err)
-	}
+	r := sansPips(t)
 	if len(r.Document.Defaults.Printed) != 0 {
 		t.Errorf("printed fields learned on a book that prints none: %v", r.Document.Defaults.Printed)
 	}
