@@ -167,6 +167,7 @@
         "syncTitle": "Sincronización"
     },
     "toolbar": {
+        "importDocument": "Importar un documento…",
         "copyBoardImage": "Copiar imagen del tablero",
         "copyBoardImageTip": "Copiar imagen del tablero al portapapeles",
         "copyBoardImageWithAnalysis": "con análisis",
@@ -3829,6 +3830,10 @@
     "documentImport": {
         "title": "Importar un documento",
         "reading": "Leyendo el documento…",
+        "progress": "página {page} / {pages} · {diagrams} diagramas",
+        "eta": "faltan {eta}",
+        "cancelled": "Lectura cancelada.",
+        "importCancelled": "Importación cancelada.",
         "failed": "Falló la importación del documento: {err}",
         "summary": "{title}: {entries} entradas (seguras {sure}, por verificar {toVerify}, inciertas {uncertain})",
         "defaults": "Valores por defecto del documento",

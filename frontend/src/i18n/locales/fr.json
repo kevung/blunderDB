@@ -167,6 +167,7 @@
         "syncTitle": "Synchronisation"
     },
     "toolbar": {
+        "importDocument": "Importer un document…",
         "copyBoardImage": "Copier l'image du plateau",
         "copyBoardImageTip": "Copier l'image du plateau dans le presse-papiers",
         "copyBoardImageWithAnalysis": "avec analyse",
@@ -3829,6 +3830,10 @@
     "documentImport": {
         "title": "Importer un document",
         "reading": "Lecture du document…",
+        "progress": "page {page} / {pages} · {diagrams} diagrammes",
+        "eta": "{eta} restantes",
+        "cancelled": "Lecture annulée.",
+        "importCancelled": "Import annulé.",
         "failed": "Import du document échoué : {err}",
         "summary": "{title} : {entries} entrées (sûres {sure}, à vérifier {toVerify}, incertaines {uncertain})",
         "defaults": "Défauts du document",

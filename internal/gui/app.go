@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 	"io/fs"
 	"log"
 	"os"
@@ -153,6 +154,7 @@ func NewApp(db *database.Database) *App {
 		database.SetOpenGuard(db, a.refuseHeldLibrary)
 		database.SetMatchStatsFillReport(db, a.matchStatsFillReport())
 		database.SetTaskTracker(db, a.trackDirectTask)
+		database.SetDocumentProgress(db, func(p document.Progress) { a.emitBatch(documentProgressEvent, p) })
 		database.SetBlunderCountReady(db, func() {
 			if a.ctx != nil {
 				runtime.EventsEmit(a.ctx, blunderCountReadyEvent)

@@ -167,6 +167,7 @@
         "syncTitle": "Синхронизация"
     },
     "toolbar": {
+        "importDocument": "Импортировать документ…",
         "copyBoardImage": "Копировать изображение доски",
         "copyBoardImageTip": "Копировать изображение доски в буфер обмена",
         "copyBoardImageWithAnalysis": "с анализом",
@@ -3829,6 +3830,10 @@
     "documentImport": {
         "title": "Импорт документа",
         "reading": "Чтение документа…",
+        "progress": "страница {page} / {pages} · диаграмм: {diagrams}",
+        "eta": "осталось {eta}",
+        "cancelled": "Чтение отменено.",
+        "importCancelled": "Импорт отменён.",
         "failed": "Не удалось импортировать документ: {err}",
         "summary": "{title}: {entries} записей (надёжных {sure}, к проверке {toVerify}, сомнительных {uncertain})",
         "defaults": "Значения документа по умолчанию",

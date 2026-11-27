@@ -59,7 +59,9 @@ Le parcours en trois commandes
    ./blunderdb document import --db base.db releve.json
 
 1. ``analyze`` lit le PDF et écrit le relevé (sans ``-o``, il l'écrit sur la
-   sortie standard). Il résume ce qu'il a trouvé :
+   sortie standard). Quand l'erreur standard est un terminal, il y écrit la
+   progression de la lecture (``page 37/212, 54 diagrams``) ; rien n'est écrit
+   dans un script. Il résume ce qu'il a trouvé :
 
    .. code-block:: text
 

@@ -128,6 +128,8 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		// The desktop's tracker lists what the frontend calls on this handle,
 		// whichever library it carries.
 		"tracker": true,
+		// Where a document reading reports, whichever library it is read for.
+		"documentProgress": true,
 		// A test seam of the handle's own vacuum.
 		"beforeSwapRename": true,
 	}

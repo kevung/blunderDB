@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 )
@@ -152,7 +153,17 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 	// Ctrl-C stops a scanned book's decoding between code-blocks.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
-	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: *title, Author: *author, Warn: warn, Context: ctx})
+	opts := document.AnalyzeOptions{Title: *title, Author: *author, Warn: warn, Context: ctx}
+	// A script's standard error stays quiet: the progress shows on a terminal only.
+	if st, err := os.Stderr.Stat(); err == nil && st.Mode()&os.ModeCharDevice != 0 {
+		opts.Progress = document.ThrottledProgress(func(p document.Progress) {
+			fmt.Fprintf(os.Stderr, "\rpage %d/%d, %d diagrams\033[K", p.Page, p.Pages, p.Diagrams)
+			if p.Page == p.Pages {
+				fmt.Fprintln(os.Stderr)
+			}
+		}, 250*time.Millisecond)
+	}
+	r, err := document.AnalyzeFile(path, opts)
 	if err != nil {
 		return err
 	}

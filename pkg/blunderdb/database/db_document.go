@@ -1,8 +1,8 @@
 package database
 
 import (
-	"context"
 	"fmt"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 )
@@ -20,12 +20,15 @@ func (d *Database) ImportDocumentReleve(releveJSON string, collection string, ac
 	if err != nil {
 		return document.ImportResult{}, err
 	}
+	// CancelImport stops the import, which then writes nothing.
+	ctx, done := d.beginCancellableImport()
+	defer done()
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	if d.db == nil {
 		return document.ImportResult{}, fmt.Errorf("no database is currently open")
 	}
-	return document.Import(context.Background(), d.store, "", r, document.ImportOptions{Collection: collection, AcceptComplete: acceptComplete, Fallback: fallback, Force: force})
+	return document.Import(ctx, d.store, "", r, document.ImportOptions{Collection: collection, AcceptComplete: acceptComplete, Fallback: fallback, Force: force})
 }
 
 // AnalyzeDocument reads the diagrams of the document at path (package
@@ -34,15 +37,32 @@ func (d *Database) ImportDocumentReleve(releveJSON string, collection string, ac
 // back. title and author replace the document's own metadata when not empty. It reads and writes no database: a document is
 // analysed on the person's machine, then its Relevé is verified and imported.
 func (d *Database) AnalyzeDocument(path, title, author string) (string, error) {
-	// A scanned book takes minutes to decode: CancelImport stops it.
-	ctx, done := d.beginCancellableImport()
-	defer done()
-	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: title, Author: author, Context: ctx})
-	if err != nil {
-		return "", err
+	return tracked(d, TaskImport, path, d.CancelImport, func() (string, error) {
+		// A scanned book takes minutes to decode: CancelImport stops it.
+		ctx, done := d.beginCancellableImport()
+		defer done()
+		opts := document.AnalyzeOptions{Title: title, Author: author, Context: ctx}
+		if hook := d.documentProgress.Load(); hook != nil {
+			opts.Progress = document.ThrottledProgress(*hook, 250*time.Millisecond)
+		}
+		r, err := document.AnalyzeFile(path, opts)
+		if err != nil {
+			return "", err
+		}
+		out, err := r.Encode()
+		return string(out), err
+	})
+}
+
+// SetDocumentProgress registers where AnalyzeDocument reports how far it has
+// read (nil removes it): at most four times a second, the last page always.
+// A function, not a method, as SetTaskTracker is.
+func SetDocumentProgress(d *Database, f func(document.Progress)) {
+	if f == nil {
+		d.documentProgress.Store(nil)
+		return
 	}
-	out, err := r.Encode()
-	return string(out), err
+	d.documentProgress.Store(&f)
 }
 
 // SummarizeDocumentReleve counts the entries of a Relevé by certainty and

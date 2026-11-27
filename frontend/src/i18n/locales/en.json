@@ -167,6 +167,7 @@
         "syncTitle": "Synchronisation"
     },
     "toolbar": {
+        "importDocument": "Import a document…",
         "copyBoardImage": "Copy Board Image",
         "copyBoardImageTip": "Copy Board Image to Clipboard",
         "copyBoardImageWithAnalysis": "with Analysis",
@@ -3829,6 +3830,10 @@
     "documentImport": {
         "title": "Import a document",
         "reading": "Reading the document…",
+        "progress": "page {page} / {pages} · {diagrams} diagrams",
+        "eta": "{eta} left",
+        "cancelled": "Reading cancelled.",
+        "importCancelled": "Import cancelled.",
         "failed": "Document import failed: {err}",
         "summary": "{title}: {entries} entries (sure {sure}, to verify {toVerify}, uncertain {uncertain})",
         "defaults": "Defaults of the document",

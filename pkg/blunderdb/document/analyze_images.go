@@ -111,7 +111,7 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 	if title == "" || title == "." {
 		title = "Untitled document"
 	}
-	res, err := structure.Read(opts.context(), &imageFiles{ctx: opts.context(), paths: paths, jpx: jpx.Budget{Left: MaxJPXPixels}})
+	res, err := structure.ReadProgress(opts.context(), &imageFiles{ctx: opts.context(), paths: paths, jpx: jpx.Budget{Left: MaxJPXPixels}}, opts.pageHook(len(paths)))
 	if errors.Is(err, structure.ErrNoDiagram) {
 		return nil, fmt.Errorf("document: no backgammon diagram found in the page images: %w", err)
 	}

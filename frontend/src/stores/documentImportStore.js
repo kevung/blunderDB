@@ -16,6 +16,7 @@ import { writable } from 'svelte/store';
  * @property {string} collection
  * @property {any} result
  * @property {string} error
+ * @property {{page: number, pages: number, diagrams: number, startedAt: number}|null} progress la lecture en cours, rendue par `document-analyze:progress`
  */
 
 /** @returns {DocumentImportState} */
@@ -30,7 +31,8 @@ export function initialDocumentImport() {
         fallback: false,
         collection: '',
         result: null,
-        error: ''
+        error: '',
+        progress: null
     };
 }
 
