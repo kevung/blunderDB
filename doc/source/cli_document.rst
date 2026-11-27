@@ -414,6 +414,11 @@ l'image donnent chacun des pips et qu'ils diffèrent, les pions ne sont pas
 confirmés et le doute le dit (``the two disagree``). Une entrée sans pips lus reste
 ``to-verify`` (``no printed pip count was found next to the diagram``).
 
+Une flèche de coup dessinée sur le diagramme (un trait droit et fin, oblique,
+seul sur le papier) n'est pas lue comme un pion, et les nombres de quinze ou
+moins imprimés à côté du plateau (comptes de pions, numéros) ne sont pas pris
+pour les pips.
+
 La lecture des chiffres suppose des chiffres arabes sombres sur fond clair,
 écrits à l'horizontale, d'au moins 15 pixels de haut à la résolution de lecture,
 des pips imprimés à la même place dans tout le document, et une trentaine de
