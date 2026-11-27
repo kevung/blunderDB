@@ -131,9 +131,19 @@ func TestScoreAsOCR(t *testing.T) {
 	if s == nil || *s != (Score{Length: 7, Bottom: 4, Top: 2}) || why != "" {
 		t.Errorf("OCR panel: %+v, doubt %q", s, why)
 	}
-	s, why = read(col([]string{"score:", "0"}, []string{"pip:", "89"}, []string{"7", "point", "match"}, []string{"score:", "0"}))
+	s, why = read(col([]string{"score:", "0"}, []string{"pip:", "160"}, []string{"7", "point", "match"}, []string{"score:", "0"}))
 	if s == nil || *s != (Score{Length: 7}) || why != "" {
-		t.Errorf("equal scores, one pip count: %+v, doubt %q", s, why)
+		t.Errorf("equal scores, one pip count of the diagram's: %+v, doubt %q", s, why)
+	}
+	// A pip count neither player has: the panel may be another's, or a
+	// figure misread (3 read 8 makes 8-8 of 3-8).
+	s, why = read(col([]string{"score:", "8"}, []string{"pip:", "89"}, []string{"7", "point", "match"}, []string{"pip:", "150"}, []string{"score:", "8"}))
+	if s != nil || !strings.Contains(why, "neither player has") {
+		t.Errorf("equal scores beside a foreign pip count: %+v, doubt %q", s, why)
+	}
+	s, why = read(col([]string{"score:", "0"}, []string{"7", "point", "match"}, []string{"score:", "0"}))
+	if s != nil || !strings.Contains(why, "one source") {
+		t.Errorf("equal scores with no pip count: %+v, doubt %q", s, why)
 	}
 	s, why = read(col([]string{"score:", "1"}, []string{"pip:", "89"}, []string{"7", "point", "match"}, []string{"score:", "0"}))
 	if s != nil || !strings.Contains(why, "not read whole") {

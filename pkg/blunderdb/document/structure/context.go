@@ -34,7 +34,7 @@ import (
 //   - the score: a panel of the text layer giving the match length and two
 //     scores, each assigned to a player by the pip count printed beside it,
 //     which must be the pips read for that player; equal scores need no
-//     assignment.
+//     assignment, but each pip count printed must be one of the pips read.
 //
 // Whatever is drawn or printed and not certified is a named doubt.
 type Context struct {
@@ -546,7 +546,8 @@ func rollOf(steps []int) ([2]int, bool) {
 // readScore reads the panel a diagram's text layer prints beside it — "score:
 // 2  pip: 156  7 point match  pip: 150  score: 4" — each score assigned to
 // a player by the pips printed nearest to it. Equal scores need no
-// assignment: the panel is read whole without its pips. The words are taken
+// assignment: one pip count printed suffices, and each must be one of the
+// pips read. The words are taken
 // as an OCR layer gives them: a tag glued to its number ("pip:9"), a colon
 // read as a semicolon, "point" cut in two.
 func readScore(rd *boardReading, d *Diagram, words []Word, env contextEnv, c *Context, add func(string, string, string, ...any)) {
@@ -591,6 +592,20 @@ func readScore(rd *boardReading, d *Diagram, words []Word, env contextEnv, c *Co
 	if len(scores) != 2 || len(lengths) != 1 || (len(pips) != 2 && !equal) {
 		add("score", "score", "a score is printed beside the diagram and not read whole (%d scores, %d match lengths, %d pip counts)", len(scores), len(lengths), len(pips))
 		return
+	}
+	if equal {
+		// No assignment to make, but the panel must still be this
+		// diagram's: each pip count printed is one of the pips read.
+		if len(pips) == 0 {
+			add("score", "score", "equal scores printed with no pip count beside them: one source, not confirmed")
+			return
+		}
+		for _, pc := range pips {
+			if int(pc.v) != d.Pips[0] && int(pc.v) != d.Pips[1] {
+				add("score", "score", "equal scores printed beside a pip count of %d, which neither player has", int(pc.v))
+				return
+			}
+		}
 	}
 	s := Score{Length: lengths[0], Crawford: crawford}
 	var set [2]bool

@@ -5,7 +5,6 @@ import (
 	"image/draw"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"golang.org/x/image/font"
@@ -13,18 +12,41 @@ import (
 	"golang.org/x/image/math/fixed"
 )
 
-// TestGenerateWords writes words.bin, and figures.bin beside it, from the typefaces named in
-// BLUNDERDB_GEN_WORDS_FONTS (paths, separated by ":"), to the path in
-// BLUNDERDB_GEN_WORDS. It runs only where those are set: the file is
-// committed, the fonts are not.
+// wordFonts are the typefaces words.bin and figures.bin are drawn from, in
+// their order, as a Linux distribution installs them under /usr/share/fonts:
+// Liberation 2 (SIL Open Font License 1.1), C059 of URW base35 (AGPL 3 with
+// the font exception; Century Schoolbook's metrics) and DejaVu (Bitstream
+// Vera licence). Only the drawings derived from them are committed.
+var wordFonts = []string{
+	"liberation/LiberationSans-Regular.ttf",
+	"liberation/LiberationSans-Bold.ttf",
+	"liberation/LiberationSans-Italic.ttf",
+	"liberation/LiberationSerif-Regular.ttf",
+	"liberation/LiberationSerif-Bold.ttf",
+	"liberation/LiberationSerif-Italic.ttf",
+	"gsfonts/C059-Roman.otf",
+	"gsfonts/C059-Bold.otf",
+	"TTF/DejaVuSans.ttf",
+	"TTF/DejaVuSans-Bold.ttf",
+}
+
+// TestGenerateWords writes words.bin, and figures.bin beside it, to the
+// path in BLUNDERDB_GEN_WORDS, from wordFonts found under the folder in
+// BLUNDERDB_GEN_WORDS_FONTS (/usr/share/fonts when empty). It runs only
+// where BLUNDERDB_GEN_WORDS is set: the files are committed, the fonts are
+// not.
 func TestGenerateWords(t *testing.T) {
 	const W, H = 640, 200
-	out, fonts := os.Getenv("BLUNDERDB_GEN_WORDS"), os.Getenv("BLUNDERDB_GEN_WORDS_FONTS")
-	if out == "" || fonts == "" {
-		t.Skip("BLUNDERDB_GEN_WORDS and BLUNDERDB_GEN_WORDS_FONTS are not set")
+	out, dir := os.Getenv("BLUNDERDB_GEN_WORDS"), os.Getenv("BLUNDERDB_GEN_WORDS_FONTS")
+	if out == "" {
+		t.Skip("BLUNDERDB_GEN_WORDS is not set")
+	}
+	if dir == "" {
+		dir = "/usr/share/fonts"
 	}
 	var buf, figs []byte
-	for _, path := range strings.Split(fonts, ":") {
+	for _, name := range wordFonts {
+		path := filepath.Join(dir, name)
 		raw, err := os.ReadFile(path)
 		if err != nil {
 			t.Fatal(err)

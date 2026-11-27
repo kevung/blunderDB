@@ -18,8 +18,9 @@ import (
 // (readDice, captionDice): a roll named and not drawn is a doubt, never a
 // reading.
 
-// wordFont holds the words of wordList in the typefaces of digitFont's
-// kind (sans serif, serif, their bold and italics), each its width over its
+// wordFont holds the words of wordList in the ten typefaces of wordFonts
+// (words_gen_test.go: sans serif, serif, their bold and italics), each its
+// width over its
 // height (a byte, in 32nds) then its ink resampled to wordW × wordH,
 // quantised to levels 0 to 15, two pixels a byte (high nibble first).
 // TestGenerateWords writes it.
@@ -34,7 +35,7 @@ const (
 	wordAspect   = 1.3  // the most a word's proportions may differ
 )
 
-// figureFont holds the figures 0 to 9 of wordFont's typefaces, in
+// figureFont holds the figures 0 to 9 of wordFonts' typefaces, in
 // digitFont's format: the figures of a caption, often bolder or of another
 // face than those around the board.
 //
@@ -55,7 +56,7 @@ func captionFigures(digits []template) []template {
 
 const (
 	captionFigureScore  = 0.70 // the least correlation for a caption's figure
-	captionFigureMargin = 0.04 // its least lead over every other figure
+	captionFigureMargin = 0.06 // its least lead over every other figure
 )
 
 // captionFigure is the figure a caption's glyph reads, or -1: the best
