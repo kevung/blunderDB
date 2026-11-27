@@ -428,3 +428,14 @@ seulement, aucune page de réserve composée). Avant = `main` à 368befef4.
   Classic Revisited et sur des légendes synthétiques en police Go (absente des gabarits) :
   corrélation de mot 0,60 avec 0,04 d'avance (mots justes 0,72-0,88, autres ≤ 0,37 sur
   501 Problems), chiffre de légende par corrélation centrée 0,70 avec 0,06 d'avance.
+
+### Le plateau seul ne complète plus un camp
+
+Règle : un camp dont les quinze reposent sur des pions comptés dans le plateau de sortie ne rend
+l'entrée complète ou sûre que si des pips imprimés concordent avec la position ; sinon doute
+nommé (« N borne-off checkers counted in the tray, no printed pips confirm them »). Une forme
+parasite lue comme barres (« [ » ouvert, contour pointillé, contour de videau non détecté) ne
+complète donc jamais une entrée. Mesure de réglage, tous livres, branche caaf9b438 → d075f3440 :
+2 945 diagrammes, comptes sûrs / complets / à vérifier / incertains identiques livre par livre ;
+une seule entrée change (Endgame Technique p. 88, demi-plateau déjà à vérifier) : elle gagne le
+doute nommé, sans changer d'état. Aucune entrée complète de ces livres ne dépendait du plateau.
