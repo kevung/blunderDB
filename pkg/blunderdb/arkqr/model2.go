@@ -384,7 +384,7 @@ func kindPrior(bar bool, prev int) []uint64 {
 	return f
 }
 
-// codeDate codes a date as its day from 2000-01-01, its second in the day and
+// codeDate codes a date as its day counted from the first day of the year 2000 (UTC), its second in the day and
 // its nanosecond: a match dated without a time costs its day alone.
 func codeDate(c coder, md *models, t time.Time) time.Time {
 	const epoch = 946_684_800
