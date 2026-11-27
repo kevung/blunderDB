@@ -243,6 +243,25 @@ Opening Concepts 2017) : aucune entrée changée, ni d'état ni de position.
   Il retirait les piles fantômes mais faisait tomber Cube Like a Boss de 157 à 78 sûrs et
   Masterclass de 50 à 23 : des pions sombres jointifs n'ont souvent aucun bord visible.
 
+### #1004 : flèches de coup et comptes du plateau
+
+Deux règles générales. (1) Une flèche de coup est un trait droit, fin, oblique (ni à moins de
+8° d'une rangée ni à moins de 16° d'un côté de flèche), qui court seul sur le papier sur au
+moins 2,5 points (`structure/lines.go`) ; ses pixels fins sont repeints de la teinte de part et
+d'autre avant la lecture des pions : il ne ferme plus le contour d'un pion absent ni ne salit
+l'intérieur d'un pion réel ; là où il croise un contour il n'est plus fin et le contour reste.
+Une hachure ne passe pas : son trait voisin est à côté (« seul » exigé sur la moitié du trait)
+et la marche la quitte à chaque ligne. (2) Des nombres de quinze ou moins à côté du plateau
+peuvent être les pions sortis imprimés près du plateau : ils n'apprennent plus où le document
+imprime ses pips. Mesure de réglage, tous livres, avant `main` 8947fa0d5 : seul Masterclass
+change ; aucune entrée des douze autres livres ne change (ni état, ni position, ni pips).
+Masterclass 61 / 60 / 36 / 16 → 67 / 61 / 35 / 10 : pp. 91, 105, 154, 286 sûres (pips de
+l'image, plus contredits par les comptes du plateau) ; pp. 74, 100 sûres et 174, 186, 194
+complètes (pion fantôme fermé par une flèche retiré). Ouvert : une tête de flèche au pied d'une
+flèche fait encore un pion (pp. 58, 84, seize pions, incertaines, doute nommé) ; une flèche
+posée sur un pion le cache (p. 28, à vérifier, pips contraires nommés) ; une flèche horizontale
+ou verticale n'est pas reconnue.
+
 ### Après revue (plateau durci)
 
 Videau chevauchant la bande : bande non lue ; barres d'épaisseur et de pas réguliers, rectangles

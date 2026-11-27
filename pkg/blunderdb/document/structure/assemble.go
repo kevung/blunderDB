@@ -211,6 +211,18 @@ func textFeatures(b box, words []Word) ([]numWord, map[byte][]sideNum) {
 	return num, side
 }
 
+// trayCounts: numbers beside a board that are all fifteen or less may be
+// the checkers borne off printed by the trays as well as the pips of a
+// late bear-off; they do not teach where the document prints its pips.
+func trayCounts(side []sideNum) bool {
+	for _, n := range side {
+		if n.v > 15 {
+			return false
+		}
+	}
+	return true
+}
+
 func abs(x int) int {
 	if x < 0 {
 		return -x
@@ -558,7 +570,7 @@ func releve(rds []*boardReading, words map[int][]Word, img []*[2]int, home strin
 		}
 		for _, s := range []byte("GDLB") {
 			n := len(fs[i].side[s])
-			if (s == 'L' || s == 'B') && n == 2 || (s == 'G' || s == 'D') && n >= 2 {
+			if (s == 'L' || s == 'B') && n == 2 || (s == 'G' || s == 'D') && n >= 2 && !trayCounts(fs[i].side[s]) {
 				sideCount[s]++
 			}
 		}
