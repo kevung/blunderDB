@@ -282,6 +282,13 @@ off » (plateau lu et quinze faits) sans changer d'état, retenus par d'autres d
 un plateau dont le trait du champ est coupé par la pile (p. 27) ou à cadre séparé (Masterclass)
 n'est pas lu.
 
+Après revue : les côtés d'un rectangle creux sont cherchés aux extrémités de l'étendue encrée
+de chaque barre, où qu'elles soient dans la bande (un rectangle en retrait, contour d'un videau
+non trouvé, passait pour deux pions sortis et complétait un camp de treize). Mesure refaite,
+`main` 2c5358ae5 → branche 249cf9688 : tous les livres identiques à `main` entrée par entrée
+sauf Magriel 1976 (0 / 0 / 331 / 94 → 0 / 0 / 0 / 425, pions en lettres) ; aucune entrée
+complète ou sûre nouvelle.
+
 ## Diagrammes en police Snowie (#1003) — réglage, 2026-11-27
 
 Lecteur `document/snowieboard.go` + `ttshape.go` : diagramme trouvé par ses deux rangées de numéros
