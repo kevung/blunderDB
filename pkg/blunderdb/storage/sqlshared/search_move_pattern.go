@@ -14,8 +14,12 @@ import (
 // (written before the column, or by an older binary) and goes through; a cube
 // pattern lets through the analyses with no checker play, an empty string
 // (engine.BestMove).
-// ok is false when a pattern matches every checker play: nothing to narrow.
+// ok is false without a pattern, or when one matches every checker play:
+// nothing to narrow.
 func movePatternCond(col string, patterns []string) (cond string, args []any, ok bool) {
+	if len(patterns) == 0 {
+		return "", nil, false
+	}
 	var b strings.Builder
 	b.WriteString("(" + col + " IS NULL")
 	cube := false
