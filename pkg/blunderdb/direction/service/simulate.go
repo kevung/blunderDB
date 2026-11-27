@@ -109,10 +109,6 @@ const (
 	// SimulateWarnRunFailed: the engine could not play at least one run to its end; the
 	// figures stand on the others.
 	SimulateWarnRunFailed = "run_failed"
-	// SimulateWarnTablesExceeded: the engine's simulation launches every match as soon as it
-	// is paired, and at its peak this format wants more tables than the room has (PeakTables);
-	// the lengths are those of a room that large, so a floor for this one.
-	SimulateWarnTablesExceeded = "tables_exceeded"
 )
 
 // SimulateRequest describes the tournament to simulate.
@@ -122,8 +118,8 @@ type SimulateRequest struct {
 	// Players is either a number — a field of that many players of ordinary, spread levels —
 	// or a list of entries ({"id","name","rating"}); a rating of 0 takes the mean of the others.
 	Players json.RawMessage `json:"players"`
-	// Tables, when positive, replaces the configuration's number of tables: the room PeakTables
-	// is compared with.
+	// Tables, when positive, replaces the configuration's number of tables: the room the
+	// simulation plays in, a match waiting for a free table.
 	Tables int `json:"tables"`
 	// Start (RFC 3339) is when the first match would be launched; EstimatedEnd needs it.
 	Start string `json:"start"`
@@ -149,7 +145,7 @@ type Simulation struct {
 	// EstimatedEnd is Start plus MinutesP50 (RFC 3339), so past the breaks; empty without a Start.
 	EstimatedEnd string `json:"estimatedEnd,omitempty"`
 	// PeakTables is the most matches ever running at once: the tables the format wants so that
-	// no match waits for one. It can exceed the room's (SimulateWarnTablesExceeded).
+	// no match waits for one, never more than the room has.
 	PeakTables int `json:"peakTables"`
 	// MatchesPerPlayerMin and MatchesPerPlayerMax are the fewest and the most matches one
 	// player played, over every run.
@@ -316,9 +312,6 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 			return nil, direction.Refusef("direction: start %q leaves no date for the end of the tournament", req.Start)
 		}
 		out.EstimatedEnd = end.Format(time.RFC3339)
-	}
-	if cfg.Tables.Count > 0 && out.PeakTables > cfg.Tables.Count {
-		warnings[SimulateWarnTablesExceeded] = true
 	}
 	out.Warnings = make([]string, 0, len(warnings))
 	for w := range warnings {

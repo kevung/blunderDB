@@ -297,7 +297,9 @@ func envelopeError(method, code, message string, details map[string]any) error {
 			return &storage.DuplicatePositionError{ExistingID: int64(id)}
 		}
 		return fmt.Errorf("%w: %s", storage.ErrConflict, message)
-	case "invalid":
+	case "invalid", "refused":
+		// refused is a well-formed request the rules turn down; to a caller of the
+		// storage contract it is the same error as an invalid one.
 		return fmt.Errorf("%w: %s", storage.ErrInvalid, message)
 	case "unknown_route":
 		// The daemon is older than this backend: the route it expects is

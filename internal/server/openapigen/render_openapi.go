@@ -236,6 +236,8 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 	}
 	if r.Gesture {
 		b.WriteString("        \"400\":\n")
+		b.WriteString("          description: Bad Request — the request is malformed (unreadable body, a field missing or out of range); nothing was written.\n")
+		b.WriteString("        \"422\":\n")
 		b.WriteString("          $ref: \"#/components/responses/gestureRefused\"\n")
 		b.WriteString("        \"409\":\n")
 		b.WriteString("          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.\n")
@@ -341,12 +343,12 @@ func writeComponents(b *strings.Builder, comps *Components) {
 	writeGestureRefused(b)
 }
 
-// writeGestureRefused declares the 400 every gesture answers when the rules refuse it, and
+// writeGestureRefused declares the 422 every gesture answers when the rules refuse it, and
 // the reasons its details may state — the list is direction.Reasons, defined once.
 func writeGestureRefused(b *strings.Builder) {
 	b.WriteString("  responses:\n")
 	b.WriteString("    gestureRefused:\n")
-	b.WriteString("      description: Bad Request — the gesture is refused and nothing was written. error.message is for a person; error.details.reason, when the refusal states one, is the stable code to branch on.\n")
+	b.WriteString("      description: Unprocessable Entity — the gesture is refused and nothing was written. error.message is for a person; error.details.reason, when the refusal states one, is the stable code to branch on.\n")
 	b.WriteString("      content:\n")
 	b.WriteString("        application/json:\n")
 	b.WriteString("          schema:\n")
@@ -357,7 +359,7 @@ func writeGestureRefused(b *strings.Builder) {
 	b.WriteString("                properties:\n")
 	b.WriteString("                  code:\n")
 	b.WriteString("                    type: string\n")
-	b.WriteString("                    enum: [invalid]\n")
+	b.WriteString("                    enum: [refused]\n")
 	b.WriteString("                  message:\n")
 	b.WriteString("                    type: string\n")
 	b.WriteString("                  details:\n")

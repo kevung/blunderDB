@@ -193,7 +193,7 @@ func checkEvents(t *testing.T, st storage.Storage) {
 		if r := send(t, ts, "1", "/v1/directions.addNote", mine.body(`"text":"x"`), `"stale"`, ""); r.status != http.StatusConflict {
 			t.Fatalf("stale addNote: %d", r.status)
 		}
-		if r := send(t, ts, "1", "/v1/directions.enterResult", mine.body(`"matchId":"nope","winner":"aa"`), v, ""); r.status != http.StatusBadRequest {
+		if r := send(t, ts, "1", "/v1/directions.enterResult", mine.body(`"matchId":"nope","winner":"aa"`), v, ""); r.status != http.StatusUnprocessableEntity {
 			t.Fatalf("refused enterResult: %d %s", r.status, r.body)
 		}
 		if r := send(t, ts, "1", "/v1/directions.addNote", mine.body(`"text":"deux"`), v, ""); r.status != http.StatusOK {

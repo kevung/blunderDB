@@ -792,7 +792,7 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   refusée. Ce que la liste fait naître, la file après un repêchage ou le
   tirage de la phase suivante, est proposé dans la réponse et n'est jamais
   confirmé d'office ;
-* la raison d'un refus : le 400 d'un geste refusé porte, quand la cause est
+* la raison d'un refus : le ``422 refused`` d'un geste refusé porte, quand la cause est
   l'une de celles-ci, un code stable dans ``details.reason`` :
   ``table_taken`` (la table est occupée, dans ce tableau ou dans un autre de
   la Rencontre), ``player_busy`` (un joueur est en match dans un autre
@@ -834,7 +834,9 @@ le geste : la réponse porte un en-tête ``Direction-Page-Warning`` par page non
 poste de travail l'affiche dans sa barre d'état.
 
 Un geste que les règles refusent (nom vide, table occupée, tournoi qui n'a pas
-commencé, configuration rejetée par le moteur) rend ``400`` avec le motif. Une
+commencé, configuration rejetée par le moteur) rend ``422``, code
+``refused``, avec le motif ; une requête mal formée (corps illisible, champ
+manquant) reste un ``400 invalid``. Une
 panne du démon ou de sa base rend ``500``, sans détail : le motif reste dans le
 journal du démon.
 
@@ -845,10 +847,9 @@ base : ``config`` (la configuration du moteur), ``players`` (un effectif, de 2
 ``runs``, ``matches``, ``minutesP10``, ``minutesP50``, ``minutesP90``,
 ``estimatedEnd``, ``peakTables``, ``matchesPerPlayerMin``,
 ``matchesPerPlayerMax`` et ``warnings``, une liste de codes. Une même requête
-rend la même réponse. La simulation lance chaque match dès qu'il est apparié :
-``peakTables`` est le nombre de tables qu'il faut pour que personne n'attende,
-et le code ``tables_exceeded`` signale une salle plus petite, dont les durées
-rendues sont alors un minimum. Sans version ni ``If-Match``.
+rend la même réponse. La simulation joue dans la salle de ``tables`` : un match
+apparié attend qu'une table se libère, et ``peakTables``, le plus de matchs
+joués à la fois, ne dépasse jamais le nombre de tables. Sans version ni ``If-Match``.
 
 Le premier ``run``, joué avec le ``seed`` de la requête, décide : son travail
 est compté, non chronométré, et un format dont ce tournoi demande plus que ce

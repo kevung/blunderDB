@@ -46,6 +46,9 @@ const (
 	// CodeStorageQuotaExceeded: the tenant stores as many positions as it
 	// may (413).
 	CodeStorageQuotaExceeded = "storage_quota_exceeded"
+	// CodeRefused: a well-formed gesture that the rules or the engine refuse
+	// (422); details.reason, when present, says which refusal.
+	CodeRefused = "refused"
 )
 
 // errorEnvelope is the wire shape of every error response:
@@ -76,7 +79,7 @@ func statusForCode(code string) int {
 		return http.StatusGone
 	case CodePreconditionRequired:
 		return http.StatusPreconditionRequired
-	case CodeIdempotencyMismatch:
+	case CodeIdempotencyMismatch, CodeRefused:
 		return http.StatusUnprocessableEntity
 	case CodeUnavailable:
 		return http.StatusServiceUnavailable
@@ -98,6 +101,8 @@ func codeForErr(err error) string {
 		return CodeJournalOff
 	case isDuelRefusal(err):
 		return CodeInvalid
+	case errors.As(err, new(gestureRefusal)):
+		return CodeRefused
 	case errors.Is(err, storage.ErrNotFound), errors.Is(err, direction.ErrNoDirection):
 		// A Tournament that was never directed has no Direction to read.
 		return CodeNotFound
