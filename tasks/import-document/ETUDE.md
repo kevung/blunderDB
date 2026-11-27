@@ -4,7 +4,7 @@
 (`JOURNAL.md` tient la reprise), copie poussée sur le dépôt privé `kevung/import-document-banc`
 (sans `texte/`, la prose extraite des livres, qui ne quitte pas le poste d'origine). Corpus : `~/bkgm/bibliotheque/livres` (17 PDF, 1 EPUB, 1 DOC).
 
-## REPRISE (2026-11-27, lot #998-#1008) — à lire en premier
+## REPRISE (2026-11-27, lot #998-#1008 clos) — à lire en premier
 
 Réserve : depuis #996, elle est tirée PAR PAGE (30 % de chaque livre). Le tirage est
 `~/bkgm/bancs/import-document/tirage.json` (lecture seule), reconstruit à l'identique par
@@ -31,13 +31,16 @@ Fusionné (chaque branche revue en vert, souvent après un ou deux renvois) :
 - Optimisations : codec de l'archive papier en format 2 (−34 % d'octets, format 1 toujours lu,
   ADR-0119) ; décodeurs JPEG 2000 et PDF scannés environ 3,5 fois plus rapides, sortie identique.
 
-Non fusionné :
-- #1008 (pips) : branche `feat/doc-pips2` (depuis cbeda8a51, sans 13a52008b) : garde par poids
-  du trait, un rival n'étant excusé que par un gabarit appris du même poids ; le plateau de sortie
-  vote de nouveau pour la place des pips. Sorties de réglage identiques. À revoir avant fusion.
-- #1004 (Masterclass) : branche `feat/doc-masterclass` — flèches de coup repeintes sur papier
-  blanc, comptes du plateau hors pips ; Masterclass 61/60/36/16 → 66/64/32/11, douze autres
-  livres inchangés. À revoir avant fusion ; limites dans `tasks/mesure-import-document-2026-11.md`.
+Fusionné ensuite (issues closes le 2026-11-27, publié dans 0.62.0) :
+- #1008 (pips) : branche `feat/doc-pips2` (b7cdacfc3) — garde par poids du trait, un rival
+  n'étant excusé que par un gabarit appris du même poids ; le plateau de sortie vote de nouveau
+  pour la place des pips. L'ancienne branche `feat/doc-pips` (13a52008b), remplacée, est supprimée.
+- #1004 (Masterclass) : branche `feat/doc-masterclass` (20de2c01d, 9eadfbb00) — flèches de coup
+  repeintes sur papier blanc, comptes du plateau hors pips, flèche d'au moins 2,5 points ;
+  Masterclass 61/60/36/16 → 66/64/32/11, douze autres livres inchangés. Limites dans
+  `tasks/mesure-import-document-2026-11.md`.
+
+Plus aucune branche ni issue ouverte sur ce chantier.
 
 Suite de l'ancienne reprise ci-dessous (2026-11-30, date erronée, écrite le 2026-11-26).
 
