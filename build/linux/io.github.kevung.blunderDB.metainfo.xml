@@ -86,6 +86,15 @@
   </branding>
 
   <releases>
+    <release version="0.62.0" date="2026-11-27">
+      <description>
+        <ul>
+          <li>Tournament engine Nicomaque 0.12.0: a consolation runs alongside the main bracket, and the director may waive it until one of its matches is launched</li>
+          <li>Tournament simulation plays in the requested room: a match waits for a free table</li>
+          <li>Server mode: a well-formed gesture refused by the rules answers 422 refused, a malformed request stays 400 invalid</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.61.0" date="2026-11-27">
       <description>
         <ul>
