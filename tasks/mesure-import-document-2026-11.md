@@ -251,7 +251,36 @@ barres doit faire quinze même quand le camp en a quinze dessinés (doute nommé
 non). Mesure de réglage, tous livres : seuls Endgame et Masterclass changent. Endgame
 11/80/153/4 → 7/65/172/4 (1 entrée gagnée, 16 complètes et 4 sûres perdues par un plateau lu
 à tort à côté d'un camp de quinze) ; Masterclass 50/71/36/16 → 49/71/37/16 (p. 144). Ouvert :
-ces lectures de plateau à tort (p. 61, 116, 131) — dégradation à résorber avant fusion.
+ces lectures de plateau à tort (p. 61, 116, 131) — résorbé ci-dessous.
+
+### Traits et piles flottantes écartés, seuil creux relatif à l'encre
+
+Les lectures à tort (p. 61, 116, 131, 134 d'Endgame) étaient des traits de 1 à 3 px — contour
+du videau « 2 », bord de cadre — comptés comme barres. Règles générales ajoutées à `trays` :
+une barre fait au moins 0,08 point (un pion vu de profil n'est jamais un trait) ; les barres
+reposent contre le bord extérieur du plateau, au niveau du champ (à moins d'un demi-point),
+sinon le plateau n'est pas lu (pile coupée par les traits du cadre, Endgame p. 151 et p. 200 :
+6 lus pour 13, 1 pour 2 ; cadre séparé de Masterclass p. 144 : 7 lus pour 10). Le seuil
+« document sans pion plein » est à mi-chemin entre l'encre mesurée (10e centile du gris sous
+l'encre, médiane des diagrammes) et le papier, au lieu de 0,5.
+
+Mesure de réglage, tous livres, `main` 368befef4 / branche avant (fusion f28322f7c) / après
+(2bfbe600c), sûrs / complets / à vérifier / incertains :
+
+| Livre | main | avant | après |
+|---|---|---|---|
+| Endgame Technique | 12 / 80 / 152 / 4 | 8 / 65 / 171 / 4 | 12 / 80 / 152 / 4 |
+| Masterclass | 61 / 60 / 36 / 16 | 60 / 60 / 37 / 16 | 61 / 60 / 36 / 16 |
+| Magriel 1976 | 0 / 0 / 331 / 94 | 0 / 0 / 0 / 425 | 0 / 0 / 0 / 425 |
+| Magriel & Roberts | 0 / 0 / 0 / 441 | 0 / 0 / 0 / 441 | 0 / 0 / 0 / 441 |
+
+Les neuf autres livres de réglage : identiques à `main`, entrée par entrée. Après = `main` entrée
+par entrée sauf Magriel 1976 (pions en lettres X/O, vérifié p. 18 : doute « no filled checker »
+au lieu de positions lues sur des lettres). Aucune entrée complète ou sûre nouvelle. Le plateau
+lu n'apporte encore rien d'autre : 6 diagrammes d'Endgame perdent le doute « taken as borne
+off » (plateau lu et quinze faits) sans changer d'état, retenus par d'autres doutes. Ouvert :
+un plateau dont le trait du champ est coupé par la pile (p. 27) ou à cadre séparé (Masterclass)
+n'est pas lu.
 
 ## Diagrammes en police Snowie (#1003) — réglage, 2026-11-27
 
