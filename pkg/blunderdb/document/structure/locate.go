@@ -882,15 +882,33 @@ func trays(ink *mask, oy, ox int, f frame, cubes []square, px, py int) [2]int {
 	return out
 }
 
-// edgeOnBars tells bars that are checkers seen edge-on: one thickness, one
-// pitch, and no two of them joined at both ends by side strokes, which would
-// make them the edges of hollow rectangles.
 // trayBar is a bar of a tray: its first row and its thickness.
 type trayBar struct {
 	y, h int
 	edge bool // merged with the band's border: its thickness is an estimate
 }
 
+// barExtent is the first and last column a bar inks in the band, over its
+// rows.
+func barExtent(ink *mask, b trayBar, x0, x1 int) (int, int) {
+	l, r := x1-1, x0
+	for y := max(b.y, 0); y < min(b.y+b.h, ink.h); y++ {
+		for x := x0; x < x1; x++ {
+			if ink.at(x, y) {
+				l, r = min(l, x), max(r, x)
+			}
+		}
+	}
+	if l > r {
+		return x0, x1 - 1
+	}
+	return l, r
+}
+
+// edgeOnBars tells bars that are checkers seen edge-on: one thickness, one
+// pitch, and no two of them joined at both ends by side strokes, wherever
+// the bars end in the band, which would make them the edges of hollow
+// rectangles.
 func edgeOnBars(ink *mask, bs []trayBar, x0, x1 int) bool {
 	hs, pitches := []float64{}, []float64{}
 	for i, b := range bs {
@@ -919,9 +937,21 @@ func edgeOnBars(ink *mask, bs []trayBar, x0, x1 int) bool {
 		if yb-ya < 2 {
 			continue
 		}
+		// The sides of a rectangle stand at the ends of its edges, wherever
+		// those lie in the band: sought at each bar's own inked extent.
+		al, ar := barExtent(ink, a, x0, x1)
+		bl, br := barExtent(ink, b, x0, x1)
+		inkIn := func(y, lo, hi int) bool {
+			for x := max(lo, x0); x <= min(hi, x1-1); x++ {
+				if ink.at(x, y) {
+					return true
+				}
+			}
+			return false
+		}
 		sides := 0
 		for y := ya; y < yb; y++ {
-			if (ink.at(x0, y) || ink.at(x0+1, y)) && (ink.at(x1-1, y) || ink.at(x1-2, y)) {
+			if inkIn(y, min(al, bl), max(al, bl)+2) && inkIn(y, min(ar, br)-2, max(ar, br)) {
 				sides++
 			}
 		}

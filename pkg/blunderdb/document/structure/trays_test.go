@@ -182,6 +182,41 @@ func TestTrayStrokesNotBars(t *testing.T) {
 	}
 }
 
+// TestTrayBesideFifteenNamed: a camp of fifteen drawn whose tray holds bars
+// is a contradiction even though the camp alone makes fifteen: that camp is
+// named, the other is not, and no entry is complete.
+func TestTrayBesideFifteenNamed(t *testing.T) {
+	r := rand.New(rand.NewSource(8))
+	var pages []synthPage
+	for i := 0; i < 5; i++ {
+		o := drawOpts{p: 36, numbering: true, tray: true, trayExtraTop: 2}
+		pages = append(pages, synthPage{pos: []synthPos{randomPos(r), randomPos(r)}, opts: []drawOpts{o, o}})
+	}
+	src, _ := book(t, pages, 8)
+	res, err := Read(context.Background(), src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	named := 0
+	for i, d := range res.Diagrams {
+		if d.Complete {
+			t.Errorf("diagram %d: complete beside a tray of two bars: %s", i+1, describe(d))
+		}
+		for _, x := range d.Doubts {
+			if !strings.Contains(x.Reason, "in its tray") {
+				continue
+			}
+			if !strings.HasPrefix(x.Reason, "the top player") || !strings.Contains(x.Reason, "15 checkers drawn and 2 in its tray") {
+				t.Errorf("diagram %d: wrong camp named: %s", i+1, x.Reason)
+			}
+			named++
+		}
+	}
+	if named < 8 {
+		t.Errorf("%d diagrams name the top camp's tray, want at least 8 of %d", named, len(res.Diagrams))
+	}
+}
+
 // TestTrayNotMistaken: a cube drawn in a tray's box, and checkers borne off
 // drawn as hollow rectangles, are not counted as bars: the tray is not read
 // and no entry is complete by it.
@@ -208,5 +243,57 @@ func TestTrayNotMistaken(t *testing.T) {
 				t.Errorf("hollow, diagram %d: complete by a tray of hollow rectangles: %s", i+1, describe(d))
 			}
 		}
+	}
+}
+
+// trayMask is a field one point 36 pixels wide whose bottom row has a tray
+// on its right: the field's edge and the box's outer stroke, both stopping
+// at the board's bottom border.
+func trayMask() (*mask, frame) {
+	m := newMask(700, 700)
+	f := frame{a: 100, b: 316, c: 356, d: 572, y0: 100, y1: 600}
+	fillMask(m, 572, 80, 576, 604)
+	fillMask(m, 612, 80, 616, 604)
+	fillMask(m, 100, 600, 616, 604)
+	return m, f
+}
+
+func fillMask(m *mask, x0, y0, x1, y1 int) {
+	for y := y0; y < y1; y++ {
+		for x := x0; x < x1; x++ {
+			m.p[y*m.w+x] = true
+		}
+	}
+}
+
+// TestTraysInsetRectangle: a hollow rectangle drawn inset in a tray,
+// against its outer end, has two edges like two bars; its sides stand
+// inside the band, away from its strokes, and still make it a rectangle,
+// never two checkers borne off.
+func TestTraysInsetRectangle(t *testing.T) {
+	m, f := trayMask()
+	fillMask(m, 583, 585, 606, 588)
+	fillMask(m, 583, 595, 606, 598)
+	fillMask(m, 583, 588, 586, 595)
+	fillMask(m, 603, 588, 606, 595)
+	if got := trays(m, 0, 0, f, nil, 0, 0); got != [2]int{} {
+		t.Fatalf("inset hollow rectangle read as bars: %v", got)
+	}
+}
+
+// TestTraysCubeOverBars: regular bars against the tray's outer end are read,
+// unless a cube found by the squares overlaps the band: then the tray is not
+// read at all.
+func TestTraysCubeOverBars(t *testing.T) {
+	m, f := trayMask()
+	for k := 0; k < 3; k++ {
+		fillMask(m, 579, 591-7*k, 610, 595-7*k)
+	}
+	if got := trays(m, 0, 0, f, nil, 0, 0); got != [2]int{0, 3} {
+		t.Fatalf("three bars read %v, want [0 3]", got)
+	}
+	cube := square{place: "bottom", x0: 578, y0: 560, x1: 611, y1: 593}
+	if got := trays(m, 0, 0, f, []square{cube}, 0, 0); got != [2]int{} {
+		t.Fatalf("tray under a cube read %v", got)
 	}
 }

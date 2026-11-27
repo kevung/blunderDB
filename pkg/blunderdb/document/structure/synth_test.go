@@ -164,6 +164,8 @@ type drawOpts struct {
 	// checkers as thin bars; trayExtra bars more than borne off.
 	tray      bool
 	trayExtra int
+	// trayExtraTop adds bars to the top row's tray alone.
+	trayExtraTop int
 	// trayCube draws a cube in the top tray's box; trayHollow draws the
 	// borne-off checkers as hollow rectangles.
 	trayCube, trayHollow bool
@@ -258,6 +260,9 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 				}
 			}
 			off += o.trayExtra
+			if row == 0 {
+				off += o.trayExtraTop
+			}
 			ya, yb := y0, mid-int(0.5*p)
 			if row == 1 {
 				ya, yb = mid+int(0.5*p), y1
