@@ -42,6 +42,15 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.62.0 (2026-11-27)
+-------------------
+
+- **Moteur de tournoi Nicomaque 0.12.0** : une consolante se joue en parallèle du tableau principal, et la direction peut renoncer à une consolante tant qu'aucun de ses matchs n'est lancé ; un renoncement trop tardif est refusé en le disant.
+- **La simulation joue dans la salle demandée** : le nombre de tables borne la simulation d'un tournoi, un match attend qu'une table se libère, et la durée estimée est celle de cette salle ; l'avertissement ``tables_exceeded`` disparaît, faute d'objet.
+- **Mode serveur : un geste refusé répond 422** : un geste de direction bien formé que les règles ou le moteur refusent répond ``422`` avec le code ``refused``, ``details.reason`` inchangé ; une requête mal formée reste un ``400`` ``invalid``.
+- **Tri par pips d'une recherche de structure plus rapide en PostgreSQL** : sous l'isolement par tenant, une recherche de structure triée par pips lit des index partiels par bande de pips ; au 95e centile, elle passe d'environ 1,8 s à 0,1 s sur une base de 15,6 millions de positions.
+- Voir :ref:`manuel_tournois` et :ref:`headless`.
+
 0.61.0 (2026-11-27)
 -------------------
 
