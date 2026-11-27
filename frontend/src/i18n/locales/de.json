@@ -3768,6 +3768,7 @@
             "close": "Schließen",
             "refused": "Abgelehnt",
             "crawford": "Crawford",
+            "postCrawford": "Post-Crawford",
             "error": "Fehler"
         },
         "verdict": {
@@ -3775,13 +3776,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "Kein Doppel",
                 "double_take": "Doppel/Annahme",
                 "double_pass": "Doppel/Passen",
-                "too_good": "Zu gut"
+                "too_good": "Zu gut",
+                "dmp": "Kein Doppler beim Double-Match-Point"
             }
         },
         "menu": {

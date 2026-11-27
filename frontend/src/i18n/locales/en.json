@@ -3768,6 +3768,7 @@
             "close": "Close",
             "refused": "Refused",
             "crawford": "Crawford",
+            "postCrawford": "post-Crawford",
             "error": "Error"
         },
         "verdict": {
@@ -3775,13 +3776,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "No double",
                 "double_take": "Double/Take",
                 "double_pass": "Double/Pass",
-                "too_good": "Too good"
+                "too_good": "Too good",
+                "dmp": "No cube at the double match point"
             }
         },
         "menu": {

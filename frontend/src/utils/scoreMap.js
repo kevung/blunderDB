@@ -9,7 +9,7 @@ export const WIDE_MARGIN = 0.05;
 /** Distinct plays given a colour; the others share the grey group. */
 export const COLOURED_PLAYS = 3;
 
-export const VERDICTS = ['no_double', 'double_take', 'double_pass', 'too_good'];
+export const VERDICTS = ['no_double', 'double_take', 'double_pass', 'too_good', 'dmp'];
 
 /** How close a cube cell's verdict is: the gap between not doubling and doubling and, when the
  * verdict is a double, the opponent's gap between taking and passing too, the smaller of the two.
@@ -24,7 +24,7 @@ export function cubeMargin(cell) {
 /** The cell's margin over its runner-up, null when it has none (a lone legal play, a refusal).
  * @param {any} cell @param {string} decision */
 export function cellMargin(cell, decision) {
-    if (!cell || cell.refused) return null;
+    if (!cell || cell.refused || cell.verdict === 'dmp') return null;
     if (decision === 'cube') return cubeMargin(cell);
     return cell.gap ?? null;
 }
@@ -60,15 +60,15 @@ export function playGroups(cells, decision) {
     return keys.map((key, i) => ({ key, letter: i < 26 ? String.fromCharCode(65 + i) : '?', slot: i < COLOURED_PLAYS ? i : -1, count: counts.get(key) }));
 }
 
-/** Cells in the grid's order: away on roll N..1 down, away opponent N..1 across, so the 1-away
- * lines — the Crawford ones — close the grid.
+/** Cells in the grid's order: away on roll 1..N down, away opponent 1..N across, the order of the
+ * equity table and of the CLI, so the 1-away lines open the grid.
  * @param {Array<any>} cells @param {number} length */
 export function gridCells(cells, length) {
     /** @type {Array<Array<any>>} */
     const rows = [];
-    for (let mine = length; mine >= 1; mine--) {
+    for (let mine = 1; mine <= length; mine++) {
         const row = [];
-        for (let theirs = length; theirs >= 1; theirs--) row.push(cells[(mine - 1) * length + (theirs - 1)] ?? null);
+        for (let theirs = 1; theirs <= length; theirs++) row.push(cells[(mine - 1) * length + (theirs - 1)] ?? null);
         rows.push(row);
     }
     return rows;
@@ -112,7 +112,8 @@ export const VERDICT_LABELS = {
     no_double: { short: 'maps.verdict.short.no_double', long: 'maps.verdict.long.no_double' },
     double_take: { short: 'maps.verdict.short.double_take', long: 'maps.verdict.long.double_take' },
     double_pass: { short: 'maps.verdict.short.double_pass', long: 'maps.verdict.long.double_pass' },
-    too_good: { short: 'maps.verdict.short.too_good', long: 'maps.verdict.long.too_good' }
+    too_good: { short: 'maps.verdict.short.too_good', long: 'maps.verdict.long.too_good' },
+    dmp: { short: 'maps.verdict.short.dmp', long: 'maps.verdict.long.dmp' }
 };
 
 /** The Eval panel's views, with the label each wears. */

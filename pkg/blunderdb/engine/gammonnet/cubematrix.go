@@ -26,7 +26,7 @@ type CubeMatrixCell struct {
 	AwayOpponent int `json:"awayOpponent"`
 
 	// Verdict is the stable token of the decision: "no_double",
-	// "double_take", "double_pass", "too_good". Empty when Refused.
+	// "double_take", "double_pass", "too_good", or "dmp" at 1-away/1-away where the cube has no value. Empty when Refused.
 	Verdict string `json:"verdict,omitempty"`
 
 	// The three option equities, in the normalised scale ADR-0019 defines at
@@ -194,6 +194,13 @@ func cubeMatrixGoroutines(workers, ply, pruneK int) CellExec {
 func cubeMatrixCell(pos domain.Position, met *engine.MET, awayOnRoll, awayOpponent int, searcher *Searcher, ply, pruneK int) CubeMatrixCell {
 	cell := CubeMatrixCell{AwayOnRoll: awayOnRoll, AwayOpponent: awayOpponent}
 
+	// Dead match point: the cube is worth nothing to either side, so there is
+	// no decision to rank. The equities stay zero, as for a refusal.
+	if awayOnRoll == 1 && awayOpponent == 1 {
+		cell.Verdict = VerdictDMP
+		return cell
+	}
+
 	at := pos
 	at.Score = scoreForCell(pos.PlayerOnRoll, awayOnRoll, awayOpponent)
 
@@ -272,6 +279,9 @@ func scoreForCell(playerOnRoll, awayOnRoll, awayOpponent int) [2]int {
 // cubeVerdictToken is the stable name of a CubeAction, the one the wire and
 // the interface both use. It is not the engine's own String(): a token that
 // travels has to stay put across versions and languages.
+// VerdictDMP marks the double match point cell, where the cube has no value.
+const VerdictDMP = "dmp"
+
 func cubeVerdictToken(a CubeAction) string {
 	switch a {
 	case DoubleTake:

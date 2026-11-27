@@ -136,9 +136,11 @@
     const dimmed = (cell) => focus !== null && cellKey(cell, kind) !== focus;
     /** @param {any} cell */
     const isHere = (cell) => !!here && cell.awayOnRoll === here.mine && cell.awayOpponent === here.theirs && !!cell.crawford === here.crawford;
-    // The 1-away lines are the Crawford game in a checker map only: a cube cell is post-Crawford.
+    // The 1-away lines are the Crawford game in a checker map, post-Crawford in a cube map.
     /** @param {number} away */
-    const crawfordMark = (away) => (away === 1 && kind === 'checker' ? ' C' : '');
+    const crawfordMark = (away) => (away === 1 ? (kind === 'checker' ? ' C' : ' PC') : '');
+    /** @param {number} away */
+    const crawfordTitle = (away) => (away === 1 ? $t(kind === 'checker' ? 'maps.scores.crawford' : 'maps.scores.postCrawford') : undefined);
     /** @param {any} cell */
     const close = (cell) => tint(cellMargin(cell, kind)) === 'close';
 
@@ -187,14 +189,14 @@
                     <tr>
                         <th class="corner">{$t('maps.scores.me')} ↓ · {$t('maps.scores.opponent')} →</th>
                         {#each grid[0] ?? [] as _, j (j)}
-                            <th scope="col">{axisLabel(matchLength - j)}{crawfordMark(matchLength - j)}</th>
+                            <th scope="col" title={crawfordTitle(j + 1)}>{axisLabel(j + 1)}{crawfordMark(j + 1)}</th>
                         {/each}
                     </tr>
                 </thead>
                 <tbody>
                     {#each grid as line, i (i)}
                         <tr>
-                            <th scope="row">{axisLabel(matchLength - i)}{crawfordMark(matchLength - i)}</th>
+                            <th scope="row" title={crawfordTitle(i + 1)}>{axisLabel(i + 1)}{crawfordMark(i + 1)}</th>
                             {#each line as cell, j (j)}
                                 {#if cell}
                                     <td>
@@ -254,18 +256,22 @@
                         {#if detail.refused}
                             <div>{$t('maps.scores.refused')}</div>
                         {:else if kind === 'cube'}
-                            {#each VERDICTS.slice(0, 3) as v (v)}
-                                {@const value = v === 'no_double' ? detail.noDouble : v === 'double_take' ? detail.doubleTake : detail.doublePass}
-                                <div class:best={detail.verdict === v}>{$t(VERDICT_LABELS[v].long)} <span class="num">{value.toFixed(3)}</span></div>
-                            {/each}
-                            {#if detail.verdict === 'too_good'}<div class="best">{$t('maps.verdict.long.too_good')}</div>{/if}
+                            {#if detail.verdict === 'dmp'}
+                                <div class="best">{$t('maps.verdict.long.dmp')}</div>
+                            {:else}
+                                {#each VERDICTS.slice(0, 3) as v (v)}
+                                    {@const value = v === 'no_double' ? detail.noDouble : v === 'double_take' ? detail.doubleTake : detail.doublePass}
+                                    <div class:best={detail.verdict === v}>{$t(VERDICT_LABELS[v].long)} <span class="num">{value.toFixed(3)}</span></div>
+                                {/each}
+                                {#if detail.verdict === 'too_good'}<div class="best">{$t('maps.verdict.long.too_good')}</div>{/if}
+                            {/if}
                         {:else}
                             <div class="best">{$t('maps.scores.best')} {detail.move} <span class="num">{detail.equity.toFixed(3)}</span></div>
                             {#if detail.secondMove}
                                 <div>{$t('maps.scores.second')} {detail.secondMove} <span class="num">{detail.secondEquity?.toFixed(3)}</span></div>
                             {/if}
                         {/if}
-                        {#if !detail.refused}
+                        {#if !detail.refused && detail.verdict !== 'dmp'}
                             <button type="button" class="evaluate" onclick={() => evaluateAt(detail)}>{$t('maps.scores.evaluate')}</button>
                         {/if}
                     </div>

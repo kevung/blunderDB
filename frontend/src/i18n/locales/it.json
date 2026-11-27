@@ -3768,6 +3768,7 @@
             "close": "Chiudi",
             "refused": "Rifiutato",
             "crawford": "Crawford",
+            "postCrawford": "post-Crawford",
             "error": "Errore"
         },
         "verdict": {
@@ -3775,13 +3776,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "Nessun raddoppio",
                 "double_take": "Raddoppio/Accetta",
                 "double_pass": "Raddoppio/Passa",
-                "too_good": "Troppo buono"
+                "too_good": "Troppo buono",
+                "dmp": "Nessun cubo al doppio match point"
             }
         },
         "menu": {

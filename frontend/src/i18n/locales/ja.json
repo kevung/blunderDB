@@ -3768,6 +3768,7 @@
             "close": "閉じる",
             "refused": "拒否",
             "crawford": "クロフォード",
+            "postCrawford": "ポスト・クロフォード",
             "error": "エラー"
         },
         "verdict": {
@@ -3775,13 +3776,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "ノーダブル",
                 "double_take": "ダブル/テイク",
                 "double_pass": "ダブル/パス",
-                "too_good": "トゥーグッド"
+                "too_good": "トゥーグッド",
+                "dmp": "ダブル・マッチポイント（キューブなし）"
             }
         },
         "menu": {
