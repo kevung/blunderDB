@@ -464,3 +464,34 @@ Avant = `main` à 2c5358ae5. 18 PDF ; 13 passent par le lecteur d'image, les cin
   égaux aux pips comptés sur un diagramme complet 549, contraires 4, contraires à la couche
   texte 15, sûres 742) : la garde ne se déclenche sur aucune page de réglage ; aucune sûre ne
   change de position, aucune nouvelle sûre.
+
+### Garde tenue par poids, rivaux excusés par les seuls gabarits appris (#1008, suite)
+
+Revue de la garde : tenue par chiffre, elle ne faisait plus rien dès que la numérotation
+enseignait les dix chiffres (un 2 lourd lu 1 dans au moins 40 cas synthétiques, Go Bold 16-34 pt, 2 et 1
+épaissis de 1 à 3 px, dix chiffres maigres appris). Chaque gabarit porte désormais le poids de son
+trait (épaisseur sur hauteur). Un chiffre gagné par un gabarit appris exige, pour chaque rival que
+le document n'a pas appris au poids du gagnant, que les polices seules placent le gagnant devant de
+`figureMargin`, sinon doute. Seul un gabarit appris excuse un rival : un 2 gras des polices, du
+poids du 1 lourd appris, ne dit rien des 2 du document (c'était la régression de la première
+version par poids, 2 de 16 pt épaissi de 2 px lu 1).
+
+- **Tests** : `TestTypefaceBoldIsNoAlibi` (rouge si les polices comptent parmi les rivaux de même
+  poids), `TestTenTaughtFiguresKeepTheGuard` (dix chiffres appris maigres, un 1 lourd appris : le
+  2 lourd n'est jamais lu 1, le 1 lourd lu comme sans la numérotation), `TestLearnedRivalIsNoAlibi`,
+  `TestMisreadNeverTeaches` (un 2 mal lu ne nourrit jamais le 1 au tour suivant).
+- **Mesure**, réglage seulement, avant `main` 8947fa0d5 : sorties identiques octet pour octet sur
+  les 13 livres lus par l'image (2 945 diagrammes, pips image 705, égaux aux comptés 549,
+  contraires 4, contraires à la couche texte 15, complets 1 372, sûres 742). Les cinq autres
+  (Deep Cube 1-3, deux PDF FT) n'ont aucun diagramme lu par l'image.
+
+### Un diagramme complété par son plateau de sortie vote pour la place des pips
+
+Depuis que le plateau seul ne complète plus un camp, un diagramme dont les quinze reposent sur des
+pions comptés dans le plateau ne votait plus dans `learnPipSlots` (le vote se fait sans pips
+imprimés, donc `Complete` faux). Il vote de nouveau (`Diagram.pipVoter`) : un pion sorti ne compte
+aucun pip, une forme parasite mal comptée dans le plateau laisse donc le compte de pips intact.
+`Complete` et l'état ne changent pas. Test : `TestTrayDiagramsVoteForPipPlaces` (livre où chaque
+diagramme a des pions sortis, pips dans l'image : aucune place apprise sans la correction). Mesure
+ci-dessus : aucune sortie ne change sur les pages de réglage (les livres à plateau y votent déjà
+assez par leurs autres diagrammes).

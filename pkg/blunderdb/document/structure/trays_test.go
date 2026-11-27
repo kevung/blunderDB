@@ -378,3 +378,39 @@ func TestTraysCubeOverBars(t *testing.T) {
 		t.Fatalf("tray under a cube read %v", got)
 	}
 }
+
+// TestTrayDiagramsVoteForPipPlaces: in a document whose every diagram has
+// checkers borne off in its trays, the pips printed in the image are still
+// located — a borne-off checker counts no pip, so such diagrams vote for the
+// pips' places — and, confirmed by them, the diagrams are complete.
+func TestTrayDiagramsVoteForPipPlaces(t *testing.T) {
+	r := rand.New(rand.NewSource(23))
+	var pages []synthPage
+	for i := 0; i < 8; i++ {
+		o := drawOpts{p: 36, numbering: true, tray: true, inkPips: true}
+		pages = append(pages, synthPage{pos: []synthPos{endgamePos(r, 2, 1), endgamePos(r, 1, 3)}, opts: []drawOpts{o, o}})
+	}
+	src, _ := book(t, pages, 5)
+	for i := range src {
+		src[i].Words = nil
+	}
+	res, err := Read(context.Background(), src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !res.Profile.PipsInImage {
+		t.Fatalf("no pip place learned on diagrams completed by their trays: %+v", res.Profile)
+	}
+	complete := 0
+	for _, d := range res.Diagrams {
+		if d.Complete {
+			complete++
+		}
+	}
+	if complete < len(res.Diagrams)*3/4 {
+		for _, d := range res.Diagrams {
+			t.Log(describe(d))
+		}
+		t.Errorf("%d complete of %d", complete, len(res.Diagrams))
+	}
+}

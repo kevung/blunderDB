@@ -49,7 +49,7 @@ var figureFont []byte
 func captionFigures(digits []template) []template {
 	var out []template
 	for _, t := range append(append([]template(nil), digits...), figureTemplates()...) {
-		out = append(out, template{digit: t.digit, v: centred(t.v), learned: t.learned})
+		out = append(out, template{digit: t.digit, v: centred(t.v), learned: t.learned, weight: t.weight})
 	}
 	return out
 }

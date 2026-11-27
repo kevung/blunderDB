@@ -152,6 +152,13 @@ type Diagram struct {
 	// Complete is fifteen checkers a side read with no doubt: not a state,
 	// kept as information.
 	Complete bool
+	// pipVoter is a diagram whose checkers drawn were read with no doubt,
+	// fifteen a side with those counted in its trays. A borne-off checker
+	// counts no pip, so a stray mark miscounted in a tray leaves the pip
+	// count whole: unlike Complete, which a tray holds back until printed
+	// pips confirm it, such a diagram votes where pips are printed
+	// (learnPipSlots).
+	pipVoter bool
 	// CheckersSure is a reading whose checkers would be sure; only a cube
 	// or dice drawn and not read hold it to verify.
 	CheckersSure bool

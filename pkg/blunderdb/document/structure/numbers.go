@@ -542,7 +542,39 @@ type template struct {
 	// learned marks a template drawn from the document's own figures, as
 	// against the embedded typefaces.
 	learned bool
+	weight  float64 // its stroke's thickness over its height (strokeWeight)
 }
+
+// strokeWeight is a figure's stroke thickness over its height, on its
+// normalised square: twice its ink's area over its outline's length, the
+// ink being the levels at least half of full.
+func strokeWeight(m []float64, full float64) float64 {
+	in := func(x, y int) bool {
+		return x >= 0 && y >= 0 && x < glyphSide && y < glyphSide && m[y*glyphSide+x] >= full/2
+	}
+	area, outline, y0, y1 := 0, 0, glyphSide, 0
+	for y := 0; y < glyphSide; y++ {
+		for x := 0; x < glyphSide; x++ {
+			if !in(x, y) {
+				continue
+			}
+			area++
+			y0, y1 = min(y0, y), max(y1, y+1)
+			for _, d := range [4][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}} {
+				if !in(x+d[0], y+d[1]) {
+					outline++
+				}
+			}
+		}
+	}
+	if area == 0 {
+		return 0
+	}
+	return 2 * float64(area) / float64(outline) / float64(y1-y0)
+}
+
+// likeWeight tells whether two strokes are of one weight, within a third.
+func likeWeight(a, b float64) bool { return max(a, b) <= 1.35*min(a, b) }
 
 func fontTemplates() []template { return templatesOf(digitFont) }
 
@@ -558,7 +590,7 @@ func templatesOf(font []byte) []template {
 			}
 			m[i] = float64(b & 15)
 		}
-		out = append(out, template{digit: (k / 200) % 10, v: unitVector(m)})
+		out = append(out, template{digit: (k / 200) % 10, v: unitVector(m), weight: strokeWeight(m, 9)})
 	}
 	return out
 }
@@ -616,31 +648,54 @@ func readFigure(ts []template, u []float64, holes int, holeY float64) int {
 }
 
 // fairWin tells whether d, read from the templates ts, did not win only
-// because the document taught d's drawing and not its rival's: when the
-// embedded typefaces alone rank another figure first and the document drew
-// none of that figure, the two were compared at unlike weights — a heavy 2
-// against the document's own heavy 1 and a typeface's light 2 — and the
-// reading is a doubt.
+// because its best template, drawn from the document, carries a weight its
+// rivals' do not — a heavy 2 against the document's own heavy 1 and only
+// light 2s, a typeface's or a numbering's. A rival the document taught no
+// template of the winner's weight was never measured against it on equal
+// terms: the embedded typefaces alone must then rank d ahead of it by
+// figureMargin, else the reading is a doubt. Only a learned template
+// excuses a rival: the typefaces' bold figures stand in every document, so
+// a typeface 2 of the winner's weight proves nothing about how this
+// document draws its 2s, and a numbering's light 2 nothing about its heavy
+// ones — so the guard holds when the numbering taught all ten figures.
 func fairWin(ts []template, u []float64, d int) bool {
+	var win *template
+	best := math.Inf(-1)
+	for i := range ts {
+		if ts[i].digit != d {
+			continue
+		}
+		if s := dot(ts[i].v, u); s > best {
+			best, win = s, &ts[i]
+		}
+	}
+	if win == nil || !win.learned {
+		return true
+	}
+	var like [10]bool
 	var fonts []template
-	taught := [10]bool{}
 	for _, t := range ts {
 		if t.learned {
-			taught[t.digit] = true
+			like[t.digit] = like[t.digit] || likeWeight(t.weight, win.weight)
 		} else {
 			fonts = append(fonts, t)
 		}
 	}
-	if !taught[d] || len(fonts) == 0 {
-		return true
-	}
 	fs := figureScores(fonts, u)
 	for e := range fs {
-		if e != d && !taught[e] && fs[e] > fs[d]-figureMargin {
+		if e != d && !like[e] && fs[e] > fs[d]-figureMargin {
 			return false
 		}
 	}
 	return true
+}
+
+func dot(a, b []float64) float64 {
+	s := 0.0
+	for i, x := range a {
+		s += x * b[i]
+	}
+	return s
 }
 
 // numberingRow is the candidate numbering above (top) or below the board:
@@ -778,9 +833,10 @@ func readNumbers(all [][]printedNumber) []template {
 		nums = append(nums, ps)
 	}
 	type unit struct {
-		u     []float64
-		holes int
-		holeY float64
+		u      []float64
+		holes  int
+		holeY  float64
+		weight float64
 	}
 	cache := map[*[glyphSide * glyphSide]uint8]unit{}
 	get := func(q *[glyphSide * glyphSide]uint8) unit {
@@ -792,11 +848,11 @@ func readNumbers(all [][]printedNumber) []template {
 		for i := range m {
 			m[i] /= 255
 		}
-		u := unit{unitVector(m), h, hy}
+		u := unit{unitVector(m), h, hy, strokeWeight(m, 1)}
 		cache[q] = u
 		return u
 	}
-	samples := map[int][][]float64{}
+	samples, weights := map[int][][]float64{}, map[int][]float64{}
 	var order []int
 	numbered := map[*printedNumber]bool{}
 	var heights []float64
@@ -811,7 +867,9 @@ func readNumbers(all [][]printedNumber) []template {
 				if _, ok := samples[d]; !ok {
 					order = append(order, d)
 				}
-				samples[d] = append(samples[d], get(&l.n.glyphs[k]).u)
+				u := get(&l.n.glyphs[k])
+				samples[d] = append(samples[d], u.u)
+				weights[d] = append(weights[d], u.weight)
 			}
 		}
 	}
@@ -820,7 +878,7 @@ func readNumbers(all [][]printedNumber) []template {
 		if len(samples[d]) < 5 {
 			continue
 		}
-		base = append(base, template{digit: d, v: unitVector(meanOf(samples[d])), learned: true})
+		base = append(base, template{digit: d, v: unitVector(meanOf(samples[d])), learned: true, weight: median(weights[d])})
 	}
 	base = append(base, fontTemplates()...)
 	hnum := 1.0
@@ -834,7 +892,7 @@ func readNumbers(all [][]printedNumber) []template {
 	var auto []template
 	for round := 0; round < 3; round++ {
 		ts := append(append([]template(nil), base...), auto...)
-		acc := map[key][][]float64{}
+		acc, accW := map[key][][]float64{}, map[key][]float64{}
 		var keys []key
 		for _, ps := range nums {
 			for _, x := range ps {
@@ -864,14 +922,16 @@ func readNumbers(all [][]printedNumber) []template {
 					if _, ok := acc[kk]; !ok {
 						keys = append(keys, kk)
 					}
-					acc[kk] = append(acc[kk], get(&x.glyphs[k]).u)
+					u := get(&x.glyphs[k])
+					acc[kk] = append(acc[kk], u.u)
+					accW[kk] = append(accW[kk], u.weight)
 				}
 			}
 		}
 		auto = auto[:0:0]
 		for _, k := range keys {
 			if len(acc[k]) >= 3 {
-				auto = append(auto, template{digit: k.d, v: centred(meanOf(acc[k])), learned: true})
+				auto = append(auto, template{digit: k.d, v: centred(meanOf(acc[k])), learned: true, weight: median(accW[k])})
 			}
 		}
 	}
@@ -896,7 +956,8 @@ func meanOf(vs [][]float64) []float64 {
 type pipSlot struct{ x, y float64 }
 
 // learnPipSlots finds where the document prints its pip counts, by a vote
-// over its diagrams read with fifteen checkers a side and no doubt: a number
+// over its diagrams read with fifteen checkers a side and no doubt, those
+// counted in a tray included (Diagram.pipVoter): a number
 // read that equals one of the two pip counts of the checkers votes for its
 // place (cells of 0.04). Two places, top and bottom, each with at least ten
 // votes and 30 % of the voting diagrams, or none; it also returns how many
@@ -911,7 +972,7 @@ func learnPipSlots(nums [][]printedNumber, ds []Diagram) ([]pipSlot, int) {
 	pos := map[cell][][2]float64{}
 	voters := 0
 	for i, d := range ds {
-		if !d.Complete || d.Pips[0] == d.Pips[1] {
+		if !d.pipVoter || d.Pips[0] == d.Pips[1] {
 			continue
 		}
 		hit := false
