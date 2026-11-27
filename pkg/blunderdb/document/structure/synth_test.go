@@ -173,6 +173,10 @@ type drawOpts struct {
 	// (a cube's or a label's outline), and in the bottom one three bars
 	// floating halfway up, off the tray's outer end.
 	trayStrokes bool
+	// trayShape draws, in place of the bottom tray's bars, a stray shape that
+	// the bars' reader counts as two: "bracket" (an open "[") or "dotted" (a
+	// rectangle with dotted sides).
+	trayShape string
 	// darkFill is the dark checkers' grey, 0.2 when unset.
 	darkFill float64
 }
@@ -277,6 +281,21 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 					}
 					c.rect(x0+4, y, x1-4, y+8, 0)
 					c.rect(x0+6, y+2, x1-6, y+6, 1)
+				}
+				continue
+			}
+			if o.trayShape != "" && row == 1 {
+				ys, ye := yb-17, yb-4
+				c.rect(x0+4, ys, x1-4, ys+3, 0)
+				c.rect(x0+4, ye-3, x1-4, ye, 0)
+				for y := ys + 3; y < ye-3; y++ {
+					switch {
+					case o.trayShape == "bracket":
+						c.rect(x0+4, y, x0+7, y+1, 0)
+					case (y-ys)%3 == 1:
+						c.rect(x0+4, y, x0+7, y+1, 0)
+						c.rect(x1-7, y, x1-4, y+1, 0)
+					}
 				}
 				continue
 			}

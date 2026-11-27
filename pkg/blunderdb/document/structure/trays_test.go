@@ -48,27 +48,108 @@ func trayBookWith(t *testing.T, base drawOpts, extra int) (memPages, []string) {
 }
 
 // TestTrayCompletesFifteen: the checkers borne off, drawn as bars in a tray
-// beside their home row, make fifteen with those on the board: the entry is
-// complete, with no supposition about the tray.
+// beside their home row, make fifteen with those on the board. With printed
+// pips that agree, the entry is complete and nothing is named about the tray;
+// without them, the tray alone does not complete it and its count is named.
 func TestTrayCompletesFifteen(t *testing.T) {
-	src, want := trayBook(t, 0)
-	res, err := Read(context.Background(), src)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(res.Diagrams) != len(want) {
-		t.Fatalf("%d diagrams, want %d", len(res.Diagrams), len(want))
-	}
-	for i, d := range res.Diagrams {
-		if d.Board != want[i] && d.Board != swapCase(want[i]) {
-			t.Errorf("diagram %d: want %s, got %s", i+1, want[i], describe(d))
+	for _, pips := range []bool{true, false} {
+		src, want := trayBookWith(t, drawOpts{p: 36, numbering: true, tray: true, pips: pips}, 0)
+		res, err := Read(context.Background(), src)
+		if err != nil {
+			t.Fatal(err)
 		}
-		if !d.Complete {
-			t.Errorf("diagram %d: drawn and tray make fifteen, not complete: %s", i+1, describe(d))
+		if len(res.Diagrams) != len(want) {
+			t.Fatalf("pips %v: %d diagrams, want %d", pips, len(res.Diagrams), len(want))
 		}
-		for _, x := range d.Doubts {
-			if x.Field == "checkers" {
-				t.Errorf("diagram %d: doubt %+v", i+1, x)
+		for i, d := range res.Diagrams {
+			if d.Board != want[i] && d.Board != swapCase(want[i]) {
+				t.Errorf("pips %v, diagram %d: want %s, got %s", pips, i+1, want[i], describe(d))
+			}
+			if i < 6 {
+				continue
+			}
+			named := false
+			for _, x := range d.Doubts {
+				if strings.Contains(x.Reason, "counted in the tray, no printed pips confirm them") {
+					named = true
+				} else if x.Field == "checkers" {
+					t.Errorf("pips %v, diagram %d: doubt %+v", pips, i+1, x)
+				}
+			}
+			if pips && (!d.Complete || !d.CheckersSure || named) {
+				t.Errorf("pips agree, diagram %d: drawn and tray make fifteen, not complete and sure: %s", i+1, describe(d))
+			}
+			if !pips && (d.Complete || d.CheckersSure || !named) {
+				t.Errorf("no pips, diagram %d: complete by the tray alone, or the tray not named: %s", i+1, describe(d))
+			}
+		}
+	}
+}
+
+// racingAhead is a position whose bottom player has borne off two checkers
+// and whose pips, both sides together, are well below those of the board
+// read the other way: without printed pips the direction of play assumed is
+// the drawn one, and the bottom tray is that player's.
+func racingAhead(r *rand.Rand) synthPos {
+	for {
+		s := endgamePos(r, 2, 0)
+		var pips, n int
+		for q := 1; q <= 24; q++ {
+			pips += q * (s.bottom[q] + s.top[q])
+			n += s.bottom[q] + s.top[q]
+		}
+		if 2*pips+40 < 25*n {
+			return s
+		}
+	}
+}
+
+// TestTrayStrayShapeNotComplete: thirteen checkers drawn and, in their tray,
+// a shape the bars' reader counts as two — an open "[" or a rectangle with
+// dotted sides. Without printed pips the entry is never complete nor sure
+// and the tray's count is named; with pips that agree it is complete.
+func TestTrayStrayShapeNotComplete(t *testing.T) {
+	for _, shape := range []string{"bracket", "dotted"} {
+		for _, pips := range []bool{false, true} {
+			r := rand.New(rand.NewSource(9))
+			var pages []synthPage
+			r2 := rand.New(rand.NewSource(6))
+			for i := 0; i < 3; i++ {
+				o := drawOpts{p: 36, numbering: true, tray: true, pips: pips}
+				pages = append(pages, synthPage{pos: []synthPos{randomPos(r2), randomPos(r2)}, opts: []drawOpts{o, o}})
+			}
+			for i := 0; i < 4; i++ {
+				o := drawOpts{p: 36, numbering: true, tray: true, pips: pips, trayShape: shape}
+				pages = append(pages, synthPage{pos: []synthPos{racingAhead(r), racingAhead(r)}, opts: []drawOpts{o, o}})
+			}
+			src, _ := book(t, pages, 9)
+			res, err := Read(context.Background(), src)
+			if err != nil {
+				t.Fatal(err)
+			}
+			counted := 0
+			for i, d := range res.Diagrams {
+				if i < 6 {
+					continue
+				}
+				named := false
+				for _, x := range d.Doubts {
+					if strings.Contains(x.Reason, "2 borne-off checkers counted in the tray, no printed pips confirm them") {
+						named = true
+					}
+				}
+				if !pips && (d.Complete || d.CheckersSure) {
+					t.Errorf("%s, no pips, diagram %d: complete or sure by a stray shape: %s", shape, i+1, describe(d))
+				}
+				if !pips && named {
+					counted++
+				}
+				if pips && !d.Complete {
+					t.Errorf("%s, pips agree, diagram %d: not complete: %s", shape, i+1, describe(d))
+				}
+			}
+			if !pips && counted < 6 {
+				t.Errorf("%s, no pips: %d diagrams name the tray's count, want at least 6 of 8", shape, counted)
 			}
 		}
 	}

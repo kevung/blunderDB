@@ -32,7 +32,10 @@
 // fifteen checkers, a second equation the pips did not give. The checkers
 // borne off are counted in the tray when the document draws them there as
 // bars: a side's drawn and tray checkers make fifteen, or the gap is a named
-// doubt. With no tray read they are taken as fifteen less those drawn, and
+// doubt. A fifteen that rests on the tray makes the diagram complete only
+// when printed pips agree with the board; otherwise the tray's count is a
+// named doubt, so a stray shape in a tray never completes an entry alone.
+// With no tray read they are taken as fifteen less those drawn, and
 // the direction of play when no pips confirm it is a supposition: both are
 // named doubts. A document whose two checker classes are both lighter than
 // mid-grey draws no filled checker (letters X and O): it is not read, each

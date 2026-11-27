@@ -851,6 +851,11 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		}
 		return n[k] == 15
 	}
+	// byTray: the side's fifteen rests on checkers counted in its tray. The
+	// tray is read from shapes alone, and a stray mark there is counted as
+	// readily as a checker: only printed pips that agree with the board
+	// vouch for such a fifteen.
+	byTray := func(k int) bool { return tray[k] > 0 && fifteenOf(k) }
 	var okPips bool
 	switch {
 	case printed == nil:
@@ -877,7 +882,7 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		Printed:   printed,
 		TextPips:  read.text,
 		ImagePips: read.image,
-		Complete:  fifteenOf(0) && fifteenOf(1) && pieceDoubts == 0 && !solved,
+		Complete:  fifteenOf(0) && fifteenOf(1) && pieceDoubts == 0 && !solved && (okPips || !byTray(0) && !byTray(1)),
 	}
 	// What is drawn and not read: never invented, named so a sure reading
 	// is not taken for more than its checkers.
@@ -895,6 +900,10 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 			add("orientation", 0, "", AssumedDirectionReason)
 		}
 		for _, k := range []int{upper, 1 - upper} {
+			if byTray(k) {
+				add("checkers", 0, "", "the %s player (%s) has %d borne-off checkers counted in the tray, no printed pips confirm them", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), tray[k])
+				continue
+			}
 			if tray[k] > 0 {
 				continue
 			}
