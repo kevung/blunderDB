@@ -378,7 +378,8 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		return false, "", nil
 	}
 	// Rare, the error is read from its two indexes, positionErrExpr split in its two
-	// branches. Common, the walk in id order meets its rows soon, probing analysis.
+	// branches. Common, the walk in id order meets its rows soon, probing analysis
+	// (probedErrExpr; SQLite keeps the join).
 	tenant, tenantArgs := s.DB.TenantFilter("an", scope)
 	own, ownArgs := s.DB.TenantFilter("", scope)
 	recheckWith := func(errExpr string) {
@@ -391,7 +392,8 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	// that the partial index applies.
 	if eHasMin && eqMin >= blunderFloor {
 		n := strconv.Itoa(eqMin)
-		// The candidates are few and walked: the join stays, a walk carries no subquery.
+		// The candidates are few and walked, so the join costs nothing there, and
+		// probesIDWalk refuses a filter that carries a subquery.
 		if s.readsBlunderWindows(ctx, f) {
 			recheckWith(positionErrExpr)
 			return true, n, nil
