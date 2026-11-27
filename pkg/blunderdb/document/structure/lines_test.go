@@ -190,8 +190,11 @@ func TestArrowsReadEndToEnd(t *testing.T) {
 	if len(res.Diagrams) != len(want) {
 		t.Fatalf("%d diagrams, want %d", len(res.Diagrams), len(want))
 	}
-	// An arrow not followed leaves its diagram with a named doubt, at most
-	// one here; never a sure reading that is wrong.
+	// An arrow not followed leaves its diagram with a named doubt; never a
+	// sure reading that is wrong. The one doubt here is diagram 12: its two
+	// arrows run back to back along nearly the same line, each tip inside the
+	// other's checker, and where they overlap the ink is wider than one
+	// stroke. Drawn alone, either arrow is painted over and the diagram read.
 	exact := 0
 	for i, d := range res.Diagrams {
 		switch {
