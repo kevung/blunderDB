@@ -32,11 +32,9 @@ Fusionné (chaque branche revue en vert, souvent après un ou deux renvois) :
   ADR-0119) ; décodeurs JPEG 2000 et PDF scannés environ 3,5 fois plus rapides, sortie identique.
 
 Non fusionné :
-- #1008 (pips) : branche `feat/doc-pips` poussée telle quelle, rouge après deux revues. Le premier
-  commit (garde `fairWin`) est sain, mais la garde ne tient plus quand la numérotation du document
-  a enseigné les dix chiffres ; la correction par poids du trait (13a52008b) crée une régression :
-  le « 2 » gras des polices lève la garde. Piste du relecteur : ne compter dans `like` que les
-  gabarits appris. Sondes dans la revue, à refaire en tests.
+- #1008 (pips) : branche `feat/doc-pips2` (depuis cbeda8a51, sans 13a52008b) : garde par poids
+  du trait, un rival n'étant excusé que par un gabarit appris du même poids ; le plateau de sortie
+  vote de nouveau pour la place des pips. Sorties de réglage identiques. À revoir avant fusion.
 - #1004 (Masterclass) : diagnostiquée, pas commencée — flèches de coup et pions fantômes annotés
   pris pour des pions ; comptes du plateau imprimés pris pour des pips.
 

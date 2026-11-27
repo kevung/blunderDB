@@ -458,3 +458,59 @@ complète donc jamais une entrée. Mesure de réglage, tous livres, branche caaf
 2 945 diagrammes, comptes sûrs / complets / à vérifier / incertains identiques livre par livre ;
 une seule entrée change (Endgame Technique p. 88, demi-plateau déjà à vérifier) : elle gagne le
 doute nommé, sans changer d'état. Aucune entrée complète de ces livres ne dépendait du plateau.
+
+## Chiffres des pips dans l'image : victoire loyale (#1008)
+
+Lecteur de structure seul (`TestMeasureContextOnPages`, `tirage.json`, pages de réglage seulement).
+Avant = `main` à 2c5358ae5. 18 PDF ; 13 passent par le lecteur d'image, les cinq autres (Deep Cube
+1-3, deux PDF du *Livre du backgammon* FT) n'y trouvent aucun diagramme et ne sont pas concernés.
+
+- **Constat corrigé** : la lecture des pips était déjà une corrélation centrée (`unitVector` finit
+  par `centred`), avec les mêmes gabarits que la légende ; la seule différence est la requête
+  (chiffre redressé et flouté pour les pips, glyphe brut pour la légende). Le commentaire de
+  `caption.go` qui parlait d'un cosinus non centré est corrigé ; les deux lecteurs partagent
+  désormais `figureScores` et `bestFigure`.
+- **Essai rejeté** : exiger que le glyphe brut classe aussi le chiffre en tête coûte 705 → 449
+  pips lus et 742 → 660 sûres (Trice, Classic Revisited, Endgame surtout, chiffres 7 et 1) ; non
+  retenu.
+- **Mécanisme reproduit** (synthétique, Go Bold épaissi de 1 à 3 px, 18-36 pt) : un 2 lourd est
+  lu 1 quand le document a appris ses propres 1 lourds mais pas ses 2 — le 1 appris l'emporte sur
+  le 2 léger des polices par le seul poids du trait, sous les deux mesures. Garde retenue
+  (`fairWin`) : un chiffre gagné par un gabarit appris n'est lu que si, polices seules, aucun
+  chiffre que le document n'a pas appris n'arrive à `figureMargin` de lui ; sinon doute. Avant :
+  10 lectures « 1 » sur 15 cas de 2 épaissi de 2-3 px ; après : aucune.
+- **Mesure** : sorties identiques octet pour octet sur les 13 livres (pips lus dans l'image 705,
+  égaux aux pips comptés sur un diagramme complet 549, contraires 4, contraires à la couche
+  texte 15, sûres 742) : la garde ne se déclenche sur aucune page de réglage ; aucune sûre ne
+  change de position, aucune nouvelle sûre.
+
+### Garde tenue par poids, rivaux excusés par les seuls gabarits appris (#1008, suite)
+
+Revue de la garde : tenue par chiffre, elle ne faisait plus rien dès que la numérotation
+enseignait les dix chiffres (un 2 lourd lu 1 dans au moins 40 cas synthétiques, Go Bold 16-34 pt, 2 et 1
+épaissis de 1 à 3 px, dix chiffres maigres appris). Chaque gabarit porte désormais le poids de son
+trait (épaisseur sur hauteur). Un chiffre gagné par un gabarit appris exige, pour chaque rival que
+le document n'a pas appris au poids du gagnant, que les polices seules placent le gagnant devant de
+`figureMargin`, sinon doute. Seul un gabarit appris excuse un rival : un 2 gras des polices, du
+poids du 1 lourd appris, ne dit rien des 2 du document (c'était la régression de la première
+version par poids, 2 de 16 pt épaissi de 2 px lu 1).
+
+- **Tests** : `TestTypefaceBoldIsNoAlibi` (rouge si les polices comptent parmi les rivaux de même
+  poids), `TestTenTaughtFiguresKeepTheGuard` (dix chiffres appris maigres, un 1 lourd appris : le
+  2 lourd n'est jamais lu 1, le 1 lourd lu comme sans la numérotation), `TestLearnedRivalIsNoAlibi`,
+  `TestMisreadNeverTeaches` (un 2 mal lu ne nourrit jamais le 1 au tour suivant).
+- **Mesure**, réglage seulement, avant `main` 8947fa0d5 : sorties identiques octet pour octet sur
+  les 13 livres lus par l'image (2 945 diagrammes, pips image 705, égaux aux comptés 549,
+  contraires 4, contraires à la couche texte 15, complets 1 372, sûres 742). Les cinq autres
+  (Deep Cube 1-3, deux PDF FT) n'ont aucun diagramme lu par l'image.
+
+### Un diagramme complété par son plateau de sortie vote pour la place des pips
+
+Depuis que le plateau seul ne complète plus un camp, un diagramme dont les quinze reposent sur des
+pions comptés dans le plateau ne votait plus dans `learnPipSlots` (le vote se fait sans pips
+imprimés, donc `Complete` faux). Il vote de nouveau (`Diagram.pipVoter`) : un pion sorti ne compte
+aucun pip, une forme parasite mal comptée dans le plateau laisse donc le compte de pips intact.
+`Complete` et l'état ne changent pas. Test : `TestTrayDiagramsVoteForPipPlaces` (livre où chaque
+diagramme a des pions sortis, pips dans l'image : aucune place apprise sans la correction). Mesure
+ci-dessus : aucune sortie ne change sur les pages de réglage (les livres à plateau y votent déjà
+assez par leurs autres diagrammes).

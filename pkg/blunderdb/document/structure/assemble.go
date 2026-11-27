@@ -895,6 +895,7 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		TextPips:  read.text,
 		ImagePips: read.image,
 		Complete:  fifteenOf(0) && fifteenOf(1) && pieceDoubts == 0 && !solved && (okPips || !byTray(0) && !byTray(1)),
+		pipVoter:  fifteenOf(0) && fifteenOf(1) && pieceDoubts == 0 && !solved,
 	}
 	// What is drawn and not read: never invented, named so a sure reading
 	// is not taken for more than its checkers.
