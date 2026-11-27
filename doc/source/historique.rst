@@ -42,6 +42,19 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.61.0 (2026-11-27)
+-------------------
+
+- **Le videau dessiné se lit mieux dans un document** : un carré vierge est lu comme un videau centré quand le document le dessine ainsi ailleurs, et les dés ne sont retenus que confirmés par un jet ou un coup écrit dans le texte (:ref:`cli_document`).
+- **Diagrammes en police de plateau Snowie** : les PDF dont les diagrammes sont dessinés avec une police de plateau de Snowie se lisent d'après la forme des glyphes, les pips imprimés confirmant la lecture.
+- **Plateau de sortie lu** : le plateau de sortie dessiné en barres complète le compte d'un camp, mais seulement quand les pips imprimés le confirment.
+- **Pions en lettres refusés en le disant** : un document dont les pions sont dessinés en lettres X et O n'est pas lu, et la cause est nommée sur chaque diagramme.
+- **Légende et score lus dans l'image** : la légende d'un diagramme et son score se lisent dans l'image, et le score n'est retenu que s'il est lu en entier.
+- **Flèches de coup et comptes du plateau** : une flèche de coup n'est plus prise pour un pion, ni un nombre de quinze ou moins imprimé à côté du plateau pour des pips.
+- **Décodeurs JPEG 2000 et JBIG2 environ 3,5 fois plus rapides** : les PDF scannés qui portent ces images s'ouvrent plus vite.
+- **Archive papier, format 2** : un match tient dans environ un tiers d'octets en moins, donc dans moins de codes ; les pages imprimées au format 1 se lisent toujours (:ref:`cli_import_export_chapitre`).
+- Voir :ref:`cli_document` et :ref:`cli_import_export_chapitre`.
+
 0.60.0 (2026-11-26)
 -------------------
 

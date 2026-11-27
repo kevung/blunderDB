@@ -303,7 +303,8 @@ depuis un scan ou une photo de la feuille.
 
 ``export`` écrit une page HTML autonome, à imprimer : chaque match tient en
 général dans un seul code (environ 250 octets pour un match en 7 points), un
-code plus long est coupé en plusieurs. Chaque code porte l'identifiant de
+code plus long est coupé en plusieurs. Les pages imprimées par les versions
+antérieures (format 1, environ un tiers d'octets de plus) se lisent toujours. Chaque code porte l'identifiant de
 l'archive, son rang et une somme de contrôle, avec une correction d'erreur de
 niveau M ; un code de parité suit chaque groupe de cinq et reconstruit l'un
 d'eux devenu illisible. Les codes remplissent les quatre quarts de la feuille,

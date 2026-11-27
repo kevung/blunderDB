@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.61.0" date="2026-11-27">
+      <description>
+        <ul>
+          <li>Document import reads Snowie board-font diagrams, drawn cubes and bear-off trays, and refuses documents with letter checkers by naming the cause</li>
+          <li>Move arrows and board counts are no longer mistaken for checkers or pips</li>
+          <li>JPEG 2000 and JBIG2 decoders about 3.5 times faster</li>
+          <li>Paper archive format 2: about a third fewer bytes per match, format 1 still read</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.60.0" date="2026-11-26">
       <description>
         <ul>

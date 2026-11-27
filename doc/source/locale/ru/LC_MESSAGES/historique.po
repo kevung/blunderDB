@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 19:32+0100\n"
+"POT-Creation-Date: 2026-11-27 15:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -134,10 +134,97 @@ msgstr ""
 "файла."
 
 #: ../../source/historique.rst:46
+msgid "0.61.0 (2026-11-27)"
+msgstr "0.61.0 (2026-11-27)"
+
+#: ../../source/historique.rst:48
+msgid ""
+"**Le videau dessiné se lit mieux dans un document** : un carré vierge est"
+" lu comme un videau centré quand le document le dessine ainsi ailleurs, "
+"et les dés ne sont retenus que confirmés par un jet ou un coup écrit dans"
+" le texte (:ref:`cli_document`)."
+msgstr ""
+"**Нарисованный куб лучше читается в документе** : пустой квадрат читается"
+" как центрированный куб, если документ рисует его так в других местах, а "
+"кости принимаются только при подтверждении броском или ходом, записанным "
+"в тексте (:ref:`cli_document`)."
+
+#: ../../source/historique.rst:49
+msgid ""
+"**Diagrammes en police de plateau Snowie** : les PDF dont les diagrammes "
+"sont dessinés avec une police de plateau de Snowie se lisent d'après la "
+"forme des glyphes, les pips imprimés confirmant la lecture."
+msgstr ""
+"**Диаграммы в шрифте доски Snowie** : PDF, диаграммы которых нарисованы "
+"шрифтом доски Snowie, читаются по форме глифов, а напечатанные пипы "
+"подтверждают чтение."
+
+#: ../../source/historique.rst:50
+msgid ""
+"**Plateau de sortie lu** : le plateau de sortie dessiné en barres "
+"complète le compte d'un camp, mais seulement quand les pips imprimés le "
+"confirment."
+msgstr ""
+"**Лоток для снятых фишек читается** : лоток для снятых, нарисованный "
+"полосками, дополняет счёт одной стороны, но только когда напечатанные "
+"пипы это подтверждают."
+
+#: ../../source/historique.rst:51
+msgid ""
+"**Pions en lettres refusés en le disant** : un document dont les pions "
+"sont dessinés en lettres X et O n'est pas lu, et la cause est nommée sur "
+"chaque diagramme."
+msgstr ""
+"**Фишки в виде букв отвергаются с объяснением** : документ, фишки "
+"которого нарисованы буквами X и O, не читается, а причина указывается на "
+"каждой диаграмме."
+
+#: ../../source/historique.rst:52
+msgid ""
+"**Légende et score lus dans l'image** : la légende d'un diagramme et son "
+"score se lisent dans l'image, et le score n'est retenu que s'il est lu en"
+" entier."
+msgstr ""
+"**Легенда и счёт читаются в изображении** : легенда диаграммы и её счёт "
+"читаются в изображении, а счёт принимается только если прочитан целиком."
+
+#: ../../source/historique.rst:53
+msgid ""
+"**Flèches de coup et comptes du plateau** : une flèche de coup n'est plus"
+" prise pour un pion, ni un nombre de quinze ou moins imprimé à côté du "
+"plateau pour des pips."
+msgstr ""
+"**Стрелки хода и счётчики доски** : стрелка хода больше не принимается за"
+" фишку, а число не более пятнадцати, напечатанное рядом с доской, — за "
+"пипы."
+
+#: ../../source/historique.rst:54
+msgid ""
+"**Décodeurs JPEG 2000 et JBIG2 environ 3,5 fois plus rapides** : les PDF "
+"scannés qui portent ces images s'ouvrent plus vite."
+msgstr ""
+"**Декодеры JPEG 2000 и JBIG2 примерно в 3,5 раза быстрее** : "
+"отсканированные PDF с такими изображениями открываются быстрее."
+
+#: ../../source/historique.rst:55
+msgid ""
+"**Archive papier, format 2** : un match tient dans environ un tiers "
+"d'octets en moins, donc dans moins de codes ; les pages imprimées au "
+"format 1 se lisent toujours (:ref:`cli_import_export_chapitre`)."
+msgstr ""
+"**Бумажный архив, формат 2** : матч занимает примерно на треть меньше "
+"байт, а значит, меньше кодов; страницы, напечатанные в формате 1, "
+"по-прежнему читаются (:ref:`cli_import_export_chapitre`)."
+
+#: ../../source/historique.rst:56
+msgid "Voir :ref:`cli_document` et :ref:`cli_import_export_chapitre`."
+msgstr "См. :ref:`cli_document` и :ref:`cli_import_export_chapitre`."
+
+#: ../../source/historique.rst:59
 msgid "0.60.0 (2026-11-26)"
 msgstr "0.60.0 (2026-11-26)"
 
-#: ../../source/historique.rst:48
+#: ../../source/historique.rst:61
 msgid ""
 "**ArkID, une position en texte lisible** : ``blunderdb arkid`` écrit et "
 "lit une position dans la notation textuelle de blunderDB, lisible et "
@@ -148,7 +235,7 @@ msgstr ""
 "записывает и читает позицию в текстовой нотации blunderDB, читаемой и "
 "произносимой (:ref:`cli_arkid`), по XGID, OGID или ArkID."
 
-#: ../../source/historique.rst:49
+#: ../../source/historique.rst:62
 msgid ""
 "**Archive papier d'une base** : ``blunderdb archive export`` et ``archive"
 " import``, et la boîte *Archive papier…* du panneau Matchs, impriment les"
@@ -164,7 +251,7 @@ msgstr ""
 "открывается и из пустого списка матчей, командой ``import_archive`` в "
 "командном режиме, и демон его предлагает."
 
-#: ../../source/historique.rst:50
+#: ../../source/historique.rst:63
 msgid ""
 "**Feuille de match imprimable** : *Imprimer…* met un match sur une page "
 "A4 sans diagramme, avec son en-tête, le PR, les erreurs et le temps de "
@@ -175,7 +262,7 @@ msgstr ""
 "диаграмм: заголовок, PR, ошибки и время каждого игрока, запись по ходам и"
 " позиции для повторения в ArkID, пронумерованные как в записи."
 
-#: ../../source/historique.rst:51
+#: ../../source/historique.rst:64
 msgid ""
 "**Listes de positions imprimables, avec leur code de réimport** : "
 "``blunderdb sheet`` et ``positions.sheet`` impriment une liste de "
@@ -187,7 +274,7 @@ msgstr ""
 "предлагает и панель Библиотеки; код сопровождает лист и позволяет "
 "импортировать его снова."
 
-#: ../../source/historique.rst:52
+#: ../../source/historique.rst:65
 msgid ""
 "**Import d'un document** : ``blunderdb document analyze`` lit un PDF "
 "(diagrammes d'eXtreme Gammon reconnus par leurs glyphes, PDF scannés, "
@@ -206,7 +293,7 @@ msgstr ""
 "скана, никогда не выдаётся за надёжную, а то, что прочитать не удалось, "
 "названо."
 
-#: ../../source/historique.rst:53
+#: ../../source/historique.rst:66
 msgid ""
 "**Images JPEG 2000 et JBIG2** : les PDF qui portent ces images "
 "(``JPXDecode``, ``.jp2`` et ``.j2k``, JBIG2) se lisent sans bibliothèque "
@@ -218,7 +305,7 @@ msgstr ""
 "библиотеки, с ограничениями по памяти и времени; отвергнутая страница не "
 "мешает читать остальные."
 
-#: ../../source/historique.rst:54
+#: ../../source/historique.rst:67
 msgid ""
 "**Assistant graphique de l'import de document** : l'interface guide "
 "l'import d'un document pas à pas, avec une revue des entrées douteuses, "
@@ -228,7 +315,7 @@ msgstr ""
 "импорт документа, с проверкой сомнительных записей, объяснёнными отказами"
 " и переведёнными примечаниями."
 
-#: ../../source/historique.rst:55
+#: ../../source/historique.rst:68
 msgid ""
 "**Défauts appris par document** : quand un document n'imprime pas son "
 "contexte (sens de jeu, score, cube), le défaut le plus sûr est proposé et"
@@ -241,7 +328,7 @@ msgstr ""
 "документ; помощник импорта предлагает запасной путь, когда чтения "
 "недостаточно."
 
-#: ../../source/historique.rst:56
+#: ../../source/historique.rst:69
 msgid ""
 "**Carte des jets** : pour une position, les 21 jets avec le meilleur "
 "coup, l'équité et le marché perdu de chacun (``blunderdb rolls``), dans "
@@ -250,7 +337,7 @@ msgstr ""
 "**Карта бросков**: для позиции 21 бросок с лучшим ходом, эквити и "
 "потерянным рынком каждого (``blunderdb rolls``), в панели оценки."
 
-#: ../../source/historique.rst:57
+#: ../../source/historique.rst:70
 msgid ""
 "**Carte des scores** : la meilleure décision de cube à tous les scores "
 "d'un match, Crawford compris (``blunderdb scoremap``)."
@@ -258,7 +345,7 @@ msgstr ""
 "**Карта счетов**: лучшее решение по кубу при каждом счёте матча, включая "
 "Crawford (``blunderdb scoremap``)."
 
-#: ../../source/historique.rst:58
+#: ../../source/historique.rst:71
 msgid ""
 "**Les cartes se calculent en fond et se gardent** : un cache garde les "
 "cartes des jets et des scores, un précalcul en fond prépare celles du jet"
@@ -269,7 +356,7 @@ msgstr ""
 "счетов, фоновый предрасчёт готовит карты следующего броска, а показанный "
 "на экране расчёт получает приоритет над остальными на ядрах машины."
 
-#: ../../source/historique.rst:59
+#: ../../source/historique.rst:72
 msgid ""
 "**Panneau Calculs** : une puce unique de la barre d'état résume les "
 "tâches de fond (analyses, rollouts, imports, maintenance, transferts) ; "
@@ -284,7 +371,7 @@ msgstr ""
 "библиотекам, с паузой, отменой, приоритетом и числом занятых ядер. "
 "Работа, запрошенная во время другой, занимает место в очереди библиотеки."
 
-#: ../../source/historique.rst:60
+#: ../../source/historique.rst:73
 msgid ""
 "**Corrections notables** : l'ouverture d'une base tenue par une autre "
 "instance est refusée en le disant, et la bibliothèque vide n'est pas "
@@ -296,25 +383,23 @@ msgstr ""
 "нетронутой; невидимый текстовый слой OCR больше не принимается за шрифт "
 "доски eXtreme Gammon."
 
-#: ../../source/historique.rst:61
+#: ../../source/historique.rst:74
 msgid ""
-"Voir :ref:`cli_arkid`, :ref:`panneau_matchs`, "
-":ref:`liste_imprimable`, "
+"Voir :ref:`cli_arkid`, :ref:`panneau_matchs`, :ref:`liste_imprimable`, "
 ":ref:`assistant_import_document`, :ref:`cli_document`, "
 ":ref:`eval_cartes`, :ref:`cli_scoremap`, :ref:`cli_rolls` et "
 ":ref:`manuel_interface`."
 msgstr ""
-"См. :ref:`cli_arkid`, :ref:`panneau_matchs`, "
-":ref:`liste_imprimable`, "
+"См. :ref:`cli_arkid`, :ref:`panneau_matchs`, :ref:`liste_imprimable`, "
 ":ref:`assistant_import_document`, :ref:`cli_document`, "
 ":ref:`eval_cartes`, :ref:`cli_scoremap`, :ref:`cli_rolls` и "
 ":ref:`manuel_interface`."
 
-#: ../../source/historique.rst:64
+#: ../../source/historique.rst:77
 msgid "0.59.0 (2026-11-21)"
 msgstr "0.59.0 (2026-11-21)"
 
-#: ../../source/historique.rst:66
+#: ../../source/historique.rst:79
 msgid ""
 "**Les piles d'étude dans la liste des positions** : ``blunderdb search`` "
 "ajoute une colonne *Decks* (clé ``decks`` en JSON) et ``blunderdb list "
@@ -328,7 +413,7 @@ msgstr ""
 "позиции; серверный режим возвращает их через ``positions.listFields`` "
 "(поле ``decks``)."
 
-#: ../../source/historique.rst:67
+#: ../../source/historique.rst:80
 msgid ""
 "**Le meilleur coup sur les coups d'un match** : en mode serveur, "
 "``matches.moves`` et ``matches.movesByMatch`` rendent à côté de l'erreur "
@@ -340,7 +425,7 @@ msgstr ""
 "``best_cube_action`` — то, что сохранённый анализ ставит первым для этого"
 " решения; без анализа они отсутствуют."
 
-#: ../../source/historique.rst:68
+#: ../../source/historique.rst:81
 msgid ""
 "**Les piles d'une page de positions se lisent par un index** (migration "
 "075 sur PostgreSQL), aussi en SQLite ; le schéma ne change pas."
@@ -348,15 +433,15 @@ msgstr ""
 "**Колоды страницы позиций читаются по индексу** (миграция 075 в "
 "PostgreSQL), и в SQLite тоже; схема не меняется."
 
-#: ../../source/historique.rst:69
+#: ../../source/historique.rst:82
 msgid "Voir :ref:`cli_bibliotheque_chapitre` et :ref:`api_reference`."
 msgstr "См. :ref:`cli_bibliotheque_chapitre` и :ref:`api_reference`."
 
-#: ../../source/historique.rst:72
+#: ../../source/historique.rst:85
 msgid "0.58.0 (2026-11-21)"
 msgstr "0.58.0 (2026-11-21)"
 
-#: ../../source/historique.rst:74
+#: ../../source/historique.rst:87
 msgid ""
 "**Le résultat d'un match est conservé** : l'import garde le score final "
 "et le vainqueur, la migration les déduit pour les matchs déjà présents. "
@@ -370,7 +455,7 @@ msgstr ""
 "незавершённый матч серым), а ``blunderdb list matches`` показывает "
 "результат или ``unfinished``."
 
-#: ../../source/historique.rst:75
+#: ../../source/historique.rst:88
 msgid ""
 "**Trier les matchs par PR** : la colonne **PR** du panneau Matchs se trie"
 " sur toute la bibliothèque, comme ``blunderdb list matches --sort pr1`` ;"
@@ -383,7 +468,7 @@ msgstr ""
 "доступна и по PR основного игрока (с псевдонимами) и по PR его соперника."
 " Матч без этого PR идёт последним в обоих направлениях."
 
-#: ../../source/historique.rst:76
+#: ../../source/historique.rst:89
 msgid ""
 "**Les chances de gagner le match au fil des décisions** : un troisième "
 "graphique de l'onglet *Graphes* d'un match trace les chances de gagner du"
@@ -397,7 +482,7 @@ msgstr ""
 "match`` выдаёт их в ``json`` (``win_trace``) и в ``text``, серверный "
 "режим — через ``stats.matchWinTrace``."
 
-#: ../../source/historique.rst:77
+#: ../../source/historique.rst:90
 msgid ""
 "**Histogramme des durées de décision** : à côté du résumé des durées, "
 "l'onglet *Graphes* compte les décisions de chaque joueur par tranche de "
@@ -411,7 +496,7 @@ msgstr ""
 "команды ``blunderdb match`` и ``stats.matchTimeSummary`` дают те же "
 "интервалы."
 
-#: ../../source/historique.rst:78
+#: ../../source/historique.rst:91
 msgid ""
 "**Chaque évaluation de pions est gardée par source** : quand plusieurs "
 "moteurs ou profondeurs ont évalué une position (XG, GNU Backgammon, "
@@ -427,7 +512,7 @@ msgstr ""
 "``allCheckerAnalyses`` в серверном режиме. Повторный импорт уже "
 "имеющегося источника ничего не записывает."
 
-#: ../../source/historique.rst:79
+#: ../../source/historique.rst:92
 msgid ""
 "**L'origine d'un tournoi** : la colonne **Origine** du panneau Tournois "
 "dit d'où vient le tournoi (« importé », « plateforme », « club »…), se "
@@ -441,7 +526,7 @@ msgstr ""
 "переходит вместе с турниром при экспорте и синхронизации; "
 "``tournaments.updateOrigin`` меняет его в серверном режиме."
 
-#: ../../source/historique.rst:80
+#: ../../source/historique.rst:93
 msgid ""
 "**Deux critères de provenance pour les collections vivantes** : ``s i`` "
 "garde les positions apportées une à une plutôt qu'avec un match, ``s fl``"
@@ -452,7 +537,7 @@ msgstr ""
 "позиции, добавленные по одной, а не вместе с матчем, ``s fl`` — те, что "
 "пометила исходная программа; оба сочетаются с любым другим критерием."
 
-#: ../../source/historique.rst:81
+#: ../../source/historique.rst:94
 msgid ""
 "**La liste des positions porte l'erreur jouée, la date et les "
 "collections** : ``blunderdb search`` et ``blunderdb list positions`` "
@@ -465,7 +550,7 @@ msgstr ""
 "(эквити, потерянное сыгранным решением), *Date* и *Collections*; "
 "серверный режим возвращает их через ``positions.listFields``."
 
-#: ../../source/historique.rst:82
+#: ../../source/historique.rst:95
 msgid ""
 "**Recherche plus rapide sur les grandes bases PostgreSQL** : une "
 "structure triée par pips se lit dans l'ordre par un index qui porte ses "
@@ -485,7 +570,7 @@ msgstr ""
 "расстояние за пределами наибольшей допустимой длины матча ничего не "
 "возвращает без чтения."
 
-#: ../../source/historique.rst:83
+#: ../../source/historique.rst:96
 msgid ""
 "**Mode d'exécution des requêtes PostgreSQL** : "
 "``BLUNDERDB_POSTGRES_QUERY_EXEC_MODE`` le choisit ; par défaut "
@@ -497,7 +582,7 @@ msgstr ""
 "``cache_describe``, не оставляет именованных планов в памяти на "
 "соединениях пула."
 
-#: ../../source/historique.rst:84
+#: ../../source/historique.rst:97
 msgid ""
 "**Simulation d'un tournoi, verdict reproductible** (nicomaque 0.10.0) : "
 "``directions.simulate`` compte le travail du premier ``run``, sans "
@@ -513,7 +598,7 @@ msgstr ""
 "швейцарской системы по турам входит в подсчёт вместо ограничения числа "
 "туров."
 
-#: ../../source/historique.rst:85
+#: ../../source/historique.rst:98
 msgid ""
 "**Compatibilité** : une base qui a reçu une évaluation de pions de "
 "plusieurs sources (schéma 2.58.0) ou un résultat de match (schéma 2.59.0)"
@@ -525,7 +610,7 @@ msgstr ""
 "открывается в blunderDB 0.57.0 или более ранней версии; база, не "
 "получившая ни того ни другого, открывается."
 
-#: ../../source/historique.rst:86
+#: ../../source/historique.rst:99
 msgid ""
 "**Corrections notables** : la conversion de l'équité en chances de gagner"
 " le match donne les mêmes chiffres sur toutes les architectures (arm64 et"
@@ -535,7 +620,7 @@ msgstr ""
 "одинаковые числа на всех архитектурах (включая arm64 и современные "
 "amd64)."
 
-#: ../../source/historique.rst:87
+#: ../../source/historique.rst:100
 msgid ""
 "Voir :ref:`manuel_matchs`, :ref:`manuel_tournois`, "
 ":ref:`panneau_collections`, :ref:`metrique_trace_mwc`, :ref:`cli`, "
@@ -545,11 +630,11 @@ msgstr ""
 ":ref:`panneau_collections`, :ref:`metrique_trace_mwc`, :ref:`cli`, "
 ":ref:`api_reference` и :ref:`headless_postgres`."
 
-#: ../../source/historique.rst:90
+#: ../../source/historique.rst:103
 msgid "0.57.0 (2026-11-16)"
 msgstr "0.57.0 (2026-11-16)"
 
-#: ../../source/historique.rst:92
+#: ../../source/historique.rst:105
 msgid ""
 "**Coller un identifiant GNU Backgammon** : le collage et "
 "``positions.parseText`` lisent l'ID de position seul, l'ID de position "
@@ -567,7 +652,7 @@ msgstr ""
 "``gnubgid``), а текст без XGID, OGID и GNUbg ID отклоняется с указанием "
 "причины."
 
-#: ../../source/historique.rst:93
+#: ../../source/historique.rst:106
 msgid ""
 "**Recherche plus rapide sous PostgreSQL** : les filtres de blot se "
 "décident en SQL (quatre index partiels, migration 069), le filtre "
@@ -585,15 +670,15 @@ msgstr ""
 "условие. Нечитаемая форма фильтра блотов (``bo3``) теперь отклоняется, "
 "вместо того чтобы ничего не возвращать."
 
-#: ../../source/historique.rst:94
+#: ../../source/historique.rst:107
 msgid "Voir :ref:`manuel_eval`, :ref:`panneau_recherche` et :ref:`api_reference`."
 msgstr "См. :ref:`manuel_eval`, :ref:`panneau_recherche` и :ref:`api_reference`."
 
-#: ../../source/historique.rst:97
+#: ../../source/historique.rst:110
 msgid "0.56.0 (2026-11-13)"
 msgstr "0.56.0 (2026-11-13)"
 
-#: ../../source/historique.rst:99
+#: ../../source/historique.rst:112
 msgid ""
 "**La relation « proche » compte des jets légaux** : la distance de deux "
 "positions est le plus petit nombre de jets légaux qui mènent de la "
@@ -612,7 +697,7 @@ msgstr ""
 "позициями; порядок, который база не обслуживает, отклоняется. Класс, "
 "исключение матча цели и звёздчатая форма ``like*`` исчезают."
 
-#: ../../source/historique.rst:100
+#: ../../source/historique.rst:113
 msgid ""
 "**« like » ne se sert que dans une recherche classée, et se refuse "
 "ailleurs** : une requête portant ``like`` passée à une collection, à une "
@@ -646,7 +731,7 @@ msgstr ""
 " или ``like<2`` теперь означает 1 или 2 броска, то есть более широкий "
 "охват. Отказы сообщаются на языке интерфейса."
 
-#: ../../source/historique.rst:101
+#: ../../source/historique.rst:114
 msgid ""
 "**Confirmer une liste de propositions d'un coup, en mode serveur** : "
 "``directions.confirmProposals`` enregistre la liste telle que le "
@@ -660,7 +745,7 @@ msgstr ""
 "несут устойчивый код в ``error.details.reason`` (см. "
 ":ref:`headless_direction_gestures`)."
 
-#: ../../source/historique.rst:102
+#: ../../source/historique.rst:115
 msgid ""
 "**Recherche plus rapide sous PostgreSQL** : un filtre de structure "
 "combiné à un autre filtre lit sa page par une sonde bornée dans l'ordre "
@@ -678,7 +763,7 @@ msgstr ""
 "хронометрированных ходов), а вопрос импорта «есть ли у тенанта уже "
 "строки?» читается по ключу."
 
-#: ../../source/historique.rst:103
+#: ../../source/historique.rst:116
 msgid ""
 "**Un import ne retire plus les statistiques des matchs dont il partage "
 "une position** : les statistiques d'un match déjà calculé restent en "
@@ -688,7 +773,7 @@ msgstr ""
 " статистика уже подсчитанного матча остаётся на месте, а не "
 "пересчитывается первым читателем."
 
-#: ../../source/historique.rst:104
+#: ../../source/historique.rst:117
 msgid ""
 "**Dépannage de la lecture vidéo sous Linux** : avec ``gst-libav`` 1.28.9,"
 " le décodeur H.264 ``avdec_h264`` fait échouer les déplacements dans la "
@@ -699,7 +784,7 @@ msgstr ""
 "1.28.9 декодер H.264 ``avdec_h264`` приводит к сбою перемотки в видео; "
 "обходной путь (исключить этот декодер) описан в руководстве по матчам."
 
-#: ../../source/historique.rst:105
+#: ../../source/historique.rst:118
 msgid ""
 "Voir :ref:`panneau_recherche`, :ref:`panneau_collections`, "
 ":ref:`headless_direction_gestures`, :ref:`api_reference` et "
@@ -709,11 +794,11 @@ msgstr ""
 ":ref:`headless_direction_gestures`, :ref:`api_reference` и "
 ":ref:`manuel_matchs`."
 
-#: ../../source/historique.rst:108
+#: ../../source/historique.rst:121
 msgid "0.55.0 (2026-11-13)"
 msgstr "0.55.0 (2026-11-13)"
 
-#: ../../source/historique.rst:110
+#: ../../source/historique.rst:123
 msgid ""
 "**Une recherche se lit page après page, par un curseur** : en mode "
 "serveur, ``search.page`` et ``search.idsPage`` rendent une page de "
@@ -737,7 +822,7 @@ msgstr ""
 "331 мс до 6,3 мс; на стенде из 8,1 миллиона первая страница фильтра "
 "``E>50`` — с 1 461 мс до 43 мс."
 
-#: ../../source/historique.rst:111
+#: ../../source/historique.rst:124
 msgid ""
 "**Un tenant neuf s'importe vite dans une base PostgreSQL déjà grosse** : "
 "sous RLS, les statistiques de match, la lecture des analyses des "
@@ -753,15 +838,15 @@ msgstr ""
 " более чем 4,5 файла в секунду, а расчёт статистики матча — с 4 575 мс в "
 "среднем до 16 мс."
 
-#: ../../source/historique.rst:112
+#: ../../source/historique.rst:125
 msgid "Voir :ref:`api_reference`, :ref:`headless` et :ref:`cli`."
 msgstr "См. :ref:`api_reference`, :ref:`headless` и :ref:`cli`."
 
-#: ../../source/historique.rst:115
+#: ../../source/historique.rst:128
 msgid "0.54.0 (2026-11-13)"
 msgstr "0.54.0 (2026-11-13)"
 
-#: ../../source/historique.rst:117
+#: ../../source/historique.rst:130
 msgid ""
 "**Exporter sans la provenance** : ``blunderdb export "
 "--provenance=false``, comme ``\"omitProvenance\": true`` en mode serveur,"
@@ -781,7 +866,7 @@ msgstr ""
 "читал бы то, что остаётся в источнике, а комментарии уходят только по "
 "запросу ``--comments``."
 
-#: ../../source/historique.rst:118
+#: ../../source/historique.rst:131
 msgid ""
 "**Les gestes de nicomaque 0.9 en mode serveur** : sous ``serve "
 "--direction``, les routes ``directions.*`` servent la phase à appariement"
@@ -804,7 +889,7 @@ msgstr ""
 "«Судейство» называет форматы «швейцарская система по турам» и «ручная "
 "жеребьёвка», а также финальный плей-офф между группами."
 
-#: ../../source/historique.rst:119
+#: ../../source/historique.rst:132
 msgid ""
 "**Un tournoi qui a reçu un geste de nicomaque 0.9** (demi-exemption, "
 "remplacement ou échange d'inscrits, phase manuelle, suisse par rondes) ne"
@@ -816,7 +901,7 @@ msgstr ""
 "система по турам), не открывается в blunderDB 0.53.1 и более ранних "
 "версиях; база и список турниров в них по-прежнему открываются."
 
-#: ../../source/historique.rst:120
+#: ../../source/historique.rst:133
 msgid ""
 "**« Est-ce que je joue ? » par l'API** : ``directions.statuses`` rend, "
 "pour chaque inscrit, son état en codes (``playing``, ``bye``, "
@@ -830,7 +915,7 @@ msgstr ""
 "матча, стол и соперника; ``directions.freeSlots`` возвращает места "
 "свободного тура, которые ещё может занять опоздавший."
 
-#: ../../source/historique.rst:121
+#: ../../source/historique.rst:134
 msgid ""
 "**Simuler un format de tournoi** : ``directions.simulate`` joue une "
 "configuration sans tournoi ni base, pour un effectif et un nombre de "
@@ -845,7 +930,7 @@ msgstr ""
 "окончание, число столов, при котором никто не ждёт, и число матчей на "
 "игрока. Слишком тяжёлый запрос отклоняется до любых вычислений."
 
-#: ../../source/historique.rst:122
+#: ../../source/historique.rst:135
 msgid ""
 "Corrections notables : un geste de transcription illisible ou refusé rend"
 " ``400`` avec son motif, et non plus ``500`` ; le démon est construit "
@@ -855,7 +940,7 @@ msgstr ""
 "возвращает ``400`` с причиной, а не ``500``; демон собирается с Go "
 "1.27.4, где исправлена уязвимость ``net/http`` (GO-2026-6859)."
 
-#: ../../source/historique.rst:123
+#: ../../source/historique.rst:136
 msgid ""
 "Voir :ref:`headless_direction`, :ref:`headless_direction_gestures`, "
 ":ref:`headless` et :ref:`cli`."
@@ -863,11 +948,11 @@ msgstr ""
 "См. :ref:`headless_direction`, :ref:`headless_direction_gestures`, "
 ":ref:`headless` и :ref:`cli`."
 
-#: ../../source/historique.rst:126
+#: ../../source/historique.rst:139
 msgid "0.53.0 (2026-11-09)"
 msgstr "0.53.0 (2026-11-09)"
 
-#: ../../source/historique.rst:128
+#: ../../source/historique.rst:141
 msgid ""
 "**Abandonner face à un double en transcription** : quand un double attend"
 " sa réponse, le bouton « Abandonner » s'allume pour le répondant, comme "
@@ -881,7 +966,7 @@ msgstr ""
 "каким он был до предложения, как и пас; сдача матча отдаёт партию и матч "
 "удвоившему."
 
-#: ../../source/historique.rst:129
+#: ../../source/historique.rst:142
 msgid ""
 "**Un clic dans la transcription pose le curseur d'un seul geste** : "
 "cliquer une cellule, ou appuyer sur *Fin*, déplace le curseur en un appel"
@@ -895,7 +980,7 @@ msgstr ""
 "турнирного матча щелчок занимал больше секунды. Отмена откатывает его за "
 "один шаг."
 
-#: ../../source/historique.rst:130
+#: ../../source/historique.rst:143
 msgid ""
 "Corrections notables : sous PostgreSQL sans ``--rls``, le mode par défaut"
 " de ``serve``, les statistiques par match, le score des coups à l'import,"
@@ -910,15 +995,15 @@ msgstr ""
 "начиная с 0.51.0 эти запросы просматривали индекс всех арендаторов, и "
 "импорт замедлялся по мере роста базы."
 
-#: ../../source/historique.rst:131
+#: ../../source/historique.rst:144
 msgid "Voir :ref:`panneau_transcription`, :ref:`raccourcis` et :ref:`headless`."
 msgstr "См. :ref:`panneau_transcription`, :ref:`raccourcis` и :ref:`headless`."
 
-#: ../../source/historique.rst:134
+#: ../../source/historique.rst:147
 msgid "0.52.0 (2026-11-09)"
 msgstr "0.52.0 (2026-11-09)"
 
-#: ../../source/historique.rst:136
+#: ../../source/historique.rst:149
 msgid ""
 "**gammonNet v1.9.0 analyse avec un réseau plus grand** : le réseau par "
 "défaut est ``strehl-prob5-768-768-256-256-256``, à cinq couches ; "
@@ -934,7 +1019,7 @@ msgstr ""
 "``blunderdb analyze --stale`` или строка *Устаревшие анализы gammonNet* "
 "на вкладке *Обслуживание* перезаписывает его."
 
-#: ../../source/historique.rst:137
+#: ../../source/historique.rst:150
 msgid ""
 "**Le livre d'ouverture est calculé au réglage standard** : ses 32 scores "
 "(13 836 lignes) sont des rollouts de 1296 parties tronquées à 11 demi-"
@@ -949,7 +1034,7 @@ msgstr ""
 "``openingbook.*`` судят по этой книге; на двадцати счетах сетки меняются "
 "28 лучших дебютных ходов из 480, каждый раз на соседний ход."
 
-#: ../../source/historique.rst:138
+#: ../../source/historique.rst:151
 msgid ""
 "**Une vidéo mal multiplexée se répare d'elle-même** : quand le volet "
 "vidéo trouve des sauts fautifs dans un fichier .webm ou .mkv et que "
@@ -963,7 +1048,7 @@ msgstr ""
 " оригиналом или в кэш blunderDB и воспроизводит её с того же момента; "
 "оригинал не изменяется и не удаляется."
 
-#: ../../source/historique.rst:139
+#: ../../source/historique.rst:152
 msgid ""
 "**Abandonner le match en transcription** : « Le match » rejoint les "
 "options d'abandon (*r* puis *4*, aussi dans le mode théâtre). "
@@ -977,7 +1062,7 @@ msgstr ""
 "действие не может последовать, а матч записывается и экспортируется как "
 "выигранный им."
 
-#: ../../source/historique.rst:140
+#: ../../source/historique.rst:153
 msgid ""
 "Corrections notables : une synchronisation dont l'envoi est arrêté par le"
 " plafond du serveur (402) n'affiche plus « Jamais synchronisée » quand la"
@@ -989,7 +1074,7 @@ msgstr ""
 "получение завершилось, а ошибка записи даты больше не скрывает причину "
 "остановки."
 
-#: ../../source/historique.rst:141
+#: ../../source/historique.rst:154
 msgid ""
 "Voir :ref:`panneau_matchs`, :ref:`manuel_entrainement`, :ref:`raccourcis`"
 " et :ref:`synchronisation_distante`."
@@ -997,11 +1082,11 @@ msgstr ""
 "См. :ref:`panneau_matchs`, :ref:`manuel_entrainement`, :ref:`raccourcis` "
 "и :ref:`synchronisation_distante`."
 
-#: ../../source/historique.rst:144
+#: ../../source/historique.rst:157
 msgid "0.51.0 (2026-11-06)"
 msgstr "0.51.0 (2026-11-06)"
 
-#: ../../source/historique.rst:146
+#: ../../source/historique.rst:159
 msgid ""
 "**Une bibliothèque se synchronise avec un serveur distant** : l'onglet "
 "*Synchronisation* des paramètres reçoit l'adresse du serveur et un jeton "
@@ -1015,7 +1100,7 @@ msgstr ""
 "запуске или по требованию, по одной странице, побеждает самое свежее "
 "изменение."
 
-#: ../../source/historique.rst:147
+#: ../../source/historique.rst:160
 msgid ""
 "**Une limite du serveur n'arrête pas la réception** : quand un plafond "
 "refuse l'envoi, l'envoi seul est suspendu et la réception continue ; un "
@@ -1028,7 +1113,7 @@ msgstr ""
 " отклоняет, остаётся в списке на вкладке и повторяется при каждом "
 "проходе."
 
-#: ../../source/historique.rst:148
+#: ../../source/historique.rst:161
 msgid ""
 "**La recherche tient sur de très grosses bases** : une page se coupe sur "
 "les identifiants, ``search.countUpTo`` compte jusqu'à une borne, et de "
@@ -1039,7 +1124,7 @@ msgstr ""
 "идентификаторам, ``search.countUpTo`` считает до границы, а новые индексы"
 " обслуживают фильтры ошибки, полной доски и доли выигрышей."
 
-#: ../../source/historique.rst:149
+#: ../../source/historique.rst:162
 msgid ""
 "**Une base occupe environ moitié moins de place sur PostgreSQL** : "
 "colonnes plus étroites, journal des changements plus léger, clés "
@@ -1050,7 +1135,7 @@ msgstr ""
 " более лёгкий журнал изменений, объединённые ключи; при запуске миграция "
 "переписывает не более 512 МБ позиций и называет ручной шаг сверх этого."
 
-#: ../../source/historique.rst:150
+#: ../../source/historique.rst:163
 msgid ""
 "**Le journal se coupe pour un tenant** : ``changeset.setJournalOff`` "
 "l'arrête, ``changeset.export`` et ``changeset.import`` refusent alors par"
@@ -1061,7 +1146,7 @@ msgstr ""
 "отказывают с именованным кодом, а повторное включение возвращает объекты,"
 " записанные во время перерыва."
 
-#: ../../source/historique.rst:151
+#: ../../source/historique.rst:164
 msgid ""
 "**La base reste au schéma 2.57.0** : les migrations de cette version "
 "ajoutent des index et rétrécissent des colonnes, sans changer le format "
@@ -1070,7 +1155,7 @@ msgstr ""
 "**База остаётся на схеме 2.57.0**: миграции этой версии добавляют индексы"
 " и сужают столбцы, не меняя формат файла SQLite."
 
-#: ../../source/historique.rst:152
+#: ../../source/historique.rst:165
 msgid ""
 "Voir :ref:`synchronisation_distante`, :ref:`headless` et "
 ":ref:`annexe_db_migration`."
@@ -1078,11 +1163,11 @@ msgstr ""
 "См. :ref:`synchronisation_distante`, :ref:`headless` и "
 ":ref:`annexe_db_migration`."
 
-#: ../../source/historique.rst:155
+#: ../../source/historique.rst:168
 msgid "0.50.0 (2026-11-05)"
 msgstr "0.50.0 (2026-11-05)"
 
-#: ../../source/historique.rst:157
+#: ../../source/historique.rst:170
 msgid ""
 "**La synchronisation couvre les paquets Anki, les transcriptions et les "
 "tournois** : ``changeset.export`` et ``changeset.import`` les échangent, "
@@ -1094,7 +1179,7 @@ msgstr ""
 "карточками колоды, в обе стороны; при равенстве дат каждое семейство "
 "сливается без потери данных."
 
-#: ../../source/historique.rst:158
+#: ../../source/historique.rst:171
 msgid ""
 "**Un transfert sans commentaires n'emporte rien de privé** : ni la note "
 "du match, ni le nom du fichier source, ni le lien vidéo, ni le "
@@ -1104,7 +1189,7 @@ msgstr ""
 "матчу, ни имя исходного файла, ни ссылка на видео, ни комментарий турнира"
 " не передаются; полученный матч по-прежнему импортируется."
 
-#: ../../source/historique.rst:159
+#: ../../source/historique.rst:172
 msgid ""
 "**L'import est plus rapide sur PostgreSQL** : les positions s'écrivent "
 "par groupes, les statistiques d'un tenant se calculent dès ses premières "
@@ -1114,7 +1199,7 @@ msgstr ""
 "статистика тенанта считается с его первых строк, а позиция, рождённая из "
 "матча с датой, получает дату матча."
 
-#: ../../source/historique.rst:160
+#: ../../source/historique.rst:173
 msgid ""
 "**Chaque fichier refusé à l'import porte un code stable** "
 "(``unknown_format``, ``truncated``, ``corrupt``, ``too_large``, ``empty``"
@@ -1127,7 +1212,7 @@ msgstr ""
 "отчёт в последнем событии, а ``imports.report`` возвращает его по "
 "запросу."
 
-#: ../../source/historique.rst:161
+#: ../../source/historique.rst:174
 msgid ""
 "**L'espace disque des imports est borné** : l'option ``--max-spool-"
 "bytes`` fixe ce que les imports en cours occupent ensemble, et une "
@@ -1137,11 +1222,11 @@ msgstr ""
 "bytes`` задаёт, сколько вместе занимают текущие импорты, а архив, "
 "превышающий заявленное, отклоняется и стирается."
 
-#: ../../source/historique.rst:162
+#: ../../source/historique.rst:175
 msgid "**Une base passe au schéma 2.57.0** à l'ouverture."
 msgstr "**База переходит на схему 2.57.0** при открытии."
 
-#: ../../source/historique.rst:163
+#: ../../source/historique.rst:176
 msgid ""
 "Corrections notables : ``imports.batch`` garde le tenant de la requête "
 "sous RLS, et ``imports.db`` n'échoue plus avec ``out of shared memory`` "
@@ -1151,15 +1236,15 @@ msgstr ""
 " а ``imports.db`` больше не завершается ошибкой ``out of shared memory`` "
 "на большой базе."
 
-#: ../../source/historique.rst:164 ../../source/historique.rst:175
+#: ../../source/historique.rst:177 ../../source/historique.rst:188
 msgid "Voir :ref:`headless` et :ref:`annexe_db_migration`."
 msgstr "См. :ref:`headless` и :ref:`annexe_db_migration`."
 
-#: ../../source/historique.rst:167
+#: ../../source/historique.rst:180
 msgid "0.49.0 (2026-11-02)"
 msgstr "0.49.0 (2026-11-02)"
 
-#: ../../source/historique.rst:169
+#: ../../source/historique.rst:182
 msgid ""
 "**Deux bibliothèques se synchronisent** : côté serveur, "
 "``changeset.export`` et ``changeset.import`` échangent ce qui a changé "
@@ -1173,7 +1258,7 @@ msgstr ""
 "запись. Перемещение в корзину передаётся как таковое, а заметка, "
 "перезаписанная импортом, остаётся в корзине."
 
-#: ../../source/historique.rst:170
+#: ../../source/historique.rst:183
 msgid ""
 "**Un dessin par position** : ``positions.drawing`` et "
 "``positions.setDrawing`` posent des flèches et des cases sur une position"
@@ -1183,7 +1268,7 @@ msgstr ""
 "``positions.setDrawing`` размещают на позиции стрелки и квадраты; при "
 "экспорте и передаче рисунок следует за комментариями."
 
-#: ../../source/historique.rst:171
+#: ../../source/historique.rst:184
 msgid ""
 "**Le lien d'une variante à son origine** : ``positions.setDerivedFrom``, "
 "``positions.derivedFrom`` et ``positions.variants`` disent de quelle "
@@ -1193,7 +1278,7 @@ msgstr ""
 "``positions.derivedFrom`` и ``positions.variants`` показывают, из какой "
 "позиции возникла другая и каким ходом."
 
-#: ../../source/historique.rst:172
+#: ../../source/historique.rst:185
 msgid ""
 "**Un libellé par position** : ``positions.publicId`` et "
 "``positions.setPublicId`` posent un libellé que blunderDB conserve sans "
@@ -1203,7 +1288,7 @@ msgstr ""
 "``positions.setPublicId`` задают метку, которую blunderDB хранит, не "
 "интерпретируя её."
 
-#: ../../source/historique.rst:173
+#: ../../source/historique.rst:186
 msgid ""
 "**Leçons et articles en Markdown** : ``lessons.markdown`` les exporte en "
 "texte, ``lessons.importMarkdown`` les crée depuis ce texte."
@@ -1211,7 +1296,7 @@ msgstr ""
 "**Уроки и статьи в Markdown**: ``lessons.markdown`` экспортирует их в "
 "текст, ``lessons.importMarkdown`` создаёт их из этого текста."
 
-#: ../../source/historique.rst:174
+#: ../../source/historique.rst:187
 msgid ""
 "**Une base passe au schéma 2.55.0** à l'ouverture, et tient désormais un "
 "journal de ses changements."
@@ -1219,11 +1304,11 @@ msgstr ""
 "**База при открытии переходит на схему 2.55.0** и теперь ведёт журнал "
 "своих изменений."
 
-#: ../../source/historique.rst:178
+#: ../../source/historique.rst:191
 msgid "0.48.0 (2026-11-02)"
 msgstr "0.48.0 (2026-11-02)"
 
-#: ../../source/historique.rst:180
+#: ../../source/historique.rst:193
 msgid ""
 "**L'application s'ouvre directement** : l'écran d'accueil disparaît ; le "
 "plateau et les panneaux sont visibles dès le démarrage, avec ou sans "
@@ -1235,7 +1320,7 @@ msgstr ""
 "снова сама, а база создаётся или открывается из панели инструментов или "
 "из пустого состояния панели."
 
-#: ../../source/historique.rst:181
+#: ../../source/historique.rst:194
 msgid ""
 "**Des propositions pour les métadonnées d'une transcription** : "
 "l'événement et le lieu proposent ceux des matchs déjà en base, les plus "
@@ -1250,7 +1335,7 @@ msgstr ""
 "своё поле, а текст, отсутствующий в списке, остаётся как набран. В "
 "серверном режиме ``stats.matchTextValues`` возвращает эти значения."
 
-#: ../../source/historique.rst:182
+#: ../../source/historique.rst:195
 msgid ""
 "**Import d'une base .db : compter, puis plafonner** : ``import --type "
 "database --analyze`` et ``imports.dbAnalyze`` comptent ce que le fichier "
@@ -1271,7 +1356,7 @@ msgstr ""
 "событие ``progress`` у ``imports.db`` объявляет ``total_positions`` до "
 "любой записи."
 
-#: ../../source/historique.rst:183
+#: ../../source/historique.rst:196
 msgid ""
 "**Côté serveur** : ``training.generateBearoff`` et "
 "``training.generateEvaluation`` rendent des questions des exercices "
@@ -1289,7 +1374,7 @@ msgstr ""
 " 10), а «Оценка» проходит через общих работников анализа и учитывается в "
 "квоте анализа."
 
-#: ../../source/historique.rst:184
+#: ../../source/historique.rst:197
 msgid ""
 "``transcribe --marks`` écrit le manifeste des repères des vidéos locales,"
 " une ligne JSON par coup horodaté ; ``--match`` le limite à un match."
@@ -1298,7 +1383,7 @@ msgstr ""
 " одна строка JSON на ход с отметкой времени; ``--match`` ограничивает его"
 " одним матчем."
 
-#: ../../source/historique.rst:185
+#: ../../source/historique.rst:198
 msgid ""
 "**Un identifiant stable pour chaque objet** : la base passe au schéma "
 "2.51.0 ; chaque position, commentaire, collection, match, transcription, "
@@ -1312,7 +1397,7 @@ msgstr ""
 "Две базы, перенесённые по отдельности, дают одному объекту один и тот же "
 "UUID."
 
-#: ../../source/historique.rst:186
+#: ../../source/historique.rst:199
 msgid ""
 "**Corrections notables** : un match gagné en transcription n'attend plus "
 "rien : le plateau reste sur la dernière position, au score de la dernière"
@@ -1336,15 +1421,15 @@ msgstr ""
 "позиция, коллекция или комментарий, восстановленные из корзины, получают "
 "обратно свой UUID."
 
-#: ../../source/historique.rst:187
+#: ../../source/historique.rst:200
 msgid "Voir :ref:`panneau_matchs`, :ref:`cli` et :ref:`headless`."
 msgstr "См. :ref:`panneau_matchs`, :ref:`cli` и :ref:`headless`."
 
-#: ../../source/historique.rst:190
+#: ../../source/historique.rst:203
 msgid "0.47.0 (2026-10-26)"
 msgstr "0.47.0 (2026-10-26)"
 
-#: ../../source/historique.rst:192
+#: ../../source/historique.rst:205
 msgid ""
 "**Une base ouverte par 0.47.0 ne sert plus aux versions antérieures** : "
 "elle passe au schéma 2.50.0, sans retour, et n'est plus utilisable avec "
@@ -1359,7 +1444,7 @@ msgstr ""
 "открытием, если она ещё нужна вам в старой версии. Миграция пересчитывает"
 " столбцы анализа и ходов всей базы (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:193
+#: ../../source/historique.rst:206
 msgid ""
 "**La migration se suit et s'annule** : avec *CTRL-O* comme dans un "
 "nouveau groupe, la barre d'état affiche l'étape en cours et sa "
@@ -1371,7 +1456,7 @@ msgstr ""
 "отменяет миграцию. После отменённого или неудачного открытия *CTRL-O* "
 "снова открывает библиотеку, которая была в группе."
 
-#: ../../source/historique.rst:194
+#: ../../source/historique.rst:207
 msgid ""
 "**Une base plus récente que le binaire est refusée** : chaque base note "
 "la version de schéma minimale qu'un blunderDB doit lire pour l'ouvrir ; "
@@ -1385,7 +1470,7 @@ msgstr ""
 "открывать, а импорт отклоняет слишком новый источник, с переведённым "
 "сообщением, где указана требуемая версия. База остаётся нетронутой."
 
-#: ../../source/historique.rst:195
+#: ../../source/historique.rst:208
 msgid ""
 "**Recherche par distance au gain** : ``aw`` borne les points qu'il reste "
 "au joueur pour gagner le match, ``AW`` ceux de l'adversaire, quelle que "
@@ -1399,7 +1484,7 @@ msgstr ""
 "партию Кроуфорда, ``pcr`` — партии после неё. В командной строке: "
 "``--away``, ``--opponent-away`` и ``--crawford game|post``."
 
-#: ../../source/historique.rst:196
+#: ../../source/historique.rst:209
 msgid ""
 "**Recherche par difficulté de la décision** : ``mg`` borne l'écart, en "
 "millipoints, entre le meilleur choix et le suivant dans l'analyse "
@@ -1412,7 +1497,7 @@ msgstr ""
 "близкое решение, ``mg>100``: очевидное); ``E<1 mg<20`` отбирает хорошо "
 "сыгранные близкие решения. В командной строке: ``--margin``."
 
-#: ../../source/historique.rst:197
+#: ../../source/historique.rst:210
 msgid ""
 "**Les écritures d'un autre programme sont relues** : ce que ``blunderdb``"
 " en ligne de commande ou un démon ``serve`` écrit dans une bibliothèque "
@@ -1424,7 +1509,7 @@ msgstr ""
 "появляется в интерфейсе, когда окно возвращается на передний план, или "
 "через несколько секунд после окончания записи."
 
-#: ../../source/historique.rst:198
+#: ../../source/historique.rst:211
 msgid ""
 "**Retraits** : la base d'exemple (commande ``demo``) et les visites "
 "guidées (commande ``tour``) ; le bouton *Noter les coups* de l'onglet "
@@ -1437,7 +1522,7 @@ msgstr ""
 "errors`` и маршрут ``matches.scoreMoves``, ставшие ненужными, поскольку "
 "ошибка сыгранного хода поддерживается при каждой записи."
 
-#: ../../source/historique.rst:199
+#: ../../source/historique.rst:212
 msgid ""
 "**Corrections notables** : une décision de videau compte une fois, quelle"
 " que soit sa graphie (« Double No » est lu comme pas de double) ; les "
@@ -1460,7 +1545,7 @@ msgstr ""
 " режиме сервера ведут себя как приложение; в PostgreSQL запись, "
 "отклонённая для арендатора, возвращает свою ошибку."
 
-#: ../../source/historique.rst:200
+#: ../../source/historique.rst:213
 msgid ""
 "Voir :ref:`cmd_mode`, :ref:`groupes_bibliotheques` et "
 ":ref:`cli_bibliotheque_chapitre`."
@@ -1468,11 +1553,11 @@ msgstr ""
 "См. :ref:`cmd_mode`, :ref:`groupes_bibliotheques` и "
 ":ref:`cli_bibliotheque_chapitre`."
 
-#: ../../source/historique.rst:203
+#: ../../source/historique.rst:216
 msgid "0.46.0 (2026-10-23)"
 msgstr "0.46.0 (2026-10-23)"
 
-#: ../../source/historique.rst:205
+#: ../../source/historique.rst:218
 msgid ""
 "**gammonNet v1.8.1, en demi-précision** : le réseau embarqué est stocké "
 "en float16 (format BGN6) et l'application pèse 1,1 Mo de moins. Le moteur"
@@ -1486,7 +1571,7 @@ msgstr ""
 "``blunderdb analyze --stale`` или строка *Устаревшие анализы gammonNet* "
 "на вкладке *Обслуживание* перезаписывает его."
 
-#: ../../source/historique.rst:206
+#: ../../source/historique.rst:219
 msgid ""
 "**Les mêmes évaluations sur toutes les machines** : une analyse gammonNet"
 " donne le même résultat au bit près sur un processeur x86-64 ou ARM "
@@ -1495,7 +1580,7 @@ msgstr ""
 "**Одни и те же оценки на любой машине**: анализ gammonNet даёт бит в бит "
 "один и тот же результат на процессоре x86-64 или ARM (arm64)."
 
-#: ../../source/historique.rst:207
+#: ../../source/historique.rst:220
 msgid ""
 "**Le panneau Autres bases** (*CTRL-MAJ-A*, qui remplace l'onglet "
 "Ailleurs) est le poste d'échange entre les bases ouvertes : pour chacune,"
@@ -1515,7 +1600,7 @@ msgstr ""
 "*Отправить* контекстного меню кладут в него позиции, матчи и турниры, "
 "которые копируются разом в выбранную базу назначения."
 
-#: ../../source/historique.rst:208
+#: ../../source/historique.rst:221
 msgid ""
 "**Le panneau Autres bases suit la sélection** : pour le match, le "
 "tournoi, la collection ou la leçon sélectionné dans son panneau, il dit "
@@ -1531,7 +1616,7 @@ msgstr ""
 "``--collection`` или ``--lesson`` и маршрут ``across.objectElsewhere`` "
 "отвечают так же."
 
-#: ../../source/historique.rst:209
+#: ../../source/historique.rst:222
 msgid ""
 "**Annuler une copie** : chaque copie de la session entre deux bases — "
 "position, match, tournoi, collection ou lot — s'annule depuis la barre "
@@ -1544,7 +1629,7 @@ msgstr ""
 "копию (n)*), начиная с самой недавней. Отмена убирает только то, что "
 "создала копия, и отклоняется, если созданное с тех пор изменилось."
 
-#: ../../source/historique.rst:210
+#: ../../source/historique.rst:223
 msgid ""
 "**L'écran partagé coupe la seule zone du plateau en deux** : chaque volet"
 " garde sa base et son côté, le volet actif est cerné de sa couleur et "
@@ -1558,7 +1643,7 @@ msgstr ""
 "перетаскивание позиции из одной половины в другую копирует её, а панели и"
 " строка состояния следуют за активной базой."
 
-#: ../../source/historique.rst:211
+#: ../../source/historique.rst:224
 msgid ""
 "**Le menu contextuel en sous-menus** : le plateau et les lignes des "
 "panneaux Matchs, Tournois et Collections tirent leurs actions d'un même "
@@ -1578,7 +1663,7 @@ msgstr ""
 "позиция. ``blunderdb gnubgid`` и маршрут ``positions.gnubgId`` вычисляют "
 "тот же ID."
 
-#: ../../source/historique.rst:212
+#: ../../source/historique.rst:225
 msgid ""
 "**Les onglets** : quand ils ne tiennent plus dans la largeur, la rangée "
 "défile entre deux flèches, un dégradé marque le bord où des onglets sont "
@@ -1592,7 +1677,7 @@ msgstr ""
 "вкладки меняет порядок видов её группы, перетаскивание заголовка группы "
 "перемещает всю группу."
 
-#: ../../source/historique.rst:213
+#: ../../source/historique.rst:226
 msgid ""
 "**CTRL-S enregistre aussi l'évaluation gammonNet affichée** dans le "
 "panneau Eval : le verdict du plateau (les coups avec des dés, le videau "
@@ -1603,7 +1688,7 @@ msgstr ""
 " для доски (ходы, если заданы кости, иначе куб) записывается вместе с "
 "позицией; анализ, который уже есть в базе, сохраняется как есть."
 
-#: ../../source/historique.rst:214
+#: ../../source/historique.rst:227
 msgid ""
 "**Les nombres de Neil exacts pour chaque n de 3 à 25** dans le panneau "
 "Données de référence, en fraction exacte, les points d'ancrage en "
@@ -1613,7 +1698,7 @@ msgstr ""
 "данные», точной дробью, опорные точки прямым шрифтом, интерполированные "
 "значения курсивом."
 
-#: ../../source/historique.rst:215
+#: ../../source/historique.rst:228
 msgid ""
 "**Transcription** : les coups candidats d'un jet sont tous ses coups "
 "légaux, classés au 0-ply ; le bouton *Importer* (touche *i* dans la liste"
@@ -1630,7 +1715,7 @@ msgstr ""
 "сервером, содержит ``video_source``, метки и длительности каждого "
 "действия."
 
-#: ../../source/historique.rst:216
+#: ../../source/historique.rst:229
 msgid ""
 "**Statistiques** : ``stats summary`` et la route ``stats.summary`` "
 "rendent la part publique des statistiques, sans les pires erreurs ni le "
@@ -1647,7 +1732,7 @@ msgstr ""
 "ограничивается списком матчей; маршрут ``stats.tournamentReviews`` "
 "возвращает разбор нескольких игроков за один вызов."
 
-#: ../../source/historique.rst:217
+#: ../../source/historique.rst:230
 msgid ""
 "**Direction de tournoi** : un barème de prix en pourcentages se paie à "
 "l'unité, par la méthode du plus fort reste ; la somme versée égale la "
@@ -1659,7 +1744,7 @@ msgstr ""
 "округлённой сумме к распределению, а убывающая шкала даёт убывающие "
 "суммы."
 
-#: ../../source/historique.rst:218
+#: ../../source/historique.rst:231
 msgid ""
 "Corrections notables : la commande ``#tag`` garde le ``#`` dans le "
 "commentaire, que la recherche ``#tag`` retrouve, et n'ajoute pas une "
@@ -1672,7 +1757,7 @@ msgstr ""
 "учётом конечной пунктуации; дозаполнение анализа заполняет и позиции, чей"
 " анализ содержит только XGID; смена группы больше не сдвигает доску."
 
-#: ../../source/historique.rst:219
+#: ../../source/historique.rst:232
 msgid ""
 "Voir :ref:`vue_ailleurs`, :ref:`menu_contextuel_actions`, "
 ":ref:`groupes_bibliotheques`, :ref:`panneau_reference`, "
@@ -1684,11 +1769,11 @@ msgstr ""
 ":ref:`panneau_transcription`, :ref:`diriger_un_tournoi` и "
 ":ref:`headless`."
 
-#: ../../source/historique.rst:222
+#: ../../source/historique.rst:235
 msgid "0.45.0 (2026-10-21)"
 msgstr "0.45.0 (2026-10-21)"
 
-#: ../../source/historique.rst:224
+#: ../../source/historique.rst:237
 msgid ""
 "**Plusieurs bibliothèques ouvertes à la fois** : chaque base ouverte "
 "forme un groupe d'onglets, sous un en-tête de couleur au nom du fichier, "
@@ -1706,7 +1791,7 @@ msgstr ""
 "импорт, отслеживаемая папка и пакетный анализ остаются привязаны к "
 "библиотеке, которая их запустила."
 
-#: ../../source/historique.rst:225
+#: ../../source/historique.rst:238
 msgid ""
 "**Copier d'une bibliothèque dans une autre** : une position, un match, "
 "une collection ou une leçon glissés sur l'en-tête d'un autre groupe y "
@@ -1720,7 +1805,7 @@ msgstr ""
 "запрещает запись в группу. ``blunderdb transfer`` и серверный маршрут "
 "``across.transferPull`` делают ту же копию."
 
-#: ../../source/historique.rst:226
+#: ../../source/historique.rst:239
 msgid ""
 "**L'onglet Ailleurs** (*CTRL-MAJ-A*) dit, pour la position affichée, ce "
 "qu'en savent les autres bibliothèques ouvertes : analyse jugée avec les "
@@ -1738,7 +1823,7 @@ msgstr ""
 "на месте доски. ``blunderdb elsewhere`` и маршрут "
 "``across.positionElsewhere`` — её другие формы."
 
-#: ../../source/historique.rst:227
+#: ../../source/historique.rst:240
 msgid ""
 "**L'écran partagé** (bouton ◫, *CTRL-MAJ-X*) montre côte à côte le groupe"
 " actif et une visionneuse en lecture d'un autre groupe ; cliquer la "
@@ -1748,7 +1833,7 @@ msgstr ""
 "активную группу и просмотрщик только для чтения другой группы; щелчок по "
 "просмотрщику меняет их роли. Нужна ширина не менее 1280 пикселей."
 
-#: ../../source/historique.rst:228
+#: ../../source/historique.rst:241
 msgid ""
 "**Synchroniser deux machines** : un export incrémental (``export --type "
 "database --incremental``) n'emporte que ce qui est entré depuis le "
@@ -1760,7 +1845,7 @@ msgstr ""
 "предыдущего экспорта в то же место назначения, а отслеживаемая папка "
 "объединяет поступающие в неё ``.db``; передаются только добавления."
 
-#: ../../source/historique.rst:229
+#: ../../source/historique.rst:242
 msgid ""
 "**Les commentaires sont signés** : un export marqué signe vos "
 "commentaires avec votre identité d'émetteur, et le destinataire voit qui "
@@ -1770,7 +1855,7 @@ msgstr ""
 "комментарии вашей идентичностью издателя, и получатель видит, кто их "
 "написал и не были ли они изменены по пути."
 
-#: ../../source/historique.rst:230
+#: ../../source/historique.rst:243
 msgid ""
 "**Le panneau Données de référence** (*CTRL-MAJ-R*, ``reference`` ou "
 "``ref``) réunit la MET Kazaross-XG2, les points de prise (videaux 2 et 4,"
@@ -1785,7 +1870,7 @@ msgstr ""
 " числа Нила, доступные без базы и во время Дуэли; ``met``, ``tp…`` и "
 "``gv…`` открывают её на своей вкладке."
 
-#: ../../source/historique.rst:231
+#: ../../source/historique.rst:244
 msgid ""
 "**Exporter une leçon en page HTML autonome** : titre, description, chaque"
 " étape avec son texte et son plateau, l'analyse de chaque position "
@@ -1797,7 +1882,7 @@ msgstr ""
 "викторины. ``blunderdb lesson export --html`` и серверный маршрут "
 "``lessons.html`` создают ту же страницу."
 
-#: ../../source/historique.rst:232
+#: ../../source/historique.rst:245
 msgid ""
 "**Afficher un tournoi sur le réseau du club** : la Direction lance un "
 "petit serveur web et montre le QR code de son adresse ; un téléphone du "
@@ -1809,7 +1894,7 @@ msgstr ""
 "сеткой, парами, результатами и турнирной таблицей, обновляемыми каждые "
 "десять секунд."
 
-#: ../../source/historique.rst:233
+#: ../../source/historique.rst:246
 msgid ""
 "**Plus rapide** : l'application démarre plus vite et pèse 3 Mo de moins ;"
 " le filtre E (``E>n``) ne compare plus les coups de chaque position, les "
@@ -1829,7 +1914,7 @@ msgstr ""
 "матчам базы вычисляется в фоне сразу после открытия, вместо того чтобы "
 "задерживать панели «Турниры» и «Игроки»."
 
-#: ../../source/historique.rst:234
+#: ../../source/historique.rst:247
 msgid ""
 "**Côté serveur** : ``blunderdb call --backend remote --dsn <URL>`` fait "
 "passer ses appels par un démon ``serve`` ; le démon SQLite chargé répond "
@@ -1847,7 +1932,7 @@ msgstr ""
 "(семь минут вместо более чем двух часов на базе из 300 000 позиций) и "
 "переносит также уроки."
 
-#: ../../source/historique.rst:235
+#: ../../source/historique.rst:248
 msgid ""
 "Corrections notables : rouvrir l'aide intégrée ne la fige plus ; "
 "modifier, supprimer ou figer une collection inexistante est refusé comme "
@@ -1857,7 +1942,7 @@ msgstr ""
 "замораживает; изменение, удаление или заморозку несуществующей коллекции "
 "сервер отклоняет как таковые, а не внутренней ошибкой или ложным успехом."
 
-#: ../../source/historique.rst:236
+#: ../../source/historique.rst:249
 msgid ""
 "Voir :ref:`groupes_bibliotheques`, :ref:`vue_ailleurs`, "
 ":ref:`synchroniser_deux_machines`, :ref:`panneau_reference`, "
@@ -1869,11 +1954,11 @@ msgstr ""
 ":ref:`lecons`, :ref:`diriger_un_tournoi`, :ref:`cli_transfer` и "
 ":ref:`headless`."
 
-#: ../../source/historique.rst:239
+#: ../../source/historique.rst:252
 msgid "0.44.0 (2026-10-19)"
 msgstr "0.44.0 (2026-10-19)"
 
-#: ../../source/historique.rst:241
+#: ../../source/historique.rst:254
 msgid ""
 "**L'exercice Ouverture choisit entre deux modes** : *Catégories XG* "
 "(*Money*, *DMP*, *Gammon save* et *Gammon go*, combinables) ou *Match en "
@@ -1887,7 +1972,7 @@ msgstr ""
 " счетов матча до 5 очков, включая DMP и игры Crawford, без выбора счёта. "
 "Сетка счётов матча до 7 исчезает."
 
-#: ../../source/historique.rst:242
+#: ../../source/historique.rst:255
 msgid ""
 "**Le livre d'ouverture embarqué tient les vingt-cinq scores d'un match en"
 " 5** : 2-4, 4-2, 2-5, 5-2, 3-5, 5-3 et les parties Crawford 1-3, 3-1, 1-5"
@@ -1899,7 +1984,7 @@ msgstr ""
 " и 5-1; ``blunderdb openingbook`` и маршруты ``openingbook.*`` сервера "
 "выдают их так же, как остальные счета."
 
-#: ../../source/historique.rst:243
+#: ../../source/historique.rst:256
 msgid ""
 "**Côté serveur** : ``search.find`` trie par compte de pips et par date, "
 "``analyses.queueStatus`` décrit la file d'analyse, les statistiques se "
@@ -1915,7 +2000,7 @@ msgstr ""
 "возвращает последний посещённый матч, а не последний импортированный; "
 "``blunderdb stats`` принимает ``--opponent``."
 
-#: ../../source/historique.rst:244
+#: ../../source/historique.rst:257
 msgid ""
 "Voir :ref:`panneau_entrainement`, :ref:`cli_openingbook` et "
 ":ref:`api_reference`."
@@ -1923,11 +2008,11 @@ msgstr ""
 "См. :ref:`panneau_entrainement`, :ref:`cli_openingbook` и "
 ":ref:`api_reference`."
 
-#: ../../source/historique.rst:247
+#: ../../source/historique.rst:260
 msgid "0.43.0 (2026-10-18)"
 msgstr "0.43.0 (2026-10-18)"
 
-#: ../../source/historique.rst:249
+#: ../../source/historique.rst:262
 msgid ""
 "**L'exercice Ouverture tire par catégories** : *Money*, *DMP*, *Gammon "
 "save* (l'ouvreur à 1 away Crawford, le répondeur à 2 away) et *Gammon go*"
@@ -1944,7 +2029,7 @@ msgstr ""
 "выключенной, потому что от 4 до 7 away лучшие ходы почти не меняются от "
 "счёта к счёту."
 
-#: ../../source/historique.rst:250
+#: ../../source/historique.rst:263
 msgid ""
 "**Le livre d'ouverture embarqué tient la partie d'argent et le DMP** : "
 "``blunderdb openingbook`` et les routes ``openingbook.*`` du serveur les "
@@ -1954,7 +2039,7 @@ msgstr ""
 "``blunderdb openingbook`` и маршруты ``openingbook.*`` сервера выдают их "
 "так же, как остальные счета."
 
-#: ../../source/historique.rst:251
+#: ../../source/historique.rst:264
 msgid ""
 "Voir :ref:`panneau_entrainement`, :ref:`cli_openingbook` et "
 ":ref:`metrique_livre_ouverture`."
@@ -1962,11 +2047,11 @@ msgstr ""
 "См. :ref:`panneau_entrainement`, :ref:`cli_openingbook` и "
 ":ref:`metrique_livre_ouverture`."
 
-#: ../../source/historique.rst:254
+#: ../../source/historique.rst:267
 msgid "0.42.0 (2026-10-17)"
 msgstr "0.42.0 (2026-10-17)"
 
-#: ../../source/historique.rst:256
+#: ../../source/historique.rst:269
 msgid ""
 "**Quel coup à ce score ? L'exercice Ouverture** : l'onglet Entraînement "
 "pose le coup d'ouverture (*1st roll*) ou la réponse (*2nd roll*) d'une "
@@ -1987,7 +2072,7 @@ msgstr ""
 "кандидатов книги. ``train opening``, ``blunderdb openingbook`` и маршруты"
 " ``openingbook.*`` сервера — его другие формы."
 
-#: ../../source/historique.rst:257
+#: ../../source/historique.rst:270
 msgid ""
 "**ENTRÉE enchaîne les questions d'entraînement** : pendant une *Décision*"
 " ou une *Ouverture*, ENTRÉE valide le coup joué au plateau, où que soit "
@@ -2001,7 +2086,7 @@ msgstr ""
 "вопросу или завершает сеанс; два быстрых нажатия подряд не оценивают "
 "ответ дважды."
 
-#: ../../source/historique.rst:258
+#: ../../source/historique.rst:271
 msgid ""
 "**Côté serveur** : la route ``matches.byPosition`` liste les matchs où un"
 " coup a été joué sur une position, et l'import d'un fichier XG dans une "
@@ -2012,7 +2097,7 @@ msgstr ""
 " в которых в позиции был сыгран ход, а импорт файла XG в базу PostgreSQL "
 "делает вдвое меньше запросов на позицию и идёт вдвое быстрее."
 
-#: ../../source/historique.rst:259
+#: ../../source/historique.rst:272
 msgid ""
 "Corrections notables : un fichier de match dont une position porte seize "
 "pions d'un camp est refusé par le serveur comme invalide, et non plus par"
@@ -2022,7 +2107,7 @@ msgstr ""
 "шестнадцать шашек, сервер отклоняет как недопустимый, а не внутренней "
 "ошибкой."
 
-#: ../../source/historique.rst:260
+#: ../../source/historique.rst:273
 msgid ""
 "Voir :ref:`panneau_entrainement`, :ref:`raccourcis`, "
 ":ref:`cli_openingbook`, :ref:`metrique_livre_ouverture` et "
@@ -2032,11 +2117,11 @@ msgstr ""
 ":ref:`cli_openingbook`, :ref:`metrique_livre_ouverture` и "
 ":ref:`api_reference`."
 
-#: ../../source/historique.rst:263
+#: ../../source/historique.rst:276
 msgid "0.41.0 (2026-10-16)"
 msgstr "0.41.0 (2026-10-16)"
 
-#: ../../source/historique.rst:265
+#: ../../source/historique.rst:278
 msgid ""
 "**Lire une position depuis une capture d'écran** : coller, glisser ou "
 "ouvrir une capture du plateau d'eXtreme Gammon sur le plateau d'édition "
@@ -2051,7 +2136,7 @@ msgstr ""
 " на доске, и ничего не сохраняется до привычного жеста. ``blunderdb "
 "capture`` и маршрут ``positions.fromImage`` сервера — другие формы."
 
-#: ../../source/historique.rst:266
+#: ../../source/historique.rst:279
 msgid ""
 "**Le joueur principal et la fenêtre Gérer les joueurs** : l'étoile d'un "
 "joueur le désigne comme joueur principal, placé au siège 1 à l'import, et"
@@ -2071,7 +2156,7 @@ msgstr ""
 "``players.main.*`` — другие формы. В панели Турниры PR и MWC строки "
 "относятся к основному игроку, как только он в ней играл."
 
-#: ../../source/historique.rst:267
+#: ../../source/historique.rst:280
 msgid ""
 "**Importer une base reprend aussi les matchs** : avec leurs parties, "
 "coups, analyses et origine, les tournois (avec leur Direction et leur "
@@ -2089,7 +2174,7 @@ msgstr ""
 "принимающей базы. ``blunderdb import --type database`` и сервер делают то"
 " же самое."
 
-#: ../../source/historique.rst:268
+#: ../../source/historique.rst:281
 msgid ""
 "**Un aperçu avant d'exporter** : la fenêtre d'export compte, famille par "
 "famille, ce que le fichier contiendra, avant de l'écrire ; ``blunderdb "
@@ -2103,7 +2188,7 @@ msgstr ""
 " всегда забирает свои матчи, а Руководство и Встреча турнира уходят "
 "вместе с ним."
 
-#: ../../source/historique.rst:269
+#: ../../source/historique.rst:282
 msgid ""
 "**Annuler la dernière révision Anki** : le bouton **Annuler** de la "
 "révision, ou la touche *u*, reprend la dernière note de la séance et "
@@ -2115,7 +2200,7 @@ msgstr ""
 "карточку; ``blunderdb anki card --action undo`` и маршрут "
 "``anki.undoReview`` сервера выполняют то же действие."
 
-#: ../../source/historique.rst:270
+#: ../../source/historique.rst:283
 msgid ""
 "**La recherche gammonNet s'étale sur les cœurs libres** : gammonNet "
 "v1.8.0 découpe une recherche à 2 plis et plus sur plusieurs cœurs, avec "
@@ -2129,7 +2214,7 @@ msgstr ""
 "сервер) берут из одного бюджета ядер, а сервер засчитывает за одну "
 "единицу время каждого занятого ядра."
 
-#: ../../source/historique.rst:271
+#: ../../source/historique.rst:284
 msgid ""
 "**Cocher les joueurs dans la légende des graphes d'un match** : décocher "
 "un joueur masque ses marques dans les trois graphes, et le survol, le "
@@ -2140,7 +2225,7 @@ msgstr ""
 "скрывает его отметки на трёх графиках, а наведение, щелчок и стрелки "
 "нацеливаются только на другого; настройка запоминается для каждого матча."
 
-#: ../../source/historique.rst:272
+#: ../../source/historique.rst:285
 msgid ""
 "**Les comptes des statistiques ouvrent leurs positions** : les panneaux "
 "Biais, Avant/après et Temps ajoutent à chaque compte de décisions une "
@@ -2150,7 +2235,7 @@ msgstr ""
 " и Время добавляют к каждому счётчику решений столбец *Позиции*, который "
 "открывает соответствующие различные позиции."
 
-#: ../../source/historique.rst:273
+#: ../../source/historique.rst:286
 msgid ""
 "**Une transcription plus lisible** : la touche chiffrée dit son effet par"
 " un indicateur de mode (Saisie ou Édition) et l'effet d'*Entrée* ; les "
@@ -2164,7 +2249,7 @@ msgstr ""
 "цветом, а недопустимый шаг рисуется красным пунктиром; выбор первой "
 "строки анализа заменяет решение."
 
-#: ../../source/historique.rst:274
+#: ../../source/historique.rst:287
 msgid ""
 "**La vidéo ne fige plus l'application** : le volet vidéo reprend sa "
 "lecture après un saut qui n'aboutit pas, ne recharge jamais une vidéo en "
@@ -2178,7 +2263,7 @@ msgstr ""
 "мультиплексированный файл ``.webm`` или ``.mkv`` отмечается при открытии "
 "с командой ``ffmpeg``, которая исправляет его без перекодирования."
 
-#: ../../source/historique.rst:275
+#: ../../source/historique.rst:288
 msgid ""
 "Corrections notables : un coup joué est apparié à ses candidats par le "
 "plateau où il arrive et non par sa notation, de sorte que deux coups de "
@@ -2191,7 +2276,7 @@ msgstr ""
 "формы, но с разными взятиями больше не путаются; скриншот с дробным "
 "масштабом читается верно; видео на паузе больше не перезагружается."
 
-#: ../../source/historique.rst:276
+#: ../../source/historique.rst:289
 msgid ""
 "Voir :ref:`manuel`, :ref:`raccourcis`, :ref:`cli`, :ref:`headless` et "
 ":ref:`api_reference`."
@@ -2199,11 +2284,11 @@ msgstr ""
 "См. :ref:`manuel`, :ref:`raccourcis`, :ref:`cli`, :ref:`headless` и "
 ":ref:`api_reference`."
 
-#: ../../source/historique.rst:279
+#: ../../source/historique.rst:292
 msgid "0.40.0 (2026-10-12)"
 msgstr "0.40.0 (2026-10-12)"
 
-#: ../../source/historique.rst:281
+#: ../../source/historique.rst:294
 msgid ""
 "**La recherche gammonNet à 3 et 4 plis va plusieurs fois plus vite** : "
 "une seule réplique par nœud intérieur, et une racine étagée qui ne pousse"
@@ -2221,7 +2306,7 @@ msgstr ""
 " gammonNet* на вкладке *Обслуживание*; роллаут, политика которого играет "
 "на 3 ply, больше не даёт прежних цифр."
 
-#: ../../source/historique.rst:282
+#: ../../source/historique.rst:295
 msgid ""
 "**Une analyse gammonNet s'annule en cours de recherche** : la barre "
 "d'état affiche sa profondeur et sa progression, et son bouton "
@@ -2232,7 +2317,7 @@ msgstr ""
 "показывает его глубину и ход выполнения, а кнопка отмены прерывает и уже "
 "начатый глубокий поиск — в интерфейсе, в командной строке и на сервере."
 
-#: ../../source/historique.rst:283
+#: ../../source/historique.rst:296
 msgid ""
 "**L'onglet Maintenance** de la configuration montre l'état de santé de la"
 " base, une ligne par opération (positions sans analyse, analyses "
@@ -2251,7 +2336,7 @@ msgstr ""
 "формы. Открытие базы больше ничего туда не записывает: статистика матча "
 "считается при первом чтении или с этой вкладки."
 
-#: ../../source/historique.rst:284
+#: ../../source/historique.rst:297
 msgid ""
 "**Une seule opération longue écrit dans la base à la fois** : pendant une"
 " opération de maintenance, une analyse gammonNet ou un rollout, une autre"
@@ -2264,7 +2349,7 @@ msgstr ""
 "с названием той, что занимает базу, а автоматический анализ (после "
 "импорта, транскрипции или Дуэли) ждёт своей очереди."
 
-#: ../../source/historique.rst:285
+#: ../../source/historique.rst:298
 msgid ""
 "**L'export Anki .apkg** : un paquet d'étude ou une collection s'écrit en "
 "paquet Anki ``.apkg``, que l'application Anki importe sur ordinateur ou "
@@ -2284,7 +2369,7 @@ msgstr ""
 "сервера ``anki.exportApkg`` — три его формы, а повторный экспорт "
 "обновляет карточки в Anki, а не дублирует их."
 
-#: ../../source/historique.rst:286
+#: ../../source/historique.rst:299
 msgid ""
 "**Le Duel part d'où l'on veut** : la bande d'en-tête du panneau Duel "
 "règle le Départ — la position initiale, ou le plateau édité comme dans le"
@@ -2303,7 +2388,7 @@ msgstr ""
 "на счёте. ``blunderdb duel create`` принимает ``--away``, ``--reroll``, "
 "``--after-cube`` и ``--single-game``."
 
-#: ../../source/historique.rst:287
+#: ../../source/historique.rst:300
 msgid ""
 "**Les cadences en minutes par point** : Standard (2 min par point + 12 "
 "s), Speed (0,4 min par point + 10 s) ou une cadence enregistrée sous un "
@@ -2315,7 +2400,7 @@ msgstr ""
 "запас каждого игрока соотносится с длиной матча или с тем, что осталось "
 "сыграть от стартового счёта."
 
-#: ../../source/historique.rst:288
+#: ../../source/historique.rst:301
 msgid ""
 "**Le pipcount masqué pendant un Duel** : décoché au lancement, il reste "
 "caché même par le bouton de la barre d'outils ou *P*, et revient à la "
@@ -2325,7 +2410,7 @@ msgstr ""
 "остаётся скрытым даже по кнопке панели инструментов или клавише *P* и "
 "возвращается при выходе из Дуэли."
 
-#: ../../source/historique.rst:289
+#: ../../source/historique.rst:302
 msgid ""
 "**Faire pivoter la vidéo** : le bouton ⟳ de la barre vidéo, présent aussi"
 " dans la barre du mode théâtre, ou la touche *o* tourne la vidéo d'un "
@@ -2337,7 +2422,7 @@ msgstr ""
 "локальный файл или ссылка YouTube; угол запоминается для черновика на "
 "этом компьютере."
 
-#: ../../source/historique.rst:290
+#: ../../source/historique.rst:303
 msgid ""
 "**La date d'un tournoi déduite de ses matchs** : un tournoi sans date "
 "prend celle de son plus ancien match, affichée en grisé et proposée par "
@@ -2351,7 +2436,7 @@ msgstr ""
 "Турниры начинается с # и Date, как в панели Матчи, а Прогресс располагает"
 " турниры в хронологическом порядке."
 
-#: ../../source/historique.rst:291
+#: ../../source/historique.rst:304
 msgid ""
 "**La fiche du match dans le panneau Tournois** : un clic sur un match "
 "d'un tournoi affiche sous la table la fiche du panneau Matchs, avec ses "
@@ -2362,7 +2447,7 @@ msgstr ""
 "под таблицей карточку панели Матчи с её вкладками, а поле фильтра сужает "
 "список турниров по мере ввода."
 
-#: ../../source/historique.rst:292
+#: ../../source/historique.rst:305
 msgid ""
 "**Toute la bibliothèque s'exporte de la même façon partout** : la "
 "nouvelle fenêtre d'export — une ligne par famille avec son compte, le "
@@ -2395,7 +2480,7 @@ msgstr ""
 "экспортирует только матчи, где сыграны его позиции, каждый со всеми "
 "своими позициями."
 
-#: ../../source/historique.rst:293
+#: ../../source/historique.rst:306
 msgid ""
 "**Réparer un match depuis son fichier source** : le bouton ⟲ de la ligne "
 "*Fichier source* de la fiche, ou ``blunderdb match repair``, relit le "
@@ -2414,7 +2499,7 @@ msgstr ""
 "``match repair --list`` находит матчи, отличающиеся от своего файла, а "
 "маршрут ``matches.repair`` делает то же самое на сервере."
 
-#: ../../source/historique.rst:294
+#: ../../source/historique.rst:307
 msgid ""
 "**Le panneau Stats** : un seul filtre, partagé par tous les onglets, avec"
 " un champ joueur qui cherche à la frappe ; le filtre de dates compte son "
@@ -2444,7 +2529,7 @@ msgstr ""
 "выдаёт его в командной строке); строка таблицы под курсором "
 "подсвечивается."
 
-#: ../../source/historique.rst:295
+#: ../../source/historique.rst:308
 msgid ""
 "**La fenêtre Fusion de joueurs reste ouverte** entre deux fusions ; "
 "*Fermer* ou *ÉCHAP* la referme."
@@ -2452,7 +2537,7 @@ msgstr ""
 "**Окно «Слияние игроков» остаётся открытым** между двумя слияниями; "
 "*Закрыть* или *ESC* закрывает его."
 
-#: ../../source/historique.rst:296
+#: ../../source/historique.rst:309
 msgid ""
 "**La danse se saisit d'une touche dans la Transcription** : quand le "
 "joueur au trait est sur la barre, *f* saisit un jet qui ne le fait pas "
@@ -2465,7 +2550,7 @@ msgstr ""
 "дубли, — и ход переходит без хода для ввода; вне бара, или если входит "
 "любой бросок, ничего не вводится, и строка состояния сообщает об этом."
 
-#: ../../source/historique.rst:297
+#: ../../source/historique.rst:310
 msgid ""
 "**L'abandon se saisit d'une touche dans la Transcription** : *r* ouvre le"
 " choix du niveau (simple, gammon, backgammon) ; dans le mode théâtre, une"
@@ -2475,7 +2560,7 @@ msgstr ""
 "(простая, гаммон, бэкгаммон); в режиме театра небольшое окно предлагает "
 "его, а клавиши *1*, *2* и *3* подтверждают выбор."
 
-#: ../../source/historique.rst:298
+#: ../../source/historique.rst:311
 msgid ""
 "**Le coup se joue sur le mini-plateau du mode théâtre** : mêmes gestes "
 "que sur le plateau, clic droit pour reprendre le coup ; les flèches du "
@@ -2485,7 +2570,7 @@ msgstr ""
 "доске, правый щелчок забирает ход; стрелки предыдущего хода стираются с "
 "первого шага."
 
-#: ../../source/historique.rst:299
+#: ../../source/historique.rst:312
 msgid ""
 "**La case Post-Crawford de la Transcription** apparaît au score de départ"
 " quand un joueur est à L-1 ; chaque marque d'incohérence de la "
@@ -2495,7 +2580,7 @@ msgstr ""
 "один из игроков на L-1; каждая отметка несоответствия в записи показывает"
 " свою причину."
 
-#: ../../source/historique.rst:300
+#: ../../source/historique.rst:313
 msgid ""
 "**L'échelle de l'interface se règle au clavier** : *Ctrl++*, *Ctrl+-* et "
 "*Ctrl+0* l'agrandissent, la réduisent et la rétablissent, comme dans un "
@@ -2505,11 +2590,11 @@ msgstr ""
 "*Ctrl+0* увеличивают, уменьшают и восстанавливают его, как в браузере; "
 "увеличенный интерфейс занимает всё окно."
 
-#: ../../source/historique.rst:301
+#: ../../source/historique.rst:314
 msgid "**Le rollout passe sur MAJ-R** ; *r* reste la position aléatoire."
 msgstr "**Роллаут переходит на SHIFT-R**; *r* остаётся случайной позицией."
 
-#: ../../source/historique.rst:302
+#: ../../source/historique.rst:315
 msgid ""
 "Corrections notables : inverser les joueurs d'un match, en 0.39.0 et "
 "avant, remplaçait ses positions par d'autres, sans analyse, et retirait "
@@ -2544,16 +2629,16 @@ msgstr ""
 "сериализованы; исправление больше не оставляет лишних шашек, а цепочка "
 "последующих позиций пересчитывается после изменения."
 
-#: ../../source/historique.rst:303 ../../source/historique.rst:361
-#: ../../source/historique.rst:379
+#: ../../source/historique.rst:316 ../../source/historique.rst:374
+#: ../../source/historique.rst:392
 msgid "Voir :ref:`manuel`, :ref:`cli` et :ref:`headless`."
 msgstr "См. :ref:`manuel`, :ref:`cli` и :ref:`headless`."
 
-#: ../../source/historique.rst:306
+#: ../../source/historique.rst:319
 msgid "0.39.0 (2026-10-10)"
 msgstr "0.39.0 (2026-10-10)"
 
-#: ../../source/historique.rst:308
+#: ../../source/historique.rst:321
 msgid ""
 "**La vidéo d'un match** : un fichier local ou un lien YouTube s'attache à"
 " un match, et le panneau Matchs ouvre la vidéo une seconde avant le jet "
@@ -2563,7 +2648,7 @@ msgstr ""
 " и панель Матчи открывает видео за секунду до броска изучаемого решения "
 "(значок строки или клавиша *v*)."
 
-#: ../../source/historique.rst:309
+#: ../../source/historique.rst:322
 msgid ""
 "**La vidéo à côté du plateau** : la zone du plateau se partage entre la "
 "vidéo et le plateau, de part et d'autre d'une poignée dont la place est "
@@ -2575,7 +2660,7 @@ msgstr ""
 "выбирает сторону видео, *[* и *]* регулируют скорость, которую крупный "
 "индикатор показывает в центре видео."
 
-#: ../../source/historique.rst:310
+#: ../../source/historique.rst:323
 msgid ""
 "**La Transcription suit une vidéo** : le volet vidéo pose les repères de "
 "chaque action (instant du jet, instant de l'action), *ESPACE*, *MAJ* avec"
@@ -2589,7 +2674,7 @@ msgstr ""
 "по ячейке переводит видео к её метке, а курсор следует за видео во время "
 "воспроизведения."
 
-#: ../../source/historique.rst:311
+#: ../../source/historique.rst:324
 msgid ""
 "**La durée de chaque coup** se lit dans une colonne de la transcription, "
 "déduite des repères ; un coup sans instant d'action a une durée estimée, "
@@ -2599,7 +2684,7 @@ msgstr ""
 "меток; у хода без момента действия длительность оценочная, она "
 "показывается как остальные."
 
-#: ../../source/historique.rst:312
+#: ../../source/historique.rst:325
 msgid ""
 "**La barre de la Transcription** se lit en trois groupes : les "
 "brouillons, la saisie avec le menu *Vidéo* (fichier local, lien YouTube, "
@@ -2610,7 +2695,7 @@ msgstr ""
 "(локальный файл, ссылка YouTube, убрать видео), затем *Готово*, *Сдаться*"
 " и меню ⋯, в котором текст и экспорт ``.mat``."
 
-#: ../../source/historique.rst:313
+#: ../../source/historique.rst:326
 msgid ""
 "**Le mode théâtre** : *F11* passe la fenêtre en plein écran avec la "
 "vidéo, un mini-plateau flottant par-dessus, le clavier de saisie restant "
@@ -2620,7 +2705,7 @@ msgstr ""
 "плавающей мини-доской поверх него, при этом клавиатура ввода остаётся "
 "активной."
 
-#: ../../source/historique.rst:314
+#: ../../source/historique.rst:327
 msgid ""
 "**La fiche d'un match en onglets** : l'en-tête et la synthèse du bilan "
 "par joueur restent en haut, et dessous les onglets *Transcription*, "
@@ -2634,7 +2719,7 @@ msgstr ""
 "отдельно; выбранная вкладка запоминается, а графики делят высоту вкладки "
 "*Графики*."
 
-#: ../../source/historique.rst:315
+#: ../../source/historique.rst:328
 msgid ""
 "**Le bilan du match** : les décisions à revoir, le résultat ajusté de la "
 "chance converti en MWC, le rythme des erreurs (précipitées ou réfléchies,"
@@ -2648,7 +2733,7 @@ msgstr ""
 "``blunderdb match --format summary`` и маршрут ``stats.matchReview`` тоже"
 " их выдают."
 
-#: ../../source/historique.rst:316
+#: ../../source/historique.rst:329
 msgid ""
 "**La perte MWC rapportée à un match en 7 points** (L₇) se lit à côté du "
 "PR dans la liste des matchs, les statistiques du match, les tournois, le "
@@ -2660,7 +2745,7 @@ msgstr ""
 "прогрессе, а также в ``blunderdb stats``, ``stats progression`` и "
 "``match``."
 
-#: ../../source/historique.rst:317
+#: ../../source/historique.rst:330
 msgid ""
 "**La difficulté de chaque décision** et l'**erreur évitable** : la "
 "transcription et le graphique de perte les montrent, et l'en-tête du "
@@ -2671,7 +2756,7 @@ msgstr ""
 "транскрипция и график потерь, а заголовок матча даёт по каждому игроку "
 "сложность, превышение, отношение и число устранимых ошибок."
 
-#: ../../source/historique.rst:318
+#: ../../source/historique.rst:331
 msgid ""
 "**Un intervalle à 95 %** accompagne le PR et chaque cellule des "
 "ventilations, rééchantillonné par matchs."
@@ -2679,7 +2764,7 @@ msgstr ""
 "**95-процентный интервал** сопровождает PR и каждую ячейку разбивок, "
 "пересэмплированный по матчам."
 
-#: ../../source/historique.rst:319
+#: ../../source/historique.rst:332
 msgid ""
 "**Le bilan d'un tournoi** : le bouton *Bilan* du panneau Tournois compare"
 " le tournoi d'un joueur à son niveau habituel, ventilé par ronde, par "
@@ -2692,7 +2777,7 @@ msgstr ""
 "счетам давления и по темпу, затем по семействам ошибок; ``blunderdb stats"
 " tournament`` и сервер тоже их выдают."
 
-#: ../../source/historique.rst:320
+#: ../../source/historique.rst:333
 msgid ""
 "**La carte Plan d'étude** du tableau de bord classe les familles "
 "d'erreurs par MWC récupérable, et chacune alimente la file d'étude, un "
@@ -2704,7 +2789,7 @@ msgstr ""
 "викторину или колоду Anki; ``blunderdb stats plan`` — её форма в "
 "командной строке."
 
-#: ../../source/historique.rst:321
+#: ../../source/historique.rst:334
 msgid ""
 "**Avant/après l'étude et biais signés** : le tableau de bord mesure si ce"
 " qui a été étudié coûte moins en match, et dans quel sens le joueur se "
@@ -2715,7 +2800,7 @@ msgstr ""
 " обходится ли изученное дешевле в матче и в какую сторону ошибается "
 "игрок; ``blunderdb stats effect`` и ``stats biases`` тоже их выдают."
 
-#: ../../source/historique.rst:322
+#: ../../source/historique.rst:335
 msgid ""
 "**Les positions de référence** : le bouton *Proposer…* du panneau "
 "Collections propose les positions à étudier sur une portée (base, match "
@@ -2728,7 +2813,7 @@ msgstr ""
 "фильтр Статистики), чтобы сделать из них коллекцию, колоду Anki или "
 "викторину; ``blunderdb collection suggest`` — другая её форма."
 
-#: ../../source/historique.rst:323
+#: ../../source/historique.rst:336
 msgid ""
 "**Un match passe par la corbeille** : supprimé, il se restaure à "
 "l'identique, avec son numéro, sa date d'import, ses parties, ses analyses"
@@ -2739,7 +2824,7 @@ msgstr ""
 "точности, с его номером, датой импорта, партиями, анализами и позициями; "
 "``blunderdb trash delete --kind match`` делает тот же жест."
 
-#: ../../source/historique.rst:324
+#: ../../source/historique.rst:337
 msgid ""
 "**Une page Métriques** donne la définition, la formule et les limites de "
 "chaque mesure : erreur, PR, perte MWC, difficulté, intervalles, bilans, "
@@ -2749,7 +2834,7 @@ msgstr ""
 "ошибка, PR, потеря MWC, сложность, интервалы, итоги, план обучения, "
 "опорные позиции, до/после и смещения."
 
-#: ../../source/historique.rst:325
+#: ../../source/historique.rst:338
 msgid ""
 "**Un coup se saisit au plateau de la même façon partout** : dans le Duel,"
 " l'Entraînement, la réponse au damier d'Anki et la Transcription, un clic"
@@ -2764,7 +2849,7 @@ msgstr ""
 "завершённый ход, как *ENTER*, а правый щелчок забирает текущий ход; ввод "
 "источника, а затем цели исчез."
 
-#: ../../source/historique.rst:326
+#: ../../source/historique.rst:339
 msgid ""
 "**Anki et l'Entraînement valident au plateau** : *ENTRÉE* ou un clic sur "
 "les dés juge le coup joué, à la place du bouton *Valider*."
@@ -2772,7 +2857,7 @@ msgstr ""
 "**Anki и Тренировка подтверждают на доске**: *ENTER* или щелчок по костям"
 " оценивает сыгранный ход вместо кнопки *Проверить*."
 
-#: ../../source/historique.rst:327
+#: ../../source/historique.rst:340
 msgid ""
 "**La Transcription demande les dés avant le coup** : sans dés saisis, le "
 "damier ne joue rien ; les deux dés saisis, le coup se joue au plateau "
@@ -2782,7 +2867,7 @@ msgstr ""
 "не играет; когда обе кости введены, ход играется на доске, как в других "
 "режимах."
 
-#: ../../source/historique.rst:328
+#: ../../source/historique.rst:341
 msgid ""
 "**Évaluer dans un nouvel onglet** : le clic droit sur le plateau ouvre "
 "une vue *Variante de #n* dans le panneau Eval, sur la position affichée, "
@@ -2794,7 +2879,7 @@ msgstr ""
 "свою позицию, свой список и свой анализ; каждый вид находит свою "
 "собственную доску Eval."
 
-#: ../../source/historique.rst:329
+#: ../../source/historique.rst:342
 msgid ""
 "**Le défi** : le bouton *Défi* de la barre d'outils (touche *m*) recouvre"
 " l'analyse du panneau Analyse jusqu'à un clic, à chaque changement de "
@@ -2805,7 +2890,7 @@ msgstr ""
 "анализ панели Анализа до щелчка при каждой смене позиции; при разборе "
 "матча она также скрывает пометки, потери и сложность списка ходов."
 
-#: ../../source/historique.rst:330
+#: ../../source/historique.rst:343
 msgid ""
 "**Chaque compte de positions s'ouvre d'un clic** : les colonnes "
 "*Positions* et *Bourdes* des ventilations, les familles du plan d'étude "
@@ -2820,7 +2905,7 @@ msgstr ""
 "новые, в изучении, на повторении), счётчик турнира и пометки партии "
 "загружают ровно сосчитанные позиции."
 
-#: ../../source/historique.rst:331
+#: ../../source/historique.rst:344
 msgid ""
 "**Les panneaux partagent une même bande d'en-tête** : titre, compteur et "
 "filtres à gauche, action primaire au bout droit (*Rechercher*, "
@@ -2831,7 +2916,7 @@ msgstr ""
 "слева, основное действие на правом краю (*Поиск*, *Начать*, *Играть*…); "
 "Поиск помещает *Критерии*, *История* и *Сохранённые* в свою полосу."
 
-#: ../../source/historique.rst:332
+#: ../../source/historique.rst:345
 msgid ""
 "**Une collection vivante se crée avec sa requête** : ``blunderdb "
 "collection create --query`` et la route ``collections.create`` ; "
@@ -2845,7 +2930,7 @@ msgstr ""
 "реальный итог, а колода Anki, взятая из живой коллекции, повторяет её "
 "запрос в каждом сеансе."
 
-#: ../../source/historique.rst:333
+#: ../../source/historique.rst:346
 msgid ""
 "**Le formulaire Metadata de la Transcription** occupe le corps du "
 "brouillon, en deux colonnes quand la largeur le permet, la transcription "
@@ -2855,11 +2940,11 @@ msgstr ""
 "когда позволяет ширина, при этом запись остаётся видимой; та же кнопка "
 "или *ESC* возвращает ввод."
 
-#: ../../source/historique.rst:334
+#: ../../source/historique.rst:347
 msgid "**La recherche de l'aide** compte et surligne les occurrences à la frappe."
 msgstr "**Поиск по справке** считает и подсвечивает вхождения по мере набора."
 
-#: ../../source/historique.rst:335
+#: ../../source/historique.rst:348
 msgid ""
 "**Schéma 2.41.0** : la source vidéo du match et les repères de chaque "
 "coup ; chaque coup porte l'erreur de sa propre décision, et le PR des "
@@ -2872,7 +2957,7 @@ msgstr ""
 "пересчитывается по правилам eXtreme Gammon. Миграция с 2.36.0 автоматична"
 " при открытии и необратима (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:336
+#: ../../source/historique.rst:349
 msgid ""
 "Corrections notables : gammonNet analyse une prise ou un refus comme la "
 "décision du doubleur avant le double, rollouts compris, et la migration "
@@ -2893,15 +2978,15 @@ msgstr ""
 "перетаскивание, начатое в диалоге и отпущенное на фоне, больше его не "
 "закрывает; каждая вкладка настроек сохраняет положение прокрутки."
 
-#: ../../source/historique.rst:337
+#: ../../source/historique.rst:350
 msgid "Voir :ref:`manuel`, :ref:`metriques`, :ref:`cli` et :ref:`headless`."
 msgstr "См. :ref:`manuel`, :ref:`metriques`, :ref:`cli` и :ref:`headless`."
 
-#: ../../source/historique.rst:340
+#: ../../source/historique.rst:353
 msgid "0.38.0 (2026-10-06)"
 msgstr "0.38.0 (2026-10-06)"
 
-#: ../../source/historique.rst:342
+#: ../../source/historique.rst:355
 msgid ""
 "**Le Duel** : un match entier se joue contre le Bot, qui joue la "
 "politique de gammonNet, sous l'arbitrage de blunderDB — dés tirés d'un "
@@ -2921,7 +3006,7 @@ msgstr ""
 "приостановленная и затем продолженная. ``blunderdb duel`` и маршруты "
 "``duels.*`` сервера — две другие её формы."
 
-#: ../../source/historique.rst:343
+#: ../../source/historique.rst:356
 msgid ""
 "**Le Duel se joue au plateau** : avant le lancer, un clic sur le plateau "
 "ou sur les dés les lance et un clic sur le videau propose de doubler ; un"
@@ -2936,7 +3021,7 @@ msgstr ""
 "*ENTER* или *ПРОБЕЛ*, а правый щелчок забирает текущий ход или открывает "
 "меню дуэли (Стопка, сдача, приостановка, остановка)."
 
-#: ../../source/historique.rst:344
+#: ../../source/historique.rst:357
 msgid ""
 "**La Cadence et la durée de décision** : une réserve par joueur et un "
 "délai gratuit à chaque tour, le temps écoulé étant noté ou faisant perdre"
@@ -2952,7 +3037,7 @@ msgstr ""
 "игрокам, график), по которой фильтрует поиск с ``tm>x``, в сочетании с "
 "``E>x``, и которую вкладка «Статистика» сопоставляет с ошибкой."
 
-#: ../../source/historique.rst:345
+#: ../../source/historique.rst:358
 msgid ""
 "**L'origine d'un Match joué ici** se relit en tête de sa transcription : "
 "départ, cadence, perte au temps ou arrêt, niveau du Bot et version de "
@@ -2965,7 +3050,7 @@ msgstr ""
 "раскрытое зерно и его SHA-256 — достаточно, чтобы пересчитать каждый "
 "бросок, не доверяя blunderDB."
 
-#: ../../source/historique.rst:346
+#: ../../source/historique.rst:359
 msgid ""
 "**La Pile** : la touche *b*, le marque-page de la barre d'outils ou un "
 "double-clic hors du plateau met la position affichée de côté, dans tous "
@@ -2977,7 +3062,7 @@ msgstr ""
 "убирает её; закладка в углу доски показывает это. ``blunderdb collection "
 "pile`` выполняет тот же жест."
 
-#: ../../source/historique.rst:347
+#: ../../source/historique.rst:360
 msgid ""
 "**Les rollouts se lancent d'un clic droit**, depuis la table des coups du"
 " panneau Analyse comme depuis le panneau Eval, sur une sélection de coups"
@@ -2991,7 +3076,7 @@ msgstr ""
 "Стандартная или Свободная, — которая сохраняется от сеанса к сеансу. То "
 "же меню копирует позицию с её анализом или с выбранными ходами."
 
-#: ../../source/historique.rst:348
+#: ../../source/historique.rst:361
 msgid ""
 "**Sans base ouverte**, le panneau Eval pose, colle, évalue, roule et "
 "copie une position, l'onglet Entraînement offre *Scores*, *Pions*, "
@@ -3003,7 +3088,7 @@ msgstr ""
 " *Счёт*, *Фишки*, *Bearoff* и *Оценка*, а ``import XGID=…`` ставит "
 "позицию на черновую доску."
 
-#: ../../source/historique.rst:349
+#: ../../source/historique.rst:362
 msgid ""
 "**Le clic droit hors du plateau** propose *Effacer la position* et "
 "*Position de départ* en édition et en Eval ; sur un coup joué au plateau "
@@ -3013,7 +3098,7 @@ msgstr ""
 "de départ* в режиме правки и в Eval; при ходе, сыгранном на доске "
 "(викторина, Транскрипция), его меню начинается с *Recommencer*."
 
-#: ../../source/historique.rst:350
+#: ../../source/historique.rst:363
 msgid ""
 "**Les invites du Duel** se posent au milieu de la moitié droite du "
 "plateau, à l'échelle typographique de l'application ; le joueur 1 reste "
@@ -3025,7 +3110,7 @@ msgstr ""
 " чей ход, а отпечаток зерна читается во всплывающей подсказке строки "
 "приглашений."
 
-#: ../../source/historique.rst:351
+#: ../../source/historique.rst:364
 msgid ""
 "**Abandonner, suspendre, annuler** : le menu du Duel abandonne le match, "
 "le met en pause ou l'annule ; en argent, l'abandon perd la partie en "
@@ -3037,7 +3122,7 @@ msgstr ""
 "простую партию по значению куба. Матч до очков записывается только "
 "целиком, а зерно ожидающей Дуэли не попадает ни в один экспорт."
 
-#: ../../source/historique.rst:352
+#: ../../source/historique.rst:365
 msgid ""
 "**Le sélecteur de niveau du Bot dit la profondeur** de chaque niveau, lue"
 " dans la table de gammonNet."
@@ -3045,7 +3130,7 @@ msgstr ""
 "**Селектор уровня Бота показывает глубину** каждого уровня, прочитанную "
 "из таблицы gammonNet."
 
-#: ../../source/historique.rst:353
+#: ../../source/historique.rst:366
 msgid ""
 "**Le Duel se joue contre un Côté externe** : un Côté externe déclare le "
 "Bot qui joue derrière lui (``--side external:<configuration>@<engine>``, "
@@ -3063,7 +3148,7 @@ msgstr ""
 "Стороны добавляется к запечатанному зерну, и броски выходят из него, "
 "формула опубликована."
 
-#: ../../source/historique.rst:354
+#: ../../source/historique.rst:367
 msgid ""
 "**Plusieurs Duels ouverts à la fois** : ouvrir un Duel n'en suspend aucun"
 " autre, et un Duel ouvert fait courir ses horloges jusqu'à ce qu'on le "
@@ -3078,7 +3163,7 @@ msgstr ""
 "покидает, не трогая те, что сервер или командная строка держат открытыми "
 "в той же базе."
 
-#: ../../source/historique.rst:355
+#: ../../source/historique.rst:368
 msgid ""
 "**La transcription d'un match** gagne les colonnes *Videau*, *Jeu* et "
 "*Horloge* ; la cadence et la banque de temps figurent dans les "
@@ -3088,7 +3173,7 @@ msgstr ""
 " времени указаны в сведениях о матче, а ячейка времени без длительности "
 "содержит тире."
 
-#: ../../source/historique.rst:356
+#: ../../source/historique.rst:369
 msgid ""
 "**La barre d'état** : le lien des blunders lance la recherche, et ses "
 "deux chiffres sont des liens distincts, les blunders de la liste à "
@@ -3097,7 +3182,7 @@ msgstr ""
 "**Строка состояния**: ссылка на блундеры запускает поиск, а её две цифры "
 "— отдельные ссылки: блундеры списка на экране и блундеры всей библиотеки."
 
-#: ../../source/historique.rst:357
+#: ../../source/historique.rst:370
 msgid ""
 "**Le moteur passe à gammonNet v1.6.0** (réseau strehl-"
 "prob5-512-512-256-256) ; les coups légaux sortent dans l'ordre de "
@@ -3107,7 +3192,7 @@ msgstr ""
 "prob5-512-512-256-256); легальные ходы выдаются в порядке первоисточника,"
 " сначала меньшая кость."
 
-#: ../../source/historique.rst:358
+#: ../../source/historique.rst:371
 msgid ""
 "**Matérialiser une transcription** d'un seul appel, en mode strict : "
 "``blunderdb transcribe --materialize`` et la route "
@@ -3119,7 +3204,7 @@ msgstr ""
 "записывают Матч либо отклоняют первое ошибочное Действие с указанием "
 "номера и причины, ничего не записывая."
 
-#: ../../source/historique.rst:359
+#: ../../source/historique.rst:372
 msgid ""
 "**Schéma 2.36.0** : les tables du Duel, la durée de chaque décision, le "
 "Bot déclaré, les apports des Côtés externes et l'état ouvert de chaque "
@@ -3131,7 +3216,7 @@ msgstr ""
 " Миграция с 2.31.0 автоматична при открытии и необратима "
 "(:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:360
+#: ../../source/historique.rst:373
 msgid ""
 "Corrections notables : un fichier d'import illisible est refusé avec le "
 "code ``invalid``, ``internal`` restant réservé aux pannes ; sous Windows,"
@@ -3145,11 +3230,11 @@ msgstr ""
 "больше не перехватывается копированием встроенного браузера, а *CTRL-X "
 "CTRL-X* копирует оценку gammonNet в режиме EVAL."
 
-#: ../../source/historique.rst:364
+#: ../../source/historique.rst:377
 msgid "0.37.0 (2026-10-05)"
 msgstr "0.37.0 (05.10.2026)"
 
-#: ../../source/historique.rst:366
+#: ../../source/historique.rst:379
 msgid ""
 "**La transcription** d'un match papier : un onglet et un mode TRANSCRIBE "
 "où le match se saisit coup par coup — dés, triangle des 21 jets, coup "
@@ -3164,7 +3249,7 @@ msgstr ""
 "черновик, который восстанавливается после сбоя. ``blunderdb transcribe`` "
 "и маршруты ``transcriptions.*`` сервера — две другие формы."
 
-#: ../../source/historique.rst:367
+#: ../../source/historique.rst:380
 msgid ""
 "**La Direction de tournoi** : un tournoi de club se mène depuis le "
 "panneau Tournoi — annuaire des joueurs, propositions d'appariements "
@@ -3181,7 +3266,7 @@ msgstr ""
 "(Rencontre) из нескольких состязаний в общем зале. ``blunderdb "
 "tournament`` и ``serve --direction`` — две другие формы."
 
-#: ../../source/historique.rst:368
+#: ../../source/historique.rst:381
 msgid ""
 "**L'entraînement** : un onglet Entraînement (Scores, Pions, Bearoff, "
 "Évaluation, Décision) et son journal, un mode quiz dont le PR est sur "
@@ -3196,7 +3281,7 @@ msgstr ""
 "изучения необработанных блундеров, объяснение ошибки на обороте карточки "
 "Anki, карточки счёта и решения по кубику в виде двух карточек."
 
-#: ../../source/historique.rst:369
+#: ../../source/historique.rst:382
 msgid ""
 "**Les Leçons** : un parcours rédigé au bureau, lu depuis l'application, "
 "la ligne de commande (``blunderdb lesson``) ou le serveur, exporté avec "
@@ -3207,7 +3292,7 @@ msgstr ""
 " командной строки (``blunderdb lesson``) или сервера и экспортируется "
 "вместе с базой; прогресс записывается только по явному действию ученика."
 
-#: ../../source/historique.rst:370
+#: ../../source/historique.rst:383
 msgid ""
 "**La recherche interroge un corpus** : jetons de joueur, d'adversaire, de"
 " tournoi, de ronde, de longueur, de date et de PR, ``like`` qui classe "
@@ -3222,7 +3307,7 @@ msgstr ""
 "закреплённые избранные фильтры, нечёткая палитра команд (CTRL-SHIFT-P), "
 "контактный лист из мини-досок и живые коллекции."
 
-#: ../../source/historique.rst:371
+#: ../../source/historique.rst:384
 msgid ""
 "**Le panneau Stats** gagne l'onglet Corpus (face-à-face, PR par fenêtre, "
 "classement, alias de joueurs et d'événements, doublons probables), deux "
@@ -3237,7 +3322,7 @@ msgstr ""
 "метке и счёту, цель прогресса, автономный HTML-отчёт и экспорт в CSV; "
 "матч, импортированный без анализа, получает PR."
 
-#: ../../source/historique.rst:372
+#: ../../source/historique.rst:385
 msgid ""
 "**L'évaluateur passe à gammonNet v1.4.0** — filtre de coups en triplet, "
 "*beaver* et *raccoon* en money game seulement — et gagne des **rollouts**"
@@ -3252,7 +3337,7 @@ msgstr ""
 " матрицу кубика при всех счётах матча и таблицу эквити матча, "
 "импортированную из ``.xml`` gnubg, своя для каждой базы."
 
-#: ../../source/historique.rst:373
+#: ../../source/historique.rst:386
 msgid ""
 "**L'import** devient parallèle, avec un mode masse pour les gros lots, un"
 " journal et la reprise d'un lot interrompu, un dossier surveillé, les "
@@ -3266,7 +3351,7 @@ msgstr ""
 "заголовка XG (Elo, транскрибер, комментарии); точный дубликат приносит "
 "свои более глубокие анализы."
 
-#: ../../source/historique.rst:374
+#: ../../source/historique.rst:387
 msgid ""
 "**Les commentaires sont signés** : le réglage « Votre nom » (``--author``"
 " en ligne de commande) nomme leur auteur, qui voyage à l'export."
@@ -3274,7 +3359,7 @@ msgstr ""
 "**Комментарии подписываются**: параметр «Ваше имя» (``--author`` в "
 "командной строке) указывает их автора, который передаётся при экспорте."
 
-#: ../../source/historique.rst:375
+#: ../../source/historique.rst:388
 msgid ""
 "Dans l'interface : un écran d'accueil, quatre thèmes nommés, l'image du "
 "plateau en SVG, une aide où l'on cherche, une suppression annulable, des "
@@ -3287,7 +3372,7 @@ msgstr ""
 "библиотекам пороги ошибок, а также библиотека, поиск и список матчей, "
 "просматриваемые окнами, без загрузки всего."
 
-#: ../../source/historique.rst:376
+#: ../../source/historique.rst:389
 msgid ""
 "**Un assistant par MCP** : l'application et le serveur offrent leurs "
 "outils à un assistant (Model Context Protocol). Côté serveur : une file "
@@ -3303,7 +3388,7 @@ msgstr ""
 "колодами Anki и коллекциями между тенантами и сгенерированный клиент на "
 "Python."
 
-#: ../../source/historique.rst:377
+#: ../../source/historique.rst:390
 msgid ""
 "**Schéma 2.31.0** : dates en entiers, position et analyse en binaire, "
 "libellés d'action codés — une base plus légère. La migration depuis "
@@ -3315,7 +3400,7 @@ msgstr ""
 "2.18.0 выполняется автоматически при открытии и необратима "
 "(:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:378
+#: ../../source/historique.rst:391
 msgid ""
 "Corrections notables : un ``.mat`` tronqué ou un ``.txt`` BGBlitz sans "
 "position est refusé au lieu d'entrer à moitié, les marques XG d'un "
@@ -3331,11 +3416,11 @@ msgstr ""
 "настенной страницы Дирекции открывает её в системном браузере, сообщая о "
 "неудаче."
 
-#: ../../source/historique.rst:382
+#: ../../source/historique.rst:395
 msgid "0.36.0 (2026-09-05)"
 msgstr "0.36.0 (05.09.2026)"
 
-#: ../../source/historique.rst:384
+#: ../../source/historique.rst:397
 msgid ""
 "Le binaire **maigrit de 7,3 Mo** : les tables de sortie ne sont plus "
 "embarquées ni téléchargées, mais calculées à la première ouverture, en "
@@ -3349,7 +3434,7 @@ msgstr ""
 "SHA-256. Расширенная таблица TS-06-11 вычисляется во вкладке *Bearoff*, а"
 " не скачивается на 1,2 ГБ."
 
-#: ../../source/historique.rst:385
+#: ../../source/historique.rst:398
 msgid ""
 "**Les tournois se remplissent à l'import** : un match entre dans le "
 "tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est"
@@ -3359,7 +3444,7 @@ msgstr ""
 "который назван в его файле, и турнир создаётся при необходимости; уже "
 "размещённый матч никогда не переносится."
 
-#: ../../source/historique.rst:386
+#: ../../source/historique.rst:399
 msgid ""
 "**Une seule grammaire de recherche**, désormais lisible depuis la ligne "
 "de commande (``blunderdb search --query``) autant que depuis "
@@ -3368,7 +3453,7 @@ msgstr ""
 "**Единая грамматика поиска**, теперь читаемая из командной строки "
 "(``blunderdb search --query``) так же, как из приложения."
 
-#: ../../source/historique.rst:387
+#: ../../source/historique.rst:400
 msgid ""
 "La ligne de commande gagne ``--format json`` sur neuf commandes, la "
 "**complétion pour bash, zsh et fish**, la commande ``repair`` et les "
@@ -3378,7 +3463,7 @@ msgstr ""
 "**автодополнение для bash, zsh и fish**, команду ``repair`` и подкоманды "
 "``anki card`` и ``anki log``."
 
-#: ../../source/historique.rst:388
+#: ../../source/historique.rst:401
 msgid ""
 "Les onglets **Raccourcis** et **Commandes** de l'aide intégrée sont "
 "engendrés depuis les pages du manuel qui les décrivent : ils ne peuvent "
@@ -3394,7 +3479,7 @@ msgstr ""
 "сети. Ещё три обзорных тура (Eval, Anki, Stats). *(Обзорные туры удалены "
 "в 0.47.0.)*"
 
-#: ../../source/historique.rst:389
+#: ../../source/historique.rst:402
 msgid ""
 "Un **binaire Linux arm64**, livré en archive, ``.deb``, ``.rpm`` et "
 "paquet AUR."
@@ -3402,7 +3487,7 @@ msgstr ""
 "**Двоичный файл Linux arm64**, поставляемый архивом, ``.deb``, ``.rpm`` и"
 " пакетом AUR."
 
-#: ../../source/historique.rst:390
+#: ../../source/historique.rst:403
 msgid ""
 "Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, "
 "distingue l'équité *money* de l'équité *match*, et se parcourt au "
@@ -3411,7 +3496,7 @@ msgstr ""
 "Панель **Eval** снова находит доску, на которой её оставили, различает "
 "*money*-эквити и *match*-эквити и просматривается с клавиатуры."
 
-#: ../../source/historique.rst:391
+#: ../../source/historique.rst:404
 #, no-python-format
 msgid ""
 "Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et "
@@ -3426,7 +3511,7 @@ msgstr ""
 "потоков NDJSON (13,5 % размера), и два вызова, выходящих за пределы "
 "тенанта — vacuum и purge — переходят под ``/ops/``."
 
-#: ../../source/historique.rst:392
+#: ../../source/historique.rst:405
 msgid ""
 "**Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, "
 "si bien qu'une même position d'argent n'entre plus deux fois par des "
@@ -3438,7 +3523,7 @@ msgstr ""
 "разные двери. Миграция выполняется автоматически при открытии и "
 "необратима (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:393
+#: ../../source/historique.rst:406
 msgid ""
 "Corrections notables : le volet de détail du panneau Matchs n'occupe plus"
 " la moitié de l'écran quand rien n'est sélectionné, la première partie "
@@ -3451,15 +3536,15 @@ msgstr ""
 "сворачивается, как и остальные; SHIFT-J и SHIFT-K переключают вид из "
 "любой панели; восемь сочетаний «показать/скрыть» наконец скрывают."
 
-#: ../../source/historique.rst:394 ../../source/historique.rst:405
+#: ../../source/historique.rst:407 ../../source/historique.rst:418
 msgid "Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
 msgstr "См. :ref:`cli`, :ref:`headless` и :ref:`manuel`."
 
-#: ../../source/historique.rst:397
+#: ../../source/historique.rst:410
 msgid "0.35.0 (2026-09-02)"
 msgstr "0.35.0 (2026-09-02)"
 
-#: ../../source/historique.rst:399
+#: ../../source/historique.rst:412
 msgid ""
 "La ligne de commande gagne deux familles : ``blunderdb collection`` "
 "(lister, afficher, créer, renommer, supprimer, exporter une collection) "
@@ -3471,7 +3556,7 @@ msgstr ""
 "``blunderdb anki`` (колоды, статистика, прогноз повторений, "
 "ресинхронизация колоды)."
 
-#: ../../source/historique.rst:400
+#: ../../source/historique.rst:413
 msgid ""
 "Le mode serveur est publié en **image Docker** (``ghcr.io/kevung"
 "/blunderdb-serve``, amd64 et arm64), gagne la route "
@@ -3483,7 +3568,7 @@ msgstr ""
 "``maintenance.vacuum`` и **ставит водяной знак на свои экспорты** с "
 "идентичностью издателя сервера (``--identity-dir``)."
 
-#: ../../source/historique.rst:401
+#: ../../source/historique.rst:414
 msgid ""
 "L'évaluateur gammonNet **value ses feuilles avec le videau** : au score, "
 "les verdicts de la recherche se rapprochent de ceux d'eXtreme Gammon."
@@ -3491,7 +3576,7 @@ msgstr ""
 "Оценщик gammonNet **оценивает свои листья с учётом куба**: при матчевом "
 "счёте вердикты поиска приближаются к вердиктам eXtreme Gammon."
 
-#: ../../source/historique.rst:402
+#: ../../source/historique.rst:415
 msgid ""
 "Chaque release livre désormais les **manifestes winget et Homebrew** et "
 "un bundle Flatpak, en plus des paquets Debian, RPM et AUR."
@@ -3499,7 +3584,7 @@ msgstr ""
 "Каждый релиз теперь поставляет **манифесты winget и Homebrew** и пакет "
 "Flatpak, в дополнение к пакетам Debian, RPM и AUR."
 
-#: ../../source/historique.rst:403
+#: ../../source/historique.rst:416
 msgid ""
 "Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 "
 "positions ne charge plus tout en mémoire à chaque rafraîchissement), les "
@@ -3513,7 +3598,7 @@ msgstr ""
 "перерисовывает только то, что меняется, а встроенный японский шрифт "
 "сокращён до своего полезного подмножества (на 5,5 МБ меньше)."
 
-#: ../../source/historique.rst:404
+#: ../../source/historique.rst:417
 msgid ""
 "Corrections notables : une base importée par « Importer une base » "
 "gardait des positions invisibles aux filtres et dédoublées au second "
@@ -3528,11 +3613,11 @@ msgstr ""
 "игроков оставалась серой; экспорт сервера был пустым; а в Windows "
 "удаление скачанной базы bearoff и ``create --force`` завершались ошибкой."
 
-#: ../../source/historique.rst:408
+#: ../../source/historique.rst:421
 msgid "0.34.0 (2026-09-02)"
 msgstr "0.34.0 (2026-09-02)"
 
-#: ../../source/historique.rst:410
+#: ../../source/historique.rst:423
 msgid ""
 "Un **évaluateur embarqué** : gammonNet, porté en Go et compilé dans "
 "blunderDB, évalue n'importe quelle position hors ligne, sans XG ni gnuBG "
@@ -3545,7 +3630,7 @@ msgstr ""
 "нейросеть, поиск от 0 до 2-ply с отсечением, решение по кубу по Яновскому"
 " и таблице матчевого эквити blunderDB, и поиск, учитывающий счёт матча."
 
-#: ../../source/historique.rst:411
+#: ../../source/historique.rst:424
 msgid ""
 "Le panneau Bearoff devient le panneau **Eval** : il présente les faits de"
 " la position (chances de gain, gammon et backgammon des deux camps, "
@@ -3559,7 +3644,7 @@ msgstr ""
 "прокрутки; матчевые эквити **нормализованы**, и вердикт «слишком хорошо "
 "для удвоения» снова виден."
 
-#: ../../source/historique.rst:412
+#: ../../source/historique.rst:425
 msgid ""
 "L'évaluation est **progressive** : 0-ply immédiat au geste, puis 2-ply au"
 " repos, annulable par tout nouveau geste, l'étiquette de profondeur "
@@ -3569,7 +3654,7 @@ msgstr ""
 "отменяемая любым новым жестом, с меткой глубины, всегда называющей ту, "
 "что дала это число."
 
-#: ../../source/historique.rst:413
+#: ../../source/historique.rst:426
 msgid ""
 "Le plateau entier, les dés et le score s'y éditent, au clic comme au "
 "clavier, et une position de la bibliothèque entre dans le panneau et en "
@@ -3578,7 +3663,7 @@ msgstr ""
 "Вся доска, кости и счёт редактируются прямо там, кликом или клавиатурой, "
 "и позиция из библиотеки входит в панель и выходит из неё."
 
-#: ../../source/historique.rst:414
+#: ../../source/historique.rst:427
 msgid ""
 "Sur une course au-delà de la base bi-face, un troisième régime **évalué**"
 " fournit le verdict de videau au score que le panneau ne donnait pas."
@@ -3587,7 +3672,7 @@ msgstr ""
 "предоставляет вердикт по кубу при данном счёте, который панель раньше не "
 "давала."
 
-#: ../../source/historique.rst:415
+#: ../../source/historique.rst:428
 msgid ""
 "Un onglet **gammonNet** de la configuration sépare la profondeur "
 "d'affichage de la profondeur d'analyse."
@@ -3595,7 +3680,7 @@ msgstr ""
 "Вкладка **gammonNet** в настройках отделяет глубину отображения от "
 "глубины анализа."
 
-#: ../../source/historique.rst:416
+#: ../../source/historique.rst:429
 msgid ""
 "Après un import, un **lot d'analyse** borné, visible, annulable et "
 "reprenable comble les positions sans aucune analyse, sans jamais écraser "
@@ -3609,7 +3694,7 @@ msgstr ""
 "библиотеки** запускается из интерфейса, новой командой ``blunderdb "
 "analyze`` или в серверном режиме."
 
-#: ../../source/historique.rst:417
+#: ../../source/historique.rst:430
 msgid ""
 "Corrections notables : la réponse à un videau importée d'eXtreme Gammon "
 "héritait de l'analyse du doubleur sans être retournée, la notation des "
@@ -3622,15 +3707,15 @@ msgstr ""
 "ходов Белых и входов с бара теперь следует gnuBG и XG; глубина анализа "
 "gnuBG считывается корректно; размер боковой панели запоминается."
 
-#: ../../source/historique.rst:418
+#: ../../source/historique.rst:431
 msgid "Voir :ref:`panneau_epc`, :ref:`manuel` et :ref:`cli`."
 msgstr "См. :ref:`panneau_epc`, :ref:`manuel` и :ref:`cli`."
 
-#: ../../source/historique.rst:421
+#: ../../source/historique.rst:434
 msgid "0.33.0 (2026-08-26)"
 msgstr "0.33.0 (2026-08-26)"
 
-#: ../../source/historique.rst:423
+#: ../../source/historique.rst:436
 msgid ""
 "Le panneau Stats gagne un onglet **Joueurs** : les trois onglets "
 "précédents décrivent un joueur, celui-ci les compare tous, une ligne par "
@@ -3653,7 +3738,7 @@ msgstr ""
 " командной строке (``blunderdb list --type players`` — текст, JSON или "
 "CSV), и в режиме сервера."
 
-#: ../../source/historique.rst:424
+#: ../../source/historique.rst:437
 msgid ""
 "La **chance** de chaque lancer est désormais conservée en base et "
 "affichée : chance moyenne par lancer, en millièmes de point, signée. Elle"
@@ -3670,7 +3755,7 @@ msgstr ""
 " её получить, исходные файлы нужно импортировать заново; форматы, которые"
 " её не переносят (BGF, Jellyfish ``.mat``), не дадут её никогда."
 
-#: ../../source/historique.rst:425
+#: ../../source/historique.rst:438
 msgid ""
 "L'onglet **Erreurs** indique désormais dans quel *sens* se trompent les "
 "décisions de videau, et non plus seulement combien elles coûtent : une "
@@ -3687,7 +3772,7 @@ msgstr ""
 " и брать широко. В каждой ячейке — количество, во всплывающей подсказке —"
 " потерянная эквити, а щелчок загружает соответствующие позиции."
 
-#: ../../source/historique.rst:426
+#: ../../source/historique.rst:439
 msgid ""
 "Nouvelle commande **Compacter la base**, qui récupère l'espace laissé par"
 " les suppressions : bouton dans les paramètres et sous-commande "
@@ -3697,7 +3782,7 @@ msgstr ""
 "удалений: кнопка в настройках и подкоманда ``blunderdb vacuum``. Сама по "
 "себе она не запускается никогда."
 
-#: ../../source/historique.rst:427
+#: ../../source/historique.rst:440
 msgid ""
 "Ergonomie : les actions destructives demandent confirmation, une "
 "recherche en cours est signalée, une commande inconnue reçoit un message "
@@ -3710,7 +3795,7 @@ msgstr ""
 "молчания, а вкладки, закреплённые панели и небольшие диалоги полностью "
 "управляются с клавиатуры. Поиск к тому же заметно быстрее."
 
-#: ../../source/historique.rst:428
+#: ../../source/historique.rst:441
 msgid ""
 "Corrections notables : les non-doubles étiquetés « Double No » par gnuBG "
 "étaient comptés comme des doubles, ce qui faussait le PR videau (une base"
@@ -3726,15 +3811,15 @@ msgstr ""
 "устаревшую схему; а ``blunderdb vacuum`` открывал графический интерфейс "
 "вместо сжатия базы."
 
-#: ../../source/historique.rst:429
+#: ../../source/historique.rst:442
 msgid "Voir :ref:`stats` et :ref:`cli`."
 msgstr "См. :ref:`stats` и :ref:`cli`."
 
-#: ../../source/historique.rst:432
+#: ../../source/historique.rst:445
 msgid "0.32.0 (2026-08-09)"
 msgstr "0.32.0 (2026-08-09)"
 
-#: ../../source/historique.rst:434
+#: ../../source/historique.rst:447
 msgid ""
 "Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de "
 "course complète. *(Renommé panneau Eval en 0.34.0.)*"
@@ -3742,7 +3827,7 @@ msgstr ""
 "Панель EPC становится панелью **Bearoff** и получает полный анализ гонки."
 " *(Переименована в панель Eval в 0.34.0.)*"
 
-#: ../../source/historique.rst:435
+#: ../../source/historique.rst:448
 msgid ""
 "Sur une position de bearoff pur, il affiche — en plus de l'EPC, du pip "
 "count, du wastage et du nombre moyen de lancers de chaque joueur, "
@@ -3758,7 +3843,7 @@ msgstr ""
 "удвоение/отказ, с разрывом каждого решения от лучшего), а также **лучшее "
 "решение по кубу**."
 
-#: ../../source/historique.rst:436
+#: ../../source/historique.rst:449
 msgid ""
 "Deux régimes clairement distingués : *exact* (lecture dans une base two-"
 "sided ; base TS-06-06 de GNUbg intégrée, couvrant jusqu'à 6 pions par "
@@ -3770,7 +3855,7 @@ msgstr ""
 "*оценённый* (калиброванная свёртка, показывается погрешность — вердикт по"
 " кубу никогда не оценивается)."
 
-#: ../../source/historique.rst:437
+#: ../../source/historique.rst:450
 msgid ""
 "La base étendue TS-06-11 (verdict exact jusqu'à 11 pions par joueur, 1,2 "
 "Go) se télécharge depuis le nouvel onglet *Bearoff* de la configuration, "
@@ -3785,7 +3870,7 @@ msgstr ""
 "любой двусторонний файл ``.bd`` от gnubg. *(Заменено в 0.36.0: таблица "
 "вычисляется на самой машине, никаких загрузок.)*"
 
-#: ../../source/historique.rst:438
+#: ../../source/historique.rst:451
 msgid ""
 "**Mode défi** pour l'entraînement : les résultats se masquent à chaque "
 "modification et se révèlent zone par zone, d'un clic."
@@ -3793,7 +3878,7 @@ msgstr ""
 "**Режим вызова** для тренировки: результаты скрываются при каждом "
 "изменении и раскрываются зона за зоной по клику."
 
-#: ../../source/historique.rst:439
+#: ../../source/historique.rst:452
 msgid ""
 "Édition entièrement au plateau : pions des deux jans, joueur au trait "
 "(clic sur le rectangle sortie/score) et position du videau (clic sur le "
@@ -3802,7 +3887,7 @@ msgstr ""
 "Полное редактирование на доске: шашки обеих сторон, игрок на ходу (клик "
 "по прямоугольнику снятия/счёта) и позиция куба (клик по кубу)."
 
-#: ../../source/historique.rst:440
+#: ../../source/historique.rst:453
 msgid ""
 "Le clic sur le plateau est désormais exact à toute échelle d'interface "
 "(un clic sur le point 1 pouvait atterrir sur le point 2)."
@@ -3810,7 +3895,7 @@ msgstr ""
 "Клик по доске теперь точен при любом масштабе интерфейса (клик по пункту "
 "1 мог попадать на пункт 2)."
 
-#: ../../source/historique.rst:441
+#: ../../source/historique.rst:454
 msgid ""
 "Nouvelle commande ``blunderdb epc`` en ligne de commande et option "
 "``--bearoff-ts`` du mode serveur."
@@ -3818,7 +3903,7 @@ msgstr ""
 "Новая команда ``blunderdb epc`` в командной строке и опция ``--bearoff-"
 "ts`` серверного режима."
 
-#: ../../source/historique.rst:442
+#: ../../source/historique.rst:455
 msgid ""
 "Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau "
 "Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur "
@@ -3828,15 +3913,15 @@ msgstr ""
 "исчерпывающе излагает допущения, стоящие за каждым отображаемым "
 "значением. *(Раздел переименован вместе с панелью в 0.34.0.)*"
 
-#: ../../source/historique.rst:443
+#: ../../source/historique.rst:456
 msgid "Voir :ref:`panneau_epc` et :ref:`epc_methodologie`."
 msgstr "См. :ref:`panneau_epc` и :ref:`epc_methodologie`."
 
-#: ../../source/historique.rst:446
+#: ../../source/historique.rst:459
 msgid "0.31.0 (2026-08-04)"
 msgstr "0.31.0 (2026-08-04)"
 
-#: ../../source/historique.rst:448
+#: ../../source/historique.rst:461
 msgid ""
 "Diffusion d'une base à des tiers : deux mécanismes indépendants, tous "
 "deux facultatifs et choisis au moment de l'export."
@@ -3844,7 +3929,7 @@ msgstr ""
 "Распространение базы среди третьих лиц: два независимых механизма, оба "
 "необязательны и выбираются при экспорте."
 
-#: ../../source/historique.rst:449
+#: ../../source/historique.rst:462
 msgid ""
 "Le **filigrane d'origine** inscrit dans le fichier ce qu'il est et d'où "
 "il vient, signé par une identité d'émetteur créée toute seule au premier "
@@ -3860,7 +3945,7 @@ msgstr ""
 " файл) и ничего не фиксирует на стороне получателя — ни журнала, ни "
 "отслеживания."
 
-#: ../../source/historique.rst:450
+#: ../../source/historique.rst:463
 msgid ""
 "La **protection par mot de passe** produit un fichier ``.dbx`` chiffré "
 "(AES-256-GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont"
@@ -3872,7 +3957,7 @@ msgstr ""
 "заголовок которого остаётся читаемым в открытом виде; идентичность "
 "экспортируется и импортируется как единый файл из настроек."
 
-#: ../../source/historique.rst:451
+#: ../../source/historique.rst:464
 msgid ""
 "Fenêtre d'export refondue : un seul écran au lieu de quatre, rappel de ce"
 " qui part réellement (les positions affichées), part couverte de chaque "
@@ -3886,7 +3971,7 @@ msgstr ""
 "экспортируются только вместе со своими матчами — и экспорт в три раза "
 "быстрее."
 
-#: ../../source/historique.rst:452
+#: ../../source/historique.rst:465
 msgid ""
 "Fenêtre de configuration réorganisée en trois onglets (Interface, "
 "Couleurs du plateau, Identité d'émetteur), de taille et de position "
@@ -3895,15 +3980,15 @@ msgstr ""
 "Окно настроек реорганизовано в три вкладки (Интерфейс, Цвета доски, "
 "Идентичность издателя), со стабильным размером и позицией."
 
-#: ../../source/historique.rst:453
+#: ../../source/historique.rst:466
 msgid "Panneau Métadonnées redisposé en une seule grille."
 msgstr "Панель Метаданных перекомпонована в единую сетку."
 
-#: ../../source/historique.rst:454
+#: ../../source/historique.rst:467
 msgid "Le panneau Journal, qui ne recevait que l'écho des commandes, est retiré."
 msgstr "Панель Журнал, которая получала лишь эхо команд, удалена."
 
-#: ../../source/historique.rst:455
+#: ../../source/historique.rst:468
 msgid ""
 "Corrections notables : un mot de passe erroné n'ouvre plus une base "
 "protégée, les champs des fenêtres modales ne perdent plus le focus au "
@@ -3916,15 +4001,15 @@ msgstr ""
 "показателей PR/MWC больше не падает на денежной партии; временные файлы "
 "(``-wal``, ``-shm``, блокировка) очищаются при закрытии."
 
-#: ../../source/historique.rst:456
+#: ../../source/historique.rst:469
 msgid "Voir :ref:`diffusion_controlee` et :ref:`manuel`."
 msgstr "См. :ref:`diffusion_controlee` и :ref:`manuel`."
 
-#: ../../source/historique.rst:459
+#: ../../source/historique.rst:472
 msgid "0.30.0 (2026-07-26)"
 msgstr "0.30.0 (2026-07-26)"
 
-#: ../../source/historique.rst:461
+#: ../../source/historique.rst:474
 msgid ""
 "Recherche par commentaire : le filtre « Texte de recherche » devient le "
 "filtre « Commentaire » et propose trois modes exclusifs — *contient le "
@@ -3940,7 +4025,7 @@ msgstr ""
 "одним движением находить прокомментированные позиции или, наоборот, те, "
 "что ещё предстоит прокомментировать."
 
-#: ../../source/historique.rst:462
+#: ../../source/historique.rst:475
 msgid ""
 "Positions marquées dans eXtreme Gammon : les marques (*flags*) posées "
 "lors de l'analyse d'un match XG sont désormais lues à l'import et "
@@ -3954,7 +4039,7 @@ msgstr ""
 "помеченное решение по кубу даёт две помеченные позиции — удвоение и "
 "принятие/отказ."
 
-#: ../../source/historique.rst:463
+#: ../../source/historique.rst:476
 msgid ""
 "Le marquage n'étant pas rétroactif, il suffit de réimporter le fichier "
 "``.xg`` concerné pour que ses marques rejoignent la base, sans toucher "
@@ -3964,7 +4049,7 @@ msgstr ""
 "импортировать соответствующий файл ``.xg``, чтобы его метки попали в "
 "базу, не затрагивая существующие комментарии или анализы."
 
-#: ../../source/historique.rst:464
+#: ../../source/historique.rst:477
 msgid ""
 "Corrections notables : le PR affiché sur le badge d'un tournoi se "
 "rapporte au joueur de référence et non plus au cumul des deux joueurs, "
@@ -3979,15 +4064,15 @@ msgstr ""
 "всю базу; исправлено зависание поиска при сочетании определённых фильтров"
 " (текст, дата, ошибка сыгранного хода)."
 
-#: ../../source/historique.rst:465
+#: ../../source/historique.rst:478
 msgid "Voir :ref:`cmd_mode` et :ref:`manuel`."
 msgstr "См. :ref:`cmd_mode` и :ref:`manuel`."
 
-#: ../../source/historique.rst:468
+#: ../../source/historique.rst:481
 msgid "0.29.0 (2026-07-18)"
 msgstr "0.29.0 (2026-07-18)"
 
-#: ../../source/historique.rst:470
+#: ../../source/historique.rst:483
 msgid ""
 "Export d'un match au format Jellyfish/gnubg (``.mat``) depuis l'interface"
 " (panneau Matchs) comme en ligne de commande, avec la route serveur "
@@ -3999,7 +4084,7 @@ msgstr ""
 "маршрутом — удобно для повторного проигрывания матча в другой программе "
 "для нард."
 
-#: ../../source/historique.rst:471
+#: ../../source/historique.rst:484
 msgid ""
 "Recherche : nouveau discriminateur « dés exclus » (jeton ``xD65``, "
 "plusieurs autorisés) qui écarte les positions dont le lancer correspond à"
@@ -4009,7 +4094,7 @@ msgstr ""
 " несколько), который отбрасывает позиции, чей бросок совпадает с "
 "заданным."
 
-#: ../../source/historique.rst:472
+#: ../../source/historique.rst:485
 msgid ""
 "Ouverture concurrente sécurisée : une base déjà ouverte en écriture dans "
 "une autre fenêtre de blunderDB s'ouvre désormais en lecture seule "
@@ -4022,7 +4107,7 @@ msgstr ""
 "анализ по-прежнему возможны, изменения отключены, отметка «[только "
 "чтение]» в заголовке окна) вместо риска повреждения."
 
-#: ../../source/historique.rst:473
+#: ../../source/historique.rst:486
 msgid ""
 "Provenance des positions : hors mode match, la barre d'informations au-"
 "dessus du plateau indique le match — et son tournoi — d'où provient la "
@@ -4033,7 +4118,7 @@ msgstr ""
 "показывает матч — и его турнир — из которого происходит изучаемая "
 "позиция, со значком «+N», если она встречается в нескольких матчах."
 
-#: ../../source/historique.rst:474
+#: ../../source/historique.rst:487
 msgid ""
 "Robustesse accrue face à l'environnement : repli automatique lorsqu'une "
 "police, le presse-papier ou la dernière base ouverte ne sont pas "
@@ -4042,7 +4127,7 @@ msgstr ""
 "Повышенная устойчивость к окружению: автоматический откат при "
 "недоступности шрифта, буфера обмена или последней открытой базы."
 
-#: ../../source/historique.rst:475
+#: ../../source/historique.rst:488
 msgid ""
 "Un rechargement explicite de la bibliothèque (``CTRL-R``, bouton de la "
 "barre d'outils ou commande ``e``) rouvre le panneau d'analyse de la "
@@ -4051,7 +4136,7 @@ msgstr ""
 "Явная перезагрузка библиотеки (``CTRL-R``, кнопка панели инструментов или"
 " команда ``e``) заново открывает панель анализа на отображаемой позиции."
 
-#: ../../source/historique.rst:476
+#: ../../source/historique.rst:489
 msgid ""
 "Corrections notables : suppression d'un blocage à l'export de grosses "
 "bases, bouton « Aucun » de l'export qui n'exportait pas réellement aucun "
@@ -4065,15 +4150,15 @@ msgstr ""
 "дублирования события и турнира в информационной панели; различные "
 "визуальные доработки."
 
-#: ../../source/historique.rst:477
+#: ../../source/historique.rst:490
 msgid "Voir :ref:`cmd_mode`, :ref:`panneau_matchs` et :ref:`manuel`."
 msgstr "См. :ref:`cmd_mode`, :ref:`panneau_matchs` и :ref:`manuel`."
 
-#: ../../source/historique.rst:480
+#: ../../source/historique.rst:493
 msgid "0.28.0 (2026-07-15)"
 msgstr "0.28.0 (2026-07-15)"
 
-#: ../../source/historique.rst:482
+#: ../../source/historique.rst:495
 msgid ""
 "Panneau de recherche : filtre unifié « Matchs & Tournois » remplaçant les"
 " champs de saisie d'identifiants par une fenêtre de sélection (listes à "
@@ -4090,7 +4175,7 @@ msgstr ""
 "показатели PR/MWC только для отображаемых матчей; ``cli list --type "
 "tournaments`` закрывает соответствующий пробел паритета."
 
-#: ../../source/historique.rst:483
+#: ../../source/historique.rst:496
 msgid ""
 "Nouveau filtre « Importée individuellement » (case à cocher du groupe "
 "Autre, ou jeton ``i`` en ligne de commande, ``s i`` ; disponible aussi en"
@@ -4102,7 +4187,7 @@ msgstr ""
 "``--individual``) для поиска позиции, сохранённой или импортированной "
 "отдельно, а не затерянной внутри импорта матча."
 
-#: ../../source/historique.rst:484
+#: ../../source/historique.rst:497
 msgid ""
 "Correction d'une perte de données : la suppression d'un match ne supprime"
 " plus les positions individuellement importées, mises en collection ou "
@@ -4112,7 +4197,7 @@ msgstr ""
 "импортированные позиции, позиции, помещённые в коллекцию, или позиции, "
 "включённые в колоду Anki, которые этот матч также содержал."
 
-#: ../../source/historique.rst:485
+#: ../../source/historique.rst:498
 msgid ""
 "Mode serveur (headless) : six nouvelles méthodes pour le planificateur "
 "Anki à répétition espacée — journal des révisions (``anki.reviewLog``), "
@@ -4140,7 +4225,7 @@ msgstr ""
 "``matches.list`` (фильтрация/сортировка/пагинация) и "
 "``stats.matchBadges`` (показатели PR/MWC, ограниченные списком матчей)."
 
-#: ../../source/historique.rst:486
+#: ../../source/historique.rst:499
 msgid ""
 "Distribution Linux native : paquets ``.deb``/``.rpm``, qui conservent le "
 "bit d'exécution perdu lors du téléchargement du binaire brut."
@@ -4148,7 +4233,7 @@ msgstr ""
 "Нативное распространение для Linux: пакеты ``.deb``/``.rpm``, сохраняющие"
 " бит исполнения, теряемый при скачивании сырого бинарника."
 
-#: ../../source/historique.rst:487
+#: ../../source/historique.rst:500
 msgid ""
 "Import : après l'import d'un match, l'onglet Matchs s'affiche et les "
 "positions importées sont immédiatement visibles ; après l'import d'une "
@@ -4168,15 +4253,15 @@ msgstr ""
 "оставалась пустой (акценты разбирались буфером обмена системы на "
 "составляющие)."
 
-#: ../../source/historique.rst:488
+#: ../../source/historique.rst:501
 msgid "Voir :ref:`headless`, :ref:`cmd_mode` et :ref:`telecharge_install`."
 msgstr "См. :ref:`headless`, :ref:`cmd_mode` и :ref:`telecharge_install`."
 
-#: ../../source/historique.rst:491
+#: ../../source/historique.rst:504
 msgid "0.27.0 (2026-06-13)"
 msgstr "0.27.0 (2026-06-13)"
 
-#: ../../source/historique.rst:493
+#: ../../source/historique.rst:506
 msgid ""
 "Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
 "accessible par le bouton *Cram* à côté de *Study*, qui présente des "
@@ -4190,7 +4275,7 @@ msgstr ""
 "разминки перед турниром или интенсивного повторения колоды без нарушения "
 "её порядка."
 
-#: ../../source/historique.rst:494
+#: ../../source/historique.rst:507
 msgid ""
 "Recherche : nouvelle commande ``blunders`` (alias ``bl``) qui charge "
 "directement les pires erreurs (équité/MWC) dans la vue d'analyse, avec un"
@@ -4207,7 +4292,7 @@ msgstr ""
 "на любой стороне; и всплывающие подсказки, показывающие при наведении на "
 "каждый фильтр панели поиска соответствующий командный токен."
 
-#: ../../source/historique.rst:495
+#: ../../source/historique.rst:508
 msgid ""
 "Mode serveur (headless) : nouvelles méthodes ``matches.movesByMatch`` "
 "(tous les coups d'un match en un seul appel) et ``positions.epc`` "
@@ -4217,15 +4302,15 @@ msgstr ""
 "ходы матча за один вызов) и ``positions.epc`` (Effective Pip Count для "
 "обоих игроков)."
 
-#: ../../source/historique.rst:496
+#: ../../source/historique.rst:509
 msgid "Voir :ref:`panneau_anki` et :ref:`cmd_mode`."
 msgstr "См. :ref:`panneau_anki` и :ref:`cmd_mode`."
 
-#: ../../source/historique.rst:499
+#: ../../source/historique.rst:512
 msgid "0.26.0 (2026-06-09)"
 msgstr "0.26.0 (2026-06-09)"
 
-#: ../../source/historique.rst:501
+#: ../../source/historique.rst:514
 msgid ""
 "Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
 " curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
@@ -4237,7 +4322,7 @@ msgstr ""
 "(внизу, сбоку или автоматически) для лучшего использования широких "
 "экранов."
 
-#: ../../source/historique.rst:502
+#: ../../source/historique.rst:515
 msgid ""
 "Ajout d'une barre d'informations au-dessus du plateau rappelant les "
 "joueurs et le contexte du match (événement, lieu, ronde, date, longueur)."
@@ -4245,7 +4330,7 @@ msgstr ""
 "Добавлена информационная панель над доской, напоминающая игроков и "
 "контекст матча (событие, место, раунд, дата, длина)."
 
-#: ../../source/historique.rst:503
+#: ../../source/historique.rst:516
 msgid ""
 "À l'ouverture d'une base, le panneau des matchs est affiché d'emblée et "
 "la revue débute sur la première position."
@@ -4253,7 +4338,7 @@ msgstr ""
 "При открытии базы панель матчей теперь сразу отображается, и просмотр "
 "начинается с первой позиции."
 
-#: ../../source/historique.rst:504
+#: ../../source/historique.rst:517
 msgid ""
 "Les raccourcis clavier sont désormais indépendants de la disposition du "
 "clavier (AZERTY, QWERTY, QWERTZ…)."
@@ -4261,13 +4346,13 @@ msgstr ""
 "Клавиатурные сочетания теперь не зависят от раскладки клавиатуры (AZERTY,"
 " QWERTY, QWERTZ…)."
 
-#: ../../source/historique.rst:505
+#: ../../source/historique.rst:518
 msgid ""
 "Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du "
 "videau)."
 msgstr "Исправлено декодирование XGID (флаги Jacoby/Beaver и значение куба)."
 
-#: ../../source/historique.rst:506
+#: ../../source/historique.rst:519
 msgid ""
 "Ajout des onglets de vues multiples : plusieurs espaces de travail "
 "indépendants (liste de positions, position courante, recherche) avec les "
@@ -4281,15 +4366,15 @@ msgstr ""
 "PageUp*/*CTRL-PageDown* (переключение представления) и переименование "
 "двойным щелчком по вкладке."
 
-#: ../../source/historique.rst:507
+#: ../../source/historique.rst:520
 msgid "Voir :ref:`configuration` et :ref:`onglets_vues`."
 msgstr "См. :ref:`configuration` и :ref:`onglets_vues`."
 
-#: ../../source/historique.rst:510
+#: ../../source/historique.rst:523
 msgid "0.25.0 (2026-06-07)"
 msgstr "0.25.0 (2026-06-07)"
 
-#: ../../source/historique.rst:512
+#: ../../source/historique.rst:525
 msgid ""
 "Mode serveur (headless) : deux nouvelles méthodes pour reconstruire une "
 "position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
@@ -4300,16 +4385,16 @@ msgstr ""
 "без её сохранения — ``positions.fromXGID`` декодирует строку XGID в "
 "позицию, а ``positions.fromXGP`` читает файл одиночной позиции ``.xgp``."
 
-#: ../../source/historique.rst:513 ../../source/historique.rst:519
-#: ../../source/historique.rst:537
+#: ../../source/historique.rst:526 ../../source/historique.rst:532
+#: ../../source/historique.rst:550
 msgid "Voir :ref:`headless`."
 msgstr "См. :ref:`headless`."
 
-#: ../../source/historique.rst:516
+#: ../../source/historique.rst:529
 msgid "0.24.0 (2026-06-06)"
 msgstr "0.24.0 (2026-06-06)"
 
-#: ../../source/historique.rst:518
+#: ../../source/historique.rst:531
 msgid ""
 "Ajout d'une image conteneur (Docker) pour le mode headless : un point "
 "d'entrée dédié ``serve`` et un ``Dockerfile.serve`` produisant un binaire"
@@ -4321,11 +4406,11 @@ msgstr ""
 "файл без графического интерфейса, для развёртывания движка blunderDB как "
 "службы за обратным прокси-сервером."
 
-#: ../../source/historique.rst:522
+#: ../../source/historique.rst:535
 msgid "0.23.0 (2026-06-05)"
 msgstr "0.23.0 (2026-06-05)"
 
-#: ../../source/historique.rst:524
+#: ../../source/historique.rst:537
 msgid ""
 "Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
 " tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
@@ -4339,7 +4424,7 @@ msgstr ""
 "чтобы познакомиться с инструментом без импорта собственных партий. "
 "*(Удалены в 0.47.0.)*"
 
-#: ../../source/historique.rst:525
+#: ../../source/historique.rst:538
 msgid ""
 "Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, "
 "dés, videau) depuis la fenêtre de configuration."
@@ -4347,11 +4432,11 @@ msgstr ""
 "Настройка цветов доски (фон, рамка, стрелки, шашки, кости, куб) из окна "
 "настроек."
 
-#: ../../source/historique.rst:526
+#: ../../source/historique.rst:539
 msgid "Autocomplétion de la ligne de commande (touche *TAB*)."
 msgstr "Автодополнение командной строки (клавиша *TAB*)."
 
-#: ../../source/historique.rst:527
+#: ../../source/historique.rst:540
 msgid ""
 "Panneau de recherche : contrôle explicite du type de décision (Pions / "
 "Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour "
@@ -4363,19 +4448,19 @@ msgstr ""
 "синхронизированный с доской; предлагаемый куб отображается в центре доски"
 " для решений о принятии/отказе."
 
-#: ../../source/historique.rst:528
+#: ../../source/historique.rst:541
 msgid "Recherche d'une position par son identifiant (filtre ``id``)."
 msgstr "Поиск позиции по её идентификатору (фильтр ``id``)."
 
-#: ../../source/historique.rst:529
+#: ../../source/historique.rst:542
 msgid "Correction de l'attribution de l'erreur de videau au joueur 1."
 msgstr "Исправлено отнесение ошибки по кубу к игроку 1."
 
-#: ../../source/historique.rst:532
+#: ../../source/historique.rst:545
 msgid "0.22.0 (2026-06-02)"
 msgstr "0.22.0 (2026-06-02)"
 
-#: ../../source/historique.rst:534
+#: ../../source/historique.rst:547
 msgid ""
 "Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
 "l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
@@ -4393,7 +4478,7 @@ msgstr ""
 "диспетчер ``call``, дающий доступ из командной строки ко всем операциям "
 "хранения."
 
-#: ../../source/historique.rst:535
+#: ../../source/historique.rst:548
 msgid ""
 "Import de positions uniques depuis de nouveaux formats (eXtreme Gammon "
 "``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec enrichissement"
@@ -4403,7 +4488,7 @@ msgstr ""
 "текст BGBlitz, нативная библиотека ``.db``) с обогащением дубликатов "
 "между форматами."
 
-#: ../../source/historique.rst:536
+#: ../../source/historique.rst:549
 msgid ""
 "Corrections : les panneaux ne provoquent plus d'erreur lorsqu'aucune base"
 " n'est ouverte et le panneau Commentaires ne boucle plus à l'ouverture."
@@ -4411,11 +4496,11 @@ msgstr ""
 "Исправления: панели больше не вызывают ошибку, когда ни одна база не "
 "открыта, а панель Комментарии больше не зацикливается при открытии."
 
-#: ../../source/historique.rst:540
+#: ../../source/historique.rst:553
 msgid "0.21.0 (2026-06-01)"
 msgstr "0.21.0 (2026-06-01)"
 
-#: ../../source/historique.rst:542
+#: ../../source/historique.rst:555
 msgid ""
 "Internationalisation de l'interface : l'intégralité de blunderDB (barre "
 "d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
@@ -4427,7 +4512,7 @@ msgstr ""
 "выбору на английском, французском, немецком, итальянском, испанском, "
 "финском, японском, греческом или русском языке."
 
-#: ../../source/historique.rst:543
+#: ../../source/historique.rst:556
 msgid ""
 "Ajout d'une fenêtre de configuration, accessible par un bouton en forme "
 "de rouage dans la barre d'outils, permettant de sélectionner la langue."
@@ -4435,19 +4520,19 @@ msgstr ""
 "Добавлено окно настроек, доступное через кнопку в виде шестерёнки на "
 "панели инструментов, позволяющее выбрать язык."
 
-#: ../../source/historique.rst:544
+#: ../../source/historique.rst:557
 msgid "Le choix de la langue est conservé d'une session à l'autre."
 msgstr "Выбор языка сохраняется от сеанса к сеансу."
 
-#: ../../source/historique.rst:545
+#: ../../source/historique.rst:558
 msgid "Voir :ref:`configuration`."
 msgstr "См. :ref:`configuration`."
 
-#: ../../source/historique.rst:548
+#: ../../source/historique.rst:561
 msgid "0.20.0 (2026-05-31)"
 msgstr "0.20.0 (2026-05-31)"
 
-#: ../../source/historique.rst:550
+#: ../../source/historique.rst:563
 msgid ""
 "Ajout de la structure d'exclusion *Except* au panneau de recherche : "
 "exclut les positions contenant l'un des pions dessinés, avec marqueur « "
@@ -4459,7 +4544,7 @@ msgstr ""
 "пусто» (двойной щелчок) и неограниченным числом шашек на пункт (команда "
 "``x``)."
 
-#: ../../source/historique.rst:551
+#: ../../source/historique.rst:564
 msgid ""
 "Ajout de l'option « premier dé uniquement » au filtre de lancer de dés "
 "(variante D1, option CLI --dice)."
@@ -4467,7 +4552,7 @@ msgstr ""
 "Добавлена опция «только первая кость» в фильтр броска (вариант D1, опция "
 "CLI ``--dice``)."
 
-#: ../../source/historique.rst:552
+#: ../../source/historique.rst:565
 msgid ""
 "Panneau Commentaires : focus automatique du champ de saisie à l'ouverture"
 " et boutons éditer / supprimer toujours visibles."
@@ -4475,17 +4560,17 @@ msgstr ""
 "Панель Комментарии: автоматический фокус на поле ввода при открытии, "
 "кнопки редактирования/удаления всегда видны."
 
-#: ../../source/historique.rst:553
+#: ../../source/historique.rst:566
 msgid ""
 "Correction du filtre « Search Text » qui ne trouvait pas tous les tags de"
 " commentaires."
 msgstr "Исправлен фильтр «Search Text», который находил не все теги комментариев."
 
-#: ../../source/historique.rst:556
+#: ../../source/historique.rst:569
 msgid "0.19.0 (2026-05-07)"
 msgstr "0.19.0 (2026-05-07)"
 
-#: ../../source/historique.rst:558
+#: ../../source/historique.rst:571
 msgid ""
 "Ajout du panneau Stats : indicateurs PR (Performance Rating), Snowie "
 "Error Rate et MWC cost (Match Winning Chance cost), barre de filtre "
@@ -4502,7 +4587,7 @@ msgstr ""
 "кривой по турнирам и диаграммой рассеяния по матчам, вкладка Ошибки с "
 "распределением по действиям с кубом и гистограммой величин."
 
-#: ../../source/historique.rst:559
+#: ../../source/historique.rst:572
 msgid ""
 "Drill-down interactif vers les positions / matchs / tournois depuis tous "
 "les indicateurs."
@@ -4510,15 +4595,15 @@ msgstr ""
 "Интерактивный drill-down к позициям / матчам / турнирам из всех "
 "показателей."
 
-#: ../../source/historique.rst:560
+#: ../../source/historique.rst:573
 msgid "Toggle PR / MWC instantané."
 msgstr "Мгновенное переключение PR / MWC."
 
-#: ../../source/historique.rst:561
+#: ../../source/historique.rst:574
 msgid "Commande CLI list --type stats."
 msgstr "Команда CLI list --type stats."
 
-#: ../../source/historique.rst:562
+#: ../../source/historique.rst:575
 msgid ""
 "Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
 "gnuBG (seuil 0.16 d'équité pour les cubes proches)."
@@ -4526,23 +4611,23 @@ msgstr ""
 "Согласование показателей PR / Snowie ER / MWC с eXtremeGammon и gnuBG "
 "(порог эквити 0.16 для близких кубов)."
 
-#: ../../source/historique.rst:563
+#: ../../source/historique.rst:576
 msgid "Correction du calcul de cube_error pour les décisions Double/Pass."
 msgstr "Исправлено вычисление cube_error для решений Double/Pass."
 
-#: ../../source/historique.rst:564
+#: ../../source/historique.rst:577
 msgid "Documentation du modèle de statistiques (:ref:`stats_parity`)."
 msgstr "Документация модели статистики (:ref:`stats_parity`)."
 
-#: ../../source/historique.rst:565
+#: ../../source/historique.rst:578
 msgid "Voir :ref:`stats`."
 msgstr "См. :ref:`stats`."
 
-#: ../../source/historique.rst:568
+#: ../../source/historique.rst:581
 msgid "0.18.0 (2026-04-20)"
 msgstr "0.18.0 (2026-04-20)"
 
-#: ../../source/historique.rst:570
+#: ../../source/historique.rst:583
 msgid ""
 "Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
 "fichiers spécialisés, extraction de 7 modules de service depuis "
@@ -4552,49 +4637,49 @@ msgstr ""
 "специализированных файлов, извлечение 7 сервисных модулей из App.svelte "
 "(4888→469 строк), консолидация модальных/панельных сторов."
 
-#: ../../source/historique.rst:571
+#: ../../source/historique.rst:584
 msgid "Migration complète vers Svelte 5 runes."
 msgstr "Полная миграция на руны Svelte 5."
 
-#: ../../source/historique.rst:572
+#: ../../source/historique.rst:585
 msgid ""
 "Remplacement de 9 modales de tableau par un composant générique "
 "DataTableModal."
 msgstr "Замена 9 табличных модальных окон общим компонентом DataTableModal."
 
-#: ../../source/historique.rst:573
+#: ../../source/historique.rst:586
 msgid "Ajout d'ESLint + Prettier + vitest (125 tests frontend) avec CI."
 msgstr "Добавлены ESLint + Prettier + vitest (125 фронтенд-тестов) с CI."
 
-#: ../../source/historique.rst:574
+#: ../../source/historique.rst:587
 msgid "Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier)."
 msgstr ""
 "Соответствие WCAG 2.1 AA (видимый фокус, роли ARIA, навигация с "
 "клавиатуры)."
 
-#: ../../source/historique.rst:575
+#: ../../source/historique.rst:588
 msgid ""
 "Passage du mutex Database en RWMutex pour un meilleur parallélisme en "
 "lecture."
 msgstr "Переход мьютекса Database на RWMutex для лучшего параллелизма чтения."
 
-#: ../../source/historique.rst:576
+#: ../../source/historique.rst:589
 msgid "Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN)."
 msgstr "Полная документация CLI (CLI_USAGE.md + Sphinx FR/EN)."
 
-#: ../../source/historique.rst:577
+#: ../../source/historique.rst:590
 msgid "Réécriture du README."
 msgstr "Переписан README."
 
-#: ../../source/historique.rst:578
+#: ../../source/historique.rst:591
 msgid "Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
 msgstr "Исправлены все предупреждения ESLint (46→0) и Vite (6→0)."
 
-#: ../../source/historique.rst:581
+#: ../../source/historique.rst:594
 msgid "0.17.0 (2026-04-20)"
 msgstr "0.17.0 (2026-04-20)"
 
-#: ../../source/historique.rst:583
+#: ../../source/historique.rst:596
 #, no-python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
@@ -4604,33 +4689,33 @@ msgstr ""
 "Оптимизация хранения: сжатие zlib данных анализа (~80% сокращение), "
 "компактное кодирование позиций (~90% уменьшение размера)."
 
-#: ../../source/historique.rst:584
+#: ../../source/historique.rst:597
 msgid "Ajout de 5 index manquants pour améliorer les performances de recherche."
 msgstr "Добавлены 5 недостающих индексов для повышения производительности поиска."
 
-#: ../../source/historique.rst:585
+#: ../../source/historique.rst:598
 msgid "Correction de la recherche par erreur de cube."
 msgstr "Исправлен поиск по ошибке куба."
 
-#: ../../source/historique.rst:586
+#: ../../source/historique.rst:599
 msgid "Correction du mode EDIT après une recherche sans résultats."
 msgstr "Исправлен режим EDIT после поиска без результатов."
 
-#: ../../source/historique.rst:587
+#: ../../source/historique.rst:600
 msgid ""
 "Restauration de l'état du panneau de recherche lors du changement "
 "d'onglets."
 msgstr "Восстановление состояния панели поиска при переключении вкладок."
 
-#: ../../source/historique.rst:588
+#: ../../source/historique.rst:601
 msgid "Suppression de 62 instructions de débogage des chemins critiques."
 msgstr "Удалены 62 отладочные инструкции из критических путей."
 
-#: ../../source/historique.rst:591
+#: ../../source/historique.rst:604
 msgid "0.16.0 (2026-04-18)"
 msgstr "0.16.0 (2026-04-18)"
 
-#: ../../source/historique.rst:593
+#: ../../source/historique.rst:606
 msgid ""
 "Schéma de base de données v2.0.0 : déduplication des positions via hash "
 "Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
@@ -4640,7 +4725,7 @@ msgstr ""
 "денормализованные столбцы фильтрации, предфильтр шаблонов на битбордах, "
 "журналирование WAL (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:594
+#: ../../source/historique.rst:607
 msgid ""
 "Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ "
 "positions."
@@ -4648,7 +4733,7 @@ msgstr ""
 "Пакетный импорт в >=3 раза быстрее, фильтрованный поиск <=100 мс на 10k+ "
 "позициях."
 
-#: ../../source/historique.rst:595
+#: ../../source/historique.rst:608
 msgid ""
 "NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts "
 "par les versions plus anciennes ; les anciennes DB sont migrées "
@@ -4658,11 +4743,11 @@ msgstr ""
 "старыми версиями; старые DB автоматически мигрируются на месте (сначала "
 "сделайте резервную копию)."
 
-#: ../../source/historique.rst:598
+#: ../../source/historique.rst:611
 msgid "0.15.0 (2026-03-31)"
 msgstr "0.15.0 (2026-03-31)"
 
-#: ../../source/historique.rst:600
+#: ../../source/historique.rst:613
 msgid ""
 "Export de la position en image PNG dans le presse-papier (board seul via "
 "Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
@@ -4670,25 +4755,25 @@ msgstr ""
 "Экспорт позиции в PNG-изображение в буфер обмена (только доска через "
 "Ctrl+X, или доска с анализом через Ctrl+X Ctrl+X)."
 
-#: ../../source/historique.rst:603
+#: ../../source/historique.rst:616
 msgid "0.14.0 (2026-03-30)"
 msgstr "0.14.0 (2026-03-30)"
 
-#: ../../source/historique.rst:605
+#: ../../source/historique.rst:618
 msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
 msgstr ""
 "Выделенная панель Anki для изучения методом интервального повторения "
 "(алгоритм FSRS)."
 
-#: ../../source/historique.rst:606
+#: ../../source/historique.rst:619
 msgid "Import des commentaires depuis les fichiers XG."
 msgstr "Импорт комментариев из файлов XG."
 
-#: ../../source/historique.rst:609
+#: ../../source/historique.rst:622
 msgid "0.13.0 (2026-03-28)"
 msgstr "0.13.0 (2026-03-28)"
 
-#: ../../source/historique.rst:611
+#: ../../source/historique.rst:624
 msgid ""
 "Simplification de l'interface : la navigation dans les matchs et les "
 "collections se fait directement via les panneaux."
@@ -4696,23 +4781,23 @@ msgstr ""
 "Упрощение интерфейса: навигация по матчам и коллекциям теперь выполняется"
 " непосредственно через панели."
 
-#: ../../source/historique.rst:612
+#: ../../source/historique.rst:625
 msgid "Ligne de commande intégrée dans la barre d'état."
 msgstr "Командная строка, интегрированная в строку состояния."
 
-#: ../../source/historique.rst:613
+#: ../../source/historique.rst:626
 msgid "Panneau Console renommé en panneau Log. *(Panneau retiré en 0.31.0.)*"
 msgstr "Панель Консоль переименована в панель Log. *(Панель удалена в 0.31.0.)*"
 
-#: ../../source/historique.rst:614
+#: ../../source/historique.rst:627
 msgid "Panneau Bearoff dédié dans le panneau inférieur."
 msgstr "Выделенная панель Bearoff в нижней панели."
 
-#: ../../source/historique.rst:615
+#: ../../source/historique.rst:628
 msgid "Copier/coller de position dans le panneau de recherche."
 msgstr "Копирование/вставка позиции в панели поиска."
 
-#: ../../source/historique.rst:616
+#: ../../source/historique.rst:629
 msgid ""
 "Glisser-déposer pour réordonner les collections, les positions dans les "
 "collections, et les matchs dans les tournois."
@@ -4720,45 +4805,45 @@ msgstr ""
 "Перетаскивание для изменения порядка коллекций, позиций в коллекциях и "
 "матчей в турнирах."
 
-#: ../../source/historique.rst:617
+#: ../../source/historique.rst:630
 msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
 msgstr "Столбец турнира в панели матчей со встроенным редактированием."
 
-#: ../../source/historique.rst:618
+#: ../../source/historique.rst:631
 msgid "Affichage automatique du panneau d'analyse après une recherche."
 msgstr "Автоматическое отображение панели анализа после поиска."
 
-#: ../../source/historique.rst:621
+#: ../../source/historique.rst:634
 msgid "0.12.0 (2026-03-19)"
 msgstr "0.12.0 (2026-03-19)"
 
-#: ../../source/historique.rst:623
+#: ../../source/historique.rst:636
 msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
 msgstr "Импорт файлов позиций eXtreme Gammon (XGP) с анализом."
 
-#: ../../source/historique.rst:626
+#: ../../source/historique.rst:639
 msgid "0.11.0 (2026-03-06)"
 msgstr "0.11.0 (2026-03-06)"
 
-#: ../../source/historique.rst:628
+#: ../../source/historique.rst:641
 msgid "Filtre de recherche dans les positions courantes."
 msgstr "Фильтр для поиска среди текущих позиций."
 
-#: ../../source/historique.rst:629
+#: ../../source/historique.rst:642
 msgid "Ajout de filtres par match et par tournoi."
 msgstr "Добавление фильтров по матчу и по турниру."
 
-#: ../../source/historique.rst:630
+#: ../../source/historique.rst:643
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
 msgstr "Автоматическая очистка доски при открытии панели поиска."
 
-#: ../../source/historique.rst:633
+#: ../../source/historique.rst:646
 msgid "0.10.0 (2026-02-25)"
 msgstr "0.10.0 (2026-02-25)"
 
-#: ../../source/historique.rst:635
+#: ../../source/historique.rst:648
 msgid ""
 "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) et BGBlitz (BGF/TXT)."
@@ -4766,7 +4851,7 @@ msgstr ""
 "Импорт матчей из eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) и BGBlitz (BGF/TXT)."
 
-#: ../../source/historique.rst:636
+#: ../../source/historique.rst:649
 msgid ""
 "Navigation dans les matchs : parcours des coups d'un match importé, avec "
 "mise en évidence du coup joué."
@@ -4774,7 +4859,7 @@ msgstr ""
 "Навигация по матчам: просмотр ходов импортированного матча с подсветкой "
 "сыгранного хода."
 
-#: ../../source/historique.rst:637
+#: ../../source/historique.rst:650
 msgid ""
 "Panneau des matchs : liste, tri, édition inline, permutation des joueurs,"
 " assignation de tournoi."
@@ -4782,11 +4867,11 @@ msgstr ""
 "Панель матчей: список, сортировка, встроенное редактирование, смена "
 "игроков, назначение турнира."
 
-#: ../../source/historique.rst:638
+#: ../../source/historique.rst:651
 msgid "Import par dossier récursif et import par glisser-déposer."
 msgstr "Рекурсивный импорт из папки и импорт перетаскиванием."
 
-#: ../../source/historique.rst:639
+#: ../../source/historique.rst:652
 msgid ""
 "Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
 "GNUbg intégrée. *(Remplacé en 0.36.0 : la table est calculée sur la "
@@ -4796,15 +4881,15 @@ msgstr ""
 "GNUbg. *(Заменено в 0.36.0: таблица вычисляется на самой машине, ни одна "
 "больше не встраивается.)*"
 
-#: ../../source/historique.rst:640
+#: ../../source/historique.rst:653
 msgid "Collections : regroupement personnalisé de positions."
 msgstr "Коллекции: пользовательская группировка позиций."
 
-#: ../../source/historique.rst:641
+#: ../../source/historique.rst:654
 msgid "Tournois : regroupement de matchs par événement."
 msgstr "Турниры: группировка матчей по событию."
 
-#: ../../source/historique.rst:642
+#: ../../source/historique.rst:655
 msgid ""
 "Sauvegarde et restauration de l'état de session (dernière recherche, "
 "position courante)."
@@ -4812,19 +4897,19 @@ msgstr ""
 "Сохранение и восстановление состояния сессии (последний поиск, текущая "
 "позиция)."
 
-#: ../../source/historique.rst:643
+#: ../../source/historique.rst:656
 msgid "Migration automatique du schéma de base de données."
 msgstr "Автоматическая миграция схемы базы данных."
 
-#: ../../source/historique.rst:644
+#: ../../source/historique.rst:657
 msgid "Affichage multi-moteurs dans l'analyse."
 msgstr "Отображение нескольких движков в анализе."
 
-#: ../../source/historique.rst:645
+#: ../../source/historique.rst:658
 msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
 msgstr "Фильтр ошибок/бландеров игрока 1 при поиске."
 
-#: ../../source/historique.rst:646
+#: ../../source/historique.rst:659
 msgid ""
 "Export de la base de données avec sélection granulaire (matchs, "
 "collections, tournois, coups joués)."
@@ -4832,154 +4917,154 @@ msgstr ""
 "Экспорт базы данных с детальным выбором (матчи, коллекции, турниры, "
 "сыгранные ходы)."
 
-#: ../../source/historique.rst:647
+#: ../../source/historique.rst:660
 msgid "Bouton de navigation dans les matchs."
 msgstr "Кнопка навигации по матчам."
 
-#: ../../source/historique.rst:648
+#: ../../source/historique.rst:661
 msgid "Compte de course (pipcount) dans la navigation des matchs."
 msgstr "Отображение подсчёта шашек (pipcount) в навигации по матчам."
 
-#: ../../source/historique.rst:649
+#: ../../source/historique.rst:662
 msgid "Interface en ligne de commande (CLI) complète."
 msgstr "Полный интерфейс командной строки (CLI)."
 
-#: ../../source/historique.rst:650
+#: ../../source/historique.rst:663
 msgid "Réouverture automatique de la dernière base de données."
 msgstr "Автоматическое открытие последней базы данных."
 
-#: ../../source/historique.rst:651
+#: ../../source/historique.rst:664
 msgid "Amélioration de la barre d'outils et des icônes."
 msgstr "Улучшение панели инструментов и иконок."
 
-#: ../../source/historique.rst:654
+#: ../../source/historique.rst:667
 msgid "0.9.0 (2025-11-02)"
 msgstr "0.9.0 (2025-11-02)"
 
-#: ../../source/historique.rst:656
+#: ../../source/historique.rst:669
 msgid "Correction de bug de la bibliothèque de filtres."
 msgstr "Исправление ошибки в библиотеке фильтров."
 
-#: ../../source/historique.rst:657
+#: ../../source/historique.rst:670
 msgid "Import/export de base de données."
 msgstr "Импорт/экспорт базы данных."
 
-#: ../../source/historique.rst:658
+#: ../../source/historique.rst:671
 msgid "Affichage de flèches pour les coups sélectionnés."
 msgstr "Отображение стрелок для выбранных ходов."
 
-#: ../../source/historique.rst:659
+#: ../../source/historique.rst:672
 msgid "Raccourcis clavier pour l'import/export."
 msgstr "Горячие клавиши для импорта/экспорта."
 
-#: ../../source/historique.rst:662
+#: ../../source/historique.rst:675
 msgid "0.8.0 (2025-05-03)"
 msgstr "0.8.0 (2025-05-03)"
 
-#: ../../source/historique.rst:664
+#: ../../source/historique.rst:677
 msgid "Possibilité de cacher le compte de course."
 msgstr "Новая кнопка для скрытия подсчёта шашек."
 
-#: ../../source/historique.rst:665
+#: ../../source/historique.rst:678
 msgid "Chargement d'une position aléatoire."
 msgstr "Кнопка загрузки случайной позиции."
 
-#: ../../source/historique.rst:668
+#: ../../source/historique.rst:681
 msgid "0.7.0 (2025-02-16)"
 msgstr "0.7.0 (2025-02-16)"
 
-#: ../../source/historique.rst:670
+#: ../../source/historique.rst:683
 msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
 msgstr "Поддержка японского и немецкого языков в экспорте XG."
 
-#: ../../source/historique.rst:673
+#: ../../source/historique.rst:686
 msgid "0.6.0 (2025-02-13)"
 msgstr "0.6.0 (2025-02-13)"
 
-#: ../../source/historique.rst:675
+#: ../../source/historique.rst:688
 msgid "Ajout de la bibliothèque de filtres."
 msgstr "Добавление библиотеки фильтров."
 
-#: ../../source/historique.rst:676
+#: ../../source/historique.rst:689
 msgid "Affichage de la version de la base de données dans les métadonnées."
 msgstr "Отображение версии базы данных в метаданных."
 
-#: ../../source/historique.rst:679
+#: ../../source/historique.rst:692
 msgid "0.5.0 (2025-02-04)"
 msgstr "0.5.0 (2025-02-04)"
 
-#: ../../source/historique.rst:681
+#: ../../source/historique.rst:694
 msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 msgstr ""
 "Добавление новых фильтров (зеркало, нет контакта, блот в яне, блот в "
 "аутфилде)."
 
-#: ../../source/historique.rst:684
+#: ../../source/historique.rst:697
 msgid "0.4.0 (2025-02-03)"
 msgstr "0.4.0 (2025-02-03)"
 
-#: ../../source/historique.rst:686 ../../source/historique.rst:694
-#: ../../source/historique.rst:701
+#: ../../source/historique.rst:699 ../../source/historique.rst:707
+#: ../../source/historique.rst:714
 msgid "Résolutions de bugs divers."
 msgstr "Исправление различных ошибок."
 
-#: ../../source/historique.rst:687
+#: ../../source/historique.rst:700
 msgid "Ajout d'une icône pour blunderDB."
 msgstr "Добавление иконки для blunderDB."
 
-#: ../../source/historique.rst:688
+#: ../../source/historique.rst:701
 msgid "Corrections de filtres."
 msgstr "Исправление фильтров."
 
-#: ../../source/historique.rst:689
+#: ../../source/historique.rst:702
 msgid "Ajout du support de MacOS."
 msgstr "Добавление поддержки macOS."
 
-#: ../../source/historique.rst:692
+#: ../../source/historique.rst:705
 msgid "0.3.0 (2025-01-27)"
 msgstr "0.3.0 (2025-01-27)"
 
-#: ../../source/historique.rst:695
+#: ../../source/historique.rst:708
 msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
 msgstr "Автоматическое сохранение размера окна."
 
-#: ../../source/historique.rst:696
+#: ../../source/historique.rst:709
 msgid "Importe les éventuels commentaires depuis XG."
 msgstr "Импорт комментариев из XG."
 
-#: ../../source/historique.rst:699
+#: ../../source/historique.rst:712
 msgid "0.2.0 (2025-01-06)"
 msgstr "0.2.0 (2025-01-06)"
 
-#: ../../source/historique.rst:702
+#: ../../source/historique.rst:715
 msgid "Ajout de tables de matchs/TP/GV."
 msgstr "Добавление таблиц матчей/TP/GV."
 
-#: ../../source/historique.rst:703
+#: ../../source/historique.rst:716
 msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
 msgstr "Добавление фильтров поиска (ходы, решение видо, дата)."
 
-#: ../../source/historique.rst:704
+#: ../../source/historique.rst:717
 msgid "Ajout de métadonnées sur les positions."
 msgstr "Добавление метаданных для позиций."
 
-#: ../../source/historique.rst:705
+#: ../../source/historique.rst:718
 msgid "Fonction d'import/export entre instances de blunderDB."
 msgstr "Функция импорта/экспорта между экземплярами blunderDB."
 
-#: ../../source/historique.rst:706
+#: ../../source/historique.rst:719
 msgid "Ajout de fonction de métadonnées sur les bases de données."
 msgstr "Добавление функции метаданных для баз данных."
 
-#: ../../source/historique.rst:707
+#: ../../source/historique.rst:720
 msgid "Introduction des numéros de versions (base de données et application)."
 msgstr "Введение номеров версий (база данных и приложение)."
 
-#: ../../source/historique.rst:710
+#: ../../source/historique.rst:723
 msgid "0.1.0 (2024-12-31)"
 msgstr "0.1.0 (2024-12-31)"
 
-#: ../../source/historique.rst:712
+#: ../../source/historique.rst:725
 msgid "Création version bêta."
 msgstr "Создание бета-версии."
 
