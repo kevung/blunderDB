@@ -195,3 +195,46 @@ func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
 		}
 	})
 }
+
+// TestRepairOfBestMoveAloneKeepsMatchStats: a row whose only stale column is
+// best_move is corrected, but match_stats summarises none of it, so the repair
+// neither counts it nor drops the statistics.
+func TestRepairOfBestMoveAloneKeepsMatchStats(t *testing.T) {
+	ctx := context.Background()
+	s, dsn := openMatchStore(t)
+	conn := rawConn(t, dsn)
+	matchID, err := s.Matches().Save(ctx, "", &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7})
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := domain.InitializePosition()
+	pid, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Analyses().Save(ctx, "", pid, &domain.PositionAnalysis{AnalysisType: "CheckerMove", CheckerAnalysis: &domain.CheckerAnalysis{
+		Moves: []domain.CheckerMove{{Index: 0, Move: "24/20 13/11", Equity: 0.1}}}}); err != nil {
+		t.Fatal(err)
+	}
+	var tenant int64
+	if err := conn.QueryRow(ctx, `UPDATE analysis SET best_move = 'stale' WHERE position_id = $1 RETURNING tenant_id`, pid).Scan(&tenant); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := conn.Exec(ctx, `INSERT INTO match_stats (tenant_id, match_id, seat, checker_moves) VALUES ($1, $2, 1, 0)`, tenant, matchID); err != nil {
+		t.Fatal(err)
+	}
+	n, err := s.Analyses().RepairDenormalisedColumns(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var bm string
+	if err := conn.QueryRow(ctx, `SELECT best_move FROM analysis WHERE position_id = $1`, pid).Scan(&bm); err != nil {
+		t.Fatal(err)
+	}
+	if bm != "24/20 13/11" {
+		t.Errorf("best_move after the repair %q, want 24/20 13/11", bm)
+	}
+	if stats := count(t, conn, `SELECT count(*) FROM match_stats`); n != 0 || stats != 1 {
+		t.Errorf("repair counted %d rows and left %d match_stats rows, want 0 and 1", n, stats)
+	}
+}

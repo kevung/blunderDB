@@ -453,7 +453,8 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 // repairDenormalisedColumns recomputes the analysis columns of tenant's rows,
 // every tenant's when tenant is nil, and rescores the moves of their
 // positions (sqlshared.RescorePlayedDecisions). It returns how many rows of
-// either kind changed; the caller invalidates match_stats.
+// either kind changed a column match_stats summarises; the caller
+// invalidates match_stats.
 func repairDenormalisedColumns(ctx context.Context, db execer, tenant *int64) (int, error) {
 	n, _, err := repairDenormalisedPages(ctx, db, tenant, 0, 0)
 	return n, err
@@ -534,7 +535,8 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}
 			// A NULL best move is not derived yet: runBestMoveBackfill owes it,
 			// not this pass, whose writes the journal reports.
-			if stored.equal(c) && (r.bestMove == nil || *r.bestMove == c.BestMove) {
+			statsStale := !stored.equal(c)
+			if !statsStale && (r.bestMove == nil || *r.bestMove == c.BestMove) {
 				continue
 			}
 			bestCube, err := actionCode(ctx, db, r.tenant, c.BestCubeAction)
@@ -548,7 +550,11 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 				c.IsForced == 1, c.IsCloseCube == 1, r.id, r.tenant, c.BestMove); err != nil {
 				return repaired, lastID, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}
-			repaired++
+			// match_stats summarises no best_move: a row stale in it alone
+			// does not invalidate them.
+			if statsStale {
+				repaired++
+			}
 		}
 		for tenant, of := range analyses {
 			n, err := sqlshared.RescorePlayedDecisions(ctx, binder{db}.shared(), scopeOfTenant(tenant), of)
