@@ -316,7 +316,7 @@ msgstr ""
 "と同じ関数を呼び、それ以外の規則は適用しません(:ref:`cli_document`)。blunderDB "
 "が作成したファイル(紙アーカイブ、マッチシート、または再インポート用コード付きの局面リストの PDF もしくは HTML "
 "ページ)はアシスタントを通らず、:ref:`紙のアーカイブ… "
-"<archive_papier_interface>`と同様にそのコードから直接インポートされます。"
+"<archive_papier_interface>`\\ と同様にそのコードから直接インポートされます。"
 
 #: ../../source/manuel_partage.rst:167
 msgid ""
