@@ -440,22 +440,25 @@ func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64)
 func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope string) (int, error) {
 	tid := tenantID(scope)
 	repaired, err := repairDenormalisedColumns(ctx, s.db, &tid)
-	if err != nil || repaired == 0 {
-		return repaired, err
+	if err != nil || repaired.stats == 0 {
+		return repaired.rows, err
 	}
-	// A repaired column is one match_stats summarises.
 	if _, err := s.db.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1`, tid); err != nil {
-		return repaired, fmt.Errorf("postgres: repair: invalidate match stats: %w", err)
+		return repaired.rows, fmt.Errorf("postgres: repair: invalidate match stats: %w", err)
 	}
-	return repaired, nil
+	return repaired.rows, nil
 }
+
+// repairCount counts the rows a repair wrote, and those of them that changed
+// a column match_stats summarises.
+type repairCount struct{ rows, stats int }
 
 // repairDenormalisedColumns recomputes the analysis columns of tenant's rows,
 // every tenant's when tenant is nil, and rescores the moves of their
 // positions (sqlshared.RescorePlayedDecisions). It returns how many rows of
-// either kind changed a column match_stats summarises; the caller
-// invalidates match_stats.
-func repairDenormalisedColumns(ctx context.Context, db execer, tenant *int64) (int, error) {
+// either kind changed; the caller invalidates match_stats when repairCount.stats
+// says one of them changed a column they summarise.
+func repairDenormalisedColumns(ctx context.Context, db execer, tenant *int64) (repairCount, error) {
 	n, _, err := repairDenormalisedPages(ctx, db, tenant, 0, 0)
 	return n, err
 }
@@ -463,7 +466,7 @@ func repairDenormalisedColumns(ctx context.Context, db execer, tenant *int64) (i
 // repairDenormalisedPages is repairDenormalisedColumns over the analyses past
 // id after, at most maxPages pages of repairPageSize (0: all of them). It
 // returns the id it stopped at: equal to after when nothing was left.
-func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, after int64, maxPages int) (int, int64, error) {
+func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, after int64, maxPages int) (repairCount, int64, error) {
 	type row struct {
 		id, tenant, posID    int64
 		data                 []byte
@@ -480,7 +483,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 		// tenant.
 		mvMove, mvCube *string
 	}
-	repaired := 0
+	var repaired repairCount
 	lastID := after
 	for pages := 0; maxPages == 0 || pages < maxPages; pages++ {
 		var page []row
@@ -551,9 +554,10 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 				return repaired, lastID, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}
 			// match_stats summarises no best_move: a row stale in it alone
-			// does not invalidate them.
+			// is written and counted, but does not invalidate them.
+			repaired.rows++
 			if statsStale {
-				repaired++
+				repaired.stats++
 			}
 		}
 		for tenant, of := range analyses {
@@ -561,7 +565,8 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			if err != nil {
 				return repaired, lastID, fmt.Errorf("postgres: repair: %w", err)
 			}
-			repaired += n
+			repaired.rows += n
+			repaired.stats += n
 		}
 	}
 	return repaired, lastID, nil

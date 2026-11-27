@@ -97,7 +97,7 @@ func (s *analysisStore) tableNames(ctx context.Context) (map[string]bool, error)
 	for rows.Next() {
 		var n string
 		if err := rows.Scan(&n); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("sqlite: list tables: %w", err)
 		}
 		out[n] = true
 	}

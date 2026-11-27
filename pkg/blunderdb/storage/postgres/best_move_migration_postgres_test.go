@@ -197,8 +197,8 @@ func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
 }
 
 // TestRepairOfBestMoveAloneKeepsMatchStats: a row whose only stale column is
-// best_move is corrected, but match_stats summarises none of it, so the repair
-// neither counts it nor drops the statistics.
+// best_move is corrected and counted, but match_stats summarises none of it,
+// so the statistics stay.
 func TestRepairOfBestMoveAloneKeepsMatchStats(t *testing.T) {
 	ctx := context.Background()
 	s, dsn := openMatchStore(t)
@@ -234,7 +234,7 @@ func TestRepairOfBestMoveAloneKeepsMatchStats(t *testing.T) {
 	if bm != "24/20 13/11" {
 		t.Errorf("best_move after the repair %q, want 24/20 13/11", bm)
 	}
-	if stats := count(t, conn, `SELECT count(*) FROM match_stats`); n != 0 || stats != 1 {
-		t.Errorf("repair counted %d rows and left %d match_stats rows, want 0 and 1", n, stats)
+	if stats := count(t, conn, `SELECT count(*) FROM match_stats`); n != 1 || stats != 1 {
+		t.Errorf("repair counted %d rows and left %d match_stats rows, want 1 and 1", n, stats)
 	}
 }

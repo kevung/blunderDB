@@ -4,7 +4,7 @@
 --
 --   * NULL means "not derived yet": every row this migration finds. The search
 --     lets such a row through and settles it on the blob, so the column is
---     correct before the Go backfill (runGoBackfills) has filled it.
+--     correct before the Go backfill (runBestMoveBackfill) has filled it.
 --   * '' is an analysis with no checker play (a cube analysis).
 --
 -- idx_analysis_best_move: LIKE is not leakproof, so under row-level security
