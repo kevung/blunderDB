@@ -4,22 +4,25 @@ package postgres_test
 
 import (
 	"context"
+	"net/url"
 	"slices"
 	"strconv"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 )
 
 // TestMigrate_BestMoveBackfillRewritesNothingElse upgrades a two-tenant
-// library, FORCEd RLS on an owner without BYPASSRLS, whose generation of Go
-// passes is already recorded and whose rows are up to date but for some
-// best_move never derived. Migrate must fill those, journal nothing, leave
-// every other row as it was (same xmin) and keep the match statistics; then a
-// write of the blob alone, as an older binary makes it, clears the column.
+// library at the deployed generation of Go passes, rows up to date but for
+// some best_move never derived and one stale column a pass would repair,
+// first as a superuser, then as an owner under FORCEd RLS. Each Migrate must
+// fill those best_move, journal nothing, leave every other row as it was
+// (same xmin) and keep the match statistics; then a write of the blob alone,
+// as an older binary makes it, clears the column.
 func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
 	ctx := context.Background()
-	s, conn, _ := openAsRLSOwner(t)
+	s, conn, ownerDSN := openAsRLSOwner(t)
 	ms := s.Matches()
 	analysis := &domain.PositionAnalysis{AnalysisType: "CheckerMove", CheckerAnalysis: &domain.CheckerAnalysis{
 		Moves: []domain.CheckerMove{{Index: 0, Move: "24/20 13/11", Equity: 0.1}}}}
@@ -46,13 +49,19 @@ func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
 		}
 		seed = append(seed,
 			`INSERT INTO match_stats (tenant_id, match_id, seat, checker_moves) VALUES (`+scope+`, `+strconv.FormatInt(matchID, 10)+`, 1, 0)`,
-			`UPDATE analysis SET best_move = NULL WHERE tenant_id = `+scope+` AND position_id = `+strconv.FormatInt(pending[scope], 10))
+			`UPDATE analysis SET best_move = NULL WHERE tenant_id = `+scope+` AND position_id = `+strconv.FormatInt(pending[scope], 10),
+			// A stale column the decision recount would repair: a pass run
+			// again rewrites its row.
+			`UPDATE analysis SET cube_error = 12345 WHERE tenant_id = `+scope+` AND position_id <> `+strconv.FormatInt(pending[scope], 10))
 	}
 	if err := s.ApplyRLS(ctx); err != nil {
 		t.Fatalf("ApplyRLS: %v", err)
 	}
 	tables := []string{"analysis", "match_stats"}
-	execUnforced(t, conn, tables, append(seed, `DELETE FROM metadata WHERE key = 'best_move_backfill'`))
+	execUnforced(t, conn, tables, append(seed, `DELETE FROM metadata WHERE key = 'best_move_backfill'`,
+		// The generation the deployed libraries record: a binary that bumped
+		// it would run every pass again over them.
+		`UPDATE metadata SET value = '5' WHERE key = 'go_backfills'`))
 
 	type state struct {
 		xmins          []string
@@ -80,42 +89,72 @@ func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
 		})
 		return st
 	}
-	before := map[string]state{"1": read("1"), "2": read("2")}
-	var seqBefore int64
-	if err := conn.QueryRow(ctx, `SELECT last_value FROM change_log_seq`).Scan(&seqBefore); err != nil {
+	// The owner under FORCE sees no position without a tenant, so the journal
+	// trigger would stay silent there anyway; a superuser, as a deployment
+	// migrates, sees every row, and a backfill that journals or a pass run
+	// again (match_stats invalidated, rows rewritten) shows under it.
+	u, err := url.Parse(ownerDSN)
+	if err != nil {
 		t.Fatal(err)
 	}
-
-	if err := s.Migrate(ctx); err != nil {
-		t.Fatalf("Migrate under RLS: %v", err)
-	}
-	assertForced(t, conn, tables...)
-	for scope, was := range before {
-		now := read(scope)
-		if was.pending != nil || now.pending == nil || *now.pending != "24/20 13/11" {
-			t.Errorf("tenant %s: best_move %v before Migrate, %v after, want NULL then 24/20 13/11", scope, was.pending, now.pending)
+	u.User = url.UserPassword("test", "test")
+	for _, m := range []struct {
+		who     string
+		migrate func() error
+	}{
+		{"superuser", func() error {
+			super, err := pg.Open(ctx, u.String(), nil)
+			if err != nil {
+				return err
+			}
+			defer func() { _ = super.Close() }()
+			return super.Migrate(ctx)
+		}},
+		{"owner under FORCE", func() error { return s.Migrate(ctx) }},
+	} {
+		if m.who != "superuser" {
+			var reset []string
+			for scope, pid := range pending {
+				reset = append(reset, `UPDATE analysis SET best_move = NULL WHERE tenant_id = `+scope+` AND position_id = `+strconv.FormatInt(pid, 10))
+			}
+			execUnforced(t, conn, tables, append(reset, `DELETE FROM metadata WHERE key = 'best_move_backfill'`))
 		}
-		if !slices.Equal(was.xmins, now.xmins) {
-			t.Errorf("tenant %s: Migrate rewrote rows already derived: xmin %v, then %v", scope, was.xmins, now.xmins)
+		before := map[string]state{"1": read("1"), "2": read("2")}
+		var seqBefore int64
+		if err := conn.QueryRow(ctx, `SELECT last_value FROM change_log_seq`).Scan(&seqBefore); err != nil {
+			t.Fatal(err)
 		}
-		if was.journal != now.journal || was.stats != now.stats || was.stats == 0 {
-			t.Errorf("tenant %s: change_log %d → %d, match_stats %d → %d, want both unchanged", scope, was.journal, now.journal, was.stats, now.stats)
+		if err := m.migrate(); err != nil {
+			t.Fatalf("Migrate as %s: %v", m.who, err)
 		}
-	}
-	var seqAfter int64
-	if err := conn.QueryRow(ctx, `SELECT last_value FROM change_log_seq`).Scan(&seqAfter); err != nil {
-		t.Fatal(err)
-	}
-	if seqAfter != seqBefore {
-		t.Errorf("change_log_seq %d → %d: the backfill journalled", seqBefore, seqAfter)
-	}
-	var gen, done string
-	if err := conn.QueryRow(ctx, `SELECT (SELECT value FROM metadata WHERE key = 'go_backfills'),
-	        (SELECT value FROM metadata WHERE key = 'best_move_backfill')`).Scan(&gen, &done); err != nil {
-		t.Fatalf("read the backfill marks: %v", err)
-	}
-	if gen != "5" || done == "" {
-		t.Errorf("go_backfills %q, best_move_backfill %q, want 5 and recorded", gen, done)
+		assertForced(t, conn, tables...)
+		for scope, was := range before {
+			now := read(scope)
+			if was.pending != nil || now.pending == nil || *now.pending != "24/20 13/11" {
+				t.Errorf("%s, tenant %s: best_move %v before Migrate, %v after, want NULL then 24/20 13/11", m.who, scope, was.pending, now.pending)
+			}
+			if !slices.Equal(was.xmins, now.xmins) {
+				t.Errorf("%s, tenant %s: Migrate rewrote rows already derived: xmin %v, then %v", m.who, scope, was.xmins, now.xmins)
+			}
+			if was.journal != now.journal || was.stats != now.stats || was.stats == 0 {
+				t.Errorf("%s, tenant %s: change_log %d → %d, match_stats %d → %d, want both unchanged", m.who, scope, was.journal, now.journal, was.stats, now.stats)
+			}
+		}
+		var seqAfter int64
+		if err := conn.QueryRow(ctx, `SELECT last_value FROM change_log_seq`).Scan(&seqAfter); err != nil {
+			t.Fatal(err)
+		}
+		if seqAfter != seqBefore {
+			t.Errorf("%s: change_log_seq %d → %d: the backfill journalled", m.who, seqBefore, seqAfter)
+		}
+		var gen, done string
+		if err := conn.QueryRow(ctx, `SELECT (SELECT value FROM metadata WHERE key = 'go_backfills'),
+		        (SELECT value FROM metadata WHERE key = 'best_move_backfill')`).Scan(&gen, &done); err != nil {
+			t.Fatalf("read the backfill marks: %v", err)
+		}
+		if gen != "5" || done == "" {
+			t.Errorf("%s: go_backfills %q, best_move_backfill %q, want 5 and recorded", m.who, gen, done)
+		}
 	}
 
 	// An older binary's write, under FORCEd RLS: data alone. The trigger
