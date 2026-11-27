@@ -10,11 +10,11 @@ import (
 )
 
 // pipBander is implemented by an Execer that indexes the positions in pip order
-// within bands of black's farthest checker (PostgreSQL, idx_position_pip_band).
+// within bands of black's farthest checker (PostgreSQL, idx_position_pip_band_NN).
 type pipBander interface {
-	// PipBand is the band of the row aliased alias: 0 when black has no checker on
-	// the board, n + 1 when its farthest stands on point n.
-	PipBand(alias string) string
+	// PipBand is the condition that the row aliased alias is in band n: black's
+	// farthest checker stands on point n - 1 (band 0: no black checker).
+	PipBand(alias string, n int) string
 }
 
 // pipBandBands is the last band: a checker on the bar, point 25.
@@ -98,7 +98,6 @@ func (s *SearchStore) pipBandWindow(ctx context.Context, f *blackFloor, from, fi
 		return nil, false, nil
 	}
 	want := limit + offset
-	band := b.PipBand("p")
 	floor := f.band(f.top + 1)
 	for i := f.top + 2; i <= pipBandBands; i++ {
 		floor = min(floor, f.band(i))
@@ -114,7 +113,7 @@ func (s *SearchStore) pipBandWindow(ctx context.Context, f *blackFloor, from, fi
 				q.WriteString(" UNION ALL ")
 			}
 			q.WriteString("(SELECT p.id, p.pip_1 FROM " + from + " WHERE " + filter + " AND pg_backend_pid() <> 0 AND " +
-				band + " = " + strconv.Itoa(i) + " AND p.pip_1 >= " + strconv.Itoa(f.band(i)))
+				b.PipBand("p", i) + " AND p.pip_1 >= " + strconv.Itoa(f.band(i)))
 			if !last {
 				q.WriteString(" AND p.pip_1 <= " + strconv.Itoa(floor+span))
 			}
