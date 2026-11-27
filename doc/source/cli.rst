@@ -84,7 +84,7 @@ Commandes disponibles
    "match", "Affiche les positions et analyses d'un match, en répare un ou l'imprime sur une feuille A4."
    "transcribe", "Rejoue une transcription et rend compte de ce que le rejeu trouve."
    "duel", "Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
-   "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
+   "collection", "Gère les collections (liste, contenu, création, copie, renommage, suppression, export)."
    "study", "La file d'étude : les blunders non traités du joueur de référence, et la marque « vu »."
    "lesson", "Gère les leçons (étapes ordonnées montrant collections et positions) et les exporte."
    "archive", "Imprime des matchs en codes QR sur des feuilles A4, ou les réimporte depuis la page ou un scan."

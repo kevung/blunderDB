@@ -262,6 +262,10 @@ export function ContributeDuel(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['ContributeDuel'](arg1, arg2, arg3, arg4);
 }
 
+export function CopyCollection(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['CopyCollection'](arg1, arg2, arg3);
+}
+
 export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['CopyPositionToCollection'](arg1, arg2);
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 10:12+0100\n"
+"POT-Creation-Date: 2026-11-27 23:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -41,17 +41,17 @@ msgstr ""
 "参照)、レスポンスの形式(JSON、またはストリーミングリストの場合は NDJSON)と、存在する場合は任意の ``Idempotency-"
 "Key`` ヘッダーへの言及を含みます。"
 
-#: ../../source/api_reference.rst:471
+#: ../../source/api_reference.rst:482
 msgid "Idempotence"
 msgstr "冪等性"
 
-#: ../../source/api_reference.rst:473
+#: ../../source/api_reference.rst:484
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 59 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 60 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -61,17 +61,17 @@ msgid ""
 "besoin ou n'accepte cet en-tête."
 msgstr ""
 "ほとんどのメソッドには特別な仕組みは不要です。読み取りに副作用はなく、``positions.*`` の書き込みは内容の Zobrist "
-"ハッシュのおかげで効果が冪等です。同じポジションを 2 回保存しても同じ行が返り、重複は生じません。59 個のメソッドは任意の "
+"ハッシュのおかげで効果が冪等です。同じポジションを 2 回保存しても同じ行が返り、重複は生じません。60 個のメソッドは任意の "
 "``Idempotency-Key`` ヘッダーを受け付けます。これは、2 回の呼び出しが 2 "
 "つの別個の効果になるメソッドと、応答が呼び出しによってポジションが作成されたか(``created``)を示すため、応答が失われた後に再送されると誤った内容を返してしまう"
 " ``positions.save`` です。同じキーで再送された呼び出しは、効果を繰り返さず最初の試行の結果を返します。上の表の"
 "「(Idempotency-Key)」の印を参照してください。それ以外のメソッドはこのヘッダーを必要とせず、受け付けません。"
 
-#: ../../source/api_reference.rst:485
+#: ../../source/api_reference.rst:496
 msgid "Lectures conditionnelles"
 msgstr "条件付き読み取り"
 
-#: ../../source/api_reference.rst:487
+#: ../../source/api_reference.rst:498
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -82,11 +82,11 @@ msgstr ""
 "に付けて送り返すと、メソッドが読み取る内容に変化がない限り、本文のない ``304`` 応答が返ります — "
 ":ref:`headless_direction` を参照してください。"
 
-#: ../../source/api_reference.rst:492
+#: ../../source/api_reference.rst:503
 msgid "Enregistrer et lire une analyse"
 msgstr "解析の保存と読み込み"
 
-#: ../../source/api_reference.rst:494
+#: ../../source/api_reference.rst:505
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -110,7 +110,7 @@ msgstr ""
 "が先頭になります。デスクトップ版の読み方と同じです。``analyses.load`` の応答にはすべて ``X-Blunderdb-With-"
 "Played`` ヘッダーが付きます。これを返さないデーモンは ``withPlayed`` を無視し、試合の手を含まない解析を返します。"
 
-#: ../../source/api_reference.rst:506
+#: ../../source/api_reference.rst:517
 msgid ""
 "``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
 "chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
@@ -133,7 +133,7 @@ msgstr ""
 "がそのソースです。その手が複数の深さを持つ場合も同じです（XG "
 "は最善の手をロールアウトし、ほかの手はより浅く評価します）。再度インポートされたソースは自身の項目を置き換えます。"
 
-#: ../../source/api_reference.rst:517
+#: ../../source/api_reference.rst:528
 msgid ""
 "Quand ``allCheckerAnalyses`` est absent et que les coups de "
 "``checkerAnalysis`` portent plusieurs ``analysisEngine``, la position a "
@@ -146,11 +146,11 @@ msgstr ""
 "``analysisEngine``\\ を持つ場合、そのポジションは 2.58.0 "
 "より前のスキーマで複数のエンジンにより解析されています。各手は最も深い評価を持ち、各エンジン単独の評価はもはやわかりません。このときソースは利用できず、新たなインポートでも再構築されません。"
 
-#: ../../source/api_reference.rst:524
+#: ../../source/api_reference.rst:535
 msgid "Lire les coups d'un match"
 msgstr "マッチの手を読む"
 
-#: ../../source/api_reference.rst:526
+#: ../../source/api_reference.rst:537
 msgid ""
 "Chaque coup que rendent ``matches.moves`` et ``matches.movesByMatch`` est"
 " jugé par l'analyse enregistrée de sa position, sans qu'aucun moteur ne "
@@ -177,7 +177,7 @@ msgstr ""
 "``Take`` または ``Pass`` です。これは ``error_mp`` "
 "の元となる誤差そのものによって順位付けされ、解析が持つ最善アクションのラベルによることはありません。インポートされたラベルは、それに付随するエクイティと矛盾することがあるためです。コストが等しい場合は、実際に選んだ判断になります。"
 
-#: ../../source/api_reference.rst:540
+#: ../../source/api_reference.rst:551
 msgid ""
 "Sans analyse du type voulu, les trois champs sont absents. ``error_mp`` "
 "l'est aussi quand le coup joué ne figure pas parmi les candidats, alors "
@@ -187,7 +187,7 @@ msgstr ""
 "適切な種類の解析がない場合、三つのフィールドはすべて省略されます。実際の手が候補に含まれない場合も ``error_mp`` は省略されますが、 "
 "``best_move`` は返されます。複数のマッチで到達した局面は、それぞれで同じ最善手を示します。"
 
-#: ../../source/api_reference.rst:544
+#: ../../source/api_reference.rst:555
 msgid ""
 "Un client affiche « mieux » seulement quand ``error_mp`` est présent et "
 "non nul ; il ne compare pas le coup joué à ``best_move`` ou "
@@ -198,11 +198,11 @@ msgstr ""
 "や ``best_cube_action`` "
 "と文字列比較することはしません。同じ手でも表記が異なることがあり、エクイティの等しい二つの手はどちらもコスト 0 だからです。"
 
-#: ../../source/api_reference.rst:550
+#: ../../source/api_reference.rst:561
 msgid "Repères d'une transcription"
 msgstr "文字起こしのタイムコード"
 
-#: ../../source/api_reference.rst:552
+#: ../../source/api_reference.rst:563
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -229,7 +229,7 @@ msgstr ""
 "またはローカルパス)を関連付け、空文字列はそれを解除します。``set_header`` "
 "も、ヘッダーが動画ソースを指定している場合はそれを設定しますが、消去することはありません。"
 
-#: ../../source/api_reference.rst:564
+#: ../../source/api_reference.rst:575
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -243,7 +243,7 @@ msgstr ""
 " を伴う ``decision_ms`` "
 "は推定値です。アクションのタイムコードがない手について、ロールから次のアクションの最初の時刻までを測ったものです。"
 
-#: ../../source/api_reference.rst:570
+#: ../../source/api_reference.rst:581
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

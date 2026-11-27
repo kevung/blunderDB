@@ -8628,6 +8628,20 @@ export namespace storage {
 	        this.aliases = source["aliases"];
 	    }
 	}
+	export class CollectionCopyResult {
+	    id: number;
+	    copied: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CollectionCopyResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.copied = source["copied"];
+	    }
+	}
 	export class CollectionEvaluation {
 	    collectionId: number;
 	    living: boolean;
