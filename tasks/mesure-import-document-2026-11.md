@@ -338,3 +338,28 @@ seulement, aucune page de réserve composée). Avant = `main` à 368befef4.
   Classic Revisited et sur des légendes synthétiques en police Go (absente des gabarits) :
   corrélation de mot 0,60 avec 0,04 d'avance (mots justes 0,72-0,88, autres ≤ 0,37 sur
   501 Problems), chiffre de légende par corrélation centrée 0,70 avec 0,06 d'avance.
+
+## Chiffres des pips dans l'image : victoire loyale (#1008)
+
+Lecteur de structure seul (`TestMeasureContextOnPages`, `tirage.json`, pages de réglage seulement).
+Avant = `main` à 2c5358ae5. 18 PDF ; 13 passent par le lecteur d'image, les cinq autres (Deep Cube
+1-3, deux PDF du *Livre du backgammon* FT) n'y trouvent aucun diagramme et ne sont pas concernés.
+
+- **Constat corrigé** : la lecture des pips était déjà une corrélation centrée (`unitVector` finit
+  par `centred`), avec les mêmes gabarits que la légende ; la seule différence est la requête
+  (chiffre redressé et flouté pour les pips, glyphe brut pour la légende). Le commentaire de
+  `caption.go` qui parlait d'un cosinus non centré est corrigé ; les deux lecteurs partagent
+  désormais `figureScores` et `bestFigure`.
+- **Essai rejeté** : exiger que le glyphe brut classe aussi le chiffre en tête coûte 705 → 449
+  pips lus et 742 → 660 sûres (Trice, Classic Revisited, Endgame surtout, chiffres 7 et 1) ; non
+  retenu.
+- **Mécanisme reproduit** (synthétique, Go Bold épaissi de 1 à 3 px, 18-36 pt) : un 2 lourd est
+  lu 1 quand le document a appris ses propres 1 lourds mais pas ses 2 — le 1 appris l'emporte sur
+  le 2 léger des polices par le seul poids du trait, sous les deux mesures. Garde retenue
+  (`fairWin`) : un chiffre gagné par un gabarit appris n'est lu que si, polices seules, aucun
+  chiffre que le document n'a pas appris n'arrive à `figureMargin` de lui ; sinon doute. Avant :
+  10 lectures « 1 » sur 15 cas de 2 épaissi de 2-3 px ; après : aucune.
+- **Mesure** : sorties identiques octet pour octet sur les 13 livres (pips lus dans l'image 705,
+  égaux aux pips comptés sur un diagramme complet 549, contraires 4, contraires à la couche
+  texte 15, sûres 742) : la garde ne se déclenche sur aucune page de réglage ; aucune sûre ne
+  change de position, aucune nouvelle sûre.

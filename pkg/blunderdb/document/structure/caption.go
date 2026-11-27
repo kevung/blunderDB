@@ -43,13 +43,13 @@ const (
 var figureFont []byte
 
 // captionFigures are the document's figures and figureFont's, each centred
-// on its mean: a caption's figure is matched by its correlation, which a
-// bolder stroke than the drawing's does not mislead as it does the bare
-// cosine of the pips' reading.
+// on its mean: a caption's figure is matched by its correlation with the
+// bare glyph, which a bolder stroke than the drawing's does not mislead as
+// it does the blurred figure alone.
 func captionFigures(digits []template) []template {
 	var out []template
 	for _, t := range append(append([]template(nil), digits...), figureTemplates()...) {
-		out = append(out, template{t.digit, centred(t.v)})
+		out = append(out, template{digit: t.digit, v: centred(t.v), learned: t.learned})
 	}
 	return out
 }
@@ -65,30 +65,8 @@ const (
 func captionFigure(figures []template, q *[glyphSide * glyphSide]uint8) int {
 	m := glyphFloats(q, 1)
 	holes, holeY := squareHoles(m)
-	u := centred(m)
-	var best [10]float64
-	for i := range best {
-		best[i] = -2
-	}
-	for _, t := range figures {
-		s := 0.0
-		for i, x := range t.v {
-			s += x * u[i]
-		}
-		best[t.digit] = max(best[t.digit], s)
-	}
-	d1 := 0
-	for d := range best {
-		if best[d] > best[d1] {
-			d1 = d
-		}
-	}
-	for d := range best {
-		if d != d1 && best[d] > best[d1]-captionFigureMargin {
-			return -1
-		}
-	}
-	if best[d1] < captionFigureScore || !slices.Contains(holesOf[d1], holes) {
+	d1 := bestFigure(figureScores(figures, centred(m)), captionFigureScore, captionFigureMargin)
+	if d1 < 0 || !slices.Contains(holesOf[d1], holes) {
 		return -1
 	}
 	if (d1 == 6 || d1 == 9) && holeY >= 0 && (holeY > 0.5) != (d1 == 6) {

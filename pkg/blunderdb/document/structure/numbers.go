@@ -3,6 +3,7 @@ package structure
 import (
 	_ "embed"
 	"math"
+	"slices"
 	"sort"
 )
 
@@ -538,6 +539,9 @@ func centred(b []float64) []float64 {
 type template struct {
 	digit int
 	v     []float64
+	// learned marks a template drawn from the document's own figures, as
+	// against the embedded typefaces.
+	learned bool
 }
 
 func fontTemplates() []template { return templatesOf(digitFont) }
@@ -554,15 +558,15 @@ func templatesOf(font []byte) []template {
 			}
 			m[i] = float64(b & 15)
 		}
-		out = append(out, template{(k / 200) % 10, unitVector(m)})
+		out = append(out, template{digit: (k / 200) % 10, v: unitVector(m)})
 	}
 	return out
 }
 
-// readFigure gives the figure read, or -1: the best correlation reaches
-// figureScore, leads every other figure by figureMargin, and the figure's
-// holes agree (a 6 holed low, a 9 high).
-func readFigure(ts []template, u []float64, holes int, holeY float64) int {
+// figureScores is, for each figure, the best correlation of u with its
+// templates (u and the templates centred and of unit length), -Inf for a
+// figure no template draws. Pips and captions measure alike by it.
+func figureScores(ts []template, u []float64) [10]float64 {
 	var best [10]float64
 	for i := range best {
 		best[i] = math.Inf(-1)
@@ -572,37 +576,71 @@ func readFigure(ts []template, u []float64, holes int, holeY float64) int {
 		for i, x := range t.v {
 			s += x * u[i]
 		}
-		if s > best[t.digit] {
-			best[t.digit] = s
+		best[t.digit] = max(best[t.digit], s)
+	}
+	return best
+}
+
+// bestFigure is the figure of the highest score, or -1 when it falls below
+// least or another figure comes within margin of it.
+func bestFigure(best [10]float64, least, margin float64) int {
+	d1 := -1
+	for d := range best {
+		if !math.IsInf(best[d], -1) && (d1 < 0 || best[d] > best[d1]) {
+			d1 = d
 		}
 	}
-	d1, s1, s2 := -1, math.Inf(-1), -1.0
-	for d := 9; d >= 0; d-- {
-		if best[d] > s1 {
-			d1, s1 = d, best[d]
-		}
-	}
-	for d := 9; d >= 0; d-- {
-		if d != d1 && !math.IsInf(best[d], -1) && best[d] > s2 {
-			s2 = best[d]
-		}
-	}
-	if d1 < 0 || s1 < figureScore || s1-s2 < figureMargin {
+	if d1 < 0 || best[d1] < least {
 		return -1
 	}
-	okHoles := false
-	for _, h := range holesOf[d1] {
-		if h == holes {
-			okHoles = true
+	for d := range best {
+		if d != d1 && best[d] > best[d1]-margin {
+			return -1
 		}
 	}
-	if !okHoles {
+	return d1
+}
+
+// readFigure gives the figure read, or -1: the best correlation reaches
+// figureScore, leads every other figure by figureMargin, is a fair win
+// (fairWin), and the figure's holes agree (a 6 holed low, a 9 high).
+func readFigure(ts []template, u []float64, holes int, holeY float64) int {
+	d1 := bestFigure(figureScores(ts, u), figureScore, figureMargin)
+	if d1 < 0 || !fairWin(ts, u, d1) || !slices.Contains(holesOf[d1], holes) {
 		return -1
 	}
 	if (d1 == 6 || d1 == 9) && holeY >= 0 && (holeY > 0.5) != (d1 == 6) {
 		return -1
 	}
 	return d1
+}
+
+// fairWin tells whether d, read from the templates ts, did not win only
+// because the document taught d's drawing and not its rival's: when the
+// embedded typefaces alone rank another figure first and the document drew
+// none of that figure, the two were compared at unlike weights — a heavy 2
+// against the document's own heavy 1 and a typeface's light 2 — and the
+// reading is a doubt.
+func fairWin(ts []template, u []float64, d int) bool {
+	var fonts []template
+	taught := [10]bool{}
+	for _, t := range ts {
+		if t.learned {
+			taught[t.digit] = true
+		} else {
+			fonts = append(fonts, t)
+		}
+	}
+	if !taught[d] || len(fonts) == 0 {
+		return true
+	}
+	fs := figureScores(fonts, u)
+	for e := range fs {
+		if e != d && !taught[e] && fs[e] > fs[d]-figureMargin {
+			return false
+		}
+	}
+	return true
 }
 
 // numberingRow is the candidate numbering above (top) or below the board:
@@ -782,7 +820,7 @@ func readNumbers(all [][]printedNumber) []template {
 		if len(samples[d]) < 5 {
 			continue
 		}
-		base = append(base, template{d, unitVector(meanOf(samples[d]))})
+		base = append(base, template{digit: d, v: unitVector(meanOf(samples[d])), learned: true})
 	}
 	base = append(base, fontTemplates()...)
 	hnum := 1.0
@@ -833,7 +871,7 @@ func readNumbers(all [][]printedNumber) []template {
 		auto = auto[:0:0]
 		for _, k := range keys {
 			if len(acc[k]) >= 3 {
-				auto = append(auto, template{k.d, centred(meanOf(acc[k]))})
+				auto = append(auto, template{digit: k.d, v: centred(meanOf(acc[k])), learned: true})
 			}
 		}
 	}
