@@ -38,6 +38,9 @@ func TestStructureSortedByPipsReadsAnIndexInOrder(t *testing.T) {
 	if _, err := conn.Exec(ctx, `ANALYZE position; ANALYZE analysis; SET enable_seqscan = off; SET enable_bitmapscan = off; SET enable_sort = off; SET enable_incremental_sort = off`); err != nil {
 		t.Fatal(err)
 	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := conn.Exec(ctx, `DO $$ BEGIN CREATE ROLE pip_plan_rls NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 		GRANT USAGE ON SCHEMA public TO pip_plan_rls; GRANT SELECT ON ALL TABLES IN SCHEMA public TO pip_plan_rls`); err != nil {
 		t.Fatal(err)
@@ -90,11 +93,12 @@ func TestStructureSortedByPipsReadsAnIndexInOrder(t *testing.T) {
 				if err := json.Unmarshal(out, &plans); err != nil {
 					t.Fatal(err)
 				}
-				read, sorted := "", false
+				var reads []string
+				sorted := false
 				var walk func(planNode)
 				walk = func(n planNode) {
 					if n.Relation == "position" {
-						read = n.NodeType + " " + n.IndexName
+						reads = append(reads, n.NodeType+" "+n.IndexName)
 					}
 					if strings.Contains(n.NodeType, "Sort") {
 						sorted = true
@@ -104,9 +108,14 @@ func TestStructureSortedByPipsReadsAnIndexInOrder(t *testing.T) {
 					}
 				}
 				walk(plans[0].Plan)
-				if sorted || !strings.Contains(read, " "+c.index) {
-					t.Errorf("position read by %q, sort node %v; want %s in order, no sort\n  in: %s\n  plan: %s",
-						read, sorted, c.index, strings.Join(strings.Fields(st.sql), " "), out)
+				for _, read := range reads {
+					if sorted || !strings.Contains(read, " "+c.index) {
+						t.Errorf("position read by %q, sort node %v; want %s in order, no sort\n  in: %s\n  plan: %s",
+							read, sorted, c.index, strings.Join(strings.Fields(st.sql), " "), out)
+					}
+				}
+				if len(reads) == 0 {
+					t.Errorf("no read of position in: %s", oneLine(st.sql))
 				}
 			}
 			if explained == 0 {

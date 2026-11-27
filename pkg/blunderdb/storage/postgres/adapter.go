@@ -241,14 +241,11 @@ func (searchDB) PipBand(alias string, n int) string {
 		return col + " = 0"
 	}
 	lo := col + " >= " + strconv.Itoa(1<<(n-1))
-	if n >= pipBandTop {
+	if n >= sqlshared.PipBandBands {
 		return lo
 	}
 	return lo + " AND " + col + " < " + strconv.Itoa(1<<n)
 }
-
-// pipBandTop is the last band: black's checkers on the bar (point 25).
-const pipBandTop = 26
 
 // ProbesIDWalk — see sqlshared.probeIDWalk.
 func (searchDB) ProbesIDWalk() bool { return true }

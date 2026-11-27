@@ -4,8 +4,7 @@
 --
 -- idx_position_pip_band (074) keyed the band as width_bucket(occupancy_1, …).
 -- The engine reads under RLS, where a condition calling a function that is not
--- leakproof (width_bucket) cannot be an index condition: the planner read every
--- band from idx_position_pip_order and filtered it. A partial index whose
+-- leakproof (width_bucket) cannot be an index condition. A partial index whose
 -- predicate compares occupancy_1 with constants is matched by the same
 -- comparisons in the query, which are leakproof. Band n holds the rows whose
 -- black farthest checker stands on point n - 1; the window starts past black's

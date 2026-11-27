@@ -17,13 +17,13 @@ type pipBander interface {
 	PipBand(alias string, n int) string
 }
 
-// pipBandBands is the last band: a checker on the bar, point 25.
-const pipBandBands = 26
+// PipBandBands is the last band: a checker on the bar, point 25.
+const PipBandBands = 26
 
 // blackFloor is what a structure asks of black's checkers, read off its template.
 type blackFloor struct {
 	// on holds the points the template puts a black checker on.
-	on [pipBandBands]bool
+	on [PipBandBands]bool
 	// top is the farthest of them, 0 for none.
 	top int
 	// pips is the least pip count a row the masks keep can have: on each point of
@@ -99,7 +99,7 @@ func (s *SearchStore) pipBandWindow(ctx context.Context, f *blackFloor, from, fi
 	}
 	want := limit + offset
 	floor := f.band(f.top + 1)
-	for i := f.top + 2; i <= pipBandBands; i++ {
+	for i := f.top + 2; i <= PipBandBands; i++ {
 		floor = min(floor, f.band(i))
 	}
 	span := pipBandSpan
@@ -108,7 +108,7 @@ func (s *SearchStore) pipBandWindow(ctx context.Context, f *blackFloor, from, fi
 		var q strings.Builder
 		var qArgs []any
 		q.WriteString("(")
-		for i := f.top + 1; i <= pipBandBands; i++ {
+		for i := f.top + 1; i <= PipBandBands; i++ {
 			if i > f.top+1 {
 				q.WriteString(" UNION ALL ")
 			}
