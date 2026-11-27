@@ -93,7 +93,7 @@ var wantIndexes = []string{
 	"idx_position_game_type", "idx_position_individual", "idx_position_match_date",
 	"idx_position_multi_played", "idx_position_no_contact", "idx_position_occupancy1",
 	"idx_position_occupancy2", "idx_position_off", "idx_position_part_fact_pending",
-	"idx_position_phase_off", "idx_position_pip_band", "idx_position_pip_diff", "idx_position_pip_order", "idx_position_pip_order_desc",
+	"idx_position_phase_off", "idx_position_pip_band_02", "idx_position_pip_band_03", "idx_position_pip_band_04", "idx_position_pip_band_05", "idx_position_pip_band_06", "idx_position_pip_band_07", "idx_position_pip_band_08", "idx_position_pip_band_09", "idx_position_pip_band_10", "idx_position_pip_band_11", "idx_position_pip_band_12", "idx_position_pip_band_13", "idx_position_pip_band_14", "idx_position_pip_band_15", "idx_position_pip_band_16", "idx_position_pip_band_17", "idx_position_pip_band_18", "idx_position_pip_band_19", "idx_position_pip_band_20", "idx_position_pip_band_21", "idx_position_pip_band_22", "idx_position_pip_band_23", "idx_position_pip_band_24", "idx_position_pip_band_25", "idx_position_pip_band_26", "idx_position_pip_diff", "idx_position_pip_order", "idx_position_pip_order_desc",
 	"idx_position_score_cube", "idx_position_structure", "idx_position_uuid", "idx_position_zobrist",
 	"idx_table_setting_rencontre", "idx_table_setting_tournament", "idx_tournament_rencontre",
 	"idx_tournament_uuid", "idx_training_item_position", "idx_training_item_session",

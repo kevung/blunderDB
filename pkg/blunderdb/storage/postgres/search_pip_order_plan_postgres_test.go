@@ -23,7 +23,9 @@ import (
 // is that an index can give the order, not the full library's choice. In
 // ascending pips the structure's black checkers name the bands it can keep, each
 // read in order (sqlshared.pipBandWindow), and merged: the pages are those of the
-// read across the tenant.
+// read across the tenant. The plans are those of a role under RLS, as the
+// engine reads: there a condition calling a function that is not leakproof
+// cannot be an index condition.
 func TestStructureSortedByPipsReadsAnIndexInOrder(t *testing.T) {
 	ctx := context.Background()
 	s, rec, dsn := probeFixture(ctx, t)
@@ -36,10 +38,30 @@ func TestStructureSortedByPipsReadsAnIndexInOrder(t *testing.T) {
 	if _, err := conn.Exec(ctx, `ANALYZE position; ANALYZE analysis; SET enable_seqscan = off; SET enable_bitmapscan = off; SET enable_sort = off; SET enable_incremental_sort = off`); err != nil {
 		t.Fatal(err)
 	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := conn.Exec(ctx, `DO $$ BEGIN CREATE ROLE pip_plan_rls NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+		GRANT USAGE ON SCHEMA public TO pip_plan_rls; GRANT SELECT ON ALL TABLES IN SCHEMA public TO pip_plan_rls`); err != nil {
+		t.Fatal(err)
+	}
+	explainUnderRLS := func(sql string, args []any) ([]byte, error) {
+		tx, err := conn.Begin(ctx)
+		if err != nil {
+			return nil, err
+		}
+		defer func() { _ = tx.Rollback(ctx) }()
+		if _, err := tx.Exec(ctx, `SET LOCAL ROLE pip_plan_rls; SELECT set_config('app.tenant_id', '1', true)`); err != nil {
+			return nil, err
+		}
+		var out []byte
+		err = tx.QueryRow(ctx, "EXPLAIN (FORMAT JSON) "+sql, args...).Scan(&out)
+		return out, err
+	}
 	for _, c := range []struct {
 		sort, index string
 	}{
-		{"pip_asc", "idx_position_pip_band"},
+		{"pip_asc", "idx_position_pip_band_"},
 		{"pip_desc", "idx_position_pip_order_desc"},
 	} {
 		t.Run(c.sort, func(t *testing.T) {
@@ -61,8 +83,8 @@ func TestStructureSortedByPipsReadsAnIndexInOrder(t *testing.T) {
 					continue
 				}
 				explained++
-				var out []byte
-				if err := conn.QueryRow(ctx, "EXPLAIN (FORMAT JSON) "+st.sql, st.args...).Scan(&out); err != nil {
+				out, err := explainUnderRLS(st.sql, st.args)
+				if err != nil {
 					t.Fatalf("explain: %v\n  in: %s", err, oneLine(st.sql))
 				}
 				var plans []struct {
@@ -71,11 +93,12 @@ func TestStructureSortedByPipsReadsAnIndexInOrder(t *testing.T) {
 				if err := json.Unmarshal(out, &plans); err != nil {
 					t.Fatal(err)
 				}
-				read, sorted := "", false
+				var reads []string
+				sorted := false
 				var walk func(planNode)
 				walk = func(n planNode) {
 					if n.Relation == "position" {
-						read = n.NodeType + " " + n.IndexName
+						reads = append(reads, n.NodeType+" "+n.IndexName)
 					}
 					if strings.Contains(n.NodeType, "Sort") {
 						sorted = true
@@ -85,9 +108,14 @@ func TestStructureSortedByPipsReadsAnIndexInOrder(t *testing.T) {
 					}
 				}
 				walk(plans[0].Plan)
-				if sorted || !strings.HasSuffix(read, " "+c.index) {
-					t.Errorf("position read by %q, sort node %v; want %s in order, no sort\n  in: %s\n  plan: %s",
-						read, sorted, c.index, strings.Join(strings.Fields(st.sql), " "), out)
+				for _, read := range reads {
+					if sorted || !strings.Contains(read, " "+c.index) {
+						t.Errorf("position read by %q, sort node %v; want %s in order, no sort\n  in: %s\n  plan: %s",
+							read, sorted, c.index, strings.Join(strings.Fields(st.sql), " "), out)
+					}
+				}
+				if len(reads) == 0 {
+					t.Errorf("no read of position in: %s", oneLine(st.sql))
 				}
 			}
 			if explained == 0 {

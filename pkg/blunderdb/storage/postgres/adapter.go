@@ -231,13 +231,20 @@ func (searchDB) InlineIDs(expr string, ids []string) string {
 	return expr + " = ANY('{" + strings.Join(ids, ",") + "}'::bigint[])"
 }
 
-// pipBandBounds are the powers of two width_bucket counts an occupancy against.
-const pipBandBounds = "'{1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,2097152,4194304,8388608,16777216,33554432}'::integer[]"
-
-// PipBand — see sqlshared.pipBandWindow. The text is idx_position_pip_band's
-// expression (migration 074): the planner reads that index for it only.
-func (searchDB) PipBand(alias string) string {
-	return "width_bucket(" + alias + ".occupancy_1, " + pipBandBounds + ")"
+// PipBand — see sqlshared.pipBandWindow. The condition is the predicate of
+// idx_position_pip_band_NN (migration 076). It compares integers only: those
+// operators are leakproof, so under RLS the planner may still match the partial
+// index, which it may not for a function such as width_bucket.
+func (searchDB) PipBand(alias string, n int) string {
+	col := alias + ".occupancy_1"
+	if n <= 0 {
+		return col + " = 0"
+	}
+	lo := col + " >= " + strconv.Itoa(1<<(n-1))
+	if n >= sqlshared.PipBandBands {
+		return lo
+	}
+	return lo + " AND " + col + " < " + strconv.Itoa(1<<n)
 }
 
 // ProbesIDWalk — see sqlshared.probeIDWalk.
