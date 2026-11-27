@@ -540,12 +540,15 @@ type template struct {
 	v     []float64
 }
 
-func fontTemplates() []template {
+func fontTemplates() []template { return templatesOf(digitFont) }
+
+// templatesOf reads figures stored as digitFont is.
+func templatesOf(font []byte) []template {
 	var out []template
-	for k := 0; k+200 <= len(digitFont); k += 200 {
+	for k := 0; k+200 <= len(font); k += 200 {
 		m := make([]float64, glyphSide*glyphSide)
 		for i := range m {
-			b := digitFont[k+i/2]
+			b := font[k+i/2]
 			if i%2 == 0 {
 				b >>= 4
 			}
@@ -725,7 +728,9 @@ func glyphFloats(q *[glyphSide * glyphSide]uint8, scale float64) []float64 {
 // the document's numbering labelled by its shape, the embedded typefaces,
 // then, over three rounds, the figures of the numbers read entirely outside
 // the numbering, by size class. No pip count takes part.
-func readNumbers(all [][]printedNumber) {
+// readNumbers reads the numbers printed around the diagrams and gives the
+// document's figures as it learned them, to read other figures by.
+func readNumbers(all [][]printedNumber) []template {
 	var nums [][]*printedNumber
 	for i := range all {
 		var ps []*printedNumber
@@ -832,6 +837,7 @@ func readNumbers(all [][]printedNumber) {
 			}
 		}
 	}
+	return append(append([]template(nil), base...), auto...)
 }
 
 func meanOf(vs [][]float64) []float64 {

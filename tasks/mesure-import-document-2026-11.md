@@ -379,3 +379,45 @@ et n'est pas lue 64 ; sinon doute nommé (« where N other diagrams print a valu
   videau vierge (501 Problems, Magriel et Roberts), aucun autre diagramme n'imprime de valeur à
   la même place. Elle vaut pour les documents inconnus, où un chiffre perdu au scan ferait
   sinon lire « centré » à tort.
+
+## Légende lue dans l'image et score OCR (#1002, #1005) — réglage seulement
+
+Lecteur de structure seul (`TestMeasureContextOnPages`, `tirage.json`, pages de réglage
+seulement, aucune page de réserve composée). Avant = `main` à 368befef4.
+
+| Livre | Diag. | dés lus | jet de légende (doute) | légende au jet non lu (doute) | score lu | doutes score |
+|---|---:|---|---:|---:|---|---|
+| 501 Problems (Robertie) | 359 | 0 → 0 | 69 | 135 | 0 → 0 | 0 → 0 |
+| Classic Backgammon Revisited | 126 | 0 → 0 | 8 | 19 | 0 → 0 | 0 → 0 |
+| Opening Concepts (Kageyama, Herrera) | 100 | 0 → 1 | 0 | 0 | 0 → 0 | 0 → 0 |
+| Cube Like a Boss | 230 | 0 → 0 | 0 | 0 | 205 → 221 | 25 → 9 |
+| Les huit autres livres scannés | | inchangés | 0 | 0 | inchangés | inchangés |
+
+- **Aucune lecture perdue** : videau, dés, trait et score lus ne baissent sur aucun des douze
+  livres (comparaison diagramme par diagramme).
+- **Légende dans l'image** (page sans couche texte) : lignes au-dessus et au-dessous du plateau
+  coupées en mots par l'encre ; un mot n'est lu que comme un mot de légende (couleur, « to play »,
+  « rolls »…) dessiné dans des polices courantes, ou comme un nombre dont chaque chiffre est
+  reconnu ; sinon « ? ». Une légende = mot de couleur ouvrant la ligne (ou après un nombre, une
+  fin de phrase, un mot non lu), le verbe, le jet finissant la ligne : la prose (« if White rolls
+  15 and plays ») n'en est pas une. Sans dés dessinés, le jet et le trait de la légende sont
+  donnés **en doute** (une seule source), jamais lus. Avec des dés dessinés, le mot lu sert de
+  confirmation comme un mot de couche texte : Opening Concepts p. 27, « How does Black play 62 »
+  confirme les dés 6-2 comptés.
+- Vérifié à l'œil : 501 Problems p. 21 (11, 65) et p. 22 (62) ; Classic Revisited p. 17 (54).
+  Deux livres de mise en page différente (légende centrée sous le plateau, légende en italique
+  gras à droite). Les 135 + 19 jets non lus sont surtout des 3 et des 2 gras d'un scan à faible
+  résolution (un 3 dont les boucles se ferment) : doute nommé, pas de chiffre deviné.
+- **Score OCR** (Cube Like a Boss) : tag collé à son nombre (« pip:9 »), point-virgule pour
+  deux-points, « po int » coupé ; deux scores égaux se passent d'attribution, mais chaque pip
+  imprimé doit valoir l'un des pips lus (sinon doute nommé) et sans pip imprimé le score reste
+  en doute (une seule source). Les 9 doutes restants : pips manquants avec scores différents ou
+  scores égaux sans pip, bandeau incomplet.
+- **Videau** : un 64 lu en haut ou en bas est un videau possédé ; il n'exempte plus la garde de
+  face vierge (comptes de videau inchangés au réglage).
+- **Gabarits** : `words.bin` et `figures.bin` tirés des dix polices nommées dans
+  `words_gen_test.go` (Liberation, C059, DejaVu), régénérés à l'identique octet pour octet.
+- **Réglages** : aucun propre à un livre. Seuils choisis sur 501 Problems et vérifiés sur
+  Classic Revisited et sur des légendes synthétiques en police Go (absente des gabarits) :
+  corrélation de mot 0,60 avec 0,04 d'avance (mots justes 0,72-0,88, autres ≤ 0,37 sur
+  501 Problems), chiffre de légende par corrélation centrée 0,70 avec 0,06 d'avance.

@@ -118,7 +118,7 @@ func TestBareFace(t *testing.T) {
 // TestBareCubePlaces: three lone bare cubes, each at its own place, are no
 // drawing the document repeats; three at one place where another diagram
 // prints a value are figures the scan may have lost; a 64 printed there
-// does not stop the reading.
+// stops the reading only off the middle, where it is an owned cube.
 func TestBareCubePlaces(t *testing.T) {
 	cs, why := cubeDoubt([]*boardReading{
 		handBoard(0, 0, cubeAt("top", true)),
@@ -144,13 +144,32 @@ func TestBareCubePlaces(t *testing.T) {
 			t.Errorf("diagram %d: a bare cube where another prints a value read %+v; doubt %q", i+1, cs[i], why[i])
 		}
 	}
-	sixtyFour := handBoard(1, 700, cubeAt("top", false))
-	s := sixtyFour.cubes[0]
-	sixtyFour.cubeFigs = []printedNumber{{x0: int(s.x0) + 10, y0: int(s.y0) + 10, x1: int(s.x1) - 10, y1: int(s.y1) - 10, val: 64}}
-	cs, why = three(sixtyFour)
+	sixtyFour := func(place string) *boardReading {
+		rd := handBoard(1, 700, cubeAt(place, false))
+		s := rd.cubes[0]
+		rd.cubeFigs = []printedNumber{{x0: int(s.x0) + 10, y0: int(s.y0) + 10, x1: int(s.x1) - 10, y1: int(s.y1) - 10, val: 64}}
+		return rd
+	}
+	middle := func(fourth *boardReading) ([]Context, []string) {
+		return cubeDoubt([]*boardReading{
+			handBoard(0, 0, cubeAt("middle", true)),
+			handBoard(0, 700, cubeAt("middle", true)),
+			handBoard(1, 0, cubeAt("middle", true)),
+			fourth,
+		})
+	}
+	cs, why = middle(sixtyFour("middle"))
 	for i := range 3 {
 		if !cs[i].CubeRead || cs[i].Cube != 1 || cs[i].CubeOwner != 0 || why[i] != "" {
-			t.Errorf("diagram %d: a bare cube beside a 64 at its place read %+v; doubt %q", i+1, cs[i], why[i])
+			t.Errorf("diagram %d: a bare cube beside a centred 64 at its place read %+v; doubt %q", i+1, cs[i], why[i])
+		}
+	}
+	// A 64 at the top is an owned cube showing its value: the bare faces
+	// at that place may be values the scan lost.
+	cs, why = three(sixtyFour("top"))
+	for i := range 3 {
+		if cs[i].CubeRead || !strings.Contains(why[i], "print a value") {
+			t.Errorf("diagram %d: a bare cube beside an owned 64 at its place read %+v; doubt %q", i+1, cs[i], why[i])
 		}
 	}
 	cs, _ = three(handBoard(1, 700, cubeAt("bottom", false)))

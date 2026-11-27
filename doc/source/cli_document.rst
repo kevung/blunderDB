@@ -241,9 +241,13 @@ n'est lu que recoupé :
   (« 2/0 2/1 », « 8/5(2) 6/3(2) »), cité deux fois si le texte nomme plusieurs
   jets ; un mot plus proche d'un autre diagramme est à celui-ci ; le trait, par
   la couleur des dés et leur moitié du plateau (la droite pour le joueur du
-  bas), qui doivent désigner le même joueur ;
+  bas), qui doivent désigner le même joueur. Sans dés dessinés, une légende qui
+  les nomme (« Black to play 53 », lue dans la couche texte ou, sans couche
+  texte, dans l'image) donne le jet et le joueur au trait, chacun en doute : une
+  seule source ne certifie rien ;
 * le score, par le bandeau de la couche texte (``score:``, ``pip:``,
-  ``7 point match``), chaque score attribué au joueur dont il porte les pips.
+  ``7 point match``), chaque score attribué au joueur dont il porte les pips ;
+  deux scores égaux se passent des pips.
 
 Une entrée dont tout le contexte est lu est ``"context": "read"``. Un videau
 introuvable n'est jamais pris pour centré : ce qui n'est pas lu prend le
@@ -299,7 +303,8 @@ sûrs deviennent ``sure``. Seules restent à vérifier une à une les exceptions
 la lecture a vues (videau possédé, dés dessinés, score de match) et les entrées
 dont les pions ne sont pas sûrs. On ne confirme pas un contexte que le document
 ne suit pas : un videau que la lecture ne trouve pas, un score imprimé dans
-l'image sans couche texte ou un trait donné par la prose ne sont pas vus.
+l'image sans couche texte ou un trait donné par la prose hors d'une légende ne
+sont pas vus.
 
 .. _cli_document_learned:
 

@@ -28,10 +28,13 @@ import (
 //     ("2/0 2/1"). The count alone, however clear, is one source; the
 //     player on roll by the dice's colour (the class of checkers they match)
 //     and their half of the board (the right half for the bottom player),
-//     which must agree.
+//     which must agree. A diagram that draws no dice and whose caption
+//     names them ("Black to play 53", in the text layer or read in the
+//     image) is given that roll and player, each a named doubt: one source.
 //   - the score: a panel of the text layer giving the match length and two
 //     scores, each assigned to a player by the pip count printed beside it,
-//     which must be the pips read for that player.
+//     which must be the pips read for that player; equal scores need no
+//     assignment, but each pip count printed must be one of the pips read.
 //
 // Whatever is drawn or printed and not certified is a named doubt.
 type Context struct {
@@ -58,7 +61,9 @@ type Score struct {
 var cubeValues = map[int]bool{2: true, 4: true, 8: true, 16: true, 32: true, 64: true}
 
 var (
-	reScoreTag = regexp.MustCompile(`(?i)^score:?$`)
+	reScoreTag = regexp.MustCompile(`(?i)^score[:;]?$`)
+	// reGlued is a tag glued to its number by an OCR layer: "pip:9".
+	reGlued    = regexp.MustCompile(`(?i)^(score|pips?)[:;]([0-9]{1,3})$`)
 	rePlayTag  = regexp.MustCompile(`(?i)^(plays?|rolls?|rolled)$`)
 	reDiceWord = regexp.MustCompile(`^\(?([1-6])-?([1-6])\)?[.,:;?!]?$`)
 	rePoint    = regexp.MustCompile(`(?i)^(point|pt\.?|points)$`)
@@ -156,8 +161,8 @@ func readContext(rd *boardReading, d *Diagram, words []Word, prof Profile, env c
 	c := &d.Context
 	readCube(rd, d, words, prof, env, c, add)
 	readDice(rd, words, prof, env, c, add)
-	readScore(rd, d, words, c, add)
-	if len(rd.dice) == 0 && c.CubeRead && c.CubeOwner == -1 {
+	readScore(rd, d, words, env, c, add)
+	if len(rd.dice) == 0 && c.Turn == 0 && c.CubeRead && c.CubeOwner == -1 {
 		c.Turn = -1
 		add("turn", "cube owned", "the cube is owned by the top player and no dice are drawn: taken as the top player's cube decision, not read")
 	}
@@ -270,7 +275,9 @@ func readCube(rd *boardReading, d *Diagram, words []Word, prof Profile, env cont
 }
 
 func readDice(rd *boardReading, words []Word, prof Profile, env contextEnv, c *Context, add func(string, string, string, ...any)) {
+	near := rd.nearWord(env)
 	if len(rd.dice) == 0 {
+		captionDice(words, near, prof, c, add)
 		return
 	}
 	if len(rd.dice) != 2 {
@@ -299,22 +306,6 @@ func readDice(rd *boardReading, words []Word, prof Profile, env contextEnv, c *C
 		add("turn", "dice drawn", "the dice's colour and their half of the board do not tell the same player on roll")
 	}
 	// The dice: confirmed by the text layer beside the diagram.
-	X0, Y0, X1, Y1 := float64(rd.bbox.x0), float64(rd.bbox.y0), float64(rd.bbox.x1), float64(rd.bbox.y1)
-	p := rd.fieldPoint()
-	// A word nearer another diagram of the page is that diagram's.
-	near := func(w Word) bool {
-		cx, cy := (w.X0+w.X1)/2, (w.Y0+w.Y1)/2
-		if cx < X0-8*p || cx > X1+8*p || cy < Y0-4*p || cy > Y1+4*p {
-			return false
-		}
-		own := rd.fieldDistance(cx, cy)
-		for _, o := range env.others {
-			if o.fieldDistance(cx, cy) < own {
-				return false
-			}
-		}
-		return true
-	}
 	said := textRolls(words, near)
 	same := func(s [2]int) bool {
 		return s == c.Dice || s == [2]int{c.Dice[1], c.Dice[0]}
@@ -341,6 +332,120 @@ func readDice(rd *boardReading, words []Word, prof Profile, env contextEnv, c *C
 	default:
 		add("dice", "dice drawn", "dice %d-%d counted in the image, the text says otherwise", c.Dice[0], c.Dice[1])
 	}
+}
+
+// nearWord tells whether a word is printed beside the diagram: in its box
+// widened by eight point widths across and four along, and nearer its field
+// than any other diagram's of the page.
+func (rd *boardReading) nearWord(env contextEnv) func(Word) bool {
+	X0, Y0, X1, Y1 := float64(rd.bbox.x0), float64(rd.bbox.y0), float64(rd.bbox.x1), float64(rd.bbox.y1)
+	p := rd.fieldPoint()
+	return func(w Word) bool {
+		cx, cy := (w.X0+w.X1)/2, (w.Y0+w.Y1)/2
+		if cx < X0-8*p || cx > X1+8*p || cy < Y0-4*p || cy > Y1+4*p {
+			return false
+		}
+		return !env.nearerOther(rd, cx, cy)
+	}
+}
+
+// captionDice reads the roll a caption gives a diagram that draws no dice —
+// "Black to play 53", "White rolls 41": the dice and the player on roll,
+// by the colour named. The caption is then the only source of either: both
+// are given and named doubts, never read. Captions beside the diagram that
+// disagree give nothing but the doubt.
+func captionDice(words []Word, near func(Word) bool, prof Profile, c *Context, add func(string, string, string, ...any)) {
+	said := captionRolls(words, near)
+	if len(said) == 0 {
+		return
+	}
+	first := said[0]
+	for _, s := range said[1:] {
+		if s.colour != first.colour || (s.roll != first.roll && s.roll != [2]int{first.roll[1], first.roll[0]}) {
+			add("dice", "dice in caption", "the text beside the diagram names %d different rolls and no dice are drawn: not read", len(said))
+			return
+		}
+	}
+	c.Turn = first.colour
+	if !prof.BottomIsDark {
+		c.Turn = -first.colour
+	}
+	if first.roll[0] == 0 {
+		add("dice", "dice in caption", "a roll is named beside the diagram and not read, none drawn")
+	} else {
+		c.Dice = first.roll
+		add("dice", "dice in caption", "dice %d-%d named beside the diagram, none drawn: one source, not confirmed", c.Dice[0], c.Dice[1])
+	}
+	add("turn", "dice in caption", "the player on roll named beside the diagram by colour only: one source, not confirmed")
+}
+
+// captionRoll is a roll a caption names, with the class of checkers on roll
+// (1 the darker, -1 the lighter).
+type captionRoll struct {
+	roll   [2]int
+	colour int
+}
+
+// captionRolls are the rolls named with their player beside a diagram: a
+// colour word opening a caption, then "to play", "plays", "rolls" or
+// "rolled" (an article allowed), then the roll ending its line — zero when the word in its place is not read
+// ("?", in the image).
+func captionRolls(words []Word, near func(Word) bool) []captionRoll {
+	var out []captionRoll
+	for i := 0; i+2 < len(words); i++ {
+		col := colourOf(words[i].Text)
+		if col == 0 || !near(words[i]) {
+			continue
+		}
+		// A caption states the roll: its colour word opens the line or
+		// follows a number or the end of a sentence, and its roll ends
+		// the line; "if White rolls 15 and plays" is no caption.
+		if i > 0 && sameLine(words[i-1], words[i]) && !opensCaption(words[i-1].Text) {
+			continue
+		}
+		j := i + 1
+		if strings.EqualFold(words[j].Text, "to") {
+			if !strings.EqualFold(strings.Trim(words[j+1].Text, ".,:;"), "play") {
+				continue
+			}
+			j++
+		} else if !rePlayTag.MatchString(words[j].Text) {
+			continue
+		}
+		j++
+		if j < len(words) && reArticle.MatchString(words[j].Text) {
+			j++
+		}
+		if j >= len(words) || !near(words[j]) {
+			continue
+		}
+		if j+1 < len(words) && sameLine(words[j], words[j+1]) {
+			continue
+		}
+		m := reDiceWord.FindStringSubmatch(words[j].Text)
+		switch {
+		case m != nil:
+			x, _ := strconv.Atoi(m[1])
+			y, _ := strconv.Atoi(m[2])
+			out = append(out, captionRoll{[2]int{x, y}, col})
+		case words[j].Text == "?":
+			out = append(out, captionRoll{colour: col})
+		}
+	}
+	return out
+}
+
+// sameLine tells whether two words stand on one line: their heights
+// overlap by half the smaller.
+func sameLine(a, b Word) bool {
+	return min(a.Y1, b.Y1)-max(a.Y0, b.Y0) >= 0.5*min(a.Y1-a.Y0, b.Y1-b.Y0)
+}
+
+// opensCaption tells whether a caption may follow the word on its line: a
+// number ("Problem 66:"), a sentence's end, or a word of the image not read
+// ("?": a caption's number in a figure the reader does not know).
+func opensCaption(s string) bool {
+	return s == "?" || reNumber.MatchString(strings.TrimRight(s, ".:")) || strings.HasSuffix(s, ":") || strings.HasSuffix(s, ".")
 }
 
 // textRolls are the rolls the text layer names beside a diagram (words for
@@ -440,8 +545,13 @@ func rollOf(steps []int) ([2]int, bool) {
 
 // readScore reads the panel a diagram's text layer prints beside it — "score:
 // 2  pip: 156  7 point match  pip: 150  score: 4" — each score assigned to
-// a player by the pips printed nearest to it.
-func readScore(rd *boardReading, d *Diagram, words []Word, c *Context, add func(string, string, string, ...any)) {
+// a player by the pips printed nearest to it. Equal scores need no
+// assignment: one pip count printed suffices, and each must be one of the
+// pips read. The words are taken
+// as an OCR layer gives them: a tag glued to its number ("pip:9"), a colon
+// read as a semicolon, "point" cut in two.
+func readScore(rd *boardReading, d *Diagram, words []Word, env contextEnv, c *Context, add func(string, string, string, ...any)) {
+	words = splitTagged(words)
 	X0, Y0, X1, Y1 := float64(rd.bbox.x0), float64(rd.bbox.y0), float64(rd.bbox.x1), float64(rd.bbox.y1)
 	p := rd.fieldPoint()
 	type tagged struct{ v, cy float64 }
@@ -450,7 +560,7 @@ func readScore(rd *boardReading, d *Diagram, words []Word, c *Context, add func(
 	crawford := false
 	for i, w := range words {
 		cx, cy := (w.X0+w.X1)/2, (w.Y0+w.Y1)/2
-		if cx < X0-8*p || cx > X1+8*p || cy < Y0-2*p || cy > Y1+2*p {
+		if cx < X0-8*p || cx > X1+8*p || cy < Y0-2*p || cy > Y1+2*p || env.nearerOther(rd, cx, cy) {
 			continue
 		}
 		if strings.EqualFold(strings.Trim(w.Text, ".,:;()"), "crawford") {
@@ -462,8 +572,7 @@ func readScore(rd *boardReading, d *Diagram, words []Word, c *Context, add func(
 		nx := words[i+1]
 		v, err := strconv.Atoi(nx.Text)
 		if err != nil || !reNumber.MatchString(nx.Text) {
-			if reNumber.MatchString(w.Text) && rePoint.MatchString(nx.Text) && i+2 < len(words) && reMatch.MatchString(words[i+2].Text) {
-				n, _ := strconv.Atoi(w.Text)
+			if n, ok := matchLength(words[i:]); ok {
 				lengths = append(lengths, n)
 			}
 			continue
@@ -479,13 +588,34 @@ func readScore(rd *boardReading, d *Diagram, words []Word, c *Context, add func(
 	if len(scores) == 0 && len(lengths) == 0 {
 		return
 	}
-	if len(scores) != 2 || len(lengths) != 1 || len(pips) != 2 {
+	equal := len(scores) == 2 && scores[0].v == scores[1].v
+	if len(scores) != 2 || len(lengths) != 1 || (len(pips) != 2 && !equal) {
 		add("score", "score", "a score is printed beside the diagram and not read whole (%d scores, %d match lengths, %d pip counts)", len(scores), len(lengths), len(pips))
 		return
 	}
+	if equal {
+		// No assignment to make, but the panel must still be this
+		// diagram's: each pip count printed is one of the pips read.
+		if len(pips) == 0 {
+			add("score", "score", "equal scores printed with no pip count beside them: one source, not confirmed")
+			return
+		}
+		for _, pc := range pips {
+			if int(pc.v) != d.Pips[0] && int(pc.v) != d.Pips[1] {
+				add("score", "score", "equal scores printed beside a pip count of %d, which neither player has", int(pc.v))
+				return
+			}
+		}
+	}
 	s := Score{Length: lengths[0], Crawford: crawford}
 	var set [2]bool
+	if equal {
+		s.Bottom, s.Top, set = int(scores[0].v), int(scores[0].v), [2]bool{true, true}
+	}
 	for _, sc := range scores {
+		if equal {
+			break
+		}
 		near := pips[0]
 		if math.Abs(pips[1].cy-sc.cy) < math.Abs(pips[0].cy-sc.cy) {
 			near = pips[1]
@@ -514,6 +644,59 @@ func readScore(rd *boardReading, d *Diagram, words []Word, c *Context, add func(
 	if !s.Crawford && (s.Bottom == L-1 || s.Top == L-1) {
 		add("score", "score", "a player 1-away: the Crawford game and the games after it are not told apart")
 	}
+}
+
+// splitTagged cuts a tag glued to its number ("pip:9") in two words, the
+// box shared by its letters' count.
+func splitTagged(words []Word) []Word {
+	var out []Word
+	for i, w := range words {
+		m := reGlued.FindStringSubmatch(w.Text)
+		if m == nil {
+			if out != nil {
+				out = append(out, w)
+			}
+			continue
+		}
+		if out == nil {
+			out = append([]Word(nil), words[:i]...)
+		}
+		cut := w.X0 + (w.X1-w.X0)*float64(len(m[1])+1)/float64(len(w.Text))
+		out = append(out, Word{X0: w.X0, Y0: w.Y0, X1: cut, Y1: w.Y1, Text: m[1] + ":"}, Word{X0: cut, Y0: w.Y0, X1: w.X1, Y1: w.Y1, Text: m[2]})
+	}
+	if out == nil {
+		return words
+	}
+	return out
+}
+
+// matchLength reads a match length at the head of ws: a number, then
+// "point" (or "pt", "points") in one word or cut in two, then "match".
+func matchLength(ws []Word) (int, bool) {
+	if len(ws) < 3 || !reNumber.MatchString(ws[0].Text) {
+		return 0, false
+	}
+	n, _ := strconv.Atoi(ws[0].Text)
+	pt := ""
+	for k := 1; k < len(ws) && k <= 2; k++ {
+		pt += strings.ToLower(ws[k].Text)
+		if rePoint.MatchString(pt) && k+1 < len(ws) && reMatch.MatchString(ws[k+1].Text) {
+			return n, true
+		}
+	}
+	return 0, false
+}
+
+// nearerOther tells whether (x, y) lies nearer the field of another diagram
+// of the page than rd's: what is printed there is that diagram's.
+func (env contextEnv) nearerOther(rd *boardReading, x, y float64) bool {
+	own := rd.fieldDistance(x, y)
+	for _, o := range env.others {
+		if o.fieldDistance(x, y) < own {
+			return true
+		}
+	}
+	return false
 }
 
 // missingCubes: in a document that draws its cube — one found beside at
@@ -612,8 +795,13 @@ func keepSquares(rds []*boardReading, stretch float64) {
 	}
 }
 
-// readsCentred tells whether 64 is read in the diagram's k-th cube.
+// readsCentred tells whether the diagram's k-th cube reads centred: 64
+// read in it, in the middle. A 64 at the top or the bottom is an owned cube
+// showing its value, which a bare face at that place must not be taken for.
 func readsCentred(rd *boardReading, k int) bool {
+	if rd.cubes[k].place != "middle" {
+		return false
+	}
 	for _, n := range rd.cubeFigs {
 		if n.val == 64 && squareOf(rd.cubes, n) == k {
 			return true
