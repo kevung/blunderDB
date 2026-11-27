@@ -92,6 +92,7 @@
           <li>Tournament engine Nicomaque 0.12.0: a consolation runs alongside the main bracket, and the director may waive it until one of its matches is launched</li>
           <li>Tournament simulation plays in the requested room: a match waits for a free table</li>
           <li>Server mode: a well-formed gesture refused by the rules answers 422 refused, a malformed request stays 400 invalid</li>
+          <li>Faster pip-count sort for a structure search on PostgreSQL, through partial indexes by pip band (p95 from about 1.8 s to 0.1 s)</li>
         </ul>
       </description>
     </release>

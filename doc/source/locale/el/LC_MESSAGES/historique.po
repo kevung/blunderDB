@@ -176,6 +176,18 @@ msgstr ""
 "αμετάβλητο· ένα κακοδιατυπωμένο αίτημα παραμένει ``400`` ``invalid``."
 
 #: ../../source/historique.rst:51
+msgid ""
+"**Tri par pips d'une recherche de structure plus rapide en PostgreSQL** : "
+"sous l'isolement par tenant, une recherche de structure triée par pips "
+"lit des index partiels par bande de pips ; au 95e centile, elle passe "
+"d'environ 1,8 s à 0,1 s sur une base de 15,6 millions de positions."
+msgstr ""
+"**Ταχύτερη ταξινόμηση κατά pips σε αναζήτηση δομής με PostgreSQL**: με "
+"την απομόνωση ανά tenant, μια αναζήτηση δομής ταξινομημένη κατά pips "
+"διαβάζει μερικά ευρετήρια ανά ζώνη pips· στο 95ο εκατοστημόριο πέφτει από "
+"περίπου 1,8 s σε 0,1 s σε βάση 15,6 εκατομμυρίων θέσεων."
+
+#: ../../source/historique.rst:51
 msgid "Voir :ref:`manuel_tournois` et :ref:`headless`."
 msgstr "Δείτε :ref:`manuel_tournois` και :ref:`headless`."
 

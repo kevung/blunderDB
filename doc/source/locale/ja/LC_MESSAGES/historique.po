@@ -153,6 +153,17 @@ msgstr ""
 "``400`` ``invalid`` です。"
 
 #: ../../source/historique.rst:51
+msgid ""
+"**Tri par pips d'une recherche de structure plus rapide en PostgreSQL** : "
+"sous l'isolement par tenant, une recherche de structure triée par pips "
+"lit des index partiels par bande de pips ; au 95e centile, elle passe "
+"d'environ 1,8 s à 0,1 s sur une base de 15,6 millions de positions."
+msgstr ""
+"**PostgreSQL "
+"での構造検索のピップ順ソートを高速化**：テナントごとの分離のもとで、ピップ数順に並べた構造検索はピップ帯ごとの部分インデックスを読みます。95 "
+"パーセンタイルで、1,560 万局面のデータベースにおいて約 1.8 秒から 0.1 秒に短縮されます。"
+
+#: ../../source/historique.rst:51
 msgid "Voir :ref:`manuel_tournois` et :ref:`headless`."
 msgstr ":ref:`manuel_tournois` と :ref:`headless` を参照してください。"
 

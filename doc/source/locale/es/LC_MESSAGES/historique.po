@@ -173,6 +173,19 @@ msgstr ""
 "formada sigue siendo un ``400`` ``invalid``."
 
 #: ../../source/historique.rst:51
+msgid ""
+"**Tri par pips d'une recherche de structure plus rapide en PostgreSQL** : "
+"sous l'isolement par tenant, une recherche de structure triée par pips "
+"lit des index partiels par bande de pips ; au 95e centile, elle passe "
+"d'environ 1,8 s à 0,1 s sur une base de 15,6 millions de positions."
+msgstr ""
+"**Ordenación por pips más rápida en una búsqueda de estructura con "
+"PostgreSQL**: con el aislamiento por inquilino, una búsqueda de "
+"estructura ordenada por pips lee índices parciales por banda de pips; en "
+"el percentil 95 pasa de unos 1,8 s a 0,1 s en una base de 15,6 millones "
+"de posiciones."
+
+#: ../../source/historique.rst:51
 msgid "Voir :ref:`manuel_tournois` et :ref:`headless`."
 msgstr "Véase :ref:`manuel_tournois` y :ref:`headless`."
 

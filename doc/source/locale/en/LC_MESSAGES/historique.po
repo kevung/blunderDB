@@ -169,6 +169,18 @@ msgstr ""
 " ``400`` ``invalid``."
 
 #: ../../source/historique.rst:51
+msgid ""
+"**Tri par pips d'une recherche de structure plus rapide en PostgreSQL** : "
+"sous l'isolement par tenant, une recherche de structure triée par pips "
+"lit des index partiels par bande de pips ; au 95e centile, elle passe "
+"d'environ 1,8 s à 0,1 s sur une base de 15,6 millions de positions."
+msgstr ""
+"**Faster pip-count sort for a structure search on PostgreSQL**: under "
+"per-tenant isolation, a structure search sorted by pip count reads "
+"partial indexes by pip band; at the 95th percentile it drops from about "
+"1.8 s to 0.1 s on a database of 15.6 million positions."
+
+#: ../../source/historique.rst:51
 msgid "Voir :ref:`manuel_tournois` et :ref:`headless`."
 msgstr "See :ref:`manuel_tournois` and :ref:`headless`."
 
