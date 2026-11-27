@@ -160,6 +160,25 @@ type drawOpts struct {
 	hidePipTop bool
 	inkPips    bool // draw the pip counts in the image, figures of inkFont
 	inkFont    int
+	// tray draws a box beside the field for each row, its borne-off
+	// checkers as thin bars; trayExtra bars more than borne off.
+	tray      bool
+	trayExtra int
+	// trayExtraTop adds bars to the top row's tray alone.
+	trayExtraTop int
+	// trayCube draws a cube in the top tray's box; trayHollow draws the
+	// borne-off checkers as hollow rectangles.
+	trayCube, trayHollow bool
+	// trayStrokes draws, in the top tray's box, two hairlines across it
+	// (a cube's or a label's outline), and in the bottom one three bars
+	// floating halfway up, off the tray's outer end.
+	trayStrokes bool
+	// trayShape draws, in place of the bottom tray's bars, a stray shape that
+	// the bars' reader counts as two: "bracket" (an open "[") or "dotted" (a
+	// rectangle with dotted sides).
+	trayShape string
+	// darkFill is the dark checkers' grey, 0.2 when unset.
+	darkFill float64
 }
 
 // draw puts a diagram on the canvas with its top-left corner at (ox, oy)
@@ -202,6 +221,10 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 	}
 	r := 0.48 * p
 	step := 2 * r
+	df := 0.2
+	if o.darkFill > 0 {
+		df = o.darkFill
+	}
 	stackAt := func(top bool, j, n int, fill float64) {
 		x0, x1 := col(j)
 		cx := float64(x0+x1) / 2
@@ -216,9 +239,9 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 	for q := 1; q <= 24; q++ {
 		if n := s.bottom[q]; n > 0 {
 			if q <= 12 {
-				stackAt(false, 12-q, n, 0.2)
+				stackAt(false, 12-q, n, df)
 			} else {
-				stackAt(true, q-13, n, 0.2)
+				stackAt(true, q-13, n, df)
 			}
 		}
 		if n := s.top[q]; n > 0 {
@@ -229,9 +252,84 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 			}
 		}
 	}
+	if o.tray {
+		x0, x1 := d+t+int(0.4*p), d+t+int(1.2*p)
+		mid := (y0 + y1) / 2
+		for row, off := range []int{15 - s.top[0], 15 - s.bottom[0]} {
+			for q := 1; q <= 24; q++ {
+				if row == 0 {
+					off -= s.top[q]
+				} else {
+					off -= s.bottom[q]
+				}
+			}
+			off += o.trayExtra
+			if row == 0 {
+				off += o.trayExtraTop
+			}
+			ya, yb := y0, mid-int(0.5*p)
+			if row == 1 {
+				ya, yb = mid+int(0.5*p), y1
+			}
+			c.rect(x0, ya, x1, yb, 0)
+			c.rect(x0+2, ya+2, x1-2, yb-2, 1)
+			if o.trayHollow {
+				for k := 0; k < off; k++ {
+					y := yb - 12 - k*12
+					if row == 0 {
+						y = ya + 4 + k*12
+					}
+					c.rect(x0+4, y, x1-4, y+8, 0)
+					c.rect(x0+6, y+2, x1-6, y+6, 1)
+				}
+				continue
+			}
+			if o.trayShape != "" && row == 1 {
+				ys, ye := yb-17, yb-4
+				c.rect(x0+4, ys, x1-4, ys+3, 0)
+				c.rect(x0+4, ye-3, x1-4, ye, 0)
+				for y := ys + 3; y < ye-3; y++ {
+					switch {
+					case o.trayShape == "bracket":
+						c.rect(x0+4, y, x0+7, y+1, 0)
+					case (y-ys)%3 == 1:
+						c.rect(x0+4, y, x0+7, y+1, 0)
+						c.rect(x1-7, y, x1-4, y+1, 0)
+					}
+				}
+				continue
+			}
+			for k := 0; k < off; k++ {
+				y := yb - 6 - k*7
+				if row == 0 {
+					y = ya + 4 + k*7
+				}
+				c.rect(x0+4, y, x1-4, y+3, 0)
+			}
+			if o.trayStrokes {
+				if row == 0 {
+					for _, y := range []int{ya + int(0.5*p), ya + int(1.3*p)} {
+						c.rect(x0+2, y, x1-2, y+1, 0)
+					}
+				} else {
+					for k := 0; k < 3; k++ {
+						y := (ya+yb)/2 + k*7
+						c.rect(x0+4, y, x1-4, y+3, 0)
+					}
+				}
+			}
+			if o.trayCube && row == 0 {
+				side := int(0.9 * p)
+				cx := (x0+x1)/2 - side/2
+				cy := yb - side - 6
+				c.rect(cx, cy, cx+side, cy+side, 0)
+				c.rect(cx+2, cy+2, cx+side-2, cy+side-2, 1)
+			}
+		}
+	}
 	bx := float64(b+cc) / 2
 	for k := 0; k < s.bottom[0]; k++ {
-		c.disc(bx, float64(y0)+0.3*float64(H)+float64(k)*step, r, 0.2)
+		c.disc(bx, float64(y0)+0.3*float64(H)+float64(k)*step, r, df)
 	}
 	for k := 0; k < s.top[0]; k++ {
 		c.disc(bx, float64(y1)-0.3*float64(H)-float64(k)*step, r, 1)
@@ -319,6 +417,9 @@ type synthPage struct {
 	spread bool // two pages side by side, one diagram on each
 	skew   float64
 	noise  float64
+	// inkGrey prints the page with a faded ink: black becomes this grey,
+	// white stays white, every grey between scaled alike.
+	inkGrey float64
 }
 
 // book draws the pages and returns them with the boards expected, in the
@@ -350,6 +451,11 @@ func book(t *testing.T, pages []synthPage, seed int64) (memPages, []string) {
 		}
 		if sp.noise > 0 {
 			c.noise(r, sp.noise)
+		}
+		if sp.inkGrey > 0 {
+			for k, v := range c.p {
+				c.p[k] = sp.inkGrey + (1-sp.inkGrey)*v
+			}
 		}
 		out = append(out, Page{Image: c.image(), DPI: 150, Words: words})
 	}

@@ -502,6 +502,12 @@ func releve(rds []*boardReading, words map[int][]Word, img []*[2]int, home strin
 		}
 	}
 	cl := learnClasses(means)
+	// Both classes lighter than halfway between the document's ink and its
+	// paper (1): the document draws no filled checker, its "dark" class is
+	// hollow discs on shaded points, and the other side is drawn otherwise.
+	// The ink is measured, not taken for black: a faded scan's filled
+	// checkers are as pale as its strokes, still darker than that halfway.
+	hollow := cl.ok && cl.c0 > hollowAbove(rds)
 	numbering := map[string]map[[2]int]int{}
 	for _, h := range corners {
 		numbering[h] = map[[2]int]int{}
@@ -720,6 +726,10 @@ func releve(rds []*boardReading, words map[int][]Word, img []*[2]int, home strin
 	}
 	diagrams := make([]Diagram, 0, len(rds))
 	for i, rd := range rds {
+		if hollow {
+			diagrams = append(diagrams, hollowDiagram(rd, cl, fs[i].pips, fs[i].read))
+			continue
+		}
 		diagrams = append(diagrams, judge(rd, cl, home0, upper, order, assumed, fs[i].pips, fs[i].read))
 	}
 	return diagrams, prof
@@ -830,6 +840,22 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 	}
 	n := [2]int{checkersOf(pts, bar, 0), checkersOf(pts, bar, 1)}
 	pc := [2]int{pipsOf(pts, bar, 0), pipsOf(pts, bar, 1)}
+	// A player's borne-off checkers lie in the tray beside their home row.
+	var tray [2]int
+	tray[upper], tray[1-upper] = rd.trays[1], rd.trays[0]
+	// fifteen: the side's checkers drawn, with those its tray shows, make
+	// fifteen — two counts read apart.
+	fifteenOf := func(k int) bool {
+		if tray[k] > 0 {
+			return n[k]+tray[k] == 15
+		}
+		return n[k] == 15
+	}
+	// byTray: the side's fifteen rests on checkers counted in its tray. The
+	// tray is read from shapes alone, and a stray mark there is counted as
+	// readily as a checker: only printed pips that agree with the board
+	// vouch for such a fifteen.
+	byTray := func(k int) bool { return tray[k] > 0 && fifteenOf(k) }
 	var okPips bool
 	switch {
 	case printed == nil:
@@ -856,7 +882,7 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		Printed:   printed,
 		TextPips:  read.text,
 		ImagePips: read.image,
-		Complete:  n == [2]int{15, 15} && pieceDoubts == 0 && !solved,
+		Complete:  fifteenOf(0) && fifteenOf(1) && pieceDoubts == 0 && !solved && (okPips || !byTray(0) && !byTray(1)),
 	}
 	// What is drawn and not read: never invented, named so a sure reading
 	// is not taken for more than its checkers.
@@ -874,11 +900,27 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 			add("orientation", 0, "", AssumedDirectionReason)
 		}
 		for _, k := range []int{upper, 1 - upper} {
+			if byTray(k) {
+				add("checkers", 0, "", "the %s player (%s) has %d borne-off checkers counted in the tray, no printed pips confirm them", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), tray[k])
+				continue
+			}
+			if tray[k] > 0 {
+				continue
+			}
 			if n[k] < 15 {
 				add("checkers", 0, "", "the %s player (%s) has %d checkers drawn: the other %d are taken as borne off, the tray is not read", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k], 15-n[k])
 			} else if n[k] > 15 {
 				add("checkers", 0, "", "the %s player (%s) has %d checkers drawn, more than fifteen", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k])
 			}
+		}
+	}
+	// A tray whose bars do not make fifteen with the side's checkers is a
+	// contradiction, named whatever the pips say.
+	trayOff := false
+	for _, k := range []int{upper, 1 - upper} {
+		if tray[k] > 0 && !fifteenOf(k) {
+			trayOff = true
+			add("checkers", 0, "", "the %s player (%s) has %d checkers drawn and %d in its tray: they do not make fifteen", map[bool]string{true: "bottom", false: "top"}[k == upper], colourName(k), n[k], tray[k])
 		}
 	}
 	if state == Confirmed && len(doubts) > 0 {
@@ -904,6 +946,41 @@ func judge(rd *boardReading, cl classes, home0 string, upper int, order string, 
 		}
 	}
 	d.State, d.Doubts, d.Families = state, doubts, families
-	d.CheckersSure = max(n[0], n[1]) <= 15 && okPips && pieceDoubts == 0 && (!solved || fifteen)
+	d.CheckersSure = max(n[0], n[1]) <= 15 && okPips && pieceDoubts == 0 && (!solved || fifteen) && !trayOff
 	return d
+}
+
+// hollowAbove is the grey above which the document's darker checker class
+// is hollow: halfway between its ink, the median of its diagrams' ink greys,
+// and its paper (1).
+func hollowAbove(rds []*boardReading) float64 {
+	var v []float64
+	for _, rd := range rds {
+		v = append(v, rd.inkGrey)
+	}
+	if len(v) == 0 {
+		return 0.5
+	}
+	return (1 + median(v)) / 2
+}
+
+// HollowReason is the doubt of every diagram of a document that draws no
+// filled checker (letters X and O, marks): the reader reads discs, and two
+// classes of hollow discs are not two players.
+const HollowReason = "the document draws no filled checker (both checker classes are lighter than halfway between its ink and its paper): one side is drawn otherwise, as letters or marks, and is not read"
+
+// hollowDiagram is a diagram of a document without filled checkers: not a
+// position, its one named cause instead of counts of shaded points.
+func hollowDiagram(rd *boardReading, cl classes, printed *[2]int, read pipsRead) Diagram {
+	return Diagram{
+		Page:      rd.page,
+		Rect:      image2Rect(rd.bbox),
+		PageSize:  [2]int{rd.pageW, rd.pageH},
+		State:     Uncertain,
+		Printed:   printed,
+		TextPips:  read.text,
+		ImagePips: read.image,
+		Doubts:    []capture.Doubt{{Field: "checkers", Reason: HollowReason}},
+		Families:  []string{"hollow classes"},
+	}
 }

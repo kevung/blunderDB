@@ -293,7 +293,10 @@ type boardReading struct {
 	digits [2][12]int
 	cubes  []square
 	dice   []square
-	field  [6]float64
+	trays  [2]int // borne off in the top and bottom rows' trays, 0 when not read
+	// inkGrey is the grey this diagram prints its strokes in (paper is 1).
+	inkGrey float64
+	field   [6]float64
 	// cubeFigs are the numbers read in a square beside the field, kept
 	// once the document's figures are read.
 	cubeFigs []printedNumber
@@ -349,7 +352,8 @@ func okBelow(slots []slot, i int, thr float64) bool {
 // checker geometry.
 func readBoard(z zone, geo geometry) boardReading {
 	g, f := z.crop, z.frame
-	out := boardReading{rows: rowEvidence(hysteresis(g), f, g)}
+	gi := hysteresis(g)
+	out := boardReading{rows: rowEvidence(gi, f, g), inkGrey: inkGrey(g, gi)}
 	// Rescaled so a point is pNorm pixels wide.
 	if p := f.pointWidth(); math.Abs(p-pNorm) > 2 {
 		s := pNorm / p
@@ -535,4 +539,21 @@ func readBoard(z zone, geo geometry) boardReading {
 		}
 	}
 	return out
+}
+
+// inkGrey is the grey a diagram prints in: the tenth percentile of the grey
+// under its ink, so a faded scan's strokes are not taken for black. A
+// diagram without ink prints in black (0).
+func inkGrey(g *raster, ink *mask) float64 {
+	var v []float64
+	for i, on := range ink.p {
+		if on {
+			v = append(v, float64(g.p[i]))
+		}
+	}
+	if len(v) == 0 {
+		return 0
+	}
+	sort.Float64s(v)
+	return v[len(v)/10]
 }

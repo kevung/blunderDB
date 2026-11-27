@@ -115,8 +115,8 @@ l'ordre du document :
   longueur du match en une seule chaîne ;
 * ``checkers`` — la certitude des pions : ``sure``, ``to-verify`` ou
   ``uncertain`` ;
-* ``complete`` — ``true`` quand les pions ont été lus à quinze par camp sans
-  aucun doute, sans qu'un recoupement les confirme (voir
+* ``complete`` — ``true`` quand les pions ont été lus à quinze par camp sur le
+  plateau sans aucun doute, sans qu'un recoupement les confirme (voir
   :ref:`cli_document_complete`) ;
 * ``context`` — comment le contexte (videau, dés, trait, score) est connu :
   ``read`` (lu et recoupé), ``default`` (le contexte par défaut du document),
@@ -354,8 +354,15 @@ intermédiaire, distinct de ``sure``. Une entrée complète ne porte, outre le
 contexte, que deux doutes : l'absence de pips imprimés, et le sens de jeu
 supposé quand aucun pip du document ne l'a confirmé. Des pips imprimés qui
 diffèrent des pips calculés sont un doute sur les pions : l'entrée n'est alors
-jamais complète. Une position dont des pions sont sortis ne l'est jamais non
-plus.
+jamais complète. Une position dont des pions sont sortis ne l'est jamais : quand
+le document dessine son plateau de sortie en barres (un pion sorti vu de
+profil), les barres comptées dans le plateau, à côté de la rangée du camp,
+complètent à quinze ses pions dessinés, mais une forme parasite s'y compte aussi
+bien qu'un pion. Ce compte ne vaut que si des pips imprimés concordent avec la
+position, qui est alors ``sure`` ; sans eux, il est un doute nommé
+(``counted in the tray, no printed pips confirm them``). Un plateau dont les
+barres ne complètent pas quinze est un doute nommé (``they do not make
+fifteen``).
 
 Le sens de jeu supposé est lui aussi un défaut du document, avec sa propre
 confirmation : un sens faux échangerait les joueurs de toutes les positions
@@ -421,8 +428,11 @@ centre, des dés dessinés.
 
 Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte par
 défaut le dit centré), les dés (aucun), le score (partie libre), le joueur au
-trait (celui du bas), le plateau de sortie (un camp dessiné avec moins de quinze pions a les
-autres sortis).
+trait (celui du bas), le plateau de sortie qui n'est pas dessiné en barres (un camp
+dessiné avec moins de quinze pions a alors les autres sortis), les pions dessinés
+en lettres (X et O) : un document dont aucun pion n'est un disque plein n'est
+pas lu, chaque diagramme est ``uncertain`` avec ce motif
+(``the document draws no filled checker``).
 
 Pourquoi l'import refuse
 ------------------------

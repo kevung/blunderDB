@@ -199,6 +199,96 @@ Formats : #993 (JPEG 2000 : Woolsey, Magriel 1976) et #997 (JBIG2 : Magriel 1976
   dépendent d'une confirmation par une personne : sans elle, seules les 1 043 entrées Deep Cube
   sont importables sans option.
 
+## Pions : #998, #1000, #1004 (réglage seulement)
+
+Mesure par `TestMeasureReglage` (`pkg/blunderdb/document/structure/measure_reglage_test.go`) :
+le lecteur de structure ne décode que les pages de réglage de `tirage.json`, apprend le style du
+livre sur elles seules (d'où des comptes distincts du tableau ci-dessus, qui lisait le livre
+entier). Colonnes : sûrs (état confirmé) / complets (15 + 15, ou 15 avec le plateau lu, sans
+doute) / à vérifier / incertains ; « sortis supposés » = doutes « taken as borne off ». Avant :
+`main` 071775534 ; après : branche `feat/doc-pions`. Les autres livres de réglage (Boot Camp,
+Cube Like a Boss, Classic Revisited, Back Checker, Opening Concepts 2019, 501 Problems,
+Opening Concepts 2017) : aucune entrée changée, ni d'état ni de position.
+
+| Livre | Avant | Après | Sortis supposés avant → après | Plateau ≠ 15 (nommé) |
+|---|---|---|---:|---:|
+| Magriel & Roberts | 0 / 0 / 0 / 441 | 0 / 0 / 0 / 441 | 437 → 0 | — |
+| Endgame Technique | 11 / 80 / 153 / 4 | 11 / 89 / 144 / 4 | 136 → 88 | 39 |
+| Masterclass | 50 / 71 / 36 / 16 | 50 / 71 / 36 / 16 | 52 → 45 | 6 |
+| Backgammon Book (Jacoby) | 0 / 0 / 65 / 0 | 0 / 0 / 65 / 0 | 130 → 129 | 1 |
+
+- **#998** : les 441 diagrammes de Magriel & Roberts restent incertains, mais par un seul doute
+  qui nomme la cause (« the document draws no filled checker ») au lieu de piles sombres
+  comptées sur les flèches grisées. Règle générale : les deux classes de pions apprises sont
+  toutes deux plus claires que le gris moyen (0,5, papier = 1, encre = 0) — ici 0,73 et 0,95,
+  les O sur flèche grisée et les O sur blanc ; les livres à pions pleins ont leur classe
+  sombre entre 0,01 et 0,40. Lire les lettres X/O n'est pas fait.
+- **#1000** : tranché pour la lecture du plateau quand le document le dessine. Les pions sortis
+  vus de profil (barres) sont comptés dans une bande bornée par deux traits verticaux à côté de
+  la rangée du camp ; une entrée n'est complète que si dessinés + plateau font quinze, sinon un
+  doute nommé. Endgame : 9 entrées passent à complètes (positions inchangées, vérifiées à l'œil
+  p. 27) ; 39 plateaux lus ne complètent pas quinze — barres jointives ou contours doubles
+  (p. 113 : dix pions clairs sortis lus douze), doute nommé, jamais une entrée complète.
+  Distinguer un demi-plateau d'une fin de partie n'apporte rien de plus : le demi-plateau est
+  déjà un doute nommé (« half board »).
+- **#1004** (diagnostic) : les classes de couleur de Masterclass sont saines (0,40 / 1). Les
+  pips contraires et les 16 pions d'un camp viennent des diagrammes annotés : flèches de coup
+  et pions fantômes hachurés dessinés sur le plateau (p. 28, p. 52), lus comme pions ou cachant
+  des pions ; un camp « sans pion » est un camp tout sorti (p. 20, plateau de 15 barres serrées
+  non compté). La couche texte imprime, à droite, le nombre de pions sortis sous chaque
+  plateau (p. 91 : 13 et 3) : pris pour des pips, il contredit les pips de l'image — doute
+  « the two disagree », juste. Restent ouverts : reconnaître une flèche de coup et nommer ce
+  doute ; ne pas prendre les comptes de plateau imprimés pour des pips.
+- Essai écarté : n'étendre une pile sombre par sa longueur qu'à partir d'un pion vu un à un.
+  Il retirait les piles fantômes mais faisait tomber Cube Like a Boss de 157 à 78 sûrs et
+  Masterclass de 50 à 23 : des pions sombres jointifs n'ont souvent aucun bord visible.
+
+### Après revue (plateau durci)
+
+Videau chevauchant la bande : bande non lue ; barres d'épaisseur et de pas réguliers, rectangles
+creux refusés ; course coupée par la séparation des rangées écartée ; un plateau qui porte des
+barres doit faire quinze même quand le camp en a quinze dessinés (doute nommé sinon, pips ou
+non). Mesure de réglage, tous livres : seuls Endgame et Masterclass changent. Endgame
+11/80/153/4 → 7/65/172/4 (1 entrée gagnée, 16 complètes et 4 sûres perdues par un plateau lu
+à tort à côté d'un camp de quinze) ; Masterclass 50/71/36/16 → 49/71/37/16 (p. 144). Ouvert :
+ces lectures de plateau à tort (p. 61, 116, 131) — résorbé ci-dessous.
+
+### Traits et piles flottantes écartés, seuil creux relatif à l'encre
+
+Les lectures à tort (p. 61, 116, 131, 134 d'Endgame) étaient des traits de 1 à 3 px — contour
+du videau « 2 », bord de cadre — comptés comme barres. Règles générales ajoutées à `trays` :
+une barre fait au moins 0,08 point (un pion vu de profil n'est jamais un trait) ; les barres
+reposent contre le bord extérieur du plateau, au niveau du champ (à moins d'un demi-point),
+sinon le plateau n'est pas lu (pile coupée par les traits du cadre, Endgame p. 151 et p. 200 :
+6 lus pour 13, 1 pour 2 ; cadre séparé de Masterclass p. 144 : 7 lus pour 10). Le seuil
+« document sans pion plein » est à mi-chemin entre l'encre mesurée (10e centile du gris sous
+l'encre, médiane des diagrammes) et le papier, au lieu de 0,5.
+
+Mesure de réglage, tous livres, `main` 368befef4 / branche avant (fusion f28322f7c) / après
+(2bfbe600c), sûrs / complets / à vérifier / incertains :
+
+| Livre | main | avant | après |
+|---|---|---|---|
+| Endgame Technique | 12 / 80 / 152 / 4 | 8 / 65 / 171 / 4 | 12 / 80 / 152 / 4 |
+| Masterclass | 61 / 60 / 36 / 16 | 60 / 60 / 37 / 16 | 61 / 60 / 36 / 16 |
+| Magriel 1976 | 0 / 0 / 331 / 94 | 0 / 0 / 0 / 425 | 0 / 0 / 0 / 425 |
+| Magriel & Roberts | 0 / 0 / 0 / 441 | 0 / 0 / 0 / 441 | 0 / 0 / 0 / 441 |
+
+Les neuf autres livres de réglage : identiques à `main`, entrée par entrée. Après = `main` entrée
+par entrée sauf Magriel 1976 (pions en lettres X/O, vérifié p. 18 : doute « no filled checker »
+au lieu de positions lues sur des lettres). Aucune entrée complète ou sûre nouvelle. Le plateau
+lu n'apporte encore rien d'autre : 6 diagrammes d'Endgame perdent le doute « taken as borne
+off » (plateau lu et quinze faits) sans changer d'état, retenus par d'autres doutes. Ouvert :
+un plateau dont le trait du champ est coupé par la pile (p. 27) ou à cadre séparé (Masterclass)
+n'est pas lu.
+
+Après revue : les côtés d'un rectangle creux sont cherchés aux extrémités de l'étendue encrée
+de chaque barre, où qu'elles soient dans la bande (un rectangle en retrait, contour d'un videau
+non trouvé, passait pour deux pions sortis et complétait un camp de treize). Mesure refaite,
+`main` 2c5358ae5 → branche 249cf9688 : tous les livres identiques à `main` entrée par entrée
+sauf Magriel 1976 (0 / 0 / 331 / 94 → 0 / 0 / 0 / 425, pions en lettres) ; aucune entrée
+complète ou sûre nouvelle.
+
 ## Diagrammes en police Snowie (#1003) — réglage, 2026-11-27
 
 Lecteur `document/snowieboard.go` + `ttshape.go` : diagramme trouvé par ses deux rangées de numéros
@@ -338,6 +428,17 @@ seulement, aucune page de réserve composée). Avant = `main` à 368befef4.
   Classic Revisited et sur des légendes synthétiques en police Go (absente des gabarits) :
   corrélation de mot 0,60 avec 0,04 d'avance (mots justes 0,72-0,88, autres ≤ 0,37 sur
   501 Problems), chiffre de légende par corrélation centrée 0,70 avec 0,06 d'avance.
+
+### Le plateau seul ne complète plus un camp
+
+Règle : un camp dont les quinze reposent sur des pions comptés dans le plateau de sortie ne rend
+l'entrée complète ou sûre que si des pips imprimés concordent avec la position ; sinon doute
+nommé (« N borne-off checkers counted in the tray, no printed pips confirm them »). Une forme
+parasite lue comme barres (« [ » ouvert, contour pointillé, contour de videau non détecté) ne
+complète donc jamais une entrée. Mesure de réglage, tous livres, branche caaf9b438 → d075f3440 :
+2 945 diagrammes, comptes sûrs / complets / à vérifier / incertains identiques livre par livre ;
+une seule entrée change (Endgame Technique p. 88, demi-plateau déjà à vérifier) : elle gagne le
+doute nommé, sans changer d'état. Aucune entrée complète de ces livres ne dépendait du plateau.
 
 ## Chiffres des pips dans l'image : victoire loyale (#1008)
 

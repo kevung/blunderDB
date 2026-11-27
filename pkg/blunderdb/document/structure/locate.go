@@ -323,6 +323,7 @@ type zone struct {
 	digits [2][12]int
 	cubes  []square // the cubes drawn
 	dice   []square // the dice drawn
+	trays  [2]int   // checkers in the trays of the top and bottom rows, 0 when none is read
 	// field is the field's frame (a, b, c, d, y0, y1) in the page's pixels,
 	// the straightening neglected: where a cube's figure or a word lies.
 	field [6]float64
@@ -457,6 +458,7 @@ func locate(g *raster, dpi float64) []zone {
 				ey := min(trunc(0.25*float64(b.w())), Y0, H-Y1)
 				wide := rotate(g.crop(X0-ex, Y0-ey, X1+ex, Y1+ey), ang)
 				z.cubes, z.dice = squares(wide, hysteresis(wide), r0+ey, c0+ex, fb, X0-ex, Y0-ey)
+				z.trays = trays(rawInk, r0, c0, fb, z.cubes, X0, Y0)
 				z.field = [6]float64{float64(X0 + c0 + fb.a), float64(X0 + c0 + fb.b), float64(X0 + c0 + fb.c),
 					float64(X0 + c0 + fb.d), float64(Y0 + r0 + fb.y0), float64(Y0 + r0 + fb.y1)}
 			}
@@ -720,4 +722,242 @@ func readingOrder(zs []zone, W int) []zone {
 		}
 	}
 	return out
+}
+
+// trays counts the checkers drawn borne off, seen edge-on as thin bars
+// stacked in a tray: a band beside the field bounded by two vertical strokes
+// (the field's edge and the board's, or a box of its own), on the side of
+// either row. A bar is a run of rows inked across the band, thinner than 0.4
+// point, away from the band's own ends; a run thicker is a divider or a
+// stack whose bars touch. The bars must also look like checkers seen
+// edge-on: of one thickness, at one pitch, no thinner than 0.08 point, not
+// the edges of hollow rectangles (two bars joined at both ends by side
+// strokes), and stacked against the tray's outer end. A band that a square
+// (a cube) overlaps, or whose bars fail these, is not read. A
+// row's tray is read only when exactly one band beside it holds bars; 0 is
+// "not read", never "empty".
+func trays(ink *mask, oy, ox int, f frame, cubes []square, px, py int) [2]int {
+	p := f.pointWidth()
+	var out [2]int
+	mid := (f.y0 + f.y1) / 2
+	minLine := max(4, trunc(1.5*p))
+	for row := 0; row < 2; row++ {
+		ya, yb := oy+f.y0-trunc(0.3*p), oy+mid
+		if row == 1 {
+			ya, yb = oy+mid, oy+f.y1+trunc(0.3*p)
+		}
+		ya, yb = max(ya, 0), min(yb, ink.h)
+		if yb-ya < minLine {
+			continue
+		}
+		found, count := 0, 0
+		for _, side := range []int{-1, 1} {
+			// x from the field's edge outward, 2.2 points at most.
+			edge := ox + f.d
+			if side < 0 {
+				edge = ox + f.a
+			}
+			type vline struct{ lo, hi, y0, y1 int }
+			var lines []vline
+			for k := 0; float64(k) <= 2.2*p; k++ {
+				x := edge + side*k
+				if x < 0 || x >= ink.w {
+					break
+				}
+				best, b0, run, r0 := 0, 0, 0, 0
+				for y := ya; y < yb; y++ {
+					if ink.at(x, y) {
+						if run == 0 {
+							r0 = y
+						}
+						run++
+						if run > best {
+							best, b0 = run, r0
+						}
+					} else {
+						run = 0
+					}
+				}
+				if best < minLine {
+					continue
+				}
+				if n := len(lines); n > 0 && abs(lines[n-1].hi-x) <= 1 || n > 0 && abs(lines[n-1].lo-x) <= 1 {
+					l := &lines[n-1]
+					l.lo, l.hi = min(l.lo, x), max(l.hi, x)
+					l.y0, l.y1 = max(l.y0, b0), min(l.y1, b0+best)
+					continue
+				}
+				lines = append(lines, vline{x, x, b0, b0 + best})
+			}
+			for i := 0; i+1 < len(lines); i++ {
+				l, r := lines[i], lines[i+1]
+				if side < 0 {
+					l, r = r, l
+				}
+				x0, x1 := l.hi+2, r.lo-1
+				if float64(x1-x0) < 0.25*p || float64(x1-x0) > 1.4*p {
+					continue
+				}
+				y0, y1 := max(l.y0, r.y0), min(l.y1, r.y1)
+				if y1-y0 < minLine {
+					continue
+				}
+				// A run at an end of the band holds its border, as thick as
+				// its vertical strokes, and a bar only beyond that.
+				wt := max(l.hi-l.lo, r.hi-r.lo) + 1
+				covered := false
+				for _, q := range cubes {
+					qx0, qx1, qy0, qy1 := q.x0-float64(px), q.x1-float64(px), q.y0-float64(py), q.y1-float64(py)
+					if qx1 >= float64(l.lo) && qx0 <= float64(r.hi) && qy1 >= float64(y0) && qy0 <= float64(y1) {
+						covered = true
+					}
+				}
+				if covered {
+					found += 2
+					continue
+				}
+				// A checker seen edge-on is a fraction of its diameter thick,
+				// never a hairline: a run thinner than 0.08 point is a
+				// stroke (a cube's or a box's outline), not a checker.
+				minBar := max(1, 0.08*p)
+				var bs []trayBar
+				run := 0
+				end := func(y int) {
+					n, edge := run, y-run <= y0+2 || y >= y1-2
+					// A run cut by the split between the rows is a divider
+					// or a stack across it, not a bar of this row.
+					if row == 0 && y >= yb-2 || row == 1 && y-run <= ya+2 {
+						n = 0
+					}
+					if edge && n > 0 {
+						n -= wt + 1
+					}
+					if float64(n) >= minBar && float64(n) < 0.4*p {
+						bs = append(bs, trayBar{y - n, n, edge})
+					}
+					run = 0
+				}
+				for y := y0; y < y1; y++ {
+					n := 0
+					for x := x0; x < x1; x++ {
+						if ink.at(x, y) {
+							n++
+						}
+					}
+					if float64(n) >= 0.6*float64(x1-x0) {
+						run++
+					} else {
+						end(y)
+					}
+				}
+				end(y1)
+				if len(bs) == 0 {
+					continue
+				}
+				if !edgeOnBars(ink, bs, x0, x1) {
+					found += 2
+					continue
+				}
+				// Checkers borne off rest against the tray's outer end, level
+				// with the field's: a stack that stops short of it is
+				// something else drawn in the band, or a stack cut short by
+				// the band's strokes, and its count would be a guess.
+				gap := float64(bs[0].y - (oy + f.y0))
+				if row == 1 {
+					last := bs[len(bs)-1]
+					gap = float64(oy + f.y1 - (last.y + last.h))
+				}
+				if math.Abs(gap) > 0.5*p {
+					found += 2
+					continue
+				}
+				found++
+				count = len(bs)
+			}
+		}
+		if found == 1 {
+			out[row] = count
+		}
+	}
+	return out
+}
+
+// trayBar is a bar of a tray: its first row and its thickness.
+type trayBar struct {
+	y, h int
+	edge bool // merged with the band's border: its thickness is an estimate
+}
+
+// barExtent is the first and last column a bar inks in the band, over its
+// rows.
+func barExtent(ink *mask, b trayBar, x0, x1 int) (int, int) {
+	l, r := x1-1, x0
+	for y := max(b.y, 0); y < min(b.y+b.h, ink.h); y++ {
+		for x := x0; x < x1; x++ {
+			if ink.at(x, y) {
+				l, r = min(l, x), max(r, x)
+			}
+		}
+	}
+	if l > r {
+		return x0, x1 - 1
+	}
+	return l, r
+}
+
+// edgeOnBars tells bars that are checkers seen edge-on: one thickness, one
+// pitch, and no two of them joined at both ends by side strokes, wherever
+// the bars end in the band, which would make them the edges of hollow
+// rectangles.
+func edgeOnBars(ink *mask, bs []trayBar, x0, x1 int) bool {
+	hs, pitches := []float64{}, []float64{}
+	for i, b := range bs {
+		if !b.edge {
+			hs = append(hs, float64(b.h))
+		}
+		if i > 0 && !b.edge && !bs[i-1].edge {
+			pitches = append(pitches, float64(b.y-bs[i-1].y))
+		}
+	}
+	same := func(v []float64) bool {
+		m := median(append([]float64(nil), v...))
+		for _, x := range v {
+			if math.Abs(x-m) > max(1, 0.35*m) {
+				return false
+			}
+		}
+		return true
+	}
+	if len(hs) > 0 && !same(hs) || len(pitches) > 1 && !same(pitches) {
+		return false
+	}
+	for i := 1; i < len(bs); i++ {
+		a, b := bs[i-1], bs[i]
+		ya, yb := a.y+a.h, b.y
+		if yb-ya < 2 {
+			continue
+		}
+		// The sides of a rectangle stand at the ends of its edges, wherever
+		// those lie in the band: sought at each bar's own inked extent.
+		al, ar := barExtent(ink, a, x0, x1)
+		bl, br := barExtent(ink, b, x0, x1)
+		inkIn := func(y, lo, hi int) bool {
+			for x := max(lo, x0); x <= min(hi, x1-1); x++ {
+				if ink.at(x, y) {
+					return true
+				}
+			}
+			return false
+		}
+		sides := 0
+		for y := ya; y < yb; y++ {
+			if inkIn(y, min(al, bl), max(al, bl)+2) && inkIn(y, min(ar, br)-2, max(ar, br)) {
+				sides++
+			}
+		}
+		if float64(sides) >= 0.7*float64(yb-ya) {
+			return false
+		}
+	}
+	return true
 }
