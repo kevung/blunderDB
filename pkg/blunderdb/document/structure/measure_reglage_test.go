@@ -34,15 +34,26 @@ func TestMeasureReglage(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var tirage struct {
-		Livres map[string]struct {
-			Chemin  string
+	// The draw's format: {"livres": [{"fichier", "pages", "reserve"}]},
+	// the file named relative to the books' folder.
+	var draw struct {
+		Livres []struct {
+			Fichier string
 			Pages   int
 			Reserve []int
 		}
 	}
-	if err := json.Unmarshal(data, &tirage); err != nil {
+	if err := json.Unmarshal(data, &draw); err != nil {
 		t.Fatal(err)
+	}
+	type book struct {
+		Chemin  string
+		Pages   int
+		Reserve []int
+	}
+	tirage := struct{ Livres map[string]book }{map[string]book{}}
+	for _, l := range draw.Livres {
+		tirage.Livres[l.Fichier] = book{l.Fichier, l.Pages, l.Reserve}
 	}
 	var only []string
 	for _, b := range strings.Split(os.Getenv("BLUNDERDB_DOCUMENT_ONLY"), ",") {
