@@ -41,6 +41,8 @@ type printedNumber struct {
 	alone          bool // no letter nor other ink beside it on its line
 	cut            bool // near the edge of the zone searched
 	boxed          bool // centred in a square of a cube's size
+	lettered       bool // alone but for one letter before it (prefixOf)
+	farOut         bool // in a far band beside the board (extractNumbers)
 	glyphs         [][glyphSide * glyphSide]uint8
 	val            int // the number read, or -1
 }
@@ -143,18 +145,85 @@ func squareHoles(v []float64) (int, float64) {
 	return n, bestY
 }
 
+// numbersNear and numbersFar are how far beside a diagram, in point
+// widths, its numbers are looked for: near it, where its figures are
+// learned, then on the board's horizontal band out to about half a board's
+// width, where some documents print their pip counts.
+const numbersNear, numbersFar = 5.0, 10.0
+
 // extractNumbers finds the numbers printed around the diagram whose box is b
-// on the normalised page g: in the box widened by 5 point widths across and
-// 1.8 along, components of ink of a figure's size, grouped into numbers of
-// one to three figures of one height on one baseline.
+// on the normalised page g: in the box widened by numbersNear point widths
+// across and 1.8 along, then on either side out to numbersFar. A number of
+// the far bands is read, never learned from (farOut): the figures a
+// document is learned on stay those beside its diagrams.
 func extractNumbers(g *raster, b box) []printedNumber {
+	X0, X1 := float64(b.x0), float64(b.x1)
+	p := (X1 - X0) / 13
+	near, _ := numbersIn(g, b, X0-numbersNear*p, X1+numbersNear*p)
+	// A number whole in the near zone is taken from it; one cut at its
+	// edge, or beyond it, from a far band, which starts half a point off
+	// the board so that such a number is whole there with the letter that
+	// may stand before it.
+	overlap := func(a, b printedNumber) bool {
+		return a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1
+	}
+	var far []printedNumber
+	var letters []box
+	for _, side := range [2][2]float64{{X0 - numbersFar*p, X0 - p/2}, {X1 + p/2, X1 + numbersFar*p}} {
+		ns, ls := numbersIn(g, b, side[0], side[1])
+		letters = append(letters, ls...)
+		for _, n := range ns {
+			if n.cut {
+				continue
+			}
+			whole := false
+			for _, m := range near {
+				// The near zone's view wins unless it sees the number among
+				// other ink where the band sees it alone, or after a letter:
+				// the near zone's edge can cut what stands round it.
+				if !m.cut && overlap(m, n) && (m.alone || m.lettered || !(n.alone || n.lettered)) {
+					whole = true
+				}
+			}
+			if !whole {
+				n.farOut = true
+				far = append(far, n)
+			}
+		}
+	}
+	out := near[:0:0]
+	for _, n := range near {
+		keep := true
+		for _, f := range far {
+			if overlap(n, f) {
+				keep = false
+			}
+		}
+		for _, l := range letters {
+			if n.x0 < l.x1 && l.x0 < n.x1 && n.y0 < l.y1 && l.y0 < n.y1 {
+				keep = false // a band's letter, seen from the near zone
+			}
+		}
+		if keep {
+			out = append(out, n)
+		}
+	}
+	return append(out, far...)
+}
+
+// numbersIn finds the numbers in the box b widened to [wx0,wx1) across and
+// 1.8 point widths along: components of ink of a figure's size, grouped
+// into numbers of one to three figures of one height on one baseline.
+// It also gives the boxes of the letters written before numbers (prefixOf),
+// which are no numbers.
+func numbersIn(g *raster, b box, wx0, wx1 float64) ([]printedNumber, []box) {
 	X0, Y0, X1, Y1 := float64(b.x0), float64(b.y0), float64(b.x1), float64(b.y1)
 	W := X1 - X0
 	p := W / 13
-	rx0, rx1 := max(0, trunc(X0-5*p)), min(g.w, trunc(X1+5*p))
+	rx0, rx1 := max(0, trunc(wx0)), min(g.w, trunc(wx1))
 	ry0, ry1 := max(0, trunc(Y0-1.8*p)), min(g.h, trunc(Y1+1.8*p))
 	if rx1-rx0 < 4 || ry1-ry0 < 4 {
-		return nil
+		return nil, nil
 	}
 	sub := g.crop(rx0, ry0, rx1, ry1)
 	ink := hysteresis(sub)
@@ -172,6 +241,8 @@ func extractNumbers(g *raster, b box) []printedNumber {
 		ok = append(ok, i)
 	}
 	var out []printedNumber
+	var figs [][]int
+	letters := map[int]bool{}
 	for _, grp := range groupFigures(comps, ok) {
 		if len(grp.figs) > 3 {
 			continue
@@ -190,37 +261,28 @@ func extractNumbers(g *raster, b box) []printedNumber {
 			}
 			n.glyphs = append(n.glyphs, q)
 		}
-		hh := float64(gy1 - gy0)
-		if float64(min(gy0, gx0, sub.h-gy1, sub.w-gx1)) < 0.6*hh {
-			alone = false
-		}
-		// Ink beside the number on its line, whatever its component (a
-		// figure joined to the frame belongs to a large one): only a long
-		// vertical stroke passing by is allowed (frame, bar); a dot or a
-		// colon is ignored.
-		ya, yb := trunc(float64(gy0)+0.2*hh), trunc(float64(gy1)-0.2*hh)+1
 		in := map[int32]bool{}
 		for _, i := range grp.figs {
 			in[int32(i+1)] = true
 		}
-		for _, band := range [2][2]int{{max(0, trunc(float64(gx0)-0.6*hh)), gx0}, {gx1, min(sub.w, trunc(float64(gx1)+0.6*hh)+1)}} {
-			xa, xb := band[0], band[1]
-			seen := map[int32]bool{}
-			for y := max(ya, 0); y < min(yb, sub.h); y++ {
-				for x := xa; x < xb; x++ {
-					l := lab[y*sub.w+x]
-					if l == 0 || in[l] || seen[l] {
-						continue
-					}
-					seen[l] = true
-					c := comps[l-1]
-					if float64(c.h()) < 0.3*hh && float64(c.w()) < 0.3*hh {
-						continue
-					}
-					if !passingLine(lab, sub.w, sub.h, l, xa, xb, ya, yb, gy0, gy1, hh) {
-						alone = false
-					}
-				}
+		alone = alone && bandClear(lab, comps, sub.w, sub.h, in, gx0, gy0, gx1, gy1)
+		// A letter naming the side before a count ("W 164", "B 123") does
+		// not keep it from standing alone when the pair stands alone on
+		// its line, clear of other ink by 1.5 height: one capital of the
+		// figures' height, within one height of their left. The letter is
+		// then no number of its own, whatever figure it resembles (a B
+		// reads as an 8). A count so lettered is read, never learned from.
+		if k := prefixOf(comps, in, gx0, gy0, gx1, gy1); k >= 0 {
+			c := comps[k]
+			in2 := map[int32]bool{int32(k + 1): true}
+			ink2 := map[int]bool{k: true}
+			for _, i := range grp.figs {
+				in2[int32(i+1)] = true
+				ink2[i] = true
+			}
+			if lineClear(comps, ink2, c.x0, gy0, gx1, gy1, 1.5) && bandClear(lab, comps, sub.w, sub.h, in2, c.x0, gy0, gx1, gy1) {
+				n.lettered = !alone
+				letters[k] = true
 			}
 		}
 		n.boxed = boxedBy(ink, gx0, gy0, gx1, gy1, p)
@@ -228,10 +290,22 @@ func extractNumbers(g *raster, b box) []printedNumber {
 		n.h, n.alone = n.y1-n.y0, alone
 		n.rel = [2]float64{round4((n.cx() - X0) / W), round4((n.cy() - Y0) / (Y1 - Y0))}
 		m := 0.6 * float64(n.h)
-		n.cut = float64(n.x0)-(X0-5*p) < m || (X1+5*p)-float64(n.x1) < m || float64(n.y0)-(Y0-1.8*p) < m || (Y1+1.8*p)-float64(n.y1) < m
+		n.cut = float64(n.x0)-wx0 < m || wx1-float64(n.x1) < m || float64(n.y0)-(Y0-1.8*p) < m || (Y1+1.8*p)-float64(n.y1) < m
 		out = append(out, n)
+		figs = append(figs, grp.figs)
 	}
-	return out
+	kept := out[:0]
+	var lbs []box
+	for k := range letters {
+		c := comps[k]
+		lbs = append(lbs, box{c.x0 + rx0, c.y0 + ry0, c.x1 + rx0, c.y1 + ry0})
+	}
+	for i, n := range out {
+		if len(figs[i]) != 1 || !letters[figs[i][0]] {
+			kept = append(kept, n)
+		}
+	}
+	return kept, lbs
 }
 
 // boxedBy tells whether the figures in [x0,x1)×[y0,y1) are centred in a
@@ -355,25 +429,91 @@ func groupFigures(comps []box, ok []int) []figureGroup {
 			y0, y1, x0, x1 = min(y0, c.y0), max(y1, c.y1), min(x0, c.x0), max(x1, c.x1)
 			in[i] = true
 		}
-		h := float64(y1 - y0)
-		alone := true
-		for k, c := range comps {
-			if in[k] {
-				continue
-			}
-			ov := float64(min(c.y1, y1) - max(c.y0, y0))
-			ch := float64(c.h())
-			if ov < 0.5*h || !(0.25*h <= ch && ch <= 1.6*h) {
-				continue // a frame's stroke is no letter
-			}
-			if float64(max(c.x0-x1, x0-c.x1)) < 0.6*h {
-				alone = false
-				break
-			}
-		}
+		alone := lineClear(comps, in, x0, y0, x1, y1, 0.6)
 		out = append(out, figureGroup{grp, alone})
 	}
 	return out
+}
+
+// lineClear tells whether no letter-sized component lies on the line of
+// [x0,x1)×[y0,y1) within reach of its height, the components in aside.
+func lineClear(comps []box, in map[int]bool, x0, y0, x1, y1 int, reach float64) bool {
+	h := float64(y1 - y0)
+	for k, c := range comps {
+		if in[k] {
+			continue
+		}
+		ov := float64(min(c.y1, y1) - max(c.y0, y0))
+		ch := float64(c.h())
+		if ov < 0.5*h || !(0.25*h <= ch && ch <= 1.6*h) {
+			continue // a frame's stroke is no letter
+		}
+		if float64(max(c.x0-x1, x0-c.x1)) < reach*h {
+			return false
+		}
+	}
+	return true
+}
+
+// bandClear tells whether the ink beside [x0,x1)×[y0,y1) on its line,
+// whatever its component (a figure joined to the frame belongs to a large
+// one), is at most a long vertical stroke passing by (frame, bar), a dot or
+// a colon, the components in aside; and whether the zone's edge is not
+// within 0.6 height.
+func bandClear(lab []int32, comps []box, w, h int, in map[int32]bool, x0, y0, x1, y1 int) bool {
+	hh := float64(y1 - y0)
+	if float64(min(y0, x0, h-y1, w-x1)) < 0.6*hh {
+		return false
+	}
+	ya, yb := trunc(float64(y0)+0.2*hh), trunc(float64(y1)-0.2*hh)+1
+	for _, band := range [2][2]int{{max(0, trunc(float64(x0)-0.6*hh)), x0}, {x1, min(w, trunc(float64(x1)+0.6*hh)+1)}} {
+		xa, xb := band[0], band[1]
+		seen := map[int32]bool{}
+		for y := max(ya, 0); y < min(yb, h); y++ {
+			for x := xa; x < xb; x++ {
+				l := lab[y*w+x]
+				if l == 0 || in[l] || seen[l] {
+					continue
+				}
+				seen[l] = true
+				c := comps[l-1]
+				if float64(c.h()) < 0.3*hh && float64(c.w()) < 0.3*hh {
+					continue
+				}
+				if !passingLine(lab, w, h, l, xa, xb, ya, yb, y0, y1, hh) {
+					return false
+				}
+			}
+		}
+	}
+	return true
+}
+
+// prefixOf is the component that may be a letter written before the number
+// in [x0,x1)×[y0,y1), or -1: a capital of the figures' height and baseline,
+// no wider than 1.6 height, ending within one height of their left.
+func prefixOf(comps []box, in map[int32]bool, x0, y0, x1, y1 int) int {
+	h := float64(y1 - y0)
+	best := -1
+	for k, c := range comps {
+		if in[int32(k+1)] || c.x1 > x0 {
+			continue
+		}
+		ch := float64(c.h())
+		if ch < 0.75*h || ch > 1.35*h || float64(c.w()) > 1.6*h {
+			continue
+		}
+		if math.Abs(float64(c.y1-y1)) > 0.2*h || math.Abs(float64(c.y0-y0)) > 0.3*h {
+			continue
+		}
+		if float64(x0-c.x1) > h {
+			continue
+		}
+		if best < 0 || c.x1 > comps[best].x1 {
+			best = k
+		}
+	}
+	return best
 }
 
 // passingLine tells whether the ink of component l in the band beside a
@@ -905,8 +1045,9 @@ func readNumbers(all [][]printedNumber) []template {
 					all = all && read[k] >= 0
 				}
 				// A number in a cube's square is not alone, its square
-				// standing round it: it is read, never learned from.
-				if !(x.alone || x.boxed) || x.h < figureMinPx || x.cut || !all || (len(read) > 1 && read[0] == 0) {
+				// standing round it, nor one after a letter: it is read,
+				// never learned from.
+				if !(x.alone || x.boxed || x.lettered) || x.h < figureMinPx || x.cut || !all || (len(read) > 1 && read[0] == 0) {
 					continue
 				}
 				v := 0
@@ -914,7 +1055,7 @@ func readNumbers(all [][]printedNumber) []template {
 					v = v*10 + d
 				}
 				x.val = v
-				if numbered[x] || !x.alone {
+				if numbered[x] || !x.alone || x.farOut {
 					continue
 				}
 				for k, d := range read {
@@ -952,8 +1093,8 @@ func meanOf(vs [][]float64) []float64 {
 }
 
 // pipSlot is a place, relative to a diagram's box, where the document prints
-// a pip count.
-type pipSlot struct{ x, y float64 }
+// a pip count, and the span [x0,x1]×[y0,y1] its counts were seen over.
+type pipSlot struct{ x, y, x0, x1, y0, y1 float64 }
 
 // learnPipSlots finds where the document prints its pip counts, by a vote
 // over its diagrams read with fifteen checkers a side and no doubt, those
@@ -1039,7 +1180,39 @@ func learnPipSlots(nums [][]printedNumber, ds []Diagram) ([]pipSlot, int) {
 				}
 			}
 		}
-		slots = append(slots, pipSlot{median(xs), median(ys)})
+		// A document that draws its boards at varying places and sizes
+		// prints its counts at varying places beside them: the place
+		// spreads over the cells voted for at least twice, each within two
+		// cells of it, on its own half of the board.
+		in := map[cell]bool{}
+		for _, c := range order {
+			if abs(c.i-k.i) <= 1 && abs(c.j-k.j) <= 1 {
+				in[c] = true
+			}
+		}
+		for grown := true; grown; {
+			grown = false
+			for _, c := range order {
+				if in[c] || votes[c] < 2 || (float64(c.j)*q < 0.5) != (float64(k.j)*q < 0.5) {
+					continue
+				}
+				for d := range in {
+					if abs(c.i-d.i) <= 2 && abs(c.j-d.j) <= 2 {
+						in[c], grown = true, true
+						break
+					}
+				}
+			}
+		}
+		x0, x1, y0, y1 := math.Inf(1), math.Inf(-1), math.Inf(1), math.Inf(-1)
+		for _, c := range order {
+			if in[c] {
+				for _, p := range pos[c] {
+					x0, x1, y0, y1 = min(x0, p[0]), max(x1, p[0]), min(y0, p[1]), max(y1, p[1])
+				}
+			}
+		}
+		slots = append(slots, pipSlot{median(xs), median(ys), x0, x1, y0, y1})
 	}
 	if len(slots) != 2 {
 		return nil, 0
@@ -1052,8 +1225,9 @@ func learnPipSlots(nums [][]printedNumber, ds []Diagram) ([]pipSlot, int) {
 
 // imagePips reads the pip counts printed at the document's two places
 // beside a diagram (top then bottom): the one number within 1.5 figure
-// heights across and 1.0 along of each place, read entirely; nil when a
-// place holds none, more than one, or a number not read.
+// heights across and 1.0 along of each place, or else of its span, read
+// entirely; nil when a place holds none, more than one, or a number not
+// read or above any pip count.
 func imagePips(nums []printedNumber, b box, slots []pipSlot) *[2]int {
 	if len(slots) != 2 {
 		return nil
@@ -1062,16 +1236,26 @@ func imagePips(nums []printedNumber, b box, slots []pipSlot) *[2]int {
 	W, H := float64(b.w()), float64(b.h())
 	var out [2]int
 	for k, s := range slots {
-		cx, cy := X0+s.x*W, Y0+s.y*H
-		found := -1
-		count := 0
-		for _, x := range nums {
-			if math.Abs(x.cx()-cx) <= 1.5*float64(x.h) && math.Abs(x.cy()-cy) <= float64(x.h) {
-				count++
-				found = x.val
+		// The place itself first; its span only when nothing stands there,
+		// so that a span never hides a count read at the place.
+		at := func(x0, x1, y0, y1 float64) (int, int) {
+			found, count := -1, 0
+			for _, x := range nums {
+				h := float64(x.h)
+				if x.cx() >= X0+x0*W-1.5*h && x.cx() <= X0+x1*W+1.5*h && x.cy() >= Y0+y0*H-h && x.cy() <= Y0+y1*H+h {
+					count++
+					found = x.val
+				}
 			}
+			return found, count
 		}
-		if count != 1 || found < 0 {
+		found, count := at(s.x, s.x, s.y, s.y)
+		if count == 0 {
+			found, count = at(s.x0, s.x1, s.y0, s.y1)
+		}
+		// Fifteen checkers on the 25-point make 375 pips at most: a
+		// larger number is a misread, left unread rather than compared.
+		if count != 1 || found < 0 || found > 375 {
 			return nil
 		}
 		out[k] = found

@@ -33,7 +33,7 @@
         if (!request) return;
         busy = true;
         try {
-            await printPositionSheet(request.source, { ...$state.snapshot(options), title });
+            await printPositionSheet(request.source, { ...$state.snapshot(options), title }, { onLaunch: close });
         } finally {
             busy = false;
         }

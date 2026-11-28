@@ -261,7 +261,7 @@ func importTx(ctx context.Context, st storage.Stores, scope string, r *Releve, n
 		} else {
 			order = append(order, id)
 		}
-		ref := e.Reference()
+		ref := r.ReferenceOf(e)
 		if fallback[e.Rank] {
 			ref += " (" + e.FallbackNote() + ")"
 		}

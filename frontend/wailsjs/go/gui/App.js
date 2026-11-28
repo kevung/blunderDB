@@ -158,6 +158,10 @@ export function ExportIssuerIdentity(arg1) {
   return window['go']['gui']['App']['ExportIssuerIdentity'](arg1);
 }
 
+export function ExportPaperArchivePDF(arg1, arg2) {
+  return window['go']['gui']['App']['ExportPaperArchivePDF'](arg1, arg2);
+}
+
 export function FolderWatchStatus() {
   return window['go']['gui']['App']['FolderWatchStatus']();
 }
@@ -204,6 +208,10 @@ export function ImportFilesIn(arg1, arg2, arg3) {
 
 export function ImportIssuerIdentity(arg1, arg2) {
   return window['go']['gui']['App']['ImportIssuerIdentity'](arg1, arg2);
+}
+
+export function IsBlunderDBArchive(arg1) {
+  return window['go']['gui']['App']['IsBlunderDBArchive'](arg1);
 }
 
 export function IsDirectory(arg1) {
@@ -430,6 +438,10 @@ export function SetLibraryGroupLocked(arg1, arg2) {
   return window['go']['gui']['App']['SetLibraryGroupLocked'](arg1, arg2);
 }
 
+export function SheetPDFAvailable() {
+  return window['go']['gui']['App']['SheetPDFAvailable']();
+}
+
 export function ShowAlert(arg1) {
   return window['go']['gui']['App']['ShowAlert'](arg1);
 }
@@ -440,6 +452,10 @@ export function ShowQuestionDialog(arg1, arg2, arg3, arg4) {
 
 export function StartEvaluationAtRest(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['gui']['App']['StartEvaluationAtRest'](arg1, arg2, arg3, arg4, arg5);
+}
+
+export function StartExportDatabase(arg1) {
+  return window['go']['gui']['App']['StartExportDatabase'](arg1);
 }
 
 export function StartFolderWatch(arg1, arg2) {
@@ -460,6 +476,26 @@ export function StartGammonNetStaleBatch(arg1, arg2, arg3) {
 
 export function StartMaintenance(arg1) {
   return window['go']['gui']['App']['StartMaintenance'](arg1);
+}
+
+export function StartMatchSheet(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['StartMatchSheet'](arg1, arg2, arg3);
+}
+
+export function StartPaperArchiveExport(arg1, arg2) {
+  return window['go']['gui']['App']['StartPaperArchiveExport'](arg1, arg2);
+}
+
+export function StartPaperArchiveImport(arg1) {
+  return window['go']['gui']['App']['StartPaperArchiveImport'](arg1);
+}
+
+export function StartPlaysEvaluationAtRest(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['gui']['App']['StartPlaysEvaluationAtRest'](arg1, arg2, arg3, arg4, arg5);
+}
+
+export function StartPositionSheet(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['StartPositionSheet'](arg1, arg2, arg3);
 }
 
 export function StartRollMap(arg1, arg2, arg3, arg4) {
@@ -540,6 +576,10 @@ export function ViewerShow(arg1, arg2) {
 
 export function ViewerSteps(arg1, arg2) {
   return window['go']['gui']['App']['ViewerSteps'](arg1, arg2);
+}
+
+export function WriteSheetPDF(arg1, arg2) {
+  return window['go']['gui']['App']['WriteSheetPDF'](arg1, arg2);
 }
 
 export function YouTubeEmbedURL(arg1) {

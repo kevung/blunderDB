@@ -3,12 +3,14 @@
     import { statusBarModeStore, MODAL, openModal, configInitialTabStore } from '../stores/uiStore';
     import { epcDataStore, epcChallengeStore, epcRevealedStore, resetEpcReveal } from '../stores/epcStore';
     import { positionStore } from '../stores/positionStore';
+    import { resetEvalBoard, startingBoard } from '../services/boardReset.js';
     import { selectedMoveStore, evalAnalysisStore, evalVerdictStore } from '../stores/analysisStore';
     import { databasePathStore } from '../stores/databaseStore';
     import { positionRefusal } from '../services/positionRefusal.js';
     import { saveScratchBoard } from '../services/scratchBoard.js';
     import { GetEpcChallenge, SaveEpcChallenge, GetGammonNetDisplayPly, GetGammonNetPruneK, GetGammonNetCandidates } from '../../wailsjs/go/main/Config.js';
-    import { EvaluatePositionImmediate, StartEvaluationAtRest, CancelEvaluationAtRest } from '../../wailsjs/go/gui/App.js';
+    import { EvaluatePositionImmediate, StartEvaluationAtRest, StartPlaysEvaluationAtRest, CancelEvaluationAtRest } from '../../wailsjs/go/gui/App.js';
+    import { evalCache, evalCacheKey, equityDeltas, mergeMoves, plyOf } from '../services/evalCache.js';
     import { EventsOn, BrowserOpenURL } from '../../wailsjs/runtime/runtime.js';
     import { logger } from '../utils/logger.js';
     import { isBareLetter, isRolloutKey } from '../utils/keys.js';
@@ -71,8 +73,8 @@
     // The cube ceiling applies at any score: read off the position.
     let maxCube = $derived($positionStore?.max_cube ?? 0);
 
-    let evalMoves = $state([]);
-    let evalCubeAnalysis = $state(null);
+    let evalMoves = $state(/** @type {any[]} */ ([]));
+    let evalCubeAnalysis = $state(/** @type {any} */ (null));
     // The verdict as a value (ADR-0020 rule 3): translatable and keeps "too
     // good", unlike the imported BestCubeAction string.
     let evalCubeVerdict = $state('');
@@ -90,9 +92,9 @@
     // Race "evaluated" regime (ADR-0012): gammonNet's async verdict, where the
     // synchronous exact/estimated path has none. Null unless the position is a
     // race outside the exact domain (same predicate as race.Evaluate).
-    let evalRaceOverride = $state(null);
+    let evalRaceOverride = $state(/** @type {any} */ (null));
     // Pre-roll fact vector (ADR-0017), mover-relative; converted to bottom/top below.
-    let evalPreRoll = $state(null);
+    let evalPreRoll = $state(/** @type {any} */ (null));
     // The board the result on screen was computed for, and the match equity
     // table that valued it: CTRL-S stores the verdict only on that board and
     // under that table (evalVerdictStore).
@@ -117,6 +119,26 @@
     let evalRestTimer = null;
     let evalGeneration = 0; // guards a late "done" against a position the user already left
     let escalationSignature = ''; // the board of the escalation evalGeneration names
+    // What the search evalGeneration names is for: the at-rest escalation ('auto'), a re-run of
+    // the position at the panel's depth ('local'), or of the selected plays only ('plays'); key
+    // is its evalCache entry, before the rows on screen when it started.
+    /** @type {{ kind: 'auto' | 'local' | 'plays', key: string, before: any[] }} */
+    let pendingRun = { kind: 'auto', key: '', before: [] };
+
+    const PLY_OPTIONS = [0, 1, 2, 3, 4];
+    // The configured display depth, and the panel's own while the position stays: a new
+    // position goes back to the configuration, so a deep check never slows the next gesture.
+    let globalPly = $state(2);
+    let localPly = $state(/** @type {number | null} */ (null));
+    let panelPly = $derived(localPly ?? globalPly);
+    let rerunning = $state(false);
+    // The equity change of each play the last re-run touched (the Δ column), null before one.
+    let evalDeltas = $state(/** @type {Map<string, number> | null} */ (null));
+
+    /** The cache entry as an answer applyEvalResult takes. @param {any} entry @param {number} metId */
+    function entryResult(entry, metId) {
+        return { metId, moves: entry.moves, cube: entry.cube, cubeVerdict: entry.cubeVerdict, race: entry.race, preRoll: entry.preRoll };
+    }
 
     // The signature is the effect's only tracked dependency; everything else is
     // untrack()ed, since reading the $state it writes loops
@@ -168,7 +190,7 @@
     $effect(
         onChange(
             () => isActive,
-            (v) => {
+            (/** @type {boolean} */ v) => {
                 if (!v) selectedMoveStore.set(null);
             },
             false
@@ -184,6 +206,9 @@
         selectedMoveStore.set(null);
         pickedMoves = [];
         anchor = null;
+        localPly = null;
+        evalDeltas = null;
+        rerunning = false;
         evalSettled = false;
         evalFailed = false;
         evalFailedMessage = '';
@@ -202,9 +227,11 @@
         GetGammonNetPruneK()
             .then((pruneK) =>
                 GetGammonNetCandidates().then((candidates) =>
-                    EvaluatePositionImmediate(pos, pruneK, candidates).then((result) => {
+                    EvaluatePositionImmediate(/** @type {any} */ (pos), pruneK, candidates).then((result) => {
                         if (generation !== evalGeneration) return; // superseded while awaiting
-                        applyEvalResult(result, signature);
+                        // A deeper answer already computed for this position shows at once.
+                        const entry = result?.refused ? null : evalCache.put(evalCacheKey(pos, { pruneK, candidates }), result);
+                        applyEvalResult(entry ? entryResult(entry, result.metId ?? 0) : result, signature);
                     })
                 )
             )
@@ -220,7 +247,12 @@
             Promise.all([GetGammonNetDisplayPly(), GetGammonNetPruneK(), GetGammonNetCandidates()])
                 .then(([ply, pruneK, candidates]) => {
                     if (generation !== evalGeneration) return;
-                    StartEvaluationAtRest(pos, ply, pruneK, candidates, generation).catch((error) => {
+                    globalPly = ply;
+                    const key = evalCacheKey(pos, { pruneK, candidates });
+                    // Already as deep in the cache (shown by the 0-ply tier): no search.
+                    if ((evalCache.get(key, evalMetId)?.ply ?? -1) >= ply) return;
+                    pendingRun = { kind: 'auto', key, before: [] };
+                    StartEvaluationAtRest(/** @type {any} */ (pos), ply, pruneK, candidates, generation).catch((error) => {
                         logger.error('gammonNet evaluation-at-rest failed to start:', error);
                         if (generation !== evalGeneration) return;
                         evalFailed = true;
@@ -234,6 +266,60 @@
                     evalFailedMessage = String(error);
                 });
         }, EVAL_REST_DELAY_MS);
+    }
+
+    // Re-runs at the panel's depth, without touching the configuration: the selected plays only
+    // when there are (the others keep their rows and depths), else the whole position.
+    /** @param {number} ply */
+    function rerunAt(ply) {
+        const pos = $positionStore;
+        if (!isActive || !pos) return;
+        localPly = ply;
+        evalGeneration += 1;
+        const generation = evalGeneration;
+        escalationSignature = positionSignature;
+        if (evalRestTimer) {
+            clearTimeout(evalRestTimer);
+            evalRestTimer = null;
+        }
+        const plays = rolloutSelection();
+        rerunning = true;
+        evalFailed = false;
+        Promise.all([GetGammonNetPruneK(), GetGammonNetCandidates()])
+            .then(([pruneK, candidates]) => {
+                if (generation !== evalGeneration) return;
+                const key = evalCacheKey(pos, { pruneK, candidates });
+                pendingRun = { kind: plays.length ? 'plays' : 'local', key, before: evalMoves };
+                const started = plays.length
+                    ? StartPlaysEvaluationAtRest(/** @type {any} */ (pos), ply, pruneK, plays, generation)
+                    : StartEvaluationAtRest(/** @type {any} */ (pos), ply, pruneK, candidates, generation);
+                return started;
+            })
+            .catch((error) => {
+                logger.error('gammonNet re-run failed to start:', error);
+                if (generation !== evalGeneration) return;
+                rerunning = false;
+                evalFailed = true;
+                evalFailedMessage = String(error);
+            });
+    }
+
+    /** An answer of the search evalGeneration names, folded into the cache, then shown. @param {any} result */
+    function applyRunResult(result) {
+        const run = pendingRun;
+        rerunning = false;
+        const entry = result?.refused ? null : evalCache.put(run.key, result);
+        if (run.kind === 'auto' || !entry) {
+            applyEvalResult(entry ? entryResult(entry, result.metId ?? 0) : result, escalationSignature);
+            return;
+        }
+        // A re-run shows what it computed, deeper or not, and how far each play moved.
+        evalDeltas = equityDeltas(run.before, result.moves);
+        if (run.kind === 'plays') {
+            applyEvalResult({ metId: result.metId ?? 0, moves: mergeMoves(evalMoves, result.moves ?? []), race: evalRaceOverride, preRoll: evalPreRoll }, escalationSignature);
+        } else {
+            applyEvalResult(result, escalationSignature);
+        }
     }
 
     // The depth label names what actually produced the result; "cancelled"
@@ -280,11 +366,14 @@
             // names the escalation it belongs to.
             EventsOn('gammonnet-eval:done', (result) => {
                 if (result?.tag !== evalGeneration) return;
-                applyEvalResult(result, escalationSignature);
+                applyRunResult(result);
             }),
-            EventsOn('gammonnet-eval:cancelled', () => {}),
+            EventsOn('gammonnet-eval:cancelled', (e) => {
+                if (e?.tag === evalGeneration) rerunning = false;
+            }),
             EventsOn('gammonnet-eval:error', (e) => {
                 if (e?.tag !== evalGeneration) return;
+                rerunning = false;
                 logger.error('gammonNet evaluation-at-rest error:', e);
                 evalFailed = true;
                 evalFailedMessage = String(e);
@@ -301,14 +390,15 @@
         unsubEval.forEach((off) => off && off());
     });
 
-    function toggleChallenge(/** @type {Event & { target: HTMLInputElement }} */ e) {
+    function toggleChallenge(/** @type {Event} */ ev) {
+        const e = /** @type {Event & { target: HTMLInputElement }} */ (ev);
         const on = e.target.checked;
         epcChallengeStore.set(on);
         resetEpcReveal();
         SaveEpcChallenge(on).catch(() => {});
     }
 
-    function reveal(zone) {
+    function reveal(/** @type {string} */ zone) {
         epcRevealedStore.update((r) => ({ ...r, [zone]: true }));
     }
 
@@ -397,7 +487,7 @@
     // analysis panel. Required: keyboardService withholds these keys app-wide
     // while selectedMoveStore is set.
     function handleKeyDown(/** @type {KeyboardEvent} */ event) {
-        if (event.target?.matches?.('input, select, textarea')) return;
+        if (/** @type {Element | null} */ (event.target)?.matches?.('input, select, textarea')) return;
         if (event.key === 'Escape') {
             // A running rollout is stopped first, then the selection cleared.
             if (rollout.running) {
@@ -444,7 +534,7 @@
     let maskedDecision = $derived(challenge && !revealed.decision);
 
     const HIDDEN = '···';
-    const pct = (x) => (100 * x).toFixed(2);
+    const pct = (/** @type {number} */ x) => (100 * x).toFixed(2);
 
     // Position facts per board side, always pre-roll (ADR-0017 rule 1): from
     // displayRace on a race, else the generic PreRoll payload.
@@ -541,7 +631,7 @@
         }
         if (decision.state === DECISION_STATE.PENDING) return null;
         const f = baselineFacts;
-        const pctOf = (x) => (x == null ? undefined : 100 * x);
+        const pctOf = (/** @type {number | null | undefined} */ x) => (x == null ? undefined : 100 * x);
         const fromFacts = f
             ? {
                   playerWinChances: pctOf(f.playerWinChance),
@@ -563,7 +653,13 @@
     }
 
     // Off a race, depth is named once in the strip (ADR-0018 rule 4).
-    let genericDepthLabel = $derived(data.race ? null : hasDiceSet ? (evalMoves[0]?.analysisDepth ?? null) : (evalCubeAnalysis?.analysisDepth ?? null));
+    // Rows from several depths (a targeted re-run) each name theirs, and the strip the span.
+    let moveDepths = $derived([...new Set(evalMoves.map((m) => plyOf(m.analysisDepth)))].filter((p) => p >= 0).sort((a, b) => a - b));
+    let mixedDepths = $derived(moveDepths.length > 1);
+    let genericDepthLabel = $derived(
+        data.race ? null : hasDiceSet ? (mixedDepths ? `${moveDepths[0]}–${moveDepths.at(-1)}-ply` : (evalMoves[0]?.analysisDepth ?? null)) : (evalCubeAnalysis?.analysisDepth ?? null)
+    );
+    let rerunPlays = $derived(hasDiceSet ? selectedPlays({ picked: pickedMoves, anchor, selected: $selectedMoveStore }).length : 0);
 </script>
 
 <!-- Present in every state, errors included: a failed evaluation leaves the position savable. -->
@@ -614,6 +710,39 @@
             {#if genericDepthLabel}
                 <span class="badge badge-evaluated" title={$t('analysis.analysisDepth')}>{genericDepthLabel}</span>
             {/if}
+            {#if $evalViewStore === EVAL_VIEW.DECISION}
+                <span class="depth-rerun">
+                    <select
+                        data-testid="eval-depth"
+                        value={panelPly}
+                        title={$t('eval.depthSelect')}
+                        aria-label={$t('eval.depthSelect')}
+                        onchange={(e) => rerunAt(Number(/** @type {HTMLSelectElement} */ (e.currentTarget).value))}
+                    >
+                        {#each PLY_OPTIONS as ply (ply)}
+                            <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
+                        {/each}
+                    </select>
+                    <button
+                        type="button"
+                        class="board-reset"
+                        class:running={rerunning}
+                        data-testid="eval-rerun"
+                        onclick={() => rerunAt(panelPly)}
+                        title={rerunPlays ? $t('eval.rerunPlays', { n: rerunPlays }) : $t('eval.rerun')}
+                        aria-label={rerunPlays ? $t('eval.rerunPlays', { n: rerunPlays }) : $t('eval.rerun')}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
+                            />
+                        </svg>
+                        {#if rerunPlays}<span class="rerun-count">{rerunPlays}</span>{/if}
+                    </button>
+                </span>
+            {/if}
         {/if}
         <button class="eval-engine-badge" onclick={openGammonNetRepo} title={$t('eval.engineTooltip')} aria-label={$t('eval.engineTooltip')}>?</button>
         {#snippet actions()}
@@ -621,6 +750,33 @@
                 <input type="checkbox" checked={challenge} onchange={toggleChallenge} />
                 <span>{$t('epc.challenge')}</span>
             </label>
+            <span class="board-resets">
+                <button
+                    type="button"
+                    class="board-reset"
+                    data-testid="eval-start-position"
+                    onclick={() => startingBoard('EVAL')}
+                    title={$t('board.menu.startingPosition')}
+                    aria-label={$t('board.menu.startingPosition')}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                        />
+                    </svg>
+                </button>
+                <button type="button" class="board-reset" data-testid="eval-clear-board" onclick={resetEvalBoard} title={$t('board.menu.clearPosition')} aria-label={$t('board.menu.clearPosition')}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                        />
+                    </svg>
+                </button>
+            </span>
             {@render addPositionButton()}
         {/snippet}
     </PanelHeader>
@@ -745,6 +901,8 @@
                                 onRowClick={handleMoveRowClick}
                                 onRowContextMenu={handleRowContextMenu}
                                 showProvenance={false}
+                                showDepth={mixedDepths}
+                                deltas={evalDeltas}
                                 baseline={baselineFacts}
                                 {isMoney}
                             />
@@ -924,6 +1082,58 @@
         font-weight: 600;
         white-space: nowrap;
         cursor: pointer;
+    }
+
+    .board-resets {
+        display: inline-flex;
+        gap: 2px;
+    }
+
+    .board-reset {
+        display: inline-flex;
+        align-items: center;
+        padding: 1px 4px;
+        border: 1px solid transparent;
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--color-text-muted);
+        cursor: pointer;
+    }
+
+    .board-reset:hover {
+        color: var(--color-primary);
+        border-color: var(--color-border);
+    }
+
+    .board-reset svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .depth-rerun {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .depth-rerun select {
+        font-size: var(--font-size-small);
+    }
+
+    .board-reset.running {
+        color: var(--color-primary);
+        animation: rerun-pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes rerun-pulse {
+        50% {
+            opacity: 0.4;
+        }
+    }
+
+    .rerun-count {
+        font-size: var(--font-size-small);
+        margin-left: 1px;
     }
 
     .add-position:hover:not(:disabled) {

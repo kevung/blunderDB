@@ -18,6 +18,9 @@ import (
 // (importProgress).
 const importProgressEvent = "import-files:progress"
 
+// documentProgressEvent carries a document reading's document.Progress.
+const documentProgressEvent = "document-analyze:progress"
+
 // importProgress is one progress event: the pipeline's counts and the group.
 type importProgress struct {
 	ingest.BatchProgress

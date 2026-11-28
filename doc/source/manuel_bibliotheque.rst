@@ -588,9 +588,13 @@ puis les chances de gain et de gammon en pour cent ; pour une décision de
 videau, la bonne action, puis les deux autres et leur perte. Le document
 s'étend sur autant de pages A4 que nécessaire, numérotées, avec sur chacune
 l'en-tête (le titre de la recherche ou de la collection, le nombre de positions,
-la date) et la légende de la notation. Le fichier HTML autonome est enregistré
-puis ouvert dans le navigateur, qui l'imprime ou l'enregistre en PDF. Les
-options de la boîte :
+la date) et la légende de la notation. Le document est enregistré en PDF A4
+puis ouvert dans la visionneuse du système, d'où il s'imprime ; sous Windows et
+macOS, faute de ce rendu, il reste un fichier HTML autonome ouvert dans le
+navigateur. La boîte se ferme dès le fichier choisi : la liste se construit
+comme une tâche du panneau Calculs, que **Annuler**
+arrête. En ligne de commande, ``sheet`` écrit la page HTML. Les options de
+la boîte :
 
 - **Analyse** (cochée) : l'analyse de chaque position, sur sa ligne.
 - **Réponses au verso** (décochée) : chaque page de positions est suivie d'une
@@ -602,8 +606,8 @@ options de la boîte :
 - **ArkID développé** (décochée) : la forme développée plutôt que la compacte.
 - **Code de réimport** (décochée) : des codes QR qui portent les positions, un
   bloc toutes les 145 positions, imprimé sur la page de la première position de
-  son bloc et embarqué dans le fichier. Le fichier enregistré, ou le scan ou la
-  photo d'une seule page, se réimporte par
+  son bloc et joint au PDF. Le PDF enregistré, ou le scan ou la photo d'une
+  seule page, se réimporte par
   :ref:`Archive papier… <archive_papier_interface>` : chaque bloc se relit seul, et un code
   illisible est reconstruit par les autres codes de son bloc. Les codes ne
   portent que les positions (ce que dit l'ArkID), sans analyses ni

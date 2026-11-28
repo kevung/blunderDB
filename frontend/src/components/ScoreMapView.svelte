@@ -14,6 +14,7 @@
     import { signed } from '../utils/rollMap.js';
     import { logger } from '../utils/logger.js';
     import { nextMapTag } from '../utils/mapTag.js';
+    import ScoreCellDetail from './ScoreCellDetail.svelte';
     import { t } from '../i18n';
 
     let { active = true } = $props();
@@ -62,11 +63,27 @@
         }
         if (mine !== tag) return;
         targetPly = ply;
+        mapPruneK = pruneK;
+        await launch(mine, ply, pruneK);
+    }
+
+    let mapPruneK = 0;
+
+    /** @param {number} mine @param {number} ply @param {number} pruneK */
+    async function launch(mine, ply, pruneK) {
         try {
             await StartScoreMap(/** @type {any} */ ($positionStore), matchLength, ply, pruneK, mine);
         } catch (e) {
             if (mine === tag) error = String(e);
         }
+    }
+
+    // A cell's own evaluation takes the search slot and stops the grid's refinement: pick it up
+    // again where it was, the cells already refined being answered from the engine's cache.
+    function resume() {
+        if (!active || error || cells.length === 0) return;
+        const complete = cells.length === matchLength * matchLength && cells.every((c) => c && c.ply >= targetPly);
+        if (!complete) launch((tag = nextMapTag()), targetPly, mapPruneK);
     }
 
     /** @type {Array<() => void>} */
@@ -136,9 +153,11 @@
     const dimmed = (cell) => focus !== null && cellKey(cell, kind) !== focus;
     /** @param {any} cell */
     const isHere = (cell) => !!here && cell.awayOnRoll === here.mine && cell.awayOpponent === here.theirs && !!cell.crawford === here.crawford;
-    // The 1-away lines are the Crawford game in a checker map only: a cube cell is post-Crawford.
+    // The 1-away lines are the Crawford game in a checker map, post-Crawford in a cube map.
     /** @param {number} away */
-    const crawfordMark = (away) => (away === 1 && kind === 'checker' ? ' C' : '');
+    const crawfordMark = (away) => (away === 1 ? (kind === 'checker' ? ' C' : ' PC') : '');
+    /** @param {number} away */
+    const crawfordTitle = (away) => (away === 1 ? $t(kind === 'checker' ? 'maps.scores.crawford' : 'maps.scores.postCrawford') : undefined);
     /** @param {any} cell */
     const close = (cell) => tint(cellMargin(cell, kind)) === 'close';
 
@@ -187,14 +206,14 @@
                     <tr>
                         <th class="corner">{$t('maps.scores.me')} ↓ · {$t('maps.scores.opponent')} →</th>
                         {#each grid[0] ?? [] as _, j (j)}
-                            <th scope="col">{axisLabel(matchLength - j)}{crawfordMark(matchLength - j)}</th>
+                            <th scope="col" title={crawfordTitle(j + 1)}>{axisLabel(j + 1)}{crawfordMark(j + 1)}</th>
                         {/each}
                     </tr>
                 </thead>
                 <tbody>
                     {#each grid as line, i (i)}
                         <tr>
-                            <th scope="row">{axisLabel(matchLength - i)}{crawfordMark(matchLength - i)}</th>
+                            <th scope="row" title={crawfordTitle(i + 1)}>{axisLabel(i + 1)}{crawfordMark(i + 1)}</th>
                             {#each line as cell, j (j)}
                                 {#if cell}
                                     <td>
@@ -249,23 +268,31 @@
                     <div class="detail">
                         <div class="detail-head">
                             <b>{detail.awayOnRoll}-{detail.awayOpponent}{detail.crawford ? ` ${$t('maps.scores.crawford')}` : ''}</b>
-                            <button type="button" onclick={() => (detail = null)} aria-label={$t('maps.scores.close')}>×</button>
+                            <button
+                                type="button"
+                                onclick={() => {
+                                    detail = null;
+                                    resume();
+                                }}
+                                aria-label={$t('maps.scores.close')}>×</button
+                            >
                         </div>
                         {#if detail.refused}
                             <div>{$t('maps.scores.refused')}</div>
                         {:else if kind === 'cube'}
-                            {#each VERDICTS.slice(0, 3) as v (v)}
-                                {@const value = v === 'no_double' ? detail.noDouble : v === 'double_take' ? detail.doubleTake : detail.doublePass}
-                                <div class:best={detail.verdict === v}>{$t(VERDICT_LABELS[v].long)} <span class="num">{value.toFixed(3)}</span></div>
-                            {/each}
-                            {#if detail.verdict === 'too_good'}<div class="best">{$t('maps.verdict.long.too_good')}</div>{/if}
-                        {:else}
-                            <div class="best">{$t('maps.scores.best')} {detail.move} <span class="num">{detail.equity.toFixed(3)}</span></div>
-                            {#if detail.secondMove}
-                                <div>{$t('maps.scores.second')} {detail.secondMove} <span class="num">{detail.secondEquity?.toFixed(3)}</span></div>
+                            {#if detail.verdict === 'dmp'}
+                                <div class="best">{$t('maps.verdict.long.dmp')}</div>
+                            {:else}
+                                {#each VERDICTS.slice(0, 3) as v (v)}
+                                    {@const value = v === 'no_double' ? detail.noDouble : v === 'double_take' ? detail.doubleTake : detail.doublePass}
+                                    <div class:best={detail.verdict === v}>{$t(VERDICT_LABELS[v].long)} <span class="num">{value.toFixed(3)}</span></div>
+                                {/each}
+                                {#if detail.verdict === 'too_good'}<div class="best">{$t('maps.verdict.long.too_good')}</div>{/if}
                             {/if}
+                        {:else}
+                            <ScoreCellDetail cell={detail} position={$positionStore} onSettled={resume} />
                         {/if}
-                        {#if !detail.refused}
+                        {#if !detail.refused && detail.verdict !== 'dmp'}
                             <button type="button" class="evaluate" onclick={() => evaluateAt(detail)}>{$t('maps.scores.evaluate')}</button>
                         {/if}
                     </div>
@@ -354,11 +381,17 @@
         font-family: var(--font-family-mono);
         color: var(--color-text-muted);
     }
+    /* The side column takes what the grid leaves; too narrow for both, it wraps under the grid
+       (the wrapping follows the panel's width, not the window's) and scrolls rather than clip. */
     .side {
         display: flex;
         flex-direction: column;
         gap: var(--space-3);
-        min-width: 160px;
+        flex: 1 1 340px;
+        min-width: 0;
+    }
+    .grid {
+        flex: none;
     }
     .legend {
         list-style: none;
@@ -399,6 +432,7 @@
         color: var(--color-text-muted);
     }
     .detail {
+        min-width: 0;
         display: flex;
         flex-direction: column;
         gap: var(--space-1);

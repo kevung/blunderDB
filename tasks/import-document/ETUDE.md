@@ -4,7 +4,7 @@
 (`JOURNAL.md` tient la reprise), copie poussée sur le dépôt privé `kevung/import-document-banc`
 (sans `texte/`, la prose extraite des livres, qui ne quitte pas le poste d'origine). Corpus : `~/bkgm/bibliotheque/livres` (17 PDF, 1 EPUB, 1 DOC).
 
-## REPRISE (2026-11-27, lot #998-#1008) — à lire en premier
+## REPRISE (2026-11-27, lot #998-#1008 clos) — à lire en premier
 
 Réserve : depuis #996, elle est tirée PAR PAGE (30 % de chaque livre). Le tirage est
 `~/bkgm/bancs/import-document/tirage.json` (lecture seule), reconstruit à l'identique par
@@ -31,13 +31,43 @@ Fusionné (chaque branche revue en vert, souvent après un ou deux renvois) :
 - Optimisations : codec de l'archive papier en format 2 (−34 % d'octets, format 1 toujours lu,
   ADR-0119) ; décodeurs JPEG 2000 et PDF scannés environ 3,5 fois plus rapides, sortie identique.
 
-Non fusionné :
-- #1008 (pips) : branche `feat/doc-pips2` (depuis cbeda8a51, sans 13a52008b) : garde par poids
-  du trait, un rival n'étant excusé que par un gabarit appris du même poids ; le plateau de sortie
-  vote de nouveau pour la place des pips. Sorties de réglage identiques. À revoir avant fusion.
-- #1004 (Masterclass) : branche `feat/doc-masterclass` — flèches de coup repeintes sur papier
-  blanc, comptes du plateau hors pips ; Masterclass 61/60/36/16 → 66/64/32/11, douze autres
-  livres inchangés. À revoir avant fusion ; limites dans `tasks/mesure-import-document-2026-11.md`.
+Fusionné ensuite (issues closes le 2026-11-27, publié dans 0.62.0) :
+- #1008 (pips) : branche `feat/doc-pips2` (b7cdacfc3) — garde par poids du trait, un rival
+  n'étant excusé que par un gabarit appris du même poids ; le plateau de sortie vote de nouveau
+  pour la place des pips. L'ancienne branche `feat/doc-pips` (13a52008b), remplacée, est supprimée.
+- #1004 (Masterclass) : branche `feat/doc-masterclass` (20de2c01d, 9eadfbb00) — flèches de coup
+  repeintes sur papier blanc, comptes du plateau hors pips, flèche d'au moins 2,5 points ;
+  Masterclass 61/60/36/16 → 66/64/32/11, douze autres livres inchangés. Limites dans
+  `tasks/mesure-import-document-2026-11.md`.
+
+En attente de revue (2026-11-28) : #1016 (pips loin du plateau), branche `feat/doc-pips-far`,
+main fusionné dedans, non fusionnée sur main. Bande lointaine dès une demi-case du bord du
+plateau, vue de la bande préférée quand elle voit le nombre seul ou après une lettre ; un nombre
+lu à la place des pips au-dessus de 375 n'est pas comparé (doute « pas de pips » au lieu d'une
+contradiction). Mesure `TestMeasureContextOnPages`, réglage seulement, 13 livres lus par
+l'image, diagramme par diagramme contre 6ac779298 : Back Checker Strategy confirmés 47 → 137
+sur 217, pips image 74 → 180 (160 égaux), aucun confirmé en contradiction avec ses pips, aucun
+confirmé perdu ; 3 plateaux complétés par les pips imprimés (pile haute, deux pions). Les 12
+autres livres : état, plateau, contexte et pips identiques. Contre main 697c069d4 : BCS 0 → 137,
+Endgame 12 → 13. Restes BCS : 20 diagrammes à pips lus qui contredisent le plateau (piles hautes,
+pions manquants ; désaccord nommé, à vérifier) ; videau blanc sur carré noir non lu.
+
+En attente de revue (2026-11-28) : #1018 (documents rédigés), branche `feat/doc-formats`, non
+fusionnée. `AnalyzeWrittenFile` (`analyze_documents.go`) lit DOCX, ODT, EPUB et HTML : chaque
+image, dans l'ordre du texte, devient une page du lecteur de structure ; le paragraphe d'avant,
+le sien et le suivant forment sa couche texte, posée en colonne à droite de l'image (quatre
+points du bord, hors de portée des pips non étiquetés, à portée des « Pips 139 » et des dés),
+seulement s'ils contiennent un chiffre, sinon les légendes de l'image restent lues. Page = rang
+de l'image, chapitre = titre qui la précède, citation « fig. N » (`Source.Pictures`,
+`Releve.ReferenceOf`). HTML : images du dossier de la page et dessous, `data:` ; rien du
+réseau. EMF/WMF/SVG nommés, non lus ; `.doc` binaire refusé (`ErrLegacyWord`, propose PDF ou
+DOCX) : une lecture OLE sans ordre du texte ni légende n'a pas été jugée raisonnable. Bornes :
+fichier 512 Mio comme le PDF, 10 000 entrées zip (signatures comptées avant `archive/zip`),
+64 Mio par partie, 1 Gio décompressé en tout. Mesure, sur fixtures fabriquées depuis
+`testdata/sans-pips` (réglage, aucun livre ni page de réserve ouverts, l'EPUB du corpus non
+plus) : DOCX, ODT, EPUB et HTML rendent exactement les entrées des mêmes images lues en dossier ;
+un diagramme sans pips devient sûr avec « Pips N » dans le texte voisin, et des pips faux ne le
+confirment pas. Non mesuré : documents rédigés réels (aucun au réglage hormis l'EPUB réservé).
 
 Suite de l'ancienne reprise ci-dessous (2026-11-30, date erronée, écrite le 2026-11-26).
 

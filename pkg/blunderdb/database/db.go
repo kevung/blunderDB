@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 	"io/fs"
 	"log/slog"
 	"os"
@@ -29,6 +30,7 @@ import (
 type Database struct {
 	db                *sql.DB
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
+	exportMu          sync.Mutex                          // one export at a time: an incremental one writes its cursor under the read lock
 	cancelMu          sync.Mutex                          // guards importCancel, gate (held briefly; taken after mu, never before)
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
 	openCancel        *context.CancelFunc                 // cancels the in-flight OpenDatabase from its first line; nil when idle
@@ -130,6 +132,9 @@ type Database struct {
 	// tracker lists the durable work the desktop calls directly on this
 	// handle (task_tracker.go); nil outside the desktop.
 	tracker atomic.Pointer[TaskTracker]
+	// documentProgress receives the progress of AnalyzeDocument (the desktop
+	// emits it as an event); see SetDocumentProgress.
+	documentProgress atomic.Pointer[func(document.Progress)]
 }
 
 // ErrDatabaseChanged refuses a background job's write once another database

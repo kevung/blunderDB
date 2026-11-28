@@ -82,8 +82,11 @@ type Source struct {
 	URL     string `json:"url,omitempty"`
 	// SHA256 is the hex SHA-256 of the source file, so a Relevé is matched
 	// to the file it was read from; empty for a web page.
-	SHA256  string   `json:"sha256,omitempty"`
-	Profile *Profile `json:"profile,omitempty"`
+	SHA256 string `json:"sha256,omitempty"`
+	// Pictures is set for a written document (DOCX, ODT, EPUB, HTML): an
+	// entry's page is then the rank of its picture in the text, not a page.
+	Pictures bool     `json:"pictures,omitempty"`
+	Profile  *Profile `json:"profile,omitempty"`
 	// Defaults is the context of every entry whose context is "default".
 	Defaults *Defaults `json:"defaults,omitempty"`
 }
@@ -323,8 +326,21 @@ func (e Entry) FallbackNote() string {
 
 // Reference is the entry's place in the document as a person cites it:
 // "p. 146, Problem 191", or "p. 146" when the diagram has no label.
-func (e Entry) Reference() string {
+func (e Entry) Reference() string { return e.reference(false) }
+
+// ReferenceOf is the entry's Reference in the Relevé's document: in a
+// written document, "fig. 12" or "Chapter 3, fig. 12", its picture's rank
+// in the text and the heading it follows.
+func (r *Releve) ReferenceOf(e Entry) string { return e.reference(r.Document.Pictures) }
+
+func (e Entry) reference(pictures bool) string {
 	ref := "p. " + strconv.Itoa(e.Page)
+	if pictures {
+		ref = "fig. " + strconv.Itoa(e.Page)
+		if c := strings.TrimSpace(e.Chapter); c != "" {
+			ref = c + ", " + ref
+		}
+	}
 	if l := strings.TrimSpace(e.Label); l != "" {
 		ref += ", " + l
 	}

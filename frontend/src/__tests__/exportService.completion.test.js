@@ -11,14 +11,17 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { get } from 'svelte/store';
 
+vi.mock('../services/longOpService.js', () => ({
+    runLongOp: vi.fn((/** @type {string} */ _prefix, /** @type {() => Promise<number>} */ start) => Promise.resolve(start()).then(() => ({ status: 'done', result: undefined })))
+}));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     OpenExportDatabaseDialog: vi.fn(() => Promise.resolve('/tmp/export.db')),
+    StartExportDatabase: vi.fn(() => Promise.resolve(1)),
     OpenExportMatDialog: vi.fn(() => Promise.resolve('')),
     ShowAlert: vi.fn(() => Promise.resolve())
 }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    ExportDatabase: vi.fn(() => Promise.resolve()),
     ExportMatchMAT: vi.fn(() => Promise.resolve()),
     SuggestMatFilename: vi.fn(() => Promise.resolve('m.mat')),
     GetAllMatches: vi.fn(() => Promise.resolve([])),
@@ -31,8 +34,7 @@ import { exportModalModeStore, exportOptionsStore, resetExportState } from '../s
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { activeModal, statusBarTextStore } from '../stores/uiStore.js';
-import { ExportDatabase } from '../../wailsjs/go/database/Database.js';
-import { OpenExportDatabaseDialog } from '../../wailsjs/go/gui/App.js';
+import { OpenExportDatabaseDialog, StartExportDatabase } from '../../wailsjs/go/gui/App.js';
 
 beforeEach(() => {
     // The stores live for the module's lifetime; without this the options chosen by one
@@ -84,7 +86,7 @@ describe('a successful export', () => {
         await exportDatabase();
         await handleExportCommit();
 
-        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        const sent = vi.mocked(StartExportDatabase).mock.calls[0][0];
         expect(sent.positionIDs).toEqual([1, 2, 3]);
         expect(sent.positions).toBeUndefined();
     });
@@ -101,7 +103,7 @@ describe('a successful export', () => {
         }));
         await handleExportCommit();
 
-        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        const sent = vi.mocked(StartExportDatabase).mock.calls[0][0];
         expect(sent.watermark).toBe('Cours de Jean');
         expect(sent.watermarkNote).toBe('Ne pas rediffuser');
         expect(sent.password).toBe('s3cret');
@@ -118,7 +120,7 @@ describe('a successful export', () => {
         }));
         await handleExportCommit();
 
-        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        const sent = vi.mocked(StartExportDatabase).mock.calls[0][0];
         expect(sent.watermark).toBe('');
         expect(sent.password).toBe('');
     });
@@ -129,7 +131,7 @@ describe('a successful export', () => {
         await handleExportCommit();
 
         expect(vi.mocked(OpenExportDatabaseDialog)).not.toHaveBeenCalled();
-        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        const sent = vi.mocked(StartExportDatabase).mock.calls[0][0];
         expect(sent.incremental).toBe(true);
         expect(sent.exportPath).toBe('/sync/vers-portable');
         // The folder is offered again the next time the dialog opens.
@@ -141,7 +143,7 @@ describe('a successful export', () => {
         exportOptionsStore.update((o) => ({ ...o, wholeLibrary: false, incremental: true, syncFolder: '/sync/x' }));
         await handleExportCommit();
 
-        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        const sent = vi.mocked(StartExportDatabase).mock.calls[0][0];
         expect(sent.incremental).toBe(false);
         expect(sent.exportPath).toBe('/tmp/export.db');
     });

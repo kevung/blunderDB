@@ -167,6 +167,7 @@
         "syncTitle": "Synchronisation"
     },
     "toolbar": {
+        "importDocument": "Importer un document…",
         "copyBoardImage": "Copier l'image du plateau",
         "copyBoardImageTip": "Copier l'image du plateau dans le presse-papiers",
         "copyBoardImageWithAnalysis": "avec analyse",
@@ -370,7 +371,10 @@
         "reimportCodeTip": "Le code QR du match en fin de transcription, également embarqué dans le fichier",
         "batch": "Les {n} matchs de la liste",
         "batchTip": "Une feuille par match, dans un seul document",
-        "tooMany": "{n} matchs dans la liste : une impression en prend {max} au plus. Filtrez la liste pour la réduire."
+        "tooMany": "{n} matchs dans la liste : une impression en prend {max} au plus. Filtrez la liste pour la réduire.",
+        "selection": "{n} matchs sélectionnés",
+        "tooManySelected": "{n} matchs sélectionnés : {max} au plus par impression ou archive.",
+        "cancelled": "Feuille de match annulée"
     },
     "positionSheet": {
         "title": "Imprimer une liste de positions",
@@ -396,7 +400,8 @@
         "library": "Bibliothèque",
         "basket": "Imprimer les positions",
         "basketTip": "Imprime les positions du panier qui viennent de la bibliothèque affichée",
-        "basketTitle": "Panier"
+        "basketTitle": "Panier",
+        "cancelled": "Liste de positions annulée"
     },
     "paperArchive": {
         "menu": "Archive papier…",
@@ -406,6 +411,7 @@
         "exportWhat": "Exporter",
         "scopeMatch": "Ce match",
         "scopeList": "Les {n} matchs de la liste",
+        "scopeSelection": "Les {n} matchs sélectionnés",
         "scopeLibrary": "Toute la bibliothèque",
         "export": "Exporter…",
         "import": "Importer…",
@@ -413,7 +419,9 @@
         "exported": "Archive papier enregistrée : {path} ({matches} matchs, {codes} codes, {skipped} écartés)",
         "importing": "Lecture de l'archive papier…",
         "imported": "Archive papier : {imported} matchs importés, {duplicates} doublons ; {positions} positions importées, {knownPositions} déjà présentes, {missing} codes manquants, {failed} en échec",
-        "failed": "Échec de l'archive papier : {err}"
+        "failed": "Échec de l'archive papier : {err}",
+        "noPdfPayload": "Ce PDF ne porte aucune archive blunderDB : rien n'a été importé",
+        "cancelled": "Archive papier annulée"
     },
     "match": {
         "errorExportingMat": "Erreur lors de l'export du match",
@@ -703,6 +711,7 @@
         "name": "Nom",
         "newTournamentPlaceholder": "Nouveau tournoi…",
         "noMatches": "Aucun match",
+        "print": "Imprimer le tournoi…",
         "noTournaments": "Aucun tournoi",
         "openHint": "Double-clic ou Entrée pour ouvrir",
         "notesPlaceholder": "Notes…",
@@ -877,6 +886,8 @@
         "hintPlayerBackgammon": "Joueur : chances de gagner un backgammon",
         "hintOpponentWin": "Adversaire : chances de gagner",
         "hintOpponentGammon": "Adversaire : chances de gagner un gammon",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "Écart d'équité avec l'évaluation précédente",
         "hintOpponentBackgammon": "Adversaire : chances de gagner un backgammon",
         "empty": "Pas d'analyse",
         "evaluate": "Évaluer"
@@ -1108,6 +1119,9 @@
         "batchDone": "gammonNet : {evaluated} analysée(s), {refused} refusée(s), {failed} échouée(s)",
         "batchFailed": "gammonNet : analyse impossible — {error}",
         "baseline": "Avant le jet",
+        "depthSelect": "Profondeur de l'évaluation affichée, pour ce panneau seulement",
+        "rerun": "Réévaluer la position à cette profondeur",
+        "rerunPlays": "Réévaluer les {n} coups sélectionnés à cette profondeur",
         "baselineTooltip": "Valeurs avant le jet, dans l'axe de la liste — un repère, pas un coup candidat. L'écart avec cette ligne est la chance du jet, pas le mérite d'un coup."
     },
     "searchHistory": {
@@ -1682,7 +1696,8 @@
         "gnubgIdCopied": "ID GNUbg copié dans le presse-papiers",
         "arkIdCopied": "ArkID copié dans le presse-papiers",
         "noMatchForPosition": "Aucun match n'a joué cette position",
-        "moveGone": "Ce coup n'est plus dans le match : ouvert là où vous l'aviez laissé"
+        "moveGone": "Ce coup n'est plus dans le match : ouvert là où vous l'aviez laissé",
+        "exportRunning": "Export en cours — progression et Annuler dans le panneau Calculs"
     },
     "stats": {
         "title": "Stats",
@@ -3744,7 +3759,7 @@
             "spread": "Écart-type",
             "dance": "Danse",
             "replies": "Réponses",
-            "other": "Autre coup…",
+            "otherPlays": "Autres coups",
             "start": "Départ",
             "me": "moi",
             "him": "lui",
@@ -3760,13 +3775,12 @@
             "opponent": "Adversaire",
             "match": "Match en {n}",
             "evaluate": "Évaluer",
-            "best": "Meilleur",
-            "second": "Second",
             "progress": "{ply}-ply : {n} / {total}",
             "legend": "Coups",
             "close": "Fermer",
             "refused": "Refusé",
             "crawford": "Crawford",
+            "postCrawford": "post-Crawford",
             "error": "Erreur"
         },
         "verdict": {
@@ -3774,13 +3788,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "Pas de double",
                 "double_take": "Double/Prise",
                 "double_pass": "Double/Passe",
-                "too_good": "Trop bon"
+                "too_good": "Trop bon",
+                "dmp": "Videau sans objet (double match point)"
             }
         },
         "menu": {
@@ -3823,12 +3839,20 @@
             "transfer": "Transfert",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Autre"
+            "other": "Autre",
+            "export": "Export",
+            "paperArchive": "Archive papier",
+            "print": "Impression"
         }
     },
     "documentImport": {
         "title": "Importer un document",
         "reading": "Lecture du document…",
+        "progress": "page {page} / {pages} · {diagrams} diagrammes",
+        "progressPictures": "image {page} / {pages} · {diagrams} diagrammes",
+        "eta": "{eta} restantes",
+        "cancelled": "Lecture annulée.",
+        "importCancelled": "Import annulé.",
         "failed": "Import du document échoué : {err}",
         "summary": "{title} : {entries} entrées (sûres {sure}, à vérifier {toVerify}, incertaines {uncertain})",
         "defaults": "Défauts du document",
@@ -3841,18 +3865,10 @@
         "acceptComplete": "Accepter les entrées de 15 + 15 pions lus sans doute ({n})",
         "fallback": "Importer sous le contexte que porte la position quand il n'est pas lu ({n}), les champs à vérifier nommés dans la référence",
         "collection": "Collection",
-        "review": "Entrées à vérifier ({n})",
-        "reviewNone": "Aucune entrée à vérifier.",
         "refused": "L'import est refusé pour le rang {ranks} : confirmez, acceptez ou utilisez le repli.",
         "run": "Importer",
         "imported": "Collection {collection} : {added} positions ajoutées, {repeated} répétées",
         "importedDetail": "{entries} entrées, {positions} positions distinctes ({fresh} nouvelles) ; complètes : {complete}, repli : {fallback}",
-        "state": {
-            "sure": "sûre",
-            "to-verify": "à vérifier",
-            "uncertain": "incertaine"
-        },
-        "check": "À comparer au diagramme : {fields}",
         "field": {
             "cube": "videau",
             "dice": "dés",
@@ -3864,6 +3880,18 @@
             "pips": "décomptes",
             "diagram": "lecture du diagramme"
         },
-        "importMenu": "Importer un document…"
+        "importMenu": "Importer un document…",
+        "sheet": {
+            "filter": {
+                "sure": "Sûres",
+                "to-verify": "À vérifier",
+                "uncertain": "Incertaines",
+                "verified": "Vérifiées"
+            },
+            "verify": "Valider",
+            "unverify": "Retirer la validation",
+            "edit": "Corriger",
+            "write": "Écrire"
+        }
     }
 }

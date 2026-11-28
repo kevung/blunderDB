@@ -92,6 +92,29 @@ func TestGammonNetEvaluate(t *testing.T) {
 	}
 }
 
+// TestGammonNetEvaluateNamedMoves: moves restricts the answer to those plays,
+// and a play that is not legal is refused.
+func TestGammonNetEvaluateNamedMoves(t *testing.T) {
+	ts := newTestServer(t)
+	zero := 0
+	const xgid = "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"
+	var full gammonnetEvaluateResp
+	postDecode(t, ts, "/v1/gammonnet.evaluate", gammonnetEvaluateReq{XGID: xgid, Ply: &zero, Candidates: 3}, &full)
+	if len(full.Moves) < 3 {
+		t.Fatalf("gammonnet.evaluate = %+v", full)
+	}
+	var out gammonnetEvaluateResp
+	postDecode(t, ts, "/v1/gammonnet.evaluate", gammonnetEvaluateReq{XGID: xgid, Ply: &zero, Moves: []string{full.Moves[2].Move}}, &out)
+	if len(out.Moves) != 1 || out.Moves[0].Move != full.Moves[2].Move || out.Moves[0].Equity != full.Moves[2].Equity {
+		t.Fatalf("moves = %+v; want only %s", out.Moves, full.Moves[2].Move)
+	}
+	r := post(t, ts, "/v1/gammonnet.evaluate", gammonnetEvaluateReq{XGID: xgid, Ply: &zero, Moves: []string{"25/1(15)"}})
+	r.Body.Close()
+	if r.StatusCode != http.StatusBadRequest {
+		t.Errorf("illegal play: status %d; want 400", r.StatusCode)
+	}
+}
+
 // TestGammonNetEvaluateUsesTheTenantsMET: a bare evaluation at a match score
 // is valued with the tenant's current table, as its stored analyses are
 // (ADR-0068).

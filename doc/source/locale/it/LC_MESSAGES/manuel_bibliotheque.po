@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 15:27+0100\n"
+"POT-Creation-Date: 2026-11-28 01:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.19.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/manuel_bibliotheque.rst:4
 msgid "Analyse, commentaires et recherche"
@@ -1383,9 +1383,13 @@ msgid ""
 " puis les deux autres et leur perte. Le document s'étend sur autant de "
 "pages A4 que nécessaire, numérotées, avec sur chacune l'en-tête (le titre"
 " de la recherche ou de la collection, le nombre de positions, la date) et"
-" la légende de la notation. Le fichier HTML autonome est enregistré puis "
-"ouvert dans le navigateur, qui l'imprime ou l'enregistre en PDF. Les "
-"options de la boîte :"
+" la légende de la notation. Le document est enregistré en PDF A4 puis "
+"ouvert dans la visionneuse du système, d'où il s'imprime ; sous Windows "
+"et macOS, faute de ce rendu, il reste un fichier HTML autonome ouvert "
+"dans le navigateur. La boîte se ferme dès le fichier choisi : la liste se"
+" construit comme une tâche du panneau Calculs, que **Annuler** arrête. En"
+" ligne de commande, ``sheet`` écrit la page HTML. Les options de la boîte"
+" :"
 msgstr ""
 "Ogni riga riporta il numero, l'ArkID in un carattere a spaziatura fissa, "
 "poi i pip del giocatore di turno e del suo avversario, per verificare la "
@@ -1397,15 +1401,19 @@ msgstr ""
 "cubo, l'azione giusta, poi le altre due e la loro perdita. Il documento "
 "si estende su tante pagine A4 numerate quante servono, ciascuna con "
 "l'intestazione (il titolo della ricerca o della raccolta, il numero di "
-"posizioni, la data) e la legenda della notazione. Il file HTML autonomo "
-"viene salvato e poi aperto nel browser, che lo stampa o lo salva in PDF. "
-"Le opzioni della finestra:"
+"posizioni, la data) e la legenda della notazione. Il documento viene "
+"salvato come PDF A4 e poi aperto nel visualizzatore di sistema, da cui si"
+" stampa; su Windows e macOS, in mancanza di questo rendering, resta un "
+"file HTML autonomo aperto nel browser. La finestra si chiude non appena "
+"il file è scelto: l'elenco viene costruito come attività del pannello "
+"**Calcoli**, che **Annulla** ferma. Da riga di "
+"comando, ``sheet`` scrive la pagina HTML. Le opzioni della finestra:"
 
-#: ../../source/manuel_bibliotheque.rst:595
+#: ../../source/manuel_bibliotheque.rst:599
 msgid "**Analyse** (cochée) : l'analyse de chaque position, sur sa ligne."
 msgstr "**Analisi** (spuntata): l'analisi di ogni posizione, sulla sua riga."
 
-#: ../../source/manuel_bibliotheque.rst:596
+#: ../../source/manuel_bibliotheque.rst:600
 msgid ""
 "**Réponses au verso** (décochée) : chaque page de positions est suivie "
 "d'une page d'analyses sous les mêmes numéros ; imprimée en recto verso, "
@@ -1415,7 +1423,7 @@ msgstr ""
 " da una pagina di analisi sotto gli stessi numeri; stampato fronte-retro,"
 " il foglio diventa un questionario."
 
-#: ../../source/manuel_bibliotheque.rst:599
+#: ../../source/manuel_bibliotheque.rst:603
 msgid ""
 "**Commentaires** (cochée) : les commentaires des positions, en entier, "
 "sous leur ligne, au verso avec les réponses. Un commentaire plus long "
@@ -1425,7 +1433,7 @@ msgstr ""
 " loro riga, sul retro con le risposte. Un commento più lungo di una "
 "pagina prosegue sulla successiva."
 
-#: ../../source/manuel_bibliotheque.rst:602
+#: ../../source/manuel_bibliotheque.rst:606
 msgid ""
 "**ArkID développé** (décochée) : la forme développée plutôt que la "
 "compacte."
@@ -1433,30 +1441,29 @@ msgstr ""
 "**ArkID esteso** (non spuntata): la forma estesa invece di quella "
 "compatta."
 
-#: ../../source/manuel_bibliotheque.rst:603
+#: ../../source/manuel_bibliotheque.rst:607
 msgid ""
 "**Code de réimport** (décochée) : des codes QR qui portent les positions,"
 " un bloc toutes les 145 positions, imprimé sur la page de la première "
-"position de son bloc et embarqué dans le fichier. Le fichier enregistré, "
-"ou le scan ou la photo d'une seule page, se réimporte par :ref:`Archive "
-"papier… <archive_papier_interface>` : chaque bloc se relit seul, et un "
-"code illisible est reconstruit par les autres codes de son bloc. Les "
-"codes ne portent que les positions (ce que dit l'ArkID), sans analyses ni"
-" commentaires ; chacune est enregistrée comme une position apportée "
-"seule, et une position déjà en base n'est pas dupliquée."
+"position de son bloc et joint au PDF. Le PDF enregistré, ou le scan ou la"
+" photo d'une seule page, se réimporte par :ref:`Archive papier… "
+"<archive_papier_interface>` : chaque bloc se relit seul, et un code "
+"illisible est reconstruit par les autres codes de son bloc. Les codes ne "
+"portent que les positions (ce que dit l'ArkID), sans analyses ni "
+"commentaires ; chacune est enregistrée comme une position apportée seule,"
+" et une position déjà en base n'est pas dupliquée."
 msgstr ""
 "**Codice di reimportazione** (non selezionata): codici QR che portano le "
 "posizioni, un blocco ogni 145 posizioni, stampato sulla pagina della "
-"prima posizione del suo blocco e incorporato nel file. Il file salvato, o"
-" la scansione o la foto di una sola pagina, si reimporta con "
-":ref:`Archivio cartaceo… <archive_papier_interface>`: ogni blocco si "
-"rilegge da solo, e un codice illeggibile si ricostruisce dagli altri "
-"codici del suo blocco. I codici portano solo le posizioni (ciò che dice "
-"l'ArkID), senza analisi né commenti; ciascuna viene salvata come una "
-"posizione portata da sola, e una posizione già presente nel database non "
-"viene duplicata."
+"prima posizione del suo blocco e allegato al PDF. Il PDF salvato, o la "
+"scansione o la foto di una sola pagina, si reimporta con :ref:`Archivio "
+"cartaceo… <archive_papier_interface>`: ogni blocco si rilegge da solo, e "
+"un codice illeggibile si ricostruisce dagli altri codici del suo blocco. "
+"I codici portano solo le posizioni (ciò che dice l'ArkID), senza analisi "
+"né commenti; ciascuna viene salvata come una posizione portata da sola, e"
+" una posizione già presente nel database non viene duplicata."
 
-#: ../../source/manuel_bibliotheque.rst:613
+#: ../../source/manuel_bibliotheque.rst:617
 msgid ""
 "L'impression n'écrit rien dans la base. En ligne de commande : ``sheet`` "
 "(:doc:`cli_import_export`)."
@@ -1464,12 +1471,12 @@ msgstr ""
 "La stampa non scrive nulla nel database. Da riga di comando: ``sheet`` "
 "(:doc:`cli_import_export`)."
 
-#: ../../source/manuel_bibliotheque.rst:619
-#: ../../source/manuel_bibliotheque.rst:621
+#: ../../source/manuel_bibliotheque.rst:623
+#: ../../source/manuel_bibliotheque.rst:625
 msgid "Panneau Collections"
 msgstr "Pannello Raccolte"
 
-#: ../../source/manuel_bibliotheque.rst:625
+#: ../../source/manuel_bibliotheque.rst:629
 msgid ""
 "Le panneau Collections : nom, nombre de positions, description, dernière "
 "modification."
@@ -1477,7 +1484,7 @@ msgstr ""
 "Il pannello Collezioni: nome, numero di posizioni, descrizione, ultima "
 "modifica."
 
-#: ../../source/manuel_bibliotheque.rst:628
+#: ../../source/manuel_bibliotheque.rst:632
 msgid ""
 "Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton"
 " **+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle "
@@ -1495,7 +1502,7 @@ msgstr ""
 "Tornei. Nell'elenco dei match, l'icona ⌨ apre la trascrizione del match e"
 " l'icona ✎ ne corregge i metadati."
 
-#: ../../source/manuel_bibliotheque.rst:636
+#: ../../source/manuel_bibliotheque.rst:640
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -1519,7 +1526,7 @@ msgstr ""
 "trascinamento. Premere *CTRL-B* o eseguire il comando ``collection`` per "
 "mostrare o nascondere il pannello."
 
-#: ../../source/manuel_bibliotheque.rst:647
+#: ../../source/manuel_bibliotheque.rst:651
 msgid ""
 "En tête d'une collection ouverte, le nombre de positions est un lien qui "
 "les remet dans le parcours, depuis la première ; la case **dans cette "
@@ -1531,7 +1538,7 @@ msgstr ""
 "questa collezione** aggiunge o toglie la posizione mostrata. Un elenco "
 "vuoto propone **+ Nuova collezione**."
 
-#: ../../source/manuel_bibliotheque.rst:652
+#: ../../source/manuel_bibliotheque.rst:656
 msgid ""
 "La **Pile** est la collection du geste « à revoir plus tard » : un "
 "double-clic hors du plateau, la touche *b* ou le bouton marque-page de la"
@@ -1563,7 +1570,7 @@ msgstr ""
 "una posizione portata da sola, poi messa sulla Pila. La riga di comando "
 "fa lo stesso gesto con ``collection pile``."
 
-#: ../../source/manuel_bibliotheque.rst:665
+#: ../../source/manuel_bibliotheque.rst:669
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1580,7 +1587,7 @@ msgstr ""
 "le restituisce la lista. Nulla viene distrutto: le posizioni che "
 "conteneva sono ancora lì quando si torna indietro."
 
-#: ../../source/manuel_bibliotheque.rst:672
+#: ../../source/manuel_bibliotheque.rst:676
 msgid ""
 "Deux critères de provenance se prêtent à une collection qui se range "
 "seule : ``s i`` garde les positions apportées une à une (à la main ou par"
@@ -1594,7 +1601,7 @@ msgstr ""
 "software d'origine aveva segnato all'importazione. Entrambi si combinano "
 "con qualsiasi altro criterio."
 
-#: ../../source/manuel_bibliotheque.rst:678
+#: ../../source/manuel_bibliotheque.rst:682
 msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
@@ -1608,7 +1615,7 @@ msgstr ""
 "cancellata. Le posizioni che conteneva prima di essere viva vengono "
 "sostituite."
 
-#: ../../source/manuel_bibliotheque.rst:683
+#: ../../source/manuel_bibliotheque.rst:687
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1620,7 +1627,7 @@ msgstr ""
 "restituire l'intera base. È l'unico guasto che un filtro salvato non deve"
 " avere: allargarsi in silenzio."
 
-#: ../../source/manuel_bibliotheque.rst:688
+#: ../../source/manuel_bibliotheque.rst:692
 msgid ""
 "Une collection vivante ne peut pas porter ``like`` : une collection est "
 "un ensemble, et ce jeton classe. Elle refuse la requête qui le porte, en "
@@ -1634,7 +1641,7 @@ msgstr ""
 " vecchia ricerca salvata porta ancora è rifiutata alla riesecuzione, "
 "dalla cronologia o dalla libreria di filtri."
 
-#: ../../source/manuel_bibliotheque.rst:694
+#: ../../source/manuel_bibliotheque.rst:698
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1656,7 +1663,7 @@ msgstr ""
 "**congelata**, con le posizioni che la query seleziona al momento "
 "dell'esportazione."
 
-#: ../../source/manuel_bibliotheque.rst:703
+#: ../../source/manuel_bibliotheque.rst:707
 msgid ""
 "Une collection vivante dont la base refuse la requête (``like``, une "
 "forme étoilée) part **figée et vide**, dans un export comme dans un "
@@ -1667,7 +1674,7 @@ msgstr ""
 "forma con asterisco) viene esportata o trasferita in un'altra base "
 "**congelata e vuota**: viva, lì verrebbe soltanto rifiutata di nuovo."
 
-#: ../../source/manuel_bibliotheque.rst:707
+#: ../../source/manuel_bibliotheque.rst:711
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1686,7 +1693,7 @@ msgstr ""
 "barra di stato lo segnala insieme al numero reale di posizioni "
 "selezionate."
 
-#: ../../source/manuel_bibliotheque.rst:717
+#: ../../source/manuel_bibliotheque.rst:721
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1704,7 +1711,7 @@ msgstr ""
 " riferimento sta al centro di più dei tuoi errori, di struttura simile, e"
 " la sua lezione serve a tutti."
 
-#: ../../source/manuel_bibliotheque.rst:724
+#: ../../source/manuel_bibliotheque.rst:728
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1718,7 +1725,7 @@ msgstr ""
 "12 passi di pedina di distanza di trasporto; un errore di cubo ha come "
 "vicini solo quelli dello stesso punteggio."
 
-#: ../../source/manuel_bibliotheque.rst:728
+#: ../../source/manuel_bibliotheque.rst:732
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1736,7 +1743,7 @@ msgstr ""
 "segnalato. La cifra all'inizio di ogni riga è l'MWC coperto; la ragione "
 "dà la cifra conteggiata quando la lezione conta per metà."
 
-#: ../../source/manuel_bibliotheque.rst:735
+#: ../../source/manuel_bibliotheque.rst:739
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1750,7 +1757,7 @@ msgstr ""
 " in una collezione, una carta Anki o contrassegnata come «studiata» — non"
 " viene mai proposta, e le sue vicine sono considerate coperte."
 
-#: ../../source/manuel_bibliotheque.rst:741
+#: ../../source/manuel_bibliotheque.rst:745
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1774,11 +1781,11 @@ msgstr ""
 " **quiz**. Da riga di comando: ``blunderdb collection suggest`` (vedi "
 ":ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:754
+#: ../../source/manuel_bibliotheque.rst:758
 msgid "Leçons"
 msgstr "Lezioni"
 
-#: ../../source/manuel_bibliotheque.rst:756
+#: ../../source/manuel_bibliotheque.rst:760
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1794,7 +1801,7 @@ msgstr ""
 "Il comando ``le`` elenca le lezioni del database nella barra di stato; "
 "``le 2`` apre la lezione 2; ``le edit`` apre l'editor delle lezioni."
 
-#: ../../source/manuel_bibliotheque.rst:763
+#: ../../source/manuel_bibliotheque.rst:767
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1810,7 +1817,7 @@ msgstr ""
 "consueti. *Chiudi* esce dalla lezione. Un passo la cui collezione o "
 "posizione è stata eliminata conserva il suo testo."
 
-#: ../../source/manuel_bibliotheque.rst:770
+#: ../../source/manuel_bibliotheque.rst:774
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1828,7 +1835,7 @@ msgstr ""
 "esportazione lo porta con sé. Importare un file che contiene una lezione "
 "la crea; una lezione con lo stesso nome già presente non viene toccata."
 
-#: ../../source/manuel_bibliotheque.rst:778
+#: ../../source/manuel_bibliotheque.rst:782
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1867,7 +1874,7 @@ msgstr ""
 "creano e si modificano anche da riga di comando o tramite l'API "
 "(:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:795
+#: ../../source/manuel_bibliotheque.rst:799
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
@@ -1933,3 +1940,4 @@ msgstr ""
 #~ " rende una lista vuota e lo "
 #~ "dice, invece di dieci posizioni senza"
 #~ " rapporto."
+

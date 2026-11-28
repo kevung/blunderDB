@@ -16,7 +16,25 @@ import { writable } from 'svelte/store';
  * @property {string} collection
  * @property {any} result
  * @property {string} error
+ * @property {{page: number, pages: number, diagrams: number, startedAt: number}|null} progress la lecture en cours, rendue par `document-analyze:progress`
+ * @property {SheetEntry[]} sheet chaque entrée du Relevé, telle que la rend DocumentSheet
+ * @property {SheetFilter} filter le compteur cliqué sur la planche de vérification
+ * @property {number} rank l'entrée montrée sur la planche (0 : aucune)
  */
+
+/**
+ * @typedef {'sure'|'to-verify'|'uncertain'|'verified'} SheetFilter
+ * @typedef {{rank: number, page: number, reference: string, position: string, state: 'sure'|'to-verify'|'uncertain', verified: boolean, fields: string[], rect?: {x: number, y: number, w: number, h: number}}} SheetEntry
+ */
+
+/**
+ * Le compteur d'une entrée : vérifiée l'emporte sur l'état lu.
+ * @param {SheetEntry} e
+ * @returns {SheetFilter}
+ */
+export function sheetCategory(e) {
+    return e.verified ? 'verified' : e.state;
+}
 
 /** @returns {DocumentImportState} */
 export function initialDocumentImport() {
@@ -30,7 +48,11 @@ export function initialDocumentImport() {
         fallback: false,
         collection: '',
         result: null,
-        error: ''
+        error: '',
+        progress: null,
+        sheet: [],
+        filter: 'to-verify',
+        rank: 0
     };
 }
 

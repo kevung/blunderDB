@@ -9,8 +9,10 @@ import (
 	"os/signal"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 )
@@ -42,6 +44,7 @@ func (cli *CLI) documentHandlers() map[string]func([]string) error {
 		"analyze": cli.runDocumentAnalyze,
 		"check":   cli.runDocumentCheck,
 		"import":  cli.runDocumentImport,
+		"verify":  cli.runDocumentVerify,
 	}
 }
 
@@ -68,6 +71,7 @@ func (cli *CLI) printDocumentUsage() {
 	fmt.Fprintln(cli.stdout(), "  analyze  Read the diagrams of a PDF or of page images into a relevé; nothing is written")
 	fmt.Fprintln(cli.stdout(), "  check    Validate a relevé and count its entries; nothing is written")
 	fmt.Fprintln(cli.stdout(), "  import   Import the positions of a relevé into a collection named after the document")
+	fmt.Fprintln(cli.stdout(), "  verify   Mark entries of a relevé verified, or correct their position; written in the relevé")
 	fmt.Fprintln(cli.stdout())
 	fmt.Fprintln(cli.stdout(), "Use 'blunderdb document <sub-command> --help' for the options of a sub-command.")
 }
@@ -115,7 +119,16 @@ func (cli *CLI) documentFileFlagSet(sub, file, summary string, examples ...strin
 	return fs
 }
 
+// readReleve reads a relevé file, or the relevé kept beside a document by
+// the interface's verification sheet, whose progress it then shows.
 func readReleve(path string) (*document.Releve, error) {
+	if !document.IsReleveFile(path) {
+		r, err := document.LoadSidecar(path)
+		if err == nil && r == nil {
+			err = fmt.Errorf("no relevé kept beside %s (%s): give the relevé file", path, document.SidecarPath(path))
+		}
+		return r, err
+	}
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -124,7 +137,7 @@ func readReleve(path string) (*document.Releve, error) {
 }
 
 func (cli *CLI) runDocumentAnalyze(args []string) error {
-	fs := cli.documentFileFlagSet("analyze", "<file.pdf|page-images-folder|page.png>",
+	fs := cli.documentFileFlagSet("analyze", "<file.pdf|file.docx|file.odt|file.epub|page.html|page-images-folder|page.png>",
 		"Read the diagrams of a document into a relevé, in the document's order, each with its page,\n"+
 			"label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own\n"+
 			"cross-checks hold (15 checkers a side, the printed pip counts of both players), to-verify\n"+
@@ -133,17 +146,24 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 			"board font (the Atchoum family), from the shapes of its embedded glyphs. A scanned book is\n"+
 			"read by the structure of each diagram, from a scanned PDF (its pages composed from their\n"+
 			"images, JPEG, JPEG 2000, JBIG2 or fax) or from its pages as images (a folder\n"+
-			"of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). The printed pip counts\n"+
+			"of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). A written\n"+
+			"document (DOCX, ODT, EPUB, or an HTML page and the pictures in its folder) is read picture\n"+
+			"by picture in the order of its text, each entry's page being the picture's rank and its\n"+
+			"chapter the heading before it; the text around a picture cross-checks it as a PDF's text\n"+
+			"layer does. Nothing is fetched from the network; a picture drawn with vectors (EMF, WMF,\n"+
+			"SVG) is named, not read, and a Word 97-2003 .doc is refused: save it as PDF or DOCX.\n"+
+			"The printed pip counts\n"+
 			"are read in the PDF's text layer and in the image; when the two disagree the entry is not\n"+
 			"sure. Pages that cannot be read are named on standard error. Nothing is written to a\n"+
 			"database: check the relevé, then import it with\n"+
 			"'blunderdb document import'.",
 		"blunderdb document analyze book.pdf -o releve.json",
 		"blunderdb document analyze pages/ -o releve.json --title \"My book\"",
+		"blunderdb document analyze notes.docx -o releve.json",
 		"blunderdb document analyze book.pdf -o releve.json --title \"My book\" --author \"Its author\"")
 	output := fs.String("o", "", "Write the relevé to this file (default: standard output)")
-	title := fs.String("title", "", "Title of the document (default: the PDF's metadata, else the file or folder name)")
-	author := fs.String("author", "", "Author of the document (default: the PDF's metadata)")
+	title := fs.String("title", "", "Title of the document (default: the document's metadata, else the file or folder name)")
+	author := fs.String("author", "", "Author of the document (default: the document's metadata)")
 	path, err := documentFileFlags(fs, args, "document")
 	if err != nil {
 		return err
@@ -152,7 +172,17 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 	// Ctrl-C stops a scanned book's decoding between code-blocks.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
-	r, err := document.AnalyzeFile(path, document.AnalyzeOptions{Title: *title, Author: *author, Warn: warn, Context: ctx})
+	opts := document.AnalyzeOptions{Title: *title, Author: *author, Warn: warn, Context: ctx}
+	// A script's standard error stays quiet: the progress shows on a terminal only.
+	if st, err := os.Stderr.Stat(); err == nil && st.Mode()&os.ModeCharDevice != 0 {
+		opts.Progress = document.ThrottledProgress(func(p document.Progress) {
+			fmt.Fprintf(os.Stderr, "\rpage %d/%d, %d diagrams\033[K", p.Page, p.Pages, p.Diagrams)
+			if p.Page == p.Pages {
+				fmt.Fprintln(os.Stderr)
+			}
+		}, 250*time.Millisecond)
+	}
+	r, err := document.AnalyzeFile(path, opts)
 	if err != nil {
 		return err
 	}
@@ -263,6 +293,59 @@ func (cli *CLI) runDocumentCheck(args []string) error {
 			fmt.Fprintf(out, "  rank %d, %s, %s: %s\n", it.Rank, it.Reference, it.State, it.Note)
 		}
 	}
+	return nil
+}
+
+func (cli *CLI) runDocumentVerify(args []string) error {
+	fs := cli.documentFileFlagSet("verify", "<releve.json|document>",
+		"Record that entries of a relevé were compared with their diagrams: they become verified, and an\n"+
+			"import accepts them. --position replaces what was read by the correct XGID (one rank only);\n"+
+			"--undo withdraws the verdict. Given a document rather than a relevé, the relevé kept beside it\n"+
+			"by the interface's verification sheet is the one changed. Nothing is written to a database.",
+		"blunderdb document verify releve.json --rank 12",
+		"blunderdb document verify releve.json --rank 3,4,9",
+		"blunderdb document verify book.pdf --rank 12 --position \"XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:5:10\"",
+		"blunderdb document verify releve.json --rank 12 --undo")
+	ranks := fs.String("rank", "", "Ranks of the entries, separated by commas (required)")
+	position := fs.String("position", "", "The correct position of the entry, as an XGID")
+	undo := fs.Bool("undo", false, "Withdraw the verdict: the entries are no longer verified")
+	path, err := documentFileFlags(fs, args, "relevé or document")
+	if err != nil {
+		return err
+	}
+	var list []int
+	for _, f := range strings.Split(*ranks, ",") {
+		if f = strings.TrimSpace(f); f == "" {
+			continue
+		}
+		n, err := strconv.Atoi(f)
+		if err != nil || n < 1 {
+			return fmt.Errorf("--rank: %q is not a rank", f)
+		}
+		list = append(list, n)
+	}
+	if len(list) == 0 {
+		fs.Usage()
+		return fmt.Errorf("missing --rank")
+	}
+	if *position != "" && len(list) != 1 {
+		return fmt.Errorf("--position corrects one rank, not %d", len(list))
+	}
+	r, err := readReleve(path)
+	if err != nil {
+		return err
+	}
+	for _, n := range list {
+		if err := document.SetVerified(r, n, !*undo, *position); err != nil {
+			return err
+		}
+	}
+	dst := document.ReleveFileFor(path)
+	if err := document.WriteFile(dst, r); err != nil {
+		return err
+	}
+	s := document.Summarize(r)
+	fmt.Fprintf(cli.stdout(), "%s: verified %d of %d entries (sure %d, to verify %d, uncertain %d)\n", dst, s.Verified, s.Entries, s.Sure, s.ToVerify, s.Uncertain)
 	return nil
 }
 

@@ -39,6 +39,7 @@ var tenantWriteCases = []tenantWriteCase{
 	{"Collection/UpdateDelete", checkWriteCollection},
 	{"Collection/Membership", checkWriteCollectionMembership},
 	{"Collection/AttachForeign", checkWriteCollectionAttach},
+	{"Collection/CopyWhole", checkWriteCollectionCopy},
 	{"Tournament/UpdateDelete", checkWriteTournament},
 	{"Tournament/AddMatch", checkWriteTournamentAddMatch},
 	{"Match/UpdateDelete", checkWriteMatch},
@@ -225,6 +226,79 @@ func checkWriteCollectionMembership(t *testing.T, cx func(scope string) context.
 	_ = s.Collections().MovePosition(cx(b), b, cid, cidB, p1)
 	if got := tenantCollectionPositionIDs(t, cx, s, a, cid); !slices.Equal(got, want) {
 		t.Errorf("after tenant %s's MovePosition, tenant %s's collection holds %v, want %v", b, a, got, want)
+	}
+}
+
+// tenantCollectionIDs lists the collections scope sees.
+func tenantCollectionIDs(t *testing.T, cx func(scope string) context.Context, s storage.Storage, scope string) []int64 {
+	t.Helper()
+	var ids []int64
+	for c, err := range s.Collections().List(cx(scope), scope) {
+		if err != nil {
+			t.Fatalf("List collections(%s): %v", scope, err)
+		}
+		ids = append(ids, c.ID)
+	}
+	return ids
+}
+
+// checkWriteCollectionCopy: tenant b can copy neither from a's collection
+// (to a new name or into its own) nor into it, and a refused copy creates no
+// collection on either side; b's own copy still works.
+func checkWriteCollectionCopy(t *testing.T, cx func(scope string) context.Context, s storage.Storage, a, b string) {
+	cidA, err := s.Collections().Create(cx(a), a, "owner", "")
+	if err != nil {
+		t.Fatalf("Create(%s): %v", a, err)
+	}
+	wantA := []int64{savePos(t, cx, s, a, provenancePos(1)), savePos(t, cx, s, a, provenancePos(2))}
+	if err := s.Collections().AddPositions(cx(a), a, cidA, wantA); err != nil {
+		t.Fatalf("AddPositions(%s): %v", a, err)
+	}
+	cidB, err := s.Collections().Create(cx(b), b, "intruder", "")
+	if err != nil {
+		t.Fatalf("Create(%s): %v", b, err)
+	}
+	wantB := []int64{savePos(t, cx, s, b, provenancePos(3))}
+	if err := s.Collections().AddPositions(cx(b), b, cidB, wantB); err != nil {
+		t.Fatalf("AddPositions(%s): %v", b, err)
+	}
+	listA, listB := tenantCollectionIDs(t, cx, s, a), tenantCollectionIDs(t, cx, s, b)
+
+	for _, tc := range []struct {
+		what   string
+		from   int64
+		target storage.CollectionCopyTarget
+	}{
+		{"copied tenant " + a + "'s collection to a new name", cidA, storage.CollectionCopyTarget{Name: "stolen"}},
+		{"copied tenant " + a + "'s collection into its own", cidA, storage.CollectionCopyTarget{ToID: cidB}},
+		{"copied its collection into tenant " + a + "'s", cidB, storage.CollectionCopyTarget{ToID: cidA}},
+	} {
+		if _, err := storage.CopyCollection(cx(b), s, b, tc.from, tc.target); !errors.Is(err, storage.ErrNotFound) {
+			t.Errorf("tenant %s %s: got %v, want ErrNotFound", b, tc.what, err)
+		}
+	}
+	if got := tenantCollectionPositionIDs(t, cx, s, a, cidA); !slices.Equal(got, wantA) {
+		t.Errorf("tenant %s's collection holds %v after tenant %s's copies, want %v", a, got, b, wantA)
+	}
+	if got := tenantCollectionPositionIDs(t, cx, s, b, cidB); !slices.Equal(got, wantB) {
+		t.Errorf("tenant %s's collection holds %v after its refused copies, want %v", b, got, wantB)
+	}
+	if got := tenantCollectionIDs(t, cx, s, a); !slices.Equal(got, listA) {
+		t.Errorf("tenant %s's collections are %v after tenant %s's copies, want %v", a, got, b, listA)
+	}
+	if got := tenantCollectionIDs(t, cx, s, b); !slices.Equal(got, listB) {
+		t.Errorf("tenant %s's collections are %v after its refused copies, want %v", b, got, listB)
+	}
+
+	res, err := storage.CopyCollection(cx(b), s, b, cidB, storage.CollectionCopyTarget{Name: "own copy"})
+	if err != nil || res.Copied != 1 {
+		t.Fatalf("tenant %s copying its own collection = %+v, %v; want 1 copied", b, res, err)
+	}
+	if got := tenantCollectionPositionIDs(t, cx, s, b, res.ID); !slices.Equal(got, wantB) {
+		t.Errorf("tenant %s's copy holds %v, want %v", b, got, wantB)
+	}
+	if got := tenantCollectionIDs(t, cx, s, a); !slices.Equal(got, listA) {
+		t.Errorf("tenant %s sees %v after tenant %s's own copy, want %v", a, got, b, listA)
 	}
 }
 

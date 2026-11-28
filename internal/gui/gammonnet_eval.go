@@ -48,6 +48,9 @@ type GammonNetEvalResult struct {
 	// Tag echoes StartEvaluationAtRest's tag, so the panel drops the answer
 	// of a search a newer gesture superseded.
 	Tag int `json:"tag,omitempty"`
+	// Partial: Moves holds only the plays StartPlaysEvaluationAtRest was
+	// asked for, not the position's ranking.
+	Partial bool `json:"partial,omitempty"`
 }
 
 // PositionFacts is the JSON mirror of gammonnet.PreRollFacts.
@@ -130,6 +133,56 @@ func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates
 		result.Tag = tag
 		runtime.EventsEmit(a.ctx, "gammonnet-eval:done", result)
 	}()
+}
+
+// StartPlaysEvaluationAtRest is StartEvaluationAtRest for the named plays
+// only (gammonnet.EvaluatePlaysWithMET), at ply: the panel replaces those
+// rows and keeps the others. Same slot, same events; the "done" result has
+// Moves only, and Partial set.
+func (a *App) StartPlaysEvaluationAtRest(pos domain.Position, ply, pruneK int, plays []string, tag int) {
+	ctx, end := a.beginEvaluationAtRest()
+
+	go func() {
+		defer recoverBackground(a.ctx, "gammonNet plays evaluation")
+		defer end()
+		result, err := a.evaluatePlaysCtx(ctx, pos, ply, pruneK, plays)
+		if end() {
+			runtime.EventsEmit(a.ctx, "gammonnet-eval:cancelled", map[string]int{"tag": tag})
+			return
+		}
+		if err != nil {
+			runtime.EventsEmit(a.ctx, "gammonnet-eval:error", map[string]any{"message": err.Error(), "tag": tag})
+			return
+		}
+		result.Tag = tag
+		runtime.EventsEmit(a.ctx, "gammonnet-eval:done", result)
+	}()
+}
+
+// evaluatePlaysCtx values plays on the live pool, under the library's table.
+func (a *App) evaluatePlaysCtx(ctx context.Context, pos domain.Position, ply, pruneK int, plays []string) (GammonNetEvalResult, error) {
+	searcher, release, err := a.gnLivePool.acquire(ply, pruneK)
+	if err != nil {
+		return GammonNetEvalResult{}, err
+	}
+	defer release()
+	defer searcher.BindContext(ctx)()
+
+	var met *engine.MET
+	var metID int64
+	if a.db != nil {
+		if metID, met, err = database.CurrentMETWithID(a.db); err != nil {
+			return GammonNetEvalResult{}, err
+		}
+	}
+	moves, err := gammonnet.EvaluatePlaysWithMET(searcher, pos, met, ply, pruneK, plays)
+	if err != nil {
+		if errors.Is(err, gammonnet.ErrNotEvaluable) {
+			return GammonNetEvalResult{Refused: true}, nil
+		}
+		return GammonNetEvalResult{}, err
+	}
+	return GammonNetEvalResult{Moves: moves, METID: metID, Partial: true}, nil
 }
 
 // beginEvaluationAtRest cancels the search in flight and registers a new one.

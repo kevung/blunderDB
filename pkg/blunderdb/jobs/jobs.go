@@ -59,6 +59,9 @@ const (
 	Transfer         Kind = "transfer"
 	BearoffTables    Kind = "bearoff"
 	Sync             Kind = "sync"
+	Export           Kind = "export"
+	PaperArchive     Kind = "paper-archive"
+	PrintSheet       Kind = "print"
 )
 
 // Spec describes a task at registration.

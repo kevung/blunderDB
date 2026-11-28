@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 10:12+0100\n"
+"POT-Creation-Date: 2026-11-27 23:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -43,17 +43,17 @@ msgstr ""
 "per un elenco in streaming) e, quando esiste, una nota sull'intestazione "
 "opzionale ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:471
+#: ../../source/api_reference.rst:482
 msgid "Idempotence"
 msgstr "Idempotenza"
 
-#: ../../source/api_reference.rst:473
+#: ../../source/api_reference.rst:484
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 59 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 60 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -66,7 +66,7 @@ msgstr ""
 " letture non hanno effetti collaterali e le scritture di ``positions.*`` "
 "sono idempotenti nel loro effetto grazie all'hash Zobrist del contenuto —"
 " salvare due volte la stessa posizione restituisce la stessa riga, mai un"
-" duplicato. 59 metodi accettano un'intestazione ``Idempotency-Key`` "
+" duplicato. 60 metodi accettano un'intestazione ``Idempotency-Key`` "
 "facoltativa: quelli le cui due chiamate sono due effetti distinti, e "
 "``positions.save``, la cui risposta dice se la chiamata ha creato la "
 "posizione (``created``) e lo direbbe in modo errato se fosse ripetuta "
@@ -75,11 +75,11 @@ msgstr ""
 "l'effetto — vedi il contrassegno «(Idempotency-Key)» nella tabella qui "
 "sopra. Nessun altro metodo richiede o accetta questa intestazione."
 
-#: ../../source/api_reference.rst:485
+#: ../../source/api_reference.rst:496
 msgid "Lectures conditionnelles"
 msgstr "Letture condizionali"
 
-#: ../../source/api_reference.rst:487
+#: ../../source/api_reference.rst:498
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -91,11 +91,11 @@ msgstr ""
 "finché non è cambiato nulla di ciò che il metodo legge — vedere "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:492
+#: ../../source/api_reference.rst:503
 msgid "Enregistrer et lire une analyse"
 msgstr "Salvare e leggere un'analisi"
 
-#: ../../source/api_reference.rst:494
+#: ../../source/api_reference.rst:505
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -125,7 +125,7 @@ msgstr ""
 "Played``: un demone che non la invia ignora ``withPlayed`` e restituisce "
 "l'analisi senza le mosse delle partite."
 
-#: ../../source/api_reference.rst:506
+#: ../../source/api_reference.rst:517
 msgid ""
 "``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
 "chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
@@ -151,7 +151,7 @@ msgstr ""
 "sue mosse migliori e valuta le altre meno in profondità). Una fonte "
 "importata di nuovo sostituisce la propria voce."
 
-#: ../../source/api_reference.rst:517
+#: ../../source/api_reference.rst:528
 msgid ""
 "Quand ``allCheckerAnalyses`` est absent et que les coups de "
 "``checkerAnalysis`` portent plusieurs ``analysisEngine``, la position a "
@@ -167,11 +167,11 @@ msgstr ""
 "Nessuna fonte è allora disponibile, e una nuova importazione non la "
 "ricostruisce."
 
-#: ../../source/api_reference.rst:524
+#: ../../source/api_reference.rst:535
 msgid "Lire les coups d'un match"
 msgstr "Leggere le mosse di un match"
 
-#: ../../source/api_reference.rst:526
+#: ../../source/api_reference.rst:537
 msgid ""
 "Chaque coup que rendent ``matches.moves`` et ``matches.movesByMatch`` est"
 " jugé par l'analyse enregistrée de sa position, sans qu'aucun moteur ne "
@@ -204,7 +204,7 @@ msgstr ""
 "quell'etichetta può contraddire le equity che accompagna. A parità di "
 "costo, è la decisione giocata."
 
-#: ../../source/api_reference.rst:540
+#: ../../source/api_reference.rst:551
 msgid ""
 "Sans analyse du type voulu, les trois champs sont absents. ``error_mp`` "
 "l'est aussi quand le coup joué ne figure pas parmi les candidats, alors "
@@ -216,7 +216,7 @@ msgstr ""
 "candidate, mentre ``best_move`` è restituita. Una posizione raggiunta da "
 "più match vi indica la stessa mossa migliore."
 
-#: ../../source/api_reference.rst:544
+#: ../../source/api_reference.rst:555
 msgid ""
 "Un client affiche « mieux » seulement quand ``error_mp`` est présent et "
 "non nul ; il ne compare pas le coup joué à ``best_move`` ou "
@@ -228,11 +228,11 @@ msgstr ""
 "``best_cube_action``: due notazioni della stessa mossa possono differire,"
 " e due mosse di pari equity costano entrambe 0."
 
-#: ../../source/api_reference.rst:550
+#: ../../source/api_reference.rst:561
 msgid "Repères d'une transcription"
 msgstr "Marcatori temporali di una trascrizione"
 
-#: ../../source/api_reference.rst:552
+#: ../../source/api_reference.rst:563
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -263,7 +263,7 @@ msgstr ""
 "imposta anche quando la sua intestazione ne indica una, senza mai "
 "cancellarla."
 
-#: ../../source/api_reference.rst:564
+#: ../../source/api_reference.rst:575
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -279,7 +279,7 @@ msgstr ""
 " una stima: una mossa senza riferimento d'azione, misurata dal tiro al "
 "primo istante dell'azione successiva."
 
-#: ../../source/api_reference.rst:570
+#: ../../source/api_reference.rst:581
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

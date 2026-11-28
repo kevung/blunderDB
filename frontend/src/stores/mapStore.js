@@ -19,3 +19,11 @@ export const rollTrailStore = writable({ root: null, steps: [] });
 /** The score map's match length for this session, null while the configured default holds. */
 /** @type {import('svelte/store').Writable<number | null>} */
 export const mapMatchLengthStore = writable(null);
+
+/**
+ * What the board previews while a roll of the map is selected and not yet played: that roll's
+ * dice on the trail's position, and the play drawn as arrows. Display only: the position the
+ * board holds stays the one before the roll, so nothing describes a board that was not played.
+ * @type {import('svelte/store').Writable<{ dice: [number, number], move: string } | null>}
+ */
+export const rollPreviewStore = writable(null);

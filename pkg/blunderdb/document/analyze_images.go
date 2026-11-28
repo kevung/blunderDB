@@ -46,7 +46,8 @@ func isJPEG2000(name string) bool {
 }
 
 // AnalyzeFile reads the document at path: a folder of page images (PNG or
-// JPEG, in the lexicographic order of their names), one page image, or a
+// JPEG, in the lexicographic order of their names), one page image, a
+// written document — DOCX, ODT, EPUB or HTML (AnalyzeWrittenFile) — or a
 // PDF (AnalyzePDFFile). It writes nothing.
 func AnalyzeFile(path string, opts AnalyzeOptions) (*Releve, error) {
 	st, err := os.Stat(path)
@@ -80,6 +81,9 @@ func AnalyzeFile(path string, opts AnalyzeOptions) (*Releve, error) {
 	if IsPageImage(path) {
 		return AnalyzeImages([]string{path}, opts)
 	}
+	if IsWrittenDocument(path) {
+		return AnalyzeWrittenFile(path, opts)
+	}
 	return AnalyzePDFFile(path, opts)
 }
 
@@ -104,6 +108,20 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 		}
 		h.Write(data)
 	}
+	src := &imageFiles{ctx: opts.context(), paths: paths, jpx: jpx.Budget{Left: MaxJPXPixels}}
+	return releveOfPages(src, len(paths), hex.EncodeToString(h.Sum(nil)), opts, nil, "")
+}
+
+func sha256Hex(data []byte) string {
+	h := sha256.Sum256(data)
+	return hex.EncodeToString(h[:])
+}
+
+// releveOfPages reads pages with the structure reader into a Relevé whose
+// source has fingerprint sum; chapter, when set, names each entry's chapter
+// from its page (from 1). what, when set, names the pages in the warning of
+// those passed over ("pictures"); a document of page images warns of none.
+func releveOfPages(src structure.Pages, n int, sum string, opts AnalyzeOptions, chapter func(page int) string, what string) (*Releve, error) {
 	title := strings.TrimSpace(opts.Title)
 	if title == "" {
 		title = strings.TrimSuffix(filepath.Base(opts.FileName), filepath.Ext(opts.FileName))
@@ -111,27 +129,43 @@ func AnalyzeImages(paths []string, opts AnalyzeOptions) (*Releve, error) {
 	if title == "" || title == "." {
 		title = "Untitled document"
 	}
-	res, err := structure.Read(opts.context(), &imageFiles{ctx: opts.context(), paths: paths, jpx: jpx.Budget{Left: MaxJPXPixels}})
+	res, err := structure.ReadProgress(opts.context(), src, opts.pageHook(n))
 	if errors.Is(err, structure.ErrNoDiagram) {
-		return nil, fmt.Errorf("document: no backgammon diagram found in the page images: %w", err)
+		return nil, fmt.Errorf("document: no backgammon diagram found in the %s: %w", orDefault(what, "page images"), err)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("document: %w", err)
 	}
+	if what != "" && opts.Warn != nil {
+		if s := unreadNamed(res.Unread, what); s != "" {
+			opts.Warn(s)
+		}
+	}
 	r := &Releve{Format: Format, Version: Version, Document: Source{
-		Title: title, Author: strings.TrimSpace(opts.Author), SHA256: hex.EncodeToString(h.Sum(nil)),
+		Title: title, Author: strings.TrimSpace(opts.Author), SHA256: sum,
 		Profile: structureProfile(res.Profile), Defaults: learnDefaults(res.Diagrams, res.Profile),
 	}}
 	for _, d := range res.Diagrams {
-		r.Entries = append(r.Entries, structureEntry(d, len(r.Entries)+1, r.Document.Defaults))
+		e := structureEntry(d, len(r.Entries)+1, r.Document.Defaults)
+		if chapter != nil {
+			e.Chapter = chapter(e.Page)
+		}
+		r.Entries = append(r.Entries, e)
 	}
 	if len(r.Entries) == 0 {
-		return nil, fmt.Errorf("document: no backgammon diagram found in the page images: %w", structure.ErrNoDiagram)
+		return nil, fmt.Errorf("document: no backgammon diagram found in the %s: %w", orDefault(what, "page images"), structure.ErrNoDiagram)
 	}
 	if err := r.Validate(); err != nil {
 		return nil, err
 	}
 	return r, nil
+}
+
+func orDefault(s, d string) string {
+	if s == "" {
+		return d
+	}
+	return s
 }
 
 func structureEntry(d structure.Diagram, rank int, defaults *Defaults) Entry {

@@ -40,7 +40,7 @@ colonnes : mêmes bords, mêmes repères de colonne, une seule colonne de
 pastilles — ils se lisent comme un seul objet à deux étages. Au-dessus des
 tableaux, la bande d'en-tête porte le titre, le badge de régime et
 l'attribution du moteur (la profondeur de la dernière évaluation y figure
-aussi), puis, à droite, la case *Défi* et le bouton *Ajouter à la base*.
+aussi), puis, à droite, la case *Défi*, deux petites icônes (*Position de départ*, *Effacer la position*) et le bouton *Ajouter à la base*.
 Tant que gammonNet n'a rien rendu, le panneau le dit en une ligne :
 « Évaluation… », ou « Posez une position » sur un plateau vide.
 
@@ -57,9 +57,30 @@ réglable dans l'onglet *gammonNet* de la configuration) la remplace en
 arrière-plan — tout nouveau geste annule ce calcul de fond. La profondeur
 affichée dans la bande de badges, ou au sein du badge de régime sur une
 position de course, est toujours celle qui a effectivement produit le
-chiffre montré, jamais celle demandée ; elle ne se répète pas sur chaque
-ligne, puisqu'une évaluation en direct partage la même profondeur pour tous
-les coups.
+chiffre montré, jamais celle demandée ; elle ne se répète sur chaque
+ligne, dans une colonne **Profondeur**, que lorsque les coups viennent de
+profondeurs différentes, et la bande donne alors l'étendue (« 2–4-ply »).
+
+Chaque évaluation reste en mémoire le temps de la session : revenir à une
+position déjà évaluée — par un autre plateau, une autre vue (*Décision*,
+*Scores*, *Jets*) ou un autre score — réaffiche aussitôt le résultat le plus
+profond déjà calculé, sans nouvelle recherche. Une position s'y reconnaît à
+tout ce qui change l'évaluation (plateau, score, videau, dés, règles de la
+séance, élagage, nombre de candidats, table d'équités de match), et pour
+chacune seule l'évaluation la plus profonde est gardée, coup par coup. Ce
+cache n'est jamais écrit sur le disque ni exporté.
+
+Le sélecteur de profondeur de la bande relance l'évaluation affichée à la
+profondeur choisie, pour ce panneau seulement : le réglage de la
+configuration ne change pas, et un changement de position y revient. Le
+bouton voisin relance à la profondeur affichée par le sélecteur. Avec des
+coups sélectionnés (*Ctrl+clic*, *Maj+clic*, ou un clic), seuls ces coups
+sont réévalués, le bouton en portant le nombre ; les autres lignes gardent
+leur évaluation et leur profondeur, et le tableau se reclasse. Après une
+relance, la colonne **Δ** donne, pour chaque coup réévalué, l'écart de son
+équité avec celle qu'il affichait avant. Un coup réévalué seul reçoit
+exactement l'équité qu'une évaluation complète à la même profondeur lui
+donne.
 L'équité des coups candidats et de la décision de videau suit le score de
 la position : en money game elle est exprimée en points, à un score de
 match en **équité normalisée** — la même échelle que XG et GNU Backgammon,
@@ -95,6 +116,13 @@ rollout n'est jamais enregistré : il se joue en mémoire, sans base ouverte
 comme sur une base en lecture seule, et son résultat ne s'affiche que tant
 que le plateau reste le même. Un rollout lancé avant une modification du
 plateau ne s'affiche pas sur la nouvelle position.
+
+Les deux icônes à gauche du bouton *Ajouter à la base* remettent le plateau
+à la position de départ du backgammon, ou le vident ; elles font ce que font les
+mêmes entrées du menu contextuel du plateau. Dans les deux cas le score
+reprend l'argent, le videau retourne au centre, les dés sont retirés et le
+trait revient au joueur du bas ; l'évaluation affichée est recalculée pour
+la nouvelle position.
 
 Le bouton **Ajouter à la base**, en fin de bande de badges, après la case *Défi*, enregistre
 dans la base la position posée sur le plateau ; *CTRL-S*, la commande ``w``
@@ -252,11 +280,12 @@ damier : les mêmes pions, le même compte de pips, se doublent à 2-away/4-away
 et ne se doublent pas à 4-away/2-away. La vue Scores montre la décision de la
 position à tous les scores d'un match de N points (N impair, de 3 à 15). La
 ligne est le nombre de points qu'il reste à faire au joueur au trait
-(*Moi*), la colonne celui de son adversaire (*Adversaire*) ; la dernière
-ligne et la dernière colonne sont le 1-away. Avec des dés, elles sont la
-partie Crawford, repérée par « C » ; sans dés, elles sont post-Crawford, le
-videau étant mort dans la partie Crawford. Une position post-Crawford n'est
-donc jamais encadrée sur une case Crawford.
+(*Moi*), la colonne celui de son adversaire (*Adversaire*) ; la première
+ligne et la première colonne sont le 1-away, comme dans la table du panneau
+Référence. Avec des dés, elles sont la partie Crawford, repérée par « C » ;
+sans dés, elles sont post-Crawford, repérées par « PC », le videau étant mort
+dans la partie Crawford. Une position post-Crawford n'est donc jamais encadrée
+sur une case Crawford.
 
 Avec des dés, chaque case porte la lettre du meilleur coup à ce score (A le
 plus fréquent de la grille, puis B, C…) et son équité en dessous. Les trois
@@ -266,7 +295,8 @@ est large (0,050 et plus), et « ≈ » marque une marge sous 0,010. Sans dés, 
 case dit le verdict de videau — *ND* (pas de double), *D/T* (double, prend),
 *D/P* (double, passe), *TG* (trop bon) — avec les mêmes teintes ; la marge
 d'un double est la plus petite de celle entre doubler et ne pas doubler et de
-celle entre prendre et passer. Le score de
+celle entre prendre et passer. La case 1-away/1-away, où le videau n'a
+aucune valeur, porte *DMP* (double match point). Le score de
 la position est encadré. La grille paraît aussitôt à 0-ply, puis à 1-ply si
 la profondeur réglée est plus grande ; à 2-ply, elle se raffine ensuite case
 par case en partant de ce score. Une case pas encore à la profondeur réglée
@@ -275,9 +305,13 @@ où le videau de la position ne peut pas se trouver porte un tiret. La
 légende à droite a un bouton par coup ou par verdict (lettre ou sigle,
 notation, nombre de scores) : un clic met ses cases en évidence. Avec des dés,
 le survol d'une case montre son coup sur le plateau. Un clic sur une case
-ouvre un volet avec le score, puis les deux meilleurs coups et leurs équités,
-ou les équités de pas de double, double/prise et double/passe et le verdict, et
-**Évaluer**, qui bascule la vue Décision à ce score ; le volet d'une case au
+ouvre un volet avec le score, puis, avec des dés, le tableau des coups
+candidats à ce score — le même que la vue Décision, d'abord à 0-ply puis à la
+profondeur réglée, le survol d'une ligne montrant le coup sur le plateau —,
+ou, sans dés, les équités de pas de double, double/prise et double/passe et le
+verdict ; un clic sur une autre case interrompt le calcul de la précédente. Le
+volet porte aussi **Évaluer**, qui bascule la vue Décision à ce score ; il
+passe sous la grille quand le panneau est étroit ; le volet d'une case au
 tiret dit *Refusé* et n'a pas **Évaluer**. Le sélecteur *Match en N* choisit
 la longueur ; sa valeur par défaut (9) se règle dans la configuration, onglet
 gammonNet, ligne *Match par défaut*.
@@ -301,12 +335,19 @@ Un jet sans coup légal s'écrit *Danse*. Les 21 jets paraissent aussitôt à
 raffinent ensuite un à un. Une ligne pas encore à la profondeur réglée est
 grisée, sa case en pointillé.
 
-Le fil d'Ariane (« Départ › moi 6-4 24/14 › lui 5-2 13/8 24/22 › Mes jets »)
-dit d'où vient la position évaluée et à qui sont les jets affichés (*Mes jets*
-ou *Ses jets*), et le plateau le suit ; chaque maillon remonte. Sur un jet
-sélectionné, **Réponses** joue son meilleur coup et affiche les 21 réponses
-suivantes, **Autre coup…** fait choisir un autre coup légal de ce jet (pas sur
-une danse). La profondeur est sans limite. Changer la position d'une autre
+Sélectionner un jet laisse le plateau sur la position *avant* le jet : les dés
+du jet y sont posés et son meilleur coup y est dessiné en flèches.
+**Réponses ›**, le double-clic ou *ENTRÉE* jouent ce coup : le plateau passe à
+la position après lui et la carte aux jets de l'adversaire. Le chevron de la
+ligne sélectionnée déplie, sous elle, les autres coups légaux du jet (pas sur
+une danse), chacun avec son écart au meilleur, évalués ensemble à 0-ply, ou à
+la profondeur plus grande qu'une évaluation de ce jet a déjà atteinte dans le
+panneau ; survoler un coup dessine ses flèches, cliquer dessus le joue. Le fil
+d'Ariane montre les jets joués depuis la position de départ, en petits dés,
+avec un trait de couleur pour le camp qui les a joués (bleu le joueur de la
+position de départ, orange son adversaire) ; chaque maillon remonte. Le
+dernier maillon, en pointillé, est le jet sélectionné et pas encore joué, ou
+deux dés vides sans sélection. La profondeur est sans limite. Changer la position d'une autre
 façon remet le fil à zéro. Le menu contextuel d'un coup candidat (Analyse ou
 Évaluation) offre *Réponses adverses*, qui ouvre cette vue sur la position
 après ce coup (grisé quand la notation du coup peut mener à plusieurs

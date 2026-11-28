@@ -32,7 +32,11 @@
 // pdf is the reader of the file itself: pure Go, it distrusts the PDF and is
 // bounded (see its doc). AnalyzeImages reads page images (a folder of them,
 // or one: AnalyzeFile) with the same package structure, which finds diagrams
-// by their structure and learns the document's style from the document. The
+// by their structure and learns the document's style from the document.
+// AnalyzeWrittenFile reads a written document (DOCX, ODT, EPUB, HTML) the
+// same way, its pictures in the order of its text for pages and the text
+// around each one for its text layer; a Word 97-2003 file is refused
+// (ErrLegacyWord), a picture drawn with vectors named and not read. The
 // printed pip counts that confirm its entries are read in the text layer
 // when there is one and in the image itself; when the two disagree, the
 // entry's checkers are not confirmed. The context is read field by field

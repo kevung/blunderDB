@@ -31,7 +31,10 @@ et **Bilan**. Dessous, ses matchs, un par ligne, que ▲ et ▼ réordonnent, qu
 tournoi. Un clic sur un match affiche sous la table sa fiche, la même que dans le
 panneau Matchs (onglets Transcription, Graphes, À revoir, Détails, Infos, Stats) ;
 un second clic ou *ÉCHAP* la referme, un double-clic ou *ENTRÉE* ouvre le match dans le plateau. Le champ **Ajouter un match…** y range un match de la base, et ←
-ramène à la liste des tournois.
+ramène à la liste des tournois. *Ctrl+clic* ajoute ou retire un match de la sélection, *Maj+clic*
+sélectionne une plage ; le menu contextuel, *Imprimer…* et *Archive papier…*, s'applique alors à toute la
+sélection (100 matchs au plus). **Imprimer le tournoi…**, dans l'en-tête, imprime tous les matchs du tournoi sur une
+seule feuille, dans la même boîte que celle du panneau Matchs.
 
 Chaque ligne commence par son rang (#) et sa date, comme dans le panneau
 Matchs : la liste va du plus récent au plus ancien, et un clic sur un en-tête

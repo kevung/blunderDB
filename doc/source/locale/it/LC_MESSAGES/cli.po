@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:13+0100\n"
+"POT-Creation-Date: 2026-11-28 01:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -265,10 +265,10 @@ msgstr "collection"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Gère les collections (liste, contenu, création, renommage, suppression, "
-"export)."
+"Gère les collections (liste, contenu, création, copie, renommage, "
+"suppression, export)."
 msgstr ""
-"Gestisce le collezioni (elenco, contenuto, creazione, rinomina, "
+"Gestisce le collezioni (elenco, contenuto, creazione, copia, rinomina, "
 "eliminazione, esportazione)."
 
 #: ../../source/cli.rst:1
@@ -325,11 +325,11 @@ msgstr "document"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Lit les diagrammes d'un PDF dans un relevé, vérifie un relevé ou importe "
-"ses positions dans une collection."
+"Lit les diagrammes d'un PDF dans un relevé, vérifie un relevé, y note les"
+" entrées vérifiées ou importe ses positions dans une collection."
 msgstr ""
-"Legge i diagrammi di un PDF in un relevé, verifica un relevé o ne importa"
-" le posizioni in una collezione."
+"Legge i diagrammi di un PDF in un relevé, verifica un relevé, vi annota "
+"le voci verificate o ne importa le posizioni in una collezione."
 
 #: ../../source/cli.rst:1
 msgid "anki"

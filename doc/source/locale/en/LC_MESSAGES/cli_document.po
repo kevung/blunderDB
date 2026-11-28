@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-27 15:11+0100\n"
+"POT-Creation-Date: 2026-11-28 03:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.19.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cli_document.rst:4
 msgid "Importer les positions d'un document"
@@ -61,8 +61,8 @@ msgid "Ce qui est lu, ce qui est refusé"
 msgstr "What is read, what is refused"
 
 #: ../../source/cli_document.rst:23
-msgid "``document analyze`` lit deux sortes de documents :"
-msgstr "``document analyze`` reads two kinds of documents:"
+msgid "``document analyze`` lit ces sortes de documents :"
+msgstr "``document analyze`` reads these kinds of documents:"
 
 #: ../../source/cli_document.rst:25
 msgid ""
@@ -94,15 +94,44 @@ msgid ""
 "sans couche texte, ou ses pages en images (un dossier de fichiers PNG ou "
 "JPEG, une page par fichier, lus dans l'ordre de leurs noms, ou une image "
 "seule). Les diagrammes y sont lus par leur structure (voir "
-":ref:`cli_document_images`)."
+":ref:`cli_document_images`) ;"
 msgstr ""
 "a scanned book: a PDF whose pages are made of images, with or without a "
 "text layer, or its pages as images (a folder of PNG or JPEG files, one "
 "page per file, read in the order of their names, or a single image). "
 "Diagrams are read there by their structure (see "
-":ref:`cli_document_images`)."
+":ref:`cli_document_images`);"
 
-#: ../../source/cli_document.rst:38
+#: ../../source/cli_document.rst:37
+msgid ""
+"un document rédigé, DOCX, ODT, EPUB ou page HTML : ses images sont lues "
+"une à une dans l'ordre du texte, chacune comme une page en image. Le "
+"numéro de page d'une entrée est alors le rang de son image parmi celles "
+"lues, son chapitre le titre qui la précède, et elle est citée « fig. 12 »"
+" ou « Chapitre 3, fig. 12 ». Le paragraphe qui précède l'image, le sien "
+"et le suivant servent de couche texte : les pips et les dés qu'ils citent"
+" recoupent la lecture comme dans un PDF. Une page HTML lit les images de "
+"son dossier et de ses sous-dossiers, et celles écrites dans la page "
+"(``data:``) ; rien n'est téléchargé, et les images en ligne sont comptées"
+" sur la sortie d'erreur. Une image dessinée en vecteurs (EMF, WMF, SVG) "
+"n'est pas lue : elle est nommée sur la sortie d'erreur. Un ``.doc`` de "
+"Word 97-2003 est refusé avec un message qui propose de l'enregistrer en "
+"PDF ou en DOCX."
+msgstr ""
+"a written document, DOCX, ODT, EPUB or HTML page: its images are read one"
+" by one in the order of the text, each as a page image. The page number "
+"of an entry is then the rank of its image among those read, its chapter "
+"the title that precedes it, and it is cited “fig. 12” or “Chapter 3, fig."
+" 12”. The paragraph before the image, its own and the next one serve as a"
+" text layer: the pips and dice they cite cross-check the reading as in a "
+"PDF. An HTML page reads the images of its folder and subfolders, and "
+"those written in the page (``data:``); nothing is downloaded, and online "
+"images are counted on the error output. An image drawn as vectors (EMF, "
+"WMF, SVG) is not read: it is named on the error output. A Word 97-2003 "
+"``.doc`` is refused with a message that suggests saving it as PDF or "
+"DOCX."
+
+#: ../../source/cli_document.rst:50
 msgid ""
 "Un PDF dont aucune page n'est faite d'images ni dessinée avec cette "
 "police (un livre dessiné en vecteurs) est refusé ; ses pages se donnent "
@@ -111,7 +140,7 @@ msgstr ""
 "A PDF none of whose pages is made of images or drawn with this font (a "
 "book drawn in vectors) is refused; its pages are then given as images:"
 
-#: ../../source/cli_document.rst:45
+#: ../../source/cli_document.rst:57
 msgid ""
 "Un PDF dessiné avec une police de plateau dont les formes ne sont pas "
 "embarquées est refusé avec un message qui nomme la police."
@@ -119,29 +148,39 @@ msgstr ""
 "A PDF drawn with a board font whose shapes are not embedded is refused "
 "with a message that names the font."
 
-#: ../../source/cli_document.rst:48
+#: ../../source/cli_document.rst:60
 msgid ""
-"Un fichier qui n'est ni un PDF ni une image, un PDF chiffré ou plus gros "
-"que 512 Mio, une image de plus de 64 Mio ou de plus de 100 millions de "
-"pixels est refusé aussi, avec un message qui le dit."
+"Un fichier qui n'est ni un PDF, ni un document rédigé, ni une image, un "
+"PDF chiffré ou plus gros que 512 Mio, une image de plus de 64 Mio ou de "
+"plus de 100 millions de pixels est refusé aussi, avec un message qui le "
+"dit. Un document rédigé a la même limite de 512 Mio ; son archive est "
+"refusée au-delà de 10 000 entrées, d'une partie qui se décompresse en "
+"plus de 64 Mio ou d'un total décompressé de plus de 1 Gio."
 msgstr ""
-"A file that is neither a PDF nor an image, an encrypted PDF or one larger"
-" than 512 MiB, an image of more than 64 MiB or of more than 100 million "
-"pixels is refused too, with a message that says so."
+"A file that is neither a PDF, nor a written document, nor an image, an "
+"encrypted PDF or one larger than 512 MiB, an image of more than 64 MiB or"
+" of more than 100 million pixels is refused too, with a message that says"
+" so. A written document has the same 512 MiB limit; its archive is "
+"refused beyond 10,000 entries, a part that decompresses to more than 64 "
+"MiB or a total decompressed size of more than 1 GiB."
 
-#: ../../source/cli_document.rst:53
+#: ../../source/cli_document.rst:68
 msgid "Le parcours en trois commandes"
 msgstr "The three-command workflow"
 
-#: ../../source/cli_document.rst:61
+#: ../../source/cli_document.rst:76
 msgid ""
 "``analyze`` lit le PDF et écrit le relevé (sans ``-o``, il l'écrit sur la"
-" sortie standard). Il résume ce qu'il a trouvé :"
+" sortie standard). Quand l'erreur standard est un terminal, il y écrit la"
+" progression de la lecture (``page 37/212, 54 diagrams``) ; rien n'est "
+"écrit dans un script. Il résume ce qu'il a trouvé :"
 msgstr ""
 "``analyze`` reads the PDF and writes the relevé (without ``-o``, it "
-"writes it to standard output). It summarises what it found:"
+"writes it to standard output). When standard error is a terminal, it "
+"writes the progress of the reading there (``page 37/212, 54 diagrams``); "
+"nothing is written in a script. It summarises what it found:"
 
-#: ../../source/cli_document.rst:72
+#: ../../source/cli_document.rst:89
 msgid ""
 "Le titre et l'auteur viennent des métadonnées du PDF, à défaut le titre "
 "est le nom du fichier ; ``--title`` et ``--author`` les remplacent. Le "
@@ -151,7 +190,7 @@ msgstr ""
 "title is the file name; ``--title`` and ``--author`` replace them. The "
 "chapter of each entry comes from the PDF bookmarks."
 
-#: ../../source/cli_document.rst:76
+#: ../../source/cli_document.rst:93
 msgid ""
 "``check`` valide le relevé et compte ses entrées, sans lire ni écrire de "
 "base. Il liste aussi, après le décompte, les entrées à vérifier (rang, "
@@ -164,11 +203,23 @@ msgstr ""
 "``--format json`` gives the same counts and the same list (``review``) in"
 " JSON:"
 
-#: ../../source/cli_document.rst:91
+#: ../../source/cli_document.rst:108
+msgid ""
+"``check`` reçoit aussi le document lui-même (``check livre.pdf``) : il "
+"lit alors le relevé que la planche de vérification de l'interface garde à"
+" côté (``livre.pdf.releve.json``, :ref:`assistant_import_document`) et en"
+" donne l'avancement, ``verified`` compris."
+msgstr ""
+"``check`` also accepts the document itself (``check livre.pdf``): it then"
+" reads the relevé that the interface's verification sheet keeps beside it"
+" (``livre.pdf.releve.json``, :ref:`assistant_import_document`) and "
+"reports its progress, ``verified`` included."
+
+#: ../../source/cli_document.rst:113
 msgid "``import`` écrit les positions dans la collection :"
 msgstr "``import`` writes the positions to the collection:"
 
-#: ../../source/cli_document.rst:98
+#: ../../source/cli_document.rst:120
 msgid ""
 "``--collection`` choisit un autre nom que le titre du document. Si le "
 "fichier de base n'existe pas, il est créé."
@@ -176,11 +227,11 @@ msgstr ""
 "``--collection`` chooses a name other than the document title. If the "
 "database file does not exist, it is created."
 
-#: ../../source/cli_document.rst:102
+#: ../../source/cli_document.rst:124
 msgid "Le relevé"
 msgstr "The relevé"
 
-#: ../../source/cli_document.rst:104
+#: ../../source/cli_document.rst:126
 msgid ""
 "Le relevé est un fichier JSON lisible, que l'on peut ouvrir dans un "
 "éditeur de texte. L'en-tête (``document``) donne le titre, l'auteur, "
@@ -196,11 +247,11 @@ msgstr ""
 "(``defaults``, see :ref:`cli_document_defaults`). Then each diagram is an"
 " entry, in the order of the document:"
 
-#: ../../source/cli_document.rst:111
+#: ../../source/cli_document.rst:133
 msgid "``rank`` — son rang, de 1 sans trou ;"
 msgstr "``rank`` — its rank, from 1 with no gap;"
 
-#: ../../source/cli_document.rst:112
+#: ../../source/cli_document.rst:134
 msgid ""
 "``page``, ``chapter`` et ``label`` — sa page, le chapitre des signets et "
 "le nom que le document lui donne (« Problem 191 ») quand il est imprimé "
@@ -210,7 +261,7 @@ msgstr ""
 "the name the document gives it (\"Problem 191\") when it is printed above"
 " it;"
 
-#: ../../source/cli_document.rst:114
+#: ../../source/cli_document.rst:136
 msgid ""
 "``position`` — la position, en XGID : pions, videau, trait, dés, score et"
 " longueur du match en une seule chaîne ;"
@@ -218,7 +269,7 @@ msgstr ""
 "``position`` — the position, as an XGID: checkers, cube, side to move, "
 "dice, score and match length in a single string;"
 
-#: ../../source/cli_document.rst:116
+#: ../../source/cli_document.rst:138
 msgid ""
 "``checkers`` — la certitude des pions : ``sure``, ``to-verify`` ou "
 "``uncertain`` ;"
@@ -226,7 +277,7 @@ msgstr ""
 "``checkers`` — the certainty of the checkers: ``sure``, ``to-verify`` or "
 "``uncertain``;"
 
-#: ../../source/cli_document.rst:118
+#: ../../source/cli_document.rst:140
 msgid ""
 "``complete`` — ``true`` quand les pions ont été lus à quinze par camp sur"
 " le plateau sans aucun doute, sans qu'un recoupement les confirme (voir "
@@ -236,7 +287,7 @@ msgstr ""
 "on the board with no doubt, without a cross-check confirming them (see "
 ":ref:`cli_document_complete`);"
 
-#: ../../source/cli_document.rst:121
+#: ../../source/cli_document.rst:143
 msgid ""
 "``context`` — comment le contexte (videau, dés, trait, score) est connu :"
 " ``read`` (lu et recoupé), ``default`` (le contexte par défaut du "
@@ -249,11 +300,11 @@ msgstr ""
 "drawn cube or dice that were not read, a score that cannot be found) or "
 "``uncertain`` (contradicted);"
 
-#: ../../source/cli_document.rst:125
+#: ../../source/cli_document.rst:147
 msgid "``doubts`` — les doutes nommés de la lecture ;"
 msgstr "``doubts`` — the named doubts of the reading;"
 
-#: ../../source/cli_document.rst:126
+#: ../../source/cli_document.rst:148
 msgid ""
 "``rect`` — où le diagramme se trouve sur la page, en fraction de sa "
 "taille, pour le retrouver dans le PDF ;"
@@ -261,7 +312,7 @@ msgstr ""
 "``rect`` — where the diagram lies on the page, as a fraction of its size,"
 " to find it again in the PDF;"
 
-#: ../../source/cli_document.rst:128
+#: ../../source/cli_document.rst:150
 msgid ""
 "``verified`` — ``true`` quand une personne a comparé la lecture au "
 "diagramme."
@@ -269,7 +320,31 @@ msgstr ""
 "``verified`` — ``true`` when a person has compared the reading with the "
 "diagram."
 
-#: ../../source/cli_document.rst:130
+#: ../../source/cli_document.rst:152
+msgid "``verify`` écrit le verdict d'une personne dans le relevé, sans base :"
+msgstr "``verify`` writes a person's verdict into the relevé, without a database:"
+
+#: ../../source/cli_document.rst:160
+msgid ""
+"``--rank`` nomme les entrées, séparées par des virgules ; elles "
+"deviennent vérifiées. ``--position`` remplace la lecture d'une seule "
+"entrée par le XGID correct, refusé s'il n'est pas une position légale ; "
+"une correction dont le contexte n'est plus celui du défaut garde le sien,"
+" à vérifier. ``--undo`` retire le verdict. Donné à la place du relevé, le"
+" document fait écrire dans le relevé gardé à côté de lui. La commande "
+"affiche le fichier écrit et l'avancement : ``releve.json: verified 3 of 6"
+" entries (sure 3, to verify 2, uncertain 1)``."
+msgstr ""
+"``--rank`` names the entries, separated by commas; they become verified. "
+"``--position`` replaces the reading of a single entry with the correct "
+"XGID, refused if it is not a legal position; a correction whose context "
+"is no longer the default's keeps its own, to verify. ``--undo`` removes "
+"the verdict. Given instead of the relevé, the document makes the command "
+"write into the relevé kept beside it. The command prints the file written"
+" and the progress: ``releve.json: verified 3 of 6 entries (sure 3, to "
+"verify 2, uncertain 1)``."
+
+#: ../../source/cli_document.rst:168
 msgid ""
 "On relit un relevé en ouvrant le PDF à la page de l'entrée. On y corrige "
 "la position (le XGID), on marque ``\"verified\": true`` une entrée "
@@ -292,7 +367,7 @@ msgstr ""
 "carry a doubt only about the context; a ``read`` context carries none; a "
 "``default`` entry carries the default context in its XGID."
 
-#: ../../source/cli_document.rst:140
+#: ../../source/cli_document.rst:178
 msgid ""
 "Le relevé est au format de version 2. Un relevé de version 1, qui donnait"
 " un seul état (``state``) par entrée, se lit encore : une entrée ``sure``"
@@ -306,11 +381,11 @@ msgstr ""
 " book falls under the default context, unconfirmed, and any other has its"
 " context to verify. ``analyze`` always writes version 2."
 
-#: ../../source/cli_document.rst:147
+#: ../../source/cli_document.rst:185
 msgid "Les trois états"
 msgstr "The three states"
 
-#: ../../source/cli_document.rst:149
+#: ../../source/cli_document.rst:187
 msgid ""
 "L'état d'une entrée découle de ses deux certitudes ; il n'est pas écrit "
 "dans le relevé."
@@ -318,11 +393,11 @@ msgstr ""
 "The state of an entry follows from its two certainties; it is not written"
 " in the relevé."
 
-#: ../../source/cli_document.rst:152
+#: ../../source/cli_document.rst:190
 msgid "``sure``"
 msgstr "``sure``"
 
-#: ../../source/cli_document.rst:153
+#: ../../source/cli_document.rst:191
 msgid ""
 "Les pions sont sûrs **et** le contexte est certifié : lu, ou sous le "
 "contexte par défaut du document une fois celui-ci confirmé. Les pions "
@@ -342,11 +417,11 @@ msgstr ""
 " are those it prints beside it. That of a scanned book never is: see "
 ":ref:`cli_document_images`."
 
-#: ../../source/cli_document.rst:162
+#: ../../source/cli_document.rst:200
 msgid "``to-verify``"
 msgstr "``to-verify``"
 
-#: ../../source/cli_document.rst:163
+#: ../../source/cli_document.rst:201
 msgid ""
 "La lecture tient, mais rien ne la confirme : un pip imprimé diffère du "
 "pip calculé, ou le diagramme montre ce que les impressions de référence "
@@ -368,11 +443,11 @@ msgstr ""
 "be told apart), font glyphs that the table does not read. These cases are"
 " read but never declared sure."
 
-#: ../../source/cli_document.rst:172
+#: ../../source/cli_document.rst:210
 msgid "``uncertain``"
 msgstr "``uncertain``"
 
-#: ../../source/cli_document.rst:173
+#: ../../source/cli_document.rst:211
 msgid ""
 "Les pions ou le contexte sont contredits, ou la lecture est incomplète : "
 "un glyphe inconnu, un camp qui ne compte pas quinze pions et dont les "
@@ -386,7 +461,7 @@ msgstr ""
 "legal position can be drawn keeps its place in the relevé, without a "
 "position (``\"position\": \"\"``)."
 
-#: ../../source/cli_document.rst:178
+#: ../../source/cli_document.rst:216
 msgid ""
 "Une entrée est **importable** quand elle est ``sure`` ou vérifiée, ou, "
 "sur demande, quand elle est complète (:ref:`cli_document_complete`). Les "
@@ -396,15 +471,15 @@ msgstr ""
 "request, when it is complete (:ref:`cli_document_complete`). The doubts "
 "it carries say what to check, for example:"
 
-#: ../../source/cli_document.rst:186
+#: ../../source/cli_document.rst:224
 msgid "Le dé n'est pas lu : l'analyse écrit toujours « pas de dés » (``00``)."
 msgstr "The die is not read: the analysis always writes \"no dice\" (``00``)."
 
-#: ../../source/cli_document.rst:191
+#: ../../source/cli_document.rst:229
 msgid "Livres scannés"
 msgstr "Scanned books"
 
-#: ../../source/cli_document.rst:193
+#: ../../source/cli_document.rst:231
 msgid ""
 "Une page en image est lue sans style supposé : la commande y cherche deux"
 " rangées de douze pointes coupées par une barre, et des pions, disques de"
@@ -422,7 +497,7 @@ msgstr ""
 "numbering and the direction of play. Nothing is kept from one document to"
 " the next, and no image is kept."
 
-#: ../../source/cli_document.rst:200
+#: ../../source/cli_document.rst:238
 msgid ""
 "Elle lit les diagrammes au trait et les captures de logiciel imprimées, "
 "dans l'ordre de lecture : page de gauche puis de droite d'une double "
@@ -437,7 +512,7 @@ msgstr ""
 "erased. Useful resolution: 150 to 300 dpi, the one the file states; "
 "failing that, the long side of the page is taken to be eleven inches."
 
-#: ../../source/cli_document.rst:206
+#: ../../source/cli_document.rst:244
 msgid ""
 "Un PDF scanné est lu directement, sans outil externe : chaque page est "
 "composée de ses images, placées comme le PDF les place, à la résolution "
@@ -485,7 +560,7 @@ msgstr ""
 " image), gives its words their place on the image; a text that its font "
 "does not translate into characters gives no word."
 
-#: ../../source/cli_document.rst:227
+#: ../../source/cli_document.rst:265
 msgid ""
 "Sur un livre scanné, les pions et le contexte sont certifiés à part. Les "
 "pions sont ``sure`` quand les pips imprimés à côté du diagramme égalent "
@@ -499,7 +574,7 @@ msgstr ""
 " checkers and when no doubt remains about the checkers. The context is "
 "read field by field, and a field counts as read only when cross-checked:"
 
-#: ../../source/cli_document.rst:233
+#: ../../source/cli_document.rst:271
 msgid ""
 "le videau, par sa valeur lue dans son carré (chiffres du document) ou "
 "dans la couche texte — deux sources présentes doivent concorder — et "
@@ -517,7 +592,7 @@ msgstr ""
 "place, beside at least three diagrams, since an owned cube carries its "
 "value;"
 
-#: ../../source/cli_document.rst:239
+#: ../../source/cli_document.rst:277
 msgid ""
 "les dés, comptés sur l'image et confirmés par le texte voisin : un jet "
 "nommé (« to play 41 », « rolls a 65 ») ou un coup écrit dont chaque pas "
@@ -540,7 +615,7 @@ msgstr ""
 " image) gives the roll and the player on roll, each in doubt: a single "
 "source certifies nothing;"
 
-#: ../../source/cli_document.rst:248
+#: ../../source/cli_document.rst:286
 msgid ""
 "le score, par le bandeau de la couche texte (``score:``, ``pip:``, ``7 "
 "point match``), chaque score attribué au joueur dont il porte les pips ; "
@@ -550,7 +625,7 @@ msgstr ""
 "point match``), each score being attributed to the player whose pips it "
 "carries; two equal scores do without the pips."
 
-#: ../../source/cli_document.rst:252
+#: ../../source/cli_document.rst:290
 msgid ""
 "Une entrée dont tout le contexte est lu est ``\"context\": \"read\"``. Un"
 " videau introuvable n'est jamais pris pour centré : ce qui n'est pas lu "
@@ -586,7 +661,7 @@ msgstr ""
 " to verify never is. ``analyze`` and ``check`` count the entries by "
 "context, and separately those whose checkers alone are certified:"
 
-#: ../../source/cli_document.rst:275
+#: ../../source/cli_document.rst:313
 msgid ""
 "Pour une entrée dont le contexte reste à vérifier, on ouvre le livre à la"
 " page de l'entrée, on compare au diagramme le videau (valeur et "
@@ -600,11 +675,11 @@ msgstr ""
 " diagram, correct these fields of the XGID if needed, then mark "
 "``\"verified\": true``."
 
-#: ../../source/cli_document.rst:283
+#: ../../source/cli_document.rst:321
 msgid "Le contexte par défaut"
 msgstr "The default context"
 
-#: ../../source/cli_document.rst:285
+#: ../../source/cli_document.rst:323
 msgid ""
 "Le contexte par défaut d'un livre scanné est celui qu'écrit la lecture : "
 "videau centré, pas de dés, joueur du bas au trait, partie libre. Il "
@@ -614,7 +689,7 @@ msgstr ""
 "centered cube, no dice, the bottom player on roll, a free game (no "
 "match). It appears in the header of the relevé:"
 
-#: ../../source/cli_document.rst:297
+#: ../../source/cli_document.rst:335
 msgid ""
 "``context`` est la fin du XGID après le plateau ; toute entrée "
 "``default`` la porte. Quand les diagrammes du document suivent ce "
@@ -641,11 +716,11 @@ msgstr ""
 "printed in the image without a text layer or a player on roll given by "
 "the prose outside a caption are not seen."
 
-#: ../../source/cli_document.rst:312
+#: ../../source/cli_document.rst:350
 msgid "Le défaut appris sur le document"
 msgstr "The default learned from the document"
 
-#: ../../source/cli_document.rst:314
+#: ../../source/cli_document.rst:352
 msgid ""
 "La lecture apprend sur le document quels champs du contexte il imprime à "
 "côté de ses diagrammes : le videau, les dés (avec le joueur au trait) ou "
@@ -657,7 +732,7 @@ msgstr ""
 "score, read beside at least a third of the diagrams. It names them in "
 "``printed``:"
 
-#: ../../source/cli_document.rst:327
+#: ../../source/cli_document.rst:365
 msgid ""
 "Un champ imprimé est la lecture de chaque entrée, que la lecture a "
 "certifiée ; le contexte par défaut ne couvre que les autres. Dans un "
@@ -681,7 +756,7 @@ msgstr ""
 " it is not taken as money play``). ``analyze`` and ``check`` display what"
 " was learned:"
 
-#: ../../source/cli_document.rst:341
+#: ../../source/cli_document.rst:379
 msgid ""
 "Rien n'est gardé d'un document à l'autre. Un relevé sans ``printed`` "
 "garde la règle stricte : tout champ lu hors du défaut laisse le contexte "
@@ -691,11 +766,11 @@ msgstr ""
 "``printed`` keeps the strict rule: any field read outside the default "
 "leaves the context to be verified."
 
-#: ../../source/cli_document.rst:347
+#: ../../source/cli_document.rst:385
 msgid "Quinze et quinze sans doute"
 msgstr "Fifteen and fifteen without a doubt"
 
-#: ../../source/cli_document.rst:349
+#: ../../source/cli_document.rst:387
 msgid ""
 "Un diagramme sans pips imprimés n'a pas de recoupement : ses pions "
 "restent ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils "
@@ -734,7 +809,7 @@ msgstr ""
 "printed pips confirm them``). A board whose bars do not make fifteen is a"
 " named doubt (``they do not make fifteen``)."
 
-#: ../../source/cli_document.rst:367
+#: ../../source/cli_document.rst:405
 msgid ""
 "Le sens de jeu supposé est lui aussi un défaut du document, avec sa "
 "propre confirmation : un sens faux échangerait les joueurs de toutes les "
@@ -746,7 +821,7 @@ msgstr ""
 "positions read under it. It appears in the default context, under "
 "``direction``:"
 
-#: ../../source/cli_document.rst:379
+#: ../../source/cli_document.rst:417
 msgid ""
 "Confirmer le contexte ne le confirme pas. On le contrôle sur quelques "
 "diagrammes, puis on écrit ``\"confirmed\": true`` dans ``direction``."
@@ -754,7 +829,7 @@ msgstr ""
 "Confirming the context does not confirm it. It is checked on a few "
 "diagrams, then ``\"confirmed\": true`` is written in ``direction``."
 
-#: ../../source/cli_document.rst:382
+#: ../../source/cli_document.rst:420
 msgid ""
 "``import --accept-complete`` accepte en bloc les entrées complètes dont "
 "le contexte est certifié (lu, ou sous le contexte par défaut confirmé) et"
@@ -768,7 +843,7 @@ msgstr ""
 "confirmed), without marking them verified; ``check`` counts them, and "
 "counts separately those held back by an unconfirmed direction:"
 
-#: ../../source/cli_document.rst:398
+#: ../../source/cli_document.rst:436
 msgid ""
 "L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
 " checkers read with no doubt``). Une entrée complète dont le contexte "
@@ -780,40 +855,50 @@ msgstr ""
 "certified, or whose assumed direction of play is not confirmed, is still "
 "refused; the error message says to confirm it."
 
-#: ../../source/cli_document.rst:403
+#: ../../source/cli_document.rst:441
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
-"autour du diagramme, chiffre par chiffre, par comparaison avec la "
-"numérotation des pointes du document, avec huit polices courantes "
-"embarquées, puis avec les chiffres déjà lus dans le document ; un nombre "
-"n'est rendu que si chacun de ses chiffres est reconnu nettement, sinon "
-"elle s'abstient. L'emplacement des pips est appris sur le document : un "
-"nombre lu qui égale les pips d'un diagramme compté à quinze pions par "
-"camp vote pour sa place, et deux places (haut et bas) doivent réunir "
-"assez de votes. Aucun chiffre n'est choisi d'après les pips du diagramme "
-"qu'il accompagne, et rien n'est gardé d'un document à l'autre. Quand le "
-"texte et l'image donnent chacun des pips et qu'ils diffèrent, les pions "
-"ne sont pas confirmés et le doute le dit (``the two disagree``). Une "
-"entrée sans pips lus reste ``to-verify`` (``no printed pip count was "
-"found next to the diagram``)."
+"autour du diagramme, sur la bande horizontale du plateau jusqu'à environ "
+"une demi-largeur de plateau de chaque côté ; une lettre seule devant un "
+"nombre (``W 164``, ``B 123``) ne l'empêche pas d'être lu. Elle les lit "
+"chiffre par chiffre, par comparaison avec la numérotation des pointes du "
+"document, avec huit polices courantes embarquées, puis avec les chiffres "
+"déjà lus dans le document ; un nombre n'est rendu que si chacun de ses "
+"chiffres est reconnu nettement, sinon elle s'abstient. L'emplacement des "
+"pips est appris sur le document : un nombre lu qui égale les pips d'un "
+"diagramme compté à quinze pions par camp vote pour sa place, et deux "
+"places (haut et bas) doivent réunir assez de votes ; une place s'étend "
+"sur les positions voisines qui ont reçu des votes, pour un document qui "
+"place ses plateaux à des endroits ou à des tailles qui varient. Aucun "
+"chiffre n'est choisi d'après les pips du diagramme qu'il accompagne, et "
+"rien n'est gardé d'un document à l'autre. Quand le texte et l'image "
+"donnent chacun des pips et qu'ils diffèrent, les pions ne sont pas "
+"confirmés et le doute le dit (``the two disagree``). Une entrée sans pips"
+" lus reste ``to-verify`` (``no printed pip count was found next to the "
+"diagram``)."
 msgstr ""
 "Printed pips are read from two sources: the text layer of a PDF, and the "
 "image itself. In the image, the command reads the isolated numbers around"
-" the diagram, digit by digit, by comparison with the point numbering of "
-"the document, with eight common embedded fonts, then with the digits "
-"already read in the document; a number is returned only if each of its "
-"digits is clearly recognized, otherwise it abstains. The location of the "
-"pips is learned from the document: a number read that equals the pips of "
-"a diagram counted at fifteen checkers per side votes for its place, and "
-"two places (top and bottom) must gather enough votes. No digit is chosen "
-"from the pips of the diagram it accompanies, and nothing is kept from one"
-" document to the next. When the text and the image each give pips and "
-"they differ, the checkers are not confirmed and the doubt says so (``the "
-"two disagree``). An entry without read pips stays ``to-verify`` (``no "
-"printed pip count was found next to the diagram``)."
+" the diagram, on the horizontal band of the board out to about half a "
+"board width on each side; a lone letter in front of a number (``W 164``, "
+"``B 123``) does not prevent it from being read. It reads them digit by "
+"digit, by comparison with the document's point numbering, with eight "
+"common embedded fonts, then with the digits already read in the document;"
+" a number is returned only if each of its digits is clearly recognised, "
+"otherwise it abstains. The location of the pips is learned from the "
+"document: a number read that equals the pips of a diagram counted at "
+"fifteen checkers per side votes for its place, and two places (top and "
+"bottom) must gather enough votes; a place extends over the neighbouring "
+"positions that received votes, for a document that places its boards at "
+"positions or sizes that vary. No digit is chosen from the pips of the "
+"diagram it accompanies, and nothing is kept from one document to the "
+"next. When the text and the image each give pips and they differ, the "
+"checkers are not confirmed and the doubt says so (``the two disagree``). "
+"An entry without pips read stays ``to-verify`` (``no printed pip count "
+"was found next to the diagram``)."
 
-#: ../../source/cli_document.rst:417
+#: ../../source/cli_document.rst:460
 msgid ""
 "Une flèche de coup dessinée sur le diagramme (un trait droit et fin, "
 "oblique, seul sur le papier) n'est pas lue comme un pion, et les nombres "
@@ -825,20 +910,20 @@ msgstr ""
 "fewer printed beside the board (checker counts, numbers) are not taken "
 "for the pips."
 
-#: ../../source/cli_document.rst:422
+#: ../../source/cli_document.rst:465
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
-"résolution de lecture, des pips imprimés à la même place dans tout le "
-"document, et une trentaine de diagrammes lus à quinze pions par camp pour"
-" apprendre cette place."
+"résolution de lecture, des pips imprimés à une place voisine d'un "
+"diagramme à l'autre, et une trentaine de diagrammes lus à quinze pions "
+"par camp pour apprendre cette place."
 msgstr ""
 "Reading the digits assumes dark Arabic digits on a light background, "
 "written horizontally, at least 15 pixels high at the reading resolution, "
 "pips printed in the same place throughout the document, and about thirty "
 "diagrams read at fifteen checkers per side to learn that place."
 
-#: ../../source/cli_document.rst:427
+#: ../../source/cli_document.rst:470
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -855,7 +940,7 @@ msgstr ""
 "the side with the fewest pips), borne-off checkers counted by difference,"
 " a cube drawn off-center, dice drawn."
 
-#: ../../source/cli_document.rst:434
+#: ../../source/cli_document.rst:477
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
@@ -873,11 +958,11 @@ msgstr ""
 " is a filled disc is not read, and every diagram is ``uncertain`` with "
 "this reason (``the document draws no filled checker``)."
 
-#: ../../source/cli_document.rst:443
+#: ../../source/cli_document.rst:486
 msgid "Pourquoi l'import refuse"
 msgstr "Why the import refuses"
 
-#: ../../source/cli_document.rst:445
+#: ../../source/cli_document.rst:488
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -889,7 +974,7 @@ msgstr ""
 " **whole** relevé, before writing anything, names the ranks and says what"
 " to do:"
 
-#: ../../source/cli_document.rst:453
+#: ../../source/cli_document.rst:496
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -897,7 +982,7 @@ msgstr ""
 "When entries are under an unconfirmed default context, or complete "
 "without ``--accept-complete``, the message says so too:"
 
-#: ../../source/cli_document.rst:460
+#: ../../source/cli_document.rst:503
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -907,11 +992,11 @@ msgstr ""
 "is; the import then says how many entries it forced (``Forced: 3 entries "
 "neither sure nor verified``)."
 
-#: ../../source/cli_document.rst:467
+#: ../../source/cli_document.rst:510
 msgid "Le repli"
 msgstr "The fallback"
 
-#: ../../source/cli_document.rst:469
+#: ../../source/cli_document.rst:512
 msgid ""
 "Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
 "``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
@@ -928,7 +1013,7 @@ msgstr ""
 " the default for the rest. ``check`` names these ranks, and the error "
 "message offers the fallback:"
 
-#: ../../source/cli_document.rst:480
+#: ../../source/cli_document.rst:523
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
@@ -952,11 +1037,11 @@ msgstr ""
 "default context. Even with ``--force``, an entry without a position is "
 "refused: it must be filled in or removed."
 
-#: ../../source/cli_document.rst:491
+#: ../../source/cli_document.rst:534
 msgid "Ce qui entre en base"
 msgstr "What enters the database"
 
-#: ../../source/cli_document.rst:493
+#: ../../source/cli_document.rst:536
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -970,7 +1055,7 @@ msgstr ""
 " its identity: a position it already has is not duplicated (``new in the "
 "library`` counts those it lacked)."
 
-#: ../../source/cli_document.rst:499
+#: ../../source/cli_document.rst:542
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -984,7 +1069,7 @@ msgstr ""
 " description if it has one; a dynamic collection (defined by a query) is "
 "refused."
 
-#: ../../source/cli_document.rst:503
+#: ../../source/cli_document.rst:546
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -992,7 +1077,7 @@ msgstr ""
 "Each position carries a **comment** that gives its reference, after the "
 "document title: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:506
+#: ../../source/cli_document.rst:549
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -1002,11 +1087,11 @@ msgstr ""
 "An interrupted or refused import writes nothing: it is a single "
 "transaction."
 
-#: ../../source/cli_document.rst:510
+#: ../../source/cli_document.rst:553
 msgid "Une position répétée"
 msgstr "A repeated position"
 
-#: ../../source/cli_document.rst:512
+#: ../../source/cli_document.rst:555
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -1018,11 +1103,11 @@ msgstr ""
 "``Mon livre — p. 2, Problem 1; p. 4``. ``repeated`` counts these "
 "repetitions."
 
-#: ../../source/cli_document.rst:518
+#: ../../source/cli_document.rst:561
 msgid "Réimporter"
 msgstr "Re-importing"
 
-#: ../../source/cli_document.rst:520
+#: ../../source/cli_document.rst:563
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -1034,11 +1119,11 @@ msgstr ""
 "comment is rewritten only if its references changed, never doubled. You "
 "can therefore resume an import after correcting the relevé."
 
-#: ../../source/cli_document.rst:526
+#: ../../source/cli_document.rst:569
 msgid "Le démon"
 msgstr "The daemon"
 
-#: ../../source/cli_document.rst:528
+#: ../../source/cli_document.rst:571
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

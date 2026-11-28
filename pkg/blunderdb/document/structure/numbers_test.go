@@ -24,8 +24,8 @@ func fontFigure(f, d int) []int {
 
 // inkNumber draws text, figures of the embedded typeface font, h pixels
 // high, centred on (cx, cy): figures printed in the image, not in a text
-// layer.
-func (c *canvas) inkNumber(text string, cx, cy, h float64, font int) {
+// layer. It gives the left and right of the ink drawn.
+func (c *canvas) inkNumber(text string, cx, cy, h float64, font int) (float64, float64) {
 	type fig struct {
 		lv             []int
 		x0, y0, x1, y1 int
@@ -47,6 +47,7 @@ func (c *canvas) inkNumber(text string, cx, cy, h float64, font int) {
 	gap := 0.15 * h
 	total += gap * float64(len(figs)-1)
 	x := cx - total/2
+	left := x
 	for _, f := range figs {
 		scale := h / float64(f.y1-f.y0)
 		w := float64(f.x1-f.x0) * scale
@@ -61,6 +62,7 @@ func (c *canvas) inkNumber(text string, cx, cy, h float64, font int) {
 		}
 		x += w + gap
 	}
+	return left, x - gap
 }
 
 // TestNumbersReadOrAbstain: numbers drawn in each embedded typeface are read
@@ -197,3 +199,108 @@ func TestUnreadPage(t *testing.T) {
 }
 
 var errUnreadTest = errors.New("a page of vectors")
+
+// farBook prints its pips far right of the board, a letter before each,
+// shifted across from page to page as a book does that sets its boards at
+// varying places under one column of counts.
+func farBook(t *testing.T, letter bool) memPages {
+	r := rand.New(rand.NewSource(29))
+	var pages []synthPage
+	for i := 0; i < 8; i++ {
+		o := drawOpts{p: 36, numbering: true, inkPips: true, inkPipsFar: 6.5, inkPipsShift: float64(i%3 - 1), inkPipsLetter: letter}
+		pages = append(pages, synthPage{pos: []synthPos{randomPos(r), randomPos(r)}, opts: []drawOpts{o, o}})
+	}
+	src, _ := book(t, pages, 7)
+	for i := range src {
+		src[i].Words = nil
+	}
+	return src
+}
+
+// TestLetteredPipsFarRight: counts printed half a board right of it, each
+// after the letter of its side ("W 164", "B 123"), at places that vary across
+// from diagram to diagram, confirm the diagrams.
+func TestLetteredPipsFarRight(t *testing.T) {
+	for _, letter := range []bool{false, true} {
+		res, err := Read(context.Background(), farBook(t, letter))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !res.Profile.PipsInImage {
+			t.Fatalf("letter %v: no pip place learned: %+v", letter, res.Profile)
+		}
+		sure := 0
+		for _, d := range res.Diagrams {
+			if d.State == Confirmed {
+				sure++
+			}
+			if d.ImagePips != nil && (d.ImagePips[0] != d.Pips[1] || d.ImagePips[1] != d.Pips[0]) {
+				t.Errorf("letter %v: pips read %v, counted %v", letter, *d.ImagePips, d.Pips)
+			}
+		}
+		if sure < len(res.Diagrams) {
+			t.Errorf("letter %v: %d sure of %d", letter, sure, len(res.Diagrams))
+		}
+	}
+}
+
+// TestLetterBeforeNumber: one capital before a number, alone with it on
+// its line, is no number of its own and lets the number be read; a word
+// before it, or a letter after it, keeps it from being read.
+func TestLetterBeforeNumber(t *testing.T) {
+	c := newCanvas(1400, 900)
+	h := 20.0
+	gap := 0.55 * h // closer than a lone number's margin, wider than figures'
+	l, _ := c.inkNumber("123", 300, 150, h, 0)
+	c.inkLetter('B', l-gap, 150, h)
+	l, _ = c.inkNumber("164", 700, 150, h, 0)
+	c.inkLetter('W', l-gap, 150, h)
+	// A word: two letters before the number.
+	l, _ = c.inkNumber("145", 300, 400, h, 0)
+	c.inkLetter('W', c.inkLetter('B', l-gap, 400, h)-0.3*h, 400, h)
+	// A letter on either side.
+	l, r := c.inkNumber("152", 700, 400, h, 0)
+	c.inkLetter('B', l-gap, 400, h)
+	c.inkLetter('B', r+gap+0.7*h, 400, h)
+	for k := 0; k < 4; k++ {
+		c.inkNumber(strconv.Itoa(10+k), float64(200+k*200), 650, h, 0)
+	}
+	g := normalize(fromImage(c.image()))
+	nums := extractNumbers(g, box{150, 100, 150 + 13*85, 100 + 8*85})
+	readNumbers([][]printedNumber{nums})
+	got := map[int]bool{}
+	for _, n := range nums {
+		if n.val >= 0 {
+			got[n.val] = true
+		}
+		if n.val == 8 {
+			t.Errorf("the letter B at (%d,%d) read as a number", n.x0, n.y0)
+		}
+	}
+	for _, v := range []int{123, 164} {
+		if !got[v] {
+			t.Errorf("%d after its letter not read", v)
+		}
+	}
+	for _, v := range []int{145, 152} {
+		if got[v] {
+			t.Errorf("%d read beside letters that make no lone letter", v)
+		}
+	}
+}
+
+// A number at a pip place larger than any pip count is a misread: the
+// diagram is left without printed pips instead of showing a contradiction.
+func TestImagePipsRefusesImpossibleCount(t *testing.T) {
+	b := box{0, 0, 1000, 800}
+	slots := []pipSlot{{x: 1.1, y: 0.1, x0: 1.1, x1: 1.1, y0: 0.1, y1: 0.1}, {x: 1.1, y: 0.9, x0: 1.1, x1: 1.1, y0: 0.9, y1: 0.9}}
+	at := func(y, v int) printedNumber {
+		return printedNumber{x0: 1090, x1: 1110, y0: y - 10, y1: y + 10, h: 20, val: v}
+	}
+	if got := imagePips([]printedNumber{at(80, 102), at(720, 90)}, b, slots); got == nil || *got != [2]int{102, 90} {
+		t.Fatalf("counts beside the board: got %v, want [102 90]", got)
+	}
+	if got := imagePips([]printedNumber{at(80, 102), at(720, 890)}, b, slots); got != nil {
+		t.Fatalf("890 read as a pip count: got %v, want nil", *got)
+	}
+}

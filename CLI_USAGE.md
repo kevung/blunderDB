@@ -2718,8 +2718,9 @@ Examples:
 Usage: blunderdb archive import [options] <file>...
 
 Import the matches of paper archives: the exported HTML page (its embedded matches, no code
-reading), or scans and photographs of its sheets (PNG, JPEG), several codes an image, any
-number of images in any order. A lost code is rebuilt from its parity code. Matches go
+reading), a PDF the interface printed (an archive, a match sheet or a position list, its
+codes attached; any other PDF is refused), or scans and photographs of its sheets (PNG,
+JPEG), several codes an image, any number of images in any order. A lost code is rebuilt from its parity code. Matches go
 through the ordinary import: an import batch, and a match already held is a duplicate.
 The reimport codes of a printed position list (sheet --reimport-code) bring their
 positions back, each saved on its own.
@@ -2733,6 +2734,7 @@ Options:
 Examples:
   blunderdb archive import --db database.db archive.html
   blunderdb archive import --db database.db page1.jpg page2.jpg
+  blunderdb archive import --db database.db match-sheet.pdf
 ```
 
 ### `blunderdb arkid`
@@ -2878,6 +2880,28 @@ Examples:
   blunderdb capture --format xgid screenshot.png
   blunderdb capture --db my.db --save --score 2a/5a screenshot.png
   blunderdb capture --db my.db --save --score money --turn 2 cube.png
+```
+
+### `blunderdb collection copy`
+
+```
+Usage: blunderdb collection copy [options]
+
+Copy a whole collection, keeping its order: to a new collection (--name, which takes the source's description), or to the end of an existing one (--to), skipping the positions it already holds. Nothing is copied if any part fails. A living collection cannot be copied or copied into: freeze it first.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	ID of the collection to copy (required)
+  -name string
+    	Name of a new collection to copy to (or --to)
+  -to int
+    	ID of an existing collection to append to (or --name)
+
+Examples:
+  blunderdb collection copy --db database.db --id 3 --name "Openings (copy)"
+  blunderdb collection copy --db database.db --id 3 --to 5
 ```
 
 ### `blunderdb collection create`
@@ -3295,7 +3319,7 @@ Examples:
 ### `blunderdb document analyze`
 
 ```
-Usage: blunderdb document analyze [options] <file.pdf|page-images-folder|page.png>
+Usage: blunderdb document analyze [options] <file.pdf|file.docx|file.odt|file.epub|page.html|page-images-folder|page.png>
 
 Read the diagrams of a document into a relevé, in the document's order, each with its page,
 label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own
@@ -3305,7 +3329,13 @@ with eXtreme Gammon's board font (XG's PDF prints), from its glyphs, or with a S
 board font (the Atchoum family), from the shapes of its embedded glyphs. A scanned book is
 read by the structure of each diagram, from a scanned PDF (its pages composed from their
 images, JPEG, JPEG 2000, JBIG2 or fax) or from its pages as images (a folder
-of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). The printed pip counts
+of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). A written
+document (DOCX, ODT, EPUB, or an HTML page and the pictures in its folder) is read picture
+by picture in the order of its text, each entry's page being the picture's rank and its
+chapter the heading before it; the text around a picture cross-checks it as a PDF's text
+layer does. Nothing is fetched from the network; a picture drawn with vectors (EMF, WMF,
+SVG) is named, not read, and a Word 97-2003 .doc is refused: save it as PDF or DOCX.
+The printed pip counts
 are read in the PDF's text layer and in the image; when the two disagree the entry is not
 sure. Pages that cannot be read are named on standard error. Nothing is written to a
 database: check the relevé, then import it with
@@ -3313,15 +3343,16 @@ database: check the relevé, then import it with
 
 Options:
   -author string
-    	Author of the document (default: the PDF's metadata)
+    	Author of the document (default: the document's metadata)
   -o string
     	Write the relevé to this file (default: standard output)
   -title string
-    	Title of the document (default: the PDF's metadata, else the file or folder name)
+    	Title of the document (default: the document's metadata, else the file or folder name)
 
 Examples:
   blunderdb document analyze book.pdf -o releve.json
   blunderdb document analyze pages/ -o releve.json --title "My book"
+  blunderdb document analyze notes.docx -o releve.json
   blunderdb document analyze book.pdf -o releve.json --title "My book" --author "Its author"
 ```
 
@@ -3378,6 +3409,31 @@ Examples:
   blunderdb document import --db database.db releve.json --accept-complete
   blunderdb document import --db database.db releve.json --fallback
   blunderdb document import --db database.db releve.json --collection "My book" --force
+```
+
+### `blunderdb document verify`
+
+```
+Usage: blunderdb document verify [options] <releve.json|document>
+
+Record that entries of a relevé were compared with their diagrams: they become verified, and an
+import accepts them. --position replaces what was read by the correct XGID (one rank only);
+--undo withdraws the verdict. Given a document rather than a relevé, the relevé kept beside it
+by the interface's verification sheet is the one changed. Nothing is written to a database.
+
+Options:
+  -position string
+    	The correct position of the entry, as an XGID
+  -rank string
+    	Ranks of the entries, separated by commas (required)
+  -undo
+    	Withdraw the verdict: the entries are no longer verified
+
+Examples:
+  blunderdb document verify releve.json --rank 12
+  blunderdb document verify releve.json --rank 3,4,9
+  blunderdb document verify book.pdf --rank 12 --position "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:5:10"
+  blunderdb document verify releve.json --rank 12 --undo
 ```
 
 ### `blunderdb duel contribute`

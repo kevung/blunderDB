@@ -18,6 +18,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
+	"github.com/kevung/blunderdb/pkg/blunderdb/progress"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/searchfilter"
@@ -201,6 +202,11 @@ func ExportSQLite(ctx context.Context, src storage.Storage, scope, path string, 
 	}
 	report, err := writeExport(ctx, src, scope, writePath, opts)
 	if err != nil {
+		// A cancelled or failed export leaves no half-made file behind: it
+		// would open as a database holding part of the selection.
+		if rmErr := os.Remove(writePath); rmErr != nil && !os.IsNotExist(rmErr) {
+			slog.Warn("removing the unfinished export", "path", writePath, "err", rmErr)
+		}
 		return report, err
 	}
 	if writePath != path {
@@ -266,6 +272,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 	for _, step := range []func() error{
 		e.writeMetadata,
 		e.resolveSelection,
+		e.countWork,
 		e.writePositions,
 		e.writeDerivations,
 		e.writeCollections,
@@ -341,6 +348,8 @@ func openExportTarget(ctx context.Context, path string) (*sql.DB, error) {
 // exporter carries one export's state: the resolved selection and the maps
 // from source ids to the ids the new file assigned.
 type exporter struct {
+	// workDone and workTotal are the units the export reports done of all.
+	workDone, workTotal int
 	// tags are the tags of the comments that leave: a stored query may name
 	// no other.
 	tags  map[string]bool
@@ -602,6 +611,35 @@ const positionBatch = 1000
 
 // writePositions walks the position set in batches, reading each batch's
 // analyses, played moves and comments in one statement per family.
+// countWork sizes the progress the export reports (progress.Report): one
+// unit a position, one a match. A count that fails leaves the size unknown.
+func (e *exporter) countWork() error {
+	sel := e.opts.Selection
+	n := len(sel.Positions) + len(sel.PositionIDs)
+	if sel.AllPositions {
+		c, err := e.src.Positions().Count(e.ctx, e.scope)
+		if err != nil {
+			e.workTotal = 0
+			return nil
+		}
+		n = c
+	}
+	e.workTotal = n + len(e.extraPositionIDs) + len(e.matchIDs)
+	progress.Report(e.ctx, 0, e.workTotal)
+	return nil
+}
+
+// tick reports one more unit written.
+func (e *exporter) tick() {
+	e.workDone++
+	if e.workTotal > 0 && e.workDone > e.workTotal {
+		// The count fell short: say the size is unknown rather than move
+		// the end at every row.
+		e.workTotal = 0
+	}
+	progress.Report(e.ctx, e.workDone, e.workTotal)
+}
+
 func (e *exporter) writePositions() error {
 	sel := e.opts.Selection
 	switch {
@@ -744,6 +782,7 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 		}
 		e.written[newID] = true
 		e.report.Positions++
+		e.tick()
 
 		if a := analyses[p.ID]; a != nil {
 			ac := *a
@@ -1437,6 +1476,7 @@ func (e *exporter) writeMatches() error {
 		}
 		e.matchMap[id] = newMatchID
 		e.report.Matches++
+		e.tick()
 		e.noteMatchNames(m)
 
 		var games []*domain.Game

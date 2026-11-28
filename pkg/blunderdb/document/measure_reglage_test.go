@@ -73,7 +73,7 @@ func TestMeasureContextOnPages(t *testing.T) {
 	count := map[string]int{"diagrams": len(res.Diagrams)}
 	for _, x := range res.Diagrams {
 		c := x.Context
-		_ = enc.Encode(map[string]any{"page": pages[x.Page], "rect": x.Rect, "context": c, "doubts": x.Doubts,
+		_ = enc.Encode(map[string]any{"page": pages[x.Page], "rect": x.Rect, "state": x.State, "context": c, "doubts": x.Doubts,
 			"board": x.Board, "sure": x.CheckersSure, "complete": x.Complete, "pips": x.Pips, "printed": x.Printed, "textPips": x.TextPips, "imagePips": x.ImagePips})
 		for k, v := range map[string]bool{"cube read": c.CubeRead, "dice read": c.DiceRead, "turn read": c.TurnRead, "context read": c.Read, "score read": c.Score != nil} {
 			if v {

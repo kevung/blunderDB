@@ -53,6 +53,13 @@ func TestComputeCubeMatrix_ShapeAndScores(t *testing.T) {
 		}
 		switch c.Verdict {
 		case "no_double", "double_take", "double_pass", "too_good":
+			if key == [2]int{1, 1} {
+				t.Fatalf("cell %v: the double match point must carry %q, got %q", key, VerdictDMP, c.Verdict)
+			}
+		case VerdictDMP:
+			if key != [2]int{1, 1} {
+				t.Fatalf("cell %v: %q outside the double match point", key, c.Verdict)
+			}
 		default:
 			t.Fatalf("cell %v: unknown verdict %q", key, c.Verdict)
 		}

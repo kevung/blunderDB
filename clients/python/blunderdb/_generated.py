@@ -250,6 +250,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/collections.collectionsOf — NDJSON stream."
         return self._stream("/v1/collections.collectionsOf", payload)
 
+    def collections_copy(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/collections.copy — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/collections.copy", payload, idempotency_key=idempotency_key)
+
     def collections_copy_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.copyPosition — JSON."
         return self._call("/v1/collections.copyPosition", payload)

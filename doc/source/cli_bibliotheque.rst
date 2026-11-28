@@ -515,6 +515,13 @@ ou ``csv``, comme ``list``.
 * ``freeze --id <id>`` — Fige une collection vivante : les positions que sa
   requête sélectionne maintenant deviennent sa composition, la requête
   s'efface. Refusé sur une collection qui n'est pas vivante.
+* ``copy --id <id> (--name <nom> | --to <id>)`` — Copie une collection
+  entière, dans son ordre, en une seule opération : vers une nouvelle
+  collection nommée ``--name``, qui reprend la description de la source et
+  se range en fin de liste, ou à la suite de la collection existante
+  ``--to``, en sautant les positions qu'elle contient déjà. Rien n'est copié
+  si une partie échoue. Une collection vivante n'est ni copiée ni complétée :
+  la figer d'abord.
 * ``evaluate --id <id> [--limit <n>] [--format text|json]`` — Lit les
   identifiants des positions d'une collection, en rejouant maintenant la
   requête d'une collection vivante. La réponse est bornée par un plafond
@@ -580,6 +587,7 @@ tout de même avec le code 0.
    ./blunderdb collection show --db base.db --id 3 --format csv
 
    ./blunderdb collection create --db base.db --name "Ouvertures blitz"
+   ./blunderdb collection copy --db base.db --id 3 --name "Ouvertures (copie)"
    ./blunderdb collection rename --db base.db --id 3 --name "Ouvertures"
    ./blunderdb collection delete --db base.db --id 3 --confirm
 

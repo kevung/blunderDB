@@ -23,7 +23,7 @@ body { --ink: #111; --soft: #555; --paper: #fff;
 .sheet { position: relative; width: 210mm; height: 297mm; box-sizing: border-box; padding: 9mm 8mm; overflow: hidden;
   background: var(--paper); color: var(--ink); font-family: var(--cond); font-size: 7pt; line-height: 1.2;
   font-variant-numeric: tabular-nums; break-after: page; page-break-after: always }
-.doc:last-child .sheet:last-child { break-after: auto; page-break-after: auto }
+.doc:last-of-type .sheet:last-child { break-after: auto; page-break-after: auto }
 @media screen { body { background: #ddd } .sheet { margin: 8mm auto; box-shadow: 0 0 2mm #888 } }
 .mh { display: flex; justify-content: space-between; gap: 2em; align-items: flex-end; border-bottom: .6pt solid var(--ink); padding-bottom: .35em }
 .mt { font-size: 1.9em; font-weight: 600; line-height: 1.1 }
@@ -58,7 +58,7 @@ body { --ink: #111; --soft: #555; --paper: #fff;
 .nt { font-family: var(--mono); font-size: .93em; font-weight: 600; white-space: nowrap; min-width: 34ch }
 .wh { color: var(--soft) } .cm { font-style: italic; white-space: pre-wrap }
 .pe > .cm { grid-column: 2 / -1 }
-.qrb { break-inside: avoid; display: flex; gap: 1.2em; align-items: flex-end; margin-top: .9em; color: var(--soft) }
+.qrb { break-inside: avoid; display: flex; flex-wrap: wrap; gap: 1.2em; align-items: flex-end; margin-top: .9em; color: var(--soft) }
 .qrb svg { flex: none; display: block; shape-rendering: crispEdges }
 .pe.cont > .cm::before, .de.cont > .cm:first-child::before { content: "… " }
 .dl { column-gap: 1.6em; column-rule: .3pt solid #aaa }
@@ -265,6 +265,8 @@ const fitScript = `(function () {
       spill(doc, back, head);
     } else if (flow(s)) fit(s);
   });
+  // The signal a PDF renderer waits for: the layout is final.
+  document.documentElement.setAttribute('data-fitted', '');
 })();`
 
 // Document wraps documents — each a <section class="doc"> holding its sheets

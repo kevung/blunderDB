@@ -13,6 +13,10 @@ func TestOpenLocalPage_Validation(t *testing.T) {
 	if err := os.WriteFile(page, []byte("<html></html>"), 0o600); err != nil {
 		t.Fatal(err)
 	}
+	pdf := filepath.Join(dir, "sheet.pdf")
+	if err := os.WriteFile(pdf, []byte("%PDF-1.4"), 0o600); err != nil {
+		t.Fatal(err)
+	}
 	txt := filepath.Join(dir, "notes.txt")
 	if err := os.WriteFile(txt, nil, 0o600); err != nil {
 		t.Fatal(err)
@@ -37,6 +41,7 @@ func TestOpenLocalPage_Validation(t *testing.T) {
 		skip bool
 	}{
 		{"html file", page, true, false},
+		{"printed sheet", pdf, true, false},
 		{"wrong extension", txt, false, false},
 		{"missing", filepath.Join(dir, "absent.html"), false, false},
 		{"directory", sub, false, false},

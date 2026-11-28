@@ -14,6 +14,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/document/pdf"
 )
@@ -45,6 +46,49 @@ type AnalyzeOptions struct {
 	// Every caller gives one (CancelImport, Ctrl-C); nil, for a test, is
 	// context.Background.
 	Context context.Context `json:"-"`
+	// Progress, when set, receives the pages read so far after each page
+	// (never decreasing, the last one always delivered); wrap it with
+	// ThrottledProgress to bound its rate.
+	Progress func(Progress) `json:"-"`
+}
+
+// Progress is how far a reading has gone: Page of Pages done, Diagrams found
+// so far.
+type Progress struct {
+	Page     int `json:"page"`
+	Pages    int `json:"pages"`
+	Diagrams int `json:"diagrams"`
+}
+
+// ThrottledProgress wraps f so that it is called at most once per interval,
+// except for the final report (Page == Pages), which is always delivered.
+func ThrottledProgress(f func(Progress), interval time.Duration) func(Progress) {
+	if f == nil {
+		return nil
+	}
+	var last time.Time
+	return func(p Progress) {
+		now := time.Now()
+		if p.Page < p.Pages && !last.IsZero() && now.Sub(last) < interval {
+			return
+		}
+		last = now
+		f(p)
+	}
+}
+
+func (o AnalyzeOptions) report(page, pages, diagrams int) {
+	if o.Progress != nil {
+		o.Progress(Progress{Page: page, Pages: pages, Diagrams: diagrams})
+	}
+}
+
+// pageHook adapts the progress to the structure reader's per-page report.
+func (o AnalyzeOptions) pageHook(pages int) func(done, diagrams int) {
+	if o.Progress == nil {
+		return nil
+	}
+	return func(done, diagrams int) { o.report(done, pages, diagrams) }
 }
 
 func (o AnalyzeOptions) context() context.Context {
@@ -160,6 +204,11 @@ func AnalyzePDF(data []byte, opts AnalyzeOptions) (*Releve, error) {
 			e.Page = n
 			e.Chapter = chapterOf(outline, n)
 			r.Entries = append(r.Entries, e)
+		}
+		// A scanned book has no entry here: its progress is the structure
+		// reader's, so as not to count its pages twice.
+		if boardFont || len(r.Entries) > 0 {
+			opts.report(n, rd.NumPages(), len(r.Entries))
 		}
 	}
 	if len(r.Entries) == 0 && !boardFont {

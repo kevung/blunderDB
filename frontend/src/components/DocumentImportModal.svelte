@@ -1,14 +1,17 @@
 <script>
-    // L'assistant d'import de document : lit un PDF, des images ou un Relevé,
+    // L'assistant d'import de document : lit un PDF, un document rédigé, des images ou un Relevé,
     // fait confirmer une fois les défauts du document et le sens de jeu,
     // montre les entrées à vérifier avec leur note, puis importe — au même
     // niveau que `document import --accept-complete --fallback`.
     import { t } from '../i18n';
     import Modal from './Modal.svelte';
+    import DocumentVerifySheet from './DocumentVerifySheet.svelte';
     import { documentImportStore } from '../stores/documentImportStore.js';
-    import { confirmDocument, setChoice, runDocumentImport, closeDocumentImport } from '../services/documentImportService.js';
+    import { confirmDocument, setChoice, runDocumentImport, closeDocumentImport, cancelDocumentImport, isWrittenDocument } from '../services/documentImportService.js';
 
     let { visible = false } = $props();
+    /** @type {any} */
+    let sheet = $state();
 
     const s = $derived($documentImportStore);
     const summary = $derived(s.summary);
@@ -17,6 +20,14 @@
     const refused = $derived(s.review.refused ?? []);
     const unconfirmed = $derived(!!defaults && (!defaults.confirmed || (!!defaults.direction && !defaults.direction.confirmed)));
     const busy = $derived(s.phase === 'reading' || s.phase === 'importing');
+    const percent = $derived(s.progress && s.progress.pages > 0 ? Math.round((s.progress.page / s.progress.pages) * 100) : 0);
+    // Le temps restant se tire de la vitesse moyenne depuis le début ; muet avant deux pages.
+    const eta = $derived.by(() => {
+        const p = s.progress;
+        if (!p || p.page < 2 || p.page >= p.pages) return '';
+        const secs = Math.round((((Date.now() - p.startedAt) / p.page) * (p.pages - p.page)) / 1000);
+        return secs >= 60 ? `${Math.floor(secs / 60)} min ${String(secs % 60).padStart(2, '0')} s` : `${secs} s`;
+    });
     const canImport = $derived(s.phase === 'review' && refused.length === 0 && (summary?.entries ?? 0) > 0);
     /** @param {string} f a field code of a doubt, as document.ReviewItem names it */
     function fieldLabel(f) {
@@ -46,10 +57,18 @@
     const fallbackRanks = $derived(s.review.fallbackRanks ?? []);
 </script>
 
-<Modal open={visible} onclose={() => !busy && closeDocumentImport()} closeButton={!busy} closeOnEscape={!busy} size="wide" label={$t('documentImport.title')}>
+<Modal open={visible} onclose={cancelDocumentImport} size="wide" label={$t('documentImport.title')} onkeydown={(/** @type {KeyboardEvent} */ e) => sheet?.handleKey(e)}>
     <h2 class="doc-title">{$t('documentImport.title')}</h2>
     {#if s.phase === 'reading'}
         <p data-testid="document-import-reading">{$t('documentImport.reading')}</p>
+        {#if s.progress && s.progress.pages > 0}
+            <div class="progress-bar-container"><div class="progress-bar" style="width: {percent}%"></div></div>
+            <p class="doc-progress" data-testid="document-import-progress">
+                {$t(isWrittenDocument(s.path) ? 'documentImport.progressPictures' : 'documentImport.progress', { page: s.progress.page, pages: s.progress.pages, diagrams: s.progress.diagrams })}{eta
+                    ? ` · ${$t('documentImport.eta', { eta })}`
+                    : ''}
+            </p>
+        {/if}
     {/if}
     {#if s.error}
         <p class="doc-error" role="alert" data-testid="document-import-error">{s.error}</p>
@@ -99,25 +118,8 @@
             </label>
         </fieldset>
         <section class="doc-block">
-            <h3>{$t('documentImport.review', { n: s.review.items.length })}</h3>
-            {#if s.review.items.length === 0}
-                <p>{$t('documentImport.reviewNone')}</p>
-            {:else}
-                <ul class="doc-review" data-testid="document-import-review">
-                    {#each s.review.items as item (item.rank)}
-                        <li data-rank={item.rank} class:held={item.held}>
-                            <strong>{item.reference}</strong>
-                            <span
-                                >{item.state === 'sure'
-                                    ? $t('documentImport.state.sure')
-                                    : item.state === 'uncertain'
-                                      ? $t('documentImport.state.uncertain')
-                                      : $t('documentImport.state.to-verify')}</span
-                            >
-                            {#if item.fields.length}<em>{$t('documentImport.check', { fields: item.fields.map((/** @type {string} */ f) => fieldLabel(f)).join(', ') })}</em>{/if}
-                        </li>
-                    {/each}
-                </ul>
+            {#if s.sheet.length > 0}
+                <DocumentVerifySheet bind:this={sheet} {fieldLabel} {busy} />
             {/if}
             {#if refused.length > 0}
                 <p class="doc-refused" data-testid="document-import-refused">{$t('documentImport.refused', { ranks: refused.join(', ') })}</p>
@@ -136,13 +138,29 @@
         {#if s.phase === 'done'}
             <button type="button" class="primary" data-testid="document-import-close" onclick={closeDocumentImport}>{$t('common.close')}</button>
         {:else}
-            <button type="button" data-testid="document-import-cancel" disabled={busy} onclick={closeDocumentImport}>{$t('common.cancel')}</button>
+            <button type="button" data-testid="document-import-cancel" onclick={cancelDocumentImport}>{$t('common.cancel')}</button>
             <button type="button" class="primary" data-testid="document-import-run" disabled={!canImport} onclick={runDocumentImport}>{$t('documentImport.run')}</button>
         {/if}
     {/snippet}
 </Modal>
 
 <style>
+    .progress-bar-container {
+        width: 100%;
+        background-color: var(--color-border);
+        border-radius: 4px;
+        overflow: hidden;
+        height: 8px;
+    }
+    .progress-bar {
+        height: 100%;
+        background-color: var(--color-text);
+        transition: width 0.2s ease;
+    }
+    .doc-progress {
+        margin: var(--space-2) 0;
+        color: var(--color-text-muted);
+    }
     .doc-title {
         margin: 0 0 var(--space-2);
         font-size: var(--font-size-dialog-title);
@@ -158,20 +176,6 @@
         border: none;
         padding: 0;
         margin: var(--space-2) 0;
-    }
-    .doc-review {
-        max-height: 14em;
-        overflow-y: auto;
-        margin: 0;
-        padding-left: var(--space-3);
-    }
-    .doc-review li.held {
-        font-weight: 600;
-    }
-    .doc-review em {
-        display: block;
-        font-style: normal;
-        opacity: 0.8;
     }
     .doc-error,
     .doc-refused {

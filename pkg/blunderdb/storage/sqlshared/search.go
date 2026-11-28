@@ -206,8 +206,10 @@ func placedCheckers(b domain.Board) (black, white int) {
 
 // blunderFloor is the predicate of idx_analysis_blunder, in thousandths of a point.
 // blunderListLimit: a list costs about a millisecond of planning per thousand ids.
+// countJoinFloor: see probedErrExpr; measured between E>35 and E>50 on 11 M positions.
 const (
 	blunderFloor     = 100
+	countJoinFloor   = 50
 	blunderListLimit = 50000
 )
 
@@ -378,20 +380,24 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		return false, "", nil
 	}
 	// Rare, the error is read from its two indexes, positionErrExpr split in its two
-	// branches. Common, the walk in id order meets its rows soon, on the joined analysis.
+	// branches. Common, the walk in id order meets its rows soon, probing analysis
+	// (probedErrExpr; SQLite keeps the join).
 	tenant, tenantArgs := s.DB.TenantFilter("an", scope)
 	own, ownArgs := s.DB.TenantFilter("", scope)
-	recheck := func() {
-		where.WriteString(" AND (" + positionErrExpr + cond + " OR " + s.DB.Bool("p.multi_played", true) + ")")
+	recheckWith := func(errExpr string) {
+		where.WriteString(" AND (" + errExpr + cond + " OR " + s.DB.Bool("p.multi_played", true) + ")")
 		*argsp = append(*argsp, bound...)
 	}
+	recheck := func() { recheckWith(s.probedErrExpr(ctx, eHasMin && eqMin >= countJoinFloor)) }
 	// From a blunder up, idx_analysis_blunder holds every candidate in id order, whatever
 	// the decision of the position: the threshold is written out for the planner to see
 	// that the partial index applies.
 	if eHasMin && eqMin >= blunderFloor {
 		n := strconv.Itoa(eqMin)
+		// The candidates are few and walked, so the join costs nothing there, and
+		// probesIDWalk refuses a filter that carries a subquery.
 		if s.readsBlunderWindows(ctx, f) {
-			recheck()
+			recheckWith(positionErrExpr)
 			return true, n, nil
 		}
 		sub := "SELECT position_id FROM analysis WHERE " + own + " AND (best_move_equity_error >= " + n + " OR cube_error >= " + n + ")" +
@@ -417,7 +423,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		if err := s.narrowWithin(ctx, blunderListLimit, sub, append(append([]any{}, ownArgs...), ownArgs...), where, argsp, common); err != nil {
 			return true, "", err
 		}
-		recheck()
+		recheckWith(positionErrExpr)
 		return true, "", nil
 	}
 	branch := func(decision, col string) string {
@@ -432,6 +438,32 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		"SELECT * FROM (SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true) + stop + "multi"
 	subArgs := append(append(append(append(append([]any{}, tenantArgs...), bound...), tenantArgs...), bound...), ownArgs...)
 	return true, "", s.narrowToIDs(ctx, sub, subArgs, where, argsp, recheck)
+}
+
+// probedErrExpr is positionErrExpr read by one probe of analysis per position
+// on PostgreSQL. Joined, with a filter on position beside it, the planner
+// hashes the analysis of the whole tenant to keep a page; a scalar subquery
+// cannot be turned into a join, so the walk in id order stops at the page.
+// A counting reader (countingKey) keeps the join when it reads every
+// survivor, or a bounded count of a selective threshold: probed, the planner
+// walks position by a tenant-led index in random heap order, and past
+// countJoinFloor that walk is long enough to cost twice the sequential one of
+// the join. SQLite keeps the join, which its planner walks row by row anyway.
+func (s *SearchStore) probedErrExpr(ctx context.Context, selective bool) string {
+	bounded, counts := ctx.Value(countingKey{}).(bool)
+	if s.DB.Name() == "sqlite" || counts && (!bounded || selective) {
+		return positionErrExpr
+	}
+	return "(SELECT CASE WHEN p.decision_type = 1 THEN e.cube_error ELSE e.best_move_equity_error END" +
+		" FROM analysis e WHERE e.position_id = p.id" + andSameTenant(s.DB, "e", "p") + ")"
+}
+
+// countingKey marks a reader that counts the survivors instead of stopping at
+// a page: true for CountUpTo, bounded, false for Count and IndexOf.
+type countingKey struct{}
+
+func counting(ctx context.Context, bounded bool) context.Context {
+	return context.WithValue(ctx, countingKey{}, bounded)
 }
 
 // blunderBranches: atomic so a test can turn the blunder windows off
@@ -1502,7 +1534,7 @@ func (s *SearchStore) findIDsWith(ctx context.Context, f domain.SearchFilters, w
 // Count returns how many positions the search finds: one COUNT in SQL when
 // no Go phase is left, else a chunked scan that holds one chunk at a time.
 func (s *SearchStore) Count(ctx context.Context, scope string, f domain.SearchFilters) (int, error) {
-	wc, err := s.buildWhere(ctx, scope, f)
+	wc, err := s.buildWhere(counting(ctx, false), scope, f)
 	if err != nil {
 		return 0, err
 	}
@@ -1546,7 +1578,7 @@ func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.Sear
 	if max <= 0 {
 		return 0, false, fmt.Errorf("search count: max %d: %w", max, storage.ErrInvalid)
 	}
-	wc, err := s.buildWhere(context.WithValue(ctx, listedBlundersKey{}, true), scope, f)
+	wc, err := s.buildWhere(context.WithValue(counting(ctx, true), listedBlundersKey{}, true), scope, f)
 	if err != nil {
 		return 0, false, err
 	}
@@ -1606,7 +1638,7 @@ func (s *SearchStore) countWhere(ctx context.Context, wc searchWhereClause, extr
 // is COUNTs: the rows sorted before id, compared on the sort key then the id.
 // Otherwise the scan walks to id.
 func (s *SearchStore) IndexOf(ctx context.Context, scope string, f domain.SearchFilters, id int64) (int, bool, error) {
-	wc, err := s.buildWhere(ctx, scope, f)
+	wc, err := s.buildWhere(counting(ctx, false), scope, f)
 	if err != nil {
 		return 0, false, err
 	}

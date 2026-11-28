@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:13+0100\n"
+"POT-Creation-Date: 2026-11-28 01:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -240,9 +240,9 @@ msgstr "collection"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Gère les collections (liste, contenu, création, renommage, suppression, "
-"export)."
-msgstr "コレクションを管理します（一覧、内容、作成、名前変更、削除、エクスポート）。"
+"Gère les collections (liste, contenu, création, copie, renommage, "
+"suppression, export)."
+msgstr "コレクションを管理します（一覧、内容、作成、コピー、名前変更、削除、エクスポート）。"
 
 #: ../../source/cli.rst:1
 msgid "study"
@@ -290,9 +290,11 @@ msgstr "document"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Lit les diagrammes d'un PDF dans un relevé, vérifie un relevé ou importe "
-"ses positions dans une collection."
-msgstr "PDF の図を relevé に読み取るか、relevé を検証するか、そのポジションをコレクションに取り込みます。"
+"Lit les diagrammes d'un PDF dans un relevé, vérifie un relevé, y note les"
+" entrées vérifiées ou importe ses positions dans une collection."
+msgstr ""
+"PDF の図を relevé に読み取るか、relevé "
+"を検証するか、そこに確認済みの項目を記録するか、そのポジションをコレクションに取り込みます。"
 
 #: ../../source/cli.rst:1
 msgid "anki"

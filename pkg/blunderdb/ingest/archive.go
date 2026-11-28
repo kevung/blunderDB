@@ -7,11 +7,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/arkqr"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
+	"github.com/kevung/blunderdb/pkg/blunderdb/pdfattach"
+	"github.com/kevung/blunderdb/pkg/blunderdb/progress"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
@@ -53,10 +56,11 @@ func ExportArchive(ctx context.Context, s storage.Storage, scope string, ids []i
 	}
 	var payloads [][]byte
 	var labels []string
-	for _, id := range ids {
+	for i, id := range ids {
 		if err := ctx.Err(); err != nil {
 			return nil, res, err
 		}
+		progress.Report(ctx, i, len(ids))
 		am, label, err := ArchiveMatch(ctx, s, scope, id)
 		if err == nil {
 			var data []byte
@@ -75,6 +79,7 @@ func ExportArchive(ctx context.Context, s storage.Storage, scope string, ids []i
 	if len(payloads) == 0 {
 		return nil, res, fmt.Errorf("no match to archive: %w", storage.ErrInvalid)
 	}
+	progress.Report(ctx, len(ids), len(ids))
 	frames, owner, err := arkqr.Frames(payloads)
 	if err != nil {
 		return nil, res, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
@@ -265,10 +270,28 @@ func ArchiveGraph(am arkqr.Match) (*MatchGraph, error) {
 }
 
 // ReadArchive returns the codes of one archive file: the frames an exported
-// page embeds, or the codes an image (PNG, JPEG) shows.
+// page embeds, those a PDF printed from such a page carries as an attached
+// file, or the codes an image (PNG, JPEG) shows.
 func ReadArchive(data []byte) ([]arkqr.Frame, error) {
 	if arkqr.IsPage(data) {
 		return arkqr.ReadPage(data)
+	}
+	if IsPDF(data) {
+		var out []arkqr.Frame
+		for _, f := range pdfattach.Files(data) {
+			if !arkqr.IsPage(f) {
+				continue
+			}
+			fs, err := arkqr.ReadPage(f)
+			if err != nil {
+				return nil, err
+			}
+			out = append(out, fs...)
+		}
+		if len(out) == 0 {
+			return nil, ErrNoPDFPayload
+		}
+		return out, nil
 	}
 	if t := bytes.TrimSpace(data); len(t) > 0 && t[0] == '<' {
 		return nil, arkqr.ErrNoPayload
@@ -427,4 +450,56 @@ func (im ArchiveImporter) Import(ctx context.Context, scope string, src Source, 
 	}
 	committed = true
 	return sum, nil
+}
+
+// ErrNoPDFPayload is a PDF that carries no blunderDB archive: not printed by
+// blunderDB, or printed without reimport codes.
+var ErrNoPDFPayload = fmt.Errorf("%w: this PDF carries no blunderDB archive", arkqr.ErrNoPayload)
+
+// archiveAttachment is the name of the file a printed PDF carries: an
+// archive page of its own, importable as it is once extracted.
+const archiveAttachment = "blunderdb-archive.html"
+
+// IsPDF reports whether data is a PDF document.
+func IsPDF(data []byte) bool {
+	return bytes.HasPrefix(bytes.TrimLeft(data, " \t\r\n"), []byte("%PDF-"))
+}
+
+// EmbedArchiveInPDF attaches to pdf, printed from page, the frames page
+// embeds, so the PDF reimports like the page. A page without frames leaves
+// pdf as it is.
+func EmbedArchiveInPDF(pdf, page []byte) ([]byte, error) {
+	if !arkqr.IsPage(page) {
+		return pdf, nil
+	}
+	frames, err := arkqr.ReadPage(page)
+	if err != nil {
+		return nil, err
+	}
+	return pdfattach.Attach(pdf, archiveAttachment, "text/html", []byte(arkqr.EmbedFrames(frames)))
+}
+
+// IsArchiveFile reports whether the file at path is one blunderDB produced
+// that carries an archive: an exported page, a match sheet or a position
+// list saved as HTML with its reimport codes, or the PDF the interface
+// printed from one. Every entry that takes a printed or written document
+// asks it first, so such a file imports by the archive path.
+func IsArchiveFile(path string) bool {
+	switch strings.ToLower(filepath.Ext(path)) {
+	case ".html", ".htm", ".pdf":
+	default:
+		return false
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false
+	}
+	if arkqr.IsPage(data) {
+		return true
+	}
+	if !IsPDF(data) {
+		return false
+	}
+	frames, err := ReadArchive(data)
+	return err == nil && len(frames) > 0
 }

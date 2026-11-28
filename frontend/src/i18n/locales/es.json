@@ -167,6 +167,7 @@
         "syncTitle": "Sincronización"
     },
     "toolbar": {
+        "importDocument": "Importar un documento…",
         "copyBoardImage": "Copiar imagen del tablero",
         "copyBoardImageTip": "Copiar imagen del tablero al portapapeles",
         "copyBoardImageWithAnalysis": "con análisis",
@@ -370,7 +371,10 @@
         "reimportCodeTip": "El código QR del partido al final de la transcripción, también incrustado en el archivo",
         "batch": "Los {n} partidos de la lista",
         "batchTip": "Una hoja por partido, en un solo documento",
-        "tooMany": "{n} partidas en la lista: una impresión admite {max} como máximo. Filtre la lista para reducirla."
+        "tooMany": "{n} partidas en la lista: una impresión admite {max} como máximo. Filtre la lista para reducirla.",
+        "selection": "{n} partidas seleccionadas",
+        "tooManySelected": "{n} partidas seleccionadas: máximo {max} por impresión o archivo.",
+        "cancelled": "Hoja de partida cancelada"
     },
     "positionSheet": {
         "title": "Imprimir una lista de posiciones",
@@ -396,7 +400,8 @@
         "library": "Biblioteca",
         "basket": "Imprimir las posiciones",
         "basketTip": "Imprime las posiciones de la cesta que vienen de la biblioteca en pantalla",
-        "basketTitle": "Cesta"
+        "basketTitle": "Cesta",
+        "cancelled": "Lista de posiciones cancelada"
     },
     "paperArchive": {
         "menu": "Archivo en papel…",
@@ -406,6 +411,7 @@
         "exportWhat": "Exportar",
         "scopeMatch": "Esta partida",
         "scopeList": "Las {n} partidas de la lista",
+        "scopeSelection": "Las {n} partidas seleccionadas",
         "scopeLibrary": "Toda la biblioteca",
         "export": "Exportar…",
         "import": "Importar…",
@@ -413,7 +419,9 @@
         "exported": "Archivo en papel guardado: {path} ({matches} partidas, {codes} códigos, {skipped} descartadas)",
         "importing": "Leyendo el archivo en papel…",
         "imported": "Archivo en papel: {imported} partidas importadas, {duplicates} duplicadas; {positions} posiciones importadas, {knownPositions} ya presentes, {missing} códigos faltantes, {failed} fallidas",
-        "failed": "Error en el archivo en papel: {err}"
+        "failed": "Error en el archivo en papel: {err}",
+        "noPdfPayload": "Este PDF no contiene ningún archivo de blunderDB: no se ha importado nada",
+        "cancelled": "Archivo en papel cancelado"
     },
     "match": {
         "errorExportingMat": "Error al exportar el partido",
@@ -703,6 +711,7 @@
         "name": "Nombre",
         "newTournamentPlaceholder": "Nuevo torneo…",
         "noMatches": "Sin partidas",
+        "print": "Imprimir el torneo…",
         "noTournaments": "Sin torneos",
         "openHint": "Doble clic o Intro para abrir",
         "notesPlaceholder": "Notas…",
@@ -877,6 +886,8 @@
         "hintPlayerBackgammon": "Jugador: probabilidad de backgammon",
         "hintOpponentWin": "Rival: probabilidad de ganar",
         "hintOpponentGammon": "Rival: probabilidad de gammon",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "Variación de equity respecto a la evaluación anterior",
         "hintOpponentBackgammon": "Rival: probabilidad de backgammon",
         "empty": "Sin análisis",
         "evaluate": "Evaluar"
@@ -1108,6 +1119,9 @@
         "batchDone": "gammonNet: {evaluated} analizada(s), {refused} rechazada(s), {failed} fallida(s)",
         "batchFailed": "gammonNet: análisis no realizado — {error}",
         "baseline": "Antes de la tirada",
+        "depthSelect": "Profundidad de la evaluación mostrada, solo para este panel",
+        "rerun": "Reevaluar la posición a esta profundidad",
+        "rerunPlays": "Reevaluar las {n} jugadas seleccionadas a esta profundidad",
         "baselineTooltip": "Valores antes de la tirada, en el eje de la lista — una referencia, no una jugada candidata. La diferencia con esta fila es la suerte de la tirada, no el mérito de una jugada."
     },
     "searchHistory": {
@@ -1682,7 +1696,8 @@
         "gnubgIdCopied": "ID GNUbg copiado al portapapeles",
         "arkIdCopied": "ArkID copiado al portapapeles",
         "noMatchForPosition": "Ningún match ha jugado esta posición",
-        "moveGone": "Esa jugada ya no está en la partida: abierta donde la dejó"
+        "moveGone": "Esa jugada ya no está en la partida: abierta donde la dejó",
+        "exportRunning": "Exportación en curso — progreso y Cancelar en el panel Cálculos"
     },
     "stats": {
         "title": "Stats",
@@ -3744,7 +3759,7 @@
             "spread": "Desv. típica",
             "dance": "Baile",
             "replies": "Respuestas",
-            "other": "Otra jugada…",
+            "otherPlays": "Otras jugadas",
             "start": "Inicio",
             "me": "yo",
             "him": "él",
@@ -3760,13 +3775,12 @@
             "opponent": "Rival",
             "match": "Partida a {n}",
             "evaluate": "Evaluar",
-            "best": "Mejor",
-            "second": "Segunda",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Jugadas",
             "close": "Cerrar",
             "refused": "Rechazado",
             "crawford": "Crawford",
+            "postCrawford": "post-Crawford",
             "error": "Error"
         },
         "verdict": {
@@ -3774,13 +3788,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "Sin doble",
                 "double_take": "Doble/Acepta",
                 "double_pass": "Doble/Rechaza",
-                "too_good": "Demasiado bueno"
+                "too_good": "Demasiado bueno",
+                "dmp": "Sin cubo en el doble punto de partido"
             }
         },
         "menu": {
@@ -3823,12 +3839,20 @@
             "transfer": "Transferencia",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Otro"
+            "other": "Otro",
+            "export": "Exportación",
+            "paperArchive": "Archivo en papel",
+            "print": "Impresión"
         }
     },
     "documentImport": {
         "title": "Importar un documento",
         "reading": "Leyendo el documento…",
+        "progress": "página {page} / {pages} · {diagrams} diagramas",
+        "progressPictures": "imagen {page} / {pages} · {diagrams} diagramas",
+        "eta": "faltan {eta}",
+        "cancelled": "Lectura cancelada.",
+        "importCancelled": "Importación cancelada.",
         "failed": "Falló la importación del documento: {err}",
         "summary": "{title}: {entries} entradas (seguras {sure}, por verificar {toVerify}, inciertas {uncertain})",
         "defaults": "Valores por defecto del documento",
@@ -3841,18 +3865,10 @@
         "acceptComplete": "Aceptar las entradas de 15 + 15 fichas leídas sin duda ({n})",
         "fallback": "Importar con el contexto de la posición cuando no se lee ({n}); los campos a verificar figuran en la referencia",
         "collection": "Colección",
-        "review": "Entradas por verificar ({n})",
-        "reviewNone": "Ninguna entrada por verificar.",
         "refused": "Se rechaza la importación del rango {ranks}: confirme, acepte o use el recurso.",
         "run": "Importar",
         "imported": "Colección {collection}: {added} posiciones añadidas, {repeated} repetidas",
         "importedDetail": "{entries} entradas, {positions} posiciones distintas ({fresh} nuevas); completas: {complete}, recurso: {fallback}",
-        "state": {
-            "sure": "segura",
-            "to-verify": "por verificar",
-            "uncertain": "incierta"
-        },
-        "check": "Comparar con el diagrama: {fields}",
         "field": {
             "cube": "cubo",
             "dice": "dados",
@@ -3864,6 +3880,18 @@
             "pips": "recuentos de pips",
             "diagram": "lectura del diagrama"
         },
-        "importMenu": "Importar un documento…"
+        "importMenu": "Importar un documento…",
+        "sheet": {
+            "filter": {
+                "sure": "Seguras",
+                "to-verify": "Por verificar",
+                "uncertain": "Inciertas",
+                "verified": "Verificadas"
+            },
+            "verify": "Validar",
+            "unverify": "Retirar la validación",
+            "edit": "Corregir",
+            "write": "Escribir"
+        }
     }
 }

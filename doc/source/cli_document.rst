@@ -20,7 +20,7 @@ l'import d'un relevé écrit.
 Ce qui est lu, ce qui est refusé
 --------------------------------
 
-``document analyze`` lit deux sortes de documents :
+``document analyze`` lit ces sortes de documents :
 
 * un PDF dont les diagrammes sont dessinés avec la police de plateau
   d'eXtreme Gammon (les PDF imprimés par XG) : chaque diagramme y est du texte,
@@ -33,7 +33,19 @@ Ce qui est lu, ce qui est refusé
 * un livre scanné : un PDF dont les pages sont faites d'images, avec ou sans
   couche texte, ou ses pages en images (un dossier de fichiers PNG ou JPEG, une
   page par fichier, lus dans l'ordre de leurs noms, ou une image seule). Les
-  diagrammes y sont lus par leur structure (voir :ref:`cli_document_images`).
+  diagrammes y sont lus par leur structure (voir :ref:`cli_document_images`) ;
+* un document rédigé, DOCX, ODT, EPUB ou page HTML : ses images sont lues
+  une à une dans l'ordre du texte, chacune comme une page en image. Le numéro de
+  page d'une entrée est alors le rang de son image parmi celles lues, son
+  chapitre le titre qui la précède, et elle est citée « fig. 12 » ou
+  « Chapitre 3, fig. 12 ». Le paragraphe qui précède l'image, le sien et le
+  suivant servent de couche texte : les pips et les dés qu'ils citent recoupent
+  la lecture comme dans un PDF. Une page HTML lit les images de son dossier et
+  de ses sous-dossiers, et celles écrites dans la page (``data:``) ; rien n'est
+  téléchargé, et les images en ligne sont comptées sur la sortie d'erreur. Une
+  image dessinée en vecteurs (EMF, WMF, SVG) n'est pas lue : elle est nommée
+  sur la sortie d'erreur. Un ``.doc`` de Word 97-2003 est refusé avec un message
+  qui propose de l'enregistrer en PDF ou en DOCX.
 
 Un PDF dont aucune page n'est faite d'images ni dessinée avec cette police (un
 livre dessiné en vecteurs) est refusé ; ses pages se donnent alors en images :
@@ -45,9 +57,12 @@ livre dessiné en vecteurs) est refusé ; ses pages se donnent alors en images :
 Un PDF dessiné avec une police de plateau dont les formes ne sont pas
 embarquées est refusé avec un message qui nomme la police.
 
-Un fichier qui n'est ni un PDF ni une image, un PDF chiffré ou plus gros que
-512 Mio, une image de plus de 64 Mio ou de plus de 100 millions de pixels est
-refusé aussi, avec un message qui le dit.
+Un fichier qui n'est ni un PDF, ni un document rédigé, ni une image, un PDF
+chiffré ou plus gros que 512 Mio, une image de plus de 64 Mio ou de plus de
+100 millions de pixels est refusé aussi, avec un message qui le dit. Un
+document rédigé a la même limite de 512 Mio ; son archive est refusée au-delà
+de 10 000 entrées, d'une partie qui se décompresse en plus de 64 Mio ou d'un
+total décompressé de plus de 1 Gio.
 
 Le parcours en trois commandes
 ------------------------------
@@ -59,7 +74,9 @@ Le parcours en trois commandes
    ./blunderdb document import --db base.db releve.json
 
 1. ``analyze`` lit le PDF et écrit le relevé (sans ``-o``, il l'écrit sur la
-   sortie standard). Il résume ce qu'il a trouvé :
+   sortie standard). Quand l'erreur standard est un terminal, il y écrit la
+   progression de la lecture (``page 37/212, 54 diagrams``) ; rien n'est écrit
+   dans un script. Il résume ce qu'il a trouvé :
 
    .. code-block:: text
 
@@ -87,6 +104,11 @@ Le parcours en trois commandes
       Unverified: rank 4, 5, 6 (import refused without --force)
       Review:
         rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
+
+   ``check`` reçoit aussi le document lui-même (``check livre.pdf``) : il lit
+   alors le relevé que la planche de vérification de l'interface garde à côté
+   (``livre.pdf.releve.json``, :ref:`assistant_import_document`) et en donne
+   l'avancement, ``verified`` compris.
 
 3. ``import`` écrit les positions dans la collection :
 
@@ -126,6 +148,22 @@ l'ordre du document :
 * ``rect`` — où le diagramme se trouve sur la page, en fraction de sa taille,
   pour le retrouver dans le PDF ;
 * ``verified`` — ``true`` quand une personne a comparé la lecture au diagramme.
+
+``verify`` écrit le verdict d'une personne dans le relevé, sans base :
+
+.. code-block:: bash
+
+   ./blunderdb document verify releve.json --rank 3,4,9
+   ./blunderdb document verify releve.json --rank 12 --position "XGID=..."
+   ./blunderdb document verify releve.json --rank 12 --undo
+
+``--rank`` nomme les entrées, séparées par des virgules ; elles deviennent
+vérifiées. ``--position`` remplace la lecture d'une seule entrée par le XGID
+correct, refusé s'il n'est pas une position légale ; une correction dont le
+contexte n'est plus celui du défaut garde le sien, à vérifier. ``--undo`` retire
+le verdict. Donné à la place du relevé, le document fait écrire dans le relevé
+gardé à côté de lui. La commande affiche le fichier écrit et l'avancement :
+``releve.json: verified 3 of 6 entries (sure 3, to verify 2, uncertain 1)``.
 
 On relit un relevé en ouvrant le PDF à la page de l'entrée. On y corrige la
 position (le XGID), on marque ``"verified": true`` une entrée contrôlée, on
@@ -402,13 +440,18 @@ message d'erreur dit de le confirmer.
 
 Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et
 l'image elle-même. Dans l'image, la commande lit les nombres isolés autour du
-diagramme, chiffre par chiffre, par comparaison avec la numérotation des pointes
-du document, avec huit polices courantes embarquées, puis avec les chiffres déjà
-lus dans le document ; un nombre n'est rendu que si chacun de ses chiffres est
-reconnu nettement, sinon elle s'abstient. L'emplacement des pips est appris sur
+diagramme, sur la bande horizontale du plateau jusqu'à environ une demi-largeur
+de plateau de chaque côté ; une lettre seule devant un nombre (``W 164``,
+``B 123``) ne l'empêche pas d'être lu. Elle les lit chiffre par chiffre, par
+comparaison avec la numérotation des pointes du document, avec huit polices
+courantes embarquées, puis avec les chiffres déjà lus dans le document ; un
+nombre n'est rendu que si chacun de ses chiffres est reconnu nettement, sinon
+elle s'abstient. L'emplacement des pips est appris sur
 le document : un nombre lu qui égale les pips d'un diagramme compté à quinze
 pions par camp vote pour sa place, et deux places (haut et bas) doivent réunir
-assez de votes. Aucun chiffre n'est choisi d'après les pips du diagramme qu'il
+assez de votes ; une place s'étend sur les positions voisines qui ont reçu des
+votes, pour un document qui place ses plateaux à des endroits ou à des tailles
+qui varient. Aucun chiffre n'est choisi d'après les pips du diagramme qu'il
 accompagne, et rien n'est gardé d'un document à l'autre. Quand le texte et
 l'image donnent chacun des pips et qu'ils diffèrent, les pions ne sont pas
 confirmés et le doute le dit (``the two disagree``). Une entrée sans pips lus reste
@@ -421,7 +464,7 @@ pour les pips.
 
 La lecture des chiffres suppose des chiffres arabes sombres sur fond clair,
 écrits à l'horizontale, d'au moins 15 pixels de haut à la résolution de lecture,
-des pips imprimés à la même place dans tout le document, et une trentaine de
+des pips imprimés à une place voisine d'un diagramme à l'autre, et une trentaine de
 diagrammes lus à quinze pions par camp pour apprendre cette place.
 
 Les doutes nomment ce qui reste à contrôler : une pile qui porte un chiffre, un

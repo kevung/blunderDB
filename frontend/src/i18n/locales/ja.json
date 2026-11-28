@@ -167,6 +167,7 @@
         "syncTitle": "同期"
     },
     "toolbar": {
+        "importDocument": "文書を読み込む…",
         "copyBoardImage": "盤面画像をコピー",
         "copyBoardImageTip": "盤面画像をクリップボードにコピー",
         "copyBoardImageWithAnalysis": "解析付き",
@@ -370,7 +371,10 @@
         "reimportCodeTip": "棋譜の末尾にマッチの QR コードを置き、ファイルにも埋め込みます",
         "batch": "リストの {n} マッチ",
         "batchTip": "1 マッチ 1 枚、ひとつの文書にまとめます",
-        "tooMany": "リストに {n} マッチあります。1 回の印刷は最大 {max} マッチです。リストを絞り込んでください。"
+        "tooMany": "リストに {n} マッチあります。1 回の印刷は最大 {max} マッチです。リストを絞り込んでください。",
+        "selection": "{n} 試合を選択中",
+        "tooManySelected": "{n} 試合を選択中：印刷・アーカイブは最大 {max} 試合まで。",
+        "cancelled": "マッチシートを取り消しました"
     },
     "positionSheet": {
         "title": "局面リストを印刷",
@@ -396,7 +400,8 @@
         "library": "ライブラリ",
         "basket": "局面を印刷",
         "basketTip": "画面のライブラリから来たバスケットの局面を印刷します",
-        "basketTitle": "バスケット"
+        "basketTitle": "バスケット",
+        "cancelled": "ポジションリストを取り消しました"
     },
     "paperArchive": {
         "menu": "紙のアーカイブ…",
@@ -406,6 +411,7 @@
         "exportWhat": "エクスポート",
         "scopeMatch": "このマッチ",
         "scopeList": "リストの {n} マッチ",
+        "scopeSelection": "選択した {n} 試合",
         "scopeLibrary": "ライブラリ全体",
         "export": "エクスポート…",
         "import": "インポート…",
@@ -413,7 +419,9 @@
         "exported": "紙のアーカイブを保存しました：{path}（{matches} マッチ、{codes} コード、{skipped} 除外）",
         "importing": "紙のアーカイブを読み込み中…",
         "imported": "紙のアーカイブ：{imported} マッチをインポート、{duplicates} 重複、{positions} 局面をインポート、{knownPositions} は既存、{missing} コード欠落、{failed} 失敗",
-        "failed": "紙のアーカイブに失敗しました：{err}"
+        "failed": "紙のアーカイブに失敗しました：{err}",
+        "noPdfPayload": "この PDF には blunderDB のアーカイブが含まれていません。何もインポートされませんでした",
+        "cancelled": "紙アーカイブを取り消しました"
     },
     "match": {
         "errorExportingMat": "マッチのエクスポート中にエラーが発生しました",
@@ -703,6 +711,7 @@
         "name": "名前",
         "newTournamentPlaceholder": "新規トーナメント…",
         "noMatches": "マッチがありません",
+        "print": "トーナメントを印刷…",
         "noTournaments": "トーナメントがありません",
         "openHint": "ダブルクリックまたは Enter で開く",
         "notesPlaceholder": "メモ…",
@@ -877,6 +886,8 @@
         "hintPlayerBackgammon": "プレイヤー: バックギャモン勝率",
         "hintOpponentWin": "相手: 勝率",
         "hintOpponentGammon": "相手: ギャモン勝率",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "前回の評価からのエクイティの変化",
         "hintOpponentBackgammon": "相手: バックギャモン勝率",
         "empty": "解析なし",
         "evaluate": "評価"
@@ -1108,6 +1119,9 @@
         "batchDone": "gammonNet: {evaluated} 件解析、{refused} 件却下、{failed} 件失敗",
         "batchFailed": "gammonNet：解析を実行できません — {error}",
         "baseline": "ロール前",
+        "depthSelect": "表示中の評価の深さ（このパネルのみ）",
+        "rerun": "この深さで局面を再評価",
+        "rerunPlays": "選択した{n}手をこの深さで再評価",
         "baselineTooltip": "ロール前の数値。リストと同じ軸で表示される基準値であり、候補手ではありません。この行との差はロールの運であり、指し手の巧拙ではありません。"
     },
     "searchHistory": {
@@ -1682,7 +1696,8 @@
         "gnubgIdCopied": "GNUbg ID をクリップボードにコピーしました",
         "arkIdCopied": "ArkID をクリップボードにコピーしました",
         "noMatchForPosition": "この局面を指したマッチはありません",
-        "moveGone": "この手はもうマッチにありません。前回の位置で開きました"
+        "moveGone": "この手はもうマッチにありません。前回の位置で開きました",
+        "exportRunning": "エクスポート中 — 進捗と取り消しは計算パネルで"
     },
     "stats": {
         "title": "統計",
@@ -3744,7 +3759,7 @@
             "spread": "標準偏差",
             "dance": "ダンス",
             "replies": "応手",
-            "other": "別の手…",
+            "otherPlays": "他の手",
             "start": "開始",
             "me": "自分",
             "him": "相手",
@@ -3760,13 +3775,12 @@
             "opponent": "相手",
             "match": "{n}ポイントマッチ",
             "evaluate": "評価",
-            "best": "最良",
-            "second": "次善",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "手",
             "close": "閉じる",
             "refused": "拒否",
             "crawford": "クロフォード",
+            "postCrawford": "ポスト・クロフォード",
             "error": "エラー"
         },
         "verdict": {
@@ -3774,13 +3788,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "ノーダブル",
                 "double_take": "ダブル/テイク",
                 "double_pass": "ダブル/パス",
-                "too_good": "トゥーグッド"
+                "too_good": "トゥーグッド",
+                "dmp": "ダブル・マッチポイント（キューブなし）"
             }
         },
         "menu": {
@@ -3823,12 +3839,20 @@
             "transfer": "転送",
             "bearoff": "ベアオフ",
             "sync": "同期",
-            "other": "その他"
+            "other": "その他",
+            "export": "エクスポート",
+            "paperArchive": "紙アーカイブ",
+            "print": "印刷"
         }
     },
     "documentImport": {
         "title": "文書を取り込む",
         "reading": "文書を読み取っています…",
+        "progress": "{page} / {pages} ページ · 図 {diagrams} 件",
+        "progressPictures": "画像 {page} / {pages} · 図 {diagrams} 件",
+        "eta": "残り {eta}",
+        "cancelled": "読み取りを中止しました。",
+        "importCancelled": "読み込みを中止しました。",
         "failed": "文書の取り込みに失敗しました: {err}",
         "summary": "{title}: {entries} 件(確実 {sure}、要確認 {toVerify}、不確か {uncertain})",
         "defaults": "文書の既定値",
@@ -3841,18 +3865,10 @@
         "acceptComplete": "15 + 15 個を疑いなく読み取った項目を受け入れる({n})",
         "fallback": "読み取れない場合は局面が持つ文脈で取り込む({n})。確認すべき欄は参照に記載",
         "collection": "コレクション",
-        "review": "確認する項目({n})",
-        "reviewNone": "確認する項目はありません。",
         "refused": "順位 {ranks} の取り込みは拒否されました。確認、受け入れ、または代替を使ってください。",
         "run": "取り込む",
         "imported": "コレクション {collection}: {added} 局面を追加、{repeated} 件は重複",
         "importedDetail": "{entries} 件、異なる局面 {positions}(新規 {fresh})。完全: {complete}、代替: {fallback}",
-        "state": {
-            "sure": "確実",
-            "to-verify": "要確認",
-            "uncertain": "不確か"
-        },
-        "check": "図と照合: {fields}",
         "field": {
             "cube": "キューブ",
             "dice": "ダイス",
@@ -3864,6 +3880,18 @@
             "pips": "ピップ数",
             "diagram": "図の読み取り"
         },
-        "importMenu": "文書を読み込む…"
+        "importMenu": "文書を読み込む…",
+        "sheet": {
+            "filter": {
+                "sure": "確実",
+                "to-verify": "要確認",
+                "uncertain": "不確実",
+                "verified": "確認済み"
+            },
+            "verify": "確認する",
+            "unverify": "確認を取り消す",
+            "edit": "修正",
+            "write": "書き込む"
+        }
     }
 }

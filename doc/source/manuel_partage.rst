@@ -155,26 +155,55 @@ et ``blunderdb events alias``.
 L'assistant d'import de l'interface
 -----------------------------------
 
-La commande ``import_document`` (``idoc``, :doc:`cmd_mode`) ou le bouton **Importer un
-document…** de la liste des collections vide ouvre l'assistant : on choisit un PDF, une
-image de page ou un relevé ``.json`` déjà lu. L'assistant appelle les mêmes fonctions que
+La commande ``import_document`` (``idoc``, :doc:`cmd_mode`), le bouton **Importer un
+document…** de la barre d'outils ou celui de la liste des collections vide ouvre
+l'assistant : on choisit un PDF, un document rédigé (DOCX, ODT, EPUB, page
+HTML), une image de page ou un relevé ``.json`` déjà lu. Déposer un tel fichier
+sur la fenêtre ou le choisir par *CTRL-I* ouvre aussi l'assistant ; un ``.doc``
+de Word 97-2003 y est refusé avec un message qui propose de l'enregistrer en PDF
+ou en DOCX. L'assistant appelle les mêmes fonctions que
 ``document analyze``, ``check`` et ``import`` et n'applique aucune règle de plus
-(:ref:`cli_document`).
+(:ref:`cli_document`). Un fichier que blunderDB a produit — PDF ou page HTML
+d'archive papier, de feuille de match ou de liste de positions avec codes de
+réimport — ne passe pas par l'assistant : il s'importe directement par ses codes,
+comme par :ref:`Archive papier… <archive_papier_interface>`.
 
 * **Défauts et sens de jeu** : le contexte par défaut du document et le sens de jeu
   supposé sont décrits. Un seul bouton les confirme pour tout le document, après
   contrôle sur quelques diagrammes ; rien n'est confirmé sans ce geste.
-* **Entrées à vérifier** : la liste donne, pour chaque entrée que l'import refuserait
-  en l'état, sa page, son étiquette, son état et la note qui nomme les champs à
-  comparer au diagramme. Celles que les choix en cours ne couvrent pas sont en gras.
+* **Planche de vérification** : quatre compteurs, **Sûres**, **À vérifier**,
+  **Incertaines** et **Vérifiées**, filtrent les entrées ; la planche s'ouvre sur
+  celles à vérifier. Pour l'entrée montrée, le diagramme d'origine, recadré depuis
+  le fichier à chaque affichage, est placé à côté du plateau redessiné dans le sens
+  de jeu du document ; les champs à comparer sont nommés en rouge sous le plateau,
+  encadré tant que l'entrée n'est pas vérifiée. Un diagramme dessiné par une police
+  de plateau, lu exactement, n'a pas de vignette.
+* **Clavier de la planche** : *V* (ou *Espace*) valide l'entrée, qui devient
+  vérifiée, et passe à la suivante ; sur une entrée vérifiée, *V* retire la
+  validation. *E* ouvre la position en XGID : le plateau suit la saisie, *Entrée*
+  écrit la correction et valide l'entrée, *Échap* l'abandonne. *J* ou les flèches
+  droite et bas passent à l'entrée suivante, *K* ou les flèches gauche et haut à la
+  précédente.
 * **Entrées complètes** : la case équivaut à ``--accept-complete``.
 * **Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une fois les
   défauts confirmés.
 * **Collection** : vide, elle prend le titre du document.
 
+Chaque verdict est écrit aussitôt dans le relevé, gardé à côté du document sous le
+nom du fichier suivi de ``.releve.json`` (``livre.pdf.releve.json``) ; rien n'entre
+en base avant l'import, et aucune image n'est gardée. Rouvrir le même document
+reprend ce relevé, sans relire le document, là où la vérification s'était arrêtée ;
+un document modifié depuis est relu. Ouvrir le relevé ``.json`` lui-même reprend
+aussi la vérification, avec les vignettes tant que le document est à côté. L'import
+accepte les entrées vérifiées.
+
 Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; l'assistant n'offre
-pas ``--force``. Pendant la lecture et l'import, **Annuler** et la fermeture sont
-suspendus. Le bilan donne le nombre de positions ajoutées et répétées.
+pas ``--force``. Pendant la lecture, une barre de progression indique la page lue sur le
+total (l'image lue, pour un document rédigé), les diagrammes trouvés jusque-là et le temps restant estimé. **Annuler**, la
+fermeture et la touche Échap arrêtent la lecture ou l'import en cours : l'assistant
+se ferme sur « Lecture annulée » après une lecture, et revient à la revue après un
+import, qui n'a alors rien écrit. La tâche figure aussi dans le panneau des calculs.
+Le bilan donne le nombre de positions ajoutées et répétées.
 
 .. _panneau_metadata:
 
@@ -218,9 +247,12 @@ l'export, et sont ce que le fichier contiendra (le nombre de positions de la
 bande d'en-tête, les commentaires, les matchs, les transcriptions, les alias,
 les tournois, les collections, les leçons, les paquets, les filtres). Le fichier
 se choisit en dernier, après **Exporter…** ; fermer ce choix sans nom revient à
-la grille. Une progression
-se superpose ensuite le temps de l'écriture, la fenêtre se ferme d'elle-même et
-le résultat s'affiche dans la barre d'état.
+la grille. La fenêtre se ferme alors et l'écriture tourne comme une tâche du
+panneau Calculs : sa barre compte les positions et les
+matchs écrits, **Annuler** l'arrête et efface le fichier inachevé, et le
+résultat s'affiche dans la barre d'état. Pendant l'export, la bibliothèque se
+lit normalement ; les modifications attendent la fin de l'écriture, pour que le
+fichier soit une image cohérente de la base.
 
 Neuf points méritent l'attention :
 

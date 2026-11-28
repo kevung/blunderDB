@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 13:13+0100\n"
+"POT-Creation-Date: 2026-11-28 01:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -269,11 +269,11 @@ msgstr "collection"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Gère les collections (liste, contenu, création, renommage, suppression, "
-"export)."
+"Gère les collections (liste, contenu, création, copie, renommage, "
+"suppression, export)."
 msgstr ""
-"Gestiona las colecciones (lista, contenido, creación, cambio de nombre, "
-"eliminación, exportación)."
+"Gestiona las colecciones (lista, contenido, creación, copia, cambio de "
+"nombre, eliminación, exportación)."
 
 #: ../../source/cli.rst:1
 msgid "study"
@@ -329,11 +329,11 @@ msgstr "document"
 
 #: ../../source/cli.rst:1
 msgid ""
-"Lit les diagrammes d'un PDF dans un relevé, vérifie un relevé ou importe "
-"ses positions dans une collection."
+"Lit les diagrammes d'un PDF dans un relevé, vérifie un relevé, y note les"
+" entrées vérifiées ou importe ses positions dans une collection."
 msgstr ""
-"Lee los diagramas de un PDF en un relevé, comprueba un relevé o importa "
-"sus posiciones en una colección."
+"Lee los diagramas de un PDF en un relevé, comprueba un relevé, anota en "
+"él las entradas verificadas o importa sus posiciones en una colección."
 
 #: ../../source/cli.rst:1
 msgid "anki"
