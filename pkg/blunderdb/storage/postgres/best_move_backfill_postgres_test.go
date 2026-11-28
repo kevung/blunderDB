@@ -140,3 +140,23 @@ func TestBestMoveBackfillRunsBesideAReader(t *testing.T) {
 		t.Errorf("%d rows NULL after the pass, want 0", nulls)
 	}
 }
+
+// TestMigrateLeavesTheBestMoveBackfillToTheService: Migrate returns with
+// every row still NULL and the cursor pending, so the daemon serves before
+// the pass ends; BackfillDeferred then ends it.
+func TestMigrateLeavesTheBestMoveBackfillToTheService(t *testing.T) {
+	ctx := context.Background()
+	s, conn := seedBestMovePending(t, 4)
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate: %v", err)
+	}
+	if nulls, _ := bestMoveState(t, conn); nulls != 8 {
+		t.Fatalf("Migrate derived the best move: %d rows NULL, want 8", nulls)
+	}
+	if err := s.BackfillDeferred(ctx); err != nil {
+		t.Fatalf("BackfillDeferred: %v", err)
+	}
+	if nulls, _ := bestMoveState(t, conn); nulls != 0 {
+		t.Errorf("%d rows NULL after BackfillDeferred, want 0", nulls)
+	}
+}

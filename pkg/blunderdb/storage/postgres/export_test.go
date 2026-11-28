@@ -12,7 +12,7 @@ import (
 func SharedExecer(s *Storage) sqlshared.Execer { return s.shared() }
 
 // BackfillAnalysisBestMove runs at most maxBatches batches (0: all) of the
-// best-move pass of runGoBackfills, batch rows each, and reports whether it
+// best-move pass of BackfillDeferred, batch rows each, and reports whether it
 // has ended.
 func BackfillAnalysisBestMove(ctx context.Context, s *Storage, batch, maxBatches int) (bool, error) {
 	was := bestMoveBatch

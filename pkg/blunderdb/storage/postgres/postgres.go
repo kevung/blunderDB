@@ -389,19 +389,12 @@ const goBackfillsKey = "go_backfills"
 // runs them once more.
 const goBackfillsGeneration = "5"
 
-// runGoBackfills runs, once per library, the passes the SQL chain cannot.
-// Those of runGenerationBackfills lift FORCE, which takes an ACCESS EXCLUSIVE
-// lock on the tables they touch, so it is not paid at every start. The row is written only when
+// runGoBackfills runs, once per library, the passes the SQL chain cannot:
+// each lifts FORCE, which takes an ACCESS EXCLUSIVE lock on the tables it
+// touches, so it is not paid at every start. The row is written only when
 // every pass saw every tenant's rows; a pass whose table stayed busy past
 // unforcedLockTimeout is left for the next Migrate rather than failing it.
 func runGoBackfills(ctx context.Context, conn migrationConn) error {
-	if err := runGenerationBackfills(ctx, conn); err != nil {
-		return err
-	}
-	return runBestMoveBackfill(ctx, conn)
-}
-
-func runGenerationBackfills(ctx context.Context, conn migrationConn) error {
 	var gen string
 	err := conn.QueryRow(ctx, `SELECT value FROM metadata WHERE key = $1`, goBackfillsKey).Scan(&gen)
 	switch {
@@ -439,6 +432,14 @@ func runGenerationBackfills(ctx context.Context, conn migrationConn) error {
 		return fmt.Errorf("postgres: write %s: %w", goBackfillsKey, err)
 	}
 	return nil
+}
+
+// BackfillDeferred runs the passes Migrate leaves to the open service: about
+// an hour at 15 M analyses. They take no lock a request waits on, resume
+// where they stopped, and the search lets a row not reached yet through to
+// its blob. It returns when they end or ctx is done.
+func (s *Storage) BackfillDeferred(ctx context.Context) error {
+	return runBestMoveBackfill(ctx, s.pool)
 }
 
 // runBestMoveBackfill runs backfillAnalysisBestMove over the tenants 077
