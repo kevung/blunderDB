@@ -126,7 +126,10 @@ const ReadTenantsHeader = middleware.ReadTenantsHeader
 
 // Bootstrap opens the storage backend, runs migrations, installs RLS policies
 // when enabled, builds the engine server and returns its http.Handler plus an
-// io.Closer for the storage pool and, on PostgreSQL, the event transport. On
+// io.Closer for the storage pool and, on PostgreSQL, the event transport. It
+// returns without waiting for the passes Migrate defers to the open service
+// (on PostgreSQL, the best move index and column): they run beside the
+// handler until they end or Close stops them, and resume at the next start. On
 // PostgreSQL with Config.Transcription or Config.EnableDirection, a failing LISTEN (a pgbouncer in
 // transaction mode, say) makes Bootstrap fail, as it makes serve fail. Mount
 // the handler behind your own auth and inject X-Tenant-ID per request — the
@@ -194,17 +197,25 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		st.Close()
 		return nil, nil, err
 	}
-	return srv.Handler(), &closer{srv: srv, st: st}, nil
+	// The deferred passes outlive the setup ctx, which a host may bound to
+	// the start: Close stops them, and waits for them, before the pool closes.
+	bgCtx, stop := context.WithCancel(context.WithoutCancel(ctx))
+	deferred := internalserver.StartDeferredBackfills(bgCtx, st, logger)
+	return srv.Handler(), &closer{srv: srv, st: st, stopDeferred: stop, deferred: deferred}, nil
 }
 
-// closer stops the server's event transport before the storage pool it shares
-// a database with.
+// closer stops the deferred passes and the server's event transport before
+// the storage pool they share a database with.
 type closer struct {
-	srv *internalserver.Server
-	st  io.Closer
+	srv          *internalserver.Server
+	st           io.Closer
+	stopDeferred context.CancelFunc
+	deferred     <-chan struct{}
 }
 
 func (c *closer) Close() error {
+	c.stopDeferred()
+	<-c.deferred
 	c.srv.Close()
 	return c.st.Close()
 }
