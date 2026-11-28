@@ -557,8 +557,7 @@ func loadServeIdentity(dir, name string) (*issuance.Identity, error) {
 // StartDeferredBackfills runs, beside the service, the passes Migrate leaves
 // to it (postgres: the best move of the stored analyses), until ctx is done;
 // the channel closes when the pass returns. An interrupted pass resumes at
-// the next start. Every process that serves an opened storage starts it:
-// serve, and the embedded engine (pkg/blunderdb/server.Bootstrap).
+// the next start.
 func StartDeferredBackfills(ctx context.Context, st storage.Storage, logger *slog.Logger) <-chan struct{} {
 	done := make(chan struct{})
 	d, ok := st.(interface{ BackfillDeferred(context.Context) error })

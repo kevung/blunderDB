@@ -7,6 +7,9 @@ package server
 
 import (
 	"context"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -89,7 +92,7 @@ func deferredState(t *testing.T, conn *pgx.Conn) (valid *bool, nulls int) {
 	return valid, nulls
 }
 
-func waitDeferred(t *testing.T, c any) {
+func waitDeferred(t *testing.T, c io.Closer) {
 	t.Helper()
 	select {
 	case <-c.(*closer).deferred:
@@ -98,8 +101,8 @@ func waitDeferred(t *testing.T, c any) {
 	}
 }
 
-// TestBootstrapDeferredBackfills: the embedded engine serves before the
-// passes Migrate defers, then builds the best move index and fills the column.
+// TestBootstrapDeferredBackfills: Bootstrap returns before the passes Migrate
+// defers, which then build the best move index and fill the column.
 func TestBootstrapDeferredBackfills(t *testing.T) {
 	dsn, conn := seedDeferredPending(t)
 	_, c, err := Bootstrap(context.Background(), Config{Backend: "postgres", DSN: dsn})
@@ -113,9 +116,9 @@ func TestBootstrapDeferredBackfills(t *testing.T) {
 	}
 }
 
-// TestBootstrapCloseStopsDeferredBackfills: Close interrupts a pass that
-// cannot end (an open snapshot holds CREATE INDEX CONCURRENTLY) without an
-// error, and the next start resumes it.
+// TestBootstrapCloseStopsDeferredBackfills: the engine serves while a pass
+// cannot end (an open snapshot holds CREATE INDEX CONCURRENTLY), Close
+// interrupts that pass without an error, and the next start resumes it.
 func TestBootstrapCloseStopsDeferredBackfills(t *testing.T) {
 	ctx := context.Background()
 	dsn, conn := seedDeferredPending(t)
@@ -132,9 +135,34 @@ func TestBootstrapCloseStopsDeferredBackfills(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, c, err := Bootstrap(ctx, Config{Backend: "postgres", DSN: dsn})
+	h, c, err := Bootstrap(ctx, Config{Backend: "postgres", DSN: dsn})
 	if err != nil {
 		t.Fatalf("Bootstrap: %v", err)
+	}
+	// Close must meet the build itself, not a pass that has not reached it.
+	for deadline := time.Now().Add(30 * time.Second); ; {
+		var waiting bool
+		if err := conn.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM pg_stat_activity
+			WHERE query LIKE 'CREATE INDEX CONCURRENTLY%idx_analysis_best_move%' AND wait_event_type IS NOT NULL)`).Scan(&waiting); err != nil {
+			t.Fatal(err)
+		}
+		if waiting {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("the index build never started")
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+	ts := httptest.NewServer(h)
+	defer ts.Close()
+	resp, err := http.Get(ts.URL + "/healthz")
+	if err != nil {
+		t.Fatalf("healthz during the build: %v", err)
+	}
+	_ = resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("healthz during the build: %d, want 200", resp.StatusCode)
 	}
 	closed := make(chan error, 1)
 	go func() { closed <- c.Close() }()
