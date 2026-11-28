@@ -29,8 +29,8 @@ const analysisInsertSQL = `INSERT INTO analysis (
 	player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
 	player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
 	is_forced, is_close_cube,
-	analysis_engine, analysis_depth, creation_date
-) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?, ?,?,?)`
+	analysis_engine, analysis_depth, creation_date, best_move
+) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?, ?,?,?, ?)`
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
 // same statement, so concurrent saves cannot insert two rows. The target is
@@ -55,6 +55,7 @@ ON CONFLICT(position_id) DO UPDATE SET
 	analysis_engine=excluded.analysis_engine,
 	analysis_depth=excluded.analysis_depth,
 	creation_date=excluded.creation_date,
+	best_move=excluded.best_move,
 	met_id=CASE WHEN excluded.analysis_engine LIKE 'gammonNet%' THEN analysis.met_id END`
 
 // Save stores (or replaces) the analysis for positionID. The analysis JSON is
@@ -66,11 +67,11 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 	if err != nil {
 		return err
 	}
-	return s.write(ctx, positionID, a, c, nil)
+	return s.write(ctx, positionID, a, c, nil, nil)
 }
 
 var analysisMergeSelectSQL = `SELECT data, ` + sqlshared.ActionLabelSQL("best_cube_action") + `, cube_error, best_move_equity_error, is_forced, is_close_cube,
-	analysis_engine, analysis_depth, met_id
+	analysis_engine, analysis_depth, met_id, best_move
 	FROM analysis WHERE position_id = ?`
 
 const cubeResponseSQL = `UPDATE position SET is_cube_response = 1 WHERE id = ?`
@@ -98,9 +99,10 @@ func (s *analysisStore) mergeIn(ctx context.Context, positionID int64, played *s
 		storedEng sql.NullString
 		storedDep sql.NullInt64
 		storedMET sql.NullInt64
+		storedBM  sql.NullString
 	)
 	err := s.db.QueryRowContext(ctx, analysisMergeSelectSQL, positionID).
-		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube, &storedEng, &storedDep, &storedMET)
+		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube, &storedEng, &storedDep, &storedMET, &storedBM)
 	found := err == nil
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return false, fmt.Errorf("sqlite: load analysis for position %d: %w", positionID, err)
@@ -139,7 +141,10 @@ func (s *analysisStore) mergeIn(ctx context.Context, positionID int64, played *s
 	// The columns just read decide the match_stats invalidation: the import
 	// path pays no second read for it.
 	statsChanged := !found || statsColumnsDiffer(stored, storedEng, storedDep, storedMET, c)
-	return true, s.write(ctx, positionID, merged, c, &statsChanged)
+	// analysis_best_move_stale fires only on a stored row whose best move
+	// the upsert keeps.
+	rewrite := found && storedBM.Valid && storedBM.String == c.BestMove
+	return true, s.write(ctx, positionID, merged, c, &statsChanged, &rewrite)
 }
 
 // storedPlayedColumns are the stored columns that depend on the played
@@ -218,9 +223,9 @@ func positionOf(ctx context.Context, q execer, positionID int64, a *domain.Posit
 // write encodes a prepared analysis and upserts it with its columns.
 //
 // statsChanged says whether the write changes a column match_stats
-// summarises; nil when the caller has not read the stored row, and write
-// reads it.
-func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.PositionAnalysis, c engine.AnalysisColumns, statsChanged *bool) error {
+// summarises, and rewriteBestMove whether best_move must be written again
+// after the upsert; nil when the caller has not read the stored row.
+func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.PositionAnalysis, c engine.AnalysisColumns, statsChanged, rewriteBestMove *bool) error {
 	data, err := engine.EncodeAnalysisForStorage(a)
 	if err != nil {
 		return fmt.Errorf("sqlite: encode analysis: %w", err)
@@ -255,8 +260,17 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced, c.IsCloseCube,
-			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate)); err != nil {
+			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove); err != nil {
 			return fmt.Errorf("sqlite: save analysis: %w", referenced(err))
+		}
+		// An upsert that kept the best play had it cleared by
+		// analysis_best_move_stale: it is written again. A fresh position had
+		// no analysis to update, so the trigger did not fire.
+		if rewriteBestMove != nil && *rewriteBestMove || rewriteBestMove == nil && !storage.IsFreshPosition(ctx, positionID) {
+			if _, err := tx.ExecContext(ctx, `UPDATE analysis SET best_move = ? WHERE position_id = ? AND best_move IS NULL`,
+				c.BestMove, positionID); err != nil {
+				return fmt.Errorf("sqlite: save analysis best move: %w", err)
+			}
 		}
 		// The moves played here are scored against the analysis just written.
 		if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{db: tx}.shared(), "", map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
@@ -366,7 +380,7 @@ func SaveExportedAnalysis(ctx context.Context, tx *sql.Tx, positionID int64, a *
 		c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 		c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 		c.IsForced, c.IsCloseCube,
-		c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate)); err != nil {
+		c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove); err != nil {
 		return nil, fmt.Errorf("sqlite: save analysis: %w", err)
 	}
 	if !found {
@@ -488,7 +502,7 @@ func (s *analysisStore) RepairDenormalisedFrom(ctx context.Context, after int64,
 				`SELECT a.id, a.position_id, a.data, `+sqlshared.ActionLabelSQL("a.best_cube_action")+`, a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
 				        a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
 				        a.player2_win_rate, a.player2_gammon_rate, a.player2_backgammon_rate,
-				        a.analysis_engine, a.analysis_depth, a.creation_date,
+				        a.analysis_engine, a.analysis_depth, a.creation_date, a.best_move,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 				        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
 				        `+sqlshared.PlayPositionColumns+`
@@ -500,7 +514,7 @@ func (s *analysisStore) RepairDenormalisedFrom(ctx context.Context, after int64,
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.label.rates[0], &r.label.rates[1], &r.label.rates[2], &r.label.rates[3], &r.label.rates[4], &r.label.rates[5], &r.label.engine, &r.label.depth, &r.label.created, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
+				if err := rows.Scan(&r.id, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.label.rates[0], &r.label.rates[1], &r.label.rates[2], &r.label.rates[3], &r.label.rates[4], &r.label.rates[5], &r.label.engine, &r.label.depth, &r.label.created, &r.label.bestMove, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
 					return fmt.Errorf("sqlite: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -580,6 +594,7 @@ type storedLabelColumns struct {
 	rates          [6]sql.NullInt64
 	engine         sql.NullString
 	depth, created sql.NullInt64
+	bestMove       sql.NullString
 }
 
 func (l storedLabelColumns) equal(c engine.AnalysisColumns) bool {
@@ -593,11 +608,13 @@ func (l storedLabelColumns) equal(c engine.AnalysisColumns) bool {
 	// nullableUnix stores an unset date as NULL.
 	createdEqual := !l.created.Valid && c.CreationDate == 0 || l.created.Valid && l.created.Int64 == c.CreationDate
 	return l.engine.Valid && l.engine.String == c.AnalysisEngine &&
-		l.depth.Valid && l.depth.Int64 == c.AnalysisDepth && createdEqual
+		l.depth.Valid && l.depth.Int64 == c.AnalysisDepth && createdEqual &&
+		// NULL is "not derived yet", which BackfillBestMove owes, not a repair.
+		(!l.bestMove.Valid || l.bestMove.String == c.BestMove)
 }
 
 // repairLabel rewrites the columns an analysis describes itself with (rates,
-// engine, depth, date) for a row where they differ from its blob, and raises the position's
+// engine, depth, date, best move) for a row where they differ from its blob, and raises the position's
 // cube-response flag its played actions imply for any row. It reports whether
 // it wrote.
 func (s *analysisStore) repairLabel(ctx context.Context, id, positionID int64, stale bool, a *domain.PositionAnalysis, c engine.AnalysisColumns) (bool, error) {
@@ -619,10 +636,10 @@ func (s *analysisStore) repairLabel(ctx context.Context, id, positionID int64, s
 	if _, err := s.db.ExecContext(ctx,
 		`UPDATE analysis SET player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
 		 player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?,
-		 analysis_engine=?, analysis_depth=?, creation_date=? WHERE id=?`,
+		 analysis_engine=?, analysis_depth=?, creation_date=?, best_move=? WHERE id=?`,
 		c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 		c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
-		c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), id); err != nil {
+		c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove, id); err != nil {
 		return false, fmt.Errorf("sqlite: repair: label %d: %w", id, err)
 	}
 	return true, nil

@@ -64,6 +64,8 @@ var postgresOnlyIndexes = []string{
 	"idx_position_structure",
 	// The covering indexes kept by SQLite, narrowed here (see above).
 	"idx_analysis_win1",
+	// The move-pattern search narrows by it under RLS; SQLite reads the joined row.
+	"idx_analysis_best_move",
 	"idx_analysis_win2",
 	// SQLite has no row-level security to read the tenant for.
 	"idx_move_game_position",
@@ -229,6 +231,10 @@ func TestIndexParityWithSQLite(t *testing.T) {
 	}
 	if len(pgIdx) == 0 {
 		t.Fatal("no CREATE INDEX found in the embedded migrations")
+	}
+	// Built by BackfillDeferred outside the chain, CONCURRENTLY (ensureBestMoveIndex).
+	for name, decl := range parseIndexes(strings.Replace(bestMoveIndexSQL, "CONCURRENTLY ", "", 1), "--") {
+		pgIdx[name] = decl
 	}
 
 	// Each direction: names declared on one side, absent on the other, minus

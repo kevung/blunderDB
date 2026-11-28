@@ -321,6 +321,22 @@ func matchDateEnd(s string) (string, bool) {
 	return next.Format("2006-01-02"), ok
 }
 
+// MovePatterns splits a move-pattern filter into its lower-cased patterns,
+// nil when there is no filter. A checker analysis matches when its best move
+// (engine.BestMove) contains one of them; a cube analysis when one is nd, dt
+// or dp and that action is the best.
+func MovePatterns(filter string) []string {
+	if filter == "" {
+		return nil
+	}
+	return strings.Split(strings.ToLower(strings.Trim(filter, `m"'`)), ";")
+}
+
+// IsCubeMovePattern reports whether pattern names a cube action.
+func IsCubeMovePattern(pattern string) bool {
+	return pattern == "nd" || pattern == "dt" || pattern == "dp"
+}
+
 // AnalysisMatchesMovePattern checks a move-pattern filter against pre-fetched analysis.
 func AnalysisMatchesMovePattern(filter string, ana *domain.PositionAnalysis) bool {
 	if filter == "" {
@@ -329,10 +345,9 @@ func AnalysisMatchesMovePattern(filter string, ana *domain.PositionAnalysis) boo
 	if ana == nil {
 		return false
 	}
-	movePatternMatch := strings.Trim(filter, `m"'`)
-	movePatterns := strings.Split(strings.ToLower(movePatternMatch), ";")
+	movePatterns := MovePatterns(filter)
 	if ana.AnalysisType == "CheckerMove" && ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
-		move := strings.ToLower(ana.CheckerAnalysis.Moves[0].Move)
+		move := engine.BestMove(ana)
 		for _, pattern := range movePatterns {
 			if strings.Contains(move, pattern) {
 				return true

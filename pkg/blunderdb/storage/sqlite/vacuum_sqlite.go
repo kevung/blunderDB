@@ -179,8 +179,9 @@ func (s *Storage) vacuumOnFileTemp(ctx context.Context) error {
 const compactAnalysesBatchSize = 2000
 
 type analysisRow struct {
-	id   int64
-	data []byte
+	id       int64
+	data     []byte
+	bestMove sql.NullString
 }
 
 // fetchAnalysisBatch reads one page of analysis.data ordered by id,
@@ -188,7 +189,7 @@ type analysisRow struct {
 // same connection right after.
 func fetchAnalysisBatch(ctx context.Context, db execer, afterID int64, limit int) ([]analysisRow, error) {
 	rows, err := db.QueryContext(ctx,
-		`SELECT id, data FROM analysis WHERE id > ? ORDER BY id LIMIT ?`, afterID, limit)
+		`SELECT id, data, best_move FROM analysis WHERE id > ? ORDER BY id LIMIT ?`, afterID, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +198,7 @@ func fetchAnalysisBatch(ctx context.Context, db execer, afterID int64, limit int
 	var batch []analysisRow
 	for rows.Next() {
 		var r analysisRow
-		if err := rows.Scan(&r.id, &r.data); err != nil {
+		if err := rows.Scan(&r.id, &r.data, &r.bestMove); err != nil {
 			return nil, err
 		}
 		batch = append(batch, r)
@@ -248,6 +249,14 @@ func (s *Storage) compactAnalyses(ctx context.Context) error {
 				if _, err := tx.ExecContext(ctx,
 					`UPDATE analysis SET data = ? WHERE id = ?`, fresh, r.id); err != nil {
 					return fmt.Errorf("id %d: %w", r.id, err)
+				}
+				// The same analysis in other bytes: the best move the
+				// trigger cleared stands.
+				if r.bestMove.Valid {
+					if _, err := tx.ExecContext(ctx,
+						`UPDATE analysis SET best_move = ? WHERE id = ?`, r.bestMove.String, r.id); err != nil {
+						return fmt.Errorf("id %d: %w", r.id, err)
+					}
 				}
 				upgraded++
 			}

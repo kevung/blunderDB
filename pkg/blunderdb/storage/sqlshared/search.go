@@ -738,6 +738,9 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		if moveErrorInGo, blunder, err = s.appendMoveErrorClause(ctx, scope, f, &where, &args); err != nil {
 			return searchWhereClause{}, err
 		}
+		if err := s.appendMovePatternClause(ctx, scope, f, &where, &args); err != nil {
+			return searchWhereClause{}, err
+		}
 
 		if f.DecisionTimeFilter != "" {
 			if cond, condArgs := decisionTimeSQL(s.DB, scope, f.DecisionTimeFilter); cond != "" {

@@ -294,6 +294,9 @@ func mergeRolloutsIntoTx(ctx context.Context, tx *sql.Tx, keepID int64, rollouts
 	if err != nil {
 		return fmt.Errorf("encode analysis: %w", err)
 	}
+	// best_move is left to the trigger (NULL) and to finishBestMoveBackfill,
+	// which runs after this repair on the same open; the 2.5 step calls this
+	// before the column exists.
 	_, err = tx.ExecContext(ctx, `UPDATE analysis SET data = ?, analysis_engine = NULL WHERE position_id = ?`, encoded, keepID)
 	return err
 }
@@ -359,6 +362,7 @@ func mergePositionInto(ctx context.Context, tx *sql.Tx, keepID, dupID int64) err
 			if err != nil {
 				return fmt.Errorf("merging duplicate position %d into %d: encode analysis: %w", dupID, keepID, err)
 			}
+			// best_move: see mergeRolloutsIntoTx.
 			if _, err := tx.ExecContext(ctx,
 				`UPDATE analysis SET position_id = ?, data = ? WHERE position_id = ?`, keepID, encoded, dupID); err != nil {
 				return fmt.Errorf("merging duplicate position %d into %d: %w", dupID, keepID, err)

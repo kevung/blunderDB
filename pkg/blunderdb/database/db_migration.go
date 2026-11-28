@@ -112,6 +112,7 @@ var migrationSteps = []migrationStep{
 	{"2.57.0", "2.58.0", (*Database).migrate_2_57_0_to_2_58_0},
 	{"2.58.0", "2.59.0", (*Database).migrate_2_58_0_to_2_59_0},
 	{"2.59.0", "2.60.0", (*Database).migrate_2_59_0_to_2_60_0},
+	{"2.60.0", "2.61.0", (*Database).migrate_2_60_0_to_2_61_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given
@@ -257,6 +258,9 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	// After the provenance pass and the answered doubles too: the columns
 	// are derived from the rows those passes leave.
 	if err := d.finishRederivedColumns(ctx); err != nil {
+		return err
+	}
+	if err := d.finishBestMoveBackfill(ctx); err != nil {
 		return err
 	}
 	// An older shape of match_stats rows is a schema repair, not a fill:

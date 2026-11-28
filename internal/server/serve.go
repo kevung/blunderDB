@@ -307,6 +307,8 @@ func RunServe(args []string) error {
 		return err
 	}
 
+	startDeferredBackfills(ctx, st, logger)
+
 	if cfg.pprofAddr != "" {
 		stopPprof := startPprofServer(ctx, logger, cfg.pprofAddr)
 		defer stopPprof()
@@ -550,4 +552,23 @@ func loadServeIdentity(dir, name string) (*issuance.Identity, error) {
 		}
 	}
 	return id, nil
+}
+
+// startDeferredBackfills runs, beside the service, the passes Migrate leaves
+// to it (postgres: the best move of the stored analyses). An interrupted
+// pass resumes at the next start.
+func startDeferredBackfills(ctx context.Context, st storage.Storage, logger *slog.Logger) <-chan struct{} {
+	done := make(chan struct{})
+	d, ok := st.(interface{ BackfillDeferred(context.Context) error })
+	if !ok {
+		close(done)
+		return done
+	}
+	go func() {
+		defer close(done)
+		if err := d.BackfillDeferred(ctx); err != nil && ctx.Err() == nil {
+			logger.Error("deferred backfill stopped; the next start resumes it", "error", err)
+		}
+	}()
+	return done
 }

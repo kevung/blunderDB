@@ -34,9 +34,17 @@ const analysisInsertSQL = `INSERT INTO analysis (
 	player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
 	player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
 	is_forced, is_close_cube,
-	analysis_engine, analysis_depth, creation_date
+	analysis_engine, analysis_depth, creation_date, best_move
 ) VALUES ($1,$2,$3, $4,$5,$6, $7,$8,$9, $10,$11,$12, $13,$14,
-	$15,$16,$17::timestamp AT TIME ZONE 'UTC')`
+	$15,$16,$17::timestamp AT TIME ZONE 'UTC', $18)`
+
+// analysisBestMoveSQL writes best_move again after an upsert that rewrote
+// data with the same best play, which the analysis_best_move_stale trigger
+// (077) has set NULL. It does not touch data, so the trigger stays silent, and
+// in the upsert's transaction the journal collapses it into the same entry.
+const analysisBestMoveSQL = `UPDATE analysis a SET best_move = v.m
+  FROM unnest($2::bigint[], $3::text[]) AS v(pid, m)
+ WHERE a.tenant_id = $1 AND a.position_id = v.pid AND a.best_move IS NULL`
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
 // same statement, so concurrent saves cannot insert two rows. Save checks the
@@ -60,6 +68,7 @@ ON CONFLICT (tenant_id, position_id) DO UPDATE SET
 	analysis_engine=excluded.analysis_engine,
 	analysis_depth=excluded.analysis_depth,
 	creation_date=excluded.creation_date,
+	best_move=excluded.best_move,
 	met_id=CASE WHEN excluded.analysis_engine LIKE 'gammonNet%' THEN analysis.met_id END
 WHERE analysis.tenant_id = excluded.tenant_id`
 
@@ -261,7 +270,7 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced != 0, c.IsCloseCube != 0,
-			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate))
+			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove)
 		if isForeignKeyViolation(err, "analysis_position_tenant_fkey") {
 			// The position was deleted after the ownership check: the same
 			// refusal requireOwned gives, without the driver's text.
@@ -272,6 +281,11 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 		}
 		if tag.RowsAffected() == 0 {
 			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, storage.ErrNotFound)
+		}
+		if !fresh {
+			if _, err := tx.Exec(ctx, analysisBestMoveSQL, tenant, []int64{positionID}, []string{c.BestMove}); err != nil {
+				return fmt.Errorf("postgres: save analysis best move: %w", err)
+			}
 		}
 		// The moves played here are scored against the analysis just written.
 		if !fresh {
@@ -426,21 +440,25 @@ func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64)
 func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope string) (int, error) {
 	tid := tenantID(scope)
 	repaired, err := repairDenormalisedColumns(ctx, s.db, &tid)
-	if err != nil || repaired == 0 {
-		return repaired, err
+	if err != nil || repaired.stats == 0 {
+		return repaired.rows, err
 	}
-	// A repaired column is one match_stats summarises.
 	if _, err := s.db.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1`, tid); err != nil {
-		return repaired, fmt.Errorf("postgres: repair: invalidate match stats: %w", err)
+		return repaired.rows, fmt.Errorf("postgres: repair: invalidate match stats: %w", err)
 	}
-	return repaired, nil
+	return repaired.rows, nil
 }
+
+// repairCount counts the rows a repair wrote, and those of them that changed
+// a column match_stats summarises.
+type repairCount struct{ rows, stats int }
 
 // repairDenormalisedColumns recomputes the analysis columns of tenant's rows,
 // every tenant's when tenant is nil, and rescores the moves of their
 // positions (sqlshared.RescorePlayedDecisions). It returns how many rows of
-// either kind changed; the caller invalidates match_stats.
-func repairDenormalisedColumns(ctx context.Context, db execer, tenant *int64) (int, error) {
+// either kind changed; the caller invalidates match_stats when repairCount.stats
+// says one of them changed a column they summarise.
+func repairDenormalisedColumns(ctx context.Context, db execer, tenant *int64) (repairCount, error) {
 	n, _, err := repairDenormalisedPages(ctx, db, tenant, 0, 0)
 	return n, err
 }
@@ -448,7 +466,7 @@ func repairDenormalisedColumns(ctx context.Context, db execer, tenant *int64) (i
 // repairDenormalisedPages is repairDenormalisedColumns over the analyses past
 // id after, at most maxPages pages of repairPageSize (0: all of them). It
 // returns the id it stopped at: equal to after when nothing was left.
-func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, after int64, maxPages int) (int, int64, error) {
+func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, after int64, maxPages int) (repairCount, int64, error) {
 	type row struct {
 		id, tenant, posID    int64
 		data                 []byte
@@ -456,6 +474,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 		cubeErr, bestMoveErr int64
 		bestMoveUnscored     bool
 		forced, closeCub     bool
+		bestMove             *string
 		// The position's columns its legal plays depend on.
 		state           []byte
 		por, d1, d2, dt *int64
@@ -464,14 +483,14 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 		// tenant.
 		mvMove, mvCube *string
 	}
-	repaired := 0
+	var repaired repairCount
 	lastID := after
 	for pages := 0; maxPages == 0 || pages < maxPages; pages++ {
 		var page []row
 		if err := func() error {
 			rows, err := db.Query(ctx,
 				`SELECT a.id, a.tenant_id, a.position_id, a.data, `+sqlshared.TenantActionLabelOrEmptySQL("a.best_cube_action")+`, COALESCE(a.cube_error,0),
-				        COALESCE(a.best_move_equity_error,0), a.best_move_equity_error IS NULL, a.is_forced, a.is_close_cube,
+				        COALESCE(a.best_move_equity_error,0), a.best_move_equity_error IS NULL, a.is_forced, a.is_close_cube, a.best_move,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 				        (SELECT `+sqlshared.TenantActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
 				        `+sqlshared.PlayPositionColumns+`
@@ -484,7 +503,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.tenant, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
+				if err := rows.Scan(&r.id, &r.tenant, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.bestMove, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
 					return fmt.Errorf("postgres: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -517,7 +536,10 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			analyses[r.tenant][r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr,
 				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}
-			if stored.equal(c) {
+			// A NULL best move is not derived yet: runBestMoveBackfill owes it,
+			// not this pass, whose writes the journal reports.
+			statsStale := !stored.equal(c)
+			if !statsStale && (r.bestMove == nil || *r.bestMove == c.BestMove) {
 				continue
 			}
 			bestCube, err := actionCode(ctx, db, r.tenant, c.BestCubeAction)
@@ -526,19 +548,25 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			}
 			if _, err := db.Exec(ctx,
 				`UPDATE analysis SET best_cube_action=$1, cube_error=$2, best_move_equity_error=$3,
-				 is_forced=$4, is_close_cube=$5 WHERE id=$6 AND tenant_id=$7`,
+				 is_forced=$4, is_close_cube=$5, best_move=$8 WHERE id=$6 AND tenant_id=$7`,
 				bestCube, c.CubeError, c.BestMoveErrorArg(),
-				c.IsForced == 1, c.IsCloseCube == 1, r.id, r.tenant); err != nil {
+				c.IsForced == 1, c.IsCloseCube == 1, r.id, r.tenant, c.BestMove); err != nil {
 				return repaired, lastID, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}
-			repaired++
+			// match_stats summarises no best_move: a row stale in it alone
+			// is written and counted, but does not invalidate them.
+			repaired.rows++
+			if statsStale {
+				repaired.stats++
+			}
 		}
 		for tenant, of := range analyses {
 			n, err := sqlshared.RescorePlayedDecisions(ctx, binder{db}.shared(), scopeOfTenant(tenant), of)
 			if err != nil {
 				return repaired, lastID, fmt.Errorf("postgres: repair: %w", err)
 			}
-			repaired += n
+			repaired.rows += n
+			repaired.stats += n
 		}
 	}
 	return repaired, lastID, nil
@@ -781,6 +809,7 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 		}
 		b := &pgx.Batch{}
 		var responses []int64
+		moves := make([]string, 0, len(chunk))
 		for _, id := range chunk {
 			a := analyses[id]
 			c, err := s.prepare(ctx, tenant, id, a, &storage.PlayedActions{Position: plays[id]})
@@ -809,11 +838,13 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 				c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 				c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 				c.IsForced != 0, c.IsCloseCube != 0,
-				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate))
+				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove)
+			moves = append(moves, c.BestMove)
 			if slices.ContainsFunc(a.PlayedCubeActions, engine.IsResponseCubeAction) {
 				responses = append(responses, id)
 			}
 		}
+		b.Queue(analysisBestMoveSQL, tenant, chunk, moves)
 		res := bt.SendBatch(ctx, b)
 		for _, id := range chunk {
 			tag, err := res.Exec()
@@ -825,6 +856,10 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 				_ = res.Close()
 				return fmt.Errorf("postgres: save analysis for position %d: %w", id, storage.ErrNotFound)
 			}
+		}
+		if _, err := res.Exec(); err != nil {
+			_ = res.Close()
+			return fmt.Errorf("postgres: save analysis best move: %w", err)
 		}
 		if err := res.Close(); err != nil {
 			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
@@ -847,7 +882,7 @@ var analysisBulkTypes = []string{
 	bulkBigint, bulkBigint, bulkBigint,
 	bulkBigint, bulkBigint, bulkBigint,
 	bulkBool, bulkBool,
-	bulkText, bulkInt, bulkTime,
+	bulkText, bulkInt, bulkTime, bulkText,
 }
 
 var analysisBulkInsertSQL = insertHead(analysisInsertSQL) + " " + unnestSelect(analysisBulkTypes)
@@ -882,7 +917,7 @@ func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []sto
 				c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 				c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 				c.IsForced != 0, c.IsCloseCube != 0,
-				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate),
+				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate), c.BestMove,
 			}
 			if slices.ContainsFunc(it.Analysis.PlayedCubeActions, engine.IsResponseCubeAction) {
 				responses = append(responses, it.PositionID)

@@ -1,6 +1,13 @@
 package server
 
-import "testing"
+import (
+	"context"
+	"log/slog"
+	"testing"
+	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+)
 
 // TestParseServeArgs_RejectsPositionalArgument: flag.FlagSet stops at the
 // first non-flag, so flags after a stray positional would be silently
@@ -153,5 +160,38 @@ func TestLoadServeIdentity_Name(t *testing.T) {
 	}
 	if kept.Name != "Club de Paris" {
 		t.Fatalf("no name given: %q, want the stored \"Club de Paris\"", kept.Name)
+	}
+}
+
+type blockingBackfillStore struct {
+	storage.Storage
+	release chan struct{}
+}
+
+func (b blockingBackfillStore) BackfillDeferred(ctx context.Context) error {
+	select {
+	case <-b.release:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
+// TestDeferredBackfillDoesNotHoldTheStart: the start goes on while the pass
+// runs, and the pass stops with the service.
+func TestDeferredBackfillDoesNotHoldTheStart(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	st := blockingBackfillStore{release: make(chan struct{})}
+	done := startDeferredBackfills(ctx, st, slog.New(slog.DiscardHandler))
+	select {
+	case <-done:
+		t.Fatal("the pass ended before it was released")
+	default:
+	}
+	cancel()
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("the pass outlived the service")
 	}
 }

@@ -40,7 +40,7 @@ func recountDecisions(ctx context.Context, conn beginner) (bool, error) {
 		if err := ctx.Err(); err != nil {
 			return false, err
 		}
-		after, n := last, 0
+		after, n := last, repairCount{}
 		all, err := inUnforcedTx(ctx, conn, recountTables, func(tx pgx.Tx) error {
 			if first {
 				if _, err := tx.Exec(ctx, `DELETE FROM match_stats`); err != nil {
@@ -52,7 +52,7 @@ func recountDecisions(ctx context.Context, conn beginner) (bool, error) {
 			if err != nil {
 				return fmt.Errorf("postgres: decision recount: %w", err)
 			}
-			if n > 0 && !first {
+			if n.stats > 0 && !first {
 				if _, err := tx.Exec(ctx, `DELETE FROM match_stats`); err != nil {
 					return fmt.Errorf("postgres: decision recount: invalidate match stats: %w", err)
 				}
@@ -63,7 +63,7 @@ func recountDecisions(ctx context.Context, conn beginner) (bool, error) {
 			return false, err
 		}
 		complete = complete && all
-		total += n
+		total += n.rows
 		if last == after {
 			break
 		}
