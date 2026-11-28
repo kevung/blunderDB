@@ -160,18 +160,32 @@ func extractNumbers(g *raster, b box) []printedNumber {
 	X0, X1 := float64(b.x0), float64(b.x1)
 	p := (X1 - X0) / 13
 	near, _ := numbersIn(g, b, X0-numbersNear*p, X1+numbersNear*p)
-	// A number belongs to the near zone or to a far band by its centre,
-	// half a point inside the near zone's edge; the bands reach further
-	// in, so that a number at the edge is whole in its band with the letter
-	// that may stand before it.
-	in0, in1 := X0-(numbersNear-0.5)*p, X1+(numbersNear-0.5)*p
+	// A number whole in the near zone is taken from it; one cut at its
+	// edge, or beyond it, from a far band, which starts half a point off
+	// the board so that such a number is whole there with the letter that
+	// may stand before it.
+	overlap := func(a, b printedNumber) bool {
+		return a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1
+	}
 	var far []printedNumber
 	var letters []box
-	for _, side := range [2][2]float64{{X0 - numbersFar*p, in0 + 2.5*p}, {in1 - 2.5*p, X1 + numbersFar*p}} {
+	for _, side := range [2][2]float64{{X0 - numbersFar*p, X0 - p/2}, {X1 + p/2, X1 + numbersFar*p}} {
 		ns, ls := numbersIn(g, b, side[0], side[1])
 		letters = append(letters, ls...)
 		for _, n := range ns {
-			if !n.cut && (n.cx() < in0 || n.cx() >= in1) {
+			if n.cut {
+				continue
+			}
+			whole := false
+			for _, m := range near {
+				// The near zone's view wins unless it sees the number among
+				// other ink where the band sees it alone, or after a letter:
+				// the near zone's edge can cut what stands round it.
+				if !m.cut && overlap(m, n) && (m.alone || m.lettered || !(n.alone || n.lettered)) {
+					whole = true
+				}
+			}
+			if !whole {
 				n.farOut = true
 				far = append(far, n)
 			}
@@ -179,7 +193,12 @@ func extractNumbers(g *raster, b box) []printedNumber {
 	}
 	out := near[:0:0]
 	for _, n := range near {
-		keep := n.cx() >= in0 && n.cx() < in1
+		keep := true
+		for _, f := range far {
+			if overlap(n, f) {
+				keep = false
+			}
+		}
 		for _, l := range letters {
 			if n.x0 < l.x1 && l.x0 < n.x1 && n.y0 < l.y1 && l.y0 < n.y1 {
 				keep = false // a band's letter, seen from the near zone
@@ -1208,7 +1227,7 @@ func learnPipSlots(nums [][]printedNumber, ds []Diagram) ([]pipSlot, int) {
 // beside a diagram (top then bottom): the one number within 1.5 figure
 // heights across and 1.0 along of each place, or else of its span, read
 // entirely; nil when a place holds none, more than one, or a number not
-// read.
+// read or above any pip count.
 func imagePips(nums []printedNumber, b box, slots []pipSlot) *[2]int {
 	if len(slots) != 2 {
 		return nil
@@ -1234,7 +1253,9 @@ func imagePips(nums []printedNumber, b box, slots []pipSlot) *[2]int {
 		if count == 0 {
 			found, count = at(s.x0, s.x1, s.y0, s.y1)
 		}
-		if count != 1 || found < 0 {
+		// Fifteen checkers on the 25-point make 375 pips at most: a
+		// larger number is a misread, left unread rather than compared.
+		if count != 1 || found < 0 || found > 375 {
 			return nil
 		}
 		out[k] = found

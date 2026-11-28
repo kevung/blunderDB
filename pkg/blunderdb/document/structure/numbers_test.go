@@ -288,3 +288,19 @@ func TestLetterBeforeNumber(t *testing.T) {
 		}
 	}
 }
+
+// A number at a pip place larger than any pip count is a misread: the
+// diagram is left without printed pips instead of showing a contradiction.
+func TestImagePipsRefusesImpossibleCount(t *testing.T) {
+	b := box{0, 0, 1000, 800}
+	slots := []pipSlot{{x: 1.1, y: 0.1, x0: 1.1, x1: 1.1, y0: 0.1, y1: 0.1}, {x: 1.1, y: 0.9, x0: 1.1, x1: 1.1, y0: 0.9, y1: 0.9}}
+	at := func(y, v int) printedNumber {
+		return printedNumber{x0: 1090, x1: 1110, y0: y - 10, y1: y + 10, h: 20, val: v}
+	}
+	if got := imagePips([]printedNumber{at(80, 102), at(720, 90)}, b, slots); got == nil || *got != [2]int{102, 90} {
+		t.Fatalf("counts beside the board: got %v, want [102 90]", got)
+	}
+	if got := imagePips([]printedNumber{at(80, 102), at(720, 890)}, b, slots); got != nil {
+		t.Fatalf("890 read as a pip count: got %v, want nil", *got)
+	}
+}
