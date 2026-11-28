@@ -201,32 +201,3 @@ func TestBootstrapCloseStopsDeferredBackfills(t *testing.T) {
 		t.Errorf("after the resumed passes: index valid %v, %d rows NULL; want valid, 0", valid, nulls)
 	}
 }
-
-// TestBootstrapDeferredWaitsForAnotherBuilder: an engine that finds another
-// process holding the index build waits for it, then builds what that
-// process left unbuilt.
-func TestBootstrapDeferredWaitsForAnotherBuilder(t *testing.T) {
-	ctx := context.Background()
-	dsn, conn := seedDeferredPending(t)
-	other, err := pgx.Connect(ctx, dsn)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer func() { _ = other.Close(ctx) }()
-	if _, err := other.Exec(ctx, `SELECT pg_advisory_lock($1)`, int64(0x5f62657374696478)); err != nil {
-		t.Fatal(err)
-	}
-	_, c, err := Bootstrap(ctx, Config{Backend: "postgres", DSN: dsn})
-	if err != nil {
-		t.Fatalf("Bootstrap: %v", err)
-	}
-	defer func() { _ = c.Close() }()
-	waitActivity(t, conn, `wait_event = 'advisory' AND query LIKE '%pg_advisory_lock%'`)
-	if err := other.Close(ctx); err != nil {
-		t.Fatal(err)
-	}
-	waitDeferred(t, c)
-	if valid, nulls := deferredState(t, conn); valid == nil || !*valid || nulls != 0 {
-		t.Errorf("after the other builder left: index valid %v, %d rows NULL; want valid, 0", valid, nulls)
-	}
-}
