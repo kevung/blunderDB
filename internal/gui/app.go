@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 	"io/fs"
 	"log"
 	"os"
@@ -18,6 +17,8 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
