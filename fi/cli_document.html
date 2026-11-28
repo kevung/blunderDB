@@ -1,0 +1,396 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asiakirjan asemien tuonti &mdash; blunderDB 0.63.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d906bdf1"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Kirjasto: haku, luettelot, kokoelmat" href="cli_bibliotheque.html" />
+    <link rel="prev" title="Tuonti, vienti, siirto" href="cli_import_export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/cli_document.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_document.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_document.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_document.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_document.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/cli_document.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_document.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_document.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Yleinen syntaksi</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Käytettävissä olevat komennot</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Tuonti, vienti, siirto</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Asiakirjan asemien tuonti</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-quoi-cela-sert">Mihin tätä käytetään</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-est-lu-ce-qui-est-refuse">Mitä luetaan, mitä hylätään</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-parcours-en-trois-commandes">Kolmen komennon kulku</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-releve">Relevé</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-trois-etats">Kolme tilaa</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#livres-scannes">Skannatut kirjat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-l-import-refuse">Miksi tuonti hylkää</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-entre-en-base">Mitä tietokantaan päätyy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#une-position-repetee">Toistuva asema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reimporter">Uudelleentuonti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-demon">Daemon</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Kirjasto: haku, luettelot, kokoelmat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Ottelut, turnaukset ja pelit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Analyysi ja pelimoottori</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Opiskelu, oppitunnit ja harjoittelu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Tilastot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Tietokannan hallinta</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Työnkulkuesimerkkejä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Paluukoodit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Komentoriviliittymä (CLI)</a></li>
+      <li class="breadcrumb-item active">Asiakirjan asemien tuonti</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="importer-les-positions-d-un-document">
+<span id="cli-document"></span><h1>Asiakirjan asemien tuonti<a class="headerlink" href="#importer-les-positions-d-un-document" title="Link to this heading"></a></h1>
+<section id="a-quoi-cela-sert">
+<h2>Mihin tätä käytetään<a class="headerlink" href="#a-quoi-cela-sert" title="Link to this heading"></a></h2>
+<p>Omistamasi kirja — tehtäväkirja, kokoelma, artikkeli — näyttää asemat kaavioina opiskelun järjestyksessä. Komento <code class="docutils literal notranslate"><span class="pre">document</span></code> sijoittaa ne tietokannan kokoelmaan tässä järjestyksessä, jotta voit opiskella ne uudelleen muun kirjaston kanssa. Käyttöliittymä kulkee saman polun avustajassa (<a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">Käyttöliittymän tuontiavustaja</span></a>); komentorivi kuvataan tässä.</p>
+<p>Työ kulkee välitiedoston, <strong>relevén</strong> (asiakirjasta poimitun luettelon), kautta: JSON-tiedosto, joka luettelee asiakirjasta luetut asemat. Sen voi lukea uudelleen, korjata tarvittaessa ja tuoda sitten. Asiakirjan lukeminen ei kirjoita tietokantaan mitään; vain relevén tuonti kirjoittaa.</p>
+</section>
+<section id="ce-qui-est-lu-ce-qui-est-refuse">
+<h2>Mitä luetaan, mitä hylätään<a class="headerlink" href="#ce-qui-est-lu-ce-qui-est-refuse" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">document</span> <span class="pre">analyze</span></code> lukee seuraavanlaisia asiakirjoja:</p>
+<ul class="simple">
+<li><p>PDF-tiedoston, jonka kaaviot on piirretty eXtreme Gammonin lautafontilla (XG:n tulostamat PDF:t): siinä jokainen kaavio on tekstiä, jonka komento purkaa tarkasti glyfi glyfiltä;</p></li>
+<li><p>PDF, jonka kaaviot on piirretty Snowien lautafontilla (Atchoum-perhe, esimerkiksi ”AtchoumSnowie4Normal”): nappulat luetaan PDF:ään upotettujen glyfien muodoista fontin versiosta riippumatta; painetut pipit vahvistavat luennan. Tilannetta ei ole painettu: konteksti jää tarkistettavaksi;</p></li>
+<li><p>skannattu kirja: PDF, jonka sivut koostuvat kuvista, tekstikerroksella tai ilman, tai sen sivut kuvina (kansio PNG- tai JPEG-tiedostoja, yksi sivu tiedostoa kohden, luettuna nimien järjestyksessä, tai yksittäinen kuva). Kaaviot luetaan niistä rakenteensa perusteella (ks. <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Skannatut kirjat</span></a>);</p></li>
+<li><p>tekstiasiakirja, DOCX, ODT, EPUB tai HTML-sivu: sen kuvat luetaan yksi kerrallaan tekstin järjestyksessä, kukin sivukuvana. Merkinnän sivunumero on tällöin sen kuvan sija luettujen joukossa, sen luku on kuvaa edeltävä otsikko, ja siihen viitataan muodossa ”fig. 12” tai ”Luku 3, fig. 12”. Kuvaa edeltävä kappale, kuvan oma kappale ja seuraava toimivat tekstikerroksena: niissä mainitut pipit ja nopat vahvistavat lukemisen kuten PDF:ssä. HTML-sivu lukee kansionsa ja alikansioidensa kuvat sekä sivuun kirjoitetut kuvat (<code class="docutils literal notranslate"><span class="pre">data:</span></code>); mitään ei ladata, ja verkossa olevat kuvat lasketaan virhetulosteeseen. Vektoreina piirretty kuva (EMF, WMF, SVG) jää lukematta: se mainitaan virhetulosteessa. Word 97-2003:n <code class="docutils literal notranslate"><span class="pre">.doc</span></code> hylätään viestillä, joka ehdottaa sen tallentamista PDF- tai DOCX-muodossa.</p></li>
+</ul>
+<p>PDF, jonka mikään sivu ei koostu kuvista eikä ole piirretty tällä fontilla (vektoreilla piirretty kirja), hylätään; sen sivut annetaan silloin kuvina:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page; structure: no page of the document could be read: page 1: pdf: the page draws no image (a page drawn with vectors is not rendered)
+</pre></div>
+</div>
+<p>PDF, joka on piirretty lautafontilla, jonka muotoja ei ole upotettu, hylätään viestillä, joka nimeää fontin.</p>
+<p>Tiedosto, joka ei ole PDF, tekstiasiakirja eikä kuva, salattu PDF tai yli 512 MiB:n PDF, yli 64 MiB:n kuva tai kuva, jossa on yli 100 miljoonaa pikseliä, hylätään myös, ja viesti kertoo sen. Tekstiasiakirjalla on sama 512 MiB:n raja; sen arkisto hylätään, jos siinä on yli 10 000 merkintää, osa purkautuu yli 64 MiB:ksi tai purettu kokonaiskoko on yli 1 GiB.</p>
+</section>
+<section id="le-parcours-en-trois-commandes">
+<h2>Kolmen komennon kulku<a class="headerlink" href="#le-parcours-en-trois-commandes" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>analyze<span class="w"> </span>livre.pdf<span class="w"> </span>-o<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>check<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>releve.json
+</pre></div>
+</div>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">analyze</span></code> lukee PDF:n ja kirjoittaa relevén (ilman <code class="docutils literal notranslate"><span class="pre">-o</span></code>-valitsinta vakiotulosteeseen). Kun vakiovirhetuloste on pääte, se kirjoittaa sinne lukemisen etenemisen (<code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">37/212,</span> <span class="pre">54</span> <span class="pre">diagrams</span></code>); skriptissä mitään ei kirjoiteta. Se tiivistää löytämänsä:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Relevé:     releve.json
+</pre></div>
+</div>
+<p>Otsikko ja tekijä tulevat PDF:n metatiedoista, muuten otsikko on tiedoston nimi; <code class="docutils literal notranslate"><span class="pre">--title</span></code> ja <code class="docutils literal notranslate"><span class="pre">--author</span></code> korvaavat ne. Kunkin merkinnän luku tulee PDF:n kirjanmerkeistä.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">check</span></code> tarkistaa relevén ja laskee sen merkinnät lukematta tai kirjoittamatta mitään tietokantaa. Laskennan jälkeen se luettelee myös tarkistettavat merkinnät (sija, sivu, tila ja kaavioon verrattavat kentät); <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> antaa samat luvut ja saman luettelon (<code class="docutils literal notranslate"><span class="pre">review</span></code>) JSON-muodossa:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1; verified 0)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Unverified: rank 4, 5, 6 (import refused without --force)
+Review:
+  rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">check</span></code> ottaa vastaan myös itse asiakirjan (<code class="docutils literal notranslate"><span class="pre">check</span> <span class="pre">livre.pdf</span></code>): se lukee silloin relevén, jonka käyttöliittymän tarkistuslehti säilyttää asiakirjan vieressä (<code class="docutils literal notranslate"><span class="pre">livre.pdf.releve.json</span></code>, <a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">Käyttöliittymän tuontiavustaja</span></a>), ja antaa sen edistymisen, <code class="docutils literal notranslate"><span class="pre">verified</span></code> mukaan lukien.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">import</span></code> kirjoittaa asemat kokoelmaan:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Created collection "Mon livre" (id 1)
+Entries: 6, distinct positions: 5 (5 new in the library), added to the collection: 5, repeated: 1
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--collection</span></code> valitsee muun nimen kuin asiakirjan otsikon. Jos tietokantatiedostoa ei ole, se luodaan.</p>
+</li>
+</ol>
+</section>
+<section id="le-releve">
+<h2>Relevé<a class="headerlink" href="#le-releve" title="Link to this heading"></a></h2>
+<p>Relevé on luettava JSON-tiedosto, jonka voi avata tekstieditorissa. Otsake (<code class="docutils literal notranslate"><span class="pre">document</span></code>) kertoo asiakirjan otsikon, tekijän, painoksen tai osoitteen, luetun tiedoston SHA-256-sormenjäljen, sen kaavioiden profiilin ja skannatun kirjan kohdalla sen oletuskontekstin (<code class="docutils literal notranslate"><span class="pre">defaults</span></code>, katso <a class="reference internal" href="#cli-document-defaults"><span class="std std-ref">Oletuskonteksti</span></a>). Sen jälkeen jokainen kaavio on merkintä asiakirjan järjestyksessä:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code> — sen järjestysluku, alkaen luvusta 1 ilman aukkoja;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">page</span></code>, <code class="docutils literal notranslate"><span class="pre">chapter</span></code> ja <code class="docutils literal notranslate"><span class="pre">label</span></code> — sen sivu, kirjanmerkkien luku ja nimi, jonka asiakirja sille antaa (”Problem 191”), kun se on painettu kaavion yläpuolelle;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">position</span></code> — asema XGID-muodossa: nappulat, tuplauskuutio, vuoro, nopat, pistetilanne ja ottelun pituus yhtenä merkkijonona;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checkers</span></code> — nappuloiden varmuus: <code class="docutils literal notranslate"><span class="pre">sure</span></code>, <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> tai <code class="docutils literal notranslate"><span class="pre">uncertain</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">complete</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code>, kun nappulat on luettu viisitoista per puoli laudalta ilman epäilyksiä ja ilman että ristiintarkistus vahvistaa ne (ks. <a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Viisitoista ja viisitoista ilman epäilystä</span></a>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code> — miten konteksti (tuplauskuutio, nopat, vuoro, pistetilanne) tunnetaan: <code class="docutils literal notranslate"><span class="pre">read</span></code> (luettu ja ristiintarkistettu), <code class="docutils literal notranslate"><span class="pre">default</span></code> (asiakirjan oletuskonteksti), <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (ei luettu eikä oletuksen alla: piirretty mutta lukematon tuplauskuutio tai nopat, löytymätön pistetilanne) tai <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> (ristiriitainen);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">doubts</span></code> — luvun nimetyt epäilyt;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rect</span></code> — missä kaavio on sivulla, osuutena sivun koosta, jotta se löytyy PDF:stä;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verified</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code>, kun henkilö on verrannut luentaa kaavioon.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">verify</span></code> kirjoittaa henkilön arvion relevéhen ilman tietokantaa:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">3</span>,4,9
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--position<span class="w"> </span><span class="s2">"XGID=..."</span>
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--undo
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--rank</span></code> nimeää merkinnät pilkuilla erotettuina; ne muuttuvat tarkistetuiksi. <code class="docutils literal notranslate"><span class="pre">--position</span></code> korvaa yksittäisen merkinnän luennan oikealla XGID:llä, joka hylätään, ellei se ole laillinen asema; korjaus, jonka konteksti ei enää ole oletuksen, säilyttää omansa, tarkistettavana. <code class="docutils literal notranslate"><span class="pre">--undo</span></code> poistaa arvion. Jos relevén sijasta annetaan asiakirja, komento kirjoittaa sen viereen tallennettuun relevéhen. Komento tulostaa kirjoitetun tiedoston ja edistymisen: <code class="docutils literal notranslate"><span class="pre">releve.json:</span> <span class="pre">verified</span> <span class="pre">3</span> <span class="pre">of</span> <span class="pre">6</span> <span class="pre">entries</span> <span class="pre">(sure</span> <span class="pre">3,</span> <span class="pre">to</span> <span class="pre">verify</span> <span class="pre">2,</span> <span class="pre">uncertain</span> <span class="pre">1)</span></code>.</p>
+<p>Relevé tarkistetaan avaamalla PDF merkinnän sivulta. Siellä korjataan asema (XGID), merkitään tarkistettu merkintä arvolla <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code> ja poistetaan merkintä numeroimalla järjestysluvut uudelleen. Relevé tarkistetaan useassa istunnossa: <code class="docutils literal notranslate"><span class="pre">verified</span></code> säilyy tiedostossa. <code class="docutils literal notranslate"><span class="pre">check</span></code> hylkää relevén, jossa on tuntematon kenttä, jonka järjestysluvuissa on aukko, jonka sivu menee taaksepäin, jonka XGID ei ole laillinen asema tai jonka muoto on ohjelmaa uudempi. <code class="docutils literal notranslate"><span class="pre">sure</span></code>-nappuloissa voi olla epäilys vain kontekstista; <code class="docutils literal notranslate"><span class="pre">read</span></code>-kontekstissa ei ole yhtään; <code class="docutils literal notranslate"><span class="pre">default</span></code>-merkintä kantaa oletuskontekstin XGID:ssään.</p>
+<p>Relevé on version 2 muodossa. Version 1 relevé, joka antoi merkintää kohden vain yhden tilan (<code class="docutils literal notranslate"><span class="pre">state</span></code>), voidaan yhä lukea: <code class="docutils literal notranslate"><span class="pre">sure</span></code>-merkinnällä on siinä varmat nappulat ja luettu konteksti, skannatun kirjan merkintä siirtyy vahvistamattoman oletuskontekstin alle ja kaikilla muilla konteksti on tarkistettava. <code class="docutils literal notranslate"><span class="pre">analyze</span></code> kirjoittaa aina version 2.</p>
+</section>
+<section id="les-trois-etats">
+<h2>Kolme tilaa<a class="headerlink" href="#les-trois-etats" title="Link to this heading"></a></h2>
+<p>Merkinnän tila johtuu sen kahdesta varmuudesta; sitä ei kirjoiteta relevéen.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">sure</span></code></dt><dd><p>Nappulat ovat varmat <strong>ja</strong> konteksti on todennettu: luettu tai asiakirjan oletuskontekstin alla, kun se on vahvistettu. Nappulat ovat varmat, kun kaavion ristiintarkistukset pitävät: kummallakin puolella on viisitoista nappulaa (pisteillä, laudalla ja pois pelatuissa) ja aseman perusteella lasketut pipit vastaavat molempien pelaajien painettuja pippejä. XG:n PDF:n konteksti luetaan: pistetilanne ja ottelun pituus ovat ne, jotka se painaa viereen. Skannatun kirjan kontekstia ei lueta koskaan: katso <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Skannatut kirjat</span></a>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">to-verify</span></code></dt><dd><p>Luenta pitää, mutta mikään ei vahvista sitä: painettu pip eroaa lasketusta pipistä, tai kaavio näyttää sellaista, mitä vertailutulosteet eivät ole koskaan näyttäneet — yli 9 nappulan pino, numeroidut nappulat listalla, yli kaksi valkoista tai kolme mustaa nappulaa listalla, tuplauskuutio ylemmän pelaajan puolella tai yli 8:n kohdalla, ylempi pelaaja vuorossa, ei vuoromerkintää, musta pelaaja alhaalla, Crawford-peli, pelaaja yhden pisteen päässä voitosta (Crawford-peliä ja sitä seuraavia ei voi erottaa), fontin glyfit, joita taulukko ei lue. Nämä tapaukset luetaan mutta niitä ei koskaan julisteta varmoiksi.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uncertain</span></code></dt><dd><p>Nappulat tai konteksti ovat ristiriitaiset tai luku on epätäydellinen: tuntematon glyfi, puoli, jolla ei ole viittätoista nappulaa ja jonka pipit eivät täsmää, vaurioitunut kehys. Kaavio, josta ei saada laillista asemaa, säilyttää paikkansa relevéssä ilman asemaa (<code class="docutils literal notranslate"><span class="pre">&quot;position&quot;:</span> <span class="pre">&quot;&quot;</span></code>).</p>
+</dd>
+</dl>
+<p>Merkintä on <strong>tuotavissa</strong>, kun se on <code class="docutils literal notranslate"><span class="pre">sure</span></code> tai tarkistettu tai pyynnöstä, kun se on täydellinen (<a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Viisitoista ja viisitoista ilman epäilystä</span></a>). Sen kantamat epäilyt kertovat, mitä tarkistaa, esimerkiksi:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pips read 167/167, printed 160/167 (bottom/top)
+</pre></div>
+</div>
+<p>Noppaa ei lueta: analyysi kirjoittaa aina ”ei noppia” (<code class="docutils literal notranslate"><span class="pre">00</span></code>).</p>
+</section>
+<section id="livres-scannes">
+<span id="cli-document-images"></span><h2>Skannatut kirjat<a class="headerlink" href="#livres-scannes" title="Link to this heading"></a></h2>
+<p>Kuvana oleva sivu luetaan olettamatta tyyliä: komento etsii siitä kaksi kahdentoista pisteen riviä, joita erottaa lista, sekä nappulat, kaksiluokkaiset kiekot, jotka on pinottu pisteen kannasta alkaen. Se oppii asiakirjan tyylin asiakirjasta itsestään: nappulan muodon ensimmäisistä kaavioista ja sitten kaikista nappuloiden kaksi luokkaa, painetun numeroinnin ja pelisuunnan. Mitään ei säilytetä asiakirjasta toiseen, eikä yhtään kuvaa säilytetä.</p>
+<p>Se lukee viivapiirroskaaviot ja painetut ohjelmistojen kuvakaappaukset lukujärjestyksessä: kaksoissivun vasen sivu ja sitten oikea, sarake, sitten ylhäältä alas. Hieman vino sivu oikaistaan, sidoksen varjo poistetaan. Käyttökelpoinen tarkkuus: 150-300 dpi, tiedoston ilmoittama; muuten sivun pitkän sivun oletetaan olevan yksitoista tuumaa.</p>
+<p>Skannattu PDF luetaan suoraan ilman ulkoista työkalua: jokainen sivu kootaan sen kuvista, sijoitettuina niin kuin PDF ne sijoittaa, niistä tarkimman resoluutiolla rajattuna välille 150–300 dpi, sitten luetaan ja unohdetaan. Puretaan JPEG-kuvat (<code class="docutils literal notranslate"><span class="pre">DCTDecode</span></code>), JPEG 2000 -kuvat (<code class="docutils literal notranslate"><span class="pre">JPXDecode</span></code>, harmaa tai kolme komponenttia, ilman palettia, upotettua alfaa tai HTJ2K:ta, enintään 12 miljoonaa pikseliä), JBIG2-kuvat (<code class="docutils literal notranslate"><span class="pre">JBIG2Decode</span></code> ja sen <code class="docutils literal notranslate"><span class="pre">JBIG2Globals</span></code>: geneeriset alueet MMR- tai aritmeettisella koodauksella, tarkennusalueet, symbolisanakirjat ja tekstialueet aritmeettisella koodauksella, enintään 67 miljoonaa pikseliä sivulla), faksikuvat (<code class="docutils literal notranslate"><span class="pre">CCITTFaxDecode</span></code>, ryhmä 3 yksiulotteisena ja ryhmä 4) ja raakakuvat (<code class="docutils literal notranslate"><span class="pre">FlateDecode</span></code>, harmaa, väri tai indeksoitu); sabluunamaskit ja pehmeät maskit sovelletaan, joten JPEG-taustasta ja faksimaskeista tehty sivu kootaan luettavasti. Ei tueta: värisävyavaimella tehtyä maskia (kuva maalataan kokonaan), Huffman-koodattua tai rasteroitua JBIG2-kuvaa eikä vektoreilla piirrettyä sivua (ohitetaan). Sivu, jonka jokin kuva hylätään otsakkeensa perusteella, ohitetaan purkamatta sen muita kuvia; purkubudjetin puutteen vuoksi hylätty kuva jätetään pois, ja sivu luetaan ilman sitä, jos jokin muu kuva maalaa sen. Ohitetut sivut nimetään virhetulosteessa syineen; muut luetaan. Sivun tekstikerros, näkyvä tai ei (se, jonka OCR jättää kuvan alle), antaa sanansa paikoilleen kuvaan; teksti, jota sen fontti ei käännä merkeiksi, ei anna yhtään sanaa.</p>
+<p>Skannatussa kirjassa nappulat ja konteksti todennetaan erikseen. Nappulat ovat <code class="docutils literal notranslate"><span class="pre">sure</span></code>, kun kaavion viereen painetut pipit vastaavat kummankin puolen laskettuja pippejä, kummallakaan puolella ei ole yli viittätoista nappulaa eikä nappuloista jää epäilyä. Konteksti luetaan kenttä kerrallaan, ja kenttä katsotaan luetuksi vain, kun se on ristiintarkistettu:</p>
+<ul class="simple">
+<li><p>tuplauskuutio, sen ruudusta luetun arvon (asiakirjan numerot) tai tekstikerroksen perusteella — kahden olemassa olevan lähteen on oltava yhtäpitäviä — ja sen sijainnin kanssa johdonmukainen: 64 keskellä tarkoittaa keskitettyä, 2–64 ylhäällä tai alhaalla kuuluu sen puolen pelaajalle; yksinäinen ruutu tyhjällä kasvolla on keskitetty tuplauskuutio, kun asiakirja piirtää sen näin, samaan paikkaan, vähintään kolmen kaavion viereen, koska omistettu tuplauskuutio kantaa arvoaan;</p></li>
+<li><p>nopat, kuvasta laskettuina ja viereisen tekstin vahvistamina: nimetty heitto (”to play 41”, ”rolls a 65”) tai kirjoitettu siirto, jonka jokainen askel on yksi noppa (”2/0 2/1”, ”8/5(2) 6/3(2)”), mainittuna kahdesti, jos teksti nimeää useita heittoja; sana, joka on lähempänä toista kaaviota, kuuluu sille; vuoro, noppien värin ja niiden laudan puoliskon perusteella (oikea puolisko alapelaajalle), joiden on osoitettava samaa pelaajaa. Ilman piirrettyjä noppia ne nimeävä kuvateksti (”Black to play 53”, luettuna tekstikerroksesta tai, ilman tekstikerrosta, kuvasta) antaa heiton ja vuorossa olevan pelaajan, kumpikin epäiltyinä: yksi lähde ei vahvista mitään;</p></li>
+<li><p>pistetilanne, tekstikerroksen otsikkorivin perusteella (<code class="docutils literal notranslate"><span class="pre">score:</span></code>, <code class="docutils literal notranslate"><span class="pre">pip:</span></code>, <code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">point</span> <span class="pre">match</span></code>), kukin pistetilanne liitetään pelaajalle, jonka pipit se sisältää; kaksi yhtä suurta pistetilannetta eivät tarvitse pippejä.</p></li>
+</ul>
+<p>Merkintä, jonka koko konteksti on luettu, on <code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;read&quot;</span></code>. Löytymätöntä tuplauskuutiota ei koskaan oleteta keskellä olevaksi: mitä ei lueta, saa asiakirjan oletuskontekstin (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;default&quot;</span></code>, epäilyllä <code class="docutils literal notranslate"><span class="pre">context</span> <span class="pre">not</span> <span class="pre">read:</span> <span class="pre">cube,</span> <span class="pre">dice,</span> <span class="pre">player</span> <span class="pre">on</span> <span class="pre">roll,</span> <span class="pre">score</span></code>). Piirretty tai painettu mutta todentamaton tuplauskuutio, nopat tai pistetilanne, osittain oletuksen ulkopuolelta luettu konteksti kentässä, jota asiakirja ei paina (katso <a class="reference internal" href="#cli-document-learned"><span class="std std-ref">Asiakirjasta opittu oletus</span></a>), ylemmän pelaajan omistama tuplauskuutio ilman piirrettyjä noppia, kuutiota piirtävästä asiakirjasta löytymätön tuplauskuutio tai pistetilannetta painavasta asiakirjasta löytymätön pistetilanne (löytyneenä vähintään kolmanneksen kaavioista vierestä) jättävät kontekstin tarkistettavaksi (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;to-verify&quot;</span></code>, nimetyllä epäilyllä); XGID kantaa tällöin sen, mikä luettiin. Skannatun kirjan merkintä, jonka kontekstia ei lueta, ei siis ole <strong>koskaan</strong> <code class="docutils literal notranslate"><span class="pre">sure</span></code>, kunnes oletuskonteksti on vahvistettu, eikä sellainen, jonka konteksti on tarkistettava, ole sitä koskaan. <code class="docutils literal notranslate"><span class="pre">analyze</span></code> ja <code class="docutils literal notranslate"><span class="pre">check</span></code> laskevat merkinnät kontekstin mukaan ja erikseen ne, joiden vain nappulat on todennettu:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Context:    read 0, default 140, to verify 12
+Defaults:   centred cube, no dice, the bottom player on roll, money play (0:0:1:00:0:0:0:0:10), not confirmed: set "confirmed": true once the document's diagrams follow them
+Checkers:   112 confirmed, their context alone to verify (cube, dice, player on roll, score)
+</pre></div>
+</div>
+<p>Merkinnälle, jonka konteksti on yhä tarkistettava, avataan kirja merkinnän sivulta, verrataan kaavioon tuplauskuutio (arvo ja omistaja: keskelle piirretty kuutio voi olla jonkun omistuksessa), nopat, vuorossa oleva pelaaja ja pistetilanne, korjataan nämä XGID:n kentät tarvittaessa ja merkitään sitten <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code>.</p>
+<section id="le-contexte-par-defaut">
+<span id="cli-document-defaults"></span><h3>Oletuskonteksti<a class="headerlink" href="#le-contexte-par-defaut" title="Link to this heading"></a></h3>
+<p>Skannatun kirjan oletuskonteksti on se, jonka luku kirjoittaa: keskellä oleva tuplauskuutio, ei noppia, alapelaaja vuorossa, vapaa peli. Se on relevén otsakkeessa:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"centred cube, no dice, the bottom player on roll, money play"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">context</span></code> on XGID:n loppu laudan jälkeen; jokainen <code class="docutils literal notranslate"><span class="pre">default</span></code>-merkintä kantaa sen. Kun asiakirjan kaaviot noudattavat tätä kontekstia — esimerkiksi ongelmakirja vapaassa pelissä, alapelaaja vuorossa — se <strong>vahvistetaan kerran</strong> kirjoittamalla <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code>: kaikkien <code class="docutils literal notranslate"><span class="pre">default</span></code>-merkintöjen konteksti on tällöin todennettu, ja ne, joiden nappulat ovat varmat, muuttuvat <code class="docutils literal notranslate"><span class="pre">sure</span></code>-merkinnöiksi. Yksitellen tarkistettavaksi jäävät vain poikkeukset, jotka luku on nähnyt (omistettu tuplauskuutio, piirretyt nopat, ottelun pistetilanne) ja merkinnät, joiden nappulat eivät ole varmat. Kontekstia, jota asiakirja ei noudata, ei vahvisteta: tuplauskuutiota, jota luku ei löydä, kuvaan painettua pistetilannetta ilman tekstikerrosta tai tekstin kuvatekstin ulkopuolella antamaa vuoroa ei nähdä.</p>
+</section>
+<section id="le-defaut-appris-sur-le-document">
+<span id="cli-document-learned"></span><h3>Asiakirjasta opittu oletus<a class="headerlink" href="#le-defaut-appris-sur-le-document" title="Link to this heading"></a></h3>
+<p>Lukeminen oppii asiakirjasta, mitkä kontekstin kentät se painaa kaavioidensa viereen: tuplauskuution, nopat (ja vuorossa olevan pelaajan) tai pistetilanteen, jotka luetaan vähintään kolmanneksen kaavioista vierestä. Se nimeää ne kenttään <code class="docutils literal notranslate"><span class="pre">printed</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"for what a diagram does not print: centred cube, no dice, the bottom player on roll, money play; the document prints its score, read beside each diagram"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"printed"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"score"</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Painettu kenttä on jokaisen merkinnän lukema, jonka lukeminen on todentanut; oletuskonteksti kattaa vain muut. Ottelun tehtäväkirjassa jokaisella kaaviolla on oma pistetilanteensa: sen merkinnät pysyvät tilassa <code class="docutils literal notranslate"><span class="pre">default</span></code>, kukin pistetilanteineen XGID:ssä, ja oletuskontekstin yksittäinen vahvistus todentaa kaikkien keskellä olevan tuplauskuution, noppien puuttumisen ja vuorossa olevan pelaajan. Kaaviota, jonka pistetilannetta ei tällaisessa asiakirjassa lueta, ei oleteta rahapeliksi: sen konteksti jää tarkistettavaksi (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">prints</span> <span class="pre">its</span> <span class="pre">score</span> <span class="pre">beside</span> <span class="pre">its</span> <span class="pre">diagrams,</span> <span class="pre">none</span> <span class="pre">is</span> <span class="pre">read</span> <span class="pre">here:</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">taken</span> <span class="pre">as</span> <span class="pre">money</span> <span class="pre">play</span></code>). <code class="docutils literal notranslate"><span class="pre">analyze</span></code> ja <code class="docutils literal notranslate"><span class="pre">check</span></code> näyttävät opitun:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Printed:    score, read beside each diagram (learned from the document)
+</pre></div>
+</div>
+<p>Mitään ei säilytetä asiakirjasta toiseen. Relevé ilman <code class="docutils literal notranslate"><span class="pre">printed</span></code>-kenttää noudattaa tiukkaa sääntöä: jokainen oletuksen ulkopuolelta luettu kenttä jättää kontekstin tarkistettavaksi.</p>
+</section>
+<section id="quinze-et-quinze-sans-doute">
+<span id="cli-document-complete"></span><h3>Viisitoista ja viisitoista ilman epäilystä<a class="headerlink" href="#quinze-et-quinze-sans-doute" title="Link to this heading"></a></h3>
+<p>Kaaviolla, jossa ei ole painettuja pipsejä, ei ole ristiintarkistusta: sen nappulat pysyvät tilassa <code class="docutils literal notranslate"><span class="pre">to-verify</span></code>. Kun ne on luettu viisitoista nappulaa per puoli ilman epäilyksiä, ne merkitään <code class="docutils literal notranslate"><span class="pre">&quot;complete&quot;:</span> <span class="pre">true</span></code>: kaikissa tehdyissä mittauksissa nämä lukemat olivat oikeita, mutta mikään ei vahvista niitä kaavio kerrallaan. Se on välitila, joka eroaa tilasta <code class="docutils literal notranslate"><span class="pre">sure</span></code>. Kontekstin lisäksi täydellä merkinnällä on vain kaksi epäilystä: painettujen pipsien puuttuminen ja oletettu pelisuunta, kun mikään asiakirjan pips ei ole vahvistanut sitä. Painetut pipsit, jotka poikkeavat lasketuista pipseistä, ovat epäilys nappuloista: merkintä ei silloin ole koskaan täysi. Asema, jossa nappuloita on viety ulos, ei ole koskaan täysi: kun asiakirja piirtää ulosnoistolautansa palkkeina (sivusta nähty ulos viety nappula), laudalla lasketut palkit puolen rivin vieressä täydentävät sen piirretyt nappulat viiteentoista, mutta vieras muoto lasketaan siellä yhtä helposti kuin nappula. Tämä laskenta pätee vain, jos painetut pipsit täsmäävät aseman kanssa, joka on silloin <code class="docutils literal notranslate"><span class="pre">sure</span></code>; ilman niitä se on nimetty epäilys (<code class="docutils literal notranslate"><span class="pre">counted</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">tray,</span> <span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pips</span> <span class="pre">confirm</span> <span class="pre">them</span></code>). Lauta, jonka palkit eivät täytä viittätoista, on nimetty epäilys (<code class="docutils literal notranslate"><span class="pre">they</span> <span class="pre">do</span> <span class="pre">not</span> <span class="pre">make</span> <span class="pre">fifteen</span></code>).</p>
+<p>Oletettu pelisuunta on myös asiakirjan oletusarvo, jolla on oma vahvistuksensa: väärä suunta vaihtaisi sen alla luettujen asemien kaikkien pelaajat keskenään. Se on oletuskontekstissa kohdassa <code class="docutils literal notranslate"><span class="pre">direction</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"direction"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"home"</span><span class="p">:</span><span class="w"> </span><span class="s2">"right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Kontekstin vahvistaminen ei vahvista sitä. Se tarkistetaan muutamasta kaaviosta ja sitten kirjoitetaan <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code> kohtaan <code class="docutils literal notranslate"><span class="pre">direction</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--accept-complete</span></code> hyväksyy kerralla täydelliset merkinnät, joiden konteksti on todennettu (luettu tai vahvistetun oletuskontekstin alla) ja joiden pelisuunta on varma (pippien äänestämä tai oletettu ja sitten vahvistettu), merkitsemättä niitä tarkistetuiksi; <code class="docutils literal notranslate"><span class="pre">check</span></code> laskee ne ja laskee erikseen ne, joita vahvistamaton suunta pidättää:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Direction:  direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right, not confirmed: check it on a few diagrams, then set "direction": {"confirmed": true}
+Complete:   84 more held back until the direction of play is confirmed
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Complete:   84 with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)
+Unverified: rank 3, 7, 12 (import refused without --force; rank 12 with --accept-complete)
+</pre></div>
+</div>
+<p>Tuonti kertoo, kuinka monta se hyväksyi (<code class="docutils literal notranslate"><span class="pre">Complete:</span> <span class="pre">84</span> <span class="pre">entries</span> <span class="pre">of</span> <span class="pre">15</span> <span class="pre">+</span> <span class="pre">15</span> <span class="pre">checkers</span> <span class="pre">read</span> <span class="pre">with</span> <span class="pre">no</span> <span class="pre">doubt</span></code>). Täydellinen merkintä, jonka kontekstia ei ole todennettu tai jonka oletettua pelisuuntaa ei ole vahvistettu, hylätään edelleen; virheilmoitus kehottaa vahvistamaan sen.</p>
+<p>Painetut pipit luetaan kahdesta lähteestä: PDF:n tekstikerroksesta ja itse kuvasta. Kuvasta komento lukee kaavion ympärillä olevat irralliset luvut laudan vaakakaistalta noin puolen laudan leveyden päähän kummallakin puolella; luvun edessä oleva yksittäinen kirjain (<code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">164</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">123</span></code>) ei estä sen lukemista. Se lukee ne numero kerrallaan vertaamalla asiakirjan pisteiden numerointiin, kahdeksalla yleisellä upotetulla fontilla ja sen jälkeen asiakirjasta jo luetuilla numeroilla; luku palautetaan vain, jos jokainen sen numero tunnistetaan selvästi, muuten se pidättäytyy. Pippien paikka opitaan asiakirjasta: luettu luku, joka vastaa viidentoista nappulan puolta kohti laskettua kaaviota, äänestää paikkansa puolesta, ja kahden paikan (ylhäällä ja alhaalla) on kerättävä riittävästi ääniä; paikka laajenee äänen saaneisiin naapuripaikkoihin asiakirjassa, joka sijoittaa lautansa vaihteleviin paikkoihin tai kokoihin. Mitään numeroa ei valita sen seuraaman kaavion pippien perusteella, eikä mitään säilytetä asiakirjasta toiseen. Kun teksti ja kuva antavat kumpikin pippejä ja ne eroavat, nappuloita ei vahvisteta ja epäilys kertoo sen (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">two</span> <span class="pre">disagree</span></code>). Merkintä ilman luettuja pippejä jää tilaan <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (<code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pip</span> <span class="pre">count</span> <span class="pre">was</span> <span class="pre">found</span> <span class="pre">next</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">diagram</span></code>).</p>
+<p>Kaaviossa piirrettyä siirtonuolta (suoraa, ohutta, vinoa viivaa, joka on paperilla yksin) ei lueta nappulaksi, eikä laudan viereen painettuja enintään viidentoista lukuja (nappulamääriä, numeroita) oteta pipeiksi.</p>
+<p>Numeroiden lukeminen edellyttää tummia arabialaisia numeroita vaalealla taustalla, kirjoitettuna vaakasuoraan, vähintään 15 pikselin korkuisina lukutarkkuudella, pippejä painettuna kaaviosta toiseen lähelle samaa paikkaa sekä noin kolmekymmentä kaaviota luettuna viidellätoista nappulalla puolta kohti tämän paikan oppimiseksi.</p>
+<p>Epäilykset nimeävät sen, mikä on vielä tarkistettava: pino, jossa on numero, kiekko, joka ei kuulu kumpaankaan luokkaan (haalistunut tai tahriintunut nappula), ylhäältä alas täysi sarake, tumma pino, joka lasketaan pituutensa mukaan, puolikas lauta (rivi ilman pistettä), oletettu pelisuunta (nappulat etenevät kohti sitä puolta, jolla on vähiten pipejä), erotuksena laskettu pois pelatut nappulat, keskeltä pois piirretty tuplauskuutio, piirretyt nopat.</p>
+<p>Näitä ei koskaan lueta: tuplauskuution arvo ja omistaja (oletuskonteksti sanoo sen olevan keskellä), nopat (ei yhtään), pistetilanne (vapaa peli), vuorossa oleva pelaaja (alempi), ulosnoistolauta, jos sitä ei ole piirretty palkkeina (puoli, joka on piirretty alle viidellätoista nappulalla, on silloin vienyt loput ulos), sekä kirjaimina (X ja O) piirretyt nappulat: asiakirjaa, jossa yksikään nappula ei ole täytetty kiekko, ei lueta, ja jokainen kaavio on <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> tällä syyllä (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">draws</span> <span class="pre">no</span> <span class="pre">filled</span> <span class="pre">checker</span></code>).</p>
+</section>
+</section>
+<section id="pourquoi-l-import-refuse">
+<h2>Miksi tuonti hylkää<a class="headerlink" href="#pourquoi-l-import-refuse" title="Link to this heading"></a></h2>
+<p>Merkintä, joka ei ole <code class="docutils literal notranslate"><span class="pre">sure</span></code> eikä tarkistettu, ei ole luotettava, ja kokoelmaan päätyvä jaetaan viennissä. Tuonti hylkää siksi <strong>koko</strong> relevén ennen kuin se kirjoittaa mitään, nimeää järjestysluvut ja kertoo, mitä tehdä:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 4, 5, 6; check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Kun merkintöjä on vahvistamattoman oletuskontekstin alla tai ne ovat täydellisiä ilman valitsinta <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code>, viesti kertoo senkin:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 1, 2; confirm the document's defaults once if its diagrams follow them ("defaults": {"confirmed": true}); accept the entries of fifteen checkers a side read with no doubt as a whole (accept complete); check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Nämä merkinnät tarkistetaan, tai annetaan <code class="docutils literal notranslate"><span class="pre">--force</span></code> relevén tuomiseksi sellaisenaan; tuonti kertoo tällöin, kuinka monta merkintää se pakotti (<code class="docutils literal notranslate"><span class="pre">Forced:</span> <span class="pre">3</span> <span class="pre">entries</span> <span class="pre">neither</span> <span class="pre">sure</span> <span class="pre">nor</span> <span class="pre">verified</span></code>).</p>
+<section id="le-repli">
+<span id="cli-document-fallback"></span><h3>Paluu<a class="headerlink" href="#le-repli" title="Link to this heading"></a></h3>
+<p>Merkintä, jonka nappulat on todennettu (<code class="docutils literal notranslate"><span class="pre">sure</span></code>, tai täydellinen valinnalla <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code> ja varma pelisuunta) ja jonka vain konteksti on vielä tarkistettava, ei välttämättä hylätä: kun oletuskonteksti on vahvistettu, tuonti ehdottaa sen <strong>palauttamista</strong> XGID:n kantamaan kontekstiin eli luettuun ja muuten oletukseen. <code class="docutils literal notranslate"><span class="pre">check</span></code> nimeää nämä sijat, ja virheilmoitus ehdottaa paluuta:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Fallback:   rank 4 imported with --fallback under the context its position carries, the fields to check named in its reference
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--fallback</span></code> tuo nämä merkinnät merkitsemättä niitä tarkistetuiksi; kunkin viite kommentissaan nimeää kentät, jotka on tarkistettava kaaviosta, sekä epäilyn, jonka lukeminen niihin jätti, ristiriita mukaan lukien (<code class="docutils literal notranslate"><span class="pre">p.</span> <span class="pre">12,</span> <span class="pre">Problem</span> <span class="pre">31</span> <span class="pre">(context</span> <span class="pre">not</span> <span class="pre">read,</span> <span class="pre">to</span> <span class="pre">check</span> <span class="pre">against</span> <span class="pre">the</span> <span class="pre">diagram:</span> <span class="pre">cube</span> <span class="pre">(cube</span> <span class="pre">drawn,</span> <span class="pre">value</span> <span class="pre">not</span> <span class="pre">read))</span></code>), ja tuonti laskee ne (<code class="docutils literal notranslate"><span class="pre">Fallback:</span> <span class="pre">1</span> <span class="pre">entries</span> <span class="pre">under</span> <span class="pre">the</span> <span class="pre">context</span> <span class="pre">their</span> <span class="pre">position</span> <span class="pre">carries</span></code>). Paluu ei kata merkintää, jonka nappulat on tarkistettava, ei ristiriitaista kontekstia eikä vahvistamatonta oletuskontekstia. Myös valinnalla <code class="docutils literal notranslate"><span class="pre">--force</span></code> merkintä ilman asemaa hylätään: se on täytettävä tai poistettava.</p>
+</section>
+</section>
+<section id="ce-qui-entre-en-base">
+<h2>Mitä tietokantaan päätyy<a class="headerlink" href="#ce-qui-entre-en-base" title="Link to this heading"></a></h2>
+<p>Vain asemat päätyvät kokoelmaan, asiakirjan järjestyksessä, asiakirjan nimisenä (tai <code class="docutils literal notranslate"><span class="pre">--collection</span></code>:in antamalla nimellä). Jokainen asema tulee yksittäisenä tuotuna asemana, ja kirjasto tunnistaa sen identiteetistään: asemaa, joka sillä jo on, ei kahdenneta (<code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">library</span></code> laskee ne, joita siltä puuttui).</p>
+<ul class="simple">
+<li><p>Kokoelman <strong>kuvaus</strong> sisältää asiakirjan otsikon, tekijän, painoksen ja osoitteen, yksi riville. Samanniminen olemassa oleva kokoelma saa puuttuvat asemat ja säilyttää kuvauksensa, jos sillä on sellainen; dynaaminen kokoelma (kyselyllä määritelty) hylätään.</p></li>
+<li><p>Jokaisella asemalla on <strong>kommentti</strong>, joka antaa sen viitteen asiakirjan otsikon jälkeen: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">146,</span> <span class="pre">Problem</span> <span class="pre">191</span></code>.</p></li>
+</ul>
+<p>Mitään muuta ei koskaan päädy: ei kuvaa, ei suorakulmiota, ei tekijän tekstiä. Keskeytetty tai hylätty tuonti ei kirjoita mitään: se on yksi transaktio.</p>
+</section>
+<section id="une-position-repetee">
+<h2>Toistuva asema<a class="headerlink" href="#une-position-repetee" title="Link to this heading"></a></h2>
+<p>Kun asiakirja näyttää saman aseman kahdesti, se päätyy kokoelmaan vain kerran, ensimmäisellä esiintymiskerrallaan. Sen kommentti mainitsee jokaisen viitteen: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">2,</span> <span class="pre">Problem</span> <span class="pre">1;</span> <span class="pre">p.</span> <span class="pre">4</span></code>. <code class="docutils literal notranslate"><span class="pre">repeated</span></code> laskee nämä toistot.</p>
+</section>
+<section id="reimporter">
+<h2>Uudelleentuonti<a class="headerlink" href="#reimporter" title="Link to this heading"></a></h2>
+<p>Saman relevén uudelleentuonti ei lisää mitään: ei uusia asemia, ei mitään kokoelmaan (<code class="docutils literal notranslate"><span class="pre">added</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">collection:</span> <span class="pre">0</span></code>), ja viitekommentti kirjoitetaan uudelleen vain, jos sen viitteet ovat muuttuneet, ei koskaan kahdennettuna. Tuonnin voi siis jatkaa relevén korjaamisen jälkeen.</p>
+</section>
+<section id="le-demon">
+<h2>Daemon<a class="headerlink" href="#le-demon" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">serve</span></code>-daemon tuo relevén osoitteessa <code class="docutils literal notranslate"><span class="pre">/v1/documents.importReleve</span></code> samoilla säännöillä; se ei analysoi yhtään asiakirjaa (ks. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_import_export.html" class="btn btn-neutral float-left" title="Tuonti, vienti, siirto" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-right" title="Kirjasto: haku, luettelot, kokoelmat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

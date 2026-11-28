@@ -1,0 +1,396 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Importar las posiciones de un documento &mdash; documentación de blunderDB - 0.63.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=73a157bb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="Biblioteca: búsqueda, listas, colecciones" href="cli_bibliotheque.html" />
+    <link rel="prev" title="Importar, exportar, transferir" href="cli_import_export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Idiomas">
+  <a href="../fr/cli_document.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_document.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_document.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_document.html" lang="el" hreflang="el">Ελληνικά</a>
+  <span class="current" lang="es" aria-current="true">Español</span>
+  <a href="../fi/cli_document.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_document.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_document.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_document.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Primeros pasos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guía del usuario</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referencia</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Métricas y herramientas de estudio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Atajos de teclado</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Interfaz de línea de comandos (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Introducción</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Sintaxis general</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Comandos disponibles</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Importar, exportar, transferir</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Importar las posiciones de un documento</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-quoi-cela-sert">Para qué sirve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-est-lu-ce-qui-est-refuse">Qué se lee, qué se rechaza</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-parcours-en-trois-commandes">El recorrido en tres comandos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-releve">El relevé</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-trois-etats">Los tres estados</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#livres-scannes">Libros escaneados</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-l-import-refuse">Por qué la importación rechaza</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-entre-en-base">Qué entra en la base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#une-position-repetee">Una posición repetida</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reimporter">Reimportar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-demon">El demonio</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Biblioteca: búsqueda, listas, colecciones</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Partidas, torneos y juegos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Análisis y motor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Estudio, lecciones y entrenamiento</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Estadísticas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Administración de la base de datos</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Ejemplos de flujos de trabajo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Códigos de salida</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modo headless (servidor)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrato de la API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anexos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anexo Windows: qué hacer si Windows bloquea el inicio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historial de versiones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Acerca de</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Interfaz de línea de comandos (CLI)</a></li>
+      <li class="breadcrumb-item active">Importar las posiciones de un documento</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="importer-les-positions-d-un-document">
+<span id="cli-document"></span><h1>Importar las posiciones de un documento<a class="headerlink" href="#importer-les-positions-d-un-document" title="Link to this heading"></a></h1>
+<section id="a-quoi-cela-sert">
+<h2>Para qué sirve<a class="headerlink" href="#a-quoi-cela-sert" title="Link to this heading"></a></h2>
+<p>Un libro que usted posee — libro de problemas, recopilación, artículo — muestra posiciones en diagramas, en el orden del estudio. El comando <code class="docutils literal notranslate"><span class="pre">document</span></code> las guarda en una colección de la base, en ese orden, para reestudiarlas con el resto de la biblioteca. La interfaz sigue el mismo camino en un asistente (<a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">El asistente de importación de la interfaz</span></a>); aquí se describe la línea de comandos.</p>
+<p>El trabajo pasa por un archivo intermedio, el <strong>relevé</strong> (la lista relevada del documento): un archivo JSON que enumera las posiciones leídas en el documento. Se vuelve a leer, se corrige si hace falta y luego se importa. Leer un documento no escribe nada en la base; solo escribe la importación de un relevé.</p>
+</section>
+<section id="ce-qui-est-lu-ce-qui-est-refuse">
+<h2>Qué se lee, qué se rechaza<a class="headerlink" href="#ce-qui-est-lu-ce-qui-est-refuse" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">document</span> <span class="pre">analyze</span></code> lee los siguientes tipos de documentos:</p>
+<ul class="simple">
+<li><p>un PDF cuyos diagramas están dibujados con la fuente de tablero de eXtreme Gammon (los PDF impresos por XG): en él cada diagrama es texto, que el comando decodifica exactamente, glifo por glifo;</p></li>
+<li><p>un PDF cuyos diagramas están dibujados con una fuente de tablero de Snowie (familia Atchoum, por ejemplo «AtchoumSnowie4Normal»): las fichas se leen a partir de la forma de los glifos que el PDF incrusta, sea cual sea la versión de la fuente; los pips impresos confirman la lectura. El marcador no está impreso: el contexto queda por verificar;</p></li>
+<li><p>un libro escaneado: un PDF cuyas páginas son imágenes, con o sin capa de texto, o sus páginas en imágenes (una carpeta de archivos PNG o JPEG, una página por archivo, leídos en el orden de sus nombres, o una sola imagen). Los diagramas se leen allí por su estructura (véase <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Libros escaneados</span></a>);</p></li>
+<li><p>un documento redactado, DOCX, ODT, EPUB o página HTML: sus imágenes se leen una a una en el orden del texto, cada una como una página en imagen. El número de página de una entrada es entonces el rango de su imagen entre las leídas, su capítulo el título que la precede, y se cita «fig. 12» o «Capítulo 3, fig. 12». El párrafo que precede a la imagen, el suyo y el siguiente sirven de capa de texto: los pips y los dados que citan contrastan la lectura como en un PDF. Una página HTML lee las imágenes de su carpeta y de sus subcarpetas, y las escritas en la propia página (<code class="docutils literal notranslate"><span class="pre">data:</span></code>); no se descarga nada, y las imágenes en línea se cuentan en la salida de error. Una imagen dibujada con vectores (EMF, WMF, SVG) no se lee: se nombra en la salida de error. Un <code class="docutils literal notranslate"><span class="pre">.doc</span></code> de Word 97-2003 se rechaza con un mensaje que propone guardarlo como PDF o DOCX.</p></li>
+</ul>
+<p>Se rechaza un PDF ninguna de cuyas páginas es una imagen ni está dibujada con esta fuente (un libro dibujado en vectores); sus páginas se entregan entonces como imágenes:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page; structure: no page of the document could be read: page 1: pdf: the page draws no image (a page drawn with vectors is not rendered)
+</pre></div>
+</div>
+<p>Un PDF dibujado con una fuente de tablero cuyas formas no están incrustadas se rechaza con un mensaje que nombra la fuente.</p>
+<p>Un archivo que no es ni un PDF, ni un documento redactado, ni una imagen, un PDF cifrado o de más de 512 MiB, una imagen de más de 64 MiB o de más de 100 millones de píxeles también se rechaza, con un mensaje que lo indica. Un documento redactado tiene el mismo límite de 512 MiB; su archivo se rechaza a partir de 10 000 entradas, de una parte que se descomprime en más de 64 MiB o de un total descomprimido de más de 1 GiB.</p>
+</section>
+<section id="le-parcours-en-trois-commandes">
+<h2>El recorrido en tres comandos<a class="headerlink" href="#le-parcours-en-trois-commandes" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>analyze<span class="w"> </span>livre.pdf<span class="w"> </span>-o<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>check<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>releve.json
+</pre></div>
+</div>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">analyze</span></code> lee el PDF y escribe el relevé (sin <code class="docutils literal notranslate"><span class="pre">-o</span></code>, lo escribe en la salida estándar). Cuando la salida de error estándar es un terminal, escribe allí el progreso de la lectura (<code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">37/212,</span> <span class="pre">54</span> <span class="pre">diagrams</span></code>); en un script no se escribe nada. Resume lo que ha encontrado:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Relevé:     releve.json
+</pre></div>
+</div>
+<p>El título y el autor provienen de los metadatos del PDF; a falta de ellos, el título es el nombre del archivo; <code class="docutils literal notranslate"><span class="pre">--title</span></code> y <code class="docutils literal notranslate"><span class="pre">--author</span></code> los sustituyen. El capítulo de cada entrada proviene de los marcadores del PDF.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">check</span></code> valida el relevé y cuenta sus entradas, sin leer ni escribir ninguna base. Después del recuento, lista también las entradas por verificar (rango, página, estado y campos que comparar con el diagrama); <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> da los mismos recuentos y la misma lista (<code class="docutils literal notranslate"><span class="pre">review</span></code>) en JSON:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1; verified 0)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Unverified: rank 4, 5, 6 (import refused without --force)
+Review:
+  rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">check</span></code> también recibe el propio documento (<code class="docutils literal notranslate"><span class="pre">check</span> <span class="pre">livre.pdf</span></code>): entonces lee el relevé que la hoja de verificación de la interfaz guarda a su lado (<code class="docutils literal notranslate"><span class="pre">livre.pdf.releve.json</span></code>, <a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">El asistente de importación de la interfaz</span></a>) y da su avance, <code class="docutils literal notranslate"><span class="pre">verified</span></code> incluido.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">import</span></code> escribe las posiciones en la colección:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Created collection "Mon livre" (id 1)
+Entries: 6, distinct positions: 5 (5 new in the library), added to the collection: 5, repeated: 1
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--collection</span></code> elige un nombre distinto del título del documento. Si el archivo de base no existe, se crea.</p>
+</li>
+</ol>
+</section>
+<section id="le-releve">
+<h2>El relevé<a class="headerlink" href="#le-releve" title="Link to this heading"></a></h2>
+<p>El relevé es un archivo JSON legible, que se puede abrir en un editor de texto. La cabecera (<code class="docutils literal notranslate"><span class="pre">document</span></code>) indica el título, el autor, la edición o la dirección del documento, la huella SHA-256 del archivo leído, el perfil de sus diagramas y, para un libro escaneado, su contexto por defecto (<code class="docutils literal notranslate"><span class="pre">defaults</span></code>, véase <a class="reference internal" href="#cli-document-defaults"><span class="std std-ref">El contexto por defecto</span></a>). Después cada diagrama es una entrada, en el orden del documento:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code> — su rango, desde 1 sin huecos;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">page</span></code>, <code class="docutils literal notranslate"><span class="pre">chapter</span></code> y <code class="docutils literal notranslate"><span class="pre">label</span></code> — su página, el capítulo de los marcadores y el nombre que el documento le da («Problem 191») cuando está impreso encima;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">position</span></code> — la posición, en XGID: fichas, cubo, turno, dados, marcador y longitud del partido en una sola cadena;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checkers</span></code> — la certeza de las fichas: <code class="docutils literal notranslate"><span class="pre">sure</span></code>, <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> o <code class="docutils literal notranslate"><span class="pre">uncertain</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">complete</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code> cuando las fichas se leyeron a quince por bando en el tablero sin ninguna duda, sin que un cotejo las confirme (véase <a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Quince y quince sin duda</span></a>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code> — cómo se conoce el contexto (cubo, dados, turno, marcador): <code class="docutils literal notranslate"><span class="pre">read</span></code> (leído y contrastado), <code class="docutils literal notranslate"><span class="pre">default</span></code> (el contexto por defecto del documento), <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (ni leído ni bajo el contexto por defecto: un cubo o unos dados dibujados y no leídos, un marcador que no se encuentra) o <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> (contradicho);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">doubts</span></code> — las dudas nombradas de la lectura;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rect</span></code> — dónde se encuentra el diagrama en la página, como fracción de su tamaño, para encontrarlo de nuevo en el PDF;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verified</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code> cuando una persona ha comparado la lectura con el diagrama.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">verify</span></code> escribe el veredicto de una persona en el relevé, sin base de datos:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">3</span>,4,9
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--position<span class="w"> </span><span class="s2">"XGID=..."</span>
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--undo
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--rank</span></code> nombra las entradas, separadas por comas; pasan a estar verificadas. <code class="docutils literal notranslate"><span class="pre">--position</span></code> sustituye la lectura de una sola entrada por el XGID correcto, rechazado si no es una posición legal; una corrección cuyo contexto ya no es el del valor por defecto conserva el suyo, por verificar. <code class="docutils literal notranslate"><span class="pre">--undo</span></code> retira el veredicto. Dado en lugar del relevé, el documento hace que se escriba en el relevé guardado a su lado. El comando muestra el archivo escrito y el avance: <code class="docutils literal notranslate"><span class="pre">releve.json:</span> <span class="pre">verified</span> <span class="pre">3</span> <span class="pre">of</span> <span class="pre">6</span> <span class="pre">entries</span> <span class="pre">(sure</span> <span class="pre">3,</span> <span class="pre">to</span> <span class="pre">verify</span> <span class="pre">2,</span> <span class="pre">uncertain</span> <span class="pre">1)</span></code>.</p>
+<p>Un relevé se revisa abriendo el PDF en la página de la entrada. Allí se corrige la posición (el XGID), se marca con <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code> una entrada comprobada y se elimina una entrada renumerando los rangos. Un relevé se verifica en varias sesiones: <code class="docutils literal notranslate"><span class="pre">verified</span></code> permanece en el archivo. <code class="docutils literal notranslate"><span class="pre">check</span></code> rechaza un relevé con un campo desconocido, con un hueco en los rangos, con una página que retrocede, con un XGID que no es una posición legal o de un formato más reciente que el programa. Las fichas <code class="docutils literal notranslate"><span class="pre">sure</span></code> solo pueden tener una duda sobre el contexto; un contexto <code class="docutils literal notranslate"><span class="pre">read</span></code> no tiene ninguna; una entrada <code class="docutils literal notranslate"><span class="pre">default</span></code> lleva el contexto por defecto en su XGID.</p>
+<p>El relevé tiene el formato de la versión 2. Un relevé de la versión 1, que daba un solo estado (<code class="docutils literal notranslate"><span class="pre">state</span></code>) por entrada, todavía se lee: una entrada <code class="docutils literal notranslate"><span class="pre">sure</span></code> tiene en él sus fichas seguras y su contexto leído, una entrada de un libro escaneado pasa al contexto por defecto, sin confirmar, y cualquier otra tiene su contexto por verificar. <code class="docutils literal notranslate"><span class="pre">analyze</span></code> escribe siempre la versión 2.</p>
+</section>
+<section id="les-trois-etats">
+<h2>Los tres estados<a class="headerlink" href="#les-trois-etats" title="Link to this heading"></a></h2>
+<p>El estado de una entrada se deduce de sus dos certezas; no se escribe en el relevé.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">sure</span></code></dt><dd><p>Las fichas son seguras <strong>y</strong> el contexto está certificado: leído, o bajo el contexto por defecto del documento una vez confirmado este. Las fichas son seguras cuando las comprobaciones cruzadas del diagrama se cumplen: cada bando cuenta quince fichas (en los puntos, en la barra y en la bandeja de salida), y los pips calculados a partir de la posición igualan los pips impresos de los dos jugadores. El contexto de un PDF de XG se lee: el marcador y la longitud del partido son los que imprime al lado. El de un libro escaneado nunca se lee: véase <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Libros escaneados</span></a>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">to-verify</span></code></dt><dd><p>La lectura se sostiene, pero nada la confirma: un pip impreso difiere del pip calculado, o el diagrama muestra algo que las impresiones de referencia nunca han mostrado — pila de más de 9 fichas, fichas numeradas en la barra, más de dos fichas blancas o de tres negras en la barra, cubo del lado del jugador de arriba o más allá de 8, jugador de arriba con el turno, sin marca de turno, jugador negro abajo, juego de Crawford, jugador a un punto de la victoria (el juego de Crawford y los siguientes no se distinguen), glifos de la fuente que la tabla no lee. Estos casos se leen pero nunca se declaran seguros.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uncertain</span></code></dt><dd><p>Las fichas o el contexto están contradichos, o la lectura es incompleta: un glifo desconocido, un bando que no cuenta quince fichas y cuyos pips no coinciden, un marco dañado. Un diagrama del que no se obtiene ninguna posición legal conserva su lugar en el relevé, sin posición (<code class="docutils literal notranslate"><span class="pre">&quot;position&quot;:</span> <span class="pre">&quot;&quot;</span></code>).</p>
+</dd>
+</dl>
+<p>Una entrada es <strong>importable</strong> cuando es <code class="docutils literal notranslate"><span class="pre">sure</span></code> o está verificada o, a petición, cuando está completa (<a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Quince y quince sin duda</span></a>). Las dudas que lleva dicen qué comprobar, por ejemplo:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pips read 167/167, printed 160/167 (bottom/top)
+</pre></div>
+</div>
+<p>El dado no se lee: el análisis escribe siempre «sin dados» (<code class="docutils literal notranslate"><span class="pre">00</span></code>).</p>
+</section>
+<section id="livres-scannes">
+<span id="cli-document-images"></span><h2>Libros escaneados<a class="headerlink" href="#livres-scannes" title="Link to this heading"></a></h2>
+<p>Una página en imagen se lee sin suponer ningún estilo: el comando busca en ella dos filas de doce puntos cortadas por una barra, y fichas, discos de dos clases apilados desde la base de un punto. Aprende el estilo del documento del propio documento: la forma de la ficha en los primeros diagramas y, después, en todos, las dos clases de fichas, la numeración impresa y el sentido de juego. No se conserva nada de un documento al siguiente, y no se guarda ninguna imagen.</p>
+<p>Lee los diagramas de trazo y las capturas de software impresas, en el orden de lectura: página izquierda y luego derecha de una doble página, columna, y después de arriba abajo. Una página ligeramente torcida se endereza, la sombra del encuadernado se borra. Resolución útil: de 150 a 300 dpi, la que indica el archivo; a falta de ella, se toma el lado largo de la página como once pulgadas.</p>
+<p>Un PDF escaneado se lee directamente, sin herramienta externa: cada página se compone de sus imágenes, colocadas como el PDF las coloca, a la resolución de la más fina de ellas acotada entre 150 y 300 dpi, y luego se lee y se olvida. Se decodifican las imágenes JPEG (<code class="docutils literal notranslate"><span class="pre">DCTDecode</span></code>), JPEG 2000 (<code class="docutils literal notranslate"><span class="pre">JPXDecode</span></code>, en gris o en tres componentes, sin paleta, sin alfa integrado ni HTJ2K, hasta 12 millones de píxeles), JBIG2 (<code class="docutils literal notranslate"><span class="pre">JBIG2Decode</span></code>, con sus <code class="docutils literal notranslate"><span class="pre">JBIG2Globals</span></code>: regiones genéricas MMR o aritméticas, regiones de refinamiento, diccionarios de símbolos y regiones de texto en codificación aritmética, hasta 67 millones de píxeles por página), fax (<code class="docutils literal notranslate"><span class="pre">CCITTFaxDecode</span></code>, grupo 3 unidimensional y grupo 4) y brutas (<code class="docutils literal notranslate"><span class="pre">FlateDecode</span></code>, gris, color o indexadas); se aplican las máscaras de estarcido y las máscaras suaves, de modo que una página hecha de un fondo JPEG y de máscaras fax se compone de forma legible. No se admiten: una máscara por color clave (la imagen se pinta entera), una imagen JBIG2 en codificación de Huffman o en semitonos, y una página dibujada en vectores (omitida). Una página con una imagen rechazada por su cabecera se omite sin decodificar sus otras imágenes; una imagen rechazada por falta de presupuesto de decodificación se deja fuera, y la página se lee sin ella si otra imagen la pinta. Las páginas omitidas se nombran en la salida de error, con su motivo; las demás se leen. La capa de texto de una página, visible o no (la que deja un OCR bajo la imagen), da sus palabras en su lugar sobre la imagen; un texto que su fuente no traduce a caracteres no da ninguna palabra.</p>
+<p>En un libro escaneado, las fichas y el contexto se certifican por separado. Las fichas son <code class="docutils literal notranslate"><span class="pre">sure</span></code> cuando los pips impresos junto al diagrama igualan los pips calculados de los dos bandos, cuando ningún bando tiene más de quince fichas y cuando no queda ninguna duda sobre las fichas. El contexto se lee campo por campo, y un campo solo se considera leído si se contrasta:</p>
+<ul class="simple">
+<li><p>el cubo, por su valor leído en su casilla (las cifras del documento) o en la capa de texto —dos fuentes presentes deben coincidir— y coherente con su posición: 64 en el centro es centrado, 2 a 64 arriba o abajo pertenece al jugador de ese lado; una casilla sola con la cara en blanco es el cubo centrado, cuando el documento lo dibuja así, en el mismo lugar, junto a al menos tres diagramas, puesto que un cubo poseído lleva su valor;</p></li>
+<li><p>los dados, contados en la imagen y confirmados por el texto vecino: una tirada nombrada («to play 41», «rolls a 65») o una jugada escrita en la que cada paso es un dado («2/0 2/1», «8/5(2) 6/3(2)»), citada dos veces si el texto nombra varias tiradas; una palabra más cercana a otro diagrama pertenece a este; el turno, por el color de los dados y su mitad del tablero (la derecha para el jugador de abajo), que deben designar al mismo jugador. Sin dados dibujados, una leyenda que los nombra («Black to play 53», leída en la capa de texto o, sin capa de texto, en la imagen) da la tirada y el jugador al turno, cada uno en duda: una sola fuente no certifica nada;</p></li>
+<li><p>el marcador, por el rótulo de la capa de texto (<code class="docutils literal notranslate"><span class="pre">score:</span></code>, <code class="docutils literal notranslate"><span class="pre">pip:</span></code>, <code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">point</span> <span class="pre">match</span></code>), atribuyéndose cada marcador al jugador cuyos pips lleva; dos marcadores iguales prescinden de los pips.</p></li>
+</ul>
+<p>Una entrada cuyo contexto completo está leído es <code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;read&quot;</span></code>. Un cubo que no se encuentra nunca se toma por centrado: lo que no se lee toma el contexto por defecto del documento (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;default&quot;</span></code>, con la duda <code class="docutils literal notranslate"><span class="pre">context</span> <span class="pre">not</span> <span class="pre">read:</span> <span class="pre">cube,</span> <span class="pre">dice,</span> <span class="pre">player</span> <span class="pre">on</span> <span class="pre">roll,</span> <span class="pre">score</span></code>). Un cubo, unos dados o un marcador dibujados o impresos y no certificados, un contexto leído en parte fuera del valor por defecto en un campo que el documento no imprime (véase <a class="reference internal" href="#cli-document-learned"><span class="std std-ref">El valor por defecto aprendido del documento</span></a>), un cubo en poder del jugador de arriba sin dados dibujados, un cubo que no se encuentra en un documento que lo dibuja o un marcador que no se encuentra en un documento que lo imprime (encontrados junto a al menos un tercio de sus diagramas) dejan el contexto por verificar (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;to-verify&quot;</span></code>, con una duda nombrada); el XGID lleva entonces lo que se ha leído. Una entrada de un libro escaneado cuyo contexto no se lee no es por tanto <strong>nunca</strong> <code class="docutils literal notranslate"><span class="pre">sure</span></code> mientras el contexto por defecto no esté confirmado, y aquella cuyo contexto está por verificar tampoco lo es nunca. <code class="docutils literal notranslate"><span class="pre">analyze</span></code> y <code class="docutils literal notranslate"><span class="pre">check</span></code> cuentan las entradas por contexto, y aparte aquellas cuyas fichas solas están certificadas:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Context:    read 0, default 140, to verify 12
+Defaults:   centred cube, no dice, the bottom player on roll, money play (0:0:1:00:0:0:0:0:10), not confirmed: set "confirmed": true once the document's diagrams follow them
+Checkers:   112 confirmed, their context alone to verify (cube, dice, player on roll, score)
+</pre></div>
+</div>
+<p>Para una entrada cuyo contexto queda por verificar, se abre el libro en la página de la entrada, se comparan con el diagrama el cubo (valor y propietario: un cubo dibujado en el centro puede tener propietario), los dados, el jugador al que le toca y el marcador, se corrigen estos campos del XGID si hace falta y después se marca <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code>.</p>
+<section id="le-contexte-par-defaut">
+<span id="cli-document-defaults"></span><h3>El contexto por defecto<a class="headerlink" href="#le-contexte-par-defaut" title="Link to this heading"></a></h3>
+<p>El contexto por defecto de un libro escaneado es el que escribe la lectura: cubo centrado, sin dados, jugador de abajo al turno, partida libre. Figura en la cabecera del relevé:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"centred cube, no dice, the bottom player on roll, money play"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">context</span></code> es el final del XGID tras el tablero; toda entrada <code class="docutils literal notranslate"><span class="pre">default</span></code> lo lleva. Cuando los diagramas del documento siguen este contexto —un libro de problemas en partida libre, jugador de abajo al turno, por ejemplo—, se <strong>confirma una vez</strong> escribiendo <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code>: todas las entradas <code class="docutils literal notranslate"><span class="pre">default</span></code> tienen entonces su contexto certificado, y aquellas cuyas fichas son seguras pasan a ser <code class="docutils literal notranslate"><span class="pre">sure</span></code>. Solo quedan por verificar una a una las excepciones que la lectura ha visto (cubo con propietario, dados dibujados, marcador de partido) y las entradas cuyas fichas no son seguras. No se confirma un contexto que el documento no sigue: un cubo que la lectura no encuentra, un marcador impreso en la imagen sin capa de texto o un turno dado por el texto fuera de una leyenda no se ven.</p>
+</section>
+<section id="le-defaut-appris-sur-le-document">
+<span id="cli-document-learned"></span><h3>El valor por defecto aprendido del documento<a class="headerlink" href="#le-defaut-appris-sur-le-document" title="Link to this heading"></a></h3>
+<p>La lectura aprende del documento qué campos del contexto imprime junto a sus diagramas: el cubo, los dados (con el jugador con el turno) o el marcador, leídos junto a al menos un tercio de los diagramas. Los nombra en <code class="docutils literal notranslate"><span class="pre">printed</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"for what a diagram does not print: centred cube, no dice, the bottom player on roll, money play; the document prints its score, read beside each diagram"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"printed"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"score"</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Un campo impreso es la lectura de cada entrada, que la lectura ha certificado; el contexto por defecto solo cubre las demás. En un libro de problemas de partido, cada diagrama lleva su marcador: sus entradas siguen siendo <code class="docutils literal notranslate"><span class="pre">default</span></code>, cada una con su marcador en el XGID, y la confirmación única del contexto por defecto certifica el cubo centrado, la ausencia de dados y el jugador con el turno de todas ellas. Un diagrama cuyo marcador no se lee en un documento así no se toma como partida libre: su contexto queda por verificar (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">prints</span> <span class="pre">its</span> <span class="pre">score</span> <span class="pre">beside</span> <span class="pre">its</span> <span class="pre">diagrams,</span> <span class="pre">none</span> <span class="pre">is</span> <span class="pre">read</span> <span class="pre">here:</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">taken</span> <span class="pre">as</span> <span class="pre">money</span> <span class="pre">play</span></code>). <code class="docutils literal notranslate"><span class="pre">analyze</span></code> y <code class="docutils literal notranslate"><span class="pre">check</span></code> muestran lo aprendido:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Printed:    score, read beside each diagram (learned from the document)
+</pre></div>
+</div>
+<p>No se conserva nada de un documento a otro. Un relevé sin <code class="docutils literal notranslate"><span class="pre">printed</span></code> mantiene la regla estricta: cualquier campo leído fuera del valor por defecto deja el contexto por verificar.</p>
+</section>
+<section id="quinze-et-quinze-sans-doute">
+<span id="cli-document-complete"></span><h3>Quince y quince sin duda<a class="headerlink" href="#quinze-et-quinze-sans-doute" title="Link to this heading"></a></h3>
+<p>Un diagrama sin pips impresos no tiene cotejo: sus fichas siguen <code class="docutils literal notranslate"><span class="pre">to-verify</span></code>. Leídas a quince fichas por bando sin ninguna duda, se marcan <code class="docutils literal notranslate"><span class="pre">&quot;complete&quot;:</span> <span class="pre">true</span></code>: en todas las mediciones realizadas, estas lecturas eran exactas, pero nada las confirma diagrama por diagrama. Es un estado intermedio, distinto de <code class="docutils literal notranslate"><span class="pre">sure</span></code>. Además del contexto, una entrada completa solo lleva dos dudas: la ausencia de pips impresos y el sentido de juego supuesto cuando ningún pip del documento lo ha confirmado. Unos pips impresos que difieren de los pips calculados son una duda sobre las fichas: la entrada no es entonces nunca completa. Una posición con fichas sacadas nunca lo es: cuando el documento dibuja su tablero de salida en barras (una ficha sacada vista de canto), las barras contadas en el tablero, junto a la fila del bando, completan a quince sus fichas dibujadas, pero una forma ajena cuenta allí tanto como una ficha. Ese recuento solo vale si unos pips impresos concuerdan con la posición, que es entonces <code class="docutils literal notranslate"><span class="pre">sure</span></code>; sin ellos, es una duda con nombre (<code class="docutils literal notranslate"><span class="pre">counted</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">tray,</span> <span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pips</span> <span class="pre">confirm</span> <span class="pre">them</span></code>). Un tablero cuyas barras no completan quince es una duda con nombre (<code class="docutils literal notranslate"><span class="pre">they</span> <span class="pre">do</span> <span class="pre">not</span> <span class="pre">make</span> <span class="pre">fifteen</span></code>).</p>
+<p>El sentido de juego supuesto es también un valor por defecto del documento, con su propia confirmación: un sentido erróneo intercambiaría los jugadores de todas las posiciones leídas bajo él. Figura en el contexto por defecto, bajo <code class="docutils literal notranslate"><span class="pre">direction</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"direction"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"home"</span><span class="p">:</span><span class="w"> </span><span class="s2">"right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Confirmar el contexto no lo confirma. Se comprueba en algunos diagramas y después se escribe <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code> en <code class="docutils literal notranslate"><span class="pre">direction</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--accept-complete</span></code> acepta en bloque las entradas completas cuyo contexto está certificado (leído, o bajo el contexto por defecto confirmado) y cuyo sentido de juego es cierto (votado por los pips, o supuesto y luego confirmado), sin marcarlas como verificadas; <code class="docutils literal notranslate"><span class="pre">check</span></code> las cuenta, y cuenta aparte las que retiene un sentido sin confirmar:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Direction:  direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right, not confirmed: check it on a few diagrams, then set "direction": {"confirmed": true}
+Complete:   84 more held back until the direction of play is confirmed
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Complete:   84 with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)
+Unverified: rank 3, 7, 12 (import refused without --force; rank 12 with --accept-complete)
+</pre></div>
+</div>
+<p>La importación dice cuántas ha aceptado (<code class="docutils literal notranslate"><span class="pre">Complete:</span> <span class="pre">84</span> <span class="pre">entries</span> <span class="pre">of</span> <span class="pre">15</span> <span class="pre">+</span> <span class="pre">15</span> <span class="pre">checkers</span> <span class="pre">read</span> <span class="pre">with</span> <span class="pre">no</span> <span class="pre">doubt</span></code>). Una entrada completa cuyo contexto no está certificado, o cuyo sentido de juego supuesto no está confirmado, sigue rechazándose; el mensaje de error dice que hay que confirmarlo.</p>
+<p>Los pips impresos se leen de dos fuentes: la capa de texto de un PDF y la propia imagen. En la imagen, el comando lee los números aislados alrededor del diagrama, en la banda horizontal del tablero hasta aproximadamente medio ancho de tablero a cada lado; una letra sola delante de un número (<code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">164</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">123</span></code>) no impide que se lea. Los lee dígito a dígito, por comparación con la numeración de los puntos del documento, con ocho fuentes habituales incrustadas, y luego con los dígitos ya leídos en el documento; un número solo se devuelve si cada uno de sus dígitos se reconoce con claridad; si no, se abstiene. La ubicación de los pips se aprende del documento: un número leído que iguala los pips de un diagrama contado a quince fichas por bando vota por su lugar, y dos lugares (arriba y abajo) deben reunir suficientes votos; un lugar se extiende a las posiciones vecinas que han recibido votos, para un documento que coloca sus tableros en lugares o tamaños que varían. Ningún dígito se elige a partir de los pips del diagrama al que acompaña, y no se conserva nada de un documento a otro. Cuando el texto y la imagen dan cada uno pips y estos difieren, las fichas no se confirman y la duda lo dice (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">two</span> <span class="pre">disagree</span></code>). Una entrada sin pips leídos sigue en <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (<code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pip</span> <span class="pre">count</span> <span class="pre">was</span> <span class="pre">found</span> <span class="pre">next</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">diagram</span></code>).</p>
+<p>Una flecha de jugada dibujada en el diagrama (un trazo recto y fino, oblicuo, solo en el papel) no se lee como una ficha, y los números de quince o menos impresos junto al tablero (cuentas de fichas, numeración) no se toman por los pips.</p>
+<p>La lectura de los dígitos supone dígitos arábigos oscuros sobre fondo claro, escritos en horizontal, de al menos 15 píxeles de alto a la resolución de lectura, pips impresos en un lugar próximo de un diagrama a otro, y unos treinta diagramas leídos a quince fichas por bando para aprender ese lugar.</p>
+<p>Las dudas nombran lo que queda por comprobar: una pila que lleva un número, un disco de ninguna de las dos clases (ficha desteñida o manchada), una columna llena de arriba abajo, una pila oscura contada por su longitud, medio tablero (una fila sin punto), el sentido de juego supuesto (las fichas avanzan hacia el lado con menos pips), las fichas sacadas contadas por diferencia, un cubo dibujado fuera del centro, dados dibujados.</p>
+<p>No se leen nunca: el valor y el propietario del cubo (el contexto por defecto lo da centrado), los dados (ninguno), el marcador (partida libre), el jugador con el turno (el de abajo), el tablero de salida cuando no está dibujado en barras (un bando dibujado con menos de quince fichas tiene entonces las demás sacadas) y las fichas dibujadas como letras (X y O): un documento en el que ninguna ficha es un disco lleno no se lee, y cada diagrama es <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> con este motivo (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">draws</span> <span class="pre">no</span> <span class="pre">filled</span> <span class="pre">checker</span></code>).</p>
+</section>
+</section>
+<section id="pourquoi-l-import-refuse">
+<h2>Por qué la importación rechaza<a class="headerlink" href="#pourquoi-l-import-refuse" title="Link to this heading"></a></h2>
+<p>Una entrada que no es <code class="docutils literal notranslate"><span class="pre">sure</span></code> ni está verificada no es fiable, y lo que entra en una colección se comparte al exportar. La importación rechaza por tanto <strong>todo</strong> el relevé, antes de escribir nada, nombra los rangos y dice qué hacer:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 4, 5, 6; check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Cuando hay entradas bajo un contexto por defecto sin confirmar, o completas sin <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code>, el mensaje también lo dice:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 1, 2; confirm the document's defaults once if its diagrams follow them ("defaults": {"confirmed": true}); accept the entries of fifteen checkers a side read with no doubt as a whole (accept complete); check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Se verifican estas entradas, o se pasa <code class="docutils literal notranslate"><span class="pre">--force</span></code> para importar el relevé tal cual; la importación indica entonces cuántas entradas ha forzado (<code class="docutils literal notranslate"><span class="pre">Forced:</span> <span class="pre">3</span> <span class="pre">entries</span> <span class="pre">neither</span> <span class="pre">sure</span> <span class="pre">nor</span> <span class="pre">verified</span></code>).</p>
+<section id="le-repli">
+<span id="cli-document-fallback"></span><h3>El repliegue<a class="headerlink" href="#le-repli" title="Link to this heading"></a></h3>
+<p>Una entrada cuyas fichas están certificadas (<code class="docutils literal notranslate"><span class="pre">sure</span></code>, o completa con <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code> y un sentido de juego cierto) y de la que solo queda por verificar el contexto no se rechaza necesariamente: una vez confirmado el contexto por defecto, la importación propone <strong>replegarla</strong> al contexto que lleva su XGID, es decir, lo leído y el valor por defecto para el resto. <code class="docutils literal notranslate"><span class="pre">check</span></code> nombra estos rangos, y el mensaje de error propone el repliegue:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Fallback:   rank 4 imported with --fallback under the context its position carries, the fields to check named in its reference
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--fallback</span></code> importa estas entradas sin marcarlas como verificadas; la referencia de cada una, en su comentario, nombra los campos que hay que comprobar en el diagrama con la duda que la lectura dejó en ellos, contradicción incluida (<code class="docutils literal notranslate"><span class="pre">p.</span> <span class="pre">12,</span> <span class="pre">Problem</span> <span class="pre">31</span> <span class="pre">(context</span> <span class="pre">not</span> <span class="pre">read,</span> <span class="pre">to</span> <span class="pre">check</span> <span class="pre">against</span> <span class="pre">the</span> <span class="pre">diagram:</span> <span class="pre">cube</span> <span class="pre">(cube</span> <span class="pre">drawn,</span> <span class="pre">value</span> <span class="pre">not</span> <span class="pre">read))</span></code>), y la importación las cuenta (<code class="docutils literal notranslate"><span class="pre">Fallback:</span> <span class="pre">1</span> <span class="pre">entries</span> <span class="pre">under</span> <span class="pre">the</span> <span class="pre">context</span> <span class="pre">their</span> <span class="pre">position</span> <span class="pre">carries</span></code>). El repliegue no cubre ni una entrada cuyas fichas están por verificar, ni un contexto contradictorio, ni un contexto por defecto sin confirmar. Incluso con <code class="docutils literal notranslate"><span class="pre">--force</span></code>, una entrada sin posición se rechaza: hay que rellenarla o retirarla.</p>
+</section>
+</section>
+<section id="ce-qui-entre-en-base">
+<h2>Qué entra en la base<a class="headerlink" href="#ce-qui-entre-en-base" title="Link to this heading"></a></h2>
+<p>Solo entran las posiciones, en el orden del documento, en una colección con el nombre del documento (o de <code class="docutils literal notranslate"><span class="pre">--collection</span></code>). Cada posición entra como una posición aportada por separado, y la biblioteca la reconoce por su identidad: una posición que ya tiene no se duplica (<code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">library</span></code> cuenta las que le faltaban).</p>
+<ul class="simple">
+<li><p>La <strong>descripción</strong> de la colección lleva el título, el autor, la edición y la dirección del documento, uno por línea. Una colección existente del mismo nombre recibe las posiciones que le faltan y conserva su descripción si la tiene; una colección dinámica (definida por una consulta) se rechaza.</p></li>
+<li><p>Cada posición lleva un <strong>comentario</strong> que da su referencia, tras el título del documento: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">146,</span> <span class="pre">Problem</span> <span class="pre">191</span></code>.</p></li>
+</ul>
+<p>Nunca entra nada más: ni imagen, ni rectángulo, ni texto del autor. Una importación interrumpida o rechazada no escribe nada: es una sola transacción.</p>
+</section>
+<section id="une-position-repetee">
+<h2>Una posición repetida<a class="headerlink" href="#une-position-repetee" title="Link to this heading"></a></h2>
+<p>Cuando el documento muestra dos veces la misma posición, entra una sola vez en la colección, en su primera aparición. Su comentario cita cada referencia: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">2,</span> <span class="pre">Problem</span> <span class="pre">1;</span> <span class="pre">p.</span> <span class="pre">4</span></code>. <code class="docutils literal notranslate"><span class="pre">repeated</span></code> cuenta estas repeticiones.</p>
+</section>
+<section id="reimporter">
+<h2>Reimportar<a class="headerlink" href="#reimporter" title="Link to this heading"></a></h2>
+<p>Reimportar el mismo relevé no añade nada: ninguna posición nueva, nada en la colección (<code class="docutils literal notranslate"><span class="pre">added</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">collection:</span> <span class="pre">0</span></code>), y el comentario de referencia se reescribe solo si sus referencias han cambiado, nunca se duplica. Se puede, pues, retomar una importación tras corregir el relevé.</p>
+</section>
+<section id="le-demon">
+<h2>El demonio<a class="headerlink" href="#le-demon" title="Link to this heading"></a></h2>
+<p>El demonio <code class="docutils literal notranslate"><span class="pre">serve</span></code> importa un relevé en <code class="docutils literal notranslate"><span class="pre">/v1/documents.importReleve</span></code> con las mismas reglas; no analiza ningún documento (véase <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Modo headless (servidor)</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="cli_import_export.html" class="btn btn-neutral float-left" title="Importar, exportar, transferir" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-right" title="Biblioteca: búsqueda, listas, colecciones" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

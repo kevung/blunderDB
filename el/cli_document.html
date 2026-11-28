@@ -1,0 +1,396 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Εισαγωγή των θέσεων ενός εγγράφου &mdash; Τεκμηρίωση του blunderDB - 0.63.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d62ac9cf"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές" href="cli_bibliotheque.html" />
+    <link rel="prev" title="Εισαγωγή, εξαγωγή, μεταφορά" href="cli_import_export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/cli_document.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_document.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_document.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/cli_document.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_document.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_document.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_document.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_document.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Μετρικές και εργαλεία μελέτης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Γενική σύνταξη</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Διαθέσιμες εντολές</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Εισαγωγή, εξαγωγή, μεταφορά</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Εισαγωγή των θέσεων ενός εγγράφου</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-quoi-cela-sert">Σε τι χρησιμεύει</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-est-lu-ce-qui-est-refuse">Τι διαβάζεται, τι απορρίπτεται</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-parcours-en-trois-commandes">Η διαδρομή με τρεις εντολές</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-releve">Το relevé</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-trois-etats">Οι τρεις καταστάσεις</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#livres-scannes">Σαρωμένα βιβλία</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-l-import-refuse">Γιατί η εισαγωγή απορρίπτει</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-entre-en-base">Τι μπαίνει στη βάση</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#une-position-repetee">Μια θέση που επαναλαμβάνεται</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reimporter">Επανεισαγωγή</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-demon">Ο δαίμονας</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Αγώνες, τουρνουά και παρτίδες</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Ανάλυση και μηχανή</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Μελέτη, μαθήματα και εξάσκηση</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Στατιστικά</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Διαχείριση της βάσης δεδομένων</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Παραδείγματα ροών εργασίας</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Κωδικοί εξόδου</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+      <li class="breadcrumb-item active">Εισαγωγή των θέσεων ενός εγγράφου</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="importer-les-positions-d-un-document">
+<span id="cli-document"></span><h1>Εισαγωγή των θέσεων ενός εγγράφου<a class="headerlink" href="#importer-les-positions-d-un-document" title="Link to this heading"></a></h1>
+<section id="a-quoi-cela-sert">
+<h2>Σε τι χρησιμεύει<a class="headerlink" href="#a-quoi-cela-sert" title="Link to this heading"></a></h2>
+<p>Ένα βιβλίο που έχετε — βιβλίο προβλημάτων, συλλογή, άρθρο — δείχνει θέσεις σε διαγράμματα, με τη σειρά της μελέτης. Η εντολή <code class="docutils literal notranslate"><span class="pre">document</span></code> τις τοποθετεί σε μια συλλογή της βάσης, με αυτή τη σειρά, ώστε να τις μελετήσετε ξανά μαζί με την υπόλοιπη βιβλιοθήκη. Η διεπαφή ακολουθεί την ίδια διαδρομή σε έναν βοηθό (<a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">Ο βοηθός εισαγωγής της διεπαφής</span></a>)· εδώ περιγράφεται η γραμμή εντολών.</p>
+<p>Η εργασία περνά από ένα ενδιάμεσο αρχείο, το <strong>relevé</strong> (τον κατάλογο των θέσεων που καταγράφηκαν από το έγγραφο): ένα αρχείο JSON που απαριθμεί τις θέσεις που διαβάστηκαν στο έγγραφο. Το ξαναδιαβάζετε, το διορθώνετε αν χρειάζεται και μετά το εισάγετε. Η ανάγνωση ενός εγγράφου δεν γράφει τίποτα στη βάση· γράφει μόνο η εισαγωγή ενός relevé.</p>
+</section>
+<section id="ce-qui-est-lu-ce-qui-est-refuse">
+<h2>Τι διαβάζεται, τι απορρίπτεται<a class="headerlink" href="#ce-qui-est-lu-ce-qui-est-refuse" title="Link to this heading"></a></h2>
+<p>Η <code class="docutils literal notranslate"><span class="pre">document</span> <span class="pre">analyze</span></code> διαβάζει τα ακόλουθα είδη εγγράφων:</p>
+<ul class="simple">
+<li><p>ένα PDF του οποίου τα διαγράμματα είναι σχεδιασμένα με τη γραμματοσειρά ταμπλό του eXtreme Gammon (τα PDF που τυπώνει το XG): εκεί κάθε διάγραμμα είναι κείμενο, που η εντολή αποκωδικοποιεί επακριβώς, γλύφο προς γλύφο·</p></li>
+<li><p>ένα PDF του οποίου τα διαγράμματα σχεδιάζονται με μια γραμματοσειρά ταμπλό του Snowie (οικογένεια Atchoum, για παράδειγμα «AtchoumSnowie4Normal»): τα πούλια διαβάζονται από το σχήμα των γλυφών που ενσωματώνει το PDF, όποια κι αν είναι η έκδοση της γραμματοσειράς· τα τυπωμένα pips επιβεβαιώνουν την ανάγνωση. Το σκορ δεν τυπώνεται εκεί: το πλαίσιο μένει προς επαλήθευση·</p></li>
+<li><p>ένα σαρωμένο βιβλίο: ένα PDF του οποίου οι σελίδες αποτελούνται από εικόνες, με ή χωρίς επίπεδο κειμένου, ή οι σελίδες του ως εικόνες (ένας φάκελος αρχείων PNG ή JPEG, μία σελίδα ανά αρχείο, που διαβάζονται με τη σειρά των ονομάτων τους, ή μία μεμονωμένη εικόνα). Τα διαγράμματα διαβάζονται εκεί από τη δομή τους (βλ. <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Σαρωμένα βιβλία</span></a>)·</p></li>
+<li><p>ένα έγγραφο κειμένου, DOCX, ODT, EPUB ή σελίδα HTML: οι εικόνες του διαβάζονται μία προς μία με τη σειρά του κειμένου, καθεμία ως εικόνα σελίδας. Ο αριθμός σελίδας μιας εγγραφής είναι τότε η σειρά της εικόνας της ανάμεσα σε όσες διαβάστηκαν, το κεφάλαιό της ο τίτλος που προηγείται, και παρατίθεται ως «fig. 12» ή «Κεφάλαιο 3, fig. 12». Η παράγραφος που προηγείται της εικόνας, η δική της και η επόμενη χρησιμεύουν ως επίπεδο κειμένου: τα pips και τα ζάρια που αναφέρουν διασταυρώνουν την ανάγνωση όπως σε ένα PDF. Μια σελίδα HTML διαβάζει τις εικόνες του φακέλου της και των υποφακέλων της, καθώς και εκείνες που είναι γραμμένες μέσα στη σελίδα (<code class="docutils literal notranslate"><span class="pre">data:</span></code>)· τίποτα δεν κατεβαίνει, και οι εικόνες στο διαδίκτυο καταμετρώνται στην έξοδο σφαλμάτων. Μια εικόνα σχεδιασμένη με διανύσματα (EMF, WMF, SVG) δεν διαβάζεται: κατονομάζεται στην έξοδο σφαλμάτων. Ένα <code class="docutils literal notranslate"><span class="pre">.doc</span></code> του Word 97-2003 απορρίπτεται με ένα μήνυμα που προτείνει την αποθήκευσή του ως PDF ή DOCX.</p></li>
+</ul>
+<p>Ένα PDF του οποίου καμία σελίδα δεν αποτελείται από εικόνες ούτε είναι σχεδιασμένη με αυτή τη γραμματοσειρά (ένα βιβλίο σχεδιασμένο με διανύσματα) απορρίπτεται· οι σελίδες του δίνονται τότε ως εικόνες:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page; structure: no page of the document could be read: page 1: pdf: the page draws no image (a page drawn with vectors is not rendered)
+</pre></div>
+</div>
+<p>Ένα PDF σχεδιασμένο με γραμματοσειρά ταμπλό της οποίας τα σχήματα δεν είναι ενσωματωμένα απορρίπτεται με μήνυμα που ονομάζει τη γραμματοσειρά.</p>
+<p>Ένα αρχείο που δεν είναι ούτε PDF ούτε έγγραφο κειμένου ούτε εικόνα, ένα κρυπτογραφημένο PDF ή ένα PDF μεγαλύτερο από 512 MiB, μια εικόνα μεγαλύτερη από 64 MiB ή με περισσότερα από 100 εκατομμύρια εικονοστοιχεία απορρίπτεται επίσης, με ένα μήνυμα που το λέει. Ένα έγγραφο κειμένου έχει το ίδιο όριο των 512 MiB· το αρχείο συμπίεσής του απορρίπτεται πέρα από 10 000 εγγραφές, ένα τμήμα που αποσυμπιέζεται σε περισσότερα από 64 MiB ή ένα συνολικό αποσυμπιεσμένο μέγεθος μεγαλύτερο από 1 GiB.</p>
+</section>
+<section id="le-parcours-en-trois-commandes">
+<h2>Η διαδρομή με τρεις εντολές<a class="headerlink" href="#le-parcours-en-trois-commandes" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>analyze<span class="w"> </span>livre.pdf<span class="w"> </span>-o<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>check<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>releve.json
+</pre></div>
+</div>
+<ol class="arabic">
+<li><p>Η <code class="docutils literal notranslate"><span class="pre">analyze</span></code> διαβάζει το PDF και γράφει το relevé (χωρίς <code class="docutils literal notranslate"><span class="pre">-o</span></code>, το γράφει στην τυπική έξοδο). Όταν η τυπική έξοδος σφαλμάτων είναι τερματικό, γράφει εκεί την πρόοδο της ανάγνωσης (<code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">37/212,</span> <span class="pre">54</span> <span class="pre">diagrams</span></code>)· σε σενάριο δεν γράφεται τίποτα. Συνοψίζει όσα βρήκε:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Relevé:     releve.json
+</pre></div>
+</div>
+<p>Ο τίτλος και ο συγγραφέας προέρχονται από τα μεταδεδομένα του PDF· αλλιώς ο τίτλος είναι το όνομα του αρχείου· οι <code class="docutils literal notranslate"><span class="pre">--title</span></code> και <code class="docutils literal notranslate"><span class="pre">--author</span></code> τα αντικαθιστούν. Το κεφάλαιο κάθε καταχώρισης προέρχεται από τους σελιδοδείκτες του PDF.</p>
+</li>
+<li><p>Η <code class="docutils literal notranslate"><span class="pre">check</span></code> επικυρώνει το relevé και μετρά τις καταχωρήσεις του, χωρίς να διαβάσει ή να γράψει βάση. Μετά τη μέτρηση απαριθμεί και τις καταχωρήσεις προς έλεγχο (σειρά, σελίδα, κατάσταση και πεδία προς σύγκριση με το διάγραμμα)· η <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> δίνει τις ίδιες μετρήσεις και την ίδια λίστα (<code class="docutils literal notranslate"><span class="pre">review</span></code>) σε JSON:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1; verified 0)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Unverified: rank 4, 5, 6 (import refused without --force)
+Review:
+  rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
+</pre></div>
+</div>
+<p>Η <code class="docutils literal notranslate"><span class="pre">check</span></code> δέχεται και το ίδιο το έγγραφο (<code class="docutils literal notranslate"><span class="pre">check</span> <span class="pre">livre.pdf</span></code>): τότε διαβάζει το relevé που το φύλλο επαλήθευσης της διεπαφής κρατά δίπλα του (<code class="docutils literal notranslate"><span class="pre">livre.pdf.releve.json</span></code>, <a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">Ο βοηθός εισαγωγής της διεπαφής</span></a>) και δίνει την πρόοδό του, με το <code class="docutils literal notranslate"><span class="pre">verified</span></code> συμπεριλαμβανομένο.</p>
+</li>
+<li><p>Η <code class="docutils literal notranslate"><span class="pre">import</span></code> γράφει τις θέσεις στη συλλογή:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Created collection "Mon livre" (id 1)
+Entries: 6, distinct positions: 5 (5 new in the library), added to the collection: 5, repeated: 1
+</pre></div>
+</div>
+<p>Η <code class="docutils literal notranslate"><span class="pre">--collection</span></code> επιλέγει άλλο όνομα από τον τίτλο του εγγράφου. Αν το αρχείο της βάσης δεν υπάρχει, δημιουργείται.</p>
+</li>
+</ol>
+</section>
+<section id="le-releve">
+<h2>Το relevé<a class="headerlink" href="#le-releve" title="Link to this heading"></a></h2>
+<p>Το relevé είναι ένα αναγνώσιμο αρχείο JSON, που μπορείτε να ανοίξετε σε έναν επεξεργαστή κειμένου. Η κεφαλίδα (<code class="docutils literal notranslate"><span class="pre">document</span></code>) δίνει τον τίτλο, τον συγγραφέα, την έκδοση ή τη διεύθυνση του εγγράφου, το αποτύπωμα SHA-256 του αρχείου που διαβάστηκε, το προφίλ των διαγραμμάτων του και, για ένα σκαναρισμένο βιβλίο, το προεπιλεγμένο πλαίσιό του (<code class="docutils literal notranslate"><span class="pre">defaults</span></code>, βλ. <a class="reference internal" href="#cli-document-defaults"><span class="std std-ref">Το προεπιλεγμένο πλαίσιο</span></a>). Έπειτα κάθε διάγραμμα είναι μια καταχώριση, με τη σειρά του εγγράφου:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code> — η τάξη του, από το 1 χωρίς κενά·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">page</span></code>, <code class="docutils literal notranslate"><span class="pre">chapter</span></code> και <code class="docutils literal notranslate"><span class="pre">label</span></code> — η σελίδα του, το κεφάλαιο των σελιδοδεικτών και το όνομα που του δίνει το έγγραφο («Problem 191») όταν είναι τυπωμένο από πάνω·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">position</span></code> — η θέση, σε XGID: πούλια, κύβος, σειρά παιξίματος, ζάρια, σκορ και διάρκεια αγώνα σε μία μόνο συμβολοσειρά·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checkers</span></code> — η βεβαιότητα των πουλιών: <code class="docutils literal notranslate"><span class="pre">sure</span></code>, <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> ή <code class="docutils literal notranslate"><span class="pre">uncertain</span></code>·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">complete</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code> όταν τα πούλια διαβάστηκαν σε δεκαπέντε ανά πλευρά στο ταμπλό χωρίς καμία αμφιβολία, χωρίς να τα επιβεβαιώνει διασταύρωση (βλ. <a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Δεκαπέντε και δεκαπέντε χωρίς αμφιβολία</span></a>)·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code> — πώς είναι γνωστό το πλαίσιο (κύβος, ζάρια, σειρά παιξίματος, σκορ): <code class="docutils literal notranslate"><span class="pre">read</span></code> (διαβασμένο και διασταυρωμένο), <code class="docutils literal notranslate"><span class="pre">default</span></code> (το προεπιλεγμένο πλαίσιο του εγγράφου), <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (ούτε διαβασμένο ούτε υπό το προεπιλεγμένο: κύβος ή ζάρια σχεδιασμένα και μη διαβασμένα, σκορ που δεν βρίσκεται) ή <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> (αντικρουόμενο)·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">doubts</span></code> — οι κατονομασμένες αμφιβολίες της ανάγνωσης·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rect</span></code> — πού βρίσκεται το διάγραμμα στη σελίδα, ως κλάσμα του μεγέθους της, ώστε να ξαναβρεθεί στο PDF·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verified</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code> όταν ένα πρόσωπο έχει συγκρίνει την ανάγνωση με το διάγραμμα.</p></li>
+</ul>
+<p>Η <code class="docutils literal notranslate"><span class="pre">verify</span></code> γράφει την κρίση ενός ατόμου στο relevé, χωρίς βάση:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">3</span>,4,9
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--position<span class="w"> </span><span class="s2">"XGID=..."</span>
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--undo
+</pre></div>
+</div>
+<p>Το <code class="docutils literal notranslate"><span class="pre">--rank</span></code> ονομάζει τις καταχωρήσεις, χωρισμένες με κόμμα· γίνονται ελεγμένες. Το <code class="docutils literal notranslate"><span class="pre">--position</span></code> αντικαθιστά την ανάγνωση μιας μόνο καταχώρησης με το σωστό XGID, που απορρίπτεται αν δεν είναι νόμιμη θέση· μια διόρθωση της οποίας το πλαίσιο δεν είναι πια αυτό της προεπιλογής κρατά το δικό της, προς έλεγχο. Το <code class="docutils literal notranslate"><span class="pre">--undo</span></code> αποσύρει την κρίση. Όταν δίνεται αντί για το relevé, το έγγραφο κάνει την εντολή να γράψει στο relevé που φυλάσσεται δίπλα του. Η εντολή εμφανίζει το αρχείο που γράφτηκε και την πρόοδο: <code class="docutils literal notranslate"><span class="pre">releve.json:</span> <span class="pre">verified</span> <span class="pre">3</span> <span class="pre">of</span> <span class="pre">6</span> <span class="pre">entries</span> <span class="pre">(sure</span> <span class="pre">3,</span> <span class="pre">to</span> <span class="pre">verify</span> <span class="pre">2,</span> <span class="pre">uncertain</span> <span class="pre">1)</span></code>.</p>
+<p>Ένα relevé ελέγχεται ανοίγοντας το PDF στη σελίδα της καταχώρισης. Εκεί διορθώνετε τη θέση (το XGID), σημειώνετε με <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code> μια ελεγμένη καταχώριση και αφαιρείτε μια καταχώριση αριθμώντας ξανά τις τάξεις. Ένα relevé επαληθεύεται σε πολλές συνεδρίες: το <code class="docutils literal notranslate"><span class="pre">verified</span></code> μένει στο αρχείο. Το <code class="docutils literal notranslate"><span class="pre">check</span></code> απορρίπτει ένα relevé με άγνωστο πεδίο, με κενό στις τάξεις, με σελίδα που πάει προς τα πίσω, με XGID που δεν είναι νόμιμη θέση ή με νεότερη μορφή από το πρόγραμμα. Τα πούλια <code class="docutils literal notranslate"><span class="pre">sure</span></code> μπορούν να έχουν αμφιβολία μόνο για το πλαίσιο· ένα πλαίσιο <code class="docutils literal notranslate"><span class="pre">read</span></code> δεν έχει καμία· μια καταχώριση <code class="docutils literal notranslate"><span class="pre">default</span></code> φέρει το προεπιλεγμένο πλαίσιο στο XGID της.</p>
+<p>Το relevé έχει τη μορφή της έκδοσης 2. Ένα relevé έκδοσης 1, που έδινε μία μόνο κατάσταση (<code class="docutils literal notranslate"><span class="pre">state</span></code>) ανά καταχώριση, διαβάζεται ακόμη: μια καταχώριση <code class="docutils literal notranslate"><span class="pre">sure</span></code> έχει εκεί τα πούλια της βέβαια και το πλαίσιό της διαβασμένο, μια καταχώριση σκαναρισμένου βιβλίου περνά υπό το προεπιλεγμένο πλαίσιο, ανεπιβεβαίωτο, και κάθε άλλη έχει το πλαίσιό της προς επαλήθευση. Το <code class="docutils literal notranslate"><span class="pre">analyze</span></code> γράφει πάντα την έκδοση 2.</p>
+</section>
+<section id="les-trois-etats">
+<h2>Οι τρεις καταστάσεις<a class="headerlink" href="#les-trois-etats" title="Link to this heading"></a></h2>
+<p>Η κατάσταση μιας καταχώρισης προκύπτει από τις δύο βεβαιότητές της· δεν γράφεται στο relevé.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">sure</span></code></dt><dd><p>Τα πούλια είναι βέβαια <strong>και</strong> το πλαίσιο είναι πιστοποιημένο: διαβασμένο ή υπό το προεπιλεγμένο πλαίσιο του εγγράφου, αφού αυτό επιβεβαιωθεί. Τα πούλια είναι βέβαια όταν οι διασταυρωτικοί έλεγχοι του διαγράμματος ισχύουν: κάθε πλευρά έχει δεκαπέντε πούλια (στα σημεία, στη μπάρα και στον δίσκο εξόδου) και τα pips που υπολογίζονται από τη θέση ισούνται με τα τυπωμένα pips των δύο παικτών. Το πλαίσιο ενός PDF του XG διαβάζεται: το σκορ και η διάρκεια του αγώνα είναι αυτά που τυπώνει δίπλα. Εκείνο ενός σκαναρισμένου βιβλίου δεν διαβάζεται ποτέ: βλ. <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Σαρωμένα βιβλία</span></a>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">to-verify</span></code></dt><dd><p>Η ανάγνωση στέκει, αλλά τίποτα δεν την επιβεβαιώνει: ένα τυπωμένο pip διαφέρει από το υπολογισμένο, ή το διάγραμμα δείχνει κάτι που οι τυπωμένες αναφορές δεν έχουν δείξει ποτέ — στοίβα με περισσότερα από 9 πούλια, αριθμημένα πούλια στη μπάρα, περισσότερα από δύο λευκά ή τρία μαύρα πούλια στη μπάρα, κύβο στην πλευρά του πάνω παίκτη ή πέρα από το 8, τον πάνω παίκτη να παίζει, καμία ένδειξη σειράς, τον μαύρο παίκτη κάτω, παιχνίδι Crawford, παίκτη ένα πόντο από τη νίκη (το παιχνίδι Crawford και τα επόμενα δεν διακρίνονται), γλύφους της γραμματοσειράς που ο πίνακας δεν διαβάζει. Οι περιπτώσεις αυτές διαβάζονται αλλά δεν δηλώνονται ποτέ βέβαιες.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uncertain</span></code></dt><dd><p>Τα πούλια ή το πλαίσιο αντικρούονται, ή η ανάγνωση είναι ελλιπής: ένα άγνωστο γλυφικό, μια πλευρά που δεν μετρά δεκαπέντε πούλια και της οποίας τα pips δεν ταιριάζουν, ένα φθαρμένο πλαίσιο. Ένα διάγραμμα από το οποίο δεν προκύπτει καμία νόμιμη θέση κρατά τη θέση του στο relevé, χωρίς θέση (<code class="docutils literal notranslate"><span class="pre">&quot;position&quot;:</span> <span class="pre">&quot;&quot;</span></code>).</p>
+</dd>
+</dl>
+<p>Μια καταχώριση είναι <strong>εισαγώγιμη</strong> όταν είναι <code class="docutils literal notranslate"><span class="pre">sure</span></code> ή επαληθευμένη ή, κατόπιν αιτήματος, όταν είναι πλήρης (<a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Δεκαπέντε και δεκαπέντε χωρίς αμφιβολία</span></a>). Οι αμφιβολίες που φέρει λένε τι να ελεγχθεί, για παράδειγμα:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pips read 167/167, printed 160/167 (bottom/top)
+</pre></div>
+</div>
+<p>Το ζάρι δεν διαβάζεται: η ανάλυση γράφει πάντα «χωρίς ζάρια» (<code class="docutils literal notranslate"><span class="pre">00</span></code>).</p>
+</section>
+<section id="livres-scannes">
+<span id="cli-document-images"></span><h2>Σαρωμένα βιβλία<a class="headerlink" href="#livres-scannes" title="Link to this heading"></a></h2>
+<p>Μια σελίδα ως εικόνα διαβάζεται χωρίς προϋποτιθέμενο στιλ: η εντολή αναζητά σε αυτήν δύο σειρές δώδεκα σημείων που χωρίζονται από μια μπάρα, και πούλια, δίσκους δύο κλάσεων στοιβαγμένους από τη βάση ενός σημείου. Μαθαίνει το στιλ του εγγράφου από το ίδιο το έγγραφο: το σχήμα του πουλιού στα πρώτα διαγράμματα και έπειτα, σε όλα, τις δύο κλάσεις πουλιών, την τυπωμένη αρίθμηση και τη φορά του παιχνιδιού. Τίποτα δεν διατηρείται από το ένα έγγραφο στο άλλο, και καμία εικόνα δεν φυλάσσεται.</p>
+<p>Διαβάζει διαγράμματα με γραμμές και τυπωμένα στιγμιότυπα λογισμικού, με τη σειρά ανάγνωσης: αριστερή και μετά δεξιά σελίδα μιας διπλής σελίδας, στήλη, έπειτα από πάνω προς τα κάτω. Μια ελαφρά λοξή σελίδα ισιώνεται, η σκιά της βιβλιοδεσίας σβήνεται. Χρήσιμη ανάλυση: 150 έως 300 dpi, αυτή που δηλώνει το αρχείο· ελλείψει αυτής, η μεγάλη πλευρά της σελίδας θεωρείται έντεκα ίντσες.</p>
+<p>Ένα σαρωμένο PDF διαβάζεται απευθείας, χωρίς εξωτερικό εργαλείο: κάθε σελίδα συντίθεται από τις εικόνες της, τοποθετημένες όπως τις τοποθετεί το PDF, στην ανάλυση της λεπτομερέστερης από αυτές περιορισμένη μεταξύ 150 και 300 dpi, και έπειτα διαβάζεται και ξεχνιέται. Αποκωδικοποιούνται οι εικόνες JPEG (<code class="docutils literal notranslate"><span class="pre">DCTDecode</span></code>), JPEG 2000 (<code class="docutils literal notranslate"><span class="pre">JPXDecode</span></code>, σε γκρι ή σε τρεις συνιστώσες, χωρίς παλέτα, χωρίς ενσωματωμένο άλφα ούτε HTJ2K, έως 12 εκατομμύρια εικονοστοιχεία), JBIG2 (<code class="docutils literal notranslate"><span class="pre">JBIG2Decode</span></code>, με τα <code class="docutils literal notranslate"><span class="pre">JBIG2Globals</span></code> τους: γενικές περιοχές MMR ή αριθμητικές, περιοχές βελτίωσης, λεξικά συμβόλων και περιοχές κειμένου σε αριθμητική κωδικοποίηση, έως 67 εκατομμύρια εικονοστοιχεία ανά σελίδα), φαξ (<code class="docutils literal notranslate"><span class="pre">CCITTFaxDecode</span></code>, ομάδα 3 μονοδιάστατη και ομάδα 4) και ακατέργαστες (<code class="docutils literal notranslate"><span class="pre">FlateDecode</span></code>, γκρι, έγχρωμες ή με ευρετήριο)· οι μάσκες διάτρησης και οι μαλακές μάσκες εφαρμόζονται, ώστε μια σελίδα από φόντο JPEG και μάσκες φαξ να συντίθεται ευανάγνωστα. Δεν υποστηρίζονται: μια μάσκα χρώματος-κλειδιού (η εικόνα βάφεται ολόκληρη), μια εικόνα JBIG2 σε κωδικοποίηση Huffman ή σε ημιτόνους, και μια σελίδα σχεδιασμένη με διανύσματα (παραλείπεται). Μια σελίδα με εικόνα που απορρίπτεται από την κεφαλίδα της παραλείπεται χωρίς να αποκωδικοποιηθούν οι άλλες εικόνες της· μια εικόνα που απορρίπτεται λόγω έλλειψης προϋπολογισμού αποκωδικοποίησης παραλείπεται, και η σελίδα διαβάζεται χωρίς αυτήν αν τη βάφει άλλη εικόνα. Οι σελίδες που παραλείπονται κατονομάζονται στην έξοδο σφαλμάτων, με την αιτία τους· οι υπόλοιπες διαβάζονται. Το στρώμα κειμένου μιας σελίδας, ορατό ή όχι (αυτό που αφήνει ένα OCR κάτω από την εικόνα), δίνει τις λέξεις του στη θέση τους πάνω στην εικόνα· ένα κείμενο που η γραμματοσειρά του δεν μεταφράζει σε χαρακτήρες δεν δίνει καμία λέξη.</p>
+<p>Σε ένα σαρωμένο βιβλίο, τα πούλια και το πλαίσιο πιστοποιούνται χωριστά. Τα πούλια είναι <code class="docutils literal notranslate"><span class="pre">sure</span></code> όταν τα pips που είναι τυπωμένα δίπλα στο διάγραμμα ισούνται με τα υπολογισμένα pips των δύο πλευρών, όταν καμία πλευρά δεν έχει περισσότερα από δεκαπέντε πούλια και όταν δεν μένει καμία αμφιβολία για τα πούλια. Το πλαίσιο διαβάζεται πεδίο προς πεδίο, και ένα πεδίο θεωρείται διαβασμένο μόνο όταν διασταυρώνεται:</p>
+<ul class="simple">
+<li><p>ο κύβος, από την τιμή του που διαβάζεται στο τετράγωνό του (τα ψηφία του εγγράφου) ή στο επίπεδο κειμένου — δύο πηγές, όταν υπάρχουν, πρέπει να συμφωνούν — και συνεπής με τη θέση του: το 64 στη μέση σημαίνει κεντραρισμένος, το 2 έως 64 πάνω ή κάτω ανήκει στον παίκτη εκείνης της πλευράς· ένα μόνο τετράγωνο με κενή όψη είναι ο κεντραρισμένος κύβος, όταν το έγγραφο το σχεδιάζει έτσι, στο ίδιο σημείο, δίπλα σε τουλάχιστον τρία διαγράμματα, αφού ένας κύβος που ανήκει σε παίκτη φέρει την τιμή του·</p></li>
+<li><p>τα ζάρια, μετρημένα στην εικόνα και επιβεβαιωμένα από το γειτονικό κείμενο: μια ονομασμένη ρίψη («to play 41», «rolls a 65») ή μια γραμμένη κίνηση της οποίας κάθε βήμα είναι ένα ζάρι («2/0 2/1», «8/5(2) 6/3(2)»)· αναφέρεται δύο φορές αν το κείμενο κατονομάζει πολλές ρίψεις· μια λέξη πιο κοντά σε άλλο διάγραμμα ανήκει σε εκείνο· η σειρά παιξίματος, από το χρώμα των ζαριών και το μισό του ταμπλό τους (το δεξί για τον κάτω παίκτη), που πρέπει να υποδεικνύουν τον ίδιο παίκτη·. Χωρίς ζωγραφισμένα ζάρια, μια λεζάντα που τα κατονομάζει («Black to play 53», διαβασμένη από το επίπεδο κειμένου ή, χωρίς επίπεδο κειμένου, από την εικόνα) δίνει τη ρίψη και τον παίκτη που έχει τη σειρά, το καθένα υπό αμφισβήτηση· μία μόνο πηγή δεν πιστοποιεί τίποτα·</p></li>
+<li><p>το σκορ, από το πλαίσιο-τίτλο του επιπέδου κειμένου (<code class="docutils literal notranslate"><span class="pre">score:</span></code>, <code class="docutils literal notranslate"><span class="pre">pip:</span></code>, <code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">point</span> <span class="pre">match</span></code>), με κάθε σκορ να αποδίδεται στον παίκτη του οποίου τα pips φέρει· δύο ίσα σκορ δεν χρειάζονται τα pips.</p></li>
+</ul>
+<p>Μια καταχώριση της οποίας όλο το πλαίσιο διαβάζεται είναι <code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;read&quot;</span></code>. Ένας κύβος που δεν βρίσκεται δεν θεωρείται ποτέ στο κέντρο: ό,τι δεν διαβάζεται παίρνει το προεπιλεγμένο πλαίσιο του εγγράφου (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;default&quot;</span></code>, με την αμφιβολία <code class="docutils literal notranslate"><span class="pre">context</span> <span class="pre">not</span> <span class="pre">read:</span> <span class="pre">cube,</span> <span class="pre">dice,</span> <span class="pre">player</span> <span class="pre">on</span> <span class="pre">roll,</span> <span class="pre">score</span></code>). Ένας κύβος, ζάρια ή σκορ σχεδιασμένα ή τυπωμένα αλλά όχι πιστοποιημένα, ένα πλαίσιο που διαβάζεται εν μέρει εκτός της προεπιλογής σε πεδίο που το έγγραφο δεν τυπώνει (βλ. <a class="reference internal" href="#cli-document-learned"><span class="std std-ref">Η προεπιλογή που μαθαίνεται από το έγγραφο</span></a>), ένας κύβος που ανήκει στον πάνω παίκτη χωρίς σχεδιασμένα ζάρια, ένας κύβος που δεν βρίσκεται σε έγγραφο που τον σχεδιάζει ή ένα σκορ που δεν βρίσκεται σε έγγραφο που το τυπώνει (βρέθηκαν δίπλα σε τουλάχιστον το ένα τρίτο των διαγραμμάτων του) αφήνουν το πλαίσιο προς έλεγχο (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;to-verify&quot;</span></code>, με ονομασμένη αμφιβολία)· το XGID φέρει τότε ό,τι διαβάστηκε. Μια καταχώριση από σκαναρισμένο βιβλίο της οποίας το πλαίσιο δεν διαβάζεται δεν είναι επομένως <strong>ποτέ</strong> <code class="docutils literal notranslate"><span class="pre">sure</span></code> όσο το προεπιλεγμένο πλαίσιο δεν επιβεβαιώνεται, και εκείνη της οποίας το πλαίσιο είναι προς έλεγχο δεν είναι ποτέ. Τα <code class="docutils literal notranslate"><span class="pre">analyze</span></code> και <code class="docutils literal notranslate"><span class="pre">check</span></code> μετρούν τις καταχωρίσεις ανά πλαίσιο, και χωριστά εκείνες των οποίων μόνο τα πούλια είναι πιστοποιημένα:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Context:    read 0, default 140, to verify 12
+Defaults:   centred cube, no dice, the bottom player on roll, money play (0:0:1:00:0:0:0:0:10), not confirmed: set "confirmed": true once the document's diagrams follow them
+Checkers:   112 confirmed, their context alone to verify (cube, dice, player on roll, score)
+</pre></div>
+</div>
+<p>Για μια καταχώριση της οποίας το πλαίσιο μένει προς επαλήθευση, ανοίγετε το βιβλίο στη σελίδα της καταχώρισης, συγκρίνετε με το διάγραμμα τον κύβο (τιμή και κάτοχος: ένας κύβος σχεδιασμένος στη μέση μπορεί να ανήκει σε κάποιον), τα ζάρια, τον παίκτη που παίζει και το σκορ, διορθώνετε αυτά τα πεδία του XGID αν χρειάζεται και έπειτα σημειώνετε <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code>.</p>
+<section id="le-contexte-par-defaut">
+<span id="cli-document-defaults"></span><h3>Το προεπιλεγμένο πλαίσιο<a class="headerlink" href="#le-contexte-par-defaut" title="Link to this heading"></a></h3>
+<p>Το προεπιλεγμένο πλαίσιο ενός σκαναρισμένου βιβλίου είναι αυτό που γράφει η ανάγνωση: κύβος στο κέντρο, χωρίς ζάρια, παίκτης κάτω στη σειρά του, ελεύθερο παιχνίδι. Εμφανίζεται στην κεφαλίδα του relevé:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"centred cube, no dice, the bottom player on roll, money play"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Το <code class="docutils literal notranslate"><span class="pre">context</span></code> είναι το τέλος του XGID μετά το ταμπλό· κάθε καταχώριση <code class="docutils literal notranslate"><span class="pre">default</span></code> το φέρει. Όταν τα διαγράμματα του εγγράφου ακολουθούν αυτό το πλαίσιο — ένα βιβλίο προβλημάτων σε ελεύθερο παιχνίδι, με τον κάτω παίκτη στη σειρά του, για παράδειγμα — επιβεβαιώνεται <strong>μία φορά</strong> γράφοντας <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code>: όλες οι καταχωρίσεις <code class="docutils literal notranslate"><span class="pre">default</span></code> έχουν τότε πιστοποιημένο πλαίσιο, και εκείνες των οποίων τα πούλια είναι βέβαια γίνονται <code class="docutils literal notranslate"><span class="pre">sure</span></code>. Μένουν προς επαλήθευση μία προς μία μόνο οι εξαιρέσεις που είδε η ανάγνωση (κύβος με κάτοχο, σχεδιασμένα ζάρια, σκορ αγώνα) και οι καταχωρίσεις των οποίων τα πούλια δεν είναι βέβαια. Δεν επιβεβαιώνεται ένα πλαίσιο που το έγγραφο δεν ακολουθεί: ένας κύβος που η ανάγνωση δεν βρίσκει, ένα σκορ τυπωμένο στην εικόνα χωρίς επίπεδο κειμένου ή μια σειρά παιξίματος που δίνει το κείμενο εκτός λεζάντας δεν φαίνονται.</p>
+</section>
+<section id="le-defaut-appris-sur-le-document">
+<span id="cli-document-learned"></span><h3>Η προεπιλογή που μαθαίνεται από το έγγραφο<a class="headerlink" href="#le-defaut-appris-sur-le-document" title="Link to this heading"></a></h3>
+<p>Η ανάγνωση μαθαίνει από το έγγραφο ποια πεδία του πλαισίου τυπώνει δίπλα στα διαγράμματά του: τον κύβο, τα ζάρια (με τον παίκτη που παίζει) ή το σκορ, που διαβάζονται δίπλα σε τουλάχιστον το ένα τρίτο των διαγραμμάτων. Τα ονομάζει στο <code class="docutils literal notranslate"><span class="pre">printed</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"for what a diagram does not print: centred cube, no dice, the bottom player on roll, money play; the document prints its score, read beside each diagram"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"printed"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"score"</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Ένα τυπωμένο πεδίο είναι η ανάγνωση κάθε καταχώρισης, την οποία η ανάγνωση έχει πιστοποιήσει· το προεπιλεγμένο πλαίσιο καλύπτει μόνο τις υπόλοιπες. Σε ένα βιβλίο προβλημάτων αγώνα, κάθε διάγραμμα φέρει το σκορ του: οι καταχωρίσεις του παραμένουν <code class="docutils literal notranslate"><span class="pre">default</span></code>, καθεμία με το σκορ της στο XGID, και η μία επιβεβαίωση του προεπιλεγμένου πλαισίου πιστοποιεί τον κύβο στο κέντρο, την απουσία ζαριών και τον παίκτη που παίζει για όλες. Ένα διάγραμμα του οποίου το σκορ δεν διαβάζεται σε ένα τέτοιο έγγραφο δεν θεωρείται παιχνίδι με χρήματα: το πλαίσιό του μένει προς έλεγχο (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">prints</span> <span class="pre">its</span> <span class="pre">score</span> <span class="pre">beside</span> <span class="pre">its</span> <span class="pre">diagrams,</span> <span class="pre">none</span> <span class="pre">is</span> <span class="pre">read</span> <span class="pre">here:</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">taken</span> <span class="pre">as</span> <span class="pre">money</span> <span class="pre">play</span></code>). Τα <code class="docutils literal notranslate"><span class="pre">analyze</span></code> και <code class="docutils literal notranslate"><span class="pre">check</span></code> εμφανίζουν ό,τι μαθεύτηκε:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Printed:    score, read beside each diagram (learned from the document)
+</pre></div>
+</div>
+<p>Τίποτα δεν διατηρείται από το ένα έγγραφο στο άλλο. Ένα relevé χωρίς <code class="docutils literal notranslate"><span class="pre">printed</span></code> κρατά τον αυστηρό κανόνα: κάθε πεδίο που διαβάζεται εκτός της προεπιλογής αφήνει το πλαίσιο προς έλεγχο.</p>
+</section>
+<section id="quinze-et-quinze-sans-doute">
+<span id="cli-document-complete"></span><h3>Δεκαπέντε και δεκαπέντε χωρίς αμφιβολία<a class="headerlink" href="#quinze-et-quinze-sans-doute" title="Link to this heading"></a></h3>
+<p>Ένα διάγραμμα χωρίς τυπωμένα pips δεν έχει διασταύρωση: τα πούλιά του μένουν <code class="docutils literal notranslate"><span class="pre">to-verify</span></code>. Όταν διαβάζονται σε δεκαπέντε πούλια ανά πλευρά χωρίς καμία αμφιβολία, σημειώνονται <code class="docutils literal notranslate"><span class="pre">&quot;complete&quot;:</span> <span class="pre">true</span></code>: σε όλες τις μετρήσεις που έγιναν, αυτές οι αναγνώσεις ήταν ακριβείς, αλλά τίποτα δεν τις επιβεβαιώνει διάγραμμα προς διάγραμμα. Είναι μια ενδιάμεση κατάσταση, διαφορετική από το <code class="docutils literal notranslate"><span class="pre">sure</span></code>. Εκτός από το πλαίσιο, μια πλήρης εγγραφή φέρει μόνο δύο αμφιβολίες: την απουσία τυπωμένων pips και τη φορά παιχνιδιού που υποτίθεται όταν κανένα pip του εγγράφου δεν την έχει επιβεβαιώσει. Τυπωμένα pips που διαφέρουν από τα υπολογισμένα pips είναι αμφιβολία για τα πούλια: η εγγραφή δεν είναι τότε ποτέ πλήρης. Μια θέση με πούλια που έχουν βγει δεν είναι ποτέ πλήρης: όταν το έγγραφο σχεδιάζει το ταμπλό εξόδου του με μπάρες (ένα πούλι που βγήκε, ιδωμένο από το πλάι), οι μπάρες που μετρώνται στο ταμπλό, δίπλα στη σειρά της πλευράς, συμπληρώνουν σε δεκαπέντε τα σχεδιασμένα πούλια της, αλλά ένα ξένο σχήμα μετριέται εκεί όσο και ένα πούλι. Αυτή η μέτρηση ισχύει μόνο αν τυπωμένα pips συμφωνούν με τη θέση, που είναι τότε <code class="docutils literal notranslate"><span class="pre">sure</span></code>· χωρίς αυτά, είναι ονομασμένη αμφιβολία (<code class="docutils literal notranslate"><span class="pre">counted</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">tray,</span> <span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pips</span> <span class="pre">confirm</span> <span class="pre">them</span></code>). Ένα ταμπλό του οποίου οι μπάρες δεν συμπληρώνουν δεκαπέντε είναι ονομασμένη αμφιβολία (<code class="docutils literal notranslate"><span class="pre">they</span> <span class="pre">do</span> <span class="pre">not</span> <span class="pre">make</span> <span class="pre">fifteen</span></code>).</p>
+<p>Η φορά παιχνιδιού που υποτίθεται είναι κι αυτή προεπιλογή του εγγράφου, με τη δική της επιβεβαίωση: μια λανθασμένη φορά θα αντάλλασσε τους παίκτες όλων των θέσεων που διαβάστηκαν υπό αυτήν. Εμφανίζεται στο προεπιλεγμένο πλαίσιο, κάτω από το <code class="docutils literal notranslate"><span class="pre">direction</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"direction"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"home"</span><span class="p">:</span><span class="w"> </span><span class="s2">"right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Η επιβεβαίωση του πλαισίου δεν την επιβεβαιώνει. Ελέγχεται σε μερικά διαγράμματα και έπειτα γράφεται <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code> στο <code class="docutils literal notranslate"><span class="pre">direction</span></code>.</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--accept-complete</span></code> αποδέχεται συλλήβδην τις πλήρεις καταχωρίσεις των οποίων το πλαίσιο είναι πιστοποιημένο (διαβασμένο ή υπό το επιβεβαιωμένο προεπιλεγμένο πλαίσιο) και των οποίων η φορά παιχνιδιού είναι βέβαιη (ψηφισμένη από τα pips ή υποτιθέμενη και έπειτα επιβεβαιωμένη), χωρίς να τις σημειώνει ως επαληθευμένες· το <code class="docutils literal notranslate"><span class="pre">check</span></code> τις μετρά, και μετρά χωριστά όσες κρατά πίσω μια ανεπιβεβαίωτη φορά:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Direction:  direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right, not confirmed: check it on a few diagrams, then set "direction": {"confirmed": true}
+Complete:   84 more held back until the direction of play is confirmed
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Complete:   84 with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)
+Unverified: rank 3, 7, 12 (import refused without --force; rank 12 with --accept-complete)
+</pre></div>
+</div>
+<p>Η εισαγωγή λέει πόσες αποδέχτηκε (<code class="docutils literal notranslate"><span class="pre">Complete:</span> <span class="pre">84</span> <span class="pre">entries</span> <span class="pre">of</span> <span class="pre">15</span> <span class="pre">+</span> <span class="pre">15</span> <span class="pre">checkers</span> <span class="pre">read</span> <span class="pre">with</span> <span class="pre">no</span> <span class="pre">doubt</span></code>). Μια πλήρης καταχώριση της οποίας το πλαίσιο δεν είναι πιστοποιημένο ή της οποίας η υποτιθέμενη φορά παιχνιδιού δεν είναι επιβεβαιωμένη εξακολουθεί να απορρίπτεται· το μήνυμα σφάλματος λέει να επιβεβαιωθεί.</p>
+<p>Τα τυπωμένα pips διαβάζονται από δύο πηγές: το επίπεδο κειμένου ενός PDF και την ίδια την εικόνα. Στην εικόνα, η εντολή διαβάζει τους απομονωμένους αριθμούς γύρω από το διάγραμμα, στην οριζόντια ζώνη του ταμπλό έως περίπου μισό πλάτος ταμπλό από κάθε πλευρά· ένα μεμονωμένο γράμμα μπροστά από έναν αριθμό (<code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">164</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">123</span></code>) δεν εμποδίζει την ανάγνωσή του. Τους διαβάζει ψηφίο προς ψηφίο, συγκρίνοντας με την αρίθμηση των πόντων του εγγράφου, με οκτώ συνηθισμένες ενσωματωμένες γραμματοσειρές, και στη συνέχεια με τα ψηφία που έχουν ήδη διαβαστεί στο έγγραφο· ένας αριθμός επιστρέφεται μόνο αν κάθε ψηφίο του αναγνωρίζεται καθαρά, διαφορετικά η εντολή απέχει. Η θέση των pips μαθαίνεται από το έγγραφο: ένας αριθμός που διαβάστηκε και ισούται με τα pips ενός διαγράμματος που μετράει δεκαπέντε πούλια ανά πλευρά ψηφίζει υπέρ της θέσης του, και δύο θέσεις (πάνω και κάτω) πρέπει να συγκεντρώσουν αρκετές ψήφους· μια θέση επεκτείνεται στις γειτονικές θέσεις που έλαβαν ψήφους, για ένα έγγραφο που τοποθετεί τα ταμπλό του σε θέσεις ή μεγέθη που διαφέρουν. Κανένα ψηφίο δεν επιλέγεται με βάση τα pips του διαγράμματος που συνοδεύει, και τίποτα δεν διατηρείται από το ένα έγγραφο στο άλλο. Όταν το κείμενο και η εικόνα δίνουν το καθένα pips και αυτά διαφέρουν, τα πούλια δεν επιβεβαιώνονται και η αμφιβολία το δηλώνει (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">two</span> <span class="pre">disagree</span></code>). Μια καταχώριση χωρίς pips που διαβάστηκαν παραμένει <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (<code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pip</span> <span class="pre">count</span> <span class="pre">was</span> <span class="pre">found</span> <span class="pre">next</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">diagram</span></code>).</p>
+<p>Ένα βέλος κίνησης σχεδιασμένο πάνω στο διάγραμμα (μια ευθεία και λεπτή γραμμή, λοξή, μόνη της πάνω στο χαρτί) δεν διαβάζεται ως πούλι, και οι αριθμοί δεκαπέντε ή λιγότεροι που τυπώνονται δίπλα στο ταμπλό (πλήθη πουλιών, αριθμοί) δεν εκλαμβάνονται ως pips.</p>
+<p>Η ανάγνωση των ψηφίων προϋποθέτει σκούρα αραβικά ψηφία σε ανοιχτό φόντο, γραμμένα οριζόντια, με ύψος τουλάχιστον 15 pixel στην ανάλυση ανάγνωσης, pips τυπωμένα σε γειτονική θέση από διάγραμμα σε διάγραμμα, και περίπου τριάντα διαγράμματα που διαβάστηκαν με δεκαπέντε πούλια ανά πλευρά για να μάθει αυτή τη θέση.</p>
+<p>Οι αμφιβολίες κατονομάζουν ό,τι μένει να ελεγχθεί: μια στοίβα που φέρει αριθμό, ένας δίσκος καμίας από τις δύο κλάσεις (ξεθωριασμένο ή λερωμένο πούλι), μια στήλη γεμάτη από πάνω ως κάτω, μια σκούρα στοίβα που μετριέται από το μήκος της, μισό ταμπλό (μια σειρά χωρίς σημείο), η υποτιθέμενη φορά του παιχνιδιού (τα πούλια προχωρούν προς την πλευρά με τα λιγότερα pips), τα πούλια που βγήκαν μετρημένα με διαφορά, ένα κύβος διπλασιασμού σχεδιασμένος εκτός κέντρου, σχεδιασμένα ζάρια.</p>
+<p>Δεν διαβάζονται ποτέ: η αξία και ο ιδιοκτήτης του κύβου (το προεπιλεγμένο πλαίσιο τον θέλει στο κέντρο), τα ζάρια (κανένα), το σκορ (ελεύθερο παιχνίδι), ο παίκτης που παίζει (ο κάτω), το ταμπλό εξόδου όταν δεν σχεδιάζεται με μπάρες (μια πλευρά που σχεδιάζεται με λιγότερα από δεκαπέντε πούλια έχει τότε βγάλει τα υπόλοιπα) και τα πούλια που σχεδιάζονται ως γράμματα (X και O): ένα έγγραφο όπου κανένα πούλι δεν είναι γεμάτος δίσκος δεν διαβάζεται, και κάθε διάγραμμα είναι <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> με αυτή την αιτία (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">draws</span> <span class="pre">no</span> <span class="pre">filled</span> <span class="pre">checker</span></code>).</p>
+</section>
+</section>
+<section id="pourquoi-l-import-refuse">
+<h2>Γιατί η εισαγωγή απορρίπτει<a class="headerlink" href="#pourquoi-l-import-refuse" title="Link to this heading"></a></h2>
+<p>Μια καταχώριση που δεν είναι ούτε <code class="docutils literal notranslate"><span class="pre">sure</span></code> ούτε επαληθευμένη δεν είναι αξιόπιστη, και ό,τι μπαίνει σε μια συλλογή μοιράζεται κατά την εξαγωγή. Η εισαγωγή απορρίπτει επομένως <strong>ολόκληρο</strong> το relevé, πριν γράψει οτιδήποτε, κατονομάζει τις τάξεις και λέει τι να γίνει:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 4, 5, 6; check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Όταν υπάρχουν καταχωρίσεις υπό ανεπιβεβαίωτο προεπιλεγμένο πλαίσιο, ή πλήρεις χωρίς <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code>, το μήνυμα το λέει επίσης:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 1, 2; confirm the document's defaults once if its diagrams follow them ("defaults": {"confirmed": true}); accept the entries of fifteen checkers a side read with no doubt as a whole (accept complete); check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Ελέγχετε αυτές τις καταχωρίσεις ή περνάτε <code class="docutils literal notranslate"><span class="pre">--force</span></code> για να εισαγάγετε το relevé ως έχει· η εισαγωγή αναφέρει τότε πόσες καταχωρίσεις επέβαλε (<code class="docutils literal notranslate"><span class="pre">Forced:</span> <span class="pre">3</span> <span class="pre">entries</span> <span class="pre">neither</span> <span class="pre">sure</span> <span class="pre">nor</span> <span class="pre">verified</span></code>).</p>
+<section id="le-repli">
+<span id="cli-document-fallback"></span><h3>Η υποχώρηση<a class="headerlink" href="#le-repli" title="Link to this heading"></a></h3>
+<p>Μια καταχώριση της οποίας τα πούλια είναι πιστοποιημένα (<code class="docutils literal notranslate"><span class="pre">sure</span></code>, ή πλήρης με <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code> και βέβαιη φορά παιχνιδιού) και της οποίας μόνο το πλαίσιο μένει προς έλεγχο δεν απορρίπτεται κατ” ανάγκην: μόλις επιβεβαιωθεί το προεπιλεγμένο πλαίσιο, η εισαγωγή προτείνει να την <strong>υποχωρήσει</strong> στο πλαίσιο που φέρει το XGID της, δηλαδή ό,τι διαβάστηκε και την προεπιλογή για τα υπόλοιπα. Το <code class="docutils literal notranslate"><span class="pre">check</span></code> ονομάζει αυτές τις θέσεις κατάταξης και το μήνυμα σφάλματος προτείνει την υποχώρηση:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Fallback:   rank 4 imported with --fallback under the context its position carries, the fields to check named in its reference
+</pre></div>
+</div>
+<p>Το <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--fallback</span></code> εισάγει αυτές τις καταχωρίσεις χωρίς να τις επισημαίνει ως επαληθευμένες· η αναφορά καθεμίας, στο σχόλιό της, ονομάζει τα πεδία που πρέπει να ελεγχθούν στο διάγραμμα με την αμφιβολία που άφησε εκεί η ανάγνωση, αντίφαση συμπεριλαμβανομένης (<code class="docutils literal notranslate"><span class="pre">p.</span> <span class="pre">12,</span> <span class="pre">Problem</span> <span class="pre">31</span> <span class="pre">(context</span> <span class="pre">not</span> <span class="pre">read,</span> <span class="pre">to</span> <span class="pre">check</span> <span class="pre">against</span> <span class="pre">the</span> <span class="pre">diagram:</span> <span class="pre">cube</span> <span class="pre">(cube</span> <span class="pre">drawn,</span> <span class="pre">value</span> <span class="pre">not</span> <span class="pre">read))</span></code>), και η εισαγωγή τις μετρά (<code class="docutils literal notranslate"><span class="pre">Fallback:</span> <span class="pre">1</span> <span class="pre">entries</span> <span class="pre">under</span> <span class="pre">the</span> <span class="pre">context</span> <span class="pre">their</span> <span class="pre">position</span> <span class="pre">carries</span></code>). Η υποχώρηση δεν καλύπτει ούτε καταχώριση της οποίας τα πούλια είναι προς έλεγχο, ούτε αντιφατικό πλαίσιο, ούτε μη επιβεβαιωμένο προεπιλεγμένο πλαίσιο. Ακόμη και με <code class="docutils literal notranslate"><span class="pre">--force</span></code>, μια καταχώριση χωρίς θέση απορρίπτεται: πρέπει να συμπληρωθεί ή να αφαιρεθεί.</p>
+</section>
+</section>
+<section id="ce-qui-entre-en-base">
+<h2>Τι μπαίνει στη βάση<a class="headerlink" href="#ce-qui-entre-en-base" title="Link to this heading"></a></h2>
+<p>Μπαίνουν μόνο οι θέσεις, με τη σειρά του εγγράφου, σε μια συλλογή με το όνομα του εγγράφου (ή του <code class="docutils literal notranslate"><span class="pre">--collection</span></code>). Κάθε θέση μπαίνει ως θέση που προσκομίζεται μόνη της, και η βιβλιοθήκη την αναγνωρίζει από την ταυτότητά της: μια θέση που έχει ήδη δεν διπλογράφεται (το <code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">library</span></code> μετρά αυτές που της έλειπαν).</p>
+<ul class="simple">
+<li><p>Η <strong>περιγραφή</strong> της συλλογής φέρει τον τίτλο, τον συγγραφέα, την έκδοση και τη διεύθυνση του εγγράφου, ένα ανά γραμμή. Μια υπάρχουσα συλλογή με το ίδιο όνομα δέχεται τις θέσεις που της λείπουν και κρατά την περιγραφή της αν έχει· μια δυναμική συλλογή (ορισμένη από ερώτημα) απορρίπτεται.</p></li>
+<li><p>Κάθε θέση φέρει ένα <strong>σχόλιο</strong> που δίνει την αναφορά της, μετά τον τίτλο του εγγράφου: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">146,</span> <span class="pre">Problem</span> <span class="pre">191</span></code>.</p></li>
+</ul>
+<p>Τίποτε άλλο δεν μπαίνει ποτέ: ούτε εικόνα, ούτε ορθογώνιο, ούτε κείμενο του συγγραφέα. Μια εισαγωγή που διακόπηκε ή απορρίφθηκε δεν γράφει τίποτα: είναι μία μόνο συναλλαγή.</p>
+</section>
+<section id="une-position-repetee">
+<h2>Μια θέση που επαναλαμβάνεται<a class="headerlink" href="#une-position-repetee" title="Link to this heading"></a></h2>
+<p>Όταν το έγγραφο δείχνει δύο φορές την ίδια θέση, μπαίνει μία μόνο φορά στη συλλογή, στην πρώτη εμφάνισή της. Το σχόλιό της παραθέτει κάθε αναφορά: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">2,</span> <span class="pre">Problem</span> <span class="pre">1;</span> <span class="pre">p.</span> <span class="pre">4</span></code>. Το <code class="docutils literal notranslate"><span class="pre">repeated</span></code> μετρά αυτές τις επαναλήψεις.</p>
+</section>
+<section id="reimporter">
+<h2>Επανεισαγωγή<a class="headerlink" href="#reimporter" title="Link to this heading"></a></h2>
+<p>Η επανεισαγωγή του ίδιου relevé δεν προσθέτει τίποτα: καμία νέα θέση, τίποτα στη συλλογή (<code class="docutils literal notranslate"><span class="pre">added</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">collection:</span> <span class="pre">0</span></code>), και το σχόλιο αναφοράς ξαναγράφεται μόνο αν οι αναφορές του άλλαξαν, ποτέ διπλό. Μπορείτε λοιπόν να συνεχίσετε μια εισαγωγή αφού διορθώσετε το relevé.</p>
+</section>
+<section id="le-demon">
+<h2>Ο δαίμονας<a class="headerlink" href="#le-demon" title="Link to this heading"></a></h2>
+<p>Ο δαίμονας <code class="docutils literal notranslate"><span class="pre">serve</span></code> εισάγει ένα relevé στο <code class="docutils literal notranslate"><span class="pre">/v1/documents.importReleve</span></code> με τους ίδιους κανόνες· δεν αναλύει κανένα έγγραφο (βλ. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_import_export.html" class="btn btn-neutral float-left" title="Εισαγωγή, εξαγωγή, μεταφορά" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-right" title="Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

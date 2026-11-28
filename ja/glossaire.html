@@ -1,0 +1,353 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>用語集 &mdash; blunderDB 0.63.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=51297059"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="よくある質問（FAQ）" href="faq.html" />
+    <link rel="prev" title="データベースの管理" href="cli_admin.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/glossaire.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/glossaire.html" lang="en" hreflang="en">English</a>
+  <a href="../de/glossaire.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/glossaire.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/glossaire.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/glossaire.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/glossaire.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/glossaire.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">用語集</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="glossaire">
+<span id="id1"></span><h1>用語集<a class="headerlink" href="#glossaire" title="この見出しへのリンク"></a></h1>
+<p>以下の用語は、マニュアル、ユーザーガイド、FAQ、CLI など、このドキュメントの他の部分全体で繰り返し登場します。各節で定義し直す代わりに、このページで一箇所にまとめています。</p>
+<dl>
+<dt>ポジション（position）</dt><dd><p>バックギャモンにおける意思決定の一点：盤面、キューブ、ダイス、スコア、マッチのフラグ。同じポジションを2回インポートしても1件としてしか数えられません——それを認識するのは自動的に計算されるその識別子であり、由来するファイルではありません。</p>
+</dd>
+<dt>ArkID</dt><dd><p>blunderDB 独自の位置のテキスト表記で、読みやすく発音できます。<code class="docutils literal notranslate"><span class="pre">[34]65:x2(ySQmLhfA)S3Qm3L3hf3</span></code>は開始位置で、あと 3 ポイントと 4 ポイント、6-5 をプレイ、キューブは手番側の 4 です。XGID、OGID、GNUbg ID を書く、読む、表示する、コピーする、ペーストするあらゆる場面で同じように扱え、ArkID としてペーストした位置は元と同じ行に対応します。</p>
+<p>形式は<code class="docutils literal notranslate"><span class="pre">[スコア]ダイス:キューブ(ゲート)残り</span></code>です。<strong>スコア</strong>は手番側、次に相手の「あと何ポイント」(<em>Away score</em>)を表し、マネーゲームでは<code class="docutils literal notranslate"><span class="pre">[$]</span></code>、<code class="docutils literal notranslate"><span class="pre">c</span></code>はクロフォードゲームを示します(<code class="docutils literal notranslate"><span class="pre">[14c]</span></code>)。<strong>ダイス</strong>は、キューブ判断では省かれます。<strong>キューブ</strong>は、手番側が持つなら<code class="docutils literal notranslate"><span class="pre">x</span></code>、相手なら<code class="docutils literal notranslate"><span class="pre">X</span></code>で、1 を超える場合は指数が続き(<code class="docutils literal notranslate"><span class="pre">x</span></code>:2、<code class="docutils literal notranslate"><span class="pre">x2</span></code>:4)、センターでは書きません。<strong>ゲート</strong>は 2 個以上のチェッカーが占めるポイントです。<strong>残り</strong>は各マスについて 2 個を超えるチェッカー数(1 個だけなら 1、バーはチェッカーの数)を表し、1 のときは省かれます。ベアオフ済みのチェッカーは推定されます。提示されたキューブ(テイクかパスか)は、\ <code class="docutils literal notranslate"><span class="pre">X</span></code>、1 を超える場合はその指数、続けて\ <code class="docutils literal notranslate"><span class="pre">?</span></code>\ で書かれます(\ <code class="docutils literal notranslate"><span class="pre">X?</span></code>\ :2 で提示)。読み戻すと中央のキューブ、つまり応答局面になります。</p>
+<p>文字は手番側から見たもので、小文字は手番側のチェッカー、大文字は相手のチェッカーです。どちらも手番側が自分のボードを数える番号で数えます。<code class="docutils literal notranslate"><span class="pre">A</span></code>から<code class="docutils literal notranslate"><span class="pre">W</span></code>はポイント 1 から 23、<code class="docutils literal notranslate"><span class="pre">Y</span></code>はポイント 24、<code class="docutils literal notranslate"><span class="pre">Z</span></code>はバーで、<code class="docutils literal notranslate"><span class="pre">X</span></code>はキューブ用に予約されています。各文字は動物の頭文字で、ポイントを覚える助けになります。</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.3%" />
+<col style="width: 12.8%" />
+<col style="width: 76.9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>文字</p></th>
+<th class="head"><p>ポイント</p></th>
+<th class="head"><p>動物</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>A</p></td>
+<td><p>1</p></td>
+<td><p>アルマジロ (Armadillo) — 隅で丸くなっている</p></td>
+</tr>
+<tr class="row-odd"><td><p>B</p></td>
+<td><p>2</p></td>
+<td><p>フジツボ (Barnacle) — 殻に閉じこもった、動かない点</p></td>
+</tr>
+<tr class="row-even"><td><p>C</p></td>
+<td><p>3</p></td>
+<td><p>ワニ (Crocodile) — 浅瀬に潜み、チェッカーを捕らえる</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>4</p></td>
+<td><p>イルカ (Dolphin) — 2 番目に良いポイント</p></td>
+</tr>
+<tr class="row-even"><td><p>E</p></td>
+<td><p>5</p></td>
+<td><p>ゾウ (Elephant) — 非常に強力で、動かせない</p></td>
+</tr>
+<tr class="row-odd"><td><p>F</p></td>
+<td><p>6</p></td>
+<td><p>フラミンゴ (Flamingo) — 大きな群れ、補給源</p></td>
+</tr>
+<tr class="row-even"><td><p>G</p></td>
+<td><p>7</p></td>
+<td><p>ゴリラ (Gorilla) — 出口をふさぐ力自慢</p></td>
+</tr>
+<tr class="row-odd"><td><p>H</p></td>
+<td><p>8</p></td>
+<td><p>ハリネズミ (Hedgehog) — 針があって頑丈</p></td>
+</tr>
+<tr class="row-even"><td><p>I</p></td>
+<td><p>9</p></td>
+<td><p>トキ (Ibis) — 片脚で立つ、孤立したビルダー</p></td>
+</tr>
+<tr class="row-odd"><td><p>J</p></td>
+<td><p>10</p></td>
+<td><p>ジャガー (Jaguar) — 飛びかかる構え</p></td>
+</tr>
+<tr class="row-even"><td><p>K</p></td>
+<td><p>11</p></td>
+<td><p>カンガルー (Kangaroo) — ひと跳びでアウトフィールドを渡る</p></td>
+</tr>
+<tr class="row-odd"><td><p>L</p></td>
+<td><p>12</p></td>
+<td><p>ライオン (Lion) — 相手の縄張りの中</p></td>
+</tr>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>13</p></td>
+<td><p>ラバ (Mule) — 中央の群れ</p></td>
+</tr>
+<tr class="row-odd"><td><p>N</p></td>
+<td><p>14</p></td>
+<td><p>イッカク (Narwhal) — 鼻先を外に出す</p></td>
+</tr>
+<tr class="row-even"><td><p>O</p></td>
+<td><p>15</p></td>
+<td><p>ダチョウ (Ostrich) — 帰還のために全力で走る</p></td>
+</tr>
+<tr class="row-odd"><td><p>P</p></td>
+<td><p>16</p></td>
+<td><p>ペンギン (Penguin) — もろく、はかない</p></td>
+</tr>
+<tr class="row-even"><td><p>Q</p></td>
+<td><p>17</p></td>
+<td><p>ケツァール (Quetzal) — 珍しい鳥で、ここにいることはめったにない</p></td>
+</tr>
+<tr class="row-odd"><td><p>R</p></td>
+<td><p>18</p></td>
+<td><p>サイ (Rhinoceros) — きわめて頑丈</p></td>
+</tr>
+<tr class="row-even"><td><p>S</p></td>
+<td><p>19</p></td>
+<td><p>リス (Squirrel) — 捕まえにくい</p></td>
+</tr>
+<tr class="row-odd"><td><p>T</p></td>
+<td><p>20</p></td>
+<td><p>カメ (Tortoise) — 壊れない甲羅</p></td>
+</tr>
+<tr class="row-even"><td><p>U</p></td>
+<td><p>21</p></td>
+<td><p>ウニ (Urchin) — 針を立てて岩に張りつき、ヒットを待つ</p></td>
+</tr>
+<tr class="row-odd"><td><p>V</p></td>
+<td><p>22</p></td>
+<td><p>ヘビ (Viper) — 低い草に潜む</p></td>
+</tr>
+<tr class="row-even"><td><p>W</p></td>
+<td><p>23</p></td>
+<td><p>ウォンバット (Wombat) — 深い巣穴</p></td>
+</tr>
+<tr class="row-odd"><td><p>Y</p></td>
+<td><p>24</p></td>
+<td><p>ヤク (Yak) — 高地の遠くにいて、降りてくるのが遅い</p></td>
+</tr>
+<tr class="row-even"><td><p>Z</p></td>
+<td><p>バー</p></td>
+<td><p>シマウマ (Zebra) — 格子の向こう側</p></td>
+</tr>
+</tbody>
+</table>
+<p>読み取りでは、blunderDB はコンパクト形と展開形(<code class="docutils literal notranslate"><span class="pre">[34]65:x2(ymhf)m3hf3(SQLA)S3QL3</span></code>:まず手番側のすべてのチェッカー、次に相手のもの)、自由な順序、複数の括弧グループを受け付けます。書き出しでは常に正規のコンパクト形を生成し、展開形は要求に応じて生成します。そのため、blunderDB による同じ位置の 2 通りの表記は、1 文字違わず同一になります。ArkID はセッションのルール(ジャコビー、ビーバー)もキューブの上限も表しません。OGID と同様に、それらを持たず、仮定もしません。片側に 15 個を超えるチェッカーがある、両陣営が占めるマスがある、未知の文字がある、スコアまたはダイスが無効な場合は、その旨を示して拒否されます。</p>
+</dd>
+<dt>個別にインポートされたポジション（individually imported position）</dt><dd><p>対局の一部としてではなく、単独でデータベースに登録されたポジション——盤面から書き込まれたか、ポジションファイルから読み込まれたもの。この性質は永続的です。このようにインポートされたポジションは、後でそれを含む対局がインポートされても、その性質を保ち続けます。</p>
+</dd>
+<dt>マークされたポジション（flagged position）</dt><dd><p>ユーザーが <em>対局の由来元のソフトウェア内で</em> 検討する価値があるとマークしたポジション——現在は eXtreme Gammon のみが指し手ごとにこのマークを記録します。マークされたキューブの決定は、そこから生じる両方のポジション——ダブルとテイク／パス——にマークを付けます。</p>
+</dd>
+<dt>分析（analysis）</dt><dd><p>エンジン（eXtreme Gammon、GNUbg、BGBlitz、または内蔵の gammonNet 評価エンジン）がポジションについて導き出した結論を保存し、後で読み出したもの。ポジションはエンジンごとに1つの分析を持ちます。分析をインポートしても、他のエンジンの分析や既存の分析を上書きすることは決してありません（<a class="reference internal" href="manuel_partage.html#import-regles"><span class="std std-ref">インポート：何が書き込まれ、何が決して書き込まれないか</span></a> を参照）。</p>
+</dd>
+<dt>評価（evaluation）</dt><dd><p>内蔵の評価エンジンが、現在盤面にあるポジションに対して行う計算の結果で、保存されているかどうかを問いません。評価はポジションが変わらない間だけ有効です。保存されれば、それは「分析」になります。</p>
+</dd>
+<dt>参照系（referential）</dt><dd><p>ポジションに関する数値が表される尺度。<em>マネー</em> は「これは何ポイントの価値があるか」に答え、ギャモンは常に2ポイントの価値があります。<em>マッチ</em> は「これはマッチのどれだけの価値があるか」に答え、正規化された尺度上でギャモンはスコアが決める価値を持ちます——2-away/4-away ではほぼすべて、1-away のリーダーにはゼロです。参照系はポジションのプロパティであり、表示上の好みでは決してありません。それを決めるのはアウェイスコアです。</p>
+</dd>
+<dt>正規化されたエクイティ（normalised equity）</dt><dd><p><code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">×</span> <span class="pre">MWC</span> <span class="pre">−</span> <span class="pre">1</span></code> の尺度で表されるマッチエクイティで、±1は現在のキューブを勝ち取るか失うかを表します。これは、マッチスコアにおいて blunderDB が表示し保存する尺度であり、生の勝率ではありません。</p>
+</dd>
+<dt>EMG</dt><dd><p>eXtreme Gammon と GNUbg が上記の正規化されたエクイティを指すときに使う略号であり、blunderDB の統計がエラーを数えるときの尺度でもあります。「0.100 EMG のエラー」とは、この尺度で 0.100 のエラーのことです。二つの用語は同じ量を指します。</p>
+</dd>
+<dt>エラー／ブランダー（<em>error</em>、<em>blunder</em>）</dt><dd><p>その損失がライブラリの<strong>エラー閾値</strong>に達した決定は<em>エラー</em>であり、その損失が<strong>ブランダー閾値</strong>に達したエラーは<em>ブランダー</em>です。したがって、すべてのブランダーはエラーです。二つの閾値は設定の<em>ライブラリ</em>タブで調整し、既定では 0.050 と 0.100 EMG であり、マシンではなくファイルに従います——エクスポートには持ち出されません。</p>
+</dd>
+<dt>アウェイスコア（away score）</dt><dd><p>プレイヤーがマッチに勝つためにあと何ポイント必要かを、そのプレイヤー自身の視点で表したもの。2つの値はカウントではなく番兵（センチネル）です。<code class="docutils literal notranslate"><span class="pre">-1</span></code> はマッチが存在しない——参照系は <em>マネー</em>——ことを意味し、<code class="docutils literal notranslate"><span class="pre">0</span></code>／<code class="docutils literal notranslate"><span class="pre">1</span></code> は勝利までの同じ距離でありながら、クロフォードゲームの後のゲーム（<code class="docutils literal notranslate"><span class="pre">0</span></code>）とクロフォードゲームそのもの（<code class="docutils literal notranslate"><span class="pre">1</span></code>）を区別します。</p>
+</dd>
+<dt>方式（regime）</dt><dd><p>レースについてパネルがどの種類の答えを出しているか。常に画面上に明示され、読者が推測する必要はありません。</p>
+<ul class="simple">
+<li><p><em>厳密</em> ——両面ベアオフデータベースから読み取られ、決して推定されない。</p></li>
+<li><p><em>評価済み</em> ——内蔵の評価エンジンによって計算され、軌道を最後までプレイする。</p></li>
+<li><p><em>推定</em> ——軌道を較正済みで要約したもので、勝率には有効だが、キューブの判定には決して使われない。</p></li>
+</ul>
+</dd>
+<dt>ベアオフのデータベース（bearoff database）</dt><dd><p>両面（キューブの判断）または片面（EPC）のレースの答えの表。blunderDB は初回起動時に一部を自ら生成します（プレイヤーごとに6個のチェッカーまで）。より広い領域は設定の <em>Bearoff</em> タブまたは CLI から生成されます。生成されたデータベースは、そのフィンガープリントが GNUbg の生成するものと厳密に一致するとき「検証済み」と呼ばれます。</p>
+</dd>
+<dt>EPC（Effective Pip Count）</dt><dd><p>プレイヤーの全チェッカーをベアオフするのに必要なロール数の、古典的な片面推定値——単純なピップカウントに対する無駄（wastage）を補正したもの。</p>
+</dd>
+<dt>ポジションの事実（position fact）</dt><dd><p>盤面そのものに属し、プレイヤーがどんな選択をするかとは無関係な量：ピップカウント、EPC、勝ち／ギャモン／バックギャモンの確率、キューブレスエクイティ。ロールの前から真です。</p>
+</dd>
+<dt>ロール前ベースライン（pre-roll baseline）</dt><dd><p>勝ち／ギャモン／バックギャモンの確率とキューブレスエクイティのベクトルで、ダイスが振られた後、候補手のリストの上に表示されます。この行と実際の手との差は、その目の運を測るものであり、指された手の功績を測るものでは決してありません。</p>
+</dd>
+<dt>決定（decision）</dt><dd><p>盤面が問いかける質問への答え：ダイスが振られたときは候補手のランキング、そうでなければキューブの3つの選択肢とその判定。1つのポジションが両方の質問を同時に問いかけることは決してありません。</p>
+</dd>
+<dt>判定（verdict）</dt><dd><p>キューブの決定のどの選択肢が正しいか：<em>ノーダブル</em>、<em>ダブル／テイク</em>、<em>ダブル／パス</em>、または <em>トゥーグッド（ダブルするには良すぎる）</em>。それぞれ <em>ND</em>、<em>D/T</em>、<em>D/P</em>、<em>TG</em> と略されます。2つの特別なケースは決して空欄にされません：<em>決定なし</em>（そのレジームには決定を下す資格がない）と <em>拒否</em>（エンジンがそのポジションを拒否した。典型的にはそのテーブルの範囲外のスコア）。</p>
+</dd>
+<dt>トゥーグッド（too good）</dt><dd><p>そのポジションが非常に有利で、ダブルすれば相手はパスするが、ダブルせずにプレイを続ける方がより多くの利益をもたらすという判定——キューブは手元に残しておくのがよいということです。</p>
+</dd>
+<dt>スコアマップ（score map）</dt><dd><p>同じポジションの最良の決定（ダイスがあれば手、なければキューブの判定）を、マッチの各スコアについて <em>away × away</em> の格子で示したもの。<a class="reference internal" href="manuel_eval.html#eval-cartes"><span class="std std-ref">スコアマップとロールマップ</span></a> を参照。</p>
+</dd>
+<dt>ロールマップ（roll map）</dt><dd><p>手番のプレイヤーがまだ振っていないポジションの 21 通りのロールそれぞれについて、最良の手、その後のエクイティ、ロールの確率で重み付けした平均との差を示したもの。<a class="reference internal" href="manuel_eval.html#eval-cartes"><span class="std std-ref">スコアマップとロールマップ</span></a> を参照。</p>
+</dd>
+<dt>失われたマーケット（lost market）</dt><dd><p>その後ではプレイヤーのダブルがパスされるロール。相手がこれから振るポジションでのプレイヤーのキューブの決定が、ダブル/パスまたはトゥーグッドになる場合です。プレイヤーがキューブを使える場合にのみ数えます。</p>
+</dd>
+<dt>タスク（task）</dt><dd><p>クリック一回では終わらない作業 — gammonNet の一括解析、ロールアウト、メンテナンス、インポート、ベアオフテーブル、同期 — で、そのライブラリに結び付けられ、<a class="reference internal" href="manuel_interface.html#manuel-calculs"><span class="std std-ref">計算パネル</span></a> に一覧表示されます。</p>
+</dd>
+<dt>待ち行列（queue）</dt><dd><p>同じライブラリに書き込むタスクの待ち順。同時に実行されるのは一つだけで、他は拒否されずに順番を待ちます。</p>
+</dd>
+<dt>可視の優先度（visible priority）</dt><dd><p>結果が画面に表示されている計算（評価、マップ）の順位。要求されたロールアウトより先に処理され、そのロールアウトはバックグラウンド解析より先に処理されます。優先度の低いタスクはチェックポイントで<em>譲り</em>、その後に再開します。</p>
+</dd>
+<dt>運（luck）</dt><dd><p>ダイスロールが手のエクイティに与える寄与で、インポート時にソースファイルから読み取られ（eXtreme Gammon、GNUbg）、blunderDB が再計算することは決してありません。これを伝えない形式（BGF、Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>）では決して提供されず、インポートは遡及的ではありません。</p>
+</dd>
+<dt>ブランダー（blunder）</dt><dd><p>エラー（最善の選択とのエクイティ差）が閾値を超える手またはキューブの判断。<code class="docutils literal notranslate"><span class="pre">bl</span></code>（または <code class="docutils literal notranslate"><span class="pre">blunders</span></code>）コマンドは、統計のフィルターで選ばれた最悪のエラーを直接読み込みます。</p>
+</dd>
+<dt>ミリポイント（mpt）</dt><dd><p>エクイティの 1000 分の 1 ポイント。0.100 のエクイティエラーは 100 mpt に相当します。ポジションに関する数値を読む単位であり、ブランダーのしきい値、検索フィルター <code class="docutils literal notranslate"><span class="pre">e&gt;</span></code> と <code class="docutils literal notranslate"><span class="pre">E&gt;</span></code>、エラーの大きさのヒストグラム、1 ロールあたりの平均の運がこれにあたります。PR はこの尺度では読みません。その係数は 1000 ではなく 500 であるため、PR 5.0 は 1 決定あたり平均 10 mpt のエラーに相当します。</p>
+</dd>
+<dt>PR（Performance Rating）</dt><dd><p>プレイヤーの平均的なエラーのコストで、チェッカープレイとキューブを合わせたもの。カウントされる決定 1 回あたりの平均エクイティエラーに、eXtreme Gammon や GNUbg と同じく 500 を掛けたものです。したがって PR 5.0 は、1 決定あたり 0.010 のエクイティ損失にあたります。正確な計数ルール（eXtreme Gammon および GNUbg とのパリティ）については <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a> を参照してください。</p>
+</dd>
+<dt>Snowie Error Rate</dt><dd><p>PR と同じ分子（エラーの合計）ですが、カウントされた決定の数ではなく、指された手の数で割ったもの——ツール間でより安定しています。<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a> を参照してください。</p>
+</dd>
+<dt>MWC コスト（MWC cost）</dt><dd><p>エクイティではなく、マッチ勝率（Match Winning Chance）のパーセントポイントで表したキューブのエラー——同じプレイヤーを異なるマッチスコア間で比較するのに自然な量です。</p>
+</dd>
+<dt>コレクション（collection）</dt><dd><p>ユーザーがドラッグ＆ドロップを含めて手作業で組み立てる、名前付きの順序付きポジション集合。コレクションへの所属は明示的な操作であり、個別にインポートされたポジションとは異なります（<a class="reference internal" href="manuel_bibliotheque.html#panneau-collections"><span class="std std-ref">コレクションパネル</span></a> を参照）。</p>
+</dd>
+<dt>Anki デッキ（Anki deck）</dt><dd><p>間隔反復（FSRS アルゴリズム）で復習されるカードに変換されたポジションの集合。<a class="reference internal" href="manuel_entrainement.html#panneau-anki"><span class="std std-ref">Anki パネル</span></a> を参照してください。</p>
+</dd>
+<dt>復習カード（review card）</dt><dd><p>Anki デッキのポジションで、質問として提示されます：盤面が質問であり、保存された分析が答えです。それを明らかにする操作が行われるまで隠されています。</p>
+</dd>
+<dt>コメント（comment）</dt><dd><p>ポジションに付けられた自由記述のテキストで、ユーザーが入力したもの、またはインポートしたファイルから取り込まれたもの。ポジションは複数のコメントを持つことができ、それぞれに作者の署名が付きます。インポートされたコメントは由来（<code class="docutils literal notranslate"><span class="pre">XG</span></code>、<code class="docutils literal notranslate"><span class="pre">GNU</span> <span class="pre">BG</span></code>、<code class="docutils literal notranslate"><span class="pre">BGF</span></code>）を保ちます。コメント中の <code class="docutils literal notranslate"><span class="pre">#語</span></code> はタグで、<code class="docutils literal notranslate"><span class="pre">#語</span></code> フィルターで見つけられます（<a class="reference internal" href="manuel_bibliotheque.html#panneau-commentaires"><span class="std std-ref">コメントパネル</span></a> を参照）。</p>
+</dd>
+<dt>プレイヤー（player）</dt><dd><p>インポートされた対局に現れるとおりの名前。blunderDB は名前の背後にいる人物を推測しません：同一人物が2通りの綴りで署名していても、明示的な統合（「プレイヤー管理」）を行うまでは2人の別々のプレイヤーとして扱われます。</p>
+</dd>
+<dt>透かし（watermark）</dt><dd><p>データベースをエクスポートする者が付す、それが何であり、どこから来たかについての署名済みの宣言。偽造は不可能ですが除去は可能であり、受け取る側に何かを記録することは決してありません。<a class="reference internal" href="manuel_partage.html#diffusion-controlee"><span class="std std-ref">データベースの配布：出所とパスワード</span></a> を参照してください。</p>
+</dd>
+<dt>発行者アイデンティティ（issuer identity）</dt><dd><p>ある人物の透かしに署名する鍵——最初に適用された透かしの時点で自動的に作成され、単一のファイルとしてあるマシンから別のマシンへ移動できます。</p>
+</dd>
+<dt>保護されたファイル（protected file、.dbx）</dt><dd><p>エクスポートされ、パスワードで暗号化されたデータベースで、一度開かれると後は通常のものになります。転送中のファイルを保護するものであり、その内容を保護するものではありません。パスワードを受け取った人は誰でもそれを開けます。</p>
+</dd>
+<dt>テナント（tenant）</dt><dd><p>サーバーモードにおける、ポジション、対局、コレクションの集合の所有者。あるテナントが保存するものが他のテナントに見えることは決してありません。デスクトップでは暗黙のテナントが1つだけ存在します：そのファイルの持ち主です。<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照してください。</p>
+</dd>
+</dl>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="cli_admin.html" class="btn btn-neutral float-left" title="データベースの管理" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="よくある質問（FAQ）" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

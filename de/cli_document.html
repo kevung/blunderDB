@@ -1,0 +1,396 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Die Positionen eines Dokuments importieren &mdash; blunderDB 0.63.1 Dokumentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=b54c10fd"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=9bf55d28"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="Bibliothek: Suche, Listen, Sammlungen" href="cli_bibliotheque.html" />
+    <link rel="prev" title="Importieren, exportieren, übertragen" href="cli_import_export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Sprachen">
+  <a href="../fr/cli_document.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_document.html" lang="en" hreflang="en">English</a>
+  <span class="current" lang="de" aria-current="true">Deutsch</span>
+  <a href="../el/cli_document.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_document.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_document.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_document.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_document.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_document.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Erste Schritte</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download und Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Benutzerhandbuch</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referenz</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Handbuch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metriken und Lernwerkzeuge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste der Befehle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Tastenkürzel</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Befehlszeilenschnittstelle (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Einführung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Allgemeine Syntax</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Verfügbare Befehle</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Importieren, exportieren, übertragen</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Die Positionen eines Dokuments importieren</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-quoi-cela-sert">Wozu das dient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-est-lu-ce-qui-est-refuse">Was gelesen wird, was abgelehnt wird</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-parcours-en-trois-commandes">Der Ablauf in drei Befehlen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-releve">Das Relevé</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-trois-etats">Die drei Zustände</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#livres-scannes">Eingescannte Bücher</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-l-import-refuse">Warum der Import ablehnt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-entre-en-base">Was in die Datenbank gelangt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#une-position-repetee">Eine wiederholte Position</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reimporter">Erneut importieren</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-demon">Der Daemon</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Bibliothek: Suche, Listen, Sammlungen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Matches, Turniere und Partien</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Analyse und Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Studium, Lektionen und Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Statistiken</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Datenbankverwaltung</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Workflow-Beispiele</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Rückgabecodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Häufig gestellte Fragen (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-Modus (Server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-Vertrag</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anhänge</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anhang: Fortgeschrittene Nutzung der Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anhang Windows: Was tun, wenn Windows den Start blockiert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-Anhang: Mögliche Blockierung von blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anhang: Datenbankschema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versionsverlauf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Über blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Befehlszeilenschnittstelle (CLI)</a></li>
+      <li class="breadcrumb-item active">Die Positionen eines Dokuments importieren</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="importer-les-positions-d-un-document">
+<span id="cli-document"></span><h1>Die Positionen eines Dokuments importieren<a class="headerlink" href="#importer-les-positions-d-un-document" title="Link to this heading"></a></h1>
+<section id="a-quoi-cela-sert">
+<h2>Wozu das dient<a class="headerlink" href="#a-quoi-cela-sert" title="Link to this heading"></a></h2>
+<p>Ein Buch, das Sie besitzen — Aufgabenbuch, Sammlung, Artikel — zeigt Stellungen als Diagramme, in der Reihenfolge des Studiums. Der Befehl <code class="docutils literal notranslate"><span class="pre">document</span></code> legt sie in dieser Reihenfolge in einer Sammlung der Datenbank ab, damit Sie sie mit dem Rest der Bibliothek erneut studieren können. Die Oberfläche folgt demselben Weg in einem Assistenten (<a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">Der Import-Assistent der Oberfläche</span></a>); die Befehlszeile wird hier beschrieben.</p>
+<p>Die Arbeit läuft über eine Zwischendatei, das <strong>Relevé</strong>: eine JSON-Datei, die die im Dokument gelesenen Positionen auflistet. Man liest sie noch einmal, korrigiert sie bei Bedarf und importiert sie dann. Das Lesen eines Dokuments schreibt nichts in die Datenbank; nur der Import eines Relevés schreibt.</p>
+</section>
+<section id="ce-qui-est-lu-ce-qui-est-refuse">
+<h2>Was gelesen wird, was abgelehnt wird<a class="headerlink" href="#ce-qui-est-lu-ce-qui-est-refuse" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">document</span> <span class="pre">analyze</span></code> liest folgende Arten von Dokumenten:</p>
+<ul class="simple">
+<li><p>ein PDF, dessen Diagramme mit der Brettschrift von eXtreme Gammon gezeichnet sind (die von XG gedruckten PDFs): Jedes Diagramm ist dort Text, den der Befehl Glyphe für Glyphe exakt dekodiert;</p></li>
+<li><p>ein PDF, dessen Diagramme mit einer Brettschrift von Snowie gezeichnet sind (Familie Atchoum, zum Beispiel „AtchoumSnowie4Normal“): die Steine werden aus der Form der im PDF eingebetteten Glyphen gelesen, unabhängig von der Version der Schrift; die gedruckten Pips bestätigen die Lesung. Der Spielstand ist dort nicht gedruckt: der Kontext bleibt zu prüfen;</p></li>
+<li><p>ein eingescanntes Buch: ein PDF, dessen Seiten aus Bildern bestehen, mit oder ohne Textschicht, oder seine Seiten als Bilder (ein Ordner mit PNG- oder JPEG-Dateien, eine Seite pro Datei, in der Reihenfolge ihrer Namen gelesen, oder ein einzelnes Bild). Die Diagramme werden dort an ihrer Struktur erkannt (siehe <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Eingescannte Bücher</span></a>);</p></li>
+<li><p>ein Textdokument, DOCX, ODT, EPUB oder HTML-Seite: Seine Bilder werden eines nach dem anderen in der Reihenfolge des Textes gelesen, jedes als Seitenbild. Die Seitenzahl eines Eintrags ist dann der Rang seines Bildes unter den gelesenen, sein Kapitel der vorausgehende Titel, und er wird als „fig. 12“ oder „Kapitel 3, fig. 12“ zitiert. Der Absatz vor dem Bild, der eigene und der folgende dienen als Textschicht: Die darin genannten Pips und Würfel gleichen die Lesung ab wie in einem PDF. Eine HTML-Seite liest die Bilder ihres Ordners und seiner Unterordner sowie die in der Seite eingebetteten (<code class="docutils literal notranslate"><span class="pre">data:</span></code>); nichts wird heruntergeladen, und Online-Bilder werden auf der Fehlerausgabe gezählt. Ein als Vektorgrafik gezeichnetes Bild (EMF, WMF, SVG) wird nicht gelesen: Es wird auf der Fehlerausgabe genannt. Eine <code class="docutils literal notranslate"><span class="pre">.doc</span></code>-Datei von Word 97-2003 wird mit einer Meldung abgelehnt, die vorschlägt, sie als PDF oder DOCX zu speichern.</p></li>
+</ul>
+<p>Ein PDF, dessen Seiten weder aus Bildern bestehen noch mit dieser Schrift gezeichnet sind (ein Buch aus Vektoren), wird abgelehnt; seine Seiten werden dann als Bilder übergeben:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page; structure: no page of the document could be read: page 1: pdf: the page draws no image (a page drawn with vectors is not rendered)
+</pre></div>
+</div>
+<p>Ein PDF, das mit einer Brettschrift gezeichnet ist, deren Formen nicht eingebettet sind, wird mit einer Meldung abgelehnt, die die Schrift nennt.</p>
+<p>Eine Datei, die weder ein PDF noch ein Textdokument noch ein Bild ist, ein verschlüsseltes PDF oder eines von mehr als 512 MiB, ein Bild von mehr als 64 MiB oder mit mehr als 100 Millionen Pixeln wird ebenfalls abgelehnt, mit einer Meldung, die das sagt. Ein Textdokument hat dieselbe Grenze von 512 MiB; sein Archiv wird abgelehnt ab mehr als 10 000 Einträgen, bei einem Teil, der sich zu mehr als 64 MiB entpackt, oder bei einer entpackten Gesamtgröße von mehr als 1 GiB.</p>
+</section>
+<section id="le-parcours-en-trois-commandes">
+<h2>Der Ablauf in drei Befehlen<a class="headerlink" href="#le-parcours-en-trois-commandes" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>analyze<span class="w"> </span>livre.pdf<span class="w"> </span>-o<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>check<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>releve.json
+</pre></div>
+</div>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">analyze</span></code> liest das PDF und schreibt das Relevé (ohne <code class="docutils literal notranslate"><span class="pre">-o</span></code> auf die Standardausgabe). Ist die Standardfehlerausgabe ein Terminal, schreibt es dort den Fortschritt des Lesens (<code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">37/212,</span> <span class="pre">54</span> <span class="pre">diagrams</span></code>); in einem Skript wird nichts geschrieben. Es fasst zusammen, was es gefunden hat:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Relevé:     releve.json
+</pre></div>
+</div>
+<p>Titel und Autor stammen aus den Metadaten des PDFs, andernfalls ist der Titel der Dateiname; <code class="docutils literal notranslate"><span class="pre">--title</span></code> und <code class="docutils literal notranslate"><span class="pre">--author</span></code> ersetzen sie. Das Kapitel jedes Eintrags stammt aus den Lesezeichen des PDFs.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">check</span></code> validiert das Relevé und zählt seine Einträge, ohne eine Datenbank zu lesen oder zu schreiben. Nach der Zählung listet es auch die zu prüfenden Einträge auf (Rang, Seite, Zustand und die mit dem Diagramm zu vergleichenden Felder); <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> liefert dieselben Zahlen und dieselbe Liste (<code class="docutils literal notranslate"><span class="pre">review</span></code>) als JSON:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1; verified 0)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Unverified: rank 4, 5, 6 (import refused without --force)
+Review:
+  rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">check</span></code> nimmt auch das Dokument selbst entgegen (<code class="docutils literal notranslate"><span class="pre">check</span> <span class="pre">livre.pdf</span></code>): Es liest dann das Relevé, das der Prüfbogen der Oberfläche daneben ablegt (<code class="docutils literal notranslate"><span class="pre">livre.pdf.releve.json</span></code>, <a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">Der Import-Assistent der Oberfläche</span></a>), und gibt dessen Fortschritt an, einschließlich <code class="docutils literal notranslate"><span class="pre">verified</span></code>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">import</span></code> schreibt die Positionen in die Sammlung:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Created collection "Mon livre" (id 1)
+Entries: 6, distinct positions: 5 (5 new in the library), added to the collection: 5, repeated: 1
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--collection</span></code> wählt einen anderen Namen als den Titel des Dokuments. Existiert die Datenbankdatei nicht, wird sie angelegt.</p>
+</li>
+</ol>
+</section>
+<section id="le-releve">
+<h2>Das Relevé<a class="headerlink" href="#le-releve" title="Link to this heading"></a></h2>
+<p>Das Relevé ist eine lesbare JSON-Datei, die sich in einem Texteditor öffnen lässt. Der Kopf (<code class="docutils literal notranslate"><span class="pre">document</span></code>) nennt den Titel, den Autor, die Ausgabe oder die Adresse des Dokuments, den SHA-256-Fingerabdruck der gelesenen Datei, das Profil seiner Diagramme und, bei einem gescannten Buch, seinen Standardkontext (<code class="docutils literal notranslate"><span class="pre">defaults</span></code>, siehe <a class="reference internal" href="#cli-document-defaults"><span class="std std-ref">Der Standardkontext</span></a>). Danach ist jedes Diagramm ein Eintrag, in der Reihenfolge des Dokuments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code> — sein Rang, ab 1 ohne Lücke;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">page</span></code>, <code class="docutils literal notranslate"><span class="pre">chapter</span></code> und <code class="docutils literal notranslate"><span class="pre">label</span></code> — seine Seite, das Kapitel der Lesezeichen und der Name, den das Dokument ihm gibt („Problem 191“), wenn er darüber gedruckt ist;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">position</span></code> — die Position als XGID: Steine, Doppelwürfel, Zugrecht, Würfel, Spielstand und Matchlänge in einer einzigen Zeichenkette;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checkers</span></code> — die Sicherheit der Steine: <code class="docutils literal notranslate"><span class="pre">sure</span></code>, <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> oder <code class="docutils literal notranslate"><span class="pre">uncertain</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">complete</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code>, wenn die Steine mit fünfzehn pro Seite auf dem Brett ohne jeden Zweifel gelesen wurden, ohne dass ein Abgleich sie bestätigt (siehe <a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Fünfzehn und fünfzehn ohne Zweifel</span></a>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code> — wie der Kontext (Doppelwürfel, Würfel, Zugrecht, Spielstand) bekannt ist: <code class="docutils literal notranslate"><span class="pre">read</span></code> (gelesen und gegengeprüft), <code class="docutils literal notranslate"><span class="pre">default</span></code> (der Standardkontext des Dokuments), <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (weder gelesen noch unter dem Standard: ein gezeichneter, aber nicht gelesener Doppelwürfel oder Würfel, ein nicht auffindbarer Spielstand) oder <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> (widersprüchlich);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">doubts</span></code> — die benannten Zweifel der Lesung;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rect</span></code> — wo das Diagramm auf der Seite liegt, als Bruchteil ihrer Größe, um es im PDF wiederzufinden;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verified</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code>, wenn eine Person die Lesung mit dem Diagramm verglichen hat.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">verify</span></code> schreibt das Urteil einer Person in das Relevé, ohne Datenbank:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">3</span>,4,9
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--position<span class="w"> </span><span class="s2">"XGID=..."</span>
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--undo
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--rank</span></code> nennt die Einträge, durch Kommas getrennt; sie werden geprüft. <code class="docutils literal notranslate"><span class="pre">--position</span></code> ersetzt die Lesung eines einzelnen Eintrags durch die korrekte XGID und wird abgelehnt, wenn sie keine legale Stellung ist; eine Korrektur, deren Kontext nicht mehr der des Standards ist, behält ihren eigenen, zu prüfen. <code class="docutils literal notranslate"><span class="pre">--undo</span></code> nimmt das Urteil zurück. Wird statt des Relevés das Dokument angegeben, schreibt der Befehl in das daneben abgelegte Relevé. Der Befehl gibt die geschriebene Datei und den Fortschritt aus: <code class="docutils literal notranslate"><span class="pre">releve.json:</span> <span class="pre">verified</span> <span class="pre">3</span> <span class="pre">of</span> <span class="pre">6</span> <span class="pre">entries</span> <span class="pre">(sure</span> <span class="pre">3,</span> <span class="pre">to</span> <span class="pre">verify</span> <span class="pre">2,</span> <span class="pre">uncertain</span> <span class="pre">1)</span></code>.</p>
+<p>Ein Relevé wird geprüft, indem man das PDF auf der Seite des Eintrags öffnet. Dort korrigiert man die Position (die XGID), markiert einen geprüften Eintrag mit <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code> und entfernt einen Eintrag, indem man die Ränge neu nummeriert. Ein Relevé wird über mehrere Sitzungen geprüft: <code class="docutils literal notranslate"><span class="pre">verified</span></code> bleibt in der Datei. <code class="docutils literal notranslate"><span class="pre">check</span></code> lehnt ein Relevé ab, das ein unbekanntes Feld enthält, dessen Ränge eine Lücke haben, dessen Seite rückwärts springt, dessen XGID keine legale Position ist oder das ein neueres Format hat als das Programm. Bei <code class="docutils literal notranslate"><span class="pre">sure</span></code>-Steinen bleibt nur ein Zweifel am Kontext möglich; ein Kontext <code class="docutils literal notranslate"><span class="pre">read</span></code> hat keinen; ein <code class="docutils literal notranslate"><span class="pre">default</span></code>-Eintrag trägt den Standardkontext in seiner XGID.</p>
+<p>Das Relevé hat das Format der Version 2. Ein Relevé der Version 1, das pro Eintrag nur einen einzigen Zustand (<code class="docutils literal notranslate"><span class="pre">state</span></code>) angab, lässt sich weiterhin lesen: Ein <code class="docutils literal notranslate"><span class="pre">sure</span></code>-Eintrag hat darin sichere Steine und einen gelesenen Kontext, ein Eintrag aus einem gescannten Buch fällt unter den Standardkontext, unbestätigt, und jeder andere hat einen zu prüfenden Kontext. <code class="docutils literal notranslate"><span class="pre">analyze</span></code> schreibt immer die Version 2.</p>
+</section>
+<section id="les-trois-etats">
+<h2>Die drei Zustände<a class="headerlink" href="#les-trois-etats" title="Link to this heading"></a></h2>
+<p>Der Zustand eines Eintrags ergibt sich aus seinen beiden Sicherheiten; er wird nicht im Relevé gespeichert.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">sure</span></code></dt><dd><p>Die Steine sind sicher <strong>und</strong> der Kontext ist beglaubigt: gelesen oder unter dem Standardkontext des Dokuments, sobald dieser bestätigt ist. Die Steine sind sicher, wenn die Gegenproben des Diagramms stimmen: Jede Seite hat fünfzehn Steine (auf den Punkten, auf der Bar und im Ablagefach), und die aus der Position berechneten Pips entsprechen den gedruckten Pips beider Spieler. Der Kontext eines XG-PDFs wird gelesen: Spielstand und Matchlänge sind die, die es daneben druckt. Der eines gescannten Buchs nie: siehe <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Eingescannte Bücher</span></a>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">to-verify</span></code></dt><dd><p>Die Lesung stimmt, aber nichts bestätigt sie: Ein gedruckter Pip weicht vom berechneten Pip ab, oder das Diagramm zeigt etwas, das die Referenzdrucke nie gezeigt haben — ein Stapel von mehr als 9 Steinen, nummerierte Steine auf der Bar, mehr als zwei weiße oder drei schwarze Steine auf der Bar, den Doppelwürfel auf der Seite des oberen Spielers oder jenseits von 8, den oberen Spieler am Zug, keine Zugmarkierung, den schwarzen Spieler unten, ein Crawford-Spiel, einen Spieler, dem ein Punkt zum Sieg fehlt (das Crawford-Spiel und die folgenden lassen sich nicht unterscheiden), Glyphen der Schrift, die die Tabelle nicht liest. Diese Fälle werden gelesen, aber nie als sicher erklärt.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uncertain</span></code></dt><dd><p>Die Steine oder der Kontext sind widersprüchlich, oder die Lesung ist unvollständig: ein unbekanntes Glyph, eine Seite, die keine fünfzehn Steine zählt und deren Pips nicht übereinstimmen, ein beschädigter Rahmen. Ein Diagramm, aus dem sich keine legale Position gewinnen lässt, behält seinen Platz im Relevé, ohne Position (<code class="docutils literal notranslate"><span class="pre">&quot;position&quot;:</span> <span class="pre">&quot;&quot;</span></code>).</p>
+</dd>
+</dl>
+<p>Ein Eintrag ist <strong>importierbar</strong>, wenn er <code class="docutils literal notranslate"><span class="pre">sure</span></code> oder verifiziert ist oder, auf Verlangen, wenn er vollständig ist (<a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Fünfzehn und fünfzehn ohne Zweifel</span></a>). Die Zweifel, die er trägt, sagen, was zu prüfen ist, zum Beispiel:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pips read 167/167, printed 160/167 (bottom/top)
+</pre></div>
+</div>
+<p>Der Würfel wird nicht gelesen: Die Analyse schreibt immer „keine Würfel“ (<code class="docutils literal notranslate"><span class="pre">00</span></code>).</p>
+</section>
+<section id="livres-scannes">
+<span id="cli-document-images"></span><h2>Eingescannte Bücher<a class="headerlink" href="#livres-scannes" title="Link to this heading"></a></h2>
+<p>Eine Seite als Bild wird ohne vorausgesetzten Stil gelesen: Der Befehl sucht darin zwei Reihen von zwölf Punkten, die von einer Bar getrennt sind, und Steine, Scheiben zweier Klassen, die von der Basis eines Punktes aus gestapelt sind. Den Stil des Dokuments lernt er am Dokument selbst: die Form des Steins an den ersten Diagrammen, dann an allen die beiden Klassen von Steinen, die gedruckte Nummerierung und die Spielrichtung. Nichts wird von einem Dokument zum nächsten behalten, und kein Bild wird aufbewahrt.</p>
+<p>Er liest Strichzeichnungen von Diagrammen und gedruckte Bildschirmfotos von Software, in Leserichtung: linke, dann rechte Seite einer Doppelseite, Spalte, dann von oben nach unten. Eine leicht schiefe Seite wird begradigt, der Schatten der Bindung entfernt. Nützliche Auflösung: 150 bis 300 dpi, die in der Datei angegebene; fehlt sie, gilt die lange Seite der Seite als elf Zoll.</p>
+<p>Ein gescanntes PDF wird direkt gelesen, ohne externes Werkzeug: Jede Seite wird aus ihren Bildern zusammengesetzt, so platziert, wie das PDF sie platziert, in der Auflösung des feinsten von ihnen, begrenzt auf 150 bis 300 dpi, dann gelesen und verworfen. Dekodiert werden JPEG-Bilder (<code class="docutils literal notranslate"><span class="pre">DCTDecode</span></code>), JPEG-2000-Bilder (<code class="docutils literal notranslate"><span class="pre">JPXDecode</span></code>, grau oder mit drei Komponenten, ohne Palette, ohne eingebettetes Alpha und ohne HTJ2K, bis zu 12 Millionen Pixel), JBIG2-Bilder (<code class="docutils literal notranslate"><span class="pre">JBIG2Decode</span></code>, mit ihren <code class="docutils literal notranslate"><span class="pre">JBIG2Globals</span></code>: generische Regionen in MMR- oder arithmetischer Kodierung, Verfeinerungsregionen, Symbolwörterbücher und Textregionen in arithmetischer Kodierung, bis zu 67 Millionen Pixel pro Seite), Faxbilder (<code class="docutils literal notranslate"><span class="pre">CCITTFaxDecode</span></code>, Gruppe 3 eindimensional und Gruppe 4) und Rohbilder (<code class="docutils literal notranslate"><span class="pre">FlateDecode</span></code>, grau, farbig oder indiziert); Schablonenmasken und weiche Masken werden angewendet, sodass sich eine Seite aus einem JPEG-Hintergrund und Faxmasken lesbar zusammensetzt. Nicht unterstützt werden: eine Farbschlüsselmaske (das Bild wird ganz gemalt), ein JBIG2-Bild in Huffman-Kodierung oder in Halbtönen und eine in Vektoren gezeichnete Seite (übersprungen). Eine Seite mit einem durch seinen Header abgelehnten Bild wird übersprungen, ohne ihre anderen Bilder zu dekodieren; ein mangels Dekodierbudget abgelehntes Bild wird weggelassen, und die Seite wird ohne es gelesen, wenn ein anderes Bild sie malt. Übersprungene Seiten werden mit ihrem Grund auf der Fehlerausgabe genannt; die anderen werden gelesen. Die Textebene einer Seite, sichtbar oder nicht (die, die eine OCR unter dem Bild hinterlässt), gibt ihre Wörter an ihrer Stelle auf dem Bild; ein Text, den seine Schrift nicht in Zeichen übersetzt, ergibt kein Wort.</p>
+<p>Bei einem gescannten Buch werden die Steine und der Kontext getrennt beglaubigt. Die Steine sind <code class="docutils literal notranslate"><span class="pre">sure</span></code>, wenn die neben dem Diagramm gedruckten Pips den berechneten Pips beider Seiten entsprechen, keine Seite mehr als fünfzehn Steine hat und kein Zweifel an den Steinen bleibt. Der Kontext wird Feld für Feld gelesen, und ein Feld gilt nur dann als gelesen, wenn es gegengeprüft wurde:</p>
+<ul class="simple">
+<li><p>der Doppelwürfel, über seinen im Feld gelesenen Wert (die Ziffern des Dokuments) oder in der Textebene — zwei vorhandene Quellen müssen übereinstimmen — und stimmig mit seiner Lage: 64 in der Mitte ist zentriert, 2 bis 64 oben oder unten gehört dem Spieler dieser Seite; ein einzelnes Feld mit leerer Fläche ist der zentrierte Doppelwürfel, wenn das Dokument es so zeichnet, an derselben Stelle, neben mindestens drei Diagrammen, denn ein besessener Doppelwürfel trägt seinen Wert;</p></li>
+<li><p>die Würfel, auf dem Bild gezählt und durch den benachbarten Text bestätigt: ein benannter Wurf („to play 41“, „rolls a 65“) oder ein geschriebener Zug, in dem jeder Schritt ein Würfel ist („2/0 2/1“, „8/5(2) 6/3(2)“), zweimal angeführt, wenn der Text mehrere Würfe nennt; ein Wort, das einem anderen Diagramm näher steht, gehört zu diesem; das Zugrecht, über die Farbe der Würfel und ihre Bretthälfte (die rechte für den unteren Spieler), die denselben Spieler bezeichnen müssen. Ohne gezeichnete Würfel liefert eine Legende, die sie nennt („Black to play 53“, aus der Textebene oder, ohne Textebene, aus dem Bild gelesen), den Wurf und den Spieler am Zug, jeweils unter Vorbehalt: Eine einzelne Quelle beglaubigt nichts;</p></li>
+<li><p>der Spielstand, über das Banner der Textebene (<code class="docutils literal notranslate"><span class="pre">score:</span></code>, <code class="docutils literal notranslate"><span class="pre">pip:</span></code>, <code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">point</span> <span class="pre">match</span></code>), wobei jeder Spielstand dem Spieler zugeordnet wird, dessen Pips er trägt; zwei gleiche Spielstände kommen ohne die Pips aus.</p></li>
+</ul>
+<p>Ein Eintrag, dessen gesamter Kontext gelesen ist, ist <code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;read&quot;</span></code>. Ein nicht auffindbarer Doppelwürfel gilt nie als mittig: Was nicht gelesen wird, erhält den Standardkontext des Dokuments (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;default&quot;</span></code>, mit dem Zweifel <code class="docutils literal notranslate"><span class="pre">context</span> <span class="pre">not</span> <span class="pre">read:</span> <span class="pre">cube,</span> <span class="pre">dice,</span> <span class="pre">player</span> <span class="pre">on</span> <span class="pre">roll,</span> <span class="pre">score</span></code>). Ein gezeichneter oder gedruckter, aber nicht beglaubigter Doppelwürfel, Würfel oder Spielstand, ein teilweise abseits des Standards gelesener Kontext auf einem Feld, das das Dokument nicht druckt (siehe <a class="reference internal" href="#cli-document-learned"><span class="std std-ref">Der aus dem Dokument gelernte Standard</span></a>), ein Doppelwürfel im Besitz des oberen Spielers ohne gezeichnete Würfel, ein Doppelwürfel, der in einem Dokument, das ihn zeichnet, nicht auffindbar ist, oder ein Spielstand, der in einem Dokument, das ihn druckt, nicht auffindbar ist (gefunden neben mindestens einem Drittel seiner Diagramme), lassen den Kontext zu prüfen (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;to-verify&quot;</span></code>, mit einem benannten Zweifel); die XGID trägt dann, was gelesen wurde. Ein Eintrag aus einem gescannten Buch, dessen Kontext nicht gelesen wird, ist daher <strong>nie</strong> <code class="docutils literal notranslate"><span class="pre">sure</span></code>, solange der Standardkontext nicht bestätigt ist, und einer, dessen Kontext zu prüfen ist, ist es nie. <code class="docutils literal notranslate"><span class="pre">analyze</span></code> und <code class="docutils literal notranslate"><span class="pre">check</span></code> zählen die Einträge nach Kontext und getrennt jene, deren Steine allein beglaubigt sind:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Context:    read 0, default 140, to verify 12
+Defaults:   centred cube, no dice, the bottom player on roll, money play (0:0:1:00:0:0:0:0:10), not confirmed: set "confirmed": true once the document's diagrams follow them
+Checkers:   112 confirmed, their context alone to verify (cube, dice, player on roll, score)
+</pre></div>
+</div>
+<p>Bei einem Eintrag, dessen Kontext noch zu prüfen ist, öffnet man das Buch auf der Seite des Eintrags, vergleicht mit dem Diagramm den Doppelwürfel (Wert und Besitzer: Ein in der Mitte gezeichneter Doppelwürfel kann besessen sein), die Würfel, den Spieler am Zug und den Spielstand, korrigiert diese Felder der XGID bei Bedarf und markiert dann <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code>.</p>
+<section id="le-contexte-par-defaut">
+<span id="cli-document-defaults"></span><h3>Der Standardkontext<a class="headerlink" href="#le-contexte-par-defaut" title="Link to this heading"></a></h3>
+<p>Der Standardkontext eines gescannten Buchs ist der, den die Lesung schreibt: Doppelwürfel in der Mitte, keine Würfel, unterer Spieler am Zug, freies Spiel (kein Match). Er steht im Kopf des Relevés:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"centred cube, no dice, the bottom player on roll, money play"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">context</span></code> ist das Ende der XGID nach dem Brett; jeder <code class="docutils literal notranslate"><span class="pre">default</span></code>-Eintrag trägt es. Folgen die Diagramme des Dokuments diesem Kontext — etwa ein Problembuch im freien Spiel, unterer Spieler am Zug —, so wird er <strong>einmal bestätigt</strong>, indem man <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code> schreibt: Alle <code class="docutils literal notranslate"><span class="pre">default</span></code>-Einträge haben dann einen beglaubigten Kontext, und diejenigen mit sicheren Steinen werden <code class="docutils literal notranslate"><span class="pre">sure</span></code>. Einzeln zu prüfen bleiben nur die Ausnahmen, die die Lesung gesehen hat (besessener Doppelwürfel, gezeichnete Würfel, Matchstand), und die Einträge, deren Steine nicht sicher sind. Einen Kontext, dem das Dokument nicht folgt, bestätigt man nicht: Ein Doppelwürfel, den die Lesung nicht findet, ein im Bild ohne Textebene gedruckter Spielstand oder ein im Text außerhalb einer Legende angegebenes Zugrecht werden nicht gesehen.</p>
+</section>
+<section id="le-defaut-appris-sur-le-document">
+<span id="cli-document-learned"></span><h3>Der aus dem Dokument gelernte Standard<a class="headerlink" href="#le-defaut-appris-sur-le-document" title="Link to this heading"></a></h3>
+<p>Das Einlesen lernt aus dem Dokument, welche Kontextfelder es neben seinen Diagrammen druckt: den Doppelwürfel, die Würfel (mit dem Spieler am Zug) oder den Spielstand, gelesen neben mindestens einem Drittel der Diagramme. Es nennt sie in <code class="docutils literal notranslate"><span class="pre">printed</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"for what a diagram does not print: centred cube, no dice, the bottom player on roll, money play; the document prints its score, read beside each diagram"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"printed"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"score"</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Ein gedrucktes Feld ist die Lesung jedes Eintrags, die das Einlesen beglaubigt hat; der Standardkontext deckt nur die übrigen. In einem Problembuch im Match trägt jedes Diagramm seinen Spielstand: Seine Einträge bleiben <code class="docutils literal notranslate"><span class="pre">default</span></code>, jeder mit seinem Spielstand in der XGID, und die einmalige Bestätigung des Standardkontexts beglaubigt bei allen den mittigen Doppelwürfel, das Fehlen von Würfeln und den Spieler am Zug. Ein Diagramm, dessen Spielstand in einem solchen Dokument nicht gelesen wird, gilt nicht als Money-Spiel: Sein Kontext bleibt zu prüfen (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">prints</span> <span class="pre">its</span> <span class="pre">score</span> <span class="pre">beside</span> <span class="pre">its</span> <span class="pre">diagrams,</span> <span class="pre">none</span> <span class="pre">is</span> <span class="pre">read</span> <span class="pre">here:</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">taken</span> <span class="pre">as</span> <span class="pre">money</span> <span class="pre">play</span></code>). <code class="docutils literal notranslate"><span class="pre">analyze</span></code> und <code class="docutils literal notranslate"><span class="pre">check</span></code> zeigen, was gelernt wurde:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Printed:    score, read beside each diagram (learned from the document)
+</pre></div>
+</div>
+<p>Von einem Dokument zum nächsten wird nichts behalten. Ein Relevé ohne <code class="docutils literal notranslate"><span class="pre">printed</span></code> behält die strenge Regel: Jedes außerhalb des Standards gelesene Feld lässt den Kontext zu prüfen.</p>
+</section>
+<section id="quinze-et-quinze-sans-doute">
+<span id="cli-document-complete"></span><h3>Fünfzehn und fünfzehn ohne Zweifel<a class="headerlink" href="#quinze-et-quinze-sans-doute" title="Link to this heading"></a></h3>
+<p>Ein Diagramm ohne gedruckte Pips hat keinen Abgleich: Seine Steine bleiben <code class="docutils literal notranslate"><span class="pre">to-verify</span></code>. Werden sie mit fünfzehn Steinen pro Seite ohne jeden Zweifel gelesen, sind sie mit <code class="docutils literal notranslate"><span class="pre">&quot;complete&quot;:</span> <span class="pre">true</span></code> markiert: In allen durchgeführten Messungen waren diese Lesungen korrekt, aber nichts bestätigt sie Diagramm für Diagramm. Es ist ein Zwischenzustand, verschieden von <code class="docutils literal notranslate"><span class="pre">sure</span></code>. Ein vollständiger Eintrag trägt neben dem Kontext nur zwei Zweifel: das Fehlen gedruckter Pips und die angenommene Spielrichtung, wenn kein Pip des Dokuments sie bestätigt hat. Gedruckte Pips, die von den berechneten Pips abweichen, sind ein Zweifel an den Steinen: Der Eintrag ist dann nie vollständig. Eine Stellung mit abgetragenen Steinen ist nie vollständig: Wenn das Dokument sein Abtragebrett in Balken zeichnet (ein abgetragener Stein, von der Seite gesehen), ergänzen die im Brett gezählten Balken neben der Reihe der Seite deren gezeichnete Steine auf fünfzehn, doch eine fremde Form zählt dort ebenso wie ein Stein. Diese Zählung gilt nur, wenn gedruckte Pips mit der Stellung übereinstimmen, die dann <code class="docutils literal notranslate"><span class="pre">sure</span></code> ist; ohne sie ist sie ein benannter Zweifel (<code class="docutils literal notranslate"><span class="pre">counted</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">tray,</span> <span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pips</span> <span class="pre">confirm</span> <span class="pre">them</span></code>). Ein Brett, dessen Balken nicht fünfzehn ergeben, ist ein benannter Zweifel (<code class="docutils literal notranslate"><span class="pre">they</span> <span class="pre">do</span> <span class="pre">not</span> <span class="pre">make</span> <span class="pre">fifteen</span></code>).</p>
+<p>Die angenommene Spielrichtung ist ebenfalls ein Standard des Dokuments, mit eigener Bestätigung: Eine falsche Richtung würde die Spieler aller unter ihr gelesenen Positionen vertauschen. Sie steht im Standardkontext unter <code class="docutils literal notranslate"><span class="pre">direction</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"direction"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"home"</span><span class="p">:</span><span class="w"> </span><span class="s2">"right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Die Bestätigung des Kontexts bestätigt sie nicht. Man prüft sie an einigen Diagrammen und schreibt dann <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code> in <code class="docutils literal notranslate"><span class="pre">direction</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--accept-complete</span></code> übernimmt die vollständigen Einträge im Block, deren Kontext beglaubigt ist (gelesen oder unter dem bestätigten Standardkontext) und deren Spielrichtung sicher ist (durch die Pips bestimmt oder angenommen und dann bestätigt), ohne sie als verifiziert zu markieren; <code class="docutils literal notranslate"><span class="pre">check</span></code> zählt sie und zählt getrennt diejenigen, die eine unbestätigte Richtung zurückhält:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Direction:  direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right, not confirmed: check it on a few diagrams, then set "direction": {"confirmed": true}
+Complete:   84 more held back until the direction of play is confirmed
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Complete:   84 with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)
+Unverified: rank 3, 7, 12 (import refused without --force; rank 12 with --accept-complete)
+</pre></div>
+</div>
+<p>Der Import nennt, wie viele er akzeptiert hat (<code class="docutils literal notranslate"><span class="pre">Complete:</span> <span class="pre">84</span> <span class="pre">entries</span> <span class="pre">of</span> <span class="pre">15</span> <span class="pre">+</span> <span class="pre">15</span> <span class="pre">checkers</span> <span class="pre">read</span> <span class="pre">with</span> <span class="pre">no</span> <span class="pre">doubt</span></code>). Ein vollständiger Eintrag, dessen Kontext nicht beglaubigt ist oder dessen angenommene Spielrichtung nicht bestätigt ist, wird weiterhin abgelehnt; die Fehlermeldung sagt, dass sie zu bestätigen ist.</p>
+<p>Aufgedruckte Pips werden aus zwei Quellen gelesen: der Textebene eines PDFs und dem Bild selbst. Im Bild liest der Befehl die isolierten Zahlen rund um das Diagramm, auf dem horizontalen Streifen des Bretts bis etwa eine halbe Brettbreite zu jeder Seite; ein einzelner Buchstabe vor einer Zahl (<code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">164</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">123</span></code>) verhindert nicht, dass sie gelesen wird. Er liest sie Ziffer für Ziffer, im Vergleich mit der Punktnummerierung des Dokuments, mit acht gängigen eingebetteten Schriftarten, dann mit den bereits im Dokument gelesenen Ziffern; eine Zahl wird nur zurückgegeben, wenn jede ihrer Ziffern deutlich erkannt wird, sonst enthält er sich. Die Position der Pips wird aus dem Dokument gelernt: eine gelesene Zahl, die den Pips eines mit fünfzehn Steinen pro Seite gezählten Diagramms entspricht, stimmt für ihre Position, und zwei Positionen (oben und unten) müssen genügend Stimmen vereinen; eine Position erstreckt sich auf die benachbarten Positionen, die Stimmen erhalten haben, für ein Dokument, das seine Bretter an wechselnden Orten oder in wechselnden Größen platziert. Keine Ziffer wird anhand der Pips des Diagramms gewählt, zu dem sie gehört, und von einem Dokument zum nächsten wird nichts behalten. Liefern Text und Bild jeweils Pips und weichen diese voneinander ab, sind die Steine nicht bestätigt, und der Zweifel sagt es (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">two</span> <span class="pre">disagree</span></code>). Ein Eintrag ohne gelesene Pips bleibt <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (<code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pip</span> <span class="pre">count</span> <span class="pre">was</span> <span class="pre">found</span> <span class="pre">next</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">diagram</span></code>).</p>
+<p>Ein im Diagramm gezeichneter Zugpfeil (ein gerader, dünner, schräger Strich, allein auf dem Papier) wird nicht für einen Stein gehalten, und die neben dem Brett gedruckten Zahlen von fünfzehn oder weniger (Steinzählungen, Nummern) werden nicht für die Pips gehalten.</p>
+<p>Das Lesen der Ziffern setzt dunkle arabische Ziffern auf hellem Hintergrund voraus, horizontal geschrieben, mindestens 15 Pixel hoch in der Leseauflösung, Pips, die von Diagramm zu Diagramm an einer ähnlichen Stelle gedruckt sind, und etwa dreißig mit fünfzehn Steinen pro Seite gelesene Diagramme, um diese Stelle zu lernen.</p>
+<p>Die Zweifel benennen, was noch zu prüfen bleibt: ein Stapel mit einer Zahl, eine Scheibe keiner der beiden Klassen (verblasster oder befleckter Stein), eine von oben bis unten volle Spalte, ein dunkler Stapel, der nach seiner Länge gezählt wird, ein halbes Brett (eine Reihe ohne Punkt), die angenommene Spielrichtung (die Steine rücken zur Seite mit den wenigsten Pips vor), per Differenz gezählte abgetragene Steine, ein außerhalb der Mitte gezeichneter Doppelwürfel, gezeichnete Würfel.</p>
+<p>Nie gelesen werden: der Wert und der Besitzer des Doppelwürfels (der Standardkontext sagt, er sei in der Mitte), die Würfel (keine), der Spielstand (freies Spiel), der Spieler am Zug (der untere), das Abtragebrett, wenn es nicht in Balken gezeichnet ist (eine Seite, die mit weniger als fünfzehn Steinen gezeichnet ist, hat dann die übrigen abgetragen), und als Buchstaben gezeichnete Steine (X und O): Ein Dokument, in dem kein Stein eine gefüllte Scheibe ist, wird nicht gelesen, und jedes Diagramm ist mit diesem Grund <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">draws</span> <span class="pre">no</span> <span class="pre">filled</span> <span class="pre">checker</span></code>).</p>
+</section>
+</section>
+<section id="pourquoi-l-import-refuse">
+<h2>Warum der Import ablehnt<a class="headerlink" href="#pourquoi-l-import-refuse" title="Link to this heading"></a></h2>
+<p>Ein Eintrag, der weder <code class="docutils literal notranslate"><span class="pre">sure</span></code> noch verifiziert ist, ist nicht verlässlich, und was in eine Sammlung gelangt, wird beim Export weitergegeben. Der Import lehnt daher das <strong>gesamte</strong> Relevé ab, bevor er irgendetwas schreibt, nennt die Ränge und sagt, was zu tun ist:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 4, 5, 6; check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Liegen Einträge unter einem unbestätigten Standardkontext oder sind sie vollständig, aber ohne <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code>, sagt die Meldung das ebenfalls:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 1, 2; confirm the document's defaults once if its diagrams follow them ("defaults": {"confirmed": true}); accept the entries of fifteen checkers a side read with no doubt as a whole (accept complete); check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Man prüft diese Einträge oder übergibt <code class="docutils literal notranslate"><span class="pre">--force</span></code>, um das Relevé unverändert zu importieren; der Import nennt dann, wie viele Einträge er erzwungen hat (<code class="docutils literal notranslate"><span class="pre">Forced:</span> <span class="pre">3</span> <span class="pre">entries</span> <span class="pre">neither</span> <span class="pre">sure</span> <span class="pre">nor</span> <span class="pre">verified</span></code>).</p>
+<section id="le-repli">
+<span id="cli-document-fallback"></span><h3>Der Rückfall<a class="headerlink" href="#le-repli" title="Link to this heading"></a></h3>
+<p>Ein Eintrag, dessen Steine beglaubigt sind (<code class="docutils literal notranslate"><span class="pre">sure</span></code>, oder vollständig mit <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code> und sicherer Spielrichtung) und bei dem nur der Kontext zu prüfen bleibt, wird nicht unbedingt abgelehnt: Sobald der Standardkontext bestätigt ist, bietet der Import an, ihn auf den Kontext <strong>zurückzufalten</strong>, den seine XGID trägt, also das Gelesene und für den Rest den Standard. <code class="docutils literal notranslate"><span class="pre">check</span></code> nennt diese Ränge, und die Fehlermeldung schlägt den Rückfall vor:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Fallback:   rank 4 imported with --fallback under the context its position carries, the fields to check named in its reference
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--fallback</span></code> importiert diese Einträge, ohne sie als geprüft zu markieren; die Referenz jedes Eintrags nennt in seinem Kommentar die am Diagramm zu kontrollierenden Felder mit dem Zweifel, den das Lesen dort hinterlassen hat, Widerspruch eingeschlossen (<code class="docutils literal notranslate"><span class="pre">p.</span> <span class="pre">12,</span> <span class="pre">Problem</span> <span class="pre">31</span> <span class="pre">(context</span> <span class="pre">not</span> <span class="pre">read,</span> <span class="pre">to</span> <span class="pre">check</span> <span class="pre">against</span> <span class="pre">the</span> <span class="pre">diagram:</span> <span class="pre">cube</span> <span class="pre">(cube</span> <span class="pre">drawn,</span> <span class="pre">value</span> <span class="pre">not</span> <span class="pre">read))</span></code>), und der Import zählt sie (<code class="docutils literal notranslate"><span class="pre">Fallback:</span> <span class="pre">1</span> <span class="pre">entries</span> <span class="pre">under</span> <span class="pre">the</span> <span class="pre">context</span> <span class="pre">their</span> <span class="pre">position</span> <span class="pre">carries</span></code>). Der Rückfall deckt weder einen Eintrag, dessen Steine zu prüfen sind, noch einen widersprüchlichen Kontext, noch einen unbestätigten Standardkontext. Auch mit <code class="docutils literal notranslate"><span class="pre">--force</span></code> wird ein Eintrag ohne Position abgelehnt: Er muss ausgefüllt oder entfernt werden.</p>
+</section>
+</section>
+<section id="ce-qui-entre-en-base">
+<h2>Was in die Datenbank gelangt<a class="headerlink" href="#ce-qui-entre-en-base" title="Link to this heading"></a></h2>
+<p>Es gelangen nur die Positionen hinein, in der Reihenfolge des Dokuments, in eine Sammlung mit dem Namen des Dokuments (oder von <code class="docutils literal notranslate"><span class="pre">--collection</span></code>). Jede Position gelangt als einzeln eingebrachte Position hinein, und die Bibliothek erkennt sie an ihrer Identität: Eine Position, die sie schon hat, wird nicht dupliziert (<code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">library</span></code> zählt die, die ihr fehlten).</p>
+<ul class="simple">
+<li><p>Die <strong>Beschreibung</strong> der Sammlung enthält Titel, Autor, Auflage und Adresse des Dokuments, je eine pro Zeile. Eine bestehende Sammlung gleichen Namens erhält die Positionen, die ihr fehlen, und behält ihre Beschreibung, falls sie eine hat; eine dynamische Sammlung (durch eine Abfrage definiert) wird abgelehnt.</p></li>
+<li><p>Jede Position trägt einen <strong>Kommentar</strong>, der ihre Fundstelle angibt, nach dem Titel des Dokuments: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">146,</span> <span class="pre">Problem</span> <span class="pre">191</span></code>.</p></li>
+</ul>
+<p>Nichts anderes gelangt je hinein: kein Bild, kein Rechteck, kein Text des Autors. Ein unterbrochener oder abgelehnter Import schreibt nichts: Es ist eine einzige Transaktion.</p>
+</section>
+<section id="une-position-repetee">
+<h2>Eine wiederholte Position<a class="headerlink" href="#une-position-repetee" title="Link to this heading"></a></h2>
+<p>Zeigt das Dokument dieselbe Position zweimal, gelangt sie nur einmal in die Sammlung, bei ihrem ersten Auftreten. Ihr Kommentar nennt jede Fundstelle: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">2,</span> <span class="pre">Problem</span> <span class="pre">1;</span> <span class="pre">p.</span> <span class="pre">4</span></code>. <code class="docutils literal notranslate"><span class="pre">repeated</span></code> zählt diese Wiederholungen.</p>
+</section>
+<section id="reimporter">
+<h2>Erneut importieren<a class="headerlink" href="#reimporter" title="Link to this heading"></a></h2>
+<p>Dasselbe Relevé erneut zu importieren fügt nichts hinzu: keine neue Position, nichts in der Sammlung (<code class="docutils literal notranslate"><span class="pre">added</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">collection:</span> <span class="pre">0</span></code>), und der Kommentar mit der Fundstelle wird nur neu geschrieben, wenn sich seine Fundstellen geändert haben, nie verdoppelt. Man kann also einen Import wieder aufnehmen, nachdem man das Relevé korrigiert hat.</p>
+</section>
+<section id="le-demon">
+<h2>Der Daemon<a class="headerlink" href="#le-demon" title="Link to this heading"></a></h2>
+<p>Der Daemon <code class="docutils literal notranslate"><span class="pre">serve</span></code> importiert ein Relevé unter <code class="docutils literal notranslate"><span class="pre">/v1/documents.importReleve</span></code> mit denselben Regeln; er analysiert kein Dokument (siehe <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-Modus (Server)</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_import_export.html" class="btn btn-neutral float-left" title="Importieren, exportieren, übertragen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-right" title="Bibliothek: Suche, Listen, Sammlungen" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

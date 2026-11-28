@@ -1,0 +1,396 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Импорт позиций из документа &mdash; документация blunderDB 0.63.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a635e938"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Библиотека: поиск, списки, коллекции" href="cli_bibliotheque.html" />
+    <link rel="prev" title="Импорт, экспорт, перенос" href="cli_import_export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/cli_document.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_document.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_document.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_document.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_document.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_document.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_document.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_document.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Метрики и инструменты для изучения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Общий синтаксис</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Доступные команды</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Импорт, экспорт, перенос</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Импорт позиций из документа</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-quoi-cela-sert">Для чего это нужно</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-est-lu-ce-qui-est-refuse">Что читается, что отклоняется</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-parcours-en-trois-commandes">Путь в три команды</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-releve">Relevé</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-trois-etats">Три состояния</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#livres-scannes">Отсканированные книги</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-l-import-refuse">Почему импорт отказывает</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-entre-en-base">Что попадает в базу</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#une-position-repetee">Повторяющаяся позиция</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reimporter">Повторный импорт</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-demon">Демон</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Библиотека: поиск, списки, коллекции</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Матчи, турниры и партии</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Анализ и движок</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Изучение, уроки и тренировка</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Статистика</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Администрирование базы данных</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Примеры рабочих процессов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Коды возврата</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Интерфейс командной строки (CLI)</a></li>
+      <li class="breadcrumb-item active">Импорт позиций из документа</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="importer-les-positions-d-un-document">
+<span id="cli-document"></span><h1>Импорт позиций из документа<a class="headerlink" href="#importer-les-positions-d-un-document" title="Ссылка на этот заголовок"></a></h1>
+<section id="a-quoi-cela-sert">
+<h2>Для чего это нужно<a class="headerlink" href="#a-quoi-cela-sert" title="Ссылка на этот заголовок"></a></h2>
+<p>Книга, которой вы владеете — сборник задач, собрание, статья — показывает позиции в виде диаграмм в порядке изучения. Команда <code class="docutils literal notranslate"><span class="pre">document</span></code> помещает их в коллекцию базы в этом порядке, чтобы изучать их снова вместе с остальной библиотекой. Интерфейс следует тем же путём в мастере (<a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">Мастер импорта в интерфейсе</span></a>); здесь описана командная строка.</p>
+<p>Работа идёт через промежуточный файл — <strong>relevé</strong> (список позиций, снятых с документа): JSON-файл, перечисляющий позиции, прочитанные в документе. Его перечитывают, при необходимости исправляют, затем импортируют. Чтение документа ничего не записывает в базу; записывает только импорт relevé.</p>
+</section>
+<section id="ce-qui-est-lu-ce-qui-est-refuse">
+<h2>Что читается, что отклоняется<a class="headerlink" href="#ce-qui-est-lu-ce-qui-est-refuse" title="Ссылка на этот заголовок"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">document</span> <span class="pre">analyze</span></code> читает следующие виды документов:</p>
+<ul class="simple">
+<li><p>PDF, диаграммы которого нарисованы шрифтом доски eXtreme Gammon (PDF, напечатанные XG): в нём каждая диаграмма является текстом, который команда декодирует точно, глиф за глифом;</p></li>
+<li><p>PDF, диаграммы которого нарисованы шрифтом доски Snowie (семейство Atchoum, например «AtchoumSnowie4Normal»): шашки читаются по форме глифов, встроенных в PDF, какой бы ни была версия шрифта; напечатанные пипы подтверждают чтение. Счёт там не напечатан: контекст остаётся на проверку;</p></li>
+<li><p>отсканированная книга: PDF, страницы которого состоят из изображений, с текстовым слоем или без него, либо его страницы в виде изображений (папка с файлами PNG или JPEG, по одной странице на файл, читаемых в порядке их имён, или одно изображение). Диаграммы там читаются по их структуре (см. <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Отсканированные книги</span></a>);</p></li>
+<li><p>текстовый документ, DOCX, ODT, EPUB или страница HTML: его изображения читаются по одному в порядке текста, каждое как изображение страницы. Номер страницы записи тогда равен рангу её изображения среди прочитанных, её глава — предшествующий заголовок, а ссылка на неё имеет вид «fig. 12» или «Глава 3, fig. 12». Абзац перед изображением, его собственный и следующий служат текстовым слоем: упомянутые в них пипсы и кости перепроверяют чтение, как в PDF. Страница HTML читает изображения своей папки и её подпапок, а также записанные в самой странице (<code class="docutils literal notranslate"><span class="pre">data:</span></code>); ничего не загружается, а изображения в сети подсчитываются в потоке ошибок. Изображение, нарисованное векторами (EMF, WMF, SVG), не читается: оно называется в потоке ошибок. <code class="docutils literal notranslate"><span class="pre">.doc</span></code> из Word 97-2003 отклоняется с сообщением, предлагающим сохранить его как PDF или DOCX.</p></li>
+</ul>
+<p>PDF, ни одна страница которого не состоит из изображений и не нарисована этим шрифтом (книга, нарисованная векторами), отклоняется; его страницы тогда передаются в виде изображений:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page; structure: no page of the document could be read: page 1: pdf: the page draws no image (a page drawn with vectors is not rendered)
+</pre></div>
+</div>
+<p>PDF, нарисованный шрифтом доски, формы которого не встроены, отклоняется с сообщением, называющим шрифт.</p>
+<p>Файл, не являющийся ни PDF, ни текстовым документом, ни изображением, зашифрованный PDF или PDF больше 512 МиБ, изображение больше 64 МиБ или более 100 миллионов пикселей тоже отклоняется, с сообщением, которое об этом говорит. У текстового документа тот же предел в 512 МиБ; его архив отклоняется при более чем 10 000 записей, части, которая распаковывается в более чем 64 МиБ, или общем распакованном размере более 1 ГиБ.</p>
+</section>
+<section id="le-parcours-en-trois-commandes">
+<h2>Путь в три команды<a class="headerlink" href="#le-parcours-en-trois-commandes" title="Ссылка на этот заголовок"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>analyze<span class="w"> </span>livre.pdf<span class="w"> </span>-o<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>check<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>releve.json
+</pre></div>
+</div>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">analyze</span></code> читает PDF и записывает relevé (без <code class="docutils literal notranslate"><span class="pre">-o</span></code> — в стандартный вывод). Если стандартный вывод ошибок — терминал, туда выводится ход чтения (<code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">37/212,</span> <span class="pre">54</span> <span class="pre">diagrams</span></code>); в скрипте ничего не выводится. Затем он подводит итог найденного:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Relevé:     releve.json
+</pre></div>
+</div>
+<p>Название и автор берутся из метаданных PDF, при их отсутствии названием служит имя файла; <code class="docutils literal notranslate"><span class="pre">--title</span></code> и <code class="docutils literal notranslate"><span class="pre">--author</span></code> их заменяют. Глава каждой записи берётся из закладок PDF.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">check</span></code> проверяет relevé и считает его записи, не читая и не записывая никакую базу. После подсчёта он также перечисляет записи к проверке (номер, страница, состояние и поля для сверки с диаграммой); <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> выдаёт те же числа и тот же список (<code class="docutils literal notranslate"><span class="pre">review</span></code>) в JSON:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1; verified 0)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Unverified: rank 4, 5, 6 (import refused without --force)
+Review:
+  rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">check</span></code> принимает и сам документ (<code class="docutils literal notranslate"><span class="pre">check</span> <span class="pre">livre.pdf</span></code>): тогда он читает relevé, которое лист проверки интерфейса хранит рядом (<code class="docutils literal notranslate"><span class="pre">livre.pdf.releve.json</span></code>, <a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">Мастер импорта в интерфейсе</span></a>), и выдаёт его ход, включая <code class="docutils literal notranslate"><span class="pre">verified</span></code>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">import</span></code> записывает позиции в коллекцию:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Created collection "Mon livre" (id 1)
+Entries: 6, distinct positions: 5 (5 new in the library), added to the collection: 5, repeated: 1
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--collection</span></code> выбирает имя, отличное от названия документа. Если файл базы не существует, он создаётся.</p>
+</li>
+</ol>
+</section>
+<section id="le-releve">
+<h2>Relevé<a class="headerlink" href="#le-releve" title="Ссылка на этот заголовок"></a></h2>
+<p>Relevé — это читаемый файл JSON, который можно открыть в текстовом редакторе. Заголовок (<code class="docutils literal notranslate"><span class="pre">document</span></code>) содержит название, автора, издание или адрес документа, отпечаток SHA-256 прочитанного файла, профиль его диаграмм и, для отсканированной книги, его контекст по умолчанию (<code class="docutils literal notranslate"><span class="pre">defaults</span></code>, см. <a class="reference internal" href="#cli-document-defaults"><span class="std std-ref">Контекст по умолчанию</span></a>). Затем каждая диаграмма — это запись, в порядке документа:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code> — её ранг, начиная с 1 без пропусков;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">page</span></code>, <code class="docutils literal notranslate"><span class="pre">chapter</span></code> и <code class="docutils literal notranslate"><span class="pre">label</span></code> — её страница, глава из закладок и имя, которое дал ей документ («Problem 191»), когда оно напечатано над ней;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">position</span></code> — позиция в формате XGID: фишки, куб, очередь хода, кости, счёт и длина матча в одной строке;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checkers</span></code> — достоверность фишек: <code class="docutils literal notranslate"><span class="pre">sure</span></code>, <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> или <code class="docutils literal notranslate"><span class="pre">uncertain</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">complete</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code>, когда шашки прочитаны по пятнадцать на сторону на доске без каких-либо сомнений и без подтверждения перекрёстной проверкой (см. <a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Пятнадцать и пятнадцать без сомнений</span></a>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code> — как известен контекст (куб, кости, очередь хода, счёт): <code class="docutils literal notranslate"><span class="pre">read</span></code> (прочитан и сверен), <code class="docutils literal notranslate"><span class="pre">default</span></code> (контекст документа по умолчанию), <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (ни прочитан, ни взят по умолчанию: нарисованные, но непрочитанные куб или кости, ненайденный счёт) или <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> (противоречит);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">doubts</span></code> — названные сомнения при чтении;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rect</span></code> — где диаграмма находится на странице, в долях её размера, чтобы найти её в PDF;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verified</span></code> — <code class="docutils literal notranslate"><span class="pre">true</span></code>, когда человек сверил прочитанное с диаграммой.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">verify</span></code> записывает вердикт человека в relevé, без базы:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">3</span>,4,9
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--position<span class="w"> </span><span class="s2">"XGID=..."</span>
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--undo
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--rank</span></code> называет записи через запятую; они становятся проверенными. <code class="docutils literal notranslate"><span class="pre">--position</span></code> заменяет прочтение одной записи правильным XGID, который отклоняется, если это не допустимая позиция; исправление, чей контекст больше не совпадает с контекстом по умолчанию, сохраняет собственный, к проверке. <code class="docutils literal notranslate"><span class="pre">--undo</span></code> снимает вердикт. Если вместо relevé указан документ, команда записывает в relevé, хранящееся рядом с ним. Команда выводит записанный файл и ход проверки: <code class="docutils literal notranslate"><span class="pre">releve.json:</span> <span class="pre">verified</span> <span class="pre">3</span> <span class="pre">of</span> <span class="pre">6</span> <span class="pre">entries</span> <span class="pre">(sure</span> <span class="pre">3,</span> <span class="pre">to</span> <span class="pre">verify</span> <span class="pre">2,</span> <span class="pre">uncertain</span> <span class="pre">1)</span></code>.</p>
+<p>Relevé просматривают, открывая PDF на странице записи. Там исправляют позицию (XGID), помечают проверенную запись <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code> и удаляют запись, заново нумеруя ранги. Relevé проверяется за несколько сеансов: <code class="docutils literal notranslate"><span class="pre">verified</span></code> остаётся в файле. <code class="docutils literal notranslate"><span class="pre">check</span></code> отклоняет relevé с неизвестным полем, с пропуском в рангах, со страницей, идущей назад, с XGID, не являющимся допустимой позицией, или более нового формата, чем программа. У фишек <code class="docutils literal notranslate"><span class="pre">sure</span></code> сомнение может касаться только контекста; у контекста <code class="docutils literal notranslate"><span class="pre">read</span></code> сомнений нет; запись <code class="docutils literal notranslate"><span class="pre">default</span></code> несёт контекст по умолчанию в своём XGID.</p>
+<p>Relevé имеет формат версии 2. Relevé версии 1, где у каждой записи было одно состояние (<code class="docutils literal notranslate"><span class="pre">state</span></code>), по-прежнему читается: запись <code class="docutils literal notranslate"><span class="pre">sure</span></code> получает в нём надёжные фишки и прочитанный контекст, запись отсканированной книги переходит под контекст по умолчанию, неподтверждённый, а любая другая получает контекст, требующий проверки. <code class="docutils literal notranslate"><span class="pre">analyze</span></code> всегда пишет версию 2.</p>
+</section>
+<section id="les-trois-etats">
+<h2>Три состояния<a class="headerlink" href="#les-trois-etats" title="Ссылка на этот заголовок"></a></h2>
+<p>Состояние записи вытекает из двух её достоверностей; в relevé оно не записывается.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">sure</span></code></dt><dd><p>Фишки надёжны <strong>и</strong> контекст заверен: прочитан или взят по умолчанию для документа после его подтверждения. Фишки надёжны, когда перекрёстные проверки диаграммы сходятся: у каждой стороны пятнадцать фишек (на пунктах, на баре и в лотке для снятых), а пипы, вычисленные по позиции, равны напечатанным пипам обоих игроков. Контекст PDF из XG прочитывается: счёт и длина матча — те, что он печатает рядом. Контекст отсканированной книги не читается никогда: см. <a class="reference internal" href="#cli-document-images"><span class="std std-ref">Отсканированные книги</span></a>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">to-verify</span></code></dt><dd><p>Чтение выдерживает проверку, но ничто его не подтверждает: напечатанный пип отличается от вычисленного, либо диаграмма показывает то, чего эталонные печатные образцы никогда не показывали — стопку более чем из 9 фишек, пронумерованные фишки на баре, более двух белых или трёх чёрных фишек на баре, куб на стороне верхнего игрока или за пределами 8, верхнего игрока с правом хода, отсутствие отметки хода, чёрного игрока внизу, игру Кроуфорда, игрока в одном очке от победы (игру Кроуфорда и последующие отличить нельзя), глифы шрифта, которые таблица не читает. Эти случаи читаются, но никогда не объявляются надёжными.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uncertain</span></code></dt><dd><p>Фишки или контекст противоречат друг другу, либо чтение неполное: неизвестный глиф, сторона, у которой не пятнадцать фишек и пипы не сходятся, повреждённая рамка. Диаграмма, из которой нельзя получить допустимую позицию, сохраняет своё место в relevé, без позиции (<code class="docutils literal notranslate"><span class="pre">&quot;position&quot;:</span> <span class="pre">&quot;&quot;</span></code>).</p>
+</dd>
+</dl>
+<p>Запись <strong>импортируема</strong>, когда она <code class="docutils literal notranslate"><span class="pre">sure</span></code> или проверена или, по запросу, когда она полная (<a class="reference internal" href="#cli-document-complete"><span class="std std-ref">Пятнадцать и пятнадцать без сомнений</span></a>). Сомнения, которые она несёт, говорят, что проверить, например:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pips read 167/167, printed 160/167 (bottom/top)
+</pre></div>
+</div>
+<p>Кость не читается: анализ всегда записывает «без костей» (<code class="docutils literal notranslate"><span class="pre">00</span></code>).</p>
+</section>
+<section id="livres-scannes">
+<span id="cli-document-images"></span><h2>Отсканированные книги<a class="headerlink" href="#livres-scannes" title="Ссылка на этот заголовок"></a></h2>
+<p>Страница-изображение читается без предполагаемого стиля: команда ищет на ней два ряда по двенадцать пунктов, разделённых баром, и фишки, диски двух классов, сложенные стопкой от основания пункта. Стиль документа она узнаёт из самого документа: форму фишки на первых диаграммах, затем, на всех, два класса фишек, напечатанную нумерацию и направление игры. Ничто не сохраняется от одного документа к другому, и ни одно изображение не хранится.</p>
+<p>Она читает диаграммы, нарисованные линиями, и напечатанные снимки экрана программ в порядке чтения: левая, затем правая страница разворота, колонка, затем сверху вниз. Слегка перекошенная страница выравнивается, тень переплёта стирается. Полезное разрешение: от 150 до 300 dpi, указанное в файле; если оно не указано, длинная сторона страницы принимается равной одиннадцати дюймам.</p>
+<p>Отсканированный PDF читается напрямую, без внешнего инструмента: каждая страница собирается из своих изображений, размещённых так, как их размещает PDF, с разрешением самого детального из них в пределах от 150 до 300 dpi, затем читается и забывается. Декодируются изображения JPEG (<code class="docutils literal notranslate"><span class="pre">DCTDecode</span></code>), JPEG 2000 (<code class="docutils literal notranslate"><span class="pre">JPXDecode</span></code>, в оттенках серого или в трёх компонентах, без палитры, без встроенной альфы и без HTJ2K, до 12 миллионов пикселей), JBIG2 (<code class="docutils literal notranslate"><span class="pre">JBIG2Decode</span></code> с их <code class="docutils literal notranslate"><span class="pre">JBIG2Globals</span></code>: общие области в кодировании MMR или арифметическом, области уточнения, словари символов и текстовые области в арифметическом кодировании, до 67 миллионов пикселей на страницу), факс (<code class="docutils literal notranslate"><span class="pre">CCITTFaxDecode</span></code>, группа 3 одномерная и группа 4) и необработанные (<code class="docutils literal notranslate"><span class="pre">FlateDecode</span></code>, серые, цветные или индексированные); трафаретные и мягкие маски применяются, так что страница из фона JPEG и факсовых масок собирается разборчиво. Не поддерживаются: маска по цветовому ключу (изображение рисуется целиком), изображение JBIG2 в кодировании Хаффмана или в полутонах, а также страница, нарисованная векторами (пропускается). Страница с изображением, отклонённым по его заголовку, пропускается без декодирования остальных её изображений; изображение, отклонённое из-за исчерпания бюджета декодирования, опускается, и страница читается без него, если её рисует другое изображение. Пропущенные страницы называются в потоке ошибок с указанием причины; остальные читаются. Текстовый слой страницы, видимый или нет (тот, что OCR оставляет под изображением), даёт свои слова на их месте на изображении; текст, который его шрифт не переводит в символы, не даёт ни одного слова.</p>
+<p>В отсканированной книге фишки и контекст заверяются отдельно. Фишки получают <code class="docutils literal notranslate"><span class="pre">sure</span></code>, когда пипы, напечатанные рядом с диаграммой, равны вычисленным пипам обеих сторон, ни у одной стороны нет более пятнадцати фишек и не остаётся сомнений относительно фишек. Контекст считывается поле за полем, и поле считается прочитанным, только если оно перепроверено:</p>
+<ul class="simple">
+<li><p>куб — по его значению, прочитанному в его квадрате (цифры документа) или в текстовом слое (два имеющихся источника должны совпадать), и согласованному с его положением: 64 посередине означает куб по центру, от 2 до 64 вверху или внизу принадлежит игроку этой стороны; одинокий квадрат с пустой гранью — это куб по центру, когда документ рисует его так, в том же месте, рядом по меньшей мере с тремя диаграммами, поскольку куб, которым владеют, несёт своё значение;</p></li>
+<li><p>кости — подсчитанные на изображении и подтверждённые соседним текстом: названный бросок («to play 41», «rolls a 65») или записанный ход, каждый шаг которого — одна кость («2/0 2/1», «8/5(2) 6/3(2)»), приведённый дважды, если текст называет несколько бросков; слово, расположенное ближе к другой диаграмме, относится к ней; очередь хода — по цвету костей и по той половине доски, где они лежат (правая для нижнего игрока), причём обе подсказки должны указывать на одного и того же игрока. Если кости не нарисованы, подпись, которая их называет («Black to play 53», прочитанная в текстовом слое или, без текстового слоя, на изображении), даёт бросок и игрока, чей ход, и то и другое под сомнением: один источник ничего не заверяет;</p></li>
+<li><p>счёт — по заголовку текстового слоя (<code class="docutils literal notranslate"><span class="pre">score:</span></code>, <code class="docutils literal notranslate"><span class="pre">pip:</span></code>, <code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">point</span> <span class="pre">match</span></code>), причём каждый счёт приписывается игроку, чьи пипы он несёт; два равных счёта обходятся без пипов.</p></li>
+</ul>
+<p>Запись, чей контекст прочитан целиком, имеет <code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;read&quot;</span></code>. Ненайденный куб никогда не принимается за центральный: то, что не прочитано, получает контекст документа по умолчанию (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;default&quot;</span></code>, с сомнением <code class="docutils literal notranslate"><span class="pre">context</span> <span class="pre">not</span> <span class="pre">read:</span> <span class="pre">cube,</span> <span class="pre">dice,</span> <span class="pre">player</span> <span class="pre">on</span> <span class="pre">roll,</span> <span class="pre">score</span></code>). Нарисованные или напечатанные, но не заверенные куб, кости или счёт, контекст, отчасти прочитанный вне значения по умолчанию в поле, которое документ не печатает (см. <a class="reference internal" href="#cli-document-learned"><span class="std std-ref">Значение по умолчанию, выученное из документа</span></a>), куб, принадлежащий верхнему игроку, без нарисованных костей, куб, не найденный в документе, который его рисует, или счёт, не найденный в документе, который его печатает (найденные рядом как минимум с третью его диаграмм), оставляют контекст на проверку (<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;to-verify&quot;</span></code>, с названным сомнением); XGID тогда несёт то, что было прочитано. Запись из отсканированной книги, чей контекст не прочитан, поэтому <strong>никогда</strong> не <code class="docutils literal notranslate"><span class="pre">sure</span></code>, пока контекст по умолчанию не подтверждён, и запись, чей контекст на проверке, не бывает <code class="docutils literal notranslate"><span class="pre">sure</span></code> никогда. <code class="docutils literal notranslate"><span class="pre">analyze</span></code> и <code class="docutils literal notranslate"><span class="pre">check</span></code> считают записи по контексту, а отдельно — те, у которых заверены только фишки:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Context:    read 0, default 140, to verify 12
+Defaults:   centred cube, no dice, the bottom player on roll, money play (0:0:1:00:0:0:0:0:10), not confirmed: set "confirmed": true once the document's diagrams follow them
+Checkers:   112 confirmed, their context alone to verify (cube, dice, player on roll, score)
+</pre></div>
+</div>
+<p>Для записи, контекст которой ещё предстоит проверить, открывают книгу на странице записи, сравнивают с диаграммой куб (значение и владельца: нарисованный посередине куб может кому-то принадлежать), кости, игрока, чей ход, и счёт, при необходимости исправляют эти поля XGID, затем помечают <code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code>.</p>
+<section id="le-contexte-par-defaut">
+<span id="cli-document-defaults"></span><h3>Контекст по умолчанию<a class="headerlink" href="#le-contexte-par-defaut" title="Ссылка на этот заголовок"></a></h3>
+<p>Контекст по умолчанию для отсканированной книги — тот, что записывает чтение: куб по центру, без костей, ход нижнего игрока, свободная партия. Он указан в заголовке relevé:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"centred cube, no dice, the bottom player on roll, money play"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">context</span></code> — это конец XGID после доски; каждая запись <code class="docutils literal notranslate"><span class="pre">default</span></code> его несёт. Когда диаграммы документа следуют этому контексту — например, книга задач в свободной партии с ходом нижнего игрока, — его <strong>подтверждают один раз</strong>, записывая <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code>: у всех записей <code class="docutils literal notranslate"><span class="pre">default</span></code> контекст тогда заверен, а те из них, у которых фишки надёжны, становятся <code class="docutils literal notranslate"><span class="pre">sure</span></code>. По одной приходится проверять только исключения, замеченные при чтении (куб с владельцем, нарисованные кости, счёт матча), и записи с ненадёжными фишками. Контекст, которому документ не следует, не подтверждают: куб, которого чтение не находит, счёт, напечатанный в изображении без текстового слоя, или очередь хода, заданная текстом вне подписи, не видны.</p>
+</section>
+<section id="le-defaut-appris-sur-le-document">
+<span id="cli-document-learned"></span><h3>Значение по умолчанию, выученное из документа<a class="headerlink" href="#le-defaut-appris-sur-le-document" title="Ссылка на этот заголовок"></a></h3>
+<p>Чтение узнаёт из документа, какие поля контекста он печатает рядом со своими диаграммами: куб, кости (с игроком, чей ход) или счёт, прочитанные рядом как минимум с третью диаграмм. Оно называет их в <code class="docutils literal notranslate"><span class="pre">printed</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"for what a diagram does not print: centred cube, no dice, the bottom player on roll, money play; the document prints its score, read beside each diagram"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"printed"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"score"</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Напечатанное поле — это прочтение каждой записи, заверенное чтением; контекст по умолчанию покрывает только остальные. В сборнике задач матча каждая диаграмма несёт свой счёт: её записи остаются <code class="docutils literal notranslate"><span class="pre">default</span></code>, каждая со своим счётом в XGID, а единственное подтверждение контекста по умолчанию заверяет центральный куб, отсутствие костей и игрока, чей ход, для всех. Диаграмма, счёт которой в таком документе не прочитан, не принимается за игру на деньги: её контекст остаётся на проверку (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">prints</span> <span class="pre">its</span> <span class="pre">score</span> <span class="pre">beside</span> <span class="pre">its</span> <span class="pre">diagrams,</span> <span class="pre">none</span> <span class="pre">is</span> <span class="pre">read</span> <span class="pre">here:</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">taken</span> <span class="pre">as</span> <span class="pre">money</span> <span class="pre">play</span></code>). <code class="docutils literal notranslate"><span class="pre">analyze</span></code> и <code class="docutils literal notranslate"><span class="pre">check</span></code> показывают выученное:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Printed:    score, read beside each diagram (learned from the document)
+</pre></div>
+</div>
+<p>Из одного документа в другой ничего не переносится. Relevé без <code class="docutils literal notranslate"><span class="pre">printed</span></code> сохраняет строгое правило: любое поле, прочитанное вне значения по умолчанию, оставляет контекст на проверку.</p>
+</section>
+<section id="quinze-et-quinze-sans-doute">
+<span id="cli-document-complete"></span><h3>Пятнадцать и пятнадцать без сомнений<a class="headerlink" href="#quinze-et-quinze-sans-doute" title="Ссылка на этот заголовок"></a></h3>
+<p>У диаграммы без напечатанных пипсов нет перекрёстной проверки: её шашки остаются <code class="docutils literal notranslate"><span class="pre">to-verify</span></code>. Если они прочитаны по пятнадцать шашек на сторону без каких-либо сомнений, они помечаются <code class="docutils literal notranslate"><span class="pre">&quot;complete&quot;:</span> <span class="pre">true</span></code>: во всех проведённых измерениях эти прочтения были верны, но ничто не подтверждает их диаграмма за диаграммой. Это промежуточное состояние, отличное от <code class="docutils literal notranslate"><span class="pre">sure</span></code>. Помимо контекста, полная запись несёт лишь два сомнения: отсутствие напечатанных пипсов и предполагаемое направление игры, если ни один пипс документа его не подтвердил. Напечатанные пипсы, расходящиеся с вычисленными, — это сомнение в шашках: запись тогда никогда не бывает полной. Позиция со снятыми шашками никогда не бывает полной: когда документ рисует свою доску снятия полосками (снятая шашка, увиденная с ребра), полоски, посчитанные на доске рядом с рядом стороны, дополняют её нарисованные шашки до пятнадцати, но посторонняя фигура считается там так же, как шашка. Этот счёт действителен, только если напечатанные пипсы согласуются с позицией, которая тогда <code class="docutils literal notranslate"><span class="pre">sure</span></code>; без них это именованное сомнение (<code class="docutils literal notranslate"><span class="pre">counted</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">tray,</span> <span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pips</span> <span class="pre">confirm</span> <span class="pre">them</span></code>). Доска, полоски которой не составляют пятнадцати, — именованное сомнение (<code class="docutils literal notranslate"><span class="pre">they</span> <span class="pre">do</span> <span class="pre">not</span> <span class="pre">make</span> <span class="pre">fifteen</span></code>).</p>
+<p>Предполагаемое направление игры — тоже значение документа по умолчанию, со своим подтверждением: неверное направление поменяло бы местами игроков во всех позициях, прочитанных под ним. Оно указано в контексте по умолчанию, под ключом <code class="docutils literal notranslate"><span class="pre">direction</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"direction"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"home"</span><span class="p">:</span><span class="w"> </span><span class="s2">"right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Подтверждение контекста его не подтверждает. Его проверяют на нескольких диаграммах, затем записывают <code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code> в <code class="docutils literal notranslate"><span class="pre">direction</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--accept-complete</span></code> принимает пакетом полные записи, контекст которых заверен (прочитан или взят по подтверждённому контексту по умолчанию) и направление игры которых достоверно (определено по пипам либо предположено, а затем подтверждено), не помечая их проверенными; <code class="docutils literal notranslate"><span class="pre">check</span></code> их считает и отдельно считает те, которые задерживает неподтверждённое направление:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Direction:  direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right, not confirmed: check it on a few diagrams, then set "direction": {"confirmed": true}
+Complete:   84 more held back until the direction of play is confirmed
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Complete:   84 with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)
+Unverified: rank 3, 7, 12 (import refused without --force; rank 12 with --accept-complete)
+</pre></div>
+</div>
+<p>Импорт сообщает, сколько записей он принял (<code class="docutils literal notranslate"><span class="pre">Complete:</span> <span class="pre">84</span> <span class="pre">entries</span> <span class="pre">of</span> <span class="pre">15</span> <span class="pre">+</span> <span class="pre">15</span> <span class="pre">checkers</span> <span class="pre">read</span> <span class="pre">with</span> <span class="pre">no</span> <span class="pre">doubt</span></code>). Полная запись, контекст которой не заверен или предполагаемое направление игры которой не подтверждено, по-прежнему отклоняется; сообщение об ошибке говорит подтвердить его.</p>
+<p>Напечатанные пипсы читаются из двух источников: текстового слоя PDF и самого изображения. В изображении команда читает изолированные числа вокруг диаграммы, на горизонтальной полосе доски примерно до половины ширины доски с каждой стороны; одиночная буква перед числом (<code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">164</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">123</span></code>) не мешает его прочитать. Она читает их цифра за цифрой, сравнивая с нумерацией пунктов документа, с восемью распространёнными встроенными шрифтами, затем с цифрами, уже прочитанными в документе; число возвращается, только если каждая его цифра распознана чётко, иначе команда воздерживается. Расположение пипсов выясняется по документу: прочитанное число, равное пипсам диаграммы, посчитанной по пятнадцать шашек на сторону, голосует за своё место, и два места (верхнее и нижнее) должны набрать достаточно голосов; место распространяется на соседние позиции, получившие голоса, для документа, который размещает свои доски в местах или размерах, которые меняются. Ни одна цифра не выбирается по пипсам сопровождаемой ею диаграммы, и ничего не сохраняется от одного документа к другому. Когда текст и изображение дают каждый пипсы и они различаются, шашки не подтверждаются, и сомнение об этом говорит (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">two</span> <span class="pre">disagree</span></code>). Запись без прочитанных пипсов остаётся <code class="docutils literal notranslate"><span class="pre">to-verify</span></code> (<code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pip</span> <span class="pre">count</span> <span class="pre">was</span> <span class="pre">found</span> <span class="pre">next</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">diagram</span></code>).</p>
+<p>Стрелка хода, нарисованная на диаграмме (прямая тонкая наклонная линия, одна на бумаге), не читается как фишка, а числа не более пятнадцати, напечатанные рядом с доской (счётчики фишек, номера), не принимаются за пипы.</p>
+<p>Чтение цифр предполагает тёмные арабские цифры на светлом фоне, написанные горизонтально, высотой не менее 15 пикселей при разрешении чтения, пипсы, напечатанные в близком месте от диаграммы к диаграмме, и около тридцати диаграмм, прочитанных по пятнадцать шашек на сторону, чтобы выучить это место.</p>
+<p>Сомнения называют то, что осталось проверить: стопка, несущая цифру, диск, не относящийся ни к одному из двух классов (выцветшая или запачканная фишка), колонка, заполненная сверху донизу, тёмная стопка, посчитанная по её длине, половина доски (ряд без пункта), предполагаемое направление игры (фишки движутся к стороне с наименьшим числом пипов), снятые фишки, посчитанные по разности, кубик удвоения, нарисованный не в центре, нарисованные кости.</p>
+<p>Никогда не читаются: значение и владелец куба (контекст по умолчанию считает его центральным), кости (никаких), счёт (свободная партия), игрок, чей ход (нижний), доска снятия, если она нарисована не полосками (сторона, нарисованная менее чем с пятнадцатью шашками, тогда снимает остальные), и шашки, нарисованные буквами (X и O): документ, в котором ни одна шашка не является залитым диском, не читается, и каждая диаграмма получает <code class="docutils literal notranslate"><span class="pre">uncertain</span></code> с этой причиной (<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">draws</span> <span class="pre">no</span> <span class="pre">filled</span> <span class="pre">checker</span></code>).</p>
+</section>
+</section>
+<section id="pourquoi-l-import-refuse">
+<h2>Почему импорт отказывает<a class="headerlink" href="#pourquoi-l-import-refuse" title="Ссылка на этот заголовок"></a></h2>
+<p>Запись, которая не <code class="docutils literal notranslate"><span class="pre">sure</span></code> и не проверена, ненадёжна, а то, что попадает в коллекцию, передаётся при экспорте. Поэтому импорт отклоняет <strong>весь</strong> relevé, ничего не записав, называет ранги и говорит, что делать:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 4, 5, 6; check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Когда записи находятся под неподтверждённым контекстом по умолчанию или полные без <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code>, сообщение говорит и об этом:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 1, 2; confirm the document's defaults once if its diagrams follow them ("defaults": {"confirmed": true}); accept the entries of fifteen checkers a side read with no doubt as a whole (accept complete); check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>Эти записи проверяют или передают <code class="docutils literal notranslate"><span class="pre">--force</span></code>, чтобы импортировать relevé как есть; импорт тогда сообщает, сколько записей он провёл принудительно (<code class="docutils literal notranslate"><span class="pre">Forced:</span> <span class="pre">3</span> <span class="pre">entries</span> <span class="pre">neither</span> <span class="pre">sure</span> <span class="pre">nor</span> <span class="pre">verified</span></code>).</p>
+<section id="le-repli">
+<span id="cli-document-fallback"></span><h3>Сворачивание<a class="headerlink" href="#le-repli" title="Ссылка на этот заголовок"></a></h3>
+<p>Запись, чьи фишки заверены (<code class="docutils literal notranslate"><span class="pre">sure</span></code>, или полная с <code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code> и несомненным направлением хода) и у которой на проверку остался только контекст, не обязательно отвергается: после подтверждения контекста по умолчанию импорт предлагает <strong>свернуть</strong> её к контексту, который несёт её XGID, то есть к прочитанному, а для остального — к значению по умолчанию. <code class="docutils literal notranslate"><span class="pre">check</span></code> называет эти ранги, и сообщение об ошибке предлагает такое сворачивание:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Fallback:   rank 4 imported with --fallback under the context its position carries, the fields to check named in its reference
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--fallback</span></code> импортирует эти записи, не помечая их проверенными; ссылка каждой в её комментарии называет поля, которые нужно сверить с диаграммой, с сомнением, оставленным там чтением, включая противоречие (<code class="docutils literal notranslate"><span class="pre">p.</span> <span class="pre">12,</span> <span class="pre">Problem</span> <span class="pre">31</span> <span class="pre">(context</span> <span class="pre">not</span> <span class="pre">read,</span> <span class="pre">to</span> <span class="pre">check</span> <span class="pre">against</span> <span class="pre">the</span> <span class="pre">diagram:</span> <span class="pre">cube</span> <span class="pre">(cube</span> <span class="pre">drawn,</span> <span class="pre">value</span> <span class="pre">not</span> <span class="pre">read))</span></code>), и импорт их подсчитывает (<code class="docutils literal notranslate"><span class="pre">Fallback:</span> <span class="pre">1</span> <span class="pre">entries</span> <span class="pre">under</span> <span class="pre">the</span> <span class="pre">context</span> <span class="pre">their</span> <span class="pre">position</span> <span class="pre">carries</span></code>). Сворачивание не распространяется ни на запись, чьи фишки на проверке, ни на противоречивый контекст, ни на неподтверждённый контекст по умолчанию. Даже с <code class="docutils literal notranslate"><span class="pre">--force</span></code> запись без позиции отвергается: её нужно заполнить или убрать.</p>
+</section>
+</section>
+<section id="ce-qui-entre-en-base">
+<h2>Что попадает в базу<a class="headerlink" href="#ce-qui-entre-en-base" title="Ссылка на этот заголовок"></a></h2>
+<p>Попадают только позиции, в порядке документа, в коллекцию с именем документа (или <code class="docutils literal notranslate"><span class="pre">--collection</span></code>). Каждая позиция попадает как позиция, внесённая отдельно, и библиотека узнаёт её по идентичности: позиция, которая у неё уже есть, не дублируется (<code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">library</span></code> считает те, которых ей не хватало).</p>
+<ul class="simple">
+<li><p><strong>Описание</strong> коллекции содержит название, автора, издание и адрес документа, по одному в строке. Существующая коллекция с тем же именем получает недостающие ей позиции и сохраняет своё описание, если оно есть; динамическая коллекция (заданная запросом) отклоняется.</p></li>
+<li><p>Каждая позиция несёт <strong>комментарий</strong> со своей ссылкой, после названия документа: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">146,</span> <span class="pre">Problem</span> <span class="pre">191</span></code>.</p></li>
+</ul>
+<p>Ничего другого не попадает никогда: ни изображения, ни прямоугольника, ни текста автора. Прерванный или отклонённый импорт ничего не записывает: это одна транзакция.</p>
+</section>
+<section id="une-position-repetee">
+<h2>Повторяющаяся позиция<a class="headerlink" href="#une-position-repetee" title="Ссылка на этот заголовок"></a></h2>
+<p>Когда документ показывает одну и ту же позицию дважды, она попадает в коллекцию только один раз, при первом появлении. Её комментарий приводит каждую ссылку: <code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">2,</span> <span class="pre">Problem</span> <span class="pre">1;</span> <span class="pre">p.</span> <span class="pre">4</span></code>. <code class="docutils literal notranslate"><span class="pre">repeated</span></code> считает эти повторы.</p>
+</section>
+<section id="reimporter">
+<h2>Повторный импорт<a class="headerlink" href="#reimporter" title="Ссылка на этот заголовок"></a></h2>
+<p>Повторный импорт того же relevé ничего не добавляет: ни новых позиций, ничего в коллекции (<code class="docutils literal notranslate"><span class="pre">added</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">collection:</span> <span class="pre">0</span></code>), а комментарий со ссылкой переписывается, только если его ссылки изменились, и никогда не удваивается. Поэтому импорт можно продолжить после исправления relevé.</p>
+</section>
+<section id="le-demon">
+<h2>Демон<a class="headerlink" href="#le-demon" title="Ссылка на этот заголовок"></a></h2>
+<p>Демон <code class="docutils literal notranslate"><span class="pre">serve</span></code> импортирует relevé по адресу <code class="docutils literal notranslate"><span class="pre">/v1/documents.importReleve</span></code> с теми же правилами; он не анализирует никаких документов (см. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="cli_import_export.html" class="btn btn-neutral float-left" title="Импорт, экспорт, перенос" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-right" title="Библиотека: поиск, списки, коллекции" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

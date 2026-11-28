@@ -1,0 +1,396 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ドキュメントの局面をインポートする &mdash; blunderDB 0.63.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=51297059"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="ライブラリ: 検索、一覧、コレクション" href="cli_bibliotheque.html" />
+    <link rel="prev" title="インポート、エクスポート、転送" href="cli_import_export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/cli_document.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_document.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_document.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_document.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_document.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_document.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_document.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/cli_document.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">はじめに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">一般的な構文</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">利用可能なコマンド</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">インポート、エクスポート、転送</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ドキュメントの局面をインポートする</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-quoi-cela-sert">用途</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-est-lu-ce-qui-est-refuse">読み取られるもの、拒否されるもの</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-parcours-en-trois-commandes">3 つのコマンドによる流れ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-releve">relevé</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-trois-etats">3 つの状態</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#livres-scannes">スキャンした本</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pourquoi-l-import-refuse">インポートが拒否する理由</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ce-qui-entre-en-base">データベースに入るもの</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#une-position-repetee">繰り返される局面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reimporter">再インポート</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-demon">デーモン</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">ライブラリ: 検索、一覧、コレクション</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">マッチ、トーナメント、ゲーム</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">解析とエンジン</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">学習、レッスン、トレーニング</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">統計</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">データベースの管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">ワークフロー例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">終了コード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+      <li class="breadcrumb-item active">ドキュメントの局面をインポートする</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="importer-les-positions-d-un-document">
+<span id="cli-document"></span><h1>ドキュメントの局面をインポートする<a class="headerlink" href="#importer-les-positions-d-un-document" title="この見出しへのリンク"></a></h1>
+<section id="a-quoi-cela-sert">
+<h2>用途<a class="headerlink" href="#a-quoi-cela-sert" title="この見出しへのリンク"></a></h2>
+<p>お持ちの書籍(問題集、論集、記事)は、学習の順序で局面を図として示します。<code class="docutils literal notranslate"><span class="pre">document</span></code> コマンドはそれらをその順序でデータベースのコレクションに収め、ライブラリの他の局面とともに学び直せるようにします。インターフェースも同じ道筋をアシスタント(<a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">インターフェースの取り込みアシスタント</span></a>)で提供します。ここではコマンドラインを説明します。</p>
+<p>作業は中間ファイルである<strong>relevé</strong>(ドキュメントから拾い出した一覧)を介して行います。これは、ドキュメントから読み取った局面を一覧にした JSON ファイルです。読み返し、必要なら修正してから、インポートします。ドキュメントを読んでもデータベースには何も書き込まれず、relevé をインポートしたときだけ書き込まれます。</p>
+</section>
+<section id="ce-qui-est-lu-ce-qui-est-refuse">
+<h2>読み取られるもの、拒否されるもの<a class="headerlink" href="#ce-qui-est-lu-ce-qui-est-refuse" title="この見出しへのリンク"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">document</span> <span class="pre">analyze</span></code>は次の種類のドキュメントを読み取ります。</p>
+<ul class="simple">
+<li><p>図が eXtreme Gammon のボード用フォントで描かれた PDF(XG が出力した PDF)。そこでは各図がテキストであり、コマンドはそれをグリフ単位で正確にデコードします。</p></li>
+<li><p>図が Snowie の盤面フォント（Atchoum ファミリー、例えば「AtchoumSnowie4Normal」）で描かれた PDF：駒は、フォントのバージョンにかかわらず、PDF に埋め込まれたグリフの形から読み取られます。印刷されたピップが読み取りを裏付けます。スコアは印刷されていないため、コンテキストは要確認のままです。</p></li>
+<li><p>スキャンした本。ページが画像でできている PDF(テキストレイヤーの有無を問いません)、またはそのページを画像にしたもの(PNG または JPEG ファイルのフォルダ。1 ファイルにつき 1 ページで、名前順に読み取ります。または単一の画像)です。図は構造から読み取られます(<a class="reference internal" href="#cli-document-images"><span class="std std-ref">スキャンした本</span></a> を参照)。</p></li>
+<li><p>文章ドキュメント(DOCX、ODT、EPUB、HTML ページ)。画像は本文の順に 1 枚ずつ、それぞれページ画像として読み取られます。エントリのページ番号は、読み取られた画像の中でのその画像の順位、章はその直前の見出しになり、「fig. 12」または「第 3 章、fig. 12」の形式で引用されます。画像の直前の段落、画像自身の段落、その次の段落がテキストレイヤーの役割を果たし、そこに書かれたピップ数やサイコロが PDF と同じように読み取り結果を照合します。HTML ページは、そのフォルダとサブフォルダにある画像と、ページ内に埋め込まれた画像(<code class="docutils literal notranslate"><span class="pre">data:</span></code>)を読み取ります。何もダウンロードされず、オンラインの画像は標準エラー出力に数が示されます。ベクター描画の画像(EMF、WMF、SVG)は読み取られず、標準エラー出力に名前が示されます。Word 97-2003 の<code class="docutils literal notranslate"><span class="pre">.doc</span></code>は、PDF または DOCX で保存するよう案内するメッセージとともに拒否されます。</p></li>
+</ul>
+<p>どのページも画像でできておらず、このフォントでも描かれていない PDF(ベクターで描かれた本)は拒否されます。その場合はページを画像として渡します。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: no diagram drawn with eXtreme Gammon's board font, and no page made of images (a page drawn with vectors is not rendered); give its pages as images: a folder of PNG or JPEG files, one a page; structure: no page of the document could be read: page 1: pdf: the page draws no image (a page drawn with vectors is not rendered)
+</pre></div>
+</div>
+<p>形が埋め込まれていない盤面フォントで描かれた PDF は、そのフォント名を示すメッセージとともに拒否されます。</p>
+<p>PDF でも文章ドキュメントでも画像でもないファイル、暗号化された PDF、512 MiB を超える PDF、64 MiB を超える画像、または 1 億ピクセルを超える画像も、その旨のメッセージとともに拒否されます。文章ドキュメントも上限は同じ 512 MiB で、そのアーカイブは、エントリ数が 10,000 を超える場合、展開すると 64 MiB を超えるパートがある場合、または展開後の合計が 1 GiB を超える場合に拒否されます。</p>
+</section>
+<section id="le-parcours-en-trois-commandes">
+<h2>3 つのコマンドによる流れ<a class="headerlink" href="#le-parcours-en-trois-commandes" title="この見出しへのリンク"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>analyze<span class="w"> </span>livre.pdf<span class="w"> </span>-o<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>check<span class="w"> </span>releve.json
+./blunderdb<span class="w"> </span>document<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>releve.json
+</pre></div>
+</div>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">analyze</span></code> は PDF を読み取り、relevé を書き出します(<code class="docutils literal notranslate"><span class="pre">-o</span></code> を付けない場合は標準出力に書き出します)。標準エラー出力が端末のときは、そこに読み取りの進捗(<code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">37/212,</span> <span class="pre">54</span> <span class="pre">diagrams</span></code>)を書き出します。スクリプトでは何も書き出しません。見つけた内容を要約します。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Relevé:     releve.json
+</pre></div>
+</div>
+<p>タイトルと著者は PDF のメタデータから取得され、なければタイトルはファイル名になります。<code class="docutils literal notranslate"><span class="pre">--title</span></code> と <code class="docutils literal notranslate"><span class="pre">--author</span></code> で置き換えられます。各エントリの章は PDF のしおりから取得されます。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">check</span></code> は relevé を検証してその項目を数えます。データベースの読み書きはしません。集計の後に、確認する項目(順位、ページ、状態、図と照合すべき欄)も一覧にします。<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> は同じ集計と同じ一覧(<code class="docutils literal notranslate"><span class="pre">review</span></code>)を JSON で返します:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Document:   Mon livre
+Entries:    6 (sure 3, to verify 2, uncertain 1; verified 0)
+Context:    read 5, default 0, to verify 1
+Positions:  5 distinct, 1 repeated
+Unverified: rank 4, 5, 6 (import refused without --force)
+Review:
+  rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">check</span></code>は文書そのもの(<code class="docutils literal notranslate"><span class="pre">check</span> <span class="pre">livre.pdf</span></code>)も受け付けます。その場合、インターフェースの検証シートが文書の隣に保管する relevé(<code class="docutils literal notranslate"><span class="pre">livre.pdf.releve.json</span></code>、<a class="reference internal" href="manuel_partage.html#assistant-import-document"><span class="std std-ref">インターフェースの取り込みアシスタント</span></a>)を読み、<code class="docutils literal notranslate"><span class="pre">verified</span></code>を含む進み具合を返します。</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">import</span></code> は局面をコレクションに書き込みます。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Created collection "Mon livre" (id 1)
+Entries: 6, distinct positions: 5 (5 new in the library), added to the collection: 5, repeated: 1
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--collection</span></code> で、ドキュメントのタイトルとは別の名前を選べます。データベースファイルが存在しない場合は作成されます。</p>
+</li>
+</ol>
+</section>
+<section id="le-releve">
+<h2>relevé<a class="headerlink" href="#le-releve" title="この見出しへのリンク"></a></h2>
+<p>relevé は、テキストエディタで開ける読みやすい JSON ファイルです。ヘッダー(<code class="docutils literal notranslate"><span class="pre">document</span></code>)には、ドキュメントのタイトル、著者、版またはアドレス、読み取ったファイルの SHA-256 フィンガープリント、図のプロファイル、そしてスキャンした本ではそのデフォルトコンテキスト(<code class="docutils literal notranslate"><span class="pre">defaults</span></code>。<a class="reference internal" href="#cli-document-defaults"><span class="std std-ref">デフォルトコンテキスト</span></a>参照)が入っています。その後、各図がドキュメントの順序でエントリになります。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rank</span></code> — 順位。1 から欠番なく振られます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">page</span></code>、<code class="docutils literal notranslate"><span class="pre">chapter</span></code>、<code class="docutils literal notranslate"><span class="pre">label</span></code> — ページ、しおりの章、および図の上に印刷されている場合にドキュメントが付ける名前(「Problem 191」)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">position</span></code> — 局面を XGID で表したもの。駒、キューブ、手番、サイコロ、スコア、マッチの長さが 1 つの文字列に収められます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checkers</span></code> — 駒の確実度。<code class="docutils literal notranslate"><span class="pre">sure</span></code>、<code class="docutils literal notranslate"><span class="pre">to-verify</span></code>、<code class="docutils literal notranslate"><span class="pre">uncertain</span></code>のいずれかです。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">complete</span></code> — 駒が盤上で各サイド 15 個ずつ疑いなく読み取られたが、突き合わせによる裏付けがない場合に<code class="docutils literal notranslate"><span class="pre">true</span></code>になります(<a class="reference internal" href="#cli-document-complete"><span class="std std-ref">15 個ずつ、疑いなし</span></a>参照)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code> — コンテキスト(キューブ、サイコロ、手番、スコア)がどう判明したか。<code class="docutils literal notranslate"><span class="pre">read</span></code>(読み取って突き合わせ済み)、<code class="docutils literal notranslate"><span class="pre">default</span></code>(ドキュメントのデフォルトコンテキスト)、<code class="docutils literal notranslate"><span class="pre">to-verify</span></code>(読み取られておらずデフォルトでもない。描かれているが読み取れなかったキューブやサイコロ、見つからないスコア)、<code class="docutils literal notranslate"><span class="pre">uncertain</span></code>(矛盾あり)のいずれかです。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">doubts</span></code> — 読み取りで挙げられた疑い。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rect</span></code> — 図がページ上のどこにあるかを、ページの大きさに対する割合で表したもの。PDF 内で見つけ直すために使います。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verified</span></code> — 読み取りを人が図と見比べたとき<code class="docutils literal notranslate"><span class="pre">true</span></code>になります。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">verify</span></code>は、人の判定をデータベースなしで relevé に書き込みます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">3</span>,4,9
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--position<span class="w"> </span><span class="s2">"XGID=..."</span>
+./blunderdb<span class="w"> </span>document<span class="w"> </span>verify<span class="w"> </span>releve.json<span class="w"> </span>--rank<span class="w"> </span><span class="m">12</span><span class="w"> </span>--undo
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--rank</span></code>はカンマ区切りで項目を指定し、それらは確認済みになります。<code class="docutils literal notranslate"><span class="pre">--position</span></code>は1つの項目の読み取りを正しい XGID に置き換えますが、合法なポジションでなければ拒否されます。文脈が既定のものでなくなった修正は自分の文脈を保ち、要確認のままです。<code class="docutils literal notranslate"><span class="pre">--undo</span></code>は判定を取り消します。relevé の代わりに文書を指定すると、その隣に保管された relevé に書き込みます。コマンドは書き込んだファイルと進み具合を表示します。<code class="docutils literal notranslate"><span class="pre">releve.json:</span> <span class="pre">verified</span> <span class="pre">3</span> <span class="pre">of</span> <span class="pre">6</span> <span class="pre">entries</span> <span class="pre">(sure</span> <span class="pre">3,</span> <span class="pre">to</span> <span class="pre">verify</span> <span class="pre">2,</span> <span class="pre">uncertain</span> <span class="pre">1)</span></code>。</p>
+<p>relevé の見直しは、エントリのページで PDF を開いて行います。そこで局面(XGID)を修正し、確認したエントリに<code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code>を付け、ランクを振り直してエントリを削除します。relevé の検証は複数のセッションにまたがってよく、<code class="docutils literal notranslate"><span class="pre">verified</span></code>はファイルに残ります。<code class="docutils literal notranslate"><span class="pre">check</span></code>は、未知のフィールドがある、ランクに欠番がある、ページが逆戻りする、XGID が合法な局面でない、またはプログラムより新しい形式である relevé を拒否します。<code class="docutils literal notranslate"><span class="pre">sure</span></code>の駒に残りうる疑いはコンテキストについてだけで、コンテキストが<code class="docutils literal notranslate"><span class="pre">read</span></code>なら疑いはなく、<code class="docutils literal notranslate"><span class="pre">default</span></code>のエントリは XGID にデフォルトコンテキストを持ちます。</p>
+<p>relevé の形式はバージョン 2 です。エントリごとに単一の状態(<code class="docutils literal notranslate"><span class="pre">state</span></code>)だけを持つバージョン 1 の relevé も引き続き読み込めます。<code class="docutils literal notranslate"><span class="pre">sure</span></code>のエントリは駒が確実でコンテキストは読み取り済み、スキャンした本のエントリは未確認のデフォルトコンテキストの扱い、それ以外はコンテキスト要確認になります。<code class="docutils literal notranslate"><span class="pre">analyze</span></code>は常にバージョン 2 を書き出します。</p>
+</section>
+<section id="les-trois-etats">
+<h2>3 つの状態<a class="headerlink" href="#les-trois-etats" title="この見出しへのリンク"></a></h2>
+<p>エントリの状態は 2 つの確実度から決まり、relevé には書き込まれません。</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">sure</span></code></dt><dd><p>駒が確実<strong>かつ</strong>コンテキストが保証されている状態です。コンテキストは、読み取られたか、ドキュメントのデフォルトコンテキストが確認済みであればその下にあります。駒が確実になるのは、図の突き合わせが成立するときです。各サイドの駒は 15 個(ポイント上、バー上、ベアオフ用トレイ内)で、局面から計算したピップ数が両プレイヤーの印刷されたピップ数と一致します。XG の PDF のコンテキストは読み取られ、スコアとマッチの長さは PDF が横に印刷しているものです。スキャンした本のコンテキストは決して読み取られません。<a class="reference internal" href="#cli-document-images"><span class="std std-ref">スキャンした本</span></a>を参照。</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">to-verify</span></code></dt><dd><p>読み取りは成立していますが、それを裏づけるものがありません。印刷されたピップ数が計算したピップ数と異なる場合、または図が基準の印刷物に一度も現れなかったものを示している場合です。たとえば、9 個を超える駒の山、バー上の番号付きの駒、バー上に白が 2 個を超えるか黒が 3 個を超える駒、上側のプレイヤー側または 8 を超える位置のキューブ、上側のプレイヤーの手番、手番の印がない、黒のプレイヤーが下側にある、クロフォードゲーム、勝利まで 1 ポイントのプレイヤー(クロフォードゲームとそれ以降は区別できません)、表が読み取れないフォントのグリフ、などです。これらのケースは読み取られますが、確実とは宣言されません。</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uncertain</span></code></dt><dd><p>駒またはコンテキストが矛盾しているか、読み取りが不完全です。未知のグリフ、駒が 15 個でなくピップ数も一致しないサイド、損傷した枠などです。合法な局面が得られない図は、局面なし(<code class="docutils literal notranslate"><span class="pre">&quot;position&quot;:</span> <span class="pre">&quot;&quot;</span></code>)で relevé に位置を保ちます。</p>
+</dd>
+</dl>
+<p>エントリは、<code class="docutils literal notranslate"><span class="pre">sure</span></code>であるか検証済みであるとき、または要求に応じて完全であるとき(<a class="reference internal" href="#cli-document-complete"><span class="std std-ref">15 個ずつ、疑いなし</span></a>)に<strong>インポート可能</strong>です。エントリが持つ疑いは、何を確認すべきかを示します。例:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pips read 167/167, printed 160/167 (bottom/top)
+</pre></div>
+</div>
+<p>サイコロは読み取られません。解析は常に「サイコロなし」(<code class="docutils literal notranslate"><span class="pre">00</span></code>)と書き込みます。</p>
+</section>
+<section id="livres-scannes">
+<span id="cli-document-images"></span><h2>スキャンした本<a class="headerlink" href="#livres-scannes" title="この見出しへのリンク"></a></h2>
+<p>画像のページは、スタイルを仮定せずに読み取ります。コマンドはバーで分かれた 12 ポイントの 2 列と、ポイントの根元から積まれた 2 つのクラスの円盤である駒を探します。ドキュメントのスタイルはドキュメント自身から学習します。最初の図では駒の形を、次にすべての図で 2 つの駒クラス、印刷された番号付け、進行方向を学習します。ドキュメント間では何も保持されず、画像も保存されません。</p>
+<p>線画の図と、印刷されたソフトウェアのスクリーンショットを、読む順序で読み取ります。見開きは左ページ、次に右ページ、列ごとに上から下へ読みます。わずかに傾いたページは補正され、綴じ目の影は消去されます。有効な解像度は 150〜300 dpi で、ファイルが示す値を使います。示されていない場合は、ページの長辺を 11 インチとみなします。</p>
+<p>スキャンされた PDF は外部ツールなしで直接読み込まれます。各ページはその画像から、PDF が配置するとおりに配置され、そのうち最も精細な画像の解像度（150〜300 dpi に制限）で合成され、読み取られた後に破棄されます。デコードされるのは JPEG 画像（<code class="docutils literal notranslate"><span class="pre">DCTDecode</span></code>）、JPEG 2000 画像（<code class="docutils literal notranslate"><span class="pre">JPXDecode</span></code>、グレーまたは 3 成分、パレット・埋め込みアルファ・HTJ2K なし、最大 1200 万画素）、JBIG2 画像（<code class="docutils literal notranslate"><span class="pre">JBIG2Decode</span></code>とその <code class="docutils literal notranslate"><span class="pre">JBIG2Globals</span></code>：MMR または算術符号化の汎用領域、リファインメント領域、算術符号化のシンボル辞書とテキスト領域、1 ページ最大 6700 万画素）、ファクス画像（<code class="docutils literal notranslate"><span class="pre">CCITTFaxDecode</span></code>、グループ 3 の一次元とグループ 4）、生画像（<code class="docutils literal notranslate"><span class="pre">FlateDecode</span></code>、グレー、カラー、インデックス）です。ステンシルマスクとソフトマスクが適用されるため、JPEG の背景とファクスのマスクからなるページも読みやすく合成されます。対応しないもの：カラーキーマスク（画像は全体が描かれます）、ハフマン符号化またはハーフトーンの JBIG2 画像、ベクターで描かれたページ（スキップ）。ヘッダーによって拒否された画像を含むページは、他の画像をデコードせずにスキップされます。デコード予算の不足で拒否された画像は省かれ、他の画像がページを描く場合、ページはその画像なしで読み込まれます。スキップされたページは理由とともにエラー出力に示され、その他のページは読み込まれます。ページのテキストレイヤーは、表示・非表示を問わず（OCR が画像の下に残すもの）、その単語を画像上の位置に与えます。フォントが文字に変換しないテキストは単語を与えません。</p>
+<p>スキャンされた本では、駒とコンテキストは別々に保証されます。駒が<code class="docutils literal notranslate"><span class="pre">sure</span></code>になるのは、図の横に印刷されたピップが両陣営の計算されたピップと等しく、どちらの陣営も 15 個を超える駒を持たず、駒について疑義が残っていない場合です。コンテキストはフィールドごとに読み取られ、各フィールドは照合された場合にのみ読み取り済みとみなされます。</p>
+<ul class="simple">
+<li><p>キューブは、そのマス目から読み取った値(ドキュメントの数字)またはテキストレイヤーから読み取った値によって判定します。2 つの情報源があるときは一致していなければならず、位置とも整合している必要があります。中央の 64 はセンター、上または下の 2〜64 はその側のプレイヤーの所有です。顔が空白のマス目だけがある場合は、ドキュメントがそのように、同じ位置に、3 つ以上のダイアグラムの横に描いている場合は、センターのキューブです。所有されているキューブは値を持つためです。</p></li>
+<li><p>サイコロは、画像上で数え、隣接するテキストで確認します。名前の付いたロール(&quot;to play 41&quot;、&quot;rolls a 65&quot;)、または各ステップがサイコロ 1 つに当たる書かれた手(&quot;2/0 2/1&quot;、&quot;8/5(2) 6/3(2)&quot;)が対象で、テキストが複数のロールに言及している場合は 2 回引用されている必要があります。別のダイアグラムにより近い語は、そのダイアグラムのものです。手番は、サイコロの色と盤面のどちらの半分にあるか(下側のプレイヤーは右半分)によって判定し、両者は同じプレイヤーを指していなければなりません。サイコロが描かれていない場合は、それを名指しするキャプション(&quot;Black to play 53&quot;。テキストレイヤーから、テキストレイヤーがなければ画像から読み取ります)がロールと手番のプレイヤーを与えますが、どちらも疑わしいものとして扱います。単一の情報源では何も保証されません。</p></li>
+<li><p>スコアは、テキストレイヤーのバナー(<code class="docutils literal notranslate"><span class="pre">score:</span></code>、<code class="docutils literal notranslate"><span class="pre">pip:</span></code>、<code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">point</span> <span class="pre">match</span></code>)によって判定し、各スコアは、そのスコアが示すピップを持つプレイヤーに割り当てます。2 つのスコアが等しい場合は、ピップを必要としません。</p></li>
+</ul>
+<p>コンテキストがすべて読み取れたエントリは<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;read&quot;</span></code>です。見つからないキューブがセンターと見なされることはありません。読み取れなかったものは、ドキュメントのデフォルトコンテキスト(<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;default&quot;</span></code>、疑義は<code class="docutils literal notranslate"><span class="pre">context</span> <span class="pre">not</span> <span class="pre">read:</span> <span class="pre">cube,</span> <span class="pre">dice,</span> <span class="pre">player</span> <span class="pre">on</span> <span class="pre">roll,</span> <span class="pre">score</span></code>)になります。描かれているか印刷されているが保証されていないキューブ、サイコロ、スコア、ドキュメントが印刷しないフィールドでデフォルトから外れて部分的に読み取られたコンテキスト(<a class="reference internal" href="#cli-document-learned"><span class="std std-ref">ドキュメントから学習したデフォルト</span></a>を参照)、サイコロが描かれていない上側のプレイヤー所有のキューブ、キューブを描くドキュメントで見つからないキューブ、スコアを印刷するドキュメントで見つからないスコア(図の少なくとも 3 分の 1 の横で見つかったもの)は、コンテキストを要確認にします(<code class="docutils literal notranslate"><span class="pre">&quot;context&quot;:</span> <span class="pre">&quot;to-verify&quot;</span></code>、名前の付いた疑義付き)。その場合 XGID は読み取れたものを持ちます。したがって、スキャンした本のエントリでコンテキストが読み取られていないものは、デフォルトコンテキストが確認されるまで<strong>決して</strong><code class="docutils literal notranslate"><span class="pre">sure</span></code>になりません。コンテキストが要確認のエントリも決して<code class="docutils literal notranslate"><span class="pre">sure</span></code>になりません。<code class="docutils literal notranslate"><span class="pre">analyze</span></code>と<code class="docutils literal notranslate"><span class="pre">check</span></code>はエントリをコンテキスト別に数え、駒だけが保証されたものは別に数えます。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Context:    read 0, default 140, to verify 12
+Defaults:   centred cube, no dice, the bottom player on roll, money play (0:0:1:00:0:0:0:0:10), not confirmed: set "confirmed": true once the document's diagrams follow them
+Checkers:   112 confirmed, their context alone to verify (cube, dice, player on roll, score)
+</pre></div>
+</div>
+<p>コンテキストが要確認のエントリについては、エントリのページで本を開き、キューブ(値と所有者。中央に描かれたキューブも所有されている場合があります)、サイコロ、手番のプレイヤー、スコアを図と照らし合わせ、必要なら XGID のこれらのフィールドを修正して、<code class="docutils literal notranslate"><span class="pre">&quot;verified&quot;:</span> <span class="pre">true</span></code>を付けます。</p>
+<section id="le-contexte-par-defaut">
+<span id="cli-document-defaults"></span><h3>デフォルトコンテキスト<a class="headerlink" href="#le-contexte-par-defaut" title="この見出しへのリンク"></a></h3>
+<p>スキャンした本のデフォルトコンテキストは、読み取りが書き込むものです。キューブは中央、サイコロなし、下側のプレイヤーの手番、フリーゲーム(マッチではない)です。これは relevé のヘッダーに入ります。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"centred cube, no dice, the bottom player on roll, money play"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">context</span></code>は、盤面の後ろに続く XGID の末尾部分で、<code class="docutils literal notranslate"><span class="pre">default</span></code>のエントリはすべてこれを持ちます。ドキュメントの図がこのコンテキストに従っているとき(たとえばフリーゲームで下側のプレイヤーの手番の問題集)は、<code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code>と書いて<strong>一度だけ確認</strong>します。すると<code class="docutils literal notranslate"><span class="pre">default</span></code>のエントリはすべてコンテキストが保証され、駒が確実なものは<code class="docutils literal notranslate"><span class="pre">sure</span></code>になります。1 件ずつ確認が必要なまま残るのは、読み取りが見つけた例外(所有されたキューブ、描かれたサイコロ、マッチスコア)と、駒が確実でないエントリだけです。ドキュメントが従っていないコンテキストは確認してはいけません。読み取りで見つからないキューブ、テキストレイヤーのない画像に印刷されたスコア、キャプション以外の本文で示された手番は、読み取りでは検出されません。</p>
+</section>
+<section id="le-defaut-appris-sur-le-document">
+<span id="cli-document-learned"></span><h3>ドキュメントから学習したデフォルト<a class="headerlink" href="#le-defaut-appris-sur-le-document" title="この見出しへのリンク"></a></h3>
+<p>読み取りは、ドキュメントが図の横に印刷するコンテキストのフィールドを学習します。キューブ、サイコロ(手番のプレイヤーを含む)、スコアのうち、図の少なくとも 3 分の 1 の横で読み取れたものです。それらは<code class="docutils literal notranslate"><span class="pre">printed</span></code>に記載されます。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"defaults"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:0:1:00:0:0:0:0:10"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"for what a diagram does not print: centred cube, no dice, the bottom player on roll, money play; the document prints its score, read beside each diagram"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"printed"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"score"</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>印刷されたフィールドは、各エントリの読み取り結果であり、読み取りが保証したものです。デフォルトコンテキストが対象とするのは、それ以外のエントリだけです。マッチ形式の問題集では、各図がスコアを持っています。そのエントリは<code class="docutils literal notranslate"><span class="pre">default</span></code>のままで、それぞれのスコアは XGID に入り、デフォルトコンテキストを一度確認すれば、すべてのエントリについてセンターのキューブ、サイコロなし、手番のプレイヤーが保証されます。このようなドキュメントでスコアが読み取れない図は、マネーゲームとは見なされません。そのコンテキストは要確認のままです(<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">prints</span> <span class="pre">its</span> <span class="pre">score</span> <span class="pre">beside</span> <span class="pre">its</span> <span class="pre">diagrams,</span> <span class="pre">none</span> <span class="pre">is</span> <span class="pre">read</span> <span class="pre">here:</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">taken</span> <span class="pre">as</span> <span class="pre">money</span> <span class="pre">play</span></code>)。<code class="docutils literal notranslate"><span class="pre">analyze</span></code>と<code class="docutils literal notranslate"><span class="pre">check</span></code>は学習した内容を表示します。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Printed:    score, read beside each diagram (learned from the document)
+</pre></div>
+</div>
+<p>ドキュメントをまたいで保持されるものはありません。<code class="docutils literal notranslate"><span class="pre">printed</span></code>のない relevé は厳格な規則を保ちます。デフォルト以外で読み取られたフィールドがあれば、コンテキストは要確認のままです。</p>
+</section>
+<section id="quinze-et-quinze-sans-doute">
+<span id="cli-document-complete"></span><h3>15 個ずつ、疑いなし<a class="headerlink" href="#quinze-et-quinze-sans-doute" title="この見出しへのリンク"></a></h3>
+<p>ピップ数が印刷されていない図には突き合わせがなく、駒は<code class="docutils literal notranslate"><span class="pre">to-verify</span></code>のままです。各サイド 15 個の駒が疑いなく読み取られた場合は、<code class="docutils literal notranslate"><span class="pre">&quot;complete&quot;:</span> <span class="pre">true</span></code>と印を付けます。これまでのすべての測定で、これらの読み取りは正確でしたが、図ごとに裏付けるものはありません。これは<code class="docutils literal notranslate"><span class="pre">sure</span></code>とは別の中間状態です。完全なエントリがコンテキストのほかに持つ疑いは 2 つだけです。ピップ数が印刷されていないこと、そして、ドキュメントのどのピップ数も確認していないときに仮定された進行方向です。印刷されたピップ数が計算したピップ数と異なる場合は駒への疑いとなり、そのエントリは決して完全になりません。駒がベアオフされた局面は決して完全になりません。ドキュメントがベアオフ盤をバー(横から見たベアオフ済みの駒)で描いている場合、盤で数えたバーが、そのサイドの列の隣で、描かれた駒を 15 個に補いますが、紛れ込んだ形も駒と同じように数えられてしまいます。この数は、印刷されたピップ数が局面と一致する場合にだけ有効で、そのとき局面は<code class="docutils literal notranslate"><span class="pre">sure</span></code>になります。一致するピップ数がなければ、名前の付いた疑い(<code class="docutils literal notranslate"><span class="pre">counted</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">tray,</span> <span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pips</span> <span class="pre">confirm</span> <span class="pre">them</span></code>)です。バーが 15 個にならない盤は、名前の付いた疑い(<code class="docutils literal notranslate"><span class="pre">they</span> <span class="pre">do</span> <span class="pre">not</span> <span class="pre">make</span> <span class="pre">fifteen</span></code>)です。</p>
+<p>仮定された進行方向もドキュメントのデフォルトの一つで、独自の確認を持ちます。方向が誤っていると、その下で読み取ったすべての局面でプレイヤーが入れ替わってしまいます。進行方向はデフォルトコンテキストの<code class="docutils literal notranslate"><span class="pre">direction</span></code>に入っています。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">"direction"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"home"</span><span class="p">:</span><span class="w"> </span><span class="s2">"right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"confirmed"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>コンテキストを確認しても、進行方向は確認されません。いくつかの図で確認してから、<code class="docutils literal notranslate"><span class="pre">direction</span></code>に<code class="docutils literal notranslate"><span class="pre">&quot;confirmed&quot;:</span> <span class="pre">true</span></code>と書きます。</p>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--accept-complete</span></code>は、コンテキストが保証され(読み取り済み、または確認済みのデフォルトコンテキストの下にある)、かつ進行方向が確実な(ピップ数による投票で決まった、または仮定されて確認された)完全なエントリを、検証済みの印を付けずに一括して受け入れます。<code class="docutils literal notranslate"><span class="pre">check</span></code>はそれらを数え、未確認の進行方向のために保留されるものは別に数えます。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Direction:  direction of play assumed, no printed pips confirm it: checkers move toward the side with the fewer pips, the bottom player's home on the right, not confirmed: check it on a few diagrams, then set "direction": {"confirmed": true}
+Complete:   84 more held back until the direction of play is confirmed
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Complete:   84 with 15 + 15 checkers read with no doubt and a certified context (imported with --accept-complete)
+Unverified: rank 3, 7, 12 (import refused without --force; rank 12 with --accept-complete)
+</pre></div>
+</div>
+<p>インポートは、受け入れた件数を表示します(<code class="docutils literal notranslate"><span class="pre">Complete:</span> <span class="pre">84</span> <span class="pre">entries</span> <span class="pre">of</span> <span class="pre">15</span> <span class="pre">+</span> <span class="pre">15</span> <span class="pre">checkers</span> <span class="pre">read</span> <span class="pre">with</span> <span class="pre">no</span> <span class="pre">doubt</span></code>)。コンテキストが保証されていない、または仮定された進行方向が確認されていない完全なエントリは、引き続き拒否されます。エラーメッセージは、それを確認するよう伝えます。</p>
+<p>印刷されたピップ数は 2 つの情報源から読み取られます。PDF のテキストレイヤーと、画像そのものです。画像では、コマンドは図の周囲にある孤立した数を、盤面の水平な帯の上で、両側とも盤面の幅の約半分まで読み取ります。数の前にある 1 文字だけの文字(<code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">164</span></code>、<code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">123</span></code>)があっても、その数は読み取られます。1 桁ずつ、文書のポイント番号との比較、埋め込まれた 8 つの一般的なフォント、そして文書内で既に読み取った数字を使って読み取ります。数は、すべての桁がはっきり認識された場合にのみ返され、そうでなければ読み取りを控えます。ピップ数の位置は文書から学習されます。1 サイドあたり 15 個で数えた図のピップ数と等しい読み取り済みの数が、その位置に投票し、2 か所(上と下)が十分な票を集める必要があります。位置は、票を得た隣接位置にも広がり、盤面を変動する場所や大きさに配置する文書にも対応します。付随する図のピップ数から数字が選ばれることはなく、文書間で何も保持されません。テキストと画像がそれぞれピップ数を与えて両者が異なる場合、駒は確認されず、疑いがそれを示します(<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">two</span> <span class="pre">disagree</span></code>)。ピップ数が読み取れなかったエントリは<code class="docutils literal notranslate"><span class="pre">to-verify</span></code>のままです(<code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">printed</span> <span class="pre">pip</span> <span class="pre">count</span> <span class="pre">was</span> <span class="pre">found</span> <span class="pre">next</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">diagram</span></code>)。</p>
+<p>図の上に描かれた手の矢印(紙面上に単独である、斜めの細い直線)は駒として読み取られず、盤面の横に印刷された 15 以下の数(駒の数、番号)もピップとは見なされません。</p>
+<p>数字の読み取りは、明るい背景に暗いアラビア数字が水平に書かれていること、読み取り解像度で高さが 15 ピクセル以上あること、ピップ数が図ごとに近い位置に印刷されていること、そしてその位置を学習するために 1 サイドあたり 15 個で読み取られた図が 30 個ほどあることを前提とします。</p>
+<p>疑いは、まだ確認すべき点を示します。数字が付いた駒の山、どちらのクラスでもない円盤(色あせた、または汚れた駒)、上から下まで埋まった列、長さで数えた暗い色の山、半分のボード(ポイントのない列)、仮定した進行方向(駒はピップ数の少ない側へ進む)、差から数えたベアオフ済みの駒、中央以外に描かれたキューブ、描かれたダイスです。</p>
+<p>読み取られないもの: キューブの値と所有者(デフォルトコンテキストでは中央とされます)、サイコロ(なし)、スコア(フリーゲーム)、手番のプレイヤー(下側)、バーで描かれていないベアオフ盤(駒が 15 個未満で描かれたサイドは、残りがベアオフ済みとされます)、文字(X と O)で描かれた駒。駒のどれもが塗りつぶされた円盤でないドキュメントは読み取られず、すべての図がこの理由(<code class="docutils literal notranslate"><span class="pre">the</span> <span class="pre">document</span> <span class="pre">draws</span> <span class="pre">no</span> <span class="pre">filled</span> <span class="pre">checker</span></code>)で<code class="docutils literal notranslate"><span class="pre">uncertain</span></code>になります。</p>
+</section>
+</section>
+<section id="pourquoi-l-import-refuse">
+<h2>インポートが拒否する理由<a class="headerlink" href="#pourquoi-l-import-refuse" title="この見出しへのリンク"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">sure</span></code>でも検証済みでもないエントリは信頼できず、コレクションに入ったものはエクスポート時に共有されます。そのためインポートは、何も書き込む前に relevé<strong>全体</strong>を拒否し、ランクを示して、対処を伝えます。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 4, 5, 6; check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>未確認のデフォルトコンテキストの下にあるエントリや、<code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code>なしの完全なエントリがある場合は、メッセージがそれも伝えます。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: document: entries neither sure nor verified: storage: invalid argument: rank 1, 2; confirm the document's defaults once if its diagrams follow them ("defaults": {"confirmed": true}); accept the entries of fifteen checkers a side read with no doubt as a whole (accept complete); check the cube, dice, player on roll and score of an entry whose context is not certified against its diagram; verify the others ("verified": true), or force the import
+</pre></div>
+</div>
+<p>これらのエントリを確認するか、<code class="docutils literal notranslate"><span class="pre">--force</span></code>を渡して relevé をそのままインポートします。その場合、インポートは強制したエントリの数を示します(<code class="docutils literal notranslate"><span class="pre">Forced:</span> <span class="pre">3</span> <span class="pre">entries</span> <span class="pre">neither</span> <span class="pre">sure</span> <span class="pre">nor</span> <span class="pre">verified</span></code>)。</p>
+<section id="le-repli">
+<span id="cli-document-fallback"></span><h3>フォールバック<a class="headerlink" href="#le-repli" title="この見出しへのリンク"></a></h3>
+<p>駒が保証されており(<code class="docutils literal notranslate"><span class="pre">sure</span></code>、または<code class="docutils literal notranslate"><span class="pre">--accept-complete</span></code>を付けた完全なエントリで、プレイの向きが確実なもの)、コンテキストだけが要確認のエントリは、必ずしも拒否されるとは限りません。デフォルトコンテキストが確認されると、インポートはそのエントリを、XGID が持つコンテキスト、つまり読み取れたものと、残りはデフォルトに<strong>フォールバック</strong>させることを提案します。<code class="docutils literal notranslate"><span class="pre">check</span></code>はこれらの順位を示し、エラーメッセージがフォールバックを提案します。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Fallback:   rank 4 imported with --fallback under the context its position carries, the fields to check named in its reference
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--fallback</span></code>は、これらのエントリを確認済みとせずにインポートします。それぞれの参照は、コメント内で図と照合すべきフィールドを、読み取りがそこに残した疑い（矛盾を含む）とともに示し（<code class="docutils literal notranslate"><span class="pre">p.</span> <span class="pre">12,</span> <span class="pre">Problem</span> <span class="pre">31</span> <span class="pre">(context</span> <span class="pre">not</span> <span class="pre">read,</span> <span class="pre">to</span> <span class="pre">check</span> <span class="pre">against</span> <span class="pre">the</span> <span class="pre">diagram:</span> <span class="pre">cube</span> <span class="pre">(cube</span> <span class="pre">drawn,</span> <span class="pre">value</span> <span class="pre">not</span> <span class="pre">read))</span></code>）、インポートはその件数を数えます（<code class="docutils literal notranslate"><span class="pre">Fallback:</span> <span class="pre">1</span> <span class="pre">entries</span> <span class="pre">under</span> <span class="pre">the</span> <span class="pre">context</span> <span class="pre">their</span> <span class="pre">position</span> <span class="pre">carries</span></code>）。フォールバックの対象外となるのは、駒が要確認のエントリ、矛盾したコンテキスト、確認されていないデフォルトコンテキストです。<code class="docutils literal notranslate"><span class="pre">--force</span></code>を付けても、局面のないエントリは拒否されます。入力するか削除してください。</p>
+</section>
+</section>
+<section id="ce-qui-entre-en-base">
+<h2>データベースに入るもの<a class="headerlink" href="#ce-qui-entre-en-base" title="この見出しへのリンク"></a></h2>
+<p>局面だけが、ドキュメントの順序で、ドキュメント名(または<code class="docutils literal notranslate"><span class="pre">--collection</span></code>の名前)のコレクションに入ります。各局面は単独で持ち込まれた局面として入り、ライブラリはその同一性で局面を認識します。すでに持っている局面は重複しません(<code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">library</span></code> は、足りなかった局面の数です)。</p>
+<ul class="simple">
+<li><p>コレクションの<strong>説明</strong>には、ドキュメントのタイトル、著者、版、アドレスが 1 行に 1 つずつ入ります。同名の既存コレクションは足りない局面を受け取り、説明があればそれを保持します。ダイナミックコレクション(クエリで定義されたもの)は拒否されます。</p></li>
+<li><p>各局面には、ドキュメントのタイトルに続けて参照を示す<strong>コメント</strong>が付きます。<code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">146,</span> <span class="pre">Problem</span> <span class="pre">191</span></code></p></li>
+</ul>
+<p>それ以外のものは決して入りません。画像も、矩形も、著者のテキストも入りません。中断または拒否されたインポートは何も書き込みません。インポートは単一のトランザクションです。</p>
+</section>
+<section id="une-position-repetee">
+<h2>繰り返される局面<a class="headerlink" href="#une-position-repetee" title="この見出しへのリンク"></a></h2>
+<p>ドキュメントが同じ局面を 2 回示す場合、その局面は最初の出現位置でコレクションに 1 回だけ入ります。そのコメントはすべての参照を挙げます。<code class="docutils literal notranslate"><span class="pre">Mon</span> <span class="pre">livre</span> <span class="pre">—</span> <span class="pre">p.</span> <span class="pre">2,</span> <span class="pre">Problem</span> <span class="pre">1;</span> <span class="pre">p.</span> <span class="pre">4</span></code>。<code class="docutils literal notranslate"><span class="pre">repeated</span></code> はこの繰り返しの数です。</p>
+</section>
+<section id="reimporter">
+<h2>再インポート<a class="headerlink" href="#reimporter" title="この見出しへのリンク"></a></h2>
+<p>同じ relevé を再インポートしても何も追加されません。新しい局面はなく、コレクションにも何も入らず(<code class="docutils literal notranslate"><span class="pre">added</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">collection:</span> <span class="pre">0</span></code>)、参照コメントは参照が変わった場合にのみ書き直され、二重にはなりません。したがって、relevé を修正した後でインポートをやり直せます。</p>
+</section>
+<section id="le-demon">
+<h2>デーモン<a class="headerlink" href="#le-demon" title="この見出しへのリンク"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">serve</span></code> デーモンは、同じ規則で<code class="docutils literal notranslate"><span class="pre">/v1/documents.importReleve</span></code>の下で relevé をインポートします。ドキュメントの解析は行いません(<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照)。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="cli_import_export.html" class="btn btn-neutral float-left" title="インポート、エクスポート、転送" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-right" title="ライブラリ: 検索、一覧、コレクション" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
