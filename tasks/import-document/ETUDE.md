@@ -52,6 +52,23 @@ autres livres : état, plateau, contexte et pips identiques. Contre main 697c069
 Endgame 12 → 13. Restes BCS : 20 diagrammes à pips lus qui contredisent le plateau (piles hautes,
 pions manquants ; désaccord nommé, à vérifier) ; videau blanc sur carré noir non lu.
 
+En attente de revue (2026-11-28) : #1018 (documents rédigés), branche `feat/doc-formats`, non
+fusionnée. `AnalyzeWrittenFile` (`analyze_documents.go`) lit DOCX, ODT, EPUB et HTML : chaque
+image, dans l'ordre du texte, devient une page du lecteur de structure ; le paragraphe d'avant,
+le sien et le suivant forment sa couche texte, posée en colonne à droite de l'image (quatre
+points du bord, hors de portée des pips non étiquetés, à portée des « Pips 139 » et des dés),
+seulement s'ils contiennent un chiffre, sinon les légendes de l'image restent lues. Page = rang
+de l'image, chapitre = titre qui la précède, citation « fig. N » (`Source.Pictures`,
+`Releve.ReferenceOf`). HTML : images du dossier de la page et dessous, `data:` ; rien du
+réseau. EMF/WMF/SVG nommés, non lus ; `.doc` binaire refusé (`ErrLegacyWord`, propose PDF ou
+DOCX) : une lecture OLE sans ordre du texte ni légende n'a pas été jugée raisonnable. Bornes :
+fichier 512 Mio comme le PDF, 10 000 entrées zip (signatures comptées avant `archive/zip`),
+64 Mio par partie, 1 Gio décompressé en tout. Mesure, sur fixtures fabriquées depuis
+`testdata/sans-pips` (réglage, aucun livre ni page de réserve ouverts, l'EPUB du corpus non
+plus) : DOCX, ODT, EPUB et HTML rendent exactement les entrées des mêmes images lues en dossier ;
+un diagramme sans pips devient sûr avec « Pips N » dans le texte voisin, et des pips faux ne le
+confirment pas. Non mesuré : documents rédigés réels (aucun au réglage hormis l'EPUB réservé).
+
 Suite de l'ancienne reprise ci-dessous (2026-11-30, date erronée, écrite le 2026-11-26).
 
 ### Reprise précédente

@@ -120,7 +120,15 @@ function isCancellation(err) {
 }
 
 /**
- * Lit un document (PDF, image, dossier d'images ou Relevé .json) et ouvre l'assistant.
+ * Un document rédigé (DOCX, ODT, EPUB, page HTML) se lit image par image, dans l'ordre du texte.
+ * @param {string} path
+ */
+export function isWrittenDocument(path) {
+    return /\.(docx|odt|epub|html?|xhtml|doc)$/i.test(path || '');
+}
+
+/**
+ * Lit un document (PDF, document rédigé, image, dossier d'images ou Relevé .json) et ouvre l'assistant.
  * Sans chemin, la personne le choisit dans la boîte de fichiers.
  * @param {string} [given]
  */

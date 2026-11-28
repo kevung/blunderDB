@@ -3849,6 +3849,7 @@
         "title": "Tuo asiakirja",
         "reading": "Luetaan asiakirjaa…",
         "progress": "sivu {page} / {pages} · {diagrams} kaaviota",
+        "progressPictures": "kuva {page} / {pages} · {diagrams} kaaviota",
         "eta": "{eta} jäljellä",
         "cancelled": "Lukeminen peruttu.",
         "importCancelled": "Tuonti peruttu.",

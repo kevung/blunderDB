@@ -157,8 +157,11 @@ L'assistant d'import de l'interface
 
 La commande ``import_document`` (``idoc``, :doc:`cmd_mode`), le bouton **Importer un
 document…** de la barre d'outils ou celui de la liste des collections vide ouvre
-l'assistant : on choisit un PDF, une
-image de page ou un relevé ``.json`` déjà lu. L'assistant appelle les mêmes fonctions que
+l'assistant : on choisit un PDF, un document rédigé (DOCX, ODT, EPUB, page
+HTML), une image de page ou un relevé ``.json`` déjà lu. Déposer un tel fichier
+sur la fenêtre ou le choisir par *CTRL-I* ouvre aussi l'assistant ; un ``.doc``
+de Word 97-2003 y est refusé avec un message qui propose de l'enregistrer en PDF
+ou en DOCX. L'assistant appelle les mêmes fonctions que
 ``document analyze``, ``check`` et ``import`` et n'applique aucune règle de plus
 (:ref:`cli_document`). Un fichier que blunderDB a produit — PDF ou page HTML
 d'archive papier, de feuille de match ou de liste de positions avec codes de
@@ -196,7 +199,7 @@ accepte les entrées vérifiées.
 
 Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; l'assistant n'offre
 pas ``--force``. Pendant la lecture, une barre de progression indique la page lue sur le
-total, les diagrammes trouvés jusque-là et le temps restant estimé. **Annuler**, la
+total (l'image lue, pour un document rédigé), les diagrammes trouvés jusque-là et le temps restant estimé. **Annuler**, la
 fermeture et la touche Échap arrêtent la lecture ou l'import en cours : l'assistant
 se ferme sur « Lecture annulée » après une lecture, et revient à la revue après un
 import, qui n'a alors rien écrit. La tâche figure aussi dans le panneau des calculs.

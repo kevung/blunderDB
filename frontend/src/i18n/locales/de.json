@@ -3849,6 +3849,7 @@
         "title": "Dokument importieren",
         "reading": "Dokument wird gelesen…",
         "progress": "Seite {page} / {pages} · {diagrams} Diagramme",
+        "progressPictures": "Bild {page} / {pages} · {diagrams} Diagramme",
         "eta": "noch {eta}",
         "cancelled": "Lesen abgebrochen.",
         "importCancelled": "Import abgebrochen.",

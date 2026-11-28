@@ -1,5 +1,5 @@
 <script>
-    // L'assistant d'import de document : lit un PDF, des images ou un Relevé,
+    // L'assistant d'import de document : lit un PDF, un document rédigé, des images ou un Relevé,
     // fait confirmer une fois les défauts du document et le sens de jeu,
     // montre les entrées à vérifier avec leur note, puis importe — au même
     // niveau que `document import --accept-complete --fallback`.
@@ -7,7 +7,7 @@
     import Modal from './Modal.svelte';
     import DocumentVerifySheet from './DocumentVerifySheet.svelte';
     import { documentImportStore } from '../stores/documentImportStore.js';
-    import { confirmDocument, setChoice, runDocumentImport, closeDocumentImport, cancelDocumentImport } from '../services/documentImportService.js';
+    import { confirmDocument, setChoice, runDocumentImport, closeDocumentImport, cancelDocumentImport, isWrittenDocument } from '../services/documentImportService.js';
 
     let { visible = false } = $props();
     /** @type {any} */
@@ -64,7 +64,9 @@
         {#if s.progress && s.progress.pages > 0}
             <div class="progress-bar-container"><div class="progress-bar" style="width: {percent}%"></div></div>
             <p class="doc-progress" data-testid="document-import-progress">
-                {$t('documentImport.progress', { page: s.progress.page, pages: s.progress.pages, diagrams: s.progress.diagrams })}{eta ? ` · ${$t('documentImport.eta', { eta })}` : ''}
+                {$t(isWrittenDocument(s.path) ? 'documentImport.progressPictures' : 'documentImport.progress', { page: s.progress.page, pages: s.progress.pages, diagrams: s.progress.diagrams })}{eta
+                    ? ` · ${$t('documentImport.eta', { eta })}`
+                    : ''}
             </p>
         {/if}
     {/if}

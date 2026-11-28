@@ -51,7 +51,21 @@ func analyzeScans(rd *pdf.Reader, r *Releve, opts AnalyzeOptions, outline []pdf.
 }
 
 // unreadSummary names the pages passed over, grouped by reason.
-func unreadSummary(us []structure.PageError) string {
+func unreadSummary(us []structure.PageError) string { return unreadNamed(us, "pages") }
+
+// unreadNamed names the pages passed over, grouped by reason, calling them
+// what ("pages", "pictures"); a picture too small to hold a diagram is
+// passed over in silence. Empty when there is nothing to name.
+func unreadNamed(all []structure.PageError, what string) string {
+	var us []structure.PageError
+	for _, u := range all {
+		if !errors.Is(u.Err, errSmallPicture) {
+			us = append(us, u)
+		}
+	}
+	if len(us) == 0 {
+		return ""
+	}
 	byReason := map[string][]string{}
 	var order []string
 	for _, u := range us {
@@ -64,9 +78,9 @@ func unreadSummary(us []structure.PageError) string {
 	sort.SliceStable(order, func(a, b int) bool { return len(byReason[order[a]]) > len(byReason[order[b]]) })
 	var parts []string
 	for _, k := range order {
-		parts = append(parts, fmt.Sprintf("p. %s: %s", strings.Join(byReason[k], ", "), k))
+		parts = append(parts, fmt.Sprintf("%s %s: %s", map[bool]string{true: "p.", false: "no."}[what == "pages"], strings.Join(byReason[k], ", "), k))
 	}
-	return fmt.Sprintf("%d pages not read; %s", len(us), strings.Join(parts, "; "))
+	return fmt.Sprintf("%d %s not read; %s", len(us), what, strings.Join(parts, "; "))
 }
 
 // pdfScans are a PDF's pages, each composed from its images when the

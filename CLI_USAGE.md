@@ -3319,7 +3319,7 @@ Examples:
 ### `blunderdb document analyze`
 
 ```
-Usage: blunderdb document analyze [options] <file.pdf|page-images-folder|page.png>
+Usage: blunderdb document analyze [options] <file.pdf|file.docx|file.odt|file.epub|page.html|page-images-folder|page.png>
 
 Read the diagrams of a document into a relevé, in the document's order, each with its page,
 label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own
@@ -3329,7 +3329,13 @@ with eXtreme Gammon's board font (XG's PDF prints), from its glyphs, or with a S
 board font (the Atchoum family), from the shapes of its embedded glyphs. A scanned book is
 read by the structure of each diagram, from a scanned PDF (its pages composed from their
 images, JPEG, JPEG 2000, JBIG2 or fax) or from its pages as images (a folder
-of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). The printed pip counts
+of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). A written
+document (DOCX, ODT, EPUB, or an HTML page and the pictures in its folder) is read picture
+by picture in the order of its text, each entry's page being the picture's rank and its
+chapter the heading before it; the text around a picture cross-checks it as a PDF's text
+layer does. Nothing is fetched from the network; a picture drawn with vectors (EMF, WMF,
+SVG) is named, not read, and a Word 97-2003 .doc is refused: save it as PDF or DOCX.
+The printed pip counts
 are read in the PDF's text layer and in the image; when the two disagree the entry is not
 sure. Pages that cannot be read are named on standard error. Nothing is written to a
 database: check the relevé, then import it with
@@ -3337,15 +3343,16 @@ database: check the relevé, then import it with
 
 Options:
   -author string
-    	Author of the document (default: the PDF's metadata)
+    	Author of the document (default: the document's metadata)
   -o string
     	Write the relevé to this file (default: standard output)
   -title string
-    	Title of the document (default: the PDF's metadata, else the file or folder name)
+    	Title of the document (default: the document's metadata, else the file or folder name)
 
 Examples:
   blunderdb document analyze book.pdf -o releve.json
   blunderdb document analyze pages/ -o releve.json --title "My book"
+  blunderdb document analyze notes.docx -o releve.json
   blunderdb document analyze book.pdf -o releve.json --title "My book" --author "Its author"
 ```
 

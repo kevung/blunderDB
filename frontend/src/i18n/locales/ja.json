@@ -3849,6 +3849,7 @@
         "title": "文書を取り込む",
         "reading": "文書を読み取っています…",
         "progress": "{page} / {pages} ページ · 図 {diagrams} 件",
+        "progressPictures": "画像 {page} / {pages} · 図 {diagrams} 件",
         "eta": "残り {eta}",
         "cancelled": "読み取りを中止しました。",
         "importCancelled": "読み込みを中止しました。",

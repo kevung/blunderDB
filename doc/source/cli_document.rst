@@ -20,7 +20,7 @@ l'import d'un relevé écrit.
 Ce qui est lu, ce qui est refusé
 --------------------------------
 
-``document analyze`` lit deux sortes de documents :
+``document analyze`` lit ces sortes de documents :
 
 * un PDF dont les diagrammes sont dessinés avec la police de plateau
   d'eXtreme Gammon (les PDF imprimés par XG) : chaque diagramme y est du texte,
@@ -33,7 +33,19 @@ Ce qui est lu, ce qui est refusé
 * un livre scanné : un PDF dont les pages sont faites d'images, avec ou sans
   couche texte, ou ses pages en images (un dossier de fichiers PNG ou JPEG, une
   page par fichier, lus dans l'ordre de leurs noms, ou une image seule). Les
-  diagrammes y sont lus par leur structure (voir :ref:`cli_document_images`).
+  diagrammes y sont lus par leur structure (voir :ref:`cli_document_images`) ;
+* un document rédigé, DOCX, ODT, EPUB ou page HTML : ses images sont lues
+  une à une dans l'ordre du texte, chacune comme une page en image. Le numéro de
+  page d'une entrée est alors le rang de son image parmi celles lues, son
+  chapitre le titre qui la précède, et elle est citée « fig. 12 » ou
+  « Chapitre 3, fig. 12 ». Le paragraphe qui précède l'image, le sien et le
+  suivant servent de couche texte : les pips et les dés qu'ils citent recoupent
+  la lecture comme dans un PDF. Une page HTML lit les images de son dossier et
+  de ses sous-dossiers, et celles écrites dans la page (``data:``) ; rien n'est
+  téléchargé, et les images en ligne sont comptées sur la sortie d'erreur. Une
+  image dessinée en vecteurs (EMF, WMF, SVG) n'est pas lue : elle est nommée
+  sur la sortie d'erreur. Un ``.doc`` de Word 97-2003 est refusé avec un message
+  qui propose de l'enregistrer en PDF ou en DOCX.
 
 Un PDF dont aucune page n'est faite d'images ni dessinée avec cette police (un
 livre dessiné en vecteurs) est refusé ; ses pages se donnent alors en images :
@@ -45,9 +57,12 @@ livre dessiné en vecteurs) est refusé ; ses pages se donnent alors en images :
 Un PDF dessiné avec une police de plateau dont les formes ne sont pas
 embarquées est refusé avec un message qui nomme la police.
 
-Un fichier qui n'est ni un PDF ni une image, un PDF chiffré ou plus gros que
-512 Mio, une image de plus de 64 Mio ou de plus de 100 millions de pixels est
-refusé aussi, avec un message qui le dit.
+Un fichier qui n'est ni un PDF, ni un document rédigé, ni une image, un PDF
+chiffré ou plus gros que 512 Mio, une image de plus de 64 Mio ou de plus de
+100 millions de pixels est refusé aussi, avec un message qui le dit. Un
+document rédigé a la même limite de 512 Mio ; son archive est refusée au-delà
+de 10 000 entrées, d'une partie qui se décompresse en plus de 64 Mio ou d'un
+total décompressé de plus de 1 Gio.
 
 Le parcours en trois commandes
 ------------------------------

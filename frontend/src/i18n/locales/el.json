@@ -3849,6 +3849,7 @@
         "title": "Εισαγωγή εγγράφου",
         "reading": "Ανάγνωση του εγγράφου…",
         "progress": "σελίδα {page} / {pages} · {diagrams} διαγράμματα",
+        "progressPictures": "εικόνα {page} / {pages} · {diagrams} διαγράμματα",
         "eta": "απομένουν {eta}",
         "cancelled": "Η ανάγνωση ακυρώθηκε.",
         "importCancelled": "Η εισαγωγή ακυρώθηκε.",

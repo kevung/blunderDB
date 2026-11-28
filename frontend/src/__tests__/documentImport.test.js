@@ -229,4 +229,20 @@ describe('reading progress and cancellation', () => {
         expect(get(activeModal)).not.toBe(MODAL.DOCUMENT_IMPORT);
         cancelDocumentImport();
     });
+
+    test('a written document counts its pictures, not pages', async () => {
+        /** @type {(e: any) => void} */ let fail = () => {};
+        /** @type {any} */ (db.AnalyzeDocument).mockImplementationOnce(() => new Promise((_, reject) => (fail = reject)));
+        const { findByTestId, getByTestId } = render(DocumentImportModal, { visible: true });
+        const started = startDocumentImport('/tmp/notes.docx');
+        await waitFor(() => expect(get(documentImportStore).phase).toBe('reading'));
+        events['document-analyze:progress']({ page: 3, pages: 9, diagrams: 2 });
+        const text = (await findByTestId('document-import-progress')).textContent ?? '';
+        expect(text).toContain('3 / 9');
+        expect(text).not.toMatch(/^\s*page/);
+        await fireEvent.click(getByTestId('document-import-cancel'));
+        fail(new Error('context canceled'));
+        await started;
+        cancelDocumentImport();
+    });
 });

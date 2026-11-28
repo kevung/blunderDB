@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 03:03+0100\n"
+"POT-Creation-Date: 2026-11-28 03:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -62,8 +62,8 @@ msgid "Ce qui est lu, ce qui est refusé"
 msgstr "Τι διαβάζεται, τι απορρίπτεται"
 
 #: ../../source/cli_document.rst:23
-msgid "``document analyze`` lit deux sortes de documents :"
-msgstr "Η ``document analyze`` διαβάζει δύο είδη εγγράφων:"
+msgid "``document analyze`` lit ces sortes de documents :"
+msgstr "Η ``document analyze`` διαβάζει τα ακόλουθα είδη εγγράφων:"
 
 #: ../../source/cli_document.rst:25
 msgid ""
@@ -96,15 +96,46 @@ msgid ""
 "sans couche texte, ou ses pages en images (un dossier de fichiers PNG ou "
 "JPEG, une page par fichier, lus dans l'ordre de leurs noms, ou une image "
 "seule). Les diagrammes y sont lus par leur structure (voir "
-":ref:`cli_document_images`)."
+":ref:`cli_document_images`) ;"
 msgstr ""
 "ένα σαρωμένο βιβλίο: ένα PDF του οποίου οι σελίδες αποτελούνται από "
 "εικόνες, με ή χωρίς επίπεδο κειμένου, ή οι σελίδες του ως εικόνες (ένας "
 "φάκελος αρχείων PNG ή JPEG, μία σελίδα ανά αρχείο, που διαβάζονται με τη "
 "σειρά των ονομάτων τους, ή μία μεμονωμένη εικόνα). Τα διαγράμματα "
-"διαβάζονται εκεί από τη δομή τους (βλ. :ref:`cli_document_images`)."
+"διαβάζονται εκεί από τη δομή τους (βλ. :ref:`cli_document_images`)·"
 
-#: ../../source/cli_document.rst:38
+#: ../../source/cli_document.rst:37
+msgid ""
+"un document rédigé, DOCX, ODT, EPUB ou page HTML : ses images sont lues "
+"une à une dans l'ordre du texte, chacune comme une page en image. Le "
+"numéro de page d'une entrée est alors le rang de son image parmi celles "
+"lues, son chapitre le titre qui la précède, et elle est citée « fig. 12 »"
+" ou « Chapitre 3, fig. 12 ». Le paragraphe qui précède l'image, le sien "
+"et le suivant servent de couche texte : les pips et les dés qu'ils citent"
+" recoupent la lecture comme dans un PDF. Une page HTML lit les images de "
+"son dossier et de ses sous-dossiers, et celles écrites dans la page "
+"(``data:``) ; rien n'est téléchargé, et les images en ligne sont comptées"
+" sur la sortie d'erreur. Une image dessinée en vecteurs (EMF, WMF, SVG) "
+"n'est pas lue : elle est nommée sur la sortie d'erreur. Un ``.doc`` de "
+"Word 97-2003 est refusé avec un message qui propose de l'enregistrer en "
+"PDF ou en DOCX."
+msgstr ""
+"ένα έγγραφο κειμένου, DOCX, ODT, EPUB ή σελίδα HTML: οι εικόνες του "
+"διαβάζονται μία προς μία με τη σειρά του κειμένου, καθεμία ως εικόνα "
+"σελίδας. Ο αριθμός σελίδας μιας εγγραφής είναι τότε η σειρά της εικόνας "
+"της ανάμεσα σε όσες διαβάστηκαν, το κεφάλαιό της ο τίτλος που προηγείται,"
+" και παρατίθεται ως «fig. 12» ή «Κεφάλαιο 3, fig. 12». Η παράγραφος που "
+"προηγείται της εικόνας, η δική της και η επόμενη χρησιμεύουν ως επίπεδο "
+"κειμένου: τα pips και τα ζάρια που αναφέρουν διασταυρώνουν την ανάγνωση "
+"όπως σε ένα PDF. Μια σελίδα HTML διαβάζει τις εικόνες του φακέλου της και"
+" των υποφακέλων της, καθώς και εκείνες που είναι γραμμένες μέσα στη "
+"σελίδα (``data:``)· τίποτα δεν κατεβαίνει, και οι εικόνες στο διαδίκτυο "
+"καταμετρώνται στην έξοδο σφαλμάτων. Μια εικόνα σχεδιασμένη με διανύσματα "
+"(EMF, WMF, SVG) δεν διαβάζεται: κατονομάζεται στην έξοδο σφαλμάτων. Ένα "
+"``.doc`` του Word 97-2003 απορρίπτεται με ένα μήνυμα που προτείνει την "
+"αποθήκευσή του ως PDF ή DOCX."
+
+#: ../../source/cli_document.rst:50
 msgid ""
 "Un PDF dont aucune page n'est faite d'images ni dessinée avec cette "
 "police (un livre dessiné en vecteurs) est refusé ; ses pages se donnent "
@@ -114,7 +145,7 @@ msgstr ""
 "σχεδιασμένη με αυτή τη γραμματοσειρά (ένα βιβλίο σχεδιασμένο με "
 "διανύσματα) απορρίπτεται· οι σελίδες του δίνονται τότε ως εικόνες:"
 
-#: ../../source/cli_document.rst:45
+#: ../../source/cli_document.rst:57
 msgid ""
 "Un PDF dessiné avec une police de plateau dont les formes ne sont pas "
 "embarquées est refusé avec un message qui nomme la police."
@@ -122,22 +153,28 @@ msgstr ""
 "Ένα PDF σχεδιασμένο με γραμματοσειρά ταμπλό της οποίας τα σχήματα δεν "
 "είναι ενσωματωμένα απορρίπτεται με μήνυμα που ονομάζει τη γραμματοσειρά."
 
-#: ../../source/cli_document.rst:48
+#: ../../source/cli_document.rst:60
 msgid ""
-"Un fichier qui n'est ni un PDF ni une image, un PDF chiffré ou plus gros "
-"que 512 Mio, une image de plus de 64 Mio ou de plus de 100 millions de "
-"pixels est refusé aussi, avec un message qui le dit."
+"Un fichier qui n'est ni un PDF, ni un document rédigé, ni une image, un "
+"PDF chiffré ou plus gros que 512 Mio, une image de plus de 64 Mio ou de "
+"plus de 100 millions de pixels est refusé aussi, avec un message qui le "
+"dit. Un document rédigé a la même limite de 512 Mio ; son archive est "
+"refusée au-delà de 10 000 entrées, d'une partie qui se décompresse en "
+"plus de 64 Mio ou d'un total décompressé de plus de 1 Gio."
 msgstr ""
-"Ένα αρχείο που δεν είναι ούτε PDF ούτε εικόνα, ένα κρυπτογραφημένο PDF ή "
-"ένα PDF μεγαλύτερο από 512 MiB, μια εικόνα μεγαλύτερη από 64 MiB ή με "
-"περισσότερα από 100 εκατομμύρια εικονοστοιχεία απορρίπτεται επίσης, με "
-"ένα μήνυμα που το λέει."
+"Ένα αρχείο που δεν είναι ούτε PDF ούτε έγγραφο κειμένου ούτε εικόνα, ένα "
+"κρυπτογραφημένο PDF ή ένα PDF μεγαλύτερο από 512 MiB, μια εικόνα "
+"μεγαλύτερη από 64 MiB ή με περισσότερα από 100 εκατομμύρια εικονοστοιχεία"
+" απορρίπτεται επίσης, με ένα μήνυμα που το λέει. Ένα έγγραφο κειμένου "
+"έχει το ίδιο όριο των 512 MiB· το αρχείο συμπίεσής του απορρίπτεται πέρα "
+"από 10 000 εγγραφές, ένα τμήμα που αποσυμπιέζεται σε περισσότερα από 64 "
+"MiB ή ένα συνολικό αποσυμπιεσμένο μέγεθος μεγαλύτερο από 1 GiB."
 
-#: ../../source/cli_document.rst:53
+#: ../../source/cli_document.rst:68
 msgid "Le parcours en trois commandes"
 msgstr "Η διαδρομή με τρεις εντολές"
 
-#: ../../source/cli_document.rst:61
+#: ../../source/cli_document.rst:76
 msgid ""
 "``analyze`` lit le PDF et écrit le relevé (sans ``-o``, il l'écrit sur la"
 " sortie standard). Quand l'erreur standard est un terminal, il y écrit la"
@@ -149,7 +186,7 @@ msgstr ""
 "τερματικό, γράφει εκεί την πρόοδο της ανάγνωσης (``page 37/212, 54 "
 "diagrams``)· σε σενάριο δεν γράφεται τίποτα. Συνοψίζει όσα βρήκε:"
 
-#: ../../source/cli_document.rst:74
+#: ../../source/cli_document.rst:89
 msgid ""
 "Le titre et l'auteur viennent des métadonnées du PDF, à défaut le titre "
 "est le nom du fichier ; ``--title`` et ``--author`` les remplacent. Le "
@@ -160,7 +197,7 @@ msgstr ""
 "αντικαθιστούν. Το κεφάλαιο κάθε καταχώρισης προέρχεται από τους "
 "σελιδοδείκτες του PDF."
 
-#: ../../source/cli_document.rst:78
+#: ../../source/cli_document.rst:93
 msgid ""
 "``check`` valide le relevé et compte ses entrées, sans lire ni écrire de "
 "base. Il liste aussi, après le décompte, les entrées à vérifier (rang, "
@@ -173,7 +210,7 @@ msgstr ""
 "σύγκριση με το διάγραμμα)· η ``--format json`` δίνει τις ίδιες μετρήσεις "
 "και την ίδια λίστα (``review``) σε JSON:"
 
-#: ../../source/cli_document.rst:93
+#: ../../source/cli_document.rst:108
 msgid ""
 "``check`` reçoit aussi le document lui-même (``check livre.pdf``) : il "
 "lit alors le relevé que la planche de vérification de l'interface garde à"
@@ -185,11 +222,11 @@ msgstr ""
 "(``livre.pdf.releve.json``, :ref:`assistant_import_document`) και δίνει "
 "την πρόοδό του, με το ``verified`` συμπεριλαμβανομένο."
 
-#: ../../source/cli_document.rst:98
+#: ../../source/cli_document.rst:113
 msgid "``import`` écrit les positions dans la collection :"
 msgstr "Η ``import`` γράφει τις θέσεις στη συλλογή:"
 
-#: ../../source/cli_document.rst:105
+#: ../../source/cli_document.rst:120
 msgid ""
 "``--collection`` choisit un autre nom que le titre du document. Si le "
 "fichier de base n'existe pas, il est créé."
@@ -197,11 +234,11 @@ msgstr ""
 "Η ``--collection`` επιλέγει άλλο όνομα από τον τίτλο του εγγράφου. Αν το "
 "αρχείο της βάσης δεν υπάρχει, δημιουργείται."
 
-#: ../../source/cli_document.rst:109
+#: ../../source/cli_document.rst:124
 msgid "Le relevé"
 msgstr "Το relevé"
 
-#: ../../source/cli_document.rst:111
+#: ../../source/cli_document.rst:126
 msgid ""
 "Le relevé est un fichier JSON lisible, que l'on peut ouvrir dans un "
 "éditeur de texte. L'en-tête (``document``) donne le titre, l'auteur, "
@@ -218,11 +255,11 @@ msgstr ""
 ":ref:`cli_document_defaults`). Έπειτα κάθε διάγραμμα είναι μια "
 "καταχώριση, με τη σειρά του εγγράφου:"
 
-#: ../../source/cli_document.rst:118
+#: ../../source/cli_document.rst:133
 msgid "``rank`` — son rang, de 1 sans trou ;"
 msgstr "``rank`` — η τάξη του, από το 1 χωρίς κενά·"
 
-#: ../../source/cli_document.rst:119
+#: ../../source/cli_document.rst:134
 msgid ""
 "``page``, ``chapter`` et ``label`` — sa page, le chapitre des signets et "
 "le nom que le document lui donne (« Problem 191 ») quand il est imprimé "
@@ -232,7 +269,7 @@ msgstr ""
 "σελιδοδεικτών και το όνομα που του δίνει το έγγραφο («Problem 191») όταν "
 "είναι τυπωμένο από πάνω·"
 
-#: ../../source/cli_document.rst:121
+#: ../../source/cli_document.rst:136
 msgid ""
 "``position`` — la position, en XGID : pions, videau, trait, dés, score et"
 " longueur du match en une seule chaîne ;"
@@ -240,7 +277,7 @@ msgstr ""
 "``position`` — η θέση, σε XGID: πούλια, κύβος, σειρά παιξίματος, ζάρια, "
 "σκορ και διάρκεια αγώνα σε μία μόνο συμβολοσειρά·"
 
-#: ../../source/cli_document.rst:123
+#: ../../source/cli_document.rst:138
 msgid ""
 "``checkers`` — la certitude des pions : ``sure``, ``to-verify`` ou "
 "``uncertain`` ;"
@@ -248,7 +285,7 @@ msgstr ""
 "``checkers`` — η βεβαιότητα των πουλιών: ``sure``, ``to-verify`` ή "
 "``uncertain``·"
 
-#: ../../source/cli_document.rst:125
+#: ../../source/cli_document.rst:140
 msgid ""
 "``complete`` — ``true`` quand les pions ont été lus à quinze par camp sur"
 " le plateau sans aucun doute, sans qu'un recoupement les confirme (voir "
@@ -258,7 +295,7 @@ msgstr ""
 "πλευρά στο ταμπλό χωρίς καμία αμφιβολία, χωρίς να τα επιβεβαιώνει "
 "διασταύρωση (βλ. :ref:`cli_document_complete`)·"
 
-#: ../../source/cli_document.rst:128
+#: ../../source/cli_document.rst:143
 msgid ""
 "``context`` — comment le contexte (videau, dés, trait, score) est connu :"
 " ``read`` (lu et recoupé), ``default`` (le contexte par défaut du "
@@ -271,11 +308,11 @@ msgstr ""
 "ούτε υπό το προεπιλεγμένο: κύβος ή ζάρια σχεδιασμένα και μη διαβασμένα, "
 "σκορ που δεν βρίσκεται) ή ``uncertain`` (αντικρουόμενο)·"
 
-#: ../../source/cli_document.rst:132
+#: ../../source/cli_document.rst:147
 msgid "``doubts`` — les doutes nommés de la lecture ;"
 msgstr "``doubts`` — οι κατονομασμένες αμφιβολίες της ανάγνωσης·"
 
-#: ../../source/cli_document.rst:133
+#: ../../source/cli_document.rst:148
 msgid ""
 "``rect`` — où le diagramme se trouve sur la page, en fraction de sa "
 "taille, pour le retrouver dans le PDF ;"
@@ -283,7 +320,7 @@ msgstr ""
 "``rect`` — πού βρίσκεται το διάγραμμα στη σελίδα, ως κλάσμα του μεγέθους "
 "της, ώστε να ξαναβρεθεί στο PDF·"
 
-#: ../../source/cli_document.rst:135
+#: ../../source/cli_document.rst:150
 msgid ""
 "``verified`` — ``true`` quand une personne a comparé la lecture au "
 "diagramme."
@@ -291,11 +328,11 @@ msgstr ""
 "``verified`` — ``true`` όταν ένα πρόσωπο έχει συγκρίνει την ανάγνωση με "
 "το διάγραμμα."
 
-#: ../../source/cli_document.rst:137
+#: ../../source/cli_document.rst:152
 msgid "``verify`` écrit le verdict d'une personne dans le relevé, sans base :"
 msgstr "Η ``verify`` γράφει την κρίση ενός ατόμου στο relevé, χωρίς βάση:"
 
-#: ../../source/cli_document.rst:145
+#: ../../source/cli_document.rst:160
 msgid ""
 "``--rank`` nomme les entrées, séparées par des virgules ; elles "
 "deviennent vérifiées. ``--position`` remplace la lecture d'une seule "
@@ -316,7 +353,7 @@ msgstr ""
 "γράφτηκε και την πρόοδο: ``releve.json: verified 3 of 6 entries (sure 3, "
 "to verify 2, uncertain 1)``."
 
-#: ../../source/cli_document.rst:153
+#: ../../source/cli_document.rst:168
 msgid ""
 "On relit un relevé en ouvrant le PDF à la page de l'entrée. On y corrige "
 "la position (le XGID), on marque ``\"verified\": true`` une entrée "
@@ -340,7 +377,7 @@ msgstr ""
 "έχει καμία· μια καταχώριση ``default`` φέρει το προεπιλεγμένο πλαίσιο στο"
 " XGID της."
 
-#: ../../source/cli_document.rst:163
+#: ../../source/cli_document.rst:178
 msgid ""
 "Le relevé est au format de version 2. Un relevé de version 1, qui donnait"
 " un seul état (``state``) par entrée, se lit encore : une entrée ``sure``"
@@ -355,11 +392,11 @@ msgstr ""
 "προεπιλεγμένο πλαίσιο, ανεπιβεβαίωτο, και κάθε άλλη έχει το πλαίσιό της "
 "προς επαλήθευση. Το ``analyze`` γράφει πάντα την έκδοση 2."
 
-#: ../../source/cli_document.rst:170
+#: ../../source/cli_document.rst:185
 msgid "Les trois états"
 msgstr "Οι τρεις καταστάσεις"
 
-#: ../../source/cli_document.rst:172
+#: ../../source/cli_document.rst:187
 msgid ""
 "L'état d'une entrée découle de ses deux certitudes ; il n'est pas écrit "
 "dans le relevé."
@@ -367,11 +404,11 @@ msgstr ""
 "Η κατάσταση μιας καταχώρισης προκύπτει από τις δύο βεβαιότητές της· δεν "
 "γράφεται στο relevé."
 
-#: ../../source/cli_document.rst:175
+#: ../../source/cli_document.rst:190
 msgid "``sure``"
 msgstr "``sure``"
 
-#: ../../source/cli_document.rst:176
+#: ../../source/cli_document.rst:191
 msgid ""
 "Les pions sont sûrs **et** le contexte est certifié : lu, ou sous le "
 "contexte par défaut du document une fois celui-ci confirmé. Les pions "
@@ -392,11 +429,11 @@ msgstr ""
 "ενός σκαναρισμένου βιβλίου δεν διαβάζεται ποτέ: βλ. "
 ":ref:`cli_document_images`."
 
-#: ../../source/cli_document.rst:185
+#: ../../source/cli_document.rst:200
 msgid "``to-verify``"
 msgstr "``to-verify``"
 
-#: ../../source/cli_document.rst:186
+#: ../../source/cli_document.rst:201
 msgid ""
 "La lecture tient, mais rien ne la confirme : un pip imprimé diffère du "
 "pip calculé, ou le diagramme montre ce que les impressions de référence "
@@ -419,11 +456,11 @@ msgstr ""
 "δεν διαβάζει. Οι περιπτώσεις αυτές διαβάζονται αλλά δεν δηλώνονται ποτέ "
 "βέβαιες."
 
-#: ../../source/cli_document.rst:195
+#: ../../source/cli_document.rst:210
 msgid "``uncertain``"
 msgstr "``uncertain``"
 
-#: ../../source/cli_document.rst:196
+#: ../../source/cli_document.rst:211
 msgid ""
 "Les pions ou le contexte sont contredits, ou la lecture est incomplète : "
 "un glyphe inconnu, un camp qui ne compte pas quinze pions et dont les "
@@ -437,7 +474,7 @@ msgstr ""
 " δεν προκύπτει καμία νόμιμη θέση κρατά τη θέση του στο relevé, χωρίς θέση"
 " (``\"position\": \"\"``)."
 
-#: ../../source/cli_document.rst:201
+#: ../../source/cli_document.rst:216
 msgid ""
 "Une entrée est **importable** quand elle est ``sure`` ou vérifiée, ou, "
 "sur demande, quand elle est complète (:ref:`cli_document_complete`). Les "
@@ -447,15 +484,15 @@ msgstr ""
 " κατόπιν αιτήματος, όταν είναι πλήρης (:ref:`cli_document_complete`). Οι "
 "αμφιβολίες που φέρει λένε τι να ελεγχθεί, για παράδειγμα:"
 
-#: ../../source/cli_document.rst:209
+#: ../../source/cli_document.rst:224
 msgid "Le dé n'est pas lu : l'analyse écrit toujours « pas de dés » (``00``)."
 msgstr "Το ζάρι δεν διαβάζεται: η ανάλυση γράφει πάντα «χωρίς ζάρια» (``00``)."
 
-#: ../../source/cli_document.rst:214
+#: ../../source/cli_document.rst:229
 msgid "Livres scannés"
 msgstr "Σαρωμένα βιβλία"
 
-#: ../../source/cli_document.rst:216
+#: ../../source/cli_document.rst:231
 msgid ""
 "Une page en image est lue sans style supposé : la commande y cherche deux"
 " rangées de douze pointes coupées par une barre, et des pions, disques de"
@@ -473,7 +510,7 @@ msgstr ""
 "πουλιών, την τυπωμένη αρίθμηση και τη φορά του παιχνιδιού. Τίποτα δεν "
 "διατηρείται από το ένα έγγραφο στο άλλο, και καμία εικόνα δεν φυλάσσεται."
 
-#: ../../source/cli_document.rst:223
+#: ../../source/cli_document.rst:238
 msgid ""
 "Elle lit les diagrammes au trait et les captures de logiciel imprimées, "
 "dans l'ordre de lecture : page de gauche puis de droite d'une double "
@@ -489,7 +526,7 @@ msgstr ""
 "που δηλώνει το αρχείο· ελλείψει αυτής, η μεγάλη πλευρά της σελίδας "
 "θεωρείται έντεκα ίντσες."
 
-#: ../../source/cli_document.rst:229
+#: ../../source/cli_document.rst:244
 msgid ""
 "Un PDF scanné est lu directement, sans outil externe : chaque page est "
 "composée de ses images, placées comme le PDF les place, à la résolution "
@@ -542,7 +579,7 @@ msgstr ""
 " που η γραμματοσειρά του δεν μεταφράζει σε χαρακτήρες δεν δίνει καμία "
 "λέξη."
 
-#: ../../source/cli_document.rst:250
+#: ../../source/cli_document.rst:265
 msgid ""
 "Sur un livre scanné, les pions et le contexte sont certifiés à part. Les "
 "pions sont ``sure`` quand les pips imprimés à côté du diagramme égalent "
@@ -557,7 +594,7 @@ msgstr ""
 " αμφιβολία για τα πούλια. Το πλαίσιο διαβάζεται πεδίο προς πεδίο, και ένα"
 " πεδίο θεωρείται διαβασμένο μόνο όταν διασταυρώνεται:"
 
-#: ../../source/cli_document.rst:256
+#: ../../source/cli_document.rst:271
 msgid ""
 "le videau, par sa valeur lue dans son carré (chiffres du document) ou "
 "dans la couche texte — deux sources présentes doivent concorder — et "
@@ -576,7 +613,7 @@ msgstr ""
 "τρία διαγράμματα, αφού ένας κύβος που ανήκει σε παίκτη φέρει την τιμή "
 "του·"
 
-#: ../../source/cli_document.rst:262
+#: ../../source/cli_document.rst:277
 msgid ""
 "les dés, comptés sur l'image et confirmés par le texte voisin : un jet "
 "nommé (« to play 41 », « rolls a 65 ») ou un coup écrit dont chaque pas "
@@ -600,7 +637,7 @@ msgstr ""
 "εικόνα) δίνει τη ρίψη και τον παίκτη που έχει τη σειρά, το καθένα υπό "
 "αμφισβήτηση· μία μόνο πηγή δεν πιστοποιεί τίποτα·"
 
-#: ../../source/cli_document.rst:271
+#: ../../source/cli_document.rst:286
 msgid ""
 "le score, par le bandeau de la couche texte (``score:``, ``pip:``, ``7 "
 "point match``), chaque score attribué au joueur dont il porte les pips ; "
@@ -610,7 +647,7 @@ msgstr ""
 "``pip:``, ``7 point match``), με κάθε σκορ να αποδίδεται στον παίκτη του "
 "οποίου τα pips φέρει· δύο ίσα σκορ δεν χρειάζονται τα pips."
 
-#: ../../source/cli_document.rst:275
+#: ../../source/cli_document.rst:290
 msgid ""
 "Une entrée dont tout le contexte est lu est ``\"context\": \"read\"``. Un"
 " videau introuvable n'est jamais pris pour centré : ce qui n'est pas lu "
@@ -650,7 +687,7 @@ msgstr ""
 "πλαίσιο, και χωριστά εκείνες των οποίων μόνο τα πούλια είναι "
 "πιστοποιημένα:"
 
-#: ../../source/cli_document.rst:298
+#: ../../source/cli_document.rst:313
 msgid ""
 "Pour une entrée dont le contexte reste à vérifier, on ouvre le livre à la"
 " page de l'entrée, on compare au diagramme le videau (valeur et "
@@ -665,11 +702,11 @@ msgstr ""
 " πεδία του XGID αν χρειάζεται και έπειτα σημειώνετε ``\"verified\": "
 "true``."
 
-#: ../../source/cli_document.rst:306
+#: ../../source/cli_document.rst:321
 msgid "Le contexte par défaut"
 msgstr "Το προεπιλεγμένο πλαίσιο"
 
-#: ../../source/cli_document.rst:308
+#: ../../source/cli_document.rst:323
 msgid ""
 "Le contexte par défaut d'un livre scanné est celui qu'écrit la lecture : "
 "videau centré, pas de dés, joueur du bas au trait, partie libre. Il "
@@ -679,7 +716,7 @@ msgstr ""
 " η ανάγνωση: κύβος στο κέντρο, χωρίς ζάρια, παίκτης κάτω στη σειρά του, "
 "ελεύθερο παιχνίδι. Εμφανίζεται στην κεφαλίδα του relevé:"
 
-#: ../../source/cli_document.rst:320
+#: ../../source/cli_document.rst:335
 msgid ""
 "``context`` est la fin du XGID après le plateau ; toute entrée "
 "``default`` la porte. Quand les diagrammes du document suivent ce "
@@ -708,11 +745,11 @@ msgstr ""
 "κειμένου ή μια σειρά παιξίματος που δίνει το κείμενο εκτός λεζάντας δεν "
 "φαίνονται."
 
-#: ../../source/cli_document.rst:335
+#: ../../source/cli_document.rst:350
 msgid "Le défaut appris sur le document"
 msgstr "Η προεπιλογή που μαθαίνεται από το έγγραφο"
 
-#: ../../source/cli_document.rst:337
+#: ../../source/cli_document.rst:352
 msgid ""
 "La lecture apprend sur le document quels champs du contexte il imprime à "
 "côté de ses diagrammes : le videau, les dés (avec le joueur au trait) ou "
@@ -724,7 +761,7 @@ msgstr ""
 "σκορ, που διαβάζονται δίπλα σε τουλάχιστον το ένα τρίτο των διαγραμμάτων."
 " Τα ονομάζει στο ``printed``:"
 
-#: ../../source/cli_document.rst:350
+#: ../../source/cli_document.rst:365
 msgid ""
 "Un champ imprimé est la lecture de chaque entrée, que la lecture a "
 "certifiée ; le contexte par défaut ne couvre que les autres. Dans un "
@@ -749,7 +786,7 @@ msgstr ""
 " here: it is not taken as money play``). Τα ``analyze`` και ``check`` "
 "εμφανίζουν ό,τι μαθεύτηκε:"
 
-#: ../../source/cli_document.rst:364
+#: ../../source/cli_document.rst:379
 msgid ""
 "Rien n'est gardé d'un document à l'autre. Un relevé sans ``printed`` "
 "garde la règle stricte : tout champ lu hors du défaut laisse le contexte "
@@ -759,11 +796,11 @@ msgstr ""
 "``printed`` κρατά τον αυστηρό κανόνα: κάθε πεδίο που διαβάζεται εκτός της"
 " προεπιλογής αφήνει το πλαίσιο προς έλεγχο."
 
-#: ../../source/cli_document.rst:370
+#: ../../source/cli_document.rst:385
 msgid "Quinze et quinze sans doute"
 msgstr "Δεκαπέντε και δεκαπέντε χωρίς αμφιβολία"
 
-#: ../../source/cli_document.rst:372
+#: ../../source/cli_document.rst:387
 msgid ""
 "Un diagramme sans pips imprimés n'a pas de recoupement : ses pions "
 "restent ``to-verify``. Lus à quinze pions par camp sans aucun doute, ils "
@@ -804,7 +841,7 @@ msgstr ""
 "them``). Ένα ταμπλό του οποίου οι μπάρες δεν συμπληρώνουν δεκαπέντε είναι"
 " ονομασμένη αμφιβολία (``they do not make fifteen``)."
 
-#: ../../source/cli_document.rst:390
+#: ../../source/cli_document.rst:405
 msgid ""
 "Le sens de jeu supposé est lui aussi un défaut du document, avec sa "
 "propre confirmation : un sens faux échangerait les joueurs de toutes les "
@@ -816,7 +853,7 @@ msgstr ""
 "παίκτες όλων των θέσεων που διαβάστηκαν υπό αυτήν. Εμφανίζεται στο "
 "προεπιλεγμένο πλαίσιο, κάτω από το ``direction``:"
 
-#: ../../source/cli_document.rst:402
+#: ../../source/cli_document.rst:417
 msgid ""
 "Confirmer le contexte ne le confirme pas. On le contrôle sur quelques "
 "diagrammes, puis on écrit ``\"confirmed\": true`` dans ``direction``."
@@ -825,7 +862,7 @@ msgstr ""
 "διαγράμματα και έπειτα γράφεται ``\"confirmed\": true`` στο "
 "``direction``."
 
-#: ../../source/cli_document.rst:405
+#: ../../source/cli_document.rst:420
 msgid ""
 "``import --accept-complete`` accepte en bloc les entrées complètes dont "
 "le contexte est certifié (lu, ou sous le contexte par défaut confirmé) et"
@@ -840,7 +877,7 @@ msgstr ""
 "επιβεβαιωμένη), χωρίς να τις σημειώνει ως επαληθευμένες· το ``check`` τις"
 " μετρά, και μετρά χωριστά όσες κρατά πίσω μια ανεπιβεβαίωτη φορά:"
 
-#: ../../source/cli_document.rst:421
+#: ../../source/cli_document.rst:436
 msgid ""
 "L'import dit combien il en a acceptées (``Complete: 84 entries of 15 + 15"
 " checkers read with no doubt``). Une entrée complète dont le contexte "
@@ -853,7 +890,7 @@ msgstr ""
 "παιχνιδιού δεν είναι επιβεβαιωμένη εξακολουθεί να απορρίπτεται· το μήνυμα"
 " σφάλματος λέει να επιβεβαιωθεί."
 
-#: ../../source/cli_document.rst:426
+#: ../../source/cli_document.rst:441
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
@@ -898,7 +935,7 @@ msgstr ""
 "disagree``). Μια καταχώριση χωρίς pips που διαβάστηκαν παραμένει ``to-"
 "verify`` (``no printed pip count was found next to the diagram``)."
 
-#: ../../source/cli_document.rst:445
+#: ../../source/cli_document.rst:460
 msgid ""
 "Une flèche de coup dessinée sur le diagramme (un trait droit et fin, "
 "oblique, seul sur le papier) n'est pas lue comme un pion, et les nombres "
@@ -910,7 +947,7 @@ msgstr ""
 "αριθμοί δεκαπέντε ή λιγότεροι που τυπώνονται δίπλα στο ταμπλό (πλήθη "
 "πουλιών, αριθμοί) δεν εκλαμβάνονται ως pips."
 
-#: ../../source/cli_document.rst:450
+#: ../../source/cli_document.rst:465
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
@@ -924,7 +961,7 @@ msgstr ""
 "τριάντα διαγράμματα που διαβάστηκαν με δεκαπέντε πούλια ανά πλευρά για να"
 " μάθει αυτή τη θέση."
 
-#: ../../source/cli_document.rst:455
+#: ../../source/cli_document.rst:470
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -942,7 +979,7 @@ msgstr ""
 "τα λιγότερα pips), τα πούλια που βγήκαν μετρημένα με διαφορά, ένα κύβος "
 "διπλασιασμού σχεδιασμένος εκτός κέντρου, σχεδιασμένα ζάρια."
 
-#: ../../source/cli_document.rst:462
+#: ../../source/cli_document.rst:477
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
@@ -962,11 +999,11 @@ msgstr ""
 "``uncertain`` με αυτή την αιτία (``the document draws no filled "
 "checker``)."
 
-#: ../../source/cli_document.rst:471
+#: ../../source/cli_document.rst:486
 msgid "Pourquoi l'import refuse"
 msgstr "Γιατί η εισαγωγή απορρίπτει"
 
-#: ../../source/cli_document.rst:473
+#: ../../source/cli_document.rst:488
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -978,7 +1015,7 @@ msgstr ""
 " εισαγωγή απορρίπτει επομένως **ολόκληρο** το relevé, πριν γράψει "
 "οτιδήποτε, κατονομάζει τις τάξεις και λέει τι να γίνει:"
 
-#: ../../source/cli_document.rst:481
+#: ../../source/cli_document.rst:496
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -986,7 +1023,7 @@ msgstr ""
 "Όταν υπάρχουν καταχωρίσεις υπό ανεπιβεβαίωτο προεπιλεγμένο πλαίσιο, ή "
 "πλήρεις χωρίς ``--accept-complete``, το μήνυμα το λέει επίσης:"
 
-#: ../../source/cli_document.rst:488
+#: ../../source/cli_document.rst:503
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -996,11 +1033,11 @@ msgstr ""
 "το relevé ως έχει· η εισαγωγή αναφέρει τότε πόσες καταχωρίσεις επέβαλε "
 "(``Forced: 3 entries neither sure nor verified``)."
 
-#: ../../source/cli_document.rst:495
+#: ../../source/cli_document.rst:510
 msgid "Le repli"
 msgstr "Η υποχώρηση"
 
-#: ../../source/cli_document.rst:497
+#: ../../source/cli_document.rst:512
 msgid ""
 "Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
 "``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
@@ -1017,7 +1054,7 @@ msgstr ""
 "και την προεπιλογή για τα υπόλοιπα. Το ``check`` ονομάζει αυτές τις "
 "θέσεις κατάταξης και το μήνυμα σφάλματος προτείνει την υποχώρηση:"
 
-#: ../../source/cli_document.rst:508
+#: ../../source/cli_document.rst:523
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
@@ -1042,11 +1079,11 @@ msgstr ""
 "``--force``, μια καταχώριση χωρίς θέση απορρίπτεται: πρέπει να "
 "συμπληρωθεί ή να αφαιρεθεί."
 
-#: ../../source/cli_document.rst:519
+#: ../../source/cli_document.rst:534
 msgid "Ce qui entre en base"
 msgstr "Τι μπαίνει στη βάση"
 
-#: ../../source/cli_document.rst:521
+#: ../../source/cli_document.rst:536
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -1060,7 +1097,7 @@ msgstr ""
 "ταυτότητά της: μια θέση που έχει ήδη δεν διπλογράφεται (το ``new in the "
 "library`` μετρά αυτές που της έλειπαν)."
 
-#: ../../source/cli_document.rst:527
+#: ../../source/cli_document.rst:542
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -1073,7 +1110,7 @@ msgstr ""
 "το ίδιο όνομα δέχεται τις θέσεις που της λείπουν και κρατά την περιγραφή "
 "της αν έχει· μια δυναμική συλλογή (ορισμένη από ερώτημα) απορρίπτεται."
 
-#: ../../source/cli_document.rst:531
+#: ../../source/cli_document.rst:546
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -1081,7 +1118,7 @@ msgstr ""
 "Κάθε θέση φέρει ένα **σχόλιο** που δίνει την αναφορά της, μετά τον τίτλο "
 "του εγγράφου: ``Mon livre — p. 146, Problem 191``."
 
-#: ../../source/cli_document.rst:534
+#: ../../source/cli_document.rst:549
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
@@ -1091,11 +1128,11 @@ msgstr ""
 "του συγγραφέα. Μια εισαγωγή που διακόπηκε ή απορρίφθηκε δεν γράφει "
 "τίποτα: είναι μία μόνο συναλλαγή."
 
-#: ../../source/cli_document.rst:538
+#: ../../source/cli_document.rst:553
 msgid "Une position répétée"
 msgstr "Μια θέση που επαναλαμβάνεται"
 
-#: ../../source/cli_document.rst:540
+#: ../../source/cli_document.rst:555
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -1107,11 +1144,11 @@ msgstr ""
 "αναφορά: ``Mon livre — p. 2, Problem 1; p. 4``. Το ``repeated`` μετρά "
 "αυτές τις επαναλήψεις."
 
-#: ../../source/cli_document.rst:546
+#: ../../source/cli_document.rst:561
 msgid "Réimporter"
 msgstr "Επανεισαγωγή"
 
-#: ../../source/cli_document.rst:548
+#: ../../source/cli_document.rst:563
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -1123,11 +1160,11 @@ msgstr ""
 "αναφοράς ξαναγράφεται μόνο αν οι αναφορές του άλλαξαν, ποτέ διπλό. "
 "Μπορείτε λοιπόν να συνεχίσετε μια εισαγωγή αφού διορθώσετε το relevé."
 
-#: ../../source/cli_document.rst:554
+#: ../../source/cli_document.rst:569
 msgid "Le démon"
 msgstr "Ο δαίμονας"
 
-#: ../../source/cli_document.rst:556
+#: ../../source/cli_document.rst:571
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

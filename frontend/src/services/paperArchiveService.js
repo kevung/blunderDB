@@ -113,6 +113,38 @@ export async function isBlunderDBArchive(path) {
     }
 }
 
+/** Extensions des documents rédigés que lit l'import de document. */
+const WRITTEN_DOCUMENT = ['docx', 'odt', 'epub', 'doc', 'xhtml'];
+
+/**
+ * Le fichier est-il un document à confier à l'import de document (PDF ou
+ * document rédigé) plutôt qu'aux imports de parties ?
+ * @param {string} path
+ */
+export function isDocumentPath(path) {
+    const ext = path.toLowerCase().split('.').pop() ?? '';
+    return ext === 'pdf' || WRITTEN_DOCUMENT.includes(ext);
+}
+
+/**
+ * Sépare les pages HTML apportées : celles que blunderDB a produites restent
+ * des fichiers à importer, une autre est un document dont on lit les
+ * diagrammes.
+ * @param {string[]} files
+ * @returns {Promise<{ files: string[], documents: string[] }>}
+ */
+export async function splitHTMLDocuments(files) {
+    /** @type {string[]} */
+    const kept = [];
+    /** @type {string[]} */
+    const documents = [];
+    for (const f of files) {
+        if (/\.html?$/i.test(f) && !(await isBlunderDBArchive(f))) documents.push(f);
+        else kept.push(f);
+    }
+    return { files: kept, documents };
+}
+
 /**
  * Range des PDF apportés (dépôt, Ctrl-I) : ceux que blunderDB a imprimés,
  * codes de réimport joints, s'importent en archive papier ; un autre PDF est

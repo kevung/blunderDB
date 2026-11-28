@@ -63,7 +63,7 @@ func Review(r *Releve, opts ImportOptions) ReviewResult {
 		}
 		fields, note := reviewFields(e)
 		res.Items = append(res.Items, ReviewItem{
-			Rank: e.Rank, Reference: e.Reference(), State: r.StateOf(e),
+			Rank: e.Rank, Reference: r.ReferenceOf(e), State: r.StateOf(e),
 			Checkers: e.Checkers, Context: e.Context, Complete: e.Complete,
 			Held: held[e.Rank], Fallback: taken[e.Rank], Fields: fields, Note: note,
 		})

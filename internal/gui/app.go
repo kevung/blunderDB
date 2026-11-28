@@ -329,14 +329,15 @@ func (a *App) OpenPaperArchiveDialog() ([]string, error) {
 	})
 }
 
-// OpenDocumentDialog asks for a document to import: a PDF, a page image, the
-// Relevé already read from one, or a sheet blunderDB printed (HTML or PDF),
-// which goes to the paper archive import.
+// OpenDocumentDialog asks for a document to import: a PDF, a written
+// document (DOCX, ODT, EPUB, HTML; a Word 97-2003 .doc, refused with what to
+// save it as), a page image, the Relevé already read from one, or a sheet
+// blunderDB printed (HTML or PDF), which goes to the paper archive import.
 func (a *App) OpenDocumentDialog() (string, error) {
 	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Import a Document",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "Document (*.pdf, *.png, *.jpg, *.json, *.html)", Pattern: "*.pdf;*.png;*.jpg;*.jpeg;*.json;*.html;*.htm"},
+			{DisplayName: "Document (*.pdf, *.docx, *.odt, *.epub, *.html, *.doc, *.png, *.jpg, *.json)", Pattern: "*.pdf;*.docx;*.odt;*.epub;*.html;*.htm;*.xhtml;*.doc;*.png;*.jpg;*.jpeg;*.jp2;*.j2k;*.json"},
 			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
 		},
 	})
@@ -347,7 +348,7 @@ func (a *App) OpenPositionFilesDialog() ([]string, error) {
 	return runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Import Position or Match Files",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "All Supported Files (*.txt, *.xg, *.xgp, *.sgf, *.mat, *.bgf, *.ogxm, *.pdf, *.png, *.jpg)", Pattern: "*.txt;*.xg;*.xgp;*.sgf;*.mat;*.bgf;*.ogxm;*.pdf;*.png;*.jpg;*.jpeg"},
+			{DisplayName: "All Supported Files (*.txt, *.xg, *.xgp, *.sgf, *.mat, *.bgf, *.ogxm, *.pdf, *.docx, *.odt, *.epub, *.html, *.png, *.jpg)", Pattern: "*.txt;*.xg;*.xgp;*.sgf;*.mat;*.bgf;*.ogxm;*.pdf;*.docx;*.odt;*.epub;*.html;*.htm;*.xhtml;*.doc;*.png;*.jpg;*.jpeg"},
 			{DisplayName: "Position Files (*.txt)", Pattern: "*.txt"},
 			{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"},
 			{DisplayName: "XG Position Files (*.xgp)", Pattern: "*.xgp"},
@@ -356,6 +357,7 @@ func (a *App) OpenPositionFilesDialog() ([]string, error) {
 			{DisplayName: "BGBlitz Match Files (*.bgf)", Pattern: "*.bgf"},
 			{DisplayName: "HedgeHog Match Files (*.ogxm)", Pattern: "*.ogxm"},
 			{DisplayName: "PDF: printed sheets, position books (*.pdf)", Pattern: "*.pdf"},
+			{DisplayName: "Written documents (*.docx, *.odt, *.epub, *.html, *.doc)", Pattern: "*.docx;*.odt;*.epub;*.html;*.htm;*.xhtml;*.doc"},
 			{DisplayName: "Board Screenshots (*.png, *.jpg)", Pattern: "*.png;*.jpg;*.jpeg;*.gif"},
 			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
 		},
