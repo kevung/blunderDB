@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 01:57+0100\n"
+"POT-Creation-Date: 2026-11-28 03:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -367,26 +367,34 @@ msgstr "Käyttöliittymän tuontiavustaja"
 msgid ""
 "La commande ``import_document`` (``idoc``, :doc:`cmd_mode`), le bouton "
 "**Importer un document…** de la barre d'outils ou celui de la liste des "
-"collections vide ouvre l'assistant : on choisit un PDF, une image de page"
-" ou un relevé ``.json`` déjà lu. L'assistant appelle les mêmes fonctions "
-"que ``document analyze``, ``check`` et ``import`` et n'applique aucune "
-"règle de plus (:ref:`cli_document`). Un fichier que blunderDB a produit —"
-" PDF ou page HTML d'archive papier, de feuille de match ou de liste de "
-"positions avec codes de réimport — ne passe pas par l'assistant : il "
-"s'importe directement par ses codes, comme par :ref:`Archive papier… "
+"collections vide ouvre l'assistant : on choisit un PDF, un document "
+"rédigé (DOCX, ODT, EPUB, page HTML), une image de page ou un relevé "
+"``.json`` déjà lu. Déposer un tel fichier sur la fenêtre ou le choisir "
+"par *CTRL-I* ouvre aussi l'assistant ; un ``.doc`` de Word 97-2003 y est "
+"refusé avec un message qui propose de l'enregistrer en PDF ou en DOCX. "
+"L'assistant appelle les mêmes fonctions que ``document analyze``, "
+"``check`` et ``import`` et n'applique aucune règle de plus "
+"(:ref:`cli_document`). Un fichier que blunderDB a produit — PDF ou page "
+"HTML d'archive papier, de feuille de match ou de liste de positions avec "
+"codes de réimport — ne passe pas par l'assistant : il s'importe "
+"directement par ses codes, comme par :ref:`Archive papier… "
 "<archive_papier_interface>`."
 msgstr ""
 "Komento ``import_document`` (``idoc``, :doc:`cmd_mode`), työkalupalkin "
 "**Tuo asiakirja…** -painike tai tyhjän kokoelmaluettelon vastaava painike"
-" avaa avustajan: valitaan PDF, sivukuva tai jo luettu ``.json``-relevé. "
-"Avustaja kutsuu samoja toimintoja kuin ``document analyze``, ``check`` ja"
-" ``import`` eikä noudata mitään muuta sääntöä (:ref:`cli_document`). "
-"Tiedosto, jonka blunderDB on tuottanut — paperiarkiston, ottelulehden tai"
-" asemalistan PDF tai HTML-sivu uudelleentuontikoodeineen — ei kulje "
-"avustajan kautta: se tuodaan suoraan koodiensa perusteella, kuten "
-"kohdasta :ref:`Paperiarkisto… <archive_papier_interface>`."
+" avaa avustajan: valitaan PDF, tekstiasiakirja (DOCX, ODT, EPUB, HTML-"
+"sivu), sivukuva tai jo luettu ``.json``-relevé. Myös tällaisen tiedoston "
+"pudottaminen ikkunaan tai sen valinta näppäimellä *CTRL-I* avaa "
+"avustajan; Word 97-2003:n ``.doc`` hylätään siellä viestillä, joka "
+"ehdottaa sen tallentamista PDF- tai DOCX-muodossa. Avustaja kutsuu samoja"
+" toimintoja kuin ``document analyze``, ``check`` ja ``import`` eikä "
+"noudata mitään muuta sääntöä (:ref:`cli_document`). Tiedosto, jonka "
+"blunderDB on tuottanut — paperiarkiston, ottelulehden tai asemalistan PDF"
+" tai HTML-sivu uudelleentuontikoodeineen — ei kulje avustajan kautta: se "
+"tuodaan suoraan koodiensa perusteella, kuten kohdasta "
+":ref:`Paperiarkisto… <archive_papier_interface>`."
 
-#: ../../source/manuel_partage.rst:168
+#: ../../source/manuel_partage.rst:171
 msgid ""
 "**Défauts et sens de jeu** : le contexte par défaut du document et le "
 "sens de jeu supposé sont décrits. Un seul bouton les confirme pour tout "
@@ -398,7 +406,7 @@ msgstr ""
 " kaavion tarkistuksen jälkeen; mitään ei vahvisteta ilman tätä "
 "toimenpidettä."
 
-#: ../../source/manuel_partage.rst:171
+#: ../../source/manuel_partage.rst:174
 msgid ""
 "**Planche de vérification** : quatre compteurs, **Sûres**, **À "
 "vérifier**, **Incertaines** et **Vérifiées**, filtrent les entrées ; la "
@@ -418,7 +426,7 @@ msgstr ""
 "ei ole tarkistettu. Laudan fontilla piirretyllä ja täsmälleen luetulla "
 "kaaviolla ei ole pikkukuvaa."
 
-#: ../../source/manuel_partage.rst:178
+#: ../../source/manuel_partage.rst:181
 msgid ""
 "**Clavier de la planche** : *V* (ou *Espace*) valide l'entrée, qui "
 "devient vérifiée, et passe à la suivante ; sur une entrée vérifiée, *V* "
@@ -434,13 +442,13 @@ msgstr ""
 "*J* tai oikea ja alas-nuolet siirtävät seuraavaan merkintään, *K* tai "
 "vasen ja ylös-nuolet edelliseen."
 
-#: ../../source/manuel_partage.rst:184
+#: ../../source/manuel_partage.rst:187
 msgid "**Entrées complètes** : la case équivaut à ``--accept-complete``."
 msgstr ""
 "**Täydelliset merkinnät**: valintaruutu vastaa valitsinta ``--accept-"
 "complete``."
 
-#: ../../source/manuel_partage.rst:185
+#: ../../source/manuel_partage.rst:188
 msgid ""
 "**Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une"
 " fois les défauts confirmés."
@@ -448,11 +456,11 @@ msgstr ""
 "**Varamenettely**: valintaruutu vastaa valitsinta ``--fallback``; se "
 "tarjotaan vasta, kun oletukset on vahvistettu."
 
-#: ../../source/manuel_partage.rst:187
+#: ../../source/manuel_partage.rst:190
 msgid "**Collection** : vide, elle prend le titre du document."
 msgstr "**Kokoelma**: tyhjänä se ottaa asiakirjan otsikon."
 
-#: ../../source/manuel_partage.rst:189
+#: ../../source/manuel_partage.rst:192
 msgid ""
 "Chaque verdict est écrit aussitôt dans le relevé, gardé à côté du "
 "document sous le nom du fichier suivi de ``.releve.json`` "
@@ -472,33 +480,33 @@ msgstr ""
 "avaaminen jatkaa tarkistusta, pikkukuvien kera niin kauan kuin asiakirja "
 "on vieressä. Tuonti hyväksyy tarkistetut merkinnät."
 
-#: ../../source/manuel_partage.rst:197
+#: ../../source/manuel_partage.rst:200
 msgid ""
 "Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; "
 "l'assistant n'offre pas ``--force``. Pendant la lecture, une barre de "
-"progression indique la page lue sur le total, les diagrammes trouvés "
-"jusque-là et le temps restant estimé. **Annuler**, la fermeture et la "
-"touche Échap arrêtent la lecture ou l'import en cours : l'assistant se "
-"ferme sur « Lecture annulée » après une lecture, et revient à la revue "
-"après un import, qui n'a alors rien écrit. La tâche figure aussi dans le "
-"panneau des calculs. Le bilan donne le nombre de positions ajoutées et "
-"répétées."
+"progression indique la page lue sur le total (l'image lue, pour un "
+"document rédigé), les diagrammes trouvés jusque-là et le temps restant "
+"estimé. **Annuler**, la fermeture et la touche Échap arrêtent la lecture "
+"ou l'import en cours : l'assistant se ferme sur « Lecture annulée » après"
+" une lecture, et revient à la revue après un import, qui n'a alors rien "
+"écrit. La tâche figure aussi dans le panneau des calculs. Le bilan donne "
+"le nombre de positions ajoutées et répétées."
 msgstr ""
 "**Tuo**-painike pysyy harmaana, kun jokin merkintä hylätään; avustaja ei "
 "tarjoa valitsinta ``--force``. Lukemisen aikana edistymispalkki näyttää "
-"luetun sivun kokonaismäärästä, tähän mennessä löydetyt kaaviot ja "
-"arvioidun jäljellä olevan ajan. **Peruuta**, sulkeminen ja Esc-näppäin "
-"pysäyttävät käynnissä olevan lukemisen tai tuonnin: avustaja sulkeutuu "
-"lukemisen jälkeen tekstiin ”Lukeminen peruttu” ja palaa tuonnin jälkeen "
-"tarkistukseen, jolloin se ei ole kirjoittanut mitään. Tehtävä näkyy myös "
-"laskentapaneelissa. Yhteenveto kertoo lisättyjen ja toistuvien asemien "
-"määrän."
+"luetun sivun kokonaismäärästä (tekstiasiakirjalla luetun kuvan), tähän "
+"mennessä löydetyt kaaviot ja arvioidun jäljellä olevan ajan. **Peruuta**,"
+" sulkeminen ja Esc-näppäin pysäyttävät käynnissä olevan lukemisen tai "
+"tuonnin: avustaja sulkeutuu lukemisen jälkeen tekstiin ”Lukeminen "
+"peruttu” ja palaa tuonnin jälkeen tarkistukseen, jolloin se ei ole "
+"kirjoittanut mitään. Tehtävä näkyy myös laskentapaneelissa. Yhteenveto "
+"kertoo lisättyjen ja toistuvien asemien määrän."
 
-#: ../../source/manuel_partage.rst:208
+#: ../../source/manuel_partage.rst:211
 msgid "Panneau Métadonnées"
 msgstr "Metatietopaneeli"
 
-#: ../../source/manuel_partage.rst:210
+#: ../../source/manuel_partage.rst:213
 msgid ""
 "Le panneau **Métadonnées** (*CTRL-M*) affiche les informations générales "
 "de la base de données courante : *Utilisateur*, date de création "
@@ -513,7 +521,7 @@ msgstr ""
 "tallennetaan kentästä poistuttaessa; versio on vain luettavissa. "
 "Saatavilla myös komennolla ``meta``."
 
-#: ../../source/manuel_partage.rst:216
+#: ../../source/manuel_partage.rst:219
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -523,11 +531,11 @@ msgstr ""
 ":ref:`diffusion_controlee`. Tavallisessa tietokannassa tätä osiota ei "
 "näy."
 
-#: ../../source/manuel_partage.rst:222
+#: ../../source/manuel_partage.rst:225
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Tietokannan jakaminen: alkuperä ja salasana"
 
-#: ../../source/manuel_partage.rst:224
+#: ../../source/manuel_partage.rst:227
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -539,7 +547,7 @@ msgstr ""
 "valittavia: tiedoston merkitseminen alkuperällään ja sen suojaaminen "
 "salasanalla."
 
-#: ../../source/manuel_partage.rst:231
+#: ../../source/manuel_partage.rst:234
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -552,11 +560,11 @@ msgstr ""
 "eikä missään kirjata, kuka sen avasi, milloin, tai mistä sen sisältö on "
 "peräisin."
 
-#: ../../source/manuel_partage.rst:237
+#: ../../source/manuel_partage.rst:240
 msgid "Marquer une base de son origine"
 msgstr "Tietokannan merkitseminen alkuperällään"
 
-#: ../../source/manuel_partage.rst:239
+#: ../../source/manuel_partage.rst:242
 msgid ""
 "La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
 "nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
@@ -589,11 +597,11 @@ msgstr ""
 "kirjastoa voi lukea normaalisti; muutokset odottavat kirjoituksen loppua,"
 " jotta tiedosto on tietokannan yhtenäinen kuva."
 
-#: ../../source/manuel_partage.rst:254
+#: ../../source/manuel_partage.rst:257
 msgid "Neuf points méritent l'attention :"
 msgstr "Yhdeksän kohtaa ansaitsee huomiota:"
 
-#: ../../source/manuel_partage.rst:256
+#: ../../source/manuel_partage.rst:259
 msgid ""
 "**La portée** : depuis une liste — une recherche, une collection —, la "
 "ligne *Portée* choisit entre la *Liste courante* et *Toute la "
@@ -608,7 +616,7 @@ msgstr ""
 "asemat on pelattu; jokainen valittu ottelu lähtee kaikkine asemineen. "
 "Kirjastosta käsin laajuus on kirjasto."
 
-#: ../../source/manuel_partage.rst:261
+#: ../../source/manuel_partage.rst:264
 msgid ""
 "**Toute la bibliothèque** est l'export du serveur et de ``export --type "
 "database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
@@ -619,7 +627,7 @@ msgstr ""
 "vienti: kaikki ryhmät on valittu valmiiksi, Anki-pakat "
 "kertaushistorioineen, ja kesken olevat litteroinnit lähtevät muun mukana."
 
-#: ../../source/manuel_partage.rst:265
+#: ../../source/manuel_partage.rst:268
 msgid ""
 "**La synchronisation** : avec *Toute la bibliothèque*, la ligne "
 "*Synchronisation* propose *Seulement ce qui est nouveau depuis le dernier"
@@ -635,7 +643,7 @@ msgstr ""
 "ovat uuden aineiston määriä (katso :ref:`Kahden koneen synkronointi "
 "<synchroniser_deux_machines>`)."
 
-#: ../../source/manuel_partage.rst:271
+#: ../../source/manuel_partage.rst:274
 msgid ""
 "**Un match part avec son brouillon de transcription**, sous la case "
 "*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
@@ -655,7 +663,7 @@ msgstr ""
 "sellaisenaan. Tiedosto, josta ottelu tuotiin, lähtee niin ikään vain "
 "nimellä."
 
-#: ../../source/manuel_partage.rst:278
+#: ../../source/manuel_partage.rst:281
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
 "case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
@@ -667,7 +675,7 @@ msgstr ""
 " vastaanottaja lukee yhdistetyn pelaajan yhtenä. Alias, joka ei nimeä "
 "ketään viedyistä otteluista, jää teille."
 
-#: ../../source/manuel_partage.rst:282
+#: ../../source/manuel_partage.rst:285
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la liste "
 "arrive tronquée.** La liste des collections affiche, pour chacune, la "
@@ -690,7 +698,7 @@ msgstr ""
 " ja luettelo merkitsee sen punaisella ”jäädytetyksi” sekä huomautuksella;"
 " ruutu *+ niiden asemat* pitää sen elävänä."
 
-#: ../../source/manuel_partage.rst:291
+#: ../../source/manuel_partage.rst:294
 msgid ""
 "**Un tournoi part toujours avec ses matchs** : sans eux, le lien "
 "tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un "
@@ -709,7 +717,7 @@ msgstr ""
 "heti, kun jokin sen turnauksista lähtee; Johdon tulostekansio jää teille."
 " Johto löytyy avaamalla tiedosto tai tuomalla se toiseen tietokantaan."
 
-#: ../../source/manuel_partage.rst:299
+#: ../../source/manuel_partage.rst:302
 msgid ""
 "**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
 "case *avec mon historique* emporte en plus l'état de chaque carte et le "
@@ -722,7 +730,7 @@ msgstr ""
 "lokin: varmuuskopion tai toiselle koneelle siirretyt pakkanne. Se on "
 "valitsematta luettelolle ja valittuna kirjastolle."
 
-#: ../../source/manuel_partage.rst:303
+#: ../../source/manuel_partage.rst:306
 msgid ""
 "**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
 "recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
@@ -736,7 +744,7 @@ msgstr ""
 " numerolla, numeroidaan tiedostoa varten uudelleen; jos se viittaa "
 "johonkin, joka ei lähde, se jää teille."
 
-#: ../../source/manuel_partage.rst:309
+#: ../../source/manuel_partage.rst:312
 msgid ""
 "Les collections, leçons, transcriptions, paquets Anki, alias et tournois "
 "partent avec les dates de création et d'ajout qu'ils portent chez vous, "
@@ -746,7 +754,7 @@ msgstr ""
 "lähtevät niillä luonti- ja lisäyspäivämäärillä, jotka niillä on teillä, "
 "eivät viennin päivämäärällä."
 
-#: ../../source/manuel_partage.rst:313
+#: ../../source/manuel_partage.rst:316
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
 "le **fichier produit** ; ils sont préremplis depuis la base source."
@@ -754,11 +762,11 @@ msgstr ""
 "Kentät *Käyttäjä*, *Kuvaus* ja *Luontipäivä* kuvaavat **tuotettua "
 "tiedostoa**; ne esitäytetään lähdetietokannasta."
 
-#: ../../source/manuel_partage.rst:316
+#: ../../source/manuel_partage.rst:319
 msgid "Cocher **Filigrane** fait apparaître deux champs :"
 msgstr "Kun valitset **Vesileima**, esiin tulee kaksi kenttää:"
 
-#: ../../source/manuel_partage.rst:318
+#: ../../source/manuel_partage.rst:321
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -770,7 +778,7 @@ msgstr ""
 "**pakollinen**: niin kauan kuin se on tyhjä, sen reunus on punainen ja "
 "vientipainike pysyy ei-aktiivisena."
 
-#: ../../source/manuel_partage.rst:321
+#: ../../source/manuel_partage.rst:324
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -778,7 +786,7 @@ msgstr ""
 "**Huomautus**, valinnainen — käyttöehdot, yhteysosoite, pyyntö olla "
 "jakamatta eteenpäin."
 
-#: ../../source/manuel_partage.rst:324
+#: ../../source/manuel_partage.rst:327
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -793,7 +801,7 @@ msgstr ""
 "ohjelmisto. Merkintä ei estä mitään: se kertoo, mistä tiedosto on "
 "peräisin."
 
-#: ../../source/manuel_partage.rst:330
+#: ../../source/manuel_partage.rst:333
 msgid ""
 "Les commentaires que vous avez écrits sont signés avec la même identité :"
 " le destinataire voit qu'ils viennent de vous, et s'ils ont été altérés "
@@ -809,11 +817,11 @@ msgstr ""
 "viennin lopussa, kuinka monta kommenttiasi allekirjoitettiin; merkitön "
 "vienti ei allekirjoita yhtään."
 
-#: ../../source/manuel_partage.rst:337
+#: ../../source/manuel_partage.rst:340
 msgid "Identité d'émetteur"
 msgstr "Merkitsijän identiteetti"
 
-#: ../../source/manuel_partage.rst:339
+#: ../../source/manuel_partage.rst:342
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -827,7 +835,7 @@ msgstr ""
 "tiedostoissasi on sama julkinen sormenjälki muotoa "
 "``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel_partage.rst:344
+#: ../../source/manuel_partage.rst:347
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -841,7 +849,7 @@ msgstr ""
 "salalauseella suojattuna. **Tällä tiedostolla voi allekirjoittaa sinun "
 "nimissäsi: älä jaa sitä.**"
 
-#: ../../source/manuel_partage.rst:350
+#: ../../source/manuel_partage.rst:353
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -851,7 +859,7 @@ msgstr ""
 "-välilehti näyttää nimesi ja sormenjälkesi ja tarjoaa toiminnot *Tallenna"
 " identiteetti…*, *Lataa identiteetti…* ja *Luo uusi…*."
 
-#: ../../source/manuel_partage.rst:356
+#: ../../source/manuel_partage.rst:359
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -864,7 +872,7 @@ msgstr ""
 " allekirjoittamista vanhalla sormenjäljelläsi, ja nuo merkinnät pysyvät "
 "pätevinä."
 
-#: ../../source/manuel_partage.rst:361
+#: ../../source/manuel_partage.rst:364
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -874,7 +882,7 @@ msgstr ""
 " uuden sormenjälkesi ja ilmoitat vastaanottajillesi vanhan "
 "pätemättömäksi."
 
-#: ../../source/manuel_partage.rst:365
+#: ../../source/manuel_partage.rst:368
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -882,11 +890,11 @@ msgstr ""
 "Uuden luominen korvaa nykyisen avaimen; blunderDB tarjoaa mahdollisuutta "
 "tallentaa se ennen korvaamista."
 
-#: ../../source/manuel_partage.rst:369
+#: ../../source/manuel_partage.rst:372
 msgid "Protéger une base par un mot de passe"
 msgstr "Tietokannan suojaaminen salasanalla"
 
-#: ../../source/manuel_partage.rst:371
+#: ../../source/manuel_partage.rst:374
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -896,7 +904,7 @@ msgstr ""
 "avattaessa; silmäkuvake näyttää sen **niin kauan kuin sitä pidetään "
 "painettuna** ja peittää sen taas heti, kun ote irrotetaan."
 
-#: ../../source/manuel_partage.rst:375
+#: ../../source/manuel_partage.rst:378
 msgid ""
 "Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
 "compris si le nom choisi dans la fenêtre d'enregistrement finit en "
@@ -912,7 +920,7 @@ msgstr ""
 "asentaa viereen tavallisen tietokannan; sen jälkeen mitään ei enää "
 "kysytä."
 
-#: ../../source/manuel_partage.rst:382
+#: ../../source/manuel_partage.rst:385
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -925,7 +933,7 @@ msgstr ""
 " oletuksena valittuna — suojattu tiedosto jää sinulle, jos aiot välittää "
 "sen eteenpäin — ja poisto tapahtuu vasta onnistuneen avaamisen jälkeen."
 
-#: ../../source/manuel_partage.rst:389
+#: ../../source/manuel_partage.rst:392
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -937,7 +945,7 @@ msgstr ""
 "vahingossa edelleen lähetettyä liitettä. Se ei suojaa siltä, jolle olet "
 "antanut salasanan."
 
-#: ../../source/manuel_partage.rst:394
+#: ../../source/manuel_partage.rst:397
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -945,7 +953,7 @@ msgstr ""
 "Salasana tarkistetaan **joka** avauskerralla, myös silloin kun tiedosto "
 "on jo aiemmin avattu tällä koneella."
 
-#: ../../source/manuel_partage.rst:397
+#: ../../source/manuel_partage.rst:400
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -961,7 +969,7 @@ msgstr ""
 "samoin mikä tahansa salatun tiedoston muuttaminen — vioittunutta "
 "tietokantaa ei koskaan saada hiljaisesti."
 
-#: ../../source/manuel_partage.rst:404
+#: ../../source/manuel_partage.rst:407
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -969,11 +977,11 @@ msgstr ""
 "Suojatun tiedoston otsake pysyy **salaamattomana**: sen alkuperä on "
 "luettavissa ilman salasanaa."
 
-#: ../../source/manuel_partage.rst:408
+#: ../../source/manuel_partage.rst:411
 msgid "Lire l'origine d'un fichier"
 msgstr "Tiedoston alkuperän lukeminen"
 
-#: ../../source/manuel_partage.rst:410
+#: ../../source/manuel_partage.rst:413
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -985,11 +993,11 @@ msgstr ""
 "joka kertoo, mitä on kirjattu, kenen toimesta, milloin, ja missä tilassa "
 "allekirjoitus on:"
 
-#: ../../source/manuel_partage.rst:415
+#: ../../source/manuel_partage.rst:418
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "”✓ sinun merkitsemäsi”: tiedostossa on oma merkintäsi ehjänä;"
 
-#: ../../source/manuel_partage.rst:417
+#: ../../source/manuel_partage.rst:420
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -998,17 +1006,17 @@ msgstr ""
 "avaimesta — vertaa sen sormenjälkeä siihen, jonka tekijä on sinulle "
 "kertonut;"
 
-#: ../../source/manuel_partage.rst:419
+#: ../../source/manuel_partage.rst:422
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr ""
 "”⚠ virheellinen allekirjoitus”: asiakirjaa on muutettu tai se on "
 "väärennetty."
 
-#: ../../source/manuel_partage.rst:421
+#: ../../source/manuel_partage.rst:424
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Tavallisessa tietokannassa tätä osiota ei näy."
 
-#: ../../source/manuel_partage.rst:423
+#: ../../source/manuel_partage.rst:426
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -1022,11 +1030,11 @@ msgstr ""
 "komennon ``export`` valitsimista ``--watermark`` ja ``--password`` sekä "
 "komennoista ``identity`` ja ``open``."
 
-#: ../../source/manuel_partage.rst:432
+#: ../../source/manuel_partage.rst:435
 msgid "Publier une base pour d'autres"
 msgstr "Tietokannan julkaiseminen muille"
 
-#: ../../source/manuel_partage.rst:434
+#: ../../source/manuel_partage.rst:437
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -1041,7 +1049,7 @@ msgstr ""
 "rakenteesta: tiedoston vastaanottajan puolella ei koskaan kirjata mitään,"
 " joten palvelulle ei olisi mitään ilmoitettavaa, vaikka sellainen olisi."
 
-#: ../../source/manuel_partage.rst:440
+#: ../../source/manuel_partage.rst:443
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -1049,13 +1057,13 @@ msgstr ""
 "Se, mikä tekee julkaistusta tietokannasta toisen käytettävän, tiivistyy "
 "neljään kenttään, jotka ovat kaikki jo olemassa:"
 
-#: ../../source/manuel_partage.rst:443
+#: ../../source/manuel_partage.rst:446
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Käyttäjä** — kuka sen kokosi, sillä nimellä, jonka haluat mainittavan."
 
-#: ../../source/manuel_partage.rst:444
+#: ../../source/manuel_partage.rst:447
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -1064,7 +1072,7 @@ msgstr ""
 "**Kuvaus** — mitä tietokanta sisältää, yhdessä lauseessa, joka mahtuu "
 "luetteloon: «240 tuplauspäätöstä tilanteessa, kommentoituna, keskitaso»."
 
-#: ../../source/manuel_partage.rst:446
+#: ../../source/manuel_partage.rst:449
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -1074,7 +1082,7 @@ msgstr ""
 "tuotettiin. Se on ensimmäinen asia, jonka vastaanottaja lukee "
 "*Metatiedot*-paneelista."
 
-#: ../../source/manuel_partage.rst:449
+#: ../../source/manuel_partage.rst:452
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -1084,7 +1092,7 @@ msgstr ""
 "sisällä: sitä vertaamalla vastaanottaja varmistaa, että tiedosto tulee "
 "sinulta eikä joltakulta, joka on ottanut nimesi."
 
-#: ../../source/manuel_partage.rst:453
+#: ../../source/manuel_partage.rst:456
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -1093,7 +1101,7 @@ msgstr ""
 "Ilman vesileimaa julkaistu tietokanta on täysin käyttökelpoinen; se on "
 "vain nimetön, eikä *Metatiedot*-paneeli näytä silloin *Alkuperä*-osiota."
 
-#: ../../source/manuel_partage.rst:457
+#: ../../source/manuel_partage.rst:460
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"

@@ -132,3 +132,31 @@ describe('PDF déposé', () => {
         expect(setStatusBarMessage.mock.calls.at(-1)?.[0]).toEqual({ k: 'status.noDbOpenedBeforeImport', p: undefined });
     });
 });
+
+describe('document rédigé apporté', () => {
+    test("un DOCX, un ODT, un EPUB ou un DOC déposé part à l'assistant de document", async () => {
+        const out = await classifyDroppedFiles(['/d/livre.docx', '/d/livre.ODT', '/d/livre.epub', '/d/livre.doc']);
+        expect(out.archives).toEqual(['/d/livre.docx', '/d/livre.ODT', '/d/livre.epub', '/d/livre.doc']);
+        await handleFileDrop(0, 0, ['/d/livre.docx']);
+        expect(startDocumentImport).toHaveBeenCalledWith('/d/livre.docx');
+        expect(ImportFiles).not.toHaveBeenCalled();
+    });
+
+    test("une page HTML que blunderDB n'a pas produite part à l'assistant, une page d'archive au pipeline", async () => {
+        const { splitHTMLDocuments } = await import('../services/paperArchiveService.js');
+        expect(await splitHTMLDocuments(['/d/livre.html', '/d/archive.html', '/d/m.xg'])).toEqual({
+            files: ['/d/archive.html', '/d/m.xg'],
+            documents: ['/d/livre.html']
+        });
+        await handleFileDrop(0, 0, ['/d/livre.htm']);
+        expect(startDocumentImport).toHaveBeenCalledWith('/d/livre.htm');
+        expect(ImportFiles).not.toHaveBeenCalled();
+    });
+
+    test("Ctrl-I : un EPUB part à l'assistant de document", async () => {
+        OpenPositionFilesDialog.mockResolvedValueOnce(['/d/livre.epub']);
+        await importPosition();
+        expect(startDocumentImport).toHaveBeenCalledWith('/d/livre.epub');
+        expect(ImportFiles).not.toHaveBeenCalled();
+    });
+});

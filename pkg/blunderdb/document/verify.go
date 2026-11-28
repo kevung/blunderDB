@@ -52,7 +52,7 @@ func Sheet(r *Releve) []SheetEntry {
 			fields, _ = reviewFields(e)
 		}
 		out = append(out, SheetEntry{
-			Rank: e.Rank, Page: e.Page, Reference: e.Reference(), Position: e.Position,
+			Rank: e.Rank, Page: e.Page, Reference: r.ReferenceOf(e), Position: e.Position,
 			State: st, Verified: e.Verified, Fields: fields, Rect: e.Rect,
 		})
 	}
@@ -254,13 +254,14 @@ var pageCache struct {
 	path  string
 	mod   int64
 	pdf   *pdf.Reader
+	doc   *writtenPages
 	page  int
 	image image.Image
 }
 
 // DiagramImage crops the diagram at rect on the given page (from 1) of the
 // document at path — a PDF of scanned pages, a page image or a folder of
-// them — and returns it as a PNG at most maxWidth pixels wide, redrawn from
+// them, or a written document (its pictures for pages) — and returns it as a PNG at most maxWidth pixels wide, redrawn from
 // the file each time: no image is kept with the Relevé.
 func DiagramImage(ctx context.Context, path string, page int, rect Rect, maxWidth int) ([]byte, error) {
 	if rect.W <= 0 || rect.H <= 0 || rect.X < 0 || rect.Y < 0 || rect.X+rect.W > 1.0001 || rect.Y+rect.H > 1.0001 {
@@ -304,7 +305,7 @@ func pageImage(ctx context.Context, path string, page int) (image.Image, error) 
 	pageCache.Lock()
 	defer pageCache.Unlock()
 	if pageCache.path != path || pageCache.mod != st.ModTime().UnixNano() {
-		pageCache.path, pageCache.mod, pageCache.pdf, pageCache.page, pageCache.image = path, st.ModTime().UnixNano(), nil, 0, nil
+		pageCache.path, pageCache.mod, pageCache.pdf, pageCache.doc, pageCache.page, pageCache.image = path, st.ModTime().UnixNano(), nil, nil, 0, nil
 	}
 	if pageCache.page == page && pageCache.image != nil {
 		return pageCache.image, nil
@@ -335,6 +336,30 @@ func decodePage(ctx context.Context, path string, dir bool, page int) (image.Ima
 		p, err := f.Page(0)
 		if err != nil {
 			return nil, err
+		}
+		return p.Image, nil
+	}
+	if IsWrittenDocument(path) {
+		if pageCache.doc == nil {
+			data, err := readDocumentFile(path)
+			if err != nil {
+				return nil, err
+			}
+			w, err := unpackWritten(path, data)
+			if err != nil {
+				return nil, err
+			}
+			pageCache.doc = &writtenPages{pics: w.pictures}
+		}
+		if page > pageCache.doc.Len() {
+			return nil, fmt.Errorf("%w: picture %d of %d", ErrInvalid, page, pageCache.doc.Len())
+		}
+		p, err := pageCache.doc.Page(page - 1)
+		if err != nil {
+			return nil, err
+		}
+		if p.Unread != nil {
+			return nil, fmt.Errorf("%w: %w", ErrNoPageImage, p.Unread)
 		}
 		return p.Image, nil
 	}

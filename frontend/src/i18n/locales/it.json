@@ -3849,6 +3849,7 @@
         "title": "Importa un documento",
         "reading": "Lettura del documento…",
         "progress": "pagina {page} / {pages} · {diagrams} diagrammi",
+        "progressPictures": "immagine {page} / {pages} · {diagrams} diagrammi",
         "eta": "mancano {eta}",
         "cancelled": "Lettura annullata.",
         "importCancelled": "Importazione annullata.",

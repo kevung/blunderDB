@@ -137,7 +137,7 @@ func readReleve(path string) (*document.Releve, error) {
 }
 
 func (cli *CLI) runDocumentAnalyze(args []string) error {
-	fs := cli.documentFileFlagSet("analyze", "<file.pdf|page-images-folder|page.png>",
+	fs := cli.documentFileFlagSet("analyze", "<file.pdf|file.docx|file.odt|file.epub|page.html|page-images-folder|page.png>",
 		"Read the diagrams of a document into a relevé, in the document's order, each with its page,\n"+
 			"label, chapter (from the PDF's bookmarks) and state: sure when the diagram's own\n"+
 			"cross-checks hold (15 checkers a side, the printed pip counts of both players), to-verify\n"+
@@ -146,17 +146,24 @@ func (cli *CLI) runDocumentAnalyze(args []string) error {
 			"board font (the Atchoum family), from the shapes of its embedded glyphs. A scanned book is\n"+
 			"read by the structure of each diagram, from a scanned PDF (its pages composed from their\n"+
 			"images, JPEG, JPEG 2000, JBIG2 or fax) or from its pages as images (a folder\n"+
-			"of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). The printed pip counts\n"+
+			"of PNG, JPEG or JPEG 2000 files, one a page, in the order of their names). A written\n"+
+			"document (DOCX, ODT, EPUB, or an HTML page and the pictures in its folder) is read picture\n"+
+			"by picture in the order of its text, each entry's page being the picture's rank and its\n"+
+			"chapter the heading before it; the text around a picture cross-checks it as a PDF's text\n"+
+			"layer does. Nothing is fetched from the network; a picture drawn with vectors (EMF, WMF,\n"+
+			"SVG) is named, not read, and a Word 97-2003 .doc is refused: save it as PDF or DOCX.\n"+
+			"The printed pip counts\n"+
 			"are read in the PDF's text layer and in the image; when the two disagree the entry is not\n"+
 			"sure. Pages that cannot be read are named on standard error. Nothing is written to a\n"+
 			"database: check the relevé, then import it with\n"+
 			"'blunderdb document import'.",
 		"blunderdb document analyze book.pdf -o releve.json",
 		"blunderdb document analyze pages/ -o releve.json --title \"My book\"",
+		"blunderdb document analyze notes.docx -o releve.json",
 		"blunderdb document analyze book.pdf -o releve.json --title \"My book\" --author \"Its author\"")
 	output := fs.String("o", "", "Write the relevé to this file (default: standard output)")
-	title := fs.String("title", "", "Title of the document (default: the PDF's metadata, else the file or folder name)")
-	author := fs.String("author", "", "Author of the document (default: the PDF's metadata)")
+	title := fs.String("title", "", "Title of the document (default: the document's metadata, else the file or folder name)")
+	author := fs.String("author", "", "Author of the document (default: the document's metadata)")
 	path, err := documentFileFlags(fs, args, "document")
 	if err != nil {
 		return err

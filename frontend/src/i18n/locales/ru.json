@@ -3849,6 +3849,7 @@
         "title": "Импорт документа",
         "reading": "Чтение документа…",
         "progress": "страница {page} / {pages} · диаграмм: {diagrams}",
+        "progressPictures": "изображение {page} / {pages} · диаграмм: {diagrams}",
         "eta": "осталось {eta}",
         "cancelled": "Чтение отменено.",
         "importCancelled": "Импорт отменён.",

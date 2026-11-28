@@ -3849,6 +3849,7 @@
         "title": "Import a document",
         "reading": "Reading the document…",
         "progress": "page {page} / {pages} · {diagrams} diagrams",
+        "progressPictures": "picture {page} / {pages} · {diagrams} diagrams",
         "eta": "{eta} left",
         "cancelled": "Reading cancelled.",
         "importCancelled": "Import cancelled.",
