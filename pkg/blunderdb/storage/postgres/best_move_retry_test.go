@@ -10,7 +10,9 @@ import (
 )
 
 func TestBestMoveBatchReplaysAConflictBoundedly(t *testing.T) {
+	saved := bestMoveRetryBackoff
 	bestMoveRetryBackoff = 0
+	t.Cleanup(func() { bestMoveRetryBackoff = saved })
 	conflict := func(code string) error {
 		return fmt.Errorf("postgres: write analysis best move: %w", &pgconn.PgError{Code: code})
 	}
