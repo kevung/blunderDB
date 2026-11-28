@@ -3848,18 +3848,10 @@
         "acceptComplete": "15 + 15 個を疑いなく読み取った項目を受け入れる({n})",
         "fallback": "読み取れない場合は局面が持つ文脈で取り込む({n})。確認すべき欄は参照に記載",
         "collection": "コレクション",
-        "review": "確認する項目({n})",
-        "reviewNone": "確認する項目はありません。",
         "refused": "順位 {ranks} の取り込みは拒否されました。確認、受け入れ、または代替を使ってください。",
         "run": "取り込む",
         "imported": "コレクション {collection}: {added} 局面を追加、{repeated} 件は重複",
         "importedDetail": "{entries} 件、異なる局面 {positions}(新規 {fresh})。完全: {complete}、代替: {fallback}",
-        "state": {
-            "sure": "確実",
-            "to-verify": "要確認",
-            "uncertain": "不確か"
-        },
-        "check": "図と照合: {fields}",
         "field": {
             "cube": "キューブ",
             "dice": "ダイス",
@@ -3871,6 +3863,18 @@
             "pips": "ピップ数",
             "diagram": "図の読み取り"
         },
-        "importMenu": "文書を読み込む…"
+        "importMenu": "文書を読み込む…",
+        "sheet": {
+            "filter": {
+                "sure": "確実",
+                "to-verify": "要確認",
+                "uncertain": "不確実",
+                "verified": "確認済み"
+            },
+            "verify": "確認する",
+            "unverify": "確認を取り消す",
+            "edit": "修正",
+            "write": "書き込む"
+        }
     }
 }

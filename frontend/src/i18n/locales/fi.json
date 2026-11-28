@@ -3848,18 +3848,10 @@
         "acceptComplete": "Hyväksy merkinnät, joissa 15 + 15 nappulaa luettu epäilyksittä ({n})",
         "fallback": "Tuo aseman mukanaan tuomalla kontekstilla, kun sitä ei ole luettu ({n}); tarkistettavat kentät on nimetty viitteessä",
         "collection": "Kokoelma",
-        "review": "Tarkistettavat merkinnät ({n})",
-        "reviewNone": "Ei tarkistettavia merkintöjä.",
         "refused": "Tuonti evätään sijalle {ranks}: vahvista, hyväksy tai käytä varamenettelyä.",
         "run": "Tuo",
         "imported": "Kokoelma {collection}: {added} asemaa lisätty, {repeated} toistuvaa",
         "importedDetail": "{entries} merkintää, {positions} eri asemaa ({fresh} uutta); täydelliset: {complete}, varamenettely: {fallback}",
-        "state": {
-            "sure": "varma",
-            "to-verify": "tarkistettava",
-            "uncertain": "epävarma"
-        },
-        "check": "Vertaa kaavioon: {fields}",
         "field": {
             "cube": "tuplauskuutio",
             "dice": "nopat",
@@ -3871,6 +3863,18 @@
             "pips": "pipmäärät",
             "diagram": "kaavion luku"
         },
-        "importMenu": "Tuo asiakirja…"
+        "importMenu": "Tuo asiakirja…",
+        "sheet": {
+            "filter": {
+                "sure": "Varmat",
+                "to-verify": "Tarkistettavat",
+                "uncertain": "Epävarmat",
+                "verified": "Tarkistetut"
+            },
+            "verify": "Hyväksy",
+            "unverify": "Peru hyväksyntä",
+            "edit": "Korjaa",
+            "write": "Kirjoita"
+        }
     }
 }

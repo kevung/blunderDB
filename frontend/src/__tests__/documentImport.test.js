@@ -26,6 +26,22 @@ const review = (over = {}) => ({
     ...over
 });
 
+// Rank 1 is sure; rank 2 and 3 to verify — verified once VerifyDocumentEntry said so.
+const sheet = (/** @type {string} */ releve) => {
+    /** @type {number[]} */
+    let verified = [];
+    try {
+        verified = JSON.parse(releve).verified ?? [];
+    } catch {
+        /* a relevé of the mock */
+    }
+    return [
+        { rank: 1, page: 2, reference: 'p. 2, Problem 1', position: 'p1', state: 'sure', verified: false, fields: [], rect: { x: 0.1, y: 0.1, w: 0.5, h: 0.3 } },
+        { rank: 2, page: 3, reference: 'p. 3, Problem 4', position: 'p2', state: 'to-verify', verified: verified.includes(2), fields: ['cube', 'dice'], rect: { x: 0.1, y: 0.5, w: 0.5, h: 0.3 } },
+        { rank: 3, page: 3, reference: 'p. 3, Problem 5', position: 'p3', state: 'to-verify', verified: verified.includes(3), fields: ['checkers'] }
+    ];
+};
+
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     AnalyzeDocument: vi.fn(async () => '{"releve":1}'),
     SummarizeDocumentReleve: vi.fn(),
@@ -33,7 +49,15 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ConfirmDocumentReleve: vi.fn(async () => '{"releve":2}'),
     ImportDocumentReleve: vi.fn(async () => ({ collection: 'Livre', added: 2, repeated: 0, entries: 2, positions: 2, newPositions: 2, complete: 0, fallback: 1 })),
     GetAllCollections: vi.fn(async () => []),
-    CancelImport: vi.fn(async () => {})
+    CancelImport: vi.fn(async () => {}),
+    DocumentSheet: vi.fn(async (/** @type {string} */ r) => sheet(r)),
+    LoadDocumentReleve: vi.fn(async () => ''),
+    SaveDocumentReleve: vi.fn(async () => '/tmp/livre.pdf.releve.json'),
+    VerifyDocumentEntry: vi.fn(async (/** @type {string} */ _p, /** @type {string} */ _r, /** @type {number} */ rank, /** @type {boolean} */ verified, /** @type {string} */ pos) =>
+        JSON.stringify({ verified: verified ? [rank] : [], pos })
+    ),
+    DocumentDiagramImage: vi.fn(async () => 'data:image/png;base64,AAAA'),
+    ParsePositionText: vi.fn(async () => ({ position: null }))
 }));
 const events = /** @type {Record<string, (p: any) => void>} */ ({});
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
@@ -70,9 +94,9 @@ describe('the assistant, mounted', () => {
         const { getByTestId, queryByTestId } = render(DocumentImportModal, { visible: true });
         await startDocumentImport();
         expect(get(activeModal)).toBe(MODAL.DOCUMENT_IMPORT);
-        await waitFor(() => expect(getByTestId('document-import-review')).toBeTruthy());
-        expect(getByTestId('document-import-review').textContent).toContain('p. 3, Problem 4');
-        expect(getByTestId('document-import-review').textContent).toContain('cube, dice');
+        await waitFor(() => expect(getByTestId('document-sheet-reference').textContent).toBe('p. 3, Problem 4'));
+        expect(getByTestId('document-sheet-fields').textContent).toContain('cube, dice');
+        expect(db.SaveDocumentReleve).toHaveBeenCalledWith('/tmp/livre.pdf', '{"releve":1}');
         expect(/** @type {HTMLButtonElement} */ (getByTestId('document-import-run')).disabled).toBe(true);
         expect(/** @type {HTMLButtonElement} */ (getByTestId('document-import-fallback')).disabled).toBe(true);
         expect(get(importForegroundStore)).toBe(false);
@@ -113,7 +137,7 @@ describe('the assistant, mounted', () => {
     test('a review answered after a newer choice is ignored', async () => {
         const { getByTestId } = render(DocumentImportModal, { visible: true });
         await startDocumentImport();
-        await waitFor(() => expect(getByTestId('document-import-review')).toBeTruthy());
+        await waitFor(() => expect(getByTestId('document-sheet')).toBeTruthy());
         /** @type {(v: any) => void} */
         let slow = () => {};
         /** @type {any} */ (db.ReviewDocumentReleve).mockReset();
@@ -125,6 +149,51 @@ describe('the assistant, mounted', () => {
         slow(review({ refused: [2, 99] }));
         await first;
         expect(get(documentImportStore).review.refused).toEqual([]);
+    });
+});
+
+describe('the verification sheet', () => {
+    beforeEach(() => {
+        documentImportStore.set(initialDocumentImport());
+        /** @type {any} */ (db.SummarizeDocumentReleve).mockReset().mockResolvedValue(summary(true));
+        /** @type {any} */ (db.ReviewDocumentReleve).mockReset().mockResolvedValue(review());
+        /** @type {any} */ (db.VerifyDocumentEntry).mockClear();
+        /** @type {any} */ (db.AnalyzeDocument).mockClear();
+    });
+    afterEach(() => cleanup());
+
+    test('the thumbnail beside the board; V verifies and moves on; E corrects; the counters filter', async () => {
+        const { getByTestId, findByTestId } = render(DocumentImportModal, { visible: true });
+        await startDocumentImport('/tmp/livre.pdf');
+        await waitFor(() => expect(getByTestId('document-sheet-reference').textContent).toBe('p. 3, Problem 4'));
+        expect(/** @type {HTMLImageElement} */ (await findByTestId('document-sheet-image')).src).toContain('data:image/png');
+        expect(db.DocumentDiagramImage).toHaveBeenCalledWith('/tmp/livre.pdf', 3, 0.1, 0.5, 0.5, 0.3);
+        expect(getByTestId('document-sheet-filter-to-verify').textContent).toContain('2');
+
+        const box = getByTestId('document-sheet');
+        await fireEvent.keyDown(box, { key: 'v' });
+        expect(db.VerifyDocumentEntry).toHaveBeenLastCalledWith('/tmp/livre.pdf', '{"releve":1}', 2, true, '');
+        await waitFor(() => expect(getByTestId('document-sheet-reference').textContent).toBe('p. 3, Problem 5'));
+        expect(getByTestId('document-sheet-filter-verified').textContent).toContain('1');
+        // The entry has no rectangle: no thumbnail, the board alone.
+        expect(getByTestId('document-sheet-noimage')).toBeTruthy();
+
+        await fireEvent.keyDown(box, { key: 'e' });
+        const input = /** @type {HTMLInputElement} */ (await findByTestId('document-sheet-xgid'));
+        await fireEvent.input(input, { target: { value: 'XGID=corrige' } });
+        await fireEvent.keyDown(input, { key: 'Enter' });
+        expect(db.VerifyDocumentEntry).toHaveBeenLastCalledWith('/tmp/livre.pdf', expect.any(String), 3, true, 'XGID=corrige');
+
+        await fireEvent.click(getByTestId('document-sheet-filter-sure'));
+        await waitFor(() => expect(getByTestId('document-sheet-reference').textContent).toBe('p. 2, Problem 1'));
+    });
+
+    test('a relevé kept beside the document is taken up again, not read anew', async () => {
+        /** @type {any} */ (db.LoadDocumentReleve).mockResolvedValueOnce('{"verified":[2]}');
+        const { getByTestId } = render(DocumentImportModal, { visible: true });
+        await startDocumentImport('/tmp/livre.pdf');
+        expect(db.AnalyzeDocument).not.toHaveBeenCalled();
+        await waitFor(() => expect(getByTestId('document-sheet-reference').textContent).toBe('p. 3, Problem 5'));
     });
 });
 

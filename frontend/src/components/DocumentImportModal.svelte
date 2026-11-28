@@ -5,10 +5,13 @@
     // niveau que `document import --accept-complete --fallback`.
     import { t } from '../i18n';
     import Modal from './Modal.svelte';
+    import DocumentVerifySheet from './DocumentVerifySheet.svelte';
     import { documentImportStore } from '../stores/documentImportStore.js';
     import { confirmDocument, setChoice, runDocumentImport, closeDocumentImport, cancelDocumentImport } from '../services/documentImportService.js';
 
     let { visible = false } = $props();
+    /** @type {any} */
+    let sheet = $state();
 
     const s = $derived($documentImportStore);
     const summary = $derived(s.summary);
@@ -54,7 +57,7 @@
     const fallbackRanks = $derived(s.review.fallbackRanks ?? []);
 </script>
 
-<Modal open={visible} onclose={cancelDocumentImport} size="wide" label={$t('documentImport.title')}>
+<Modal open={visible} onclose={cancelDocumentImport} size="wide" label={$t('documentImport.title')} onkeydown={(/** @type {KeyboardEvent} */ e) => sheet?.handleKey(e)}>
     <h2 class="doc-title">{$t('documentImport.title')}</h2>
     {#if s.phase === 'reading'}
         <p data-testid="document-import-reading">{$t('documentImport.reading')}</p>
@@ -113,25 +116,8 @@
             </label>
         </fieldset>
         <section class="doc-block">
-            <h3>{$t('documentImport.review', { n: s.review.items.length })}</h3>
-            {#if s.review.items.length === 0}
-                <p>{$t('documentImport.reviewNone')}</p>
-            {:else}
-                <ul class="doc-review" data-testid="document-import-review">
-                    {#each s.review.items as item (item.rank)}
-                        <li data-rank={item.rank} class:held={item.held}>
-                            <strong>{item.reference}</strong>
-                            <span
-                                >{item.state === 'sure'
-                                    ? $t('documentImport.state.sure')
-                                    : item.state === 'uncertain'
-                                      ? $t('documentImport.state.uncertain')
-                                      : $t('documentImport.state.to-verify')}</span
-                            >
-                            {#if item.fields.length}<em>{$t('documentImport.check', { fields: item.fields.map((/** @type {string} */ f) => fieldLabel(f)).join(', ') })}</em>{/if}
-                        </li>
-                    {/each}
-                </ul>
+            {#if s.sheet.length > 0}
+                <DocumentVerifySheet bind:this={sheet} {fieldLabel} {busy} />
             {/if}
             {#if refused.length > 0}
                 <p class="doc-refused" data-testid="document-import-refused">{$t('documentImport.refused', { ranks: refused.join(', ') })}</p>
@@ -188,20 +174,6 @@
         border: none;
         padding: 0;
         margin: var(--space-2) 0;
-    }
-    .doc-review {
-        max-height: 14em;
-        overflow-y: auto;
-        margin: 0;
-        padding-left: var(--space-3);
-    }
-    .doc-review li.held {
-        font-weight: 600;
-    }
-    .doc-review em {
-        display: block;
-        font-style: normal;
-        opacity: 0.8;
     }
     .doc-error,
     .doc-refused {

@@ -1842,6 +1842,24 @@ export namespace document {
 	        this.forced = source["forced"];
 	    }
 	}
+	export class Rect {
+	    x: number;
+	    y: number;
+	    w: number;
+	    h: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Rect(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.x = source["x"];
+	        this.y = source["y"];
+	        this.w = source["w"];
+	        this.h = source["h"];
+	    }
+	}
 	export class ReviewItem {
 	    rank: number;
 	    reference: string;
@@ -1886,6 +1904,50 @@ export namespace document {
 	        this.items = this.convertValues(source["items"], ReviewItem);
 	        this.refused = source["refused"];
 	        this.fallbackRanks = source["fallbackRanks"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class SheetEntry {
+	    rank: number;
+	    page: number;
+	    reference: string;
+	    position: string;
+	    state: string;
+	    verified: boolean;
+	    fields: string[];
+	    rect?: Rect;
+	
+	    static createFrom(source: any = {}) {
+	        return new SheetEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rank = source["rank"];
+	        this.page = source["page"];
+	        this.reference = source["reference"];
+	        this.position = source["position"];
+	        this.state = source["state"];
+	        this.verified = source["verified"];
+	        this.fields = source["fields"];
+	        this.rect = this.convertValues(source["rect"], Rect);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

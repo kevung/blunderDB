@@ -3848,18 +3848,10 @@
         "acceptComplete": "Accept the entries of 15 + 15 checkers read with no doubt ({n})",
         "fallback": "Import under the context the position carries when it is not read ({n}), the fields to check named in the reference",
         "collection": "Collection",
-        "review": "Entries to check ({n})",
-        "reviewNone": "No entry to check.",
         "refused": "The import is refused for rank {ranks}: confirm, accept or use the fallback.",
         "run": "Import",
         "imported": "Collection {collection}: {added} positions added, {repeated} repeated",
         "importedDetail": "{entries} entries, {positions} distinct positions ({fresh} new); complete: {complete}, fallback: {fallback}",
-        "state": {
-            "sure": "sure",
-            "to-verify": "to verify",
-            "uncertain": "uncertain"
-        },
-        "check": "Check against the diagram: {fields}",
         "field": {
             "cube": "cube",
             "dice": "dice",
@@ -3871,6 +3863,18 @@
             "pips": "pip counts",
             "diagram": "diagram reading"
         },
-        "importMenu": "Import a document…"
+        "importMenu": "Import a document…",
+        "sheet": {
+            "filter": {
+                "sure": "Sure",
+                "to-verify": "To verify",
+                "uncertain": "Uncertain",
+                "verified": "Verified"
+            },
+            "verify": "Verify",
+            "unverify": "Unverify",
+            "edit": "Correct",
+            "write": "Write"
+        }
     }
 }

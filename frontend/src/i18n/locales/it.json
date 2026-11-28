@@ -3848,18 +3848,10 @@
         "acceptComplete": "Accetta le voci di 15 + 15 pedine lette senza dubbio ({n})",
         "fallback": "Importa con il contesto della posizione quando non è letto ({n}); i campi da verificare sono nel riferimento",
         "collection": "Raccolta",
-        "review": "Voci da verificare ({n})",
-        "reviewNone": "Nessuna voce da verificare.",
         "refused": "L'importazione è rifiutata per il rango {ranks}: conferma, accetta o usa il ripiego.",
         "run": "Importa",
         "imported": "Raccolta {collection}: {added} posizioni aggiunte, {repeated} ripetute",
         "importedDetail": "{entries} voci, {positions} posizioni distinte ({fresh} nuove); complete: {complete}, ripiego: {fallback}",
-        "state": {
-            "sure": "sicura",
-            "to-verify": "da verificare",
-            "uncertain": "incerta"
-        },
-        "check": "Da confrontare con il diagramma: {fields}",
         "field": {
             "cube": "cubo",
             "dice": "dadi",
@@ -3871,6 +3863,18 @@
             "pips": "conteggi dei pip",
             "diagram": "lettura del diagramma"
         },
-        "importMenu": "Importa un documento…"
+        "importMenu": "Importa un documento…",
+        "sheet": {
+            "filter": {
+                "sure": "Sicure",
+                "to-verify": "Da verificare",
+                "uncertain": "Incerte",
+                "verified": "Verificate"
+            },
+            "verify": "Convalida",
+            "unverify": "Annulla la convalida",
+            "edit": "Correggi",
+            "write": "Scrivi"
+        }
     }
 }
