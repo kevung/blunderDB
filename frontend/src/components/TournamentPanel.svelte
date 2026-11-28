@@ -309,7 +309,7 @@
 
     async function loadAllMatches() {
         try {
-            availableMatches = (await readOfLibrary(() => ListMatches({ Unassigned: true, Text: addMatchSearch.trim(), Limit: 50 }))) || [];
+            availableMatches = (await readOfLibrary(() => ListMatches(/** @type {any} */ ({ Unassigned: true, Text: addMatchSearch.trim(), Limit: 50 })))) || [];
         } catch (error) {
             if (isLibraryLeft(error)) return;
             logger.error('Error loading matches:', error);
@@ -353,7 +353,7 @@
             } else {
                 return 0;
             }
-            const cmp = typeof valA === 'number' ? valA - valB : valA.localeCompare(valB);
+            const cmp = typeof valA === 'number' ? valA - /** @type {number} */ (valB) : valA.localeCompare(valB);
             return sortOrder === 'asc' ? cmp : -cmp;
         });
     }
@@ -459,7 +459,7 @@
 
     /**
      * @param {Tournament} tournament
-     * @param {Event} event
+     * @param {Event | undefined} event
      */
     async function deleteTournamentEntry(tournament, event) {
         event?.stopPropagation();
@@ -481,7 +481,7 @@
 
     /**
      * @param {Tournament} tournament
-     * @param {Event} event
+     * @param {Event | undefined} event
      */
     function startEdit(tournament, event) {
         event?.stopPropagation();
@@ -533,7 +533,7 @@
         set: (next) => tournamentMatchesStore.set(next),
         persist: (next) =>
             ReorderTournamentMatches(
-                selectedTournament.id,
+                /** @type {any} */ (selectedTournament).id,
                 next.map((m) => m.id)
             ),
         label: 'matches'
@@ -624,41 +624,43 @@
             const currentPlayedMove = startMovePos.checker_move || '';
             const currentPlayedCubeAction = startMovePos.cube_action || '';
 
-            analysisStore.set({
-                positionId: analysis?.positionId || null,
-                xgid: analysis?.xgid || '',
-                player1: analysis?.player1 || '',
-                player2: analysis?.player2 || '',
-                analysisType: analysis?.analysisType || '',
-                analysisEngineVersion: analysis?.analysisEngineVersion || '',
-                checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
-                doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
-                    analysisDepth: '',
-                    playerWinChances: 0,
-                    playerGammonChances: 0,
-                    playerBackgammonChances: 0,
-                    opponentWinChances: 0,
-                    opponentGammonChances: 0,
-                    opponentBackgammonChances: 0,
-                    cubelessNoDoubleEquity: 0,
-                    cubelessDoubleEquity: 0,
-                    cubefulNoDoubleEquity: 0,
-                    cubefulNoDoubleError: 0,
-                    cubefulDoubleTakeEquity: 0,
-                    cubefulDoubleTakeError: 0,
-                    cubefulDoublePassEquity: 0,
-                    cubefulDoublePassError: 0,
-                    bestCubeAction: '',
-                    wrongPassPercentage: 0,
-                    wrongTakePercentage: 0
-                },
-                playedMove: currentPlayedMove,
-                playedCubeAction: currentPlayedCubeAction,
-                playedMoves: analysis?.playedMoves || [],
-                playedCubeActions: analysis?.playedCubeActions || [],
-                creationDate: analysis?.creationDate || '',
-                lastModifiedDate: analysis?.lastModifiedDate || ''
-            });
+            analysisStore.set(
+                /** @type {any} */ ({
+                    positionId: analysis?.positionId || null,
+                    xgid: analysis?.xgid || '',
+                    player1: analysis?.player1 || '',
+                    player2: analysis?.player2 || '',
+                    analysisType: analysis?.analysisType || '',
+                    analysisEngineVersion: analysis?.analysisEngineVersion || '',
+                    checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
+                    doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
+                        analysisDepth: '',
+                        playerWinChances: 0,
+                        playerGammonChances: 0,
+                        playerBackgammonChances: 0,
+                        opponentWinChances: 0,
+                        opponentGammonChances: 0,
+                        opponentBackgammonChances: 0,
+                        cubelessNoDoubleEquity: 0,
+                        cubelessDoubleEquity: 0,
+                        cubefulNoDoubleEquity: 0,
+                        cubefulNoDoubleError: 0,
+                        cubefulDoubleTakeEquity: 0,
+                        cubefulDoubleTakeError: 0,
+                        cubefulDoublePassEquity: 0,
+                        cubefulDoublePassError: 0,
+                        bestCubeAction: '',
+                        wrongPassPercentage: 0,
+                        wrongTakePercentage: 0
+                    },
+                    playedMove: currentPlayedMove,
+                    playedCubeAction: currentPlayedCubeAction,
+                    playedMoves: analysis?.playedMoves || [],
+                    playedCubeActions: analysis?.playedCubeActions || [],
+                    creationDate: analysis?.creationDate || '',
+                    lastModifiedDate: analysis?.lastModifiedDate || ''
+                })
+            );
 
             commentTextStore.set('');
             selectedMoveStore.set(null);
@@ -1217,8 +1219,8 @@
                         <EntityAutocomplete
                             bind:value={addMatchSearch}
                             items={availableMatches}
-                            key={(m) => m.id}
-                            label={(m) => `${m.player1_name} ${$t('tournament.vs')} ${m.player2_name}`}
+                            key={(/** @type {Match} */ m) => m.id}
+                            label={(/** @type {Match} */ m) => `${m.player1_name} ${$t('tournament.vs')} ${m.player2_name}`}
                             filter={matchMatchesQuery}
                             variant="field"
                             placement="above"
@@ -1226,10 +1228,10 @@
                             fillOnSelect={false}
                             placeholder={$t('tournament.addMatchPlaceholder')}
                             onFocus={loadAllMatches}
-                            onSelect={(m) => addMatchToTournament(m.id)}
+                            onSelect={(/** @type {Match} */ m) => addMatchToTournament(m.id)}
                             onCancel={() => (addMatchSearch = '')}
                         >
-                            {#snippet item(match)}
+                            {#snippet item(/** @type {Match} */ match)}
                                 {match.player1_name}
                                 {$t('tournament.vs')}
                                 {match.player2_name} <span class="match-pts">{match.match_length}pt</span>

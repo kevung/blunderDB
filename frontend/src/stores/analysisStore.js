@@ -53,7 +53,7 @@ export const selectedMoveStore = writable(null);
 // The Eval panel's live gammonNet result, in analysisStore's shape plus the panel's
 // own cube `decision`, for the image copy: in EVAL mode analysisStore describes
 // another position. Null when the panel shows nothing to copy.
-export const evalAnalysisStore = writable(null);
+export const evalAnalysisStore = writable(/** @type {any} */ (null));
 
 // The Eval panel's gammonNet verdict, as the engine returned it and the batch
 // stores it (the moves with dice set, the cube otherwise), with the signature

@@ -72,8 +72,8 @@
     // The cube ceiling applies at any score: read off the position.
     let maxCube = $derived($positionStore?.max_cube ?? 0);
 
-    let evalMoves = $state([]);
-    let evalCubeAnalysis = $state(null);
+    let evalMoves = $state(/** @type {any[]} */ ([]));
+    let evalCubeAnalysis = $state(/** @type {any} */ (null));
     // The verdict as a value (ADR-0020 rule 3): translatable and keeps "too
     // good", unlike the imported BestCubeAction string.
     let evalCubeVerdict = $state('');
@@ -91,9 +91,9 @@
     // Race "evaluated" regime (ADR-0012): gammonNet's async verdict, where the
     // synchronous exact/estimated path has none. Null unless the position is a
     // race outside the exact domain (same predicate as race.Evaluate).
-    let evalRaceOverride = $state(null);
+    let evalRaceOverride = $state(/** @type {any} */ (null));
     // Pre-roll fact vector (ADR-0017), mover-relative; converted to bottom/top below.
-    let evalPreRoll = $state(null);
+    let evalPreRoll = $state(/** @type {any} */ (null));
     // The board the result on screen was computed for, and the match equity
     // table that valued it: CTRL-S stores the verdict only on that board and
     // under that table (evalVerdictStore).
@@ -169,7 +169,7 @@
     $effect(
         onChange(
             () => isActive,
-            (v) => {
+            (/** @type {boolean} */ v) => {
                 if (!v) selectedMoveStore.set(null);
             },
             false
@@ -203,7 +203,7 @@
         GetGammonNetPruneK()
             .then((pruneK) =>
                 GetGammonNetCandidates().then((candidates) =>
-                    EvaluatePositionImmediate(pos, pruneK, candidates).then((result) => {
+                    EvaluatePositionImmediate(/** @type {any} */ (pos), pruneK, candidates).then((result) => {
                         if (generation !== evalGeneration) return; // superseded while awaiting
                         applyEvalResult(result, signature);
                     })
@@ -221,7 +221,7 @@
             Promise.all([GetGammonNetDisplayPly(), GetGammonNetPruneK(), GetGammonNetCandidates()])
                 .then(([ply, pruneK, candidates]) => {
                     if (generation !== evalGeneration) return;
-                    StartEvaluationAtRest(pos, ply, pruneK, candidates, generation).catch((error) => {
+                    StartEvaluationAtRest(/** @type {any} */ (pos), ply, pruneK, candidates, generation).catch((error) => {
                         logger.error('gammonNet evaluation-at-rest failed to start:', error);
                         if (generation !== evalGeneration) return;
                         evalFailed = true;
@@ -302,14 +302,15 @@
         unsubEval.forEach((off) => off && off());
     });
 
-    function toggleChallenge(/** @type {Event & { target: HTMLInputElement }} */ e) {
+    function toggleChallenge(/** @type {Event} */ ev) {
+        const e = /** @type {Event & { target: HTMLInputElement }} */ (ev);
         const on = e.target.checked;
         epcChallengeStore.set(on);
         resetEpcReveal();
         SaveEpcChallenge(on).catch(() => {});
     }
 
-    function reveal(zone) {
+    function reveal(/** @type {string} */ zone) {
         epcRevealedStore.update((r) => ({ ...r, [zone]: true }));
     }
 
@@ -398,7 +399,7 @@
     // analysis panel. Required: keyboardService withholds these keys app-wide
     // while selectedMoveStore is set.
     function handleKeyDown(/** @type {KeyboardEvent} */ event) {
-        if (event.target?.matches?.('input, select, textarea')) return;
+        if (/** @type {Element | null} */ (event.target)?.matches?.('input, select, textarea')) return;
         if (event.key === 'Escape') {
             // A running rollout is stopped first, then the selection cleared.
             if (rollout.running) {
@@ -445,7 +446,7 @@
     let maskedDecision = $derived(challenge && !revealed.decision);
 
     const HIDDEN = '···';
-    const pct = (x) => (100 * x).toFixed(2);
+    const pct = (/** @type {number} */ x) => (100 * x).toFixed(2);
 
     // Position facts per board side, always pre-roll (ADR-0017 rule 1): from
     // displayRace on a race, else the generic PreRoll payload.
@@ -542,7 +543,7 @@
         }
         if (decision.state === DECISION_STATE.PENDING) return null;
         const f = baselineFacts;
-        const pctOf = (x) => (x == null ? undefined : 100 * x);
+        const pctOf = (/** @type {number | null | undefined} */ x) => (x == null ? undefined : 100 * x);
         const fromFacts = f
             ? {
                   playerWinChances: pctOf(f.playerWinChance),

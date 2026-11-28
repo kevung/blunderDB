@@ -7,7 +7,16 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
 
-const M = (id, a, b) => ({ id, player1_name: a, player2_name: b, match_length: 7, match_date: '2026-01-15', game_count: 1, pr: 0, mwc_loss: 0 });
+const M = (/** @type {number} */ id, /** @type {string} */ a, /** @type {string} */ b) => ({
+    id,
+    player1_name: a,
+    player2_name: b,
+    match_length: 7,
+    match_date: '2026-01-15',
+    game_count: 1,
+    pr: 0,
+    mwc_loss: 0
+});
 const MATCHES = [M(7, 'Alice', 'Bob'), M(8, 'Carol', 'Dave'), M(9, 'Erin', 'Finn')];
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
@@ -40,8 +49,8 @@ describe('TournamentPanel selection', () => {
     test('Ctrl+click and Shift+click select several matches', async () => {
         const { container } = render(TournamentPanel, { props: {} });
         const first = await screen.findByText('Bob');
-        await fireEvent.click(first.closest('tr'), { ctrlKey: true });
-        await fireEvent.click(screen.getByText('Finn').closest('tr'), { shiftKey: true });
+        await fireEvent.click(/** @type {Element} */ (first.closest('tr')), { ctrlKey: true });
+        await fireEvent.click(/** @type {Element} */ (screen.getByText('Finn').closest('tr')), { shiftKey: true });
         expect(container.querySelectorAll('tbody tr.selected').length).toBe(3);
         expect(screen.getByTestId('tournament-selection-chip').textContent).toContain('3');
     });

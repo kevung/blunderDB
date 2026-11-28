@@ -76,7 +76,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({ ClipboardGetText: vi.fn(), 
 const setStatusBarMessage = vi.fn();
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: (/** @type {any[]} */ ...a) => setStatusBarMessage(...a) }));
 const ImportPaperArchive = vi.fn();
-const IsBlunderDBArchive = vi.fn(async (/** @type {string} */ p) => !p.includes('livre'));
+const IsBlunderDBArchive = vi.fn(async (/** @type {string} */ p, /** @type {any[]} */ ..._rest) => !p.includes('livre'));
 const startDocumentImport = vi.fn();
 const OpenPositionFilesDialog = vi.fn();
 vi.mock('../services/documentImportService.js', () => ({ startDocumentImport: (/** @type {any[]} */ ...a) => startDocumentImport(...a) }));

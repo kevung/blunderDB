@@ -56,7 +56,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            newDatabase(e);
+            newDatabase();
         }}
         aria-label={$t('toolbar.newDatabase')}
         title="{$t('toolbar.newDatabase')} {toolbarHint('newDatabase', $t)}"
@@ -73,7 +73,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            openDatabase(e);
+            openDatabase();
         }}
         aria-label={$t('toolbar.openDatabase')}
         title="{$t('toolbar.openDatabase')} {toolbarHint('openDatabase', $t)} · {$t('toolbar.openInNewGroup')} {toolbarHint('openInNewGroup', $t)}"
@@ -90,7 +90,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            importDatabase(e);
+            importDatabase();
         }}
         aria-label={$t('toolbar.importDatabase')}
         title="{$t('toolbar.importDatabaseTip')} {toolbarHint('importDatabaseTip', $t)}"
@@ -127,7 +127,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            exportDatabase(e);
+            exportDatabase();
         }}
         aria-label={$t('toolbar.exportDatabase')}
         title="{$t('toolbar.exportDatabase')} {toolbarHint('exportDatabase', $t)}"
@@ -145,7 +145,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            exitApp(e);
+            exitApp();
         }}
         aria-label={$t('toolbar.exit')}
         title="{$t('toolbar.exit')} blunderDB {toolbarHint('exit', $t)}"
@@ -164,7 +164,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            importPosition(e);
+            importPosition();
         }}
         aria-label={$t('toolbar.importPosition')}
         title="{$t('toolbar.importPositionTip')} {toolbarHint('importPositionTip', $t)}"
@@ -182,7 +182,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            importFolder(e);
+            importFolder();
         }}
         aria-label={$t('toolbar.importFolder')}
         title="{$t('toolbar.importFolder')} {toolbarHint('importFolder', $t)}"
@@ -200,7 +200,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            copyPosition(e);
+            copyPosition();
         }}
         aria-label={$t('toolbar.copyPosition')}
         title={isSearchTab ? `${$t('toolbar.copyPositionSearchTip')} ${toolbarHint('copyPosition', $t)}` : `${$t('toolbar.copyPositionTip')} ${toolbarHint('copyPosition', $t)}`}
@@ -217,7 +217,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            pastePosition(e);
+            pastePosition();
         }}
         aria-label={$t('toolbar.pastePosition')}
         title={isSearchTab ? `${$t('toolbar.pastePositionSearchTip')} ${toolbarHint('pastePosition', $t)}` : `${$t('toolbar.pastePosition')} ${toolbarHint('pastePosition', $t)}`}
@@ -235,7 +235,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            saveCurrentPosition(e);
+            saveCurrentPosition();
         }}
         aria-label={$t('toolbar.savePosition')}
         title="{$t('toolbar.savePosition')} {toolbarHint('savePosition', $t)}"
@@ -249,7 +249,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            updatePosition(e);
+            updatePosition();
         }}
         aria-label={$t('toolbar.updatePosition')}
         title="{$t('toolbar.updatePosition')} {toolbarHint('updatePosition', $t)}"
@@ -288,7 +288,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            deletePosition(e);
+            deletePosition();
         }}
         aria-label={$t('toolbar.deletePosition')}
         title="{$t('toolbar.deletePosition')} {toolbarHint('deletePosition', $t)}"
@@ -308,7 +308,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            reloadAllPositions(e);
+            reloadAllPositions();
         }}
         aria-label={$t('toolbar.loadAllPositions')}
         title="{$t('toolbar.loadAllPositions')} {toolbarHint('loadAllPositions', $t)}"
@@ -322,7 +322,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            firstPosition(e);
+            firstPosition();
         }}
         aria-label={$t('toolbar.firstPosition')}
         title="{$t('toolbar.firstPosition')} {toolbarHint('firstPosition', $t)}"
@@ -336,7 +336,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            previousPosition(e);
+            previousPosition();
         }}
         aria-label={$t('toolbar.previousPosition')}
         title="{$t('toolbar.previousPosition')} {toolbarHint('previousPosition', $t)}"
@@ -350,7 +350,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            nextPosition(e);
+            nextPosition();
         }}
         aria-label={$t('toolbar.nextPosition')}
         title="{$t('toolbar.nextPosition')} {toolbarHint('nextPosition', $t)}"
@@ -364,7 +364,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            lastPosition(e);
+            lastPosition();
         }}
         aria-label={$t('toolbar.lastPosition')}
         title="{$t('toolbar.lastPosition')} {toolbarHint('lastPosition', $t)}"
@@ -378,7 +378,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            gotoPosition(e);
+            gotoPosition();
         }}
         aria-label={$t('toolbar.goToPosition')}
         title={$t('toolbar.goToPosition')}
@@ -398,7 +398,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            togglePipcount(e);
+            togglePipcount();
         }}
         aria-label={$t('toolbar.togglePipcount')}
         title="{$t('toolbar.togglePipcount')} {toolbarHint('togglePipcount', $t)}"
@@ -430,7 +430,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            loadRandomPosition(e);
+            loadRandomPosition();
         }}
         aria-label={$t('toolbar.randomPosition')}
         title="{$t('toolbar.randomPosition')} {toolbarHint('randomPosition', $t)}"
@@ -450,7 +450,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            showTrainingPanel(e);
+            showTrainingPanel();
         }}
         aria-label={$t('toolbar.training')}
         title="{$t('toolbar.training')} {toolbarHint('training', $t)}"
@@ -478,7 +478,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            copyBoardImage(e);
+            copyBoardImage();
         }}
         aria-label={$t('toolbar.copyBoardImage')}
         title="{$t('toolbar.copyBoardImageTip')} {toolbarHint('copyBoardImage', $t)}, {$t('toolbar.copyBoardImageWithAnalysis')} {toolbarHint('copyBoardImage', $t, 2)}"
@@ -497,7 +497,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            toggleConfig(e);
+            toggleConfig();
         }}
         aria-label={$t('toolbar.settings')}
         title={$t('toolbar.settings')}
@@ -516,7 +516,7 @@
         class="duel-keep"
         onclick={(e) => {
             e.stopPropagation();
-            toggleHelpModal(e);
+            toggleHelpModal();
         }}
         aria-label={$t('toolbar.help')}
         title="{$t('toolbar.help')} {toolbarHint('help', $t)}"

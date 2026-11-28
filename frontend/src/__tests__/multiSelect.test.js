@@ -2,26 +2,28 @@ import { describe, test, expect } from 'vitest';
 import { modifierSelect, idsFor } from '../utils/multiSelect.js';
 
 const rows = [1, 2, 3, 4, 5].map((id) => ({ id }));
-const key = (r) => r.id;
+/** @param {Parameters<typeof modifierSelect>} args */
+const ms = (...args) => /** @type {{ keys: Set<number>, anchor: number }} */ (modifierSelect(...args));
+const key = (/** @type {{ id: number }} */ r) => r.id;
 
 describe('modifierSelect', () => {
     test('a plain click is not handled', () => {
         expect(modifierSelect(rows, key, new Set(), null, rows[0], {})).toBeNull();
     });
     test('Ctrl+click adds, keeps the single selection as seed, then removes', () => {
-        let r = modifierSelect(rows, key, new Set(), null, rows[2], { ctrlKey: true }, 1);
+        let r = ms(rows, key, new Set(), null, rows[2], { ctrlKey: true }, 1);
         expect([...r.keys]).toEqual([1, 3]);
-        r = modifierSelect(rows, key, r.keys, r.anchor, rows[2], { metaKey: true });
+        r = ms(rows, key, r.keys, r.anchor, rows[2], { metaKey: true });
         expect([...r.keys]).toEqual([1]);
     });
     test('Shift+click selects the range from the anchor, either direction', () => {
-        let r = modifierSelect(rows, key, new Set(), 4, rows[1], { shiftKey: true });
+        let r = ms(rows, key, new Set(), 4, rows[1], { shiftKey: true });
         expect([...r.keys].sort()).toEqual([2, 3, 4]);
-        r = modifierSelect(rows, key, new Set(), null, rows[3], { shiftKey: true }, 2);
+        r = ms(rows, key, new Set(), null, rows[3], { shiftKey: true }, 2);
         expect([...r.keys].sort()).toEqual([2, 3, 4]);
     });
     test('Ctrl+Shift+click extends the selection', () => {
-        const r = modifierSelect(rows, key, new Set([1]), 3, rows[4], { shiftKey: true, ctrlKey: true });
+        const r = ms(rows, key, new Set([1]), 3, rows[4], { shiftKey: true, ctrlKey: true });
         expect([...r.keys].sort()).toEqual([1, 3, 4, 5]);
     });
 });

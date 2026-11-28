@@ -4,8 +4,8 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 // sheet or an archive blunderDB produced imports by its codes, through the
 // paper archive import, and its diagrams are never read.
 
-const AnalyzeDocument = vi.fn(async () => '{"releve":1}');
-const ImportPaperArchive = vi.fn(async () => ({ imported: [1], duplicates: 0, positions: 0, knownPositions: 0, missing: [], failed: [] }));
+const AnalyzeDocument = vi.fn(async (/** @type {any[]} */ ..._a) => '{"releve":1}');
+const ImportPaperArchive = vi.fn(async (/** @type {any[]} */ ..._a) => ({ imported: [1], duplicates: 0, positions: 0, knownPositions: 0, missing: [], failed: [] }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({ EventsOn: vi.fn(() => () => {}) }));
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     AnalyzeDocument: (/** @type {any[]} */ ...a) => AnalyzeDocument(...a),

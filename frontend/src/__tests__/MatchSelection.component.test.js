@@ -66,12 +66,12 @@ describe('print dialog on a selection', () => {
         expect(getByTestId('match-print-selection').textContent).toContain('3');
         await fireEvent.click(getByTestId('match-print-go'));
         await vi.waitFor(() => expect(printMatchSheet).toHaveBeenCalledTimes(1));
-        expect(printMatchSheet.mock.calls[0][0]).toEqual([3, 5, 8]);
+        expect(/** @type {any[][]} */ (printMatchSheet.mock.calls)[0][0]).toEqual([3, 5, 8]);
     });
     test('refuses beyond 100 with a message and a disabled button', () => {
         const { getByTestId } = render(MatchPrintModal, { open: true, matchIds: Array.from({ length: 101 }, (_, i) => i + 1) });
         expect(getByTestId('match-print-too-many').textContent).toContain('101');
-        expect(getByTestId('match-print-go').disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement} */ (getByTestId('match-print-go')).disabled).toBe(true);
     });
 });
 
@@ -80,11 +80,11 @@ describe('paper archive dialog on a selection', () => {
         const { getByTestId } = render(PaperArchiveModal, { open: true, matchIds: [2, 4] });
         await fireEvent.click(getByTestId('paper-archive-export'));
         await vi.waitFor(() => expect(exportPaperArchive).toHaveBeenCalledTimes(1));
-        expect(exportPaperArchive.mock.calls[0][0]).toEqual([2, 4]);
+        expect(/** @type {any[][]} */ (exportPaperArchive.mock.calls)[0][0]).toEqual([2, 4]);
     });
     test('refuses beyond 100', () => {
         const { getByTestId } = render(PaperArchiveModal, { open: true, matchIds: Array.from({ length: 150 }, (_, i) => i + 1) });
         expect(getByTestId('paper-archive-too-many')).toBeTruthy();
-        expect(getByTestId('paper-archive-export').disabled).toBe(true);
+        expect(/** @type {HTMLButtonElement} */ (getByTestId('paper-archive-export')).disabled).toBe(true);
     });
 });

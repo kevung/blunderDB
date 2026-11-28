@@ -34,7 +34,8 @@ import { positionStore } from '../stores/positionStore.js';
 import { enterEvalMode, exitEvalMode } from '../services/modeMachine.js';
 import EvalPanel from '../components/EvalPanel.svelte';
 
-const total = (pos, color) => pos.board.points.filter((p) => p.color === color).reduce((n, p) => n + p.checkers, 0);
+const total = (/** @type {any} */ pos, /** @type {number} */ color) =>
+    pos.board.points.filter((/** @type {any} */ p) => p.color === color).reduce((/** @type {number} */ n, /** @type {any} */ p) => n + p.checkers, 0);
 
 beforeEach(async () => {
     vi.clearAllMocks();
@@ -47,15 +48,15 @@ afterEach(async () => {
     await exitEvalMode();
 });
 
-const startBtn = (c) => c.querySelector('[data-testid="eval-start-position"]');
-const clearBtn = (c) => c.querySelector('[data-testid="eval-clear-board"]');
+const startBtn = (/** @type {HTMLElement} */ c) => /** @type {HTMLElement} */ (c.querySelector('[data-testid="eval-start-position"]'));
+const clearBtn = (/** @type {HTMLElement} */ c) => /** @type {HTMLElement} */ (c.querySelector('[data-testid="eval-clear-board"]'));
 
 describe('the Eval panel board resets', () => {
     test('both sit in the band before the add button, labelled', async () => {
         const { container } = render(EvalPanel);
         await tick();
-        expect(startBtn(container)).not.toBeNull();
-        expect(clearBtn(container)).not.toBeNull();
+        expect(startBtn(container)).toBeTruthy();
+        expect(clearBtn(container)).toBeTruthy();
         expect(startBtn(container).getAttribute('aria-label')).toBe('Starting position');
         expect(clearBtn(container).getAttribute('aria-label')).toBe('Clear the position');
     });
