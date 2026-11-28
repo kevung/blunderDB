@@ -3,6 +3,7 @@
     import { logger } from '../utils/logger.js';
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
+    import { rollPreviewStore } from '../stores/mapStore.js';
     import { isResponseCubeAction } from '../utils/cubeAction.js';
     import { parseMoveNotation, mirrorPosition, boardMetrics } from '../utils/boardGeometry.js';
     import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
@@ -399,6 +400,9 @@
         // Grammaire d'ADR-0086 : le jet du coup, dans l'ordre que le joueur a choisi (le dé de
         // gauche est celui qu'un clic joue).
         if (play && get(quizPlayValidateStore)) position = { ...position, dice: orderedDice(play.rolled ?? position.dice, !!play.swapped) };
+        // La carte des jets : le jet choisi, pas encore joué, posé sur la position d'avant.
+        const preview = rollPreview();
+        if (preview) position = { ...position, dice: preview.dice };
         return displayIsMirrored(position) ? mirrorPosition(position) : position;
     }
 
@@ -455,7 +459,14 @@
             const arrows = get(transcriptionArrowsStore);
             return { moves: screenMoves(arrows?.moves ?? [], flipped), tone: arrows?.tone ?? 'record' };
         }
+        const preview = rollPreview();
+        if (preview) return { moves: screenMoves(parseMoveNotation(preview.move), flipped), tone: 'candidate' };
         return { moves: screenMoves(parseMoveNotation(selectedMove), flipped), tone: 'candidate' };
+    }
+
+    // Le jet de la carte des jets n'existe que sur le plateau de l'évaluation.
+    function rollPreview() {
+        return mode === 'EVAL' ? get(rollPreviewStore) : null;
     }
 
     // Les doutes ne survivent pas à EDIT : la lecture n'y est qu'une proposition.
