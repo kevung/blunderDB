@@ -40,7 +40,7 @@ colonnes : mêmes bords, mêmes repères de colonne, une seule colonne de
 pastilles — ils se lisent comme un seul objet à deux étages. Au-dessus des
 tableaux, la bande d'en-tête porte le titre, le badge de régime et
 l'attribution du moteur (la profondeur de la dernière évaluation y figure
-aussi), puis, à droite, la case *Défi* et le bouton *Ajouter à la base*.
+aussi), puis, à droite, la case *Défi*, deux petites icônes (*Position de départ*, *Effacer la position*) et le bouton *Ajouter à la base*.
 Tant que gammonNet n'a rien rendu, le panneau le dit en une ligne :
 « Évaluation… », ou « Posez une position » sur un plateau vide.
 
@@ -95,6 +95,13 @@ rollout n'est jamais enregistré : il se joue en mémoire, sans base ouverte
 comme sur une base en lecture seule, et son résultat ne s'affiche que tant
 que le plateau reste le même. Un rollout lancé avant une modification du
 plateau ne s'affiche pas sur la nouvelle position.
+
+Les deux icônes à gauche du bouton *Ajouter à la base* remettent le plateau
+à la position de départ du backgammon, ou le vident ; elles font ce que font les
+mêmes entrées du menu contextuel du plateau. Dans les deux cas le score
+reprend l'argent, le videau retourne au centre, les dés sont retirés et le
+trait revient au joueur du bas ; l'évaluation affichée est recalculée pour
+la nouvelle position.
 
 Le bouton **Ajouter à la base**, en fin de bande de badges, après la case *Défi*, enregistre
 dans la base la position posée sur le plateau ; *CTRL-S*, la commande ``w``

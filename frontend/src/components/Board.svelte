@@ -7,7 +7,8 @@
     import { parseMoveNotation, mirrorPosition, boardMetrics } from '../utils/boardGeometry.js';
     import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
     import { defaultBoardConfig, applyPalette } from '../utils/boardConfig.js';
-    import { applyStartingCheckers, attachBoardInteractions } from '../utils/boardInteractions.js';
+    import { attachBoardInteractions } from '../utils/boardInteractions.js';
+    import { resetBoard, resetEvalBoard, startingBoard as startingBoardFor } from '../services/boardReset.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -176,41 +177,8 @@
         scheduleRedraw();
     }
 
-    function resetBoard() {
-        positionStore.update((pos) => {
-            pos.board.points.forEach((point) => (point.checkers = 0));
-            pos.board.bearoff = [15, 15]; // Reset bearoff
-            pos.cube.value = 0; // Set cube in the middle
-            pos.cube.owner = -1; // Reset cube owner
-            pos.score = [7, 7]; // Reset score to 7 away for both players
-            pos.dice = [3, 1]; // Set dice to 3 and 1
-            pos.decision_type = 0; // Checker decision
-            pos.player_on_roll = 0; // Player on roll is below
-            return pos;
-        });
-    }
-
-    // Eval's "clear": blank board with enterEvalMode()'s defaults (money, no
-    // dice), not resetBoard()'s 7-away score, which the race table would read.
-    function resetEvalBoard() {
-        positionStore.update((pos) => {
-            pos.board.points.forEach((point) => (point.checkers = 0));
-            pos.board.bearoff = [15, 15];
-            pos.cube.value = 0;
-            pos.cube.owner = -1;
-            pos.score = [-1, -1]; // money
-            pos.dice = [0, 0]; // no move in progress
-            pos.decision_type = 0;
-            pos.player_on_roll = 0;
-            return pos;
-        });
-    }
-
-    // The clear of the current mode (Backspace's), then the checkers of a new game.
     function startingBoard() {
-        if (mode === 'EVAL') resetEvalBoard();
-        else resetBoard();
-        positionStore.update((pos) => applyStartingCheckers(pos));
+        startingBoardFor(mode);
     }
 
     function logCanvasSize() {
