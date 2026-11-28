@@ -4,6 +4,7 @@ package postgres_test
 
 import (
 	"context"
+	"errors"
 	"net/url"
 	"slices"
 	"strconv"
@@ -16,8 +17,8 @@ import (
 // TestMigrate_BestMoveBackfillRewritesNothingElse upgrades a two-tenant
 // library at the deployed generation of Go passes, rows up to date but for
 // some best_move never derived and one stale column a pass would repair,
-// first as a superuser, then as an owner under FORCEd RLS. Each Migrate must
-// fill those best_move, journal nothing, leave every other row as it was
+// first as a superuser, then as an owner under FORCEd RLS. Each Migrate and
+// BackfillDeferred after it must fill those best_move, journal nothing, leave every other row as it was
 // (same xmin) and keep the match statistics; then a write of the blob alone,
 // as an older binary makes it, clears the column.
 func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
@@ -110,9 +111,9 @@ func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
 				return err
 			}
 			defer func() { _ = super.Close() }()
-			return super.Migrate(ctx)
+			return errors.Join(super.Migrate(ctx), super.BackfillDeferred(ctx))
 		}},
-		{"owner under FORCE", func() error { return s.Migrate(ctx) }},
+		{"owner under FORCE", func() error { return errors.Join(s.Migrate(ctx), s.BackfillDeferred(ctx)) }},
 	} {
 		if m.who != "superuser" {
 			var reset []string
