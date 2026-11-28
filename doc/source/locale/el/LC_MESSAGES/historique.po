@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-27 18:53+0100\n"
+"POT-Creation-Date: 2026-11-28 08:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/historique.rst:4
 msgid "Historique des versions"
@@ -134,10 +134,144 @@ msgstr ""
 "--id`` ή το κουμπί ⟲ του δελτίου τους ξαναγράφει από αυτό το αρχείο."
 
 #: ../../source/historique.rst:46
+msgid "0.63.0 (2026-11-28)"
+msgstr "0.63.0 (2026-11-28)"
+
+#: ../../source/historique.rst:48
+msgid ""
+"**Documents rédigés lus** : l'import d'un document lit aussi les "
+"diagrammes des fichiers DOCX, ODT, EPUB et des pages HTML, image par "
+"image dans l'ordre du texte, le texte voisin recoupant les pips et les "
+"dés ; un fichier Word 97-2003 est refusé avec la proposition de "
+"l'enregistrer en PDF."
+msgstr ""
+"**Ανάγνωση συνταγμένων εγγράφων**: η εισαγωγή εγγράφου διαβάζει επίσης τα"
+" διαγράμματα αρχείων DOCX, ODT και EPUB και σελίδων HTML, εικόνα προς "
+"εικόνα με τη σειρά του κειμένου, με το γειτονικό κείμενο να διασταυρώνει "
+"τα pips και τα ζάρια· ένα αρχείο Word 97-2003 απορρίπτεται με πρόταση να "
+"αποθηκευτεί ως PDF."
+
+#: ../../source/historique.rst:49
+msgid ""
+"**Planche de vérification** : l'assistant d'import d'un document montre "
+"chaque diagramme à côté du plateau redessiné ; *V* valide, *E* corrige, "
+"les compteurs filtrent les entrées, et le relevé se garde à côté du "
+"document pour reprendre plus tard ; ``blunderdb document verify`` fait de"
+" même en ligne de commande."
+msgstr ""
+"**Φύλλο επαλήθευσης**: ο οδηγός εισαγωγής εγγράφου δείχνει κάθε διάγραμμα"
+" δίπλα στο ξανασχεδιασμένο ταμπλό· το *V* επικυρώνει, το *E* διορθώνει, "
+"οι μετρητές φιλτράρουν τις εγγραφές και η καταγραφή φυλάσσεται δίπλα στο "
+"έγγραφο για να συνεχιστεί αργότερα· το ``blunderdb document verify`` "
+"κάνει το ίδιο από τη γραμμή εντολών."
+
+#: ../../source/historique.rst:50
+msgid ""
+"**Lecture d'un document suivie et annulable** : la lecture affiche sa "
+"progression et le temps restant, *Annuler* l'arrête, et les pips imprimés"
+" loin du plateau ou après une lettre de camp se lisent."
+msgstr ""
+"**Ανάγνωση εγγράφου με παρακολούθηση και ακύρωση**: η ανάγνωση δείχνει "
+"την πρόοδό της και τον χρόνο που απομένει, το *Ακύρωση* τη σταματά, και "
+"διαβάζονται τα pips που τυπώνονται μακριά από το ταμπλό ή μετά από ένα "
+"γράμμα πλευράς."
+
+#: ../../source/historique.rst:51
+msgid ""
+"**Le panneau Calculs porte les longues tâches** : la lecture d'un "
+"document, l'export, l'archive papier et les impressions y montrent leur "
+"progression et s'y annulent."
+msgstr ""
+"**Ο πίνακας Υπολογισμοί φέρει τις μακριές εργασίες**: η ανάγνωση "
+"εγγράφου, η εξαγωγή, το χάρτινο αρχείο και οι εκτυπώσεις δείχνουν εκεί "
+"την πρόοδό τους και ακυρώνονται εκεί."
+
+#: ../../source/historique.rst:52
+msgid ""
+"**Feuilles imprimées en PDF réimportable** (Linux) : l'interface imprime "
+"ses feuilles en PDF A4 qui portent leur code de réimport ; l'import "
+"d'archive relit ce PDF."
+msgstr ""
+"**Φύλλα τυπωμένα σε επανεισαγόμενο PDF** (Linux): η διεπαφή τυπώνει τα "
+"φύλλα της σε PDF A4 που φέρουν τον κωδικό επανεισαγωγής τους· η εισαγωγή "
+"αρχείου ξαναδιαβάζει αυτό το PDF."
+
+#: ../../source/historique.rst:53
+msgid ""
+"**Sélection multiple de matchs** : *Ctrl+clic* et *Maj+clic* "
+"sélectionnent plusieurs matchs, que l'on imprime ou met en archive papier"
+" d'un geste ; un tournoi s'imprime aussi."
+msgstr ""
+"**Πολλαπλή επιλογή αγώνων**: το *Ctrl+κλικ* και το *Shift+κλικ* επιλέγουν"
+" πολλούς αγώνες, που τυπώνονται ή μπαίνουν σε χάρτινο αρχείο με μία "
+"κίνηση· τυπώνεται και ένα τουρνουά."
+
+#: ../../source/historique.rst:54
+msgid ""
+"**Panneau Eval** : l'évaluation la plus profonde de chaque position se "
+"réaffiche sans recalcul ; un sélecteur de profondeur réévalue la position"
+" ou les seuls coups sélectionnés ; deux icônes remettent la position de "
+"départ ou vident le plateau."
+msgstr ""
+"**Πίνακας Eval**: η βαθύτερη αξιολόγηση κάθε θέσης εμφανίζεται ξανά χωρίς"
+" επανυπολογισμό· ένας επιλογέας βάθους επαναξιολογεί τη θέση ή μόνο τις "
+"επιλεγμένες κινήσεις· δύο εικονίδια επαναφέρουν την αρχική θέση ή "
+"αδειάζουν το ταμπλό."
+
+#: ../../source/historique.rst:55
+msgid ""
+"**Carte des jets** : sélectionner un jet pose ses dés et dessine son "
+"meilleur coup sur le plateau, le fil d'Ariane montre les jets en petits "
+"dés, et les autres coups se déplient."
+msgstr ""
+"**Χάρτης ζαριών**: η επιλογή μιας ζαριάς τοποθετεί τα ζάρια της και "
+"σχεδιάζει την καλύτερη κίνησή της στο ταμπλό, η διαδρομή πλοήγησης "
+"δείχνει τις ζαριές ως μικρά ζάρια, και οι άλλες κινήσεις αναπτύσσονται."
+
+#: ../../source/historique.rst:56
+msgid ""
+"**Carte des scores** : un clic sur une case des pions évalue les coups "
+"candidats à ce score ; la grille se lit en ordre croissant."
+msgstr ""
+"**Χάρτης σκορ**: ένα κλικ σε κελί κινήσεων πουλιών αξιολογεί τις "
+"υποψήφιες κινήσεις σε αυτό το σκορ· το πλέγμα διαβάζεται σε αύξουσα "
+"σειρά."
+
+#: ../../source/historique.rst:57
+msgid ""
+"**Copier une collection entière** : une collection se copie d'un geste, "
+"vers une nouvelle collection ou à la suite d'une collection existante, "
+"dans l'ordre de la source et sans doublon."
+msgstr ""
+"**Αντιγραφή ολόκληρης συλλογής**: μια συλλογή αντιγράφεται με μία κίνηση,"
+" σε νέα συλλογή ή στη συνέχεια μιας υπάρχουσας, με τη σειρά της πηγής και"
+" χωρίς διπλότυπα."
+
+#: ../../source/historique.rst:58
+msgid ""
+"**Recherche par motif de coup plus rapide** : le motif se préfiltre sur "
+"le meilleur coup de chaque analyse, gardé dans une colonne dérivée ; la "
+"migration remplit cette colonne en arrière-plan après l'ouverture de la "
+"base, et la recherche reste juste pendant ce rattrapage."
+msgstr ""
+"**Ταχύτερη αναζήτηση με μοτίβο κίνησης**: το μοτίβο προφιλτράρεται με την"
+" καλύτερη κίνηση κάθε ανάλυσης, που φυλάσσεται σε παράγωγη στήλη· η "
+"μετάβαση γεμίζει αυτή τη στήλη στο παρασκήνιο μετά το άνοιγμα της βάσης, "
+"και η αναζήτηση μένει ακριβής κατά τη συμπλήρωση."
+
+#: ../../source/historique.rst:59
+msgid ""
+"Voir :ref:`cli_document`, :ref:`manuel_eval`, :ref:`manuel_matchs`, "
+":ref:`manuel_bibliotheque` et :ref:`manuel_partage`."
+msgstr ""
+"Δείτε :ref:`cli_document`, :ref:`manuel_eval`, :ref:`manuel_matchs`, "
+":ref:`manuel_bibliotheque` και :ref:`manuel_partage`."
+
+#: ../../source/historique.rst:62
 msgid "0.62.0 (2026-11-27)"
 msgstr "0.62.0 (2026-11-27)"
 
-#: ../../source/historique.rst:48
+#: ../../source/historique.rst:64
 msgid ""
 "**Moteur de tournoi Nicomaque 0.12.0** : une consolante se joue en "
 "parallèle du tableau principal, et la direction peut renoncer à une "
@@ -150,7 +284,7 @@ msgstr ""
 "της· μια παραίτηση που έρχεται πολύ αργά απορρίπτεται, και η απόρριψη το "
 "λέει."
 
-#: ../../source/historique.rst:49
+#: ../../source/historique.rst:65
 msgid ""
 "**La simulation joue dans la salle demandée** : le nombre de tables borne"
 " la simulation d'un tournoi, un match attend qu'une table se libère, et "
@@ -163,7 +297,7 @@ msgstr ""
 "αίθουσας· η προειδοποίηση ``tables_exceeded`` καταργείται, καθώς δεν έχει"
 " πια λόγο ύπαρξης."
 
-#: ../../source/historique.rst:50
+#: ../../source/historique.rst:66
 msgid ""
 "**Mode serveur : un geste refusé répond 422** : un geste de direction "
 "bien formé que les règles ou le moteur refusent répond ``422`` avec le "
@@ -175,27 +309,27 @@ msgstr ""
 "απαντά ``422`` με τον κωδικό ``refused``, με το ``details.reason`` "
 "αμετάβλητο· ένα κακοδιατυπωμένο αίτημα παραμένει ``400`` ``invalid``."
 
-#: ../../source/historique.rst:51
+#: ../../source/historique.rst:67
 msgid ""
-"**Tri par pips d'une recherche de structure plus rapide en PostgreSQL** : "
-"sous l'isolement par tenant, une recherche de structure triée par pips "
+"**Tri par pips d'une recherche de structure plus rapide en PostgreSQL** :"
+" sous l'isolement par tenant, une recherche de structure triée par pips "
 "lit des index partiels par bande de pips ; au 95e centile, elle passe "
 "d'environ 1,8 s à 0,1 s sur une base de 15,6 millions de positions."
 msgstr ""
 "**Ταχύτερη ταξινόμηση κατά pips σε αναζήτηση δομής με PostgreSQL**: με "
 "την απομόνωση ανά tenant, μια αναζήτηση δομής ταξινομημένη κατά pips "
-"διαβάζει μερικά ευρετήρια ανά ζώνη pips· στο 95ο εκατοστημόριο πέφτει από "
-"περίπου 1,8 s σε 0,1 s σε βάση 15,6 εκατομμυρίων θέσεων."
+"διαβάζει μερικά ευρετήρια ανά ζώνη pips· στο 95ο εκατοστημόριο πέφτει από"
+" περίπου 1,8 s σε 0,1 s σε βάση 15,6 εκατομμυρίων θέσεων."
 
-#: ../../source/historique.rst:51
+#: ../../source/historique.rst:68
 msgid "Voir :ref:`manuel_tournois` et :ref:`headless`."
 msgstr "Δείτε :ref:`manuel_tournois` και :ref:`headless`."
 
-#: ../../source/historique.rst:54
+#: ../../source/historique.rst:71
 msgid "0.61.0 (2026-11-27)"
 msgstr "0.61.0 (2026-11-27)"
 
-#: ../../source/historique.rst:56
+#: ../../source/historique.rst:73
 msgid ""
 "**Le videau dessiné se lit mieux dans un document** : un carré vierge est"
 " lu comme un videau centré quand le document le dessine ainsi ailleurs, "
@@ -207,7 +341,7 @@ msgstr ""
 "σχεδιάζει έτσι αλλού, και τα ζάρια διατηρούνται μόνο όταν επιβεβαιώνονται"
 " από μια ρίψη ή μια κίνηση γραμμένη στο κείμενο (:ref:`cli_document`)."
 
-#: ../../source/historique.rst:57
+#: ../../source/historique.rst:74
 msgid ""
 "**Diagrammes en police de plateau Snowie** : les PDF dont les diagrammes "
 "sont dessinés avec une police de plateau de Snowie se lisent d'après la "
@@ -218,7 +352,7 @@ msgstr ""
 "διαβάζονται από το σχήμα των γλύφων, με τα τυπωμένα pips να επιβεβαιώνουν"
 " την ανάγνωση."
 
-#: ../../source/historique.rst:58
+#: ../../source/historique.rst:75
 msgid ""
 "**Plateau de sortie lu** : le plateau de sortie dessiné en barres "
 "complète le compte d'un camp, mais seulement quand les pips imprimés le "
@@ -228,7 +362,7 @@ msgstr ""
 "ράβδους συμπληρώνει το πλήθος μιας πλευράς, αλλά μόνο όταν τα τυπωμένα "
 "pips το επιβεβαιώνουν."
 
-#: ../../source/historique.rst:59
+#: ../../source/historique.rst:76
 msgid ""
 "**Pions en lettres refusés en le disant** : un document dont les pions "
 "sont dessinés en lettres X et O n'est pas lu, et la cause est nommée sur "
@@ -238,7 +372,7 @@ msgstr ""
 "οποίου τα πούλια σχεδιάζονται με τα γράμματα X και O δεν διαβάζεται, και "
 "η αιτία αναφέρεται σε κάθε διάγραμμα."
 
-#: ../../source/historique.rst:60
+#: ../../source/historique.rst:77
 msgid ""
 "**Légende et score lus dans l'image** : la légende d'un diagramme et son "
 "score se lisent dans l'image, et le score n'est retenu que s'il est lu en"
@@ -248,7 +382,7 @@ msgstr ""
 "διαγράμματος και το σκορ του διαβάζονται στην εικόνα, και το σκορ "
 "διατηρείται μόνο αν διαβαστεί ολόκληρο."
 
-#: ../../source/historique.rst:61
+#: ../../source/historique.rst:78
 msgid ""
 "**Flèches de coup et comptes du plateau** : une flèche de coup n'est plus"
 " prise pour un pion, ni un nombre de quinze ou moins imprimé à côté du "
@@ -258,7 +392,7 @@ msgstr ""
 "εκλαμβάνεται πια ως πούλι, ούτε ένας αριθμός δεκαπέντε ή λιγότερο "
 "τυπωμένος δίπλα στο ταμπλό ως pips."
 
-#: ../../source/historique.rst:62
+#: ../../source/historique.rst:79
 msgid ""
 "**Décodeurs JPEG 2000 et JBIG2 environ 3,5 fois plus rapides** : les PDF "
 "scannés qui portent ces images s'ouvrent plus vite."
@@ -266,7 +400,7 @@ msgstr ""
 "**Αποκωδικοποιητές JPEG 2000 και JBIG2 περίπου 3,5 φορές ταχύτεροι** : τα"
 " σαρωμένα PDF που φέρουν αυτές τις εικόνες ανοίγουν πιο γρήγορα."
 
-#: ../../source/historique.rst:63
+#: ../../source/historique.rst:80
 msgid ""
 "**Archive papier, format 2** : un match tient dans environ un tiers "
 "d'octets en moins, donc dans moins de codes ; les pages imprimées au "
@@ -276,15 +410,15 @@ msgstr ""
 "λιγότερα byte, άρα σε λιγότερους κωδικούς· οι σελίδες που τυπώθηκαν σε "
 "μορφή 1 διαβάζονται ακόμη (:ref:`cli_import_export_chapitre`)."
 
-#: ../../source/historique.rst:64
+#: ../../source/historique.rst:81
 msgid "Voir :ref:`cli_document` et :ref:`cli_import_export_chapitre`."
 msgstr "Βλ. :ref:`cli_document` και :ref:`cli_import_export_chapitre`."
 
-#: ../../source/historique.rst:67
+#: ../../source/historique.rst:84
 msgid "0.60.0 (2026-11-26)"
 msgstr "0.60.0 (2026-11-26)"
 
-#: ../../source/historique.rst:69
+#: ../../source/historique.rst:86
 msgid ""
 "**ArkID, une position en texte lisible** : ``blunderdb arkid`` écrit et "
 "lit une position dans la notation textuelle de blunderDB, lisible et "
@@ -296,7 +430,7 @@ msgstr ""
 "αναγνώσιμη και προφέρσιμη (:ref:`cli_arkid`), από ένα XGID, ένα OGID ή "
 "ένα ArkID."
 
-#: ../../source/historique.rst:70
+#: ../../source/historique.rst:87
 msgid ""
 "**Archive papier d'une base** : ``blunderdb archive export`` et ``archive"
 " import``, et la boîte *Archive papier…* du panneau Matchs, impriment les"
@@ -313,7 +447,7 @@ msgstr ""
 "αγώνων, με το ``import_archive`` στη λειτουργία εντολών, και ο δαίμονας "
 "την προσφέρει."
 
-#: ../../source/historique.rst:71
+#: ../../source/historique.rst:88
 msgid ""
 "**Feuille de match imprimable** : *Imprimer…* met un match sur une page "
 "A4 sans diagramme, avec son en-tête, le PR, les erreurs et le temps de "
@@ -325,7 +459,7 @@ msgstr ""
 "χρόνο κάθε παίκτη, την καταγραφή κίνηση προς κίνηση και τις θέσεις προς "
 "επανάληψη σε ArkID, αριθμημένες όπως στην καταγραφή."
 
-#: ../../source/historique.rst:72
+#: ../../source/historique.rst:89
 msgid ""
 "**Listes de positions imprimables, avec leur code de réimport** : "
 "``blunderdb sheet`` et ``positions.sheet`` impriment une liste de "
@@ -337,7 +471,7 @@ msgstr ""
 "ArkID, που προσφέρει και ο πίνακας Βιβλιοθήκη· ένας κωδικός συνοδεύει το "
 "φύλλο και επιτρέπει την επανεισαγωγή του."
 
-#: ../../source/historique.rst:73
+#: ../../source/historique.rst:90
 msgid ""
 "**Import d'un document** : ``blunderdb document analyze`` lit un PDF "
 "(diagrammes d'eXtreme Gammon reconnus par leurs glyphes, PDF scannés, "
@@ -355,7 +489,7 @@ msgstr ""
 "Κάθε καταχώριση φέρει δύο βεβαιότητες, μια καταχώριση που διαβάστηκε από "
 "σάρωση δεν δίνεται ποτέ ως βέβαιη, και ό,τι δεν διαβάστηκε κατονομάζεται."
 
-#: ../../source/historique.rst:74
+#: ../../source/historique.rst:91
 msgid ""
 "**Images JPEG 2000 et JBIG2** : les PDF qui portent ces images "
 "(``JPXDecode``, ``.jp2`` et ``.j2k``, JBIG2) se lisent sans bibliothèque "
@@ -367,7 +501,7 @@ msgstr ""
 " βιβλιοθήκη, με όρια μνήμης και χρόνου· μια σελίδα που απορρίπτεται δεν "
 "εμποδίζει την ανάγνωση των άλλων."
 
-#: ../../source/historique.rst:75
+#: ../../source/historique.rst:92
 msgid ""
 "**Assistant graphique de l'import de document** : l'interface guide "
 "l'import d'un document pas à pas, avec une revue des entrées douteuses, "
@@ -377,7 +511,7 @@ msgstr ""
 " εισαγωγή ενός εγγράφου, με έλεγχο των αμφίβολων καταχωρίσεων, εξηγημένες"
 " απορρίψεις και μεταφρασμένες σημειώσεις."
 
-#: ../../source/historique.rst:76
+#: ../../source/historique.rst:93
 msgid ""
 "**Défauts appris par document** : quand un document n'imprime pas son "
 "contexte (sens de jeu, score, cube), le défaut le plus sûr est proposé et"
@@ -389,7 +523,7 @@ msgstr ""
 " προεπιλογή και επιβεβαιώνεται χωριστά, μία φορά για το έγγραφο· η "
 "υποβοηθούμενη εισαγωγή προσφέρει εναλλακτική όταν η ανάγνωση δεν αρκεί."
 
-#: ../../source/historique.rst:77
+#: ../../source/historique.rst:94
 msgid ""
 "**Carte des jets** : pour une position, les 21 jets avec le meilleur "
 "coup, l'équité et le marché perdu de chacun (``blunderdb rolls``), dans "
@@ -399,7 +533,7 @@ msgstr ""
 "equity και την χαμένη αγορά κάθε ζαριάς (``blunderdb rolls``), στον "
 "πίνακα αξιολόγησης."
 
-#: ../../source/historique.rst:78
+#: ../../source/historique.rst:95
 msgid ""
 "**Carte des scores** : la meilleure décision de cube à tous les scores "
 "d'un match, Crawford compris (``blunderdb scoremap``)."
@@ -407,7 +541,7 @@ msgstr ""
 "**Χάρτης σκορ**: η καλύτερη απόφαση κύβου σε όλα τα σκορ ενός αγώνα, με "
 "το Crawford (``blunderdb scoremap``)."
 
-#: ../../source/historique.rst:79
+#: ../../source/historique.rst:96
 msgid ""
 "**Les cartes se calculent en fond et se gardent** : un cache garde les "
 "cartes des jets et des scores, un précalcul en fond prépare celles du jet"
@@ -419,7 +553,7 @@ msgstr ""
 "παρασκήνιο ετοιμάζει αυτούς του επόμενου ζαριού, και ο υπολογισμός που "
 "εμφανίζεται προηγείται των άλλων στους πυρήνες του υπολογιστή."
 
-#: ../../source/historique.rst:80
+#: ../../source/historique.rst:97
 msgid ""
 "**Panneau Calculs** : une puce unique de la barre d'état résume les "
 "tâches de fond (analyses, rollouts, imports, maintenance, transferts) ; "
@@ -436,7 +570,7 @@ msgstr ""
 "που ζητείται ενώ τρέχει άλλη παίρνει τη θέση της στην ουρά της "
 "βιβλιοθήκης."
 
-#: ../../source/historique.rst:81
+#: ../../source/historique.rst:98
 msgid ""
 "**Corrections notables** : l'ouverture d'une base tenue par une autre "
 "instance est refusée en le disant, et la bibliothèque vide n'est pas "
@@ -448,7 +582,7 @@ msgstr ""
 "άθικτη· ένα αόρατο στρώμα κειμένου OCR δεν περνά πλέον για τη "
 "γραμματοσειρά ταμπλό του eXtreme Gammon."
 
-#: ../../source/historique.rst:82
+#: ../../source/historique.rst:99
 msgid ""
 "Voir :ref:`cli_arkid`, :ref:`panneau_matchs`, :ref:`liste_imprimable`, "
 ":ref:`assistant_import_document`, :ref:`cli_document`, "
@@ -460,11 +594,11 @@ msgstr ""
 ":ref:`eval_cartes`, :ref:`cli_scoremap`, :ref:`cli_rolls` και "
 ":ref:`manuel_interface`."
 
-#: ../../source/historique.rst:85
+#: ../../source/historique.rst:102
 msgid "0.59.0 (2026-11-21)"
 msgstr "0.59.0 (2026-11-21)"
 
-#: ../../source/historique.rst:87
+#: ../../source/historique.rst:104
 msgid ""
 "**Les piles d'étude dans la liste des positions** : ``blunderdb search`` "
 "ajoute une colonne *Decks* (clé ``decks`` en JSON) et ``blunderdb list "
@@ -478,7 +612,7 @@ msgstr ""
 "μελέτης που έχουν μια κάρτα της θέσης· η λειτουργία διακομιστή τις "
 "επιστρέφει μέσω του ``positions.listFields`` (πεδίο ``decks``)."
 
-#: ../../source/historique.rst:88
+#: ../../source/historique.rst:105
 msgid ""
 "**Le meilleur coup sur les coups d'un match** : en mode serveur, "
 "``matches.moves`` et ``matches.movesByMatch`` rendent à côté de l'erreur "
@@ -490,7 +624,7 @@ msgstr ""
 " σφάλμα, τα ``best_move`` και ``best_cube_action``, ό,τι η αποθηκευμένη "
 "ανάλυση κατατάσσει πρώτο για την απόφαση· απουσιάζουν χωρίς ανάλυση."
 
-#: ../../source/historique.rst:89
+#: ../../source/historique.rst:106
 msgid ""
 "**Les piles d'une page de positions se lisent par un index** (migration "
 "075 sur PostgreSQL), aussi en SQLite ; le schéma ne change pas."
@@ -498,15 +632,15 @@ msgstr ""
 "**Οι τράπουλες μιας σελίδας θέσεων διαβάζονται μέσω ευρετηρίου** "
 "(μετάβαση 075 στην PostgreSQL), και στην SQLite· το σχήμα δεν αλλάζει."
 
-#: ../../source/historique.rst:90
+#: ../../source/historique.rst:107
 msgid "Voir :ref:`cli_bibliotheque_chapitre` et :ref:`api_reference`."
 msgstr "Δείτε :ref:`cli_bibliotheque_chapitre` και :ref:`api_reference`."
 
-#: ../../source/historique.rst:93
+#: ../../source/historique.rst:110
 msgid "0.58.0 (2026-11-21)"
 msgstr "0.58.0 (2026-11-21)"
 
-#: ../../source/historique.rst:95
+#: ../../source/historique.rst:112
 msgid ""
 "**Le résultat d'un match est conservé** : l'import garde le score final "
 "et le vainqueur, la migration les déduit pour les matchs déjà présents. "
@@ -520,7 +654,7 @@ msgstr ""
 "νικητή με έντονα, ένας ημιτελής αγώνας με γκρι), και το ``blunderdb list "
 "matches`` εμφανίζει το αποτέλεσμα ή ``unfinished``."
 
-#: ../../source/historique.rst:96
+#: ../../source/historique.rst:113
 msgid ""
 "**Trier les matchs par PR** : la colonne **PR** du panneau Matchs se trie"
 " sur toute la bibliothèque, comme ``blunderdb list matches --sort pr1`` ;"
@@ -534,7 +668,7 @@ msgstr ""
 " και κατά εκείνο του αντιπάλου του. Ένας αγώνας χωρίς αυτό το PR έρχεται "
 "τελευταίος και προς τις δύο κατευθύνσεις."
 
-#: ../../source/historique.rst:97
+#: ../../source/historique.rst:114
 msgid ""
 "**Les chances de gagner le match au fil des décisions** : un troisième "
 "graphique de l'onglet *Graphes* d'un match trace les chances de gagner du"
@@ -549,7 +683,7 @@ msgstr ""
 " τις δίνει σε ``json`` (``win_trace``) και σε ``text``, η λειτουργία "
 "διακομιστή μέσω ``stats.matchWinTrace``."
 
-#: ../../source/historique.rst:98
+#: ../../source/historique.rst:115
 msgid ""
 "**Histogramme des durées de décision** : à côté du résumé des durées, "
 "l'onglet *Graphes* compte les décisions de chaque joueur par tranche de "
@@ -563,7 +697,7 @@ msgstr ""
 " η έξοδος ``text`` του ``blunderdb match`` και το "
 "``stats.matchTimeSummary`` δίνουν τις ίδιες κλάσεις."
 
-#: ../../source/historique.rst:99
+#: ../../source/historique.rst:116
 msgid ""
 "**Chaque évaluation de pions est gardée par source** : quand plusieurs "
 "moteurs ou profondeurs ont évalué une position (XG, GNU Backgammon, "
@@ -578,7 +712,7 @@ msgstr ""
 "φέρει επιπλέον ό,τι είπε κάθε πηγή, ``allCheckerAnalyses`` σε λειτουργία "
 "διακομιστή. Η επανεισαγωγή μιας πηγής που υπάρχει ήδη δεν γράφει τίποτα."
 
-#: ../../source/historique.rst:100
+#: ../../source/historique.rst:117
 msgid ""
 "**L'origine d'un tournoi** : la colonne **Origine** du panneau Tournois "
 "dit d'où vient le tournoi (« importé », « plateforme », « club »…), se "
@@ -592,7 +726,7 @@ msgstr ""
 " της λίστας και ακολουθεί το τουρνουά στην εξαγωγή και στον συγχρονισμό· "
 "το ``tournaments.updateOrigin`` την αλλάζει σε λειτουργία διακομιστή."
 
-#: ../../source/historique.rst:101
+#: ../../source/historique.rst:118
 msgid ""
 "**Deux critères de provenance pour les collections vivantes** : ``s i`` "
 "garde les positions apportées une à une plutôt qu'avec un match, ``s fl``"
@@ -604,7 +738,7 @@ msgstr ""
 "όσες είχε σημειώσει το λογισμικό προέλευσης· και τα δύο συνδυάζονται με "
 "οποιοδήποτε άλλο κριτήριο."
 
-#: ../../source/historique.rst:102
+#: ../../source/historique.rst:119
 msgid ""
 "**La liste des positions porte l'erreur jouée, la date et les "
 "collections** : ``blunderdb search`` et ``blunderdb list positions`` "
@@ -618,7 +752,7 @@ msgstr ""
 "παίχτηκε), *Date* και *Collections*· η λειτουργία διακομιστή τις "
 "επιστρέφει μέσω ``positions.listFields``."
 
-#: ../../source/historique.rst:103
+#: ../../source/historique.rst:120
 msgid ""
 "**Recherche plus rapide sur les grandes bases PostgreSQL** : une "
 "structure triée par pips se lit dans l'ordre par un index qui porte ses "
@@ -638,7 +772,7 @@ msgstr ""
 " λίγες γραμμές· μια απόσταση πέρα από το μεγαλύτερο επιτρεπτό μήκος αγώνα"
 " δεν επιστρέφει τίποτα χωρίς ανάγνωση."
 
-#: ../../source/historique.rst:104
+#: ../../source/historique.rst:121
 msgid ""
 "**Mode d'exécution des requêtes PostgreSQL** : "
 "``BLUNDERDB_POSTGRES_QUERY_EXEC_MODE`` le choisit ; par défaut "
@@ -650,7 +784,7 @@ msgstr ""
 "``cache_describe``, δεν αφήνει κανένα επώνυμο πλάνο στη μνήμη στις "
 "συνδέσεις της δεξαμενής."
 
-#: ../../source/historique.rst:105
+#: ../../source/historique.rst:122
 msgid ""
 "**Simulation d'un tournoi, verdict reproductible** (nicomaque 0.10.0) : "
 "``directions.simulate`` compte le travail du premier ``run``, sans "
@@ -666,7 +800,7 @@ msgstr ""
 "της μηχανής, και η αναζήτηση ζευγαρωμάτων ενός ελβετικού με γύρους "
 "μπαίνει στη μέτρηση αντί για ένα όριο στον αριθμό των γύρων."
 
-#: ../../source/historique.rst:106
+#: ../../source/historique.rst:123
 msgid ""
 "**Compatibilité** : une base qui a reçu une évaluation de pions de "
 "plusieurs sources (schéma 2.58.0) ou un résultat de match (schéma 2.59.0)"
@@ -678,7 +812,7 @@ msgstr ""
 "με το blunderDB 0.57.0 ή προγενέστερη έκδοση· μια βάση που δεν έχει λάβει"
 " κανένα από τα δύο, ανοίγει."
 
-#: ../../source/historique.rst:107
+#: ../../source/historique.rst:124
 msgid ""
 "**Corrections notables** : la conversion de l'équité en chances de gagner"
 " le match donne les mêmes chiffres sur toutes les architectures (arm64 et"
@@ -688,7 +822,7 @@ msgstr ""
 "στον αγώνα δίνει τους ίδιους αριθμούς σε όλες τις αρχιτεκτονικές (μαζί με"
 " arm64 και πρόσφατα amd64)."
 
-#: ../../source/historique.rst:108
+#: ../../source/historique.rst:125
 msgid ""
 "Voir :ref:`manuel_matchs`, :ref:`manuel_tournois`, "
 ":ref:`panneau_collections`, :ref:`metrique_trace_mwc`, :ref:`cli`, "
@@ -698,11 +832,11 @@ msgstr ""
 ":ref:`panneau_collections`, :ref:`metrique_trace_mwc`, :ref:`cli`, "
 ":ref:`api_reference` και :ref:`headless_postgres`."
 
-#: ../../source/historique.rst:111
+#: ../../source/historique.rst:128
 msgid "0.57.0 (2026-11-16)"
 msgstr "0.57.0 (2026-11-16)"
 
-#: ../../source/historique.rst:113
+#: ../../source/historique.rst:130
 msgid ""
 "**Coller un identifiant GNU Backgammon** : le collage et "
 "``positions.parseText`` lisent l'ID de position seul, l'ID de position "
@@ -720,7 +854,7 @@ msgstr ""
 "διαβάστηκε (``xgid``, ``ogid``, ``gnubgid``), και ένα κείμενο χωρίς XGID,"
 " OGID ή GNUbg ID απορρίπτεται με αιτιολογία."
 
-#: ../../source/historique.rst:114
+#: ../../source/historique.rst:131
 msgid ""
 "**Recherche plus rapide sous PostgreSQL** : les filtres de blot se "
 "décident en SQL (quatre index partiels, migration 069), le filtre "
@@ -738,17 +872,17 @@ msgstr ""
 "δομή δεν γράφει πλέον ουδέτερη συνθήκη. Μια μη αναγνώσιμη μορφή φίλτρου "
 "blot (``bo3``) απορρίπτεται πλέον αντί να μην επιστρέφει τίποτα."
 
-#: ../../source/historique.rst:115
+#: ../../source/historique.rst:132
 msgid "Voir :ref:`manuel_eval`, :ref:`panneau_recherche` et :ref:`api_reference`."
 msgstr ""
 "Δείτε :ref:`manuel_eval`, :ref:`panneau_recherche` και "
 ":ref:`api_reference`."
 
-#: ../../source/historique.rst:118
+#: ../../source/historique.rst:135
 msgid "0.56.0 (2026-11-13)"
 msgstr "0.56.0 (2026-11-13)"
 
-#: ../../source/historique.rst:120
+#: ../../source/historique.rst:137
 msgid ""
 "**La relation « proche » compte des jets légaux** : la distance de deux "
 "positions est le plus petit nombre de jets légaux qui mènent de la "
@@ -768,7 +902,7 @@ msgstr ""
 "απορρίπτεται. Η κλάση, ο αποκλεισμός του αγώνα του στόχου και η "
 "αστερισμένη μορφή ``like*`` καταργούνται."
 
-#: ../../source/historique.rst:121
+#: ../../source/historique.rst:138
 msgid ""
 "**« like » ne se sert que dans une recherche classée, et se refuse "
 "ailleurs** : une requête portant ``like`` passée à une collection, à une "
@@ -804,7 +938,7 @@ msgstr ""
 "``like<2`` σημαίνει πλέον 1 ή 2 ζαριές, δηλαδή ευρύτερη εμβέλεια. Οι "
 "απορρίψεις διατυπώνονται στη γλώσσα της διεπαφής."
 
-#: ../../source/historique.rst:122
+#: ../../source/historique.rst:139
 msgid ""
 "**Confirmer une liste de propositions d'un coup, en mode serveur** : "
 "``directions.confirmProposals`` enregistre la liste telle que le "
@@ -818,7 +952,7 @@ msgstr ""
 "όλα ή τίποτα· οι απορρίψεις φέρουν σταθερό κωδικό στο "
 "``error.details.reason`` (βλέπε :ref:`headless_direction_gestures`)."
 
-#: ../../source/historique.rst:123
+#: ../../source/historique.rst:140
 msgid ""
 "**Recherche plus rapide sous PostgreSQL** : un filtre de structure "
 "combiné à un autre filtre lit sa page par une sonde bornée dans l'ordre "
@@ -836,7 +970,7 @@ msgstr ""
 "tenant χωρίς χρονομετρημένες κινήσεις), και το ερώτημα της εισαγωγής "
 "«έχει ήδη γραμμές ο tenant;» διαβάζεται μέσω του κλειδιού."
 
-#: ../../source/historique.rst:124
+#: ../../source/historique.rst:141
 msgid ""
 "**Un import ne retire plus les statistiques des matchs dont il partage "
 "une position** : les statistiques d'un match déjà calculé restent en "
@@ -846,7 +980,7 @@ msgstr ""
 "μοιράζεται μια θέση**: τα στατιστικά ενός ήδη υπολογισμένου αγώνα μένουν "
 "στη θέση τους αντί να υπολογίζονται ξανά από τον πρώτο αναγνώστη."
 
-#: ../../source/historique.rst:125
+#: ../../source/historique.rst:142
 msgid ""
 "**Dépannage de la lecture vidéo sous Linux** : avec ``gst-libav`` 1.28.9,"
 " le décodeur H.264 ``avdec_h264`` fait échouer les déplacements dans la "
@@ -858,7 +992,7 @@ msgstr ""
 "μετακινήσεις μέσα στο βίντεο να αποτυγχάνουν· η παράκαμψη (αποκλεισμός "
 "αυτού του αποκωδικοποιητή) περιγράφεται στο εγχειρίδιο των αγώνων."
 
-#: ../../source/historique.rst:126
+#: ../../source/historique.rst:143
 msgid ""
 "Voir :ref:`panneau_recherche`, :ref:`panneau_collections`, "
 ":ref:`headless_direction_gestures`, :ref:`api_reference` et "
@@ -868,11 +1002,11 @@ msgstr ""
 ":ref:`headless_direction_gestures`, :ref:`api_reference` και "
 ":ref:`manuel_matchs`."
 
-#: ../../source/historique.rst:129
+#: ../../source/historique.rst:146
 msgid "0.55.0 (2026-11-13)"
 msgstr "0.55.0 (2026-11-13)"
 
-#: ../../source/historique.rst:131
+#: ../../source/historique.rst:148
 msgid ""
 "**Une recherche se lit page après page, par un curseur** : en mode "
 "serveur, ``search.page`` et ``search.idsPage`` rendent une page de "
@@ -897,7 +1031,7 @@ msgstr ""
 "δοκιμή με 8,1 εκατομμύρια, η πρώτη σελίδα του φίλτρου ``E>50`` πέφτει από"
 " 1 461 ms σε 43 ms."
 
-#: ../../source/historique.rst:132
+#: ../../source/historique.rst:149
 msgid ""
 "**Un tenant neuf s'importe vite dans une base PostgreSQL déjà grosse** : "
 "sous RLS, les statistiques de match, la lecture des analyses des "
@@ -914,15 +1048,15 @@ msgstr ""
 "δευτερόλεπτο, και ο υπολογισμός των στατιστικών ενός αγώνα πέφτει από 4 "
 "575 ms κατά μέσο όρο σε 16 ms."
 
-#: ../../source/historique.rst:133
+#: ../../source/historique.rst:150
 msgid "Voir :ref:`api_reference`, :ref:`headless` et :ref:`cli`."
 msgstr "Βλ. :ref:`api_reference`, :ref:`headless` και :ref:`cli`."
 
-#: ../../source/historique.rst:136
+#: ../../source/historique.rst:153
 msgid "0.54.0 (2026-11-13)"
 msgstr "0.54.0 (2026-11-13)"
 
-#: ../../source/historique.rst:138
+#: ../../source/historique.rst:155
 msgid ""
 "**Exporter sans la provenance** : ``blunderdb export "
 "--provenance=false``, comme ``\"omitProvenance\": true`` en mode serveur,"
@@ -943,7 +1077,7 @@ msgstr ""
 "ό,τι μένει στην πηγή, και τα σχόλια φεύγουν μόνο όταν ζητούνται με "
 "``--comments``."
 
-#: ../../source/historique.rst:139
+#: ../../source/historique.rst:156
 msgid ""
 "**Les gestes de nicomaque 0.9 en mode serveur** : sous ``serve "
 "--direction``, les routes ``directions.*`` servent la phase à appariement"
@@ -967,7 +1101,7 @@ msgstr ""
 "Διεύθυνσης ονομάζει τις μορφές ελβετικό ανά γύρους και χειροκίνητο "
 "ζευγάρωμα, καθώς και το τελικό μπαράζ μεταξύ ομίλων."
 
-#: ../../source/historique.rst:140
+#: ../../source/historique.rst:157
 msgid ""
 "**Un tournoi qui a reçu un geste de nicomaque 0.9** (demi-exemption, "
 "remplacement ou échange d'inscrits, phase manuelle, suisse par rondes) ne"
@@ -979,7 +1113,7 @@ msgstr ""
 "γύρους) δεν ξανανοίγει με το blunderDB 0.53.1 ή προηγούμενη έκδοση· η "
 "βάση και η λίστα τουρνουά ανοίγουν κανονικά εκεί."
 
-#: ../../source/historique.rst:141
+#: ../../source/historique.rst:158
 msgid ""
 "**« Est-ce que je joue ? » par l'API** : ``directions.statuses`` rend, "
 "pour chaque inscrit, son état en codes (``playing``, ``bye``, "
@@ -994,7 +1128,7 @@ msgstr ""
 "``directions.freeSlots`` επιστρέφει τις θέσεις εξαίρεσης που μπορεί ακόμη"
 " να πάρει ένας καθυστερημένος."
 
-#: ../../source/historique.rst:142
+#: ../../source/historique.rst:159
 msgid ""
 "**Simuler un format de tournoi** : ``directions.simulate`` joue une "
 "configuration sans tournoi ni base, pour un effectif et un nombre de "
@@ -1010,7 +1144,7 @@ msgstr ""
 "περιμένει κανείς και τον αριθμό ματς ανά παίκτη. Ένα υπερβολικά βαρύ "
 "αίτημα απορρίπτεται πριν από κάθε υπολογισμό."
 
-#: ../../source/historique.rst:143
+#: ../../source/historique.rst:160
 msgid ""
 "Corrections notables : un geste de transcription illisible ou refusé rend"
 " ``400`` avec son motif, et non plus ``500`` ; le démon est construit "
@@ -1021,7 +1155,7 @@ msgstr ""
 "δαίμονας χτίζεται με Go 1.27.4, που διορθώνει μια ευπάθεια του "
 "``net/http`` (GO-2026-6859)."
 
-#: ../../source/historique.rst:144
+#: ../../source/historique.rst:161
 msgid ""
 "Voir :ref:`headless_direction`, :ref:`headless_direction_gestures`, "
 ":ref:`headless` et :ref:`cli`."
@@ -1029,11 +1163,11 @@ msgstr ""
 "Βλ. :ref:`headless_direction`, :ref:`headless_direction_gestures`, "
 ":ref:`headless` και :ref:`cli`."
 
-#: ../../source/historique.rst:147
+#: ../../source/historique.rst:164
 msgid "0.53.0 (2026-11-09)"
 msgstr "0.53.0 (2026-11-09)"
 
-#: ../../source/historique.rst:149
+#: ../../source/historique.rst:166
 msgid ""
 "**Abandonner face à un double en transcription** : quand un double attend"
 " sa réponse, le bouton « Abandonner » s'allume pour le répondant, comme "
@@ -1048,7 +1182,7 @@ msgstr ""
 "πριν από την προσφορά, όπως ένα πάσο· η παραίτηση από τον αγώνα δίνει την"
 " παρτίδα και τον αγώνα σε αυτόν που διπλασίασε."
 
-#: ../../source/historique.rst:150
+#: ../../source/historique.rst:167
 msgid ""
 "**Un clic dans la transcription pose le curseur d'un seul geste** : "
 "cliquer une cellule, ou appuyer sur *Fin*, déplace le curseur en un appel"
@@ -1062,7 +1196,7 @@ msgstr ""
 "στην αρχή ενός αγώνα τουρνουά, το κλικ έπαιρνε περισσότερο από ένα "
 "δευτερόλεπτο. Η αναίρεση το ακυρώνει σε ένα βήμα."
 
-#: ../../source/historique.rst:151
+#: ../../source/historique.rst:168
 msgid ""
 "Corrections notables : sous PostgreSQL sans ``--rls``, le mode par défaut"
 " de ``serve``, les statistiques par match, le score des coups à l'import,"
@@ -1078,15 +1212,15 @@ msgstr ""
 "από την 0.51.0, αυτά τα ερωτήματα διέτρεχαν το ευρετήριο όλων των "
 "tenants, και η εισαγωγή επιβραδυνόταν καθώς μεγάλωνε η βάση."
 
-#: ../../source/historique.rst:152
+#: ../../source/historique.rst:169
 msgid "Voir :ref:`panneau_transcription`, :ref:`raccourcis` et :ref:`headless`."
 msgstr "Βλ. :ref:`panneau_transcription`, :ref:`raccourcis` και :ref:`headless`."
 
-#: ../../source/historique.rst:155
+#: ../../source/historique.rst:172
 msgid "0.52.0 (2026-11-09)"
 msgstr "0.52.0 (2026-11-09)"
 
-#: ../../source/historique.rst:157
+#: ../../source/historique.rst:174
 msgid ""
 "**gammonNet v1.9.0 analyse avec un réseau plus grand** : le réseau par "
 "défaut est ``strehl-prob5-768-768-256-256-256``, à cinq couches ; "
@@ -1103,7 +1237,7 @@ msgstr ""
 "--stale``, ή η γραμμή *Παρωχημένες αναλύσεις gammonNet* της καρτέλας "
 "*Συντήρηση*, την ξαναγράφει."
 
-#: ../../source/historique.rst:158
+#: ../../source/historique.rst:175
 msgid ""
 "**Le livre d'ouverture est calculé au réglage standard** : ses 32 scores "
 "(13 836 lignes) sont des rollouts de 1296 parties tronquées à 11 demi-"
@@ -1119,7 +1253,7 @@ msgstr ""
 "βιβλίο· στα είκοσι σκορ του πλέγματος, 28 από τις 480 καλύτερες κινήσεις "
 "ανοίγματος αλλάζουν, κάθε φορά σε μια γειτονική κίνηση."
 
-#: ../../source/historique.rst:159
+#: ../../source/historique.rst:176
 msgid ""
 "**Une vidéo mal multiplexée se répare d'elle-même** : quand le volet "
 "vidéo trouve des sauts fautifs dans un fichier .webm ou .mkv et que "
@@ -1134,7 +1268,7 @@ msgstr ""
 "και το αναπαράγει στην ίδια στιγμή· το πρωτότυπο ούτε τροποποιείται ούτε "
 "διαγράφεται."
 
-#: ../../source/historique.rst:160
+#: ../../source/historique.rst:177
 msgid ""
 "**Abandonner le match en transcription** : « Le match » rejoint les "
 "options d'abandon (*r* puis *4*, aussi dans le mode théâtre). "
@@ -1148,7 +1282,7 @@ msgstr ""
 "στο μήκος του αγώνα, καμία ενέργεια δεν μπορεί να ακολουθήσει, και ο "
 "αγώνας καταγράφεται και εξάγεται ως κερδισμένος από αυτόν."
 
-#: ../../source/historique.rst:161
+#: ../../source/historique.rst:178
 msgid ""
 "Corrections notables : une synchronisation dont l'envoi est arrêté par le"
 " plafond du serveur (402) n'affiche plus « Jamais synchronisée » quand la"
@@ -1160,7 +1294,7 @@ msgstr ""
 "συγχρονιστεί ποτέ.» όταν η λήψη ολοκληρώθηκε, και μια αποτυχία εγγραφής "
 "της ημερομηνίας δεν κρύβει πια τον λόγο της διακοπής."
 
-#: ../../source/historique.rst:162
+#: ../../source/historique.rst:179
 msgid ""
 "Voir :ref:`panneau_matchs`, :ref:`manuel_entrainement`, :ref:`raccourcis`"
 " et :ref:`synchronisation_distante`."
@@ -1168,11 +1302,11 @@ msgstr ""
 "Δείτε :ref:`panneau_matchs`, :ref:`manuel_entrainement`, "
 ":ref:`raccourcis` και :ref:`synchronisation_distante`."
 
-#: ../../source/historique.rst:165
+#: ../../source/historique.rst:182
 msgid "0.51.0 (2026-11-06)"
 msgstr "0.51.0 (2026-11-06)"
 
-#: ../../source/historique.rst:167
+#: ../../source/historique.rst:184
 msgid ""
 "**Une bibliothèque se synchronise avec un serveur distant** : l'onglet "
 "*Synchronisation* des paramètres reçoit l'adresse du serveur et un jeton "
@@ -1187,7 +1321,7 @@ msgstr ""
 "κατόπιν αιτήματος, μία σελίδα τη φορά, με νικήτρια την πιο πρόσφατη "
 "αλλαγή."
 
-#: ../../source/historique.rst:168
+#: ../../source/historique.rst:185
 msgid ""
 "**Une limite du serveur n'arrête pas la réception** : quand un plafond "
 "refuse l'envoi, l'envoi seul est suspendu et la réception continue ; un "
@@ -1200,7 +1334,7 @@ msgstr ""
 " και ό,τι απορρίπτει ένας διακομιστής παραμένει στη λίστα της καρτέλας "
 "και επαναδοκιμάζεται σε κάθε πέρασμα."
 
-#: ../../source/historique.rst:169
+#: ../../source/historique.rst:186
 msgid ""
 "**La recherche tient sur de très grosses bases** : une page se coupe sur "
 "les identifiants, ``search.countUpTo`` compte jusqu'à une borne, et de "
@@ -1212,7 +1346,7 @@ msgstr ""
 "νέα ευρετήρια εξυπηρετούν τα φίλτρα σφάλματος, πλήρους ταμπλό και "
 "ποσοστού νίκης."
 
-#: ../../source/historique.rst:170
+#: ../../source/historique.rst:187
 msgid ""
 "**Une base occupe environ moitié moins de place sur PostgreSQL** : "
 "colonnes plus étroites, journal des changements plus léger, clés "
@@ -1224,7 +1358,7 @@ msgstr ""
 "κλειδιά· κατά την εκκίνηση, η μετάπτωση ξαναγράφει το πολύ 512 MB θέσεων "
 "και κατονομάζει το χειροκίνητο βήμα πέρα από αυτό."
 
-#: ../../source/historique.rst:171
+#: ../../source/historique.rst:188
 msgid ""
 "**Le journal se coupe pour un tenant** : ``changeset.setJournalOff`` "
 "l'arrête, ``changeset.export`` et ``changeset.import`` refusent alors par"
@@ -1235,7 +1369,7 @@ msgstr ""
 "``changeset.import`` αρνούνται τότε με κατονομασμένο κωδικό, και η "
 "επανενεργοποίηση επιστρέφει τα αντικείμενα που γράφτηκαν κατά τη διακοπή."
 
-#: ../../source/historique.rst:172
+#: ../../source/historique.rst:189
 msgid ""
 "**La base reste au schéma 2.57.0** : les migrations de cette version "
 "ajoutent des index et rétrécissent des colonnes, sans changer le format "
@@ -1245,7 +1379,7 @@ msgstr ""
 "προσθέτουν ευρετήρια και στενεύουν στήλες, χωρίς να αλλάζουν τη μορφή "
 "ενός αρχείου SQLite."
 
-#: ../../source/historique.rst:173
+#: ../../source/historique.rst:190
 msgid ""
 "Voir :ref:`synchronisation_distante`, :ref:`headless` et "
 ":ref:`annexe_db_migration`."
@@ -1253,11 +1387,11 @@ msgstr ""
 "Δείτε :ref:`synchronisation_distante`, :ref:`headless` και "
 ":ref:`annexe_db_migration`."
 
-#: ../../source/historique.rst:176
+#: ../../source/historique.rst:193
 msgid "0.50.0 (2026-11-05)"
 msgstr "0.50.0 (2026-11-05)"
 
-#: ../../source/historique.rst:178
+#: ../../source/historique.rst:195
 msgid ""
 "**La synchronisation couvre les paquets Anki, les transcriptions et les "
 "tournois** : ``changeset.export`` et ``changeset.import`` les échangent, "
@@ -1270,7 +1404,7 @@ msgstr ""
 "κατευθύνσεις· σε περίπτωση ίσης ημερομηνίας, κάθε οικογένεια συγχωνεύεται"
 " χωρίς να χάνεται κανένα δεδομένο."
 
-#: ../../source/historique.rst:179
+#: ../../source/historique.rst:196
 msgid ""
 "**Un transfert sans commentaires n'emporte rien de privé** : ni la note "
 "du match, ni le nom du fichier source, ni le lien vidéo, ni le "
@@ -1281,7 +1415,7 @@ msgstr ""
 "σύνδεσμος βίντεο, ούτε το σχόλιο ενός τουρνουά αναχωρούν· ο αγώνας που "
 "παραλήφθηκε εισάγεται κανονικά."
 
-#: ../../source/historique.rst:180
+#: ../../source/historique.rst:197
 msgid ""
 "**L'import est plus rapide sur PostgreSQL** : les positions s'écrivent "
 "par groupes, les statistiques d'un tenant se calculent dès ses premières "
@@ -1292,7 +1426,7 @@ msgstr ""
 "γραμμές, και μια θέση που προέρχεται από χρονολογημένο αγώνα φέρει την "
 "ημερομηνία του αγώνα."
 
-#: ../../source/historique.rst:181
+#: ../../source/historique.rst:198
 msgid ""
 "**Chaque fichier refusé à l'import porte un code stable** "
 "(``unknown_format``, ``truncated``, ``corrupt``, ``too_large``, ``empty``"
@@ -1305,7 +1439,7 @@ msgstr ""
 "``?report=deferred`` παραλείπει την αναφορά από το τελευταίο συμβάν και "
 "το ``imports.report`` την επιστρέφει κατόπιν αιτήματος."
 
-#: ../../source/historique.rst:182
+#: ../../source/historique.rst:199
 msgid ""
 "**L'espace disque des imports est borné** : l'option ``--max-spool-"
 "bytes`` fixe ce que les imports en cours occupent ensemble, et une "
@@ -1315,11 +1449,11 @@ msgstr ""
 "spool-bytes`` ορίζει πόσο καταλαμβάνουν μαζί οι εισαγωγές σε εξέλιξη, και"
 " ένα αρχείο που ξεπερνά όσα ανακοινώνει απορρίπτεται και διαγράφεται."
 
-#: ../../source/historique.rst:183
+#: ../../source/historique.rst:200
 msgid "**Une base passe au schéma 2.57.0** à l'ouverture."
 msgstr "**Μια βάση περνά στο σχήμα 2.57.0** κατά το άνοιγμα."
 
-#: ../../source/historique.rst:184
+#: ../../source/historique.rst:201
 msgid ""
 "Corrections notables : ``imports.batch`` garde le tenant de la requête "
 "sous RLS, et ``imports.db`` n'échoue plus avec ``out of shared memory`` "
@@ -1329,15 +1463,15 @@ msgstr ""
 "αιτήματος υπό RLS και το ``imports.db`` δεν αποτυγχάνει πια με ``out of "
 "shared memory`` σε μεγάλη βάση."
 
-#: ../../source/historique.rst:185 ../../source/historique.rst:196
+#: ../../source/historique.rst:202 ../../source/historique.rst:213
 msgid "Voir :ref:`headless` et :ref:`annexe_db_migration`."
 msgstr "Δείτε :ref:`headless` και :ref:`annexe_db_migration`."
 
-#: ../../source/historique.rst:188
+#: ../../source/historique.rst:205
 msgid "0.49.0 (2026-11-02)"
 msgstr "0.49.0 (2026-11-02)"
 
-#: ../../source/historique.rst:190
+#: ../../source/historique.rst:207
 msgid ""
 "**Deux bibliothèques se synchronisent** : côté serveur, "
 "``changeset.export`` et ``changeset.import`` échangent ce qui a changé "
@@ -1351,7 +1485,7 @@ msgstr ""
 "εγγραφή. Η μεταφορά στον κάδο μεταδίδεται ως τέτοια, και μια σημείωση που"
 " αντικαταστάθηκε από την εισαγωγή μένει στον κάδο."
 
-#: ../../source/historique.rst:191
+#: ../../source/historique.rst:208
 msgid ""
 "**Un dessin par position** : ``positions.drawing`` et "
 "``positions.setDrawing`` posent des flèches et des cases sur une position"
@@ -1361,7 +1495,7 @@ msgstr ""
 "``positions.setDrawing`` τοποθετούν βέλη και τετράγωνα σε μια θέση· το "
 "σχέδιο ακολουθεί τα σχόλια στην εξαγωγή και στη μεταφορά."
 
-#: ../../source/historique.rst:192
+#: ../../source/historique.rst:209
 msgid ""
 "**Le lien d'une variante à son origine** : ``positions.setDerivedFrom``, "
 "``positions.derivedFrom`` et ``positions.variants`` disent de quelle "
@@ -1372,7 +1506,7 @@ msgstr ""
 "``positions.variants`` λένε από ποια θέση προήλθε μια άλλη και με ποια "
 "κίνηση."
 
-#: ../../source/historique.rst:193
+#: ../../source/historique.rst:210
 msgid ""
 "**Un libellé par position** : ``positions.publicId`` et "
 "``positions.setPublicId`` posent un libellé que blunderDB conserve sans "
@@ -1382,7 +1516,7 @@ msgstr ""
 "``positions.setPublicId`` ορίζουν μια ετικέτα που το blunderDB διατηρεί "
 "χωρίς να την ερμηνεύει."
 
-#: ../../source/historique.rst:194
+#: ../../source/historique.rst:211
 msgid ""
 "**Leçons et articles en Markdown** : ``lessons.markdown`` les exporte en "
 "texte, ``lessons.importMarkdown`` les crée depuis ce texte."
@@ -1390,7 +1524,7 @@ msgstr ""
 "**Μαθήματα και άρθρα σε Markdown**: το ``lessons.markdown`` τα εξάγει ως "
 "κείμενο, το ``lessons.importMarkdown`` τα δημιουργεί από αυτό το κείμενο."
 
-#: ../../source/historique.rst:195
+#: ../../source/historique.rst:212
 msgid ""
 "**Une base passe au schéma 2.55.0** à l'ouverture, et tient désormais un "
 "journal de ses changements."
@@ -1398,11 +1532,11 @@ msgstr ""
 "**Μια βάση περνά στο σχήμα 2.55.0** κατά το άνοιγμα και τηρεί πλέον "
 "ημερολόγιο των αλλαγών της."
 
-#: ../../source/historique.rst:199
+#: ../../source/historique.rst:216
 msgid "0.48.0 (2026-11-02)"
 msgstr "0.48.0 (2026-11-02)"
 
-#: ../../source/historique.rst:201
+#: ../../source/historique.rst:218
 msgid ""
 "**L'application s'ouvre directement** : l'écran d'accueil disparaît ; le "
 "plateau et les panneaux sont visibles dès le démarrage, avec ou sans "
@@ -1414,7 +1548,7 @@ msgstr ""
 "βάση ανοίγει ξανά αυτόματα, και μια βάση δημιουργείται ή ανοίγει από τη "
 "γραμμή εργαλείων ή από την κενή κατάσταση ενός πάνελ."
 
-#: ../../source/historique.rst:202
+#: ../../source/historique.rst:219
 msgid ""
 "**Des propositions pour les métadonnées d'une transcription** : "
 "l'événement et le lieu proposent ceux des matchs déjà en base, les plus "
@@ -1430,7 +1564,7 @@ msgstr ""
 " που λείπει από τη λίστα μένει όπως πληκτρολογήθηκε. Στη λειτουργία "
 "διακομιστή, το ``stats.matchTextValues`` επιστρέφει αυτές τις τιμές."
 
-#: ../../source/historique.rst:203
+#: ../../source/historique.rst:220
 msgid ""
 "**Import d'une base .db : compter, puis plafonner** : ``import --type "
 "database --analyze`` et ``imports.dbAnalyze`` comptent ce que le fichier "
@@ -1452,7 +1586,7 @@ msgstr ""
 "``progress`` του ``imports.db`` ανακοινώνει το ``total_positions`` πριν "
 "από οποιαδήποτε εγγραφή."
 
-#: ../../source/historique.rst:204
+#: ../../source/historique.rst:221
 msgid ""
 "**Côté serveur** : ``training.generateBearoff`` et "
 "``training.generateEvaluation`` rendent des questions des exercices "
@@ -1470,7 +1604,7 @@ msgstr ""
 "ερωτήσεων ανά κλήση είναι φραγμένος (50 και 10) και η Αξιολόγηση περνά "
 "από τους κοινούς εργάτες ανάλυσης, μετρώντας στην ποσόστωση ανάλυσης."
 
-#: ../../source/historique.rst:205
+#: ../../source/historique.rst:222
 msgid ""
 "``transcribe --marks`` écrit le manifeste des repères des vidéos locales,"
 " une ligne JSON par coup horodaté ; ``--match`` le limite à un match."
@@ -1479,7 +1613,7 @@ msgstr ""
 "(Marks) των τοπικών βίντεο, μία γραμμή JSON ανά κίνηση με χρονοσήμανση· "
 "το ``--match`` το περιορίζει σε έναν αγώνα."
 
-#: ../../source/historique.rst:206
+#: ../../source/historique.rst:223
 msgid ""
 "**Un identifiant stable pour chaque objet** : la base passe au schéma "
 "2.51.0 ; chaque position, commentaire, collection, match, transcription, "
@@ -1493,7 +1627,7 @@ msgstr ""
 " βάσεις που μεταφέρθηκαν χωριστά δίνουν το ίδιο UUID στο ίδιο "
 "αντικείμενο."
 
-#: ../../source/historique.rst:207
+#: ../../source/historique.rst:224
 msgid ""
 "**Corrections notables** : un match gagné en transcription n'attend plus "
 "rien : le plateau reste sur la dernière position, au score de la dernière"
@@ -1518,15 +1652,15 @@ msgstr ""
 "νεότερο blunderDB· μια θέση, μια συλλογή ή ένα σχόλιο που επαναφέρεται "
 "από τον κάδο ανακύκλωσης ξαναβρίσκει το UUID του."
 
-#: ../../source/historique.rst:208
+#: ../../source/historique.rst:225
 msgid "Voir :ref:`panneau_matchs`, :ref:`cli` et :ref:`headless`."
 msgstr "Βλ. :ref:`panneau_matchs`, :ref:`cli` και :ref:`headless`."
 
-#: ../../source/historique.rst:211
+#: ../../source/historique.rst:228
 msgid "0.47.0 (2026-10-26)"
 msgstr "0.47.0 (2026-10-26)"
 
-#: ../../source/historique.rst:213
+#: ../../source/historique.rst:230
 msgid ""
 "**Une base ouverte par 0.47.0 ne sert plus aux versions antérieures** : "
 "elle passe au schéma 2.50.0, sans retour, et n'est plus utilisable avec "
@@ -1542,7 +1676,7 @@ msgstr ""
 "παλαιότερη έκδοση. Η μετάπτωση υπολογίζει ξανά τις στήλες ανάλυσης και "
 "κινήσεων όλης της βάσης (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:214
+#: ../../source/historique.rst:231
 msgid ""
 "**La migration se suit et s'annule** : avec *CTRL-O* comme dans un "
 "nouveau groupe, la barre d'état affiche l'étape en cours et sa "
@@ -1554,7 +1688,7 @@ msgstr ""
 "του, και το *Esc* την ακυρώνει. Μετά από άνοιγμα που ακυρώθηκε ή απέτυχε,"
 " το *CTRL-O* ανοίγει ξανά τη βιβλιοθήκη που είχε η ομάδα."
 
-#: ../../source/historique.rst:215
+#: ../../source/historique.rst:232
 msgid ""
 "**Une base plus récente que le binaire est refusée** : chaque base note "
 "la version de schéma minimale qu'un blunderDB doit lire pour l'ouvrir ; "
@@ -1569,7 +1703,7 @@ msgstr ""
 " μια υπερβολικά νέα πηγή, με μεταφρασμένο μήνυμα που δίνει την "
 "απαιτούμενη έκδοση. Η βάση μένει ανέπαφη."
 
-#: ../../source/historique.rst:216
+#: ../../source/historique.rst:233
 msgid ""
 "**Recherche par distance au gain** : ``aw`` borne les points qu'il reste "
 "au joueur pour gagner le match, ``AW`` ceux de l'adversaire, quelle que "
@@ -1584,7 +1718,7 @@ msgstr ""
 "παιχνίδια που ακολουθούν. Στη γραμμή εντολών: ``--away``, ``--opponent-"
 "away`` και ``--crawford game|post``."
 
-#: ../../source/historique.rst:217
+#: ../../source/historique.rst:234
 msgid ""
 "**Recherche par difficulté de la décision** : ``mg`` borne l'écart, en "
 "millipoints, entre le meilleur choix et le suivant dans l'analyse "
@@ -1598,7 +1732,7 @@ msgstr ""
 "``mg>100``: μια προφανής)· το ``E<1 mg<20`` κρατά τις οριακές αποφάσεις "
 "που παίχτηκαν σωστά. Στη γραμμή εντολών: ``--margin``."
 
-#: ../../source/historique.rst:218
+#: ../../source/historique.rst:235
 msgid ""
 "**Les écritures d'un autre programme sont relues** : ce que ``blunderdb``"
 " en ligne de commande ou un démon ``serve`` écrit dans une bibliothèque "
@@ -1610,7 +1744,7 @@ msgstr ""
 " βιβλιοθήκη εμφανίζεται στη διεπαφή όταν το παράθυρο επιστρέφει στο "
 "προσκήνιο ή λίγα δευτερόλεπτα μετά το τέλος της εγγραφής."
 
-#: ../../source/historique.rst:219
+#: ../../source/historique.rst:236
 msgid ""
 "**Retraits** : la base d'exemple (commande ``demo``) et les visites "
 "guidées (commande ``tour``) ; le bouton *Noter les coups* de l'onglet "
@@ -1624,7 +1758,7 @@ msgstr ""
 "``matches.scoreMoves``, άσκοπα πλέον αφού το σφάλμα μιας παιγμένης "
 "κίνησης ενημερώνεται σε κάθε εγγραφή."
 
-#: ../../source/historique.rst:220
+#: ../../source/historique.rst:237
 msgid ""
 "**Corrections notables** : une décision de videau compte une fois, quelle"
 " que soit sa graphie (« Double No » est lu comme pas de double) ; les "
@@ -1648,7 +1782,7 @@ msgstr ""
 " διακομιστή συμπεριφέρονται όπως η εφαρμογή· στην PostgreSQL, μια εγγραφή"
 " που απορρίπτεται για έναν tenant επιστρέφει το σφάλμα της."
 
-#: ../../source/historique.rst:221
+#: ../../source/historique.rst:238
 msgid ""
 "Voir :ref:`cmd_mode`, :ref:`groupes_bibliotheques` et "
 ":ref:`cli_bibliotheque_chapitre`."
@@ -1656,11 +1790,11 @@ msgstr ""
 "Βλ. :ref:`cmd_mode`, :ref:`groupes_bibliotheques` και "
 ":ref:`cli_bibliotheque_chapitre`."
 
-#: ../../source/historique.rst:224
+#: ../../source/historique.rst:241
 msgid "0.46.0 (2026-10-23)"
 msgstr "0.46.0 (2026-10-23)"
 
-#: ../../source/historique.rst:226
+#: ../../source/historique.rst:243
 msgid ""
 "**gammonNet v1.8.1, en demi-précision** : le réseau embarqué est stocké "
 "en float16 (format BGN6) et l'application pèse 1,1 Mo de moins. Le moteur"
@@ -1675,7 +1809,7 @@ msgstr ""
 "ή η γραμμή *Παρωχημένες αναλύσεις gammonNet* της καρτέλας *Συντήρηση* την"
 " ξαναγράφει."
 
-#: ../../source/historique.rst:227
+#: ../../source/historique.rst:244
 msgid ""
 "**Les mêmes évaluations sur toutes les machines** : une analyse gammonNet"
 " donne le même résultat au bit près sur un processeur x86-64 ou ARM "
@@ -1684,7 +1818,7 @@ msgstr ""
 "**Οι ίδιες αξιολογήσεις σε κάθε μηχάνημα**: μια ανάλυση gammonNet δίνει "
 "το ίδιο αποτέλεσμα, bit προς bit, σε επεξεργαστή x86-64 ή ARM (arm64)."
 
-#: ../../source/historique.rst:228
+#: ../../source/historique.rst:245
 msgid ""
 "**Le panneau Autres bases** (*CTRL-MAJ-A*, qui remplace l'onglet "
 "Ailleurs) est le poste d'échange entre les bases ouvertes : pour chacune,"
@@ -1705,7 +1839,7 @@ msgstr ""
 "αυτήν θέσεις, αγώνες και τουρνουά, που αντιγράφονται μονομιάς στη βάση "
 "προορισμού που επιλέχθηκε."
 
-#: ../../source/historique.rst:229
+#: ../../source/historique.rst:246
 msgid ""
 "**Le panneau Autres bases suit la sélection** : pour le match, le "
 "tournoi, la collection ou la leçon sélectionné dans son panneau, il dit "
@@ -1721,7 +1855,7 @@ msgstr ""
 "``--tournament``, ``--collection`` ή ``--lesson`` και η διαδρομή "
 "``across.objectElsewhere`` απαντούν με τον ίδιο τρόπο."
 
-#: ../../source/historique.rst:230
+#: ../../source/historique.rst:247
 msgid ""
 "**Annuler une copie** : chaque copie de la session entre deux bases — "
 "position, match, tournoi, collection ou lot — s'annule depuis la barre "
@@ -1735,7 +1869,7 @@ msgstr ""
 "αναίρεση αφαιρεί μόνο ό,τι δημιούργησε η αντιγραφή, και απορρίπτεται αν "
 "ό,τι δημιούργησε έχει αλλάξει στο μεταξύ."
 
-#: ../../source/historique.rst:231
+#: ../../source/historique.rst:248
 msgid ""
 "**L'écran partagé coupe la seule zone du plateau en deux** : chaque volet"
 " garde sa base et son côté, le volet actif est cerné de sa couleur et "
@@ -1749,7 +1883,7 @@ msgstr ""
 "τμήμα, το σύρσιμο μιας θέσης από το ένα τμήμα στο άλλο την αντιγράφει, "
 "και οι πίνακες και η γραμμή κατάστασης ακολουθούν την ενεργή βάση."
 
-#: ../../source/historique.rst:232
+#: ../../source/historique.rst:249
 msgid ""
 "**Le menu contextuel en sous-menus** : le plateau et les lignes des "
 "panneaux Matchs, Tournois et Collections tirent leurs actions d'un même "
@@ -1770,7 +1904,7 @@ msgstr ""
 "``blunderdb gnubgid`` και η διαδρομή ``positions.gnubgId`` υπολογίζουν το"
 " ίδιο ID."
 
-#: ../../source/historique.rst:233
+#: ../../source/historique.rst:250
 msgid ""
 "**Les onglets** : quand ils ne tiennent plus dans la largeur, la rangée "
 "défile entre deux flèches, un dégradé marque le bord où des onglets sont "
@@ -1784,7 +1918,7 @@ msgstr ""
 "σύρσιμο μιας καρτέλας αναδιατάσσει τις προβολές της ομάδας της, το "
 "σύρσιμο μιας κεφαλίδας ομάδας μετακινεί ολόκληρη την ομάδα."
 
-#: ../../source/historique.rst:234
+#: ../../source/historique.rst:251
 msgid ""
 "**CTRL-S enregistre aussi l'évaluation gammonNet affichée** dans le "
 "panneau Eval : le verdict du plateau (les coups avec des dés, le videau "
@@ -1796,7 +1930,7 @@ msgstr ""
 "ζάρια, αλλιώς ο κύβος) γράφεται μαζί με τη θέση· μια ανάλυση που έχει ήδη"
 " η βάση διατηρείται ως έχει."
 
-#: ../../source/historique.rst:235
+#: ../../source/historique.rst:252
 msgid ""
 "**Les nombres de Neil exacts pour chaque n de 3 à 25** dans le panneau "
 "Données de référence, en fraction exacte, les points d'ancrage en "
@@ -1806,7 +1940,7 @@ msgstr ""
 "Δεδομένα αναφοράς, σε ακριβές κλάσμα, τα σημεία αγκύρωσης σε όρθια "
 "γράμματα και οι παρεμβαλλόμενες τιμές σε πλάγια."
 
-#: ../../source/historique.rst:236
+#: ../../source/historique.rst:253
 msgid ""
 "**Transcription** : les coups candidats d'un jet sont tous ses coups "
 "légaux, classés au 0-ply ; le bouton *Importer* (touche *i* dans la liste"
@@ -1824,7 +1958,7 @@ msgstr ""
 "διακομιστής φέρει ``video_source``, τα σημάδια και τις διάρκειες κάθε "
 "ενέργειας."
 
-#: ../../source/historique.rst:237
+#: ../../source/historique.rst:254
 msgid ""
 "**Statistiques** : ``stats summary`` et la route ``stats.summary`` "
 "rendent la part publique des statistiques, sans les pires erreurs ni le "
@@ -1842,7 +1976,7 @@ msgstr ""
 "μια λίστα αγώνων· η διαδρομή ``stats.tournamentReviews`` επιστρέφει την "
 "ανασκόπηση πολλών παικτών σε μία κλήση."
 
-#: ../../source/historique.rst:238
+#: ../../source/historique.rst:255
 msgid ""
 "**Direction de tournoi** : un barème de prix en pourcentages se paie à "
 "l'unité, par la méthode du plus fort reste ; la somme versée égale la "
@@ -1854,7 +1988,7 @@ msgstr ""
 "καταβάλλεται ισούται με το στρογγυλεμένο ποσό προς διανομή, και μια "
 "φθίνουσα κλίμακα δίνει φθίνοντα ποσά."
 
-#: ../../source/historique.rst:239
+#: ../../source/historique.rst:256
 msgid ""
 "Corrections notables : la commande ``#tag`` garde le ``#`` dans le "
 "commentaire, que la recherche ``#tag`` retrouve, et n'ajoute pas une "
@@ -1868,7 +2002,7 @@ msgstr ""
 " θέσεις των οποίων η ανάλυση φέρει μόνο το XGID· η αλλαγή ομάδας δεν "
 "μετακινεί πια τη σανίδα."
 
-#: ../../source/historique.rst:240
+#: ../../source/historique.rst:257
 msgid ""
 "Voir :ref:`vue_ailleurs`, :ref:`menu_contextuel_actions`, "
 ":ref:`groupes_bibliotheques`, :ref:`panneau_reference`, "
@@ -1880,11 +2014,11 @@ msgstr ""
 ":ref:`panneau_transcription`, :ref:`diriger_un_tournoi` και "
 ":ref:`headless`."
 
-#: ../../source/historique.rst:243
+#: ../../source/historique.rst:260
 msgid "0.45.0 (2026-10-21)"
 msgstr "0.45.0 (2026-10-21)"
 
-#: ../../source/historique.rst:245
+#: ../../source/historique.rst:262
 msgid ""
 "**Plusieurs bibliothèques ouvertes à la fois** : chaque base ouverte "
 "forme un groupe d'onglets, sous un en-tête de couleur au nom du fichier, "
@@ -1903,7 +2037,7 @@ msgstr ""
 "παρακολουθούμενος φάκελος και η ανάλυση κατά παρτίδες μένουν δεμένα με τη"
 " βιβλιοθήκη που τα ξεκίνησε."
 
-#: ../../source/historique.rst:246
+#: ../../source/historique.rst:263
 msgid ""
 "**Copier d'une bibliothèque dans une autre** : une position, un match, "
 "une collection ou une leçon glissés sur l'en-tête d'un autre groupe y "
@@ -1918,7 +2052,7 @@ msgstr ""
 "transfer`` και η διαδρομή ``across.transferPull`` του διακομιστή κάνουν "
 "την ίδια αντιγραφή."
 
-#: ../../source/historique.rst:247
+#: ../../source/historique.rst:264
 msgid ""
 "**L'onglet Ailleurs** (*CTRL-MAJ-A*) dit, pour la position affichée, ce "
 "qu'en savent les autres bibliothèques ouvertes : analyse jugée avec les "
@@ -1937,7 +2071,7 @@ msgstr ""
 "``blunderdb elsewhere`` και η διαδρομή ``across.positionElsewhere`` είναι"
 " οι άλλες μορφές της."
 
-#: ../../source/historique.rst:248
+#: ../../source/historique.rst:265
 msgid ""
 "**L'écran partagé** (bouton ◫, *CTRL-MAJ-X*) montre côte à côte le groupe"
 " actif et une visionneuse en lecture d'un autre groupe ; cliquer la "
@@ -1947,7 +2081,7 @@ msgstr ""
 " ενεργή ομάδα και έναν προβολέα μόνο ανάγνωσης άλλης ομάδας· το κλικ στον"
 " προβολέα ανταλλάσσει τους ρόλους. Απαιτεί πλάτος τουλάχιστον 1280 pixel."
 
-#: ../../source/historique.rst:249
+#: ../../source/historique.rst:266
 msgid ""
 "**Synchroniser deux machines** : un export incrémental (``export --type "
 "database --incremental``) n'emporte que ce qui est entré depuis le "
@@ -1959,7 +2093,7 @@ msgstr ""
 "εξαγωγή προς τον ίδιο προορισμό, και ο παρακολουθούμενος φάκελος "
 "συγχωνεύει τα ``.db`` που φτάνουν σε αυτόν· ταξιδεύουν μόνο οι προσθήκες."
 
-#: ../../source/historique.rst:250
+#: ../../source/historique.rst:267
 msgid ""
 "**Les commentaires sont signés** : un export marqué signe vos "
 "commentaires avec votre identité d'émetteur, et le destinataire voit qui "
@@ -1969,7 +2103,7 @@ msgstr ""
 "σχόλιά σας με την ταυτότητα εκδότη σας, και ο παραλήπτης βλέπει ποιος τα "
 "έγραψε και αν αλλοιώθηκαν στη διαδρομή."
 
-#: ../../source/historique.rst:251
+#: ../../source/historique.rst:268
 msgid ""
 "**Le panneau Données de référence** (*CTRL-MAJ-R*, ``reference`` ou "
 "``ref``) réunit la MET Kazaross-XG2, les points de prise (videaux 2 et 4,"
@@ -1985,7 +2119,7 @@ msgstr ""
 "διαθέσιμα χωρίς βάση και κατά τη διάρκεια μιας Μονομαχίας· τα ``met``, "
 "``tp…`` και ``gv…`` τον ανοίγουν στην καρτέλα τους."
 
-#: ../../source/historique.rst:252
+#: ../../source/historique.rst:269
 msgid ""
 "**Exporter une leçon en page HTML autonome** : titre, description, chaque"
 " étape avec son texte et son plateau, l'analyse de chaque position "
@@ -1997,7 +2131,7 @@ msgstr ""
 " σαν απάντηση κουίζ. Το ``blunderdb lesson export --html`` και η διαδρομή"
 " ``lessons.html`` του διακομιστή παράγουν την ίδια σελίδα."
 
-#: ../../source/historique.rst:253
+#: ../../source/historique.rst:270
 msgid ""
 "**Afficher un tournoi sur le réseau du club** : la Direction lance un "
 "petit serveur web et montre le QR code de son adresse ; un téléphone du "
@@ -2009,7 +2143,7 @@ msgstr ""
 "ένα τηλέφωνο στο ίδιο δίκτυο παρακολουθεί εκεί το δέντρο, τα ζευγαρώματα,"
 " τα αποτελέσματα και την κατάταξη, ενημερωμένα κάθε δέκα δευτερόλεπτα."
 
-#: ../../source/historique.rst:254
+#: ../../source/historique.rst:271
 msgid ""
 "**Plus rapide** : l'application démarre plus vite et pèse 3 Mo de moins ;"
 " le filtre E (``E>n``) ne compare plus les coups de chaque position, les "
@@ -2030,7 +2164,7 @@ msgstr ""
 "παρασκήνιο από το άνοιγμα, αντί να καθυστερούν τους πίνακες Τουρνουά και "
 "Παίκτες."
 
-#: ../../source/historique.rst:255
+#: ../../source/historique.rst:272
 msgid ""
 "**Côté serveur** : ``blunderdb call --backend remote --dsn <URL>`` fait "
 "passer ses appels par un démon ``serve`` ; le démon SQLite chargé répond "
@@ -2049,7 +2183,7 @@ msgstr ""
 "πάνω από δύο ώρες σε βάση 300 000 θέσεων) και μεταφέρει επίσης τα "
 "μαθήματα."
 
-#: ../../source/historique.rst:256
+#: ../../source/historique.rst:273
 msgid ""
 "Corrections notables : rouvrir l'aide intégrée ne la fige plus ; "
 "modifier, supprimer ou figer une collection inexistante est refusé comme "
@@ -2060,7 +2194,7 @@ msgstr ""
 "συλλογής απορρίπτεται ως τέτοια από τον διακομιστή, όχι πια με εσωτερικό "
 "σφάλμα ή ψευδή επιτυχία."
 
-#: ../../source/historique.rst:257
+#: ../../source/historique.rst:274
 msgid ""
 "Voir :ref:`groupes_bibliotheques`, :ref:`vue_ailleurs`, "
 ":ref:`synchroniser_deux_machines`, :ref:`panneau_reference`, "
@@ -2072,11 +2206,11 @@ msgstr ""
 ":ref:`lecons`, :ref:`diriger_un_tournoi`, :ref:`cli_transfer` και "
 ":ref:`headless`."
 
-#: ../../source/historique.rst:260
+#: ../../source/historique.rst:277
 msgid "0.44.0 (2026-10-19)"
 msgstr "0.44.0 (2026-10-19)"
 
-#: ../../source/historique.rst:262
+#: ../../source/historique.rst:279
 msgid ""
 "**L'exercice Ouverture choisit entre deux modes** : *Catégories XG* "
 "(*Money*, *DMP*, *Gammon save* et *Gammon go*, combinables) ou *Match en "
@@ -2090,7 +2224,7 @@ msgstr ""
 "πέντε σκορ ενός αγώνα 5 πόντων, με το DMP και τα παιχνίδια Crawford μέσα,"
 " χωρίς σκορ να επιλέξετε. Το πλέγμα των σκορ αγώνα στους 7 καταργείται."
 
-#: ../../source/historique.rst:263
+#: ../../source/historique.rst:280
 msgid ""
 "**Le livre d'ouverture embarqué tient les vingt-cinq scores d'un match en"
 " 5** : 2-4, 4-2, 2-5, 5-2, 3-5, 5-3 et les parties Crawford 1-3, 3-1, 1-5"
@@ -2103,7 +2237,7 @@ msgstr ""
 "και οι διαδρομές ``openingbook.*`` του διακομιστή τα εξυπηρετούν όπως τα "
 "υπόλοιπα σκορ."
 
-#: ../../source/historique.rst:264
+#: ../../source/historique.rst:281
 msgid ""
 "**Côté serveur** : ``search.find`` trie par compte de pips et par date, "
 "``analyses.queueStatus`` décrit la file d'analyse, les statistiques se "
@@ -2120,7 +2254,7 @@ msgstr ""
 " αγώνα που επισκέφθηκε κάποιος, όχι τον τελευταίο που εισήχθη· το "
 "``blunderdb stats`` δέχεται το ``--opponent``."
 
-#: ../../source/historique.rst:265
+#: ../../source/historique.rst:282
 msgid ""
 "Voir :ref:`panneau_entrainement`, :ref:`cli_openingbook` et "
 ":ref:`api_reference`."
@@ -2128,11 +2262,11 @@ msgstr ""
 "Βλ. :ref:`panneau_entrainement`, :ref:`cli_openingbook` και "
 ":ref:`api_reference`."
 
-#: ../../source/historique.rst:268
+#: ../../source/historique.rst:285
 msgid "0.43.0 (2026-10-18)"
 msgstr "0.43.0 (2026-10-18)"
 
-#: ../../source/historique.rst:270
+#: ../../source/historique.rst:287
 msgid ""
 "**L'exercice Ouverture tire par catégories** : *Money*, *DMP*, *Gammon "
 "save* (l'ouvreur à 1 away Crawford, le répondeur à 2 away) et *Gammon go*"
@@ -2149,7 +2283,7 @@ msgstr ""
 "απενεργοποιημένη από την αρχή, γιατί από 4 έως 7 away οι καλύτερες "
 "κινήσεις σχεδόν δεν αλλάζουν από το ένα σκορ στο άλλο."
 
-#: ../../source/historique.rst:271
+#: ../../source/historique.rst:288
 msgid ""
 "**Le livre d'ouverture embarqué tient la partie d'argent et le DMP** : "
 "``blunderdb openingbook`` et les routes ``openingbook.*`` du serveur les "
@@ -2159,7 +2293,7 @@ msgstr ""
 "το DMP**: το ``blunderdb openingbook`` και οι διαδρομές ``openingbook.*``"
 " του διακομιστή τα εξυπηρετούν όπως τα υπόλοιπα σκορ."
 
-#: ../../source/historique.rst:272
+#: ../../source/historique.rst:289
 msgid ""
 "Voir :ref:`panneau_entrainement`, :ref:`cli_openingbook` et "
 ":ref:`metrique_livre_ouverture`."
@@ -2167,11 +2301,11 @@ msgstr ""
 "Βλ. :ref:`panneau_entrainement`, :ref:`cli_openingbook` και "
 ":ref:`metrique_livre_ouverture`."
 
-#: ../../source/historique.rst:275
+#: ../../source/historique.rst:292
 msgid "0.42.0 (2026-10-17)"
 msgstr "0.42.0 (2026-10-17)"
 
-#: ../../source/historique.rst:277
+#: ../../source/historique.rst:294
 msgid ""
 "**Quel coup à ce score ? L'exercice Ouverture** : l'onglet Entraînement "
 "pose le coup d'ouverture (*1st roll*) ou la réponse (*2nd roll*) d'une "
@@ -2194,7 +2328,7 @@ msgstr ""
 "openingbook`` και οι διαδρομές ``openingbook.*`` του διακομιστή είναι οι "
 "άλλες μορφές της."
 
-#: ../../source/historique.rst:278
+#: ../../source/historique.rst:295
 msgid ""
 "**ENTRÉE enchaîne les questions d'entraînement** : pendant une *Décision*"
 " ou une *Ouverture*, ENTRÉE valide le coup joué au plateau, où que soit "
@@ -2209,7 +2343,7 @@ msgstr ""
 " τη συνεδρία, μόλις εμφανιστεί η ετυμηγορία· δύο γρήγορα διαδοχικά "
 "πατήματα δεν βαθμολογούν την απάντηση δύο φορές."
 
-#: ../../source/historique.rst:279
+#: ../../source/historique.rst:296
 msgid ""
 "**Côté serveur** : la route ``matches.byPosition`` liste les matchs où un"
 " coup a été joué sur une position, et l'import d'un fichier XG dans une "
@@ -2221,7 +2355,7 @@ msgstr ""
 "ενός αρχείου XG σε βάση PostgreSQL κάνει τα μισά ερωτήματα ανά θέση και "
 "είναι δύο φορές ταχύτερη."
 
-#: ../../source/historique.rst:280
+#: ../../source/historique.rst:297
 msgid ""
 "Corrections notables : un fichier de match dont une position porte seize "
 "pions d'un camp est refusé par le serveur comme invalide, et non plus par"
@@ -2231,7 +2365,7 @@ msgstr ""
 " πούλια για μία πλευρά απορρίπτεται από τον διακομιστή ως άκυρο, και όχι "
 "πλέον με εσωτερικό σφάλμα."
 
-#: ../../source/historique.rst:281
+#: ../../source/historique.rst:298
 msgid ""
 "Voir :ref:`panneau_entrainement`, :ref:`raccourcis`, "
 ":ref:`cli_openingbook`, :ref:`metrique_livre_ouverture` et "
@@ -2241,11 +2375,11 @@ msgstr ""
 ":ref:`cli_openingbook`, :ref:`metrique_livre_ouverture` και "
 ":ref:`api_reference`."
 
-#: ../../source/historique.rst:284
+#: ../../source/historique.rst:301
 msgid "0.41.0 (2026-10-16)"
 msgstr "0.41.0 (2026-10-16)"
 
-#: ../../source/historique.rst:286
+#: ../../source/historique.rst:303
 msgid ""
 "**Lire une position depuis une capture d'écran** : coller, glisser ou "
 "ouvrir une capture du plateau d'eXtreme Gammon sur le plateau d'édition "
@@ -2262,7 +2396,7 @@ msgstr ""
 "``blunderdb capture`` και η διαδρομή ``positions.fromImage`` του "
 "διακομιστή είναι οι άλλες μορφές."
 
-#: ../../source/historique.rst:287
+#: ../../source/historique.rst:304
 msgid ""
 "**Le joueur principal et la fenêtre Gérer les joueurs** : l'étoile d'un "
 "joueur le désigne comme joueur principal, placé au siège 1 à l'import, et"
@@ -2283,7 +2417,7 @@ msgstr ""
 "μορφές. Στον πίνακα Τουρνουά, το PR και το MWC μιας γραμμής είναι αυτά "
 "του κύριου παίκτη μόλις έχει παίξει εκεί."
 
-#: ../../source/historique.rst:288
+#: ../../source/historique.rst:305
 msgid ""
 "**Importer une base reprend aussi les matchs** : avec leurs parties, "
 "coups, analyses et origine, les tournois (avec leur Direction et leur "
@@ -2302,7 +2436,7 @@ msgstr ""
 "βάση που τα δέχεται. Το ``blunderdb import --type database`` και ο "
 "διακομιστής κάνουν το ίδιο."
 
-#: ../../source/historique.rst:289
+#: ../../source/historique.rst:306
 msgid ""
 "**Un aperçu avant d'exporter** : la fenêtre d'export compte, famille par "
 "famille, ce que le fichier contiendra, avant de l'écrire ; ``blunderdb "
@@ -2316,7 +2450,7 @@ msgstr ""
 "ίδια μέτρηση. Ένα επιλεγμένο τουρνουά παίρνει πάντα μαζί του τους αγώνες "
 "του, και η Διεύθυνση και η Συνάντηση ενός τουρνουά το ακολουθούν."
 
-#: ../../source/historique.rst:290
+#: ../../source/historique.rst:307
 msgid ""
 "**Annuler la dernière révision Anki** : le bouton **Annuler** de la "
 "révision, ou la touche *u*, reprend la dernière note de la séance et "
@@ -2329,7 +2463,7 @@ msgstr ""
 "undo`` και η διαδρομή ``anki.undoReview`` του διακομιστή κάνουν την ίδια "
 "κίνηση."
 
-#: ../../source/historique.rst:291
+#: ../../source/historique.rst:308
 msgid ""
 "**La recherche gammonNet s'étale sur les cœurs libres** : gammonNet "
 "v1.8.0 découpe une recherche à 2 plis et plus sur plusieurs cœurs, avec "
@@ -2344,7 +2478,7 @@ msgstr ""
 " ενιαίο προϋπολογισμό πυρήνων, και ο διακομιστής χρεώνει σε μια μονάδα "
 "τον χρόνο κάθε πυρήνα που καταλαμβάνει."
 
-#: ../../source/historique.rst:292
+#: ../../source/historique.rst:309
 msgid ""
 "**Cocher les joueurs dans la légende des graphes d'un match** : décocher "
 "un joueur masque ses marques dans les trois graphes, et le survol, le "
@@ -2356,7 +2490,7 @@ msgstr ""
 "κλικ και τα βέλη στοχεύουν μόνο τον άλλον· η ρύθμιση διατηρείται ανά "
 "αγώνα."
 
-#: ../../source/historique.rst:293
+#: ../../source/historique.rst:310
 msgid ""
 "**Les comptes des statistiques ouvrent leurs positions** : les panneaux "
 "Biais, Avant/après et Temps ajoutent à chaque compte de décisions une "
@@ -2366,7 +2500,7 @@ msgstr ""
 "Bias, Πριν/μετά και Χρόνος προσθέτουν σε κάθε μέτρηση αποφάσεων μια στήλη"
 " *Θέσεις* που ανοίγει τις διακριτές θέσεις που αφορά."
 
-#: ../../source/historique.rst:294
+#: ../../source/historique.rst:311
 msgid ""
 "**Une transcription plus lisible** : la touche chiffrée dit son effet par"
 " un indicateur de mode (Saisie ou Édition) et l'effet d'*Entrée* ; les "
@@ -2381,7 +2515,7 @@ msgstr ""
 "παράνομο βήμα σχεδιάζεται με κόκκινη διακεκομμένη γραμμή· η επιλογή της "
 "πρώτης γραμμής της ανάλυσης αντικαθιστά την απόφαση."
 
-#: ../../source/historique.rst:295
+#: ../../source/historique.rst:312
 msgid ""
 "**La vidéo ne fige plus l'application** : le volet vidéo reprend sa "
 "lecture après un saut qui n'aboutit pas, ne recharge jamais une vidéo en "
@@ -2396,7 +2530,7 @@ msgstr ""
 "κατά το άνοιγμα, μαζί με την εντολή ``ffmpeg`` που το επισκευάζει χωρίς "
 "επανακωδικοποίηση."
 
-#: ../../source/historique.rst:296
+#: ../../source/historique.rst:313
 msgid ""
 "Corrections notables : un coup joué est apparié à ses candidats par le "
 "plateau où il arrive et non par sa notation, de sorte que deux coups de "
@@ -2410,7 +2544,7 @@ msgstr ""
 "χτυπήματα να μην συγχέονται πια· ένα στιγμιότυπο οθόνης με κλασματική "
 "κλίμακα διαβάζεται σωστά· ένα βίντεο σε παύση δεν επαναφορτώνεται πια."
 
-#: ../../source/historique.rst:297
+#: ../../source/historique.rst:314
 msgid ""
 "Voir :ref:`manuel`, :ref:`raccourcis`, :ref:`cli`, :ref:`headless` et "
 ":ref:`api_reference`."
@@ -2418,11 +2552,11 @@ msgstr ""
 "Βλ. :ref:`manuel`, :ref:`raccourcis`, :ref:`cli`, :ref:`headless` και "
 ":ref:`api_reference`."
 
-#: ../../source/historique.rst:300
+#: ../../source/historique.rst:317
 msgid "0.40.0 (2026-10-12)"
 msgstr "0.40.0 (2026-10-12)"
 
-#: ../../source/historique.rst:302
+#: ../../source/historique.rst:319
 msgid ""
 "**La recherche gammonNet à 3 et 4 plis va plusieurs fois plus vite** : "
 "une seule réplique par nœud intérieur, et une racine étagée qui ne pousse"
@@ -2441,7 +2575,7 @@ msgstr ""
 "του οποίου η πολιτική παίζει στα 3 ply δεν δίνει πια τους ίδιους "
 "αριθμούς."
 
-#: ../../source/historique.rst:303
+#: ../../source/historique.rst:320
 msgid ""
 "**Une analyse gammonNet s'annule en cours de recherche** : la barre "
 "d'état affiche sa profondeur et sa progression, et son bouton "
@@ -2453,7 +2587,7 @@ msgstr ""
 "της διακόπτει και μια βαθιά αναζήτηση που έχει ήδη ξεκινήσει, στη "
 "διεπαφή, στη γραμμή εντολών και στον διακομιστή."
 
-#: ../../source/historique.rst:304
+#: ../../source/historique.rst:321
 msgid ""
 "**L'onglet Maintenance** de la configuration montre l'état de santé de la"
 " base, une ligne par opération (positions sans analyse, analyses "
@@ -2473,7 +2607,7 @@ msgstr ""
 "άνοιγμα μιας βάσης δεν γράφει πια τίποτα εκεί: τα στατιστικά ενός αγώνα "
 "υπολογίζονται στην πρώτη ανάγνωση ή από αυτή την καρτέλα."
 
-#: ../../source/historique.rst:305
+#: ../../source/historique.rst:322
 msgid ""
 "**Une seule opération longue écrit dans la base à la fois** : pendant une"
 " opération de maintenance, une analyse gammonNet ou un rollout, une autre"
@@ -2487,7 +2621,7 @@ msgstr ""
 "μια αυτόματη ανάλυση (μετά από εισαγωγή, μεταγραφή ή Μονομαχία) περιμένει"
 " τη σειρά της."
 
-#: ../../source/historique.rst:306
+#: ../../source/historique.rst:323
 msgid ""
 "**L'export Anki .apkg** : un paquet d'étude ou une collection s'écrit en "
 "paquet Anki ``.apkg``, que l'application Anki importe sur ordinateur ou "
@@ -2508,7 +2642,7 @@ msgstr ""
 "διακομιστή είναι οι τρεις μορφές της, και μια νέα εξαγωγή ενημερώνει τις "
 "κάρτες στο Anki αντί να τις διπλασιάζει."
 
-#: ../../source/historique.rst:307
+#: ../../source/historique.rst:324
 msgid ""
 "**Le Duel part d'où l'on veut** : la bande d'en-tête du panneau Duel "
 "règle le Départ — la position initiale, ou le plateau édité comme dans le"
@@ -2528,7 +2662,7 @@ msgstr ""
 "ένα σκορ. Το ``blunderdb duel create`` δέχεται τα ``--away``, "
 "``--reroll``, ``--after-cube`` και ``--single-game``."
 
-#: ../../source/historique.rst:308
+#: ../../source/historique.rst:325
 msgid ""
 "**Les cadences en minutes par point** : Standard (2 min par point + 12 "
 "s), Speed (0,4 min par point + 10 s) ou une cadence enregistrée sous un "
@@ -2540,7 +2674,7 @@ msgstr ""
 "το απόθεμα κάθε παίκτη σχετίζεται με το μήκος του αγώνα, ή με ό,τι "
 "απομένει να παιχτεί από ένα αρχικό σκορ."
 
-#: ../../source/historique.rst:309
+#: ../../source/historique.rst:326
 msgid ""
 "**Le pipcount masqué pendant un Duel** : décoché au lancement, il reste "
 "caché même par le bouton de la barre d'outils ou *P*, et revient à la "
@@ -2550,7 +2684,7 @@ msgstr ""
 "τικαρισμένο κατά την εκκίνηση, μένει κρυμμένο ακόμη και με το κουμπί της "
 "γραμμής εργαλείων ή το *P*, και επιστρέφει με την έξοδο από τη Μονομαχία."
 
-#: ../../source/historique.rst:310
+#: ../../source/historique.rst:327
 msgid ""
 "**Faire pivoter la vidéo** : le bouton ⟳ de la barre vidéo, présent aussi"
 " dans la barre du mode théâtre, ou la touche *o* tourne la vidéo d'un "
@@ -2562,7 +2696,7 @@ msgstr ""
 "ένα τέταρτο στροφής, τοπικό αρχείο όπως και σύνδεσμο YouTube· η γωνία "
 "διατηρείται για το πρόχειρο, σε αυτόν τον υπολογιστή."
 
-#: ../../source/historique.rst:311
+#: ../../source/historique.rst:328
 msgid ""
 "**La date d'un tournoi déduite de ses matchs** : un tournoi sans date "
 "prend celle de son plus ancien match, affichée en grisé et proposée par "
@@ -2577,7 +2711,7 @@ msgstr ""
 "και Ημερομηνία όπως στον πίνακα Αγώνων, και η Πρόοδος ταξινομεί τα "
 "τουρνουά με χρονολογική σειρά."
 
-#: ../../source/historique.rst:312
+#: ../../source/historique.rst:329
 msgid ""
 "**La fiche du match dans le panneau Tournois** : un clic sur un match "
 "d'un tournoi affiche sous la table la fiche du panneau Matchs, avec ses "
@@ -2589,7 +2723,7 @@ msgstr ""
 "τις καρτέλες του, και ένα πεδίο φίλτρου περιορίζει τη λίστα των τουρνουά "
 "καθώς πληκτρολογείτε."
 
-#: ../../source/historique.rst:313
+#: ../../source/historique.rst:330
 msgid ""
 "**Toute la bibliothèque s'exporte de la même façon partout** : la "
 "nouvelle fenêtre d'export — une ligne par famille avec son compte, le "
@@ -2624,7 +2758,7 @@ msgstr ""
 "Μια φιλτραρισμένη λίστα εξάγει μόνο τους αγώνες όπου παίχτηκαν οι θέσεις "
 "της, καθέναν με όλες τις θέσεις του."
 
-#: ../../source/historique.rst:314
+#: ../../source/historique.rst:331
 msgid ""
 "**Réparer un match depuis son fichier source** : le bouton ⟲ de la ligne "
 "*Fichier source* de la fiche, ou ``blunderdb match repair``, relit le "
@@ -2644,7 +2778,7 @@ msgstr ""
 "βρίσκει τους αγώνες που διαφέρουν από το αρχείο τους, και η διαδρομή "
 "``matches.repair`` κάνει την ίδια κίνηση στον διακομιστή."
 
-#: ../../source/historique.rst:315
+#: ../../source/historique.rst:332
 msgid ""
 "**Le panneau Stats** : un seul filtre, partagé par tous les onglets, avec"
 " un champ joueur qui cherche à la frappe ; le filtre de dates compte son "
@@ -2675,7 +2809,7 @@ msgstr ""
 "ranking`` την δίνει πάντα στη γραμμή εντολών)· η γραμμή ενός πίνακα πάνω "
 "από την οποία περνά ο δείκτης χρωματίζεται."
 
-#: ../../source/historique.rst:316
+#: ../../source/historique.rst:333
 msgid ""
 "**La fenêtre Fusion de joueurs reste ouverte** entre deux fusions ; "
 "*Fermer* ou *ÉCHAP* la referme."
@@ -2683,7 +2817,7 @@ msgstr ""
 "**Το παράθυρο Συγχώνευση παικτών μένει ανοιχτό** ανάμεσα σε δύο "
 "συγχωνεύσεις· το *Κλείσιμο* ή το *ESC* το κλείνει."
 
-#: ../../source/historique.rst:317
+#: ../../source/historique.rst:334
 msgid ""
 "**La danse se saisit d'une touche dans la Transcription** : quand le "
 "joueur au trait est sur la barre, *f* saisit un jet qui ne le fait pas "
@@ -2697,7 +2831,7 @@ msgstr ""
 "πληκτρολόγηση· εκτός μπάρας, ή αν κάθε ζαριά μπαίνει, δεν εισάγεται "
 "τίποτα και η γραμμή κατάστασης το αναφέρει."
 
-#: ../../source/historique.rst:318
+#: ../../source/historique.rst:335
 msgid ""
 "**L'abandon se saisit d'une touche dans la Transcription** : *r* ouvre le"
 " choix du niveau (simple, gammon, backgammon) ; dans le mode théâtre, une"
@@ -2708,7 +2842,7 @@ msgstr ""
 "λειτουργία θεάτρου, ένα μικρό παράθυρο την προτείνει και τα πλήκτρα *1*, "
 "*2* και *3* την επικυρώνουν."
 
-#: ../../source/historique.rst:319
+#: ../../source/historique.rst:336
 msgid ""
 "**Le coup se joue sur le mini-plateau du mode théâtre** : mêmes gestes "
 "que sur le plateau, clic droit pour reprendre le coup ; les flèches du "
@@ -2718,7 +2852,7 @@ msgstr ""
 "χειρονομίες όπως στο ταμπλό, δεξί κλικ για να πάρετε πίσω την κίνηση· τα "
 "βέλη της προηγούμενης κίνησης σβήνουν από το πρώτο βήμα."
 
-#: ../../source/historique.rst:320
+#: ../../source/historique.rst:337
 msgid ""
 "**La case Post-Crawford de la Transcription** apparaît au score de départ"
 " quand un joueur est à L-1 ; chaque marque d'incohérence de la "
@@ -2728,7 +2862,7 @@ msgstr ""
 "όταν ένας παίκτης βρίσκεται στο L-1· κάθε σήμανση ασυνέπειας της "
 "μεταγραφής εμφανίζει τον λόγο της."
 
-#: ../../source/historique.rst:321
+#: ../../source/historique.rst:338
 msgid ""
 "**L'échelle de l'interface se règle au clavier** : *Ctrl++*, *Ctrl+-* et "
 "*Ctrl+0* l'agrandissent, la réduisent et la rétablissent, comme dans un "
@@ -2739,11 +2873,11 @@ msgstr ""
 "όπως σε έναν περιηγητή· η διεπαφή με ζουμ καταλαμβάνει ολόκληρο το "
 "παράθυρο."
 
-#: ../../source/historique.rst:322
+#: ../../source/historique.rst:339
 msgid "**Le rollout passe sur MAJ-R** ; *r* reste la position aléatoire."
 msgstr "**Το rollout περνά στο SHIFT-R**· το *r* παραμένει η τυχαία θέση."
 
-#: ../../source/historique.rst:323
+#: ../../source/historique.rst:340
 msgid ""
 "Corrections notables : inverser les joueurs d'un match, en 0.39.0 et "
 "avant, remplaçait ses positions par d'autres, sans analyse, et retirait "
@@ -2781,16 +2915,16 @@ msgstr ""
 "διόρθωση δεν αφήνει πλέον πλεονάζοντα πούλια, και η αλυσίδα των επόμενων "
 "θέσεων υπολογίζεται εκ νέου μετά από μια τροποποίηση."
 
-#: ../../source/historique.rst:324 ../../source/historique.rst:382
-#: ../../source/historique.rst:400
+#: ../../source/historique.rst:341 ../../source/historique.rst:399
+#: ../../source/historique.rst:417
 msgid "Voir :ref:`manuel`, :ref:`cli` et :ref:`headless`."
 msgstr "Βλ. :ref:`manuel`, :ref:`cli` και :ref:`headless`."
 
-#: ../../source/historique.rst:327
+#: ../../source/historique.rst:344
 msgid "0.39.0 (2026-10-10)"
 msgstr "0.39.0 (2026-10-10)"
 
-#: ../../source/historique.rst:329
+#: ../../source/historique.rst:346
 msgid ""
 "**La vidéo d'un match** : un fichier local ou un lien YouTube s'attache à"
 " un match, et le panneau Matchs ouvre la vidéo une seconde avant le jet "
@@ -2801,7 +2935,7 @@ msgstr ""
 "δευτερόλεπτο πριν από τη ριξιά της υπό μελέτη απόφασης (εικονίδιο της "
 "γραμμής ή πλήκτρο *v*)."
 
-#: ../../source/historique.rst:330
+#: ../../source/historique.rst:347
 msgid ""
 "**La vidéo à côté du plateau** : la zone du plateau se partage entre la "
 "vidéo et le plateau, de part et d'autre d'une poignée dont la place est "
@@ -2814,7 +2948,7 @@ msgstr ""
 " ρυθμίζουν την ταχύτητά του, την οποία ένας μεγάλος δείκτης εμφανίζει στο"
 " κέντρο του βίντεο."
 
-#: ../../source/historique.rst:331
+#: ../../source/historique.rst:348
 msgid ""
 "**La Transcription suit une vidéo** : le volet vidéo pose les repères de "
 "chaque action (instant du jet, instant de l'action), *ESPACE*, *MAJ* avec"
@@ -2828,7 +2962,7 @@ msgstr ""
 "τα σημεία αναφοράς, ένα κλικ σε ένα κελί φέρνει το βίντεο στο σημείο "
 "αναφοράς του, και ο Δρομέας ακολουθεί το βίντεο κατά την αναπαραγωγή."
 
-#: ../../source/historique.rst:332
+#: ../../source/historique.rst:349
 msgid ""
 "**La durée de chaque coup** se lit dans une colonne de la transcription, "
 "déduite des repères ; un coup sans instant d'action a une durée estimée, "
@@ -2838,7 +2972,7 @@ msgstr ""
 "συναγόμενη από τους δείκτες· μια κίνηση χωρίς χρονική στιγμή ενέργειας "
 "έχει εκτιμώμενη διάρκεια, που εμφανίζεται όπως οι άλλες."
 
-#: ../../source/historique.rst:333
+#: ../../source/historique.rst:350
 msgid ""
 "**La barre de la Transcription** se lit en trois groupes : les "
 "brouillons, la saisie avec le menu *Vidéo* (fichier local, lien YouTube, "
@@ -2850,7 +2984,7 @@ msgstr ""
 "αφαίρεση του βίντεο), και έπειτα *Τέλος*, *Παραίτηση* και ένα μενού ⋯ που"
 " περιέχει το κείμενο και την εξαγωγή ``.mat``."
 
-#: ../../source/historique.rst:334
+#: ../../source/historique.rst:351
 msgid ""
 "**Le mode théâtre** : *F11* passe la fenêtre en plein écran avec la "
 "vidéo, un mini-plateau flottant par-dessus, le clavier de saisie restant "
@@ -2860,7 +2994,7 @@ msgstr ""
 " βίντεο, ένα πλωτό μίνι ταμπλό από πάνω, ενώ το πληκτρολόγιο καταχώρισης "
 "παραμένει ενεργό."
 
-#: ../../source/historique.rst:335
+#: ../../source/historique.rst:352
 msgid ""
 "**La fiche d'un match en onglets** : l'en-tête et la synthèse du bilan "
 "par joueur restent en haut, et dessous les onglets *Transcription*, "
@@ -2875,7 +3009,7 @@ msgstr ""
 "καρτέλα θυμάται, και τα γραφήματα μοιράζονται το ύψος της καρτέλας "
 "*Γραφήματα*."
 
-#: ../../source/historique.rst:336
+#: ../../source/historique.rst:353
 msgid ""
 "**Le bilan du match** : les décisions à revoir, le résultat ajusté de la "
 "chance converti en MWC, le rythme des erreurs (précipitées ou réfléchies,"
@@ -2890,7 +3024,7 @@ msgstr ""
 "--format summary`` και η διαδρομή ``stats.matchReview`` τον δίνουν "
 "επίσης."
 
-#: ../../source/historique.rst:337
+#: ../../source/historique.rst:354
 msgid ""
 "**La perte MWC rapportée à un match en 7 points** (L₇) se lit à côté du "
 "PR dans la liste des matchs, les statistiques du match, les tournois, le "
@@ -2902,7 +3036,7 @@ msgstr ""
 "πίνακα και στην πρόοδο, καθώς και στα ``blunderdb stats``, ``stats "
 "progression`` και ``match``."
 
-#: ../../source/historique.rst:338
+#: ../../source/historique.rst:355
 msgid ""
 "**La difficulté de chaque décision** et l'**erreur évitable** : la "
 "transcription et le graphique de perte les montrent, et l'en-tête du "
@@ -2914,7 +3048,7 @@ msgstr ""
 "παίκτη τη δυσκολία, το πλεόνασμα, τον λόγο και τον αριθμό των αποφεύξιμων"
 " λαθών."
 
-#: ../../source/historique.rst:339
+#: ../../source/historique.rst:356
 msgid ""
 "**Un intervalle à 95 %** accompagne le PR et chaque cellule des "
 "ventilations, rééchantillonné par matchs."
@@ -2922,7 +3056,7 @@ msgstr ""
 "**Ένα διάστημα 95 %** συνοδεύει το PR και κάθε κελί των αναλύσεων, με "
 "επαναδειγματοληψία ανά αγώνες."
 
-#: ../../source/historique.rst:340
+#: ../../source/historique.rst:357
 msgid ""
 "**Le bilan d'un tournoi** : le bouton *Bilan* du panneau Tournois compare"
 " le tournoi d'un joueur à son niveau habituel, ventilé par ronde, par "
@@ -2936,7 +3070,7 @@ msgstr ""
 "και έπειτα ανά οικογένειες λαθών· το ``blunderdb stats tournament`` και ο"
 " διακομιστής τον δίνουν επίσης."
 
-#: ../../source/historique.rst:341
+#: ../../source/historique.rst:358
 msgid ""
 "**La carte Plan d'étude** du tableau de bord classe les familles "
 "d'erreurs par MWC récupérable, et chacune alimente la file d'étude, un "
@@ -2948,7 +3082,7 @@ msgstr ""
 " μια τράπουλα Anki· το ``blunderdb stats plan`` είναι η μορφή της στη "
 "γραμμή εντολών."
 
-#: ../../source/historique.rst:342
+#: ../../source/historique.rst:359
 msgid ""
 "**Avant/après l'étude et biais signés** : le tableau de bord mesure si ce"
 " qui a été étudié coûte moins en match, et dans quel sens le joueur se "
@@ -2960,7 +3094,7 @@ msgstr ""
 "σφάλλει ο παίκτης· τα ``blunderdb stats effect`` και ``stats biases`` τα "
 "δίνουν επίσης."
 
-#: ../../source/historique.rst:343
+#: ../../source/historique.rst:360
 msgid ""
 "**Les positions de référence** : le bouton *Proposer…* du panneau "
 "Collections propose les positions à étudier sur une portée (base, match "
@@ -2973,7 +3107,7 @@ msgstr ""
 "τουρνουά, φίλτρο των Στατιστικών), ώστε να γίνουν συλλογή, τράπουλα Anki "
 "ή κουίζ· το ``blunderdb collection suggest`` είναι η άλλη μορφή του."
 
-#: ../../source/historique.rst:344
+#: ../../source/historique.rst:361
 msgid ""
 "**Un match passe par la corbeille** : supprimé, il se restaure à "
 "l'identique, avec son numéro, sa date d'import, ses parties, ses analyses"
@@ -2985,7 +3119,7 @@ msgstr ""
 "του, τις παρτίδες, τις αναλύσεις και τις θέσεις του· το ``blunderdb trash"
 " delete --kind match`` κάνει την ίδια κίνηση."
 
-#: ../../source/historique.rst:345
+#: ../../source/historique.rst:362
 msgid ""
 "**Une page Métriques** donne la définition, la formule et les limites de "
 "chaque mesure : erreur, PR, perte MWC, difficulté, intervalles, bilans, "
@@ -2995,7 +3129,7 @@ msgstr ""
 "μέτρησης: λάθος, PR, απώλεια MWC, δυσκολία, διαστήματα, απολογισμοί, "
 "πλάνο μελέτης, θέσεις αναφοράς, πριν/μετά και μεροληψίες."
 
-#: ../../source/historique.rst:346
+#: ../../source/historique.rst:363
 msgid ""
 "**Un coup se saisit au plateau de la même façon partout** : dans le Duel,"
 " l'Entraînement, la réponse au damier d'Anki et la Transcription, un clic"
@@ -3012,7 +3146,7 @@ msgstr ""
 "παίρνει πίσω την κίνηση σε εξέλιξη· η καταχώριση πηγής και μετά "
 "προορισμού καταργείται."
 
-#: ../../source/historique.rst:347
+#: ../../source/historique.rst:364
 msgid ""
 "**Anki et l'Entraînement valident au plateau** : *ENTRÉE* ou un clic sur "
 "les dés juge le coup joué, à la place du bouton *Valider*."
@@ -3021,7 +3155,7 @@ msgstr ""
 "στα ζάρια κρίνει την κίνηση που παίχτηκε, στη θέση του κουμπιού "
 "*Έλεγχος*."
 
-#: ../../source/historique.rst:348
+#: ../../source/historique.rst:365
 msgid ""
 "**La Transcription demande les dés avant le coup** : sans dés saisis, le "
 "damier ne joue rien ; les deux dés saisis, le coup se joue au plateau "
@@ -3031,7 +3165,7 @@ msgstr ""
 "ζάρια, το ταμπλό δεν παίζει τίποτα· όταν καταχωριστούν και τα δύο ζάρια, "
 "η κίνηση παίζεται στο ταμπλό όπως στις άλλες λειτουργίες."
 
-#: ../../source/historique.rst:349
+#: ../../source/historique.rst:366
 msgid ""
 "**Évaluer dans un nouvel onglet** : le clic droit sur le plateau ouvre "
 "une vue *Variante de #n* dans le panneau Eval, sur la position affichée, "
@@ -3043,7 +3177,7 @@ msgstr ""
 "η αρχική προβολή κρατά τη θέση, τη λίστα και την ανάλυσή της· κάθε "
 "προβολή βρίσκει ξανά το δικό της ταμπλό Eval."
 
-#: ../../source/historique.rst:350
+#: ../../source/historique.rst:367
 msgid ""
 "**Le défi** : le bouton *Défi* de la barre d'outils (touche *m*) recouvre"
 " l'analyse du panneau Analyse jusqu'à un clic, à chaque changement de "
@@ -3055,7 +3189,7 @@ msgstr ""
 "θέσης· στην ανασκόπηση αγώνα, κρύβει επίσης τα σημάδια, τις απώλειες και "
 "τη δυσκολία της λίστας κινήσεων."
 
-#: ../../source/historique.rst:351
+#: ../../source/historique.rst:368
 msgid ""
 "**Chaque compte de positions s'ouvre d'un clic** : les colonnes "
 "*Positions* et *Bourdes* des ventilations, les familles du plan d'étude "
@@ -3071,7 +3205,7 @@ msgstr ""
 "τουρνουά και τα σημάδια ενός παιχνιδιού φορτώνουν ακριβώς τις θέσεις που "
 "μετρήθηκαν."
 
-#: ../../source/historique.rst:352
+#: ../../source/historique.rst:369
 msgid ""
 "**Les panneaux partagent une même bande d'en-tête** : titre, compteur et "
 "filtres à gauche, action primaire au bout droit (*Rechercher*, "
@@ -3083,7 +3217,7 @@ msgstr ""
 "*Παίξε*…)· η Αναζήτηση βάζει τα *Κριτήρια*, το *Ιστορικό* και τα "
 "*Αποθηκευμένα* στη ζώνη της."
 
-#: ../../source/historique.rst:353
+#: ../../source/historique.rst:370
 msgid ""
 "**Une collection vivante se crée avec sa requête** : ``blunderdb "
 "collection create --query`` et la route ``collections.create`` ; "
@@ -3097,7 +3231,7 @@ msgstr ""
 "το πραγματικό σύνολο, και μια τράπουλα Anki που προκύπτει από ζωντανή "
 "συλλογή επαναλαμβάνει το ερώτημά της σε κάθε συνεδρία."
 
-#: ../../source/historique.rst:354
+#: ../../source/historique.rst:371
 msgid ""
 "**Le formulaire Metadata de la Transcription** occupe le corps du "
 "brouillon, en deux colonnes quand la largeur le permet, la transcription "
@@ -3107,13 +3241,13 @@ msgstr ""
 "πρόχειρου, σε δύο στήλες όταν το επιτρέπει το πλάτος, ενώ η μεταγραφή "
 "παραμένει ορατή· το ίδιο κουμπί ή το *ESC* επιστρέφει την καταχώριση."
 
-#: ../../source/historique.rst:355
+#: ../../source/historique.rst:372
 msgid "**La recherche de l'aide** compte et surligne les occurrences à la frappe."
 msgstr ""
 "**Η αναζήτηση της βοήθειας** μετρά και επισημαίνει τις εμφανίσεις καθώς "
 "πληκτρολογείτε."
 
-#: ../../source/historique.rst:356
+#: ../../source/historique.rst:373
 msgid ""
 "**Schéma 2.41.0** : la source vidéo du match et les repères de chaque "
 "coup ; chaque coup porte l'erreur de sa propre décision, et le PR des "
@@ -3127,7 +3261,7 @@ msgstr ""
 "κανόνες του eXtreme Gammon. Η μετάβαση από το 2.36.0 είναι αυτόματη κατά "
 "το άνοιγμα και χωρίς επιστροφή (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:357
+#: ../../source/historique.rst:374
 msgid ""
 "Corrections notables : gammonNet analyse une prise ou un refus comme la "
 "décision du doubleur avant le double, rollouts compris, et la migration "
@@ -3149,15 +3283,15 @@ msgstr ""
 "μεταφορά που ξεκινά από παράθυρο διαλόγου και αφήνεται στο φόντο δεν το "
 "κλείνει πια· κάθε καρτέλα των ρυθμίσεων κρατά τη θέση κύλισής της."
 
-#: ../../source/historique.rst:358
+#: ../../source/historique.rst:375
 msgid "Voir :ref:`manuel`, :ref:`metriques`, :ref:`cli` et :ref:`headless`."
 msgstr "Βλ. :ref:`manuel`, :ref:`metriques`, :ref:`cli` και :ref:`headless`."
 
-#: ../../source/historique.rst:361
+#: ../../source/historique.rst:378
 msgid "0.38.0 (2026-10-06)"
 msgstr "0.38.0 (2026-10-06)"
 
-#: ../../source/historique.rst:363
+#: ../../source/historique.rst:380
 msgid ""
 "**Le Duel** : un match entier se joue contre le Bot, qui joue la "
 "politique de gammonNet, sous l'arbitrage de blunderDB — dés tirés d'un "
@@ -3179,7 +3313,7 @@ msgstr ""
 "duel`` και οι διαδρομές ``duels.*`` του διακομιστή είναι οι δύο άλλες "
 "μορφές της."
 
-#: ../../source/historique.rst:364
+#: ../../source/historique.rst:381
 msgid ""
 "**Le Duel se joue au plateau** : avant le lancer, un clic sur le plateau "
 "ou sur les dés les lance et un clic sur le videau propose de doubler ; un"
@@ -3195,7 +3329,7 @@ msgstr ""
 "*ΔΙΑΣΤΗΜΑ*, και το δεξί κλικ παίρνει πίσω την κίνηση σε εξέλιξη ή ανοίγει"
 " το μενού της Μονομαχίας (Στοίβα, εγκατάλειψη, αναστολή, διακοπή)."
 
-#: ../../source/historique.rst:365
+#: ../../source/historique.rst:382
 msgid ""
 "**La Cadence et la durée de décision** : une réserve par joueur et un "
 "délai gratuit à chaque tour, le temps écoulé étant noté ou faisant perdre"
@@ -3211,7 +3345,7 @@ msgstr ""
 "παίκτη, γράφημα), φιλτράρει η αναζήτηση με ``tm>x``, σε συνδυασμό με "
 "``E>x``, και διασταυρώνει η καρτέλα Στατιστικά με το σφάλμα."
 
-#: ../../source/historique.rst:366
+#: ../../source/historique.rst:383
 msgid ""
 "**L'origine d'un Match joué ici** se relit en tête de sa transcription : "
 "départ, cadence, perte au temps ou arrêt, niveau du Bot et version de "
@@ -3224,7 +3358,7 @@ msgstr ""
 "που αποκαλύπτεται και το SHA-256 του — αρκετά για να ξαναϋπολογιστεί κάθε"
 " ζαριά χωρίς εμπιστοσύνη στο blunderDB."
 
-#: ../../source/historique.rst:367
+#: ../../source/historique.rst:384
 msgid ""
 "**La Pile** : la touche *b*, le marque-page de la barre d'outils ou un "
 "double-clic hors du plateau met la position affichée de côté, dans tous "
@@ -3237,7 +3371,7 @@ msgstr ""
 "σελιδοδείκτης στη γωνία του ταμπλό το δείχνει. Το ``blunderdb collection "
 "pile`` κάνει την ίδια χειρονομία."
 
-#: ../../source/historique.rst:368
+#: ../../source/historique.rst:385
 msgid ""
 "**Les rollouts se lancent d'un clic droit**, depuis la table des coups du"
 " panneau Analyse comme depuis le panneau Eval, sur une sélection de coups"
@@ -3252,7 +3386,7 @@ msgstr ""
 "άλλη. Το ίδιο μενού αντιγράφει τη θέση με την ανάλυσή της ή με τις "
 "επιλεγμένες κινήσεις."
 
-#: ../../source/historique.rst:369
+#: ../../source/historique.rst:386
 msgid ""
 "**Sans base ouverte**, le panneau Eval pose, colle, évalue, roule et "
 "copie une position, l'onglet Entraînement offre *Scores*, *Pions*, "
@@ -3264,7 +3398,7 @@ msgstr ""
 "*Πούλια*, *Bearoff* και *Αξιολόγηση*, και το ``import XGID=…`` τοποθετεί "
 "τη θέση στο πρόχειρο ταμπλό."
 
-#: ../../source/historique.rst:370
+#: ../../source/historique.rst:387
 msgid ""
 "**Le clic droit hors du plateau** propose *Effacer la position* et "
 "*Position de départ* en édition et en Eval ; sur un coup joué au plateau "
@@ -3275,7 +3409,7 @@ msgstr ""
 "παίζεται στο ταμπλό (κουίζ, Καταγραφή), το μενού του αρχίζει με "
 "*Recommencer*."
 
-#: ../../source/historique.rst:371
+#: ../../source/historique.rst:388
 msgid ""
 "**Les invites du Duel** se posent au milieu de la moitié droite du "
 "plateau, à l'échelle typographique de l'application ; le joueur 1 reste "
@@ -3287,7 +3421,7 @@ msgstr ""
 "όποιος κι αν παίζει, και το αποτύπωμα του σπόρου φαίνεται σε "
 "εργαλειοσυμβουλή της γραμμής προτροπής."
 
-#: ../../source/historique.rst:372
+#: ../../source/historique.rst:389
 msgid ""
 "**Abandonner, suspendre, annuler** : le menu du Duel abandonne le match, "
 "le met en pause ou l'annule ; en argent, l'abandon perd la partie en "
@@ -3300,7 +3434,7 @@ msgstr ""
 "πόντων καταγράφεται μόνο ολόκληρος, και ο σπόρος ενός Duel σε αναμονή δεν"
 " βγαίνει από καμία εξαγωγή."
 
-#: ../../source/historique.rst:373
+#: ../../source/historique.rst:390
 msgid ""
 "**Le sélecteur de niveau du Bot dit la profondeur** de chaque niveau, lue"
 " dans la table de gammonNet."
@@ -3308,7 +3442,7 @@ msgstr ""
 "**Ο επιλογέας επιπέδου του Bot δείχνει το βάθος** κάθε επιπέδου, "
 "διαβασμένο από τον πίνακα του gammonNet."
 
-#: ../../source/historique.rst:374
+#: ../../source/historique.rst:391
 msgid ""
 "**Le Duel se joue contre un Côté externe** : un Côté externe déclare le "
 "Bot qui joue derrière lui (``--side external:<configuration>@<engine>``, "
@@ -3327,7 +3461,7 @@ msgstr ""
 " προστίθεται στον σφραγισμένο σπόρο και οι ρίψεις προκύπτουν από αυτόν, "
 "με δημοσιευμένο τον τύπο."
 
-#: ../../source/historique.rst:375
+#: ../../source/historique.rst:392
 msgid ""
 "**Plusieurs Duels ouverts à la fois** : ouvrir un Duel n'en suspend aucun"
 " autre, et un Duel ouvert fait courir ses horloges jusqu'à ce qu'on le "
@@ -3342,7 +3476,7 @@ msgstr ""
 "αυτό που αφήνει, χωρίς να αγγίζει όσα κρατά ανοιχτά ένας διακομιστής ή η "
 "γραμμή εντολών στην ίδια βάση."
 
-#: ../../source/historique.rst:376
+#: ../../source/historique.rst:393
 msgid ""
 "**La transcription d'un match** gagne les colonnes *Videau*, *Jeu* et "
 "*Horloge* ; la cadence et la banque de temps figurent dans les "
@@ -3352,7 +3486,7 @@ msgstr ""
 "*Ρολόι*· ο ρυθμός και η τράπεζα χρόνου εμφανίζονται στις πληροφορίες του "
 "αγώνα, και ένα κελί χρόνου χωρίς διάρκεια φέρει παύλα."
 
-#: ../../source/historique.rst:377
+#: ../../source/historique.rst:394
 msgid ""
 "**La barre d'état** : le lien des blunders lance la recherche, et ses "
 "deux chiffres sont des liens distincts, les blunders de la liste à "
@@ -3362,7 +3496,7 @@ msgstr ""
 "και οι δύο αριθμοί του είναι χωριστοί σύνδεσμοι, τα blunders της λίστας "
 "στην οθόνη και της ολόκληρης βιβλιοθήκης."
 
-#: ../../source/historique.rst:378
+#: ../../source/historique.rst:395
 msgid ""
 "**Le moteur passe à gammonNet v1.6.0** (réseau strehl-"
 "prob5-512-512-256-256) ; les coups légaux sortent dans l'ordre de "
@@ -3372,7 +3506,7 @@ msgstr ""
 "prob5-512-512-256-256)· οι νόμιμες κινήσεις βγαίνουν με τη σειρά του "
 "upstream, πρώτα το μικρότερο ζάρι."
 
-#: ../../source/historique.rst:379
+#: ../../source/historique.rst:396
 msgid ""
 "**Matérialiser une transcription** d'un seul appel, en mode strict : "
 "``blunderdb transcribe --materialize`` et la route "
@@ -3384,7 +3518,7 @@ msgstr ""
 "``transcriptions.materialize`` γράφουν τον Αγώνα ή απορρίπτουν την πρώτη "
 "εσφαλμένη Ενέργεια με τη σειρά και τον λόγο της, χωρίς να γράψουν τίποτα."
 
-#: ../../source/historique.rst:380
+#: ../../source/historique.rst:397
 msgid ""
 "**Schéma 2.36.0** : les tables du Duel, la durée de chaque décision, le "
 "Bot déclaré, les apports des Côtés externes et l'état ouvert de chaque "
@@ -3396,7 +3530,7 @@ msgstr ""
 "ανοίγματος κάθε Duel. Η μετάβαση από το 2.31.0 είναι αυτόματη κατά το "
 "άνοιγμα και μη αναστρέψιμη (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:381
+#: ../../source/historique.rst:398
 msgid ""
 "Corrections notables : un fichier d'import illisible est refusé avec le "
 "code ``invalid``, ``internal`` restant réservé aux pannes ; sous Windows,"
@@ -3411,11 +3545,11 @@ msgstr ""
 "ενσωματωμένου περιηγητή, και το *CTRL-X CTRL-X* αντιγράφει την αξιολόγηση"
 " του gammonNet στη λειτουργία EVAL."
 
-#: ../../source/historique.rst:385
+#: ../../source/historique.rst:402
 msgid "0.37.0 (2026-10-05)"
 msgstr "0.37.0 (05/10/2026)"
 
-#: ../../source/historique.rst:387
+#: ../../source/historique.rst:404
 msgid ""
 "**La transcription** d'un match papier : un onglet et un mode TRANSCRIBE "
 "où le match se saisit coup par coup — dés, triangle des 21 jets, coup "
@@ -3432,7 +3566,7 @@ msgstr ""
 "διαδρομές ``transcriptions.*`` του διακομιστή είναι οι δύο άλλες μορφές "
 "του."
 
-#: ../../source/historique.rst:388
+#: ../../source/historique.rst:405
 msgid ""
 "**La Direction de tournoi** : un tournoi de club se mène depuis le "
 "panneau Tournoi — annuaire des joueurs, propositions d'appariements "
@@ -3450,7 +3584,7 @@ msgstr ""
 "κοινόχρηστη αίθουσα. Το ``blunderdb tournament`` και το ``serve "
 "--direction`` είναι οι δύο άλλες μορφές του."
 
-#: ../../source/historique.rst:389
+#: ../../source/historique.rst:406
 msgid ""
 "**L'entraînement** : un onglet Entraînement (Scores, Pions, Bearoff, "
 "Évaluation, Décision) et son journal, un mode quiz dont le PR est sur "
@@ -3466,7 +3600,7 @@ msgstr ""
 "ουρά μελέτης των αδιεκπεραίωτων blunders, η εξήγηση του λάθους στο πίσω "
 "μέρος της κάρτας Anki, κάρτες σκορ και αποφάσεις κύβου σε δύο κάρτες."
 
-#: ../../source/historique.rst:390
+#: ../../source/historique.rst:407
 msgid ""
 "**Les Leçons** : un parcours rédigé au bureau, lu depuis l'application, "
 "la ligne de commande (``blunderdb lesson``) ou le serveur, exporté avec "
@@ -3478,7 +3612,7 @@ msgstr ""
 "εξάγεται μαζί με τη βάση· η πρόοδος γράφεται μόνο με ρητή κίνηση του "
 "μαθητή."
 
-#: ../../source/historique.rst:391
+#: ../../source/historique.rst:408
 msgid ""
 "**La recherche interroge un corpus** : jetons de joueur, d'adversaire, de"
 " tournoi, de ronde, de longueur, de date et de PR, ``like`` qui classe "
@@ -3494,7 +3628,7 @@ msgstr ""
 " παλέτα εντολών (CTRL-SHIFT-P), πίνακας επαφών με μικρά ταμπλό και "
 "ζωντανές συλλογές."
 
-#: ../../source/historique.rst:392
+#: ../../source/historique.rst:409
 msgid ""
 "**Le panneau Stats** gagne l'onglet Corpus (face-à-face, PR par fenêtre, "
 "classement, alias de joueurs et d'événements, doublons probables), deux "
@@ -3510,7 +3644,7 @@ msgstr ""
 "προόδου, μια αυτόνομη αναφορά HTML και την εξαγωγή CSV· ένας εισαγμένος "
 "αγώνας χωρίς ανάλυση αποκτά PR."
 
-#: ../../source/historique.rst:393
+#: ../../source/historique.rst:410
 msgid ""
 "**L'évaluateur passe à gammonNet v1.4.0** — filtre de coups en triplet, "
 "*beaver* et *raccoon* en money game seulement — et gagne des **rollouts**"
@@ -3526,7 +3660,7 @@ msgstr ""
 "και έναν πίνακα ισοτιμίας αγώνα εισαγμένο από ένα ``.xml`` του gnubg, "
 "ξεχωριστό για κάθε βάση."
 
-#: ../../source/historique.rst:394
+#: ../../source/historique.rst:411
 msgid ""
 "**L'import** devient parallèle, avec un mode masse pour les gros lots, un"
 " journal et la reprise d'un lot interrompu, un dossier surveillé, les "
@@ -3540,7 +3674,7 @@ msgstr ""
 "OpenGammon και τα μεταδεδομένα κεφαλίδας XG (Elo, μεταγραφέας, σχόλια)· "
 "ένα ακριβές διπλότυπο φέρνει τις βαθύτερες αναλύσεις του."
 
-#: ../../source/historique.rst:395
+#: ../../source/historique.rst:412
 msgid ""
 "**Les commentaires sont signés** : le réglage « Votre nom » (``--author``"
 " en ligne de commande) nomme leur auteur, qui voyage à l'export."
@@ -3549,7 +3683,7 @@ msgstr ""
 "γραμμή εντολών) ονομάζει τον συγγραφέα τους, ο οποίος ταξιδεύει με την "
 "εξαγωγή."
 
-#: ../../source/historique.rst:396
+#: ../../source/historique.rst:413
 msgid ""
 "Dans l'interface : un écran d'accueil, quatre thèmes nommés, l'image du "
 "plateau en SVG, une aide où l'on cherche, une suppression annulable, des "
@@ -3563,7 +3697,7 @@ msgstr ""
 "βιβλιοθήκη, μια αναζήτηση και μια λίστα αγώνων που διατρέχονται με "
 "παράθυρα, χωρίς να φορτώνονται όλα."
 
-#: ../../source/historique.rst:397
+#: ../../source/historique.rst:414
 msgid ""
 "**Un assistant par MCP** : l'application et le serveur offrent leurs "
 "outils à un assistant (Model Context Protocol). Côté serveur : une file "
@@ -3579,7 +3713,7 @@ msgstr ""
 "``/v1/events``, μια ιστοσελίδα προβολής, ο διαμοιρασμός πακέτων Anki και "
 "συλλογών μεταξύ tenants, και ένας παραγόμενος πελάτης Python."
 
-#: ../../source/historique.rst:398
+#: ../../source/historique.rst:415
 msgid ""
 "**Schéma 2.31.0** : dates en entiers, position et analyse en binaire, "
 "libellés d'action codés — une base plus légère. La migration depuis "
@@ -3591,7 +3725,7 @@ msgstr ""
 "μετάβαση από την 2.18.0 είναι αυτόματη κατά το άνοιγμα και χωρίς "
 "δυνατότητα επιστροφής (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:399
+#: ../../source/historique.rst:416
 msgid ""
 "Corrections notables : un ``.mat`` tronqué ou un ``.txt`` BGBlitz sans "
 "position est refusé au lieu d'entrer à moitié, les marques XG d'un "
@@ -3608,11 +3742,11 @@ msgstr ""
 "αίθουσας της Διεύθυνσης την ανοίγει στον φυλλομετρητή του συστήματος, "
 "αναφέροντας κάθε αποτυχία."
 
-#: ../../source/historique.rst:403
+#: ../../source/historique.rst:420
 msgid "0.36.0 (2026-09-05)"
 msgstr "0.36.0 (05/09/2026)"
 
-#: ../../source/historique.rst:405
+#: ../../source/historique.rst:422
 msgid ""
 "Le binaire **maigrit de 7,3 Mo** : les tables de sortie ne sont plus "
 "embarquées ni téléchargées, mais calculées à la première ouverture, en "
@@ -3626,7 +3760,7 @@ msgstr ""
 "του gnubg, με έλεγχο του αποτυπώματος SHA-256. Ο εκτεταμένος πίνακας "
 "TS-06-11 υπολογίζεται στην καρτέλα *Bearoff* αντί για μεταφόρτωση 1,2 GB."
 
-#: ../../source/historique.rst:406
+#: ../../source/historique.rst:423
 msgid ""
 "**Les tournois se remplissent à l'import** : un match entre dans le "
 "tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est"
@@ -3637,7 +3771,7 @@ msgstr ""
 "δημιουργείται αν χρειαστεί· ένας αγώνας ήδη καταταγμένος δεν μετακινείται"
 " ποτέ."
 
-#: ../../source/historique.rst:407
+#: ../../source/historique.rst:424
 msgid ""
 "**Une seule grammaire de recherche**, désormais lisible depuis la ligne "
 "de commande (``blunderdb search --query``) autant que depuis "
@@ -3646,7 +3780,7 @@ msgstr ""
 "**Μία μόνο γραμματική αναζήτησης**, τώρα αναγνώσιμη από τη γραμμή εντολών"
 " (``blunderdb search --query``) όσο και από την εφαρμογή."
 
-#: ../../source/historique.rst:408
+#: ../../source/historique.rst:425
 msgid ""
 "La ligne de commande gagne ``--format json`` sur neuf commandes, la "
 "**complétion pour bash, zsh et fish**, la commande ``repair`` et les "
@@ -3656,7 +3790,7 @@ msgstr ""
 "για bash, zsh και fish**, την εντολή ``repair`` και τις υποεντολές ``anki"
 " card`` και ``anki log``."
 
-#: ../../source/historique.rst:409
+#: ../../source/historique.rst:426
 msgid ""
 "Les onglets **Raccourcis** et **Commandes** de l'aide intégrée sont "
 "engendrés depuis les pages du manuel qui les décrivent : ils ne peuvent "
@@ -3672,7 +3806,7 @@ msgstr ""
 "διακριτή από το πλήρες εγχειρίδιο στο διαδίκτυο. Τρεις ξεναγήσεις "
 "επιπλέον (Eval, Anki, Stats). *(Οι ξεναγήσεις αφαιρέθηκαν στην 0.47.0.)*"
 
-#: ../../source/historique.rst:410
+#: ../../source/historique.rst:427
 msgid ""
 "Un **binaire Linux arm64**, livré en archive, ``.deb``, ``.rpm`` et "
 "paquet AUR."
@@ -3680,7 +3814,7 @@ msgstr ""
 "Ένα **εκτελέσιμο Linux arm64**, σε μορφή αρχείου tar, ``.deb``, ``.rpm`` "
 "και πακέτου AUR."
 
-#: ../../source/historique.rst:411
+#: ../../source/historique.rst:428
 msgid ""
 "Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, "
 "distingue l'équité *money* de l'équité *match*, et se parcourt au "
@@ -3690,7 +3824,7 @@ msgstr ""
 "την equity *money* από την equity *match* και περιηγείται με το "
 "πληκτρολόγιο."
 
-#: ../../source/historique.rst:412
+#: ../../source/historique.rst:429
 #, no-python-format
 msgid ""
 "Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et "
@@ -3705,7 +3839,7 @@ msgstr ""
 " συμπίεση των ροών NDJSON (13,5 % του μεγέθους), και οι δύο κλήσεις που "
 "ξεπερνούν τον tenant — vacuum και purge — περνούν κάτω από το ``/ops/``."
 
-#: ../../source/historique.rst:413
+#: ../../source/historique.rst:430
 msgid ""
 "**Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, "
 "si bien qu'une même position d'argent n'entre plus deux fois par des "
@@ -3717,7 +3851,7 @@ msgstr ""
 "διαφορετικές πόρτες. Η μετάβαση είναι αυτόματη κατά το άνοιγμα και χωρίς "
 "δυνατότητα επιστροφής (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:414
+#: ../../source/historique.rst:431
 msgid ""
 "Corrections notables : le volet de détail du panneau Matchs n'occupe plus"
 " la moitié de l'écran quand rien n'est sélectionné, la première partie "
@@ -3731,15 +3865,15 @@ msgstr ""
 "προβολή από οποιονδήποτε πίνακα, και οκτώ συντομεύσεις "
 "«εμφάνιση/απόκρυψη» επιτέλους κρύβουν."
 
-#: ../../source/historique.rst:415 ../../source/historique.rst:426
+#: ../../source/historique.rst:432 ../../source/historique.rst:443
 msgid "Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
 msgstr "Βλ. :ref:`cli`, :ref:`headless` και :ref:`manuel`."
 
-#: ../../source/historique.rst:418
+#: ../../source/historique.rst:435
 msgid "0.35.0 (2026-09-02)"
 msgstr "0.35.0 (2026-09-02)"
 
-#: ../../source/historique.rst:420
+#: ../../source/historique.rst:437
 msgid ""
 "La ligne de commande gagne deux familles : ``blunderdb collection`` "
 "(lister, afficher, créer, renommer, supprimer, exporter une collection) "
@@ -3751,7 +3885,7 @@ msgstr ""
 "συλλογής) και ``blunderdb anki`` (τράπουλες, στατιστικά, πρόβλεψη "
 "επαναλήψεων, επανασυγχρονισμός μιας τράπουλας)."
 
-#: ../../source/historique.rst:421
+#: ../../source/historique.rst:438
 msgid ""
 "Le mode serveur est publié en **image Docker** (``ghcr.io/kevung"
 "/blunderdb-serve``, amd64 et arm64), gagne la route "
@@ -3763,7 +3897,7 @@ msgstr ""
 "διαδρομή ``maintenance.vacuum`` και **υδατογραφεί τις εξαγωγές της** με "
 "την ταυτότητα εκδότη του διακομιστή (``--identity-dir``)."
 
-#: ../../source/historique.rst:422
+#: ../../source/historique.rst:439
 msgid ""
 "L'évaluateur gammonNet **value ses feuilles avec le videau** : au score, "
 "les verdicts de la recherche se rapprochent de ceux d'eXtreme Gammon."
@@ -3771,7 +3905,7 @@ msgstr ""
 "Ο αξιολογητής gammonNet **τιμολογεί τα φύλλα του με τον κύβο**: σε σκορ "
 "αγώνα, οι ετυμηγορίες της αναζήτησης πλησιάζουν αυτές του eXtreme Gammon."
 
-#: ../../source/historique.rst:423
+#: ../../source/historique.rst:440
 msgid ""
 "Chaque release livre désormais les **manifestes winget et Homebrew** et "
 "un bundle Flatpak, en plus des paquets Debian, RPM et AUR."
@@ -3779,7 +3913,7 @@ msgstr ""
 "Κάθε έκδοση διανέμει πλέον **δηλώσεις winget και Homebrew** και ένα "
 "πακέτο Flatpak, εκτός από τα πακέτα Debian, RPM και AUR."
 
-#: ../../source/historique.rst:424
+#: ../../source/historique.rst:441
 msgid ""
 "Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 "
 "positions ne charge plus tout en mémoire à chaque rafraîchissement), les "
@@ -3794,7 +3928,7 @@ msgstr ""
 "ενσωματωμένη ιαπωνική γραμματοσειρά περιορίζεται στο χρήσιμο υποσύνολό "
 "της (5,5 MB λιγότερα)."
 
-#: ../../source/historique.rst:425
+#: ../../source/historique.rst:442
 msgid ""
 "Corrections notables : une base importée par « Importer une base » "
 "gardait des positions invisibles aux filtres et dédoublées au second "
@@ -3810,11 +3944,11 @@ msgstr ""
 " κενή, και στα Windows η αφαίρεση της κατεβασμένης βάσης bearoff και το "
 "``create --force`` απέτυχαν."
 
-#: ../../source/historique.rst:429
+#: ../../source/historique.rst:446
 msgid "0.34.0 (2026-09-02)"
 msgstr "0.34.0 (2026-09-02)"
 
-#: ../../source/historique.rst:431
+#: ../../source/historique.rst:448
 msgid ""
 "Un **évaluateur embarqué** : gammonNet, porté en Go et compilé dans "
 "blunderDB, évalue n'importe quelle position hors ligne, sans XG ni gnuBG "
@@ -3828,7 +3962,7 @@ msgstr ""
 "κλάδεμα, απόφαση κύβου κατά Janowski και τον πίνακα ισοδυναμίας αγώνα του"
 " blunderDB, και μια αναζήτηση που σέβεται το σκορ του αγώνα."
 
-#: ../../source/historique.rst:432
+#: ../../source/historique.rst:449
 msgid ""
 "Le panneau Bearoff devient le panneau **Eval** : il présente les faits de"
 " la position (chances de gain, gammon et backgammon des deux camps, "
@@ -3842,7 +3976,7 @@ msgstr ""
 "πλέγμα χωρίς κύλιση· οι ισοδυναμίες αγώνα είναι **κανονικοποιημένες** και"
 " η ετυμηγορία «πολύ καλό για διπλασιασμό» είναι και πάλι ορατή."
 
-#: ../../source/historique.rst:433
+#: ../../source/historique.rst:450
 msgid ""
 "L'évaluation est **progressive** : 0-ply immédiat au geste, puis 2-ply au"
 " repos, annulable par tout nouveau geste, l'étiquette de profondeur "
@@ -3852,7 +3986,7 @@ msgstr ""
 "2-ply σε ηρεμία, ακυρώσιμη από κάθε νέα χειρονομία, με την ετικέτα βάθους"
 " να ονομάζει πάντα εκείνη που παρήγαγε τον αριθμό."
 
-#: ../../source/historique.rst:434
+#: ../../source/historique.rst:451
 msgid ""
 "Le plateau entier, les dés et le score s'y éditent, au clic comme au "
 "clavier, et une position de la bibliothèque entre dans le panneau et en "
@@ -3862,7 +3996,7 @@ msgstr ""
 "όπως και με πληκτρολόγιο, και μια θέση της βιβλιοθήκης μπαίνει και "
 "βγαίνει από τον πίνακα."
 
-#: ../../source/historique.rst:435
+#: ../../source/historique.rst:452
 msgid ""
 "Sur une course au-delà de la base bi-face, un troisième régime **évalué**"
 " fournit le verdict de videau au score que le panneau ne donnait pas."
@@ -3870,7 +4004,7 @@ msgstr ""
 "Σε μια κούρσα πέρα από την αμφίπλευρη βάση, ένα τρίτο, **αξιολογημένο** "
 "καθεστώς παρέχει την ετυμηγορία κύβου στο σκορ που ο πίνακας δεν έδινε."
 
-#: ../../source/historique.rst:436
+#: ../../source/historique.rst:453
 msgid ""
 "Un onglet **gammonNet** de la configuration sépare la profondeur "
 "d'affichage de la profondeur d'analyse."
@@ -3878,7 +4012,7 @@ msgstr ""
 "Μια καρτέλα **gammonNet** στις ρυθμίσεις διαχωρίζει το βάθος εμφάνισης "
 "από το βάθος ανάλυσης."
 
-#: ../../source/historique.rst:437
+#: ../../source/historique.rst:454
 msgid ""
 "Après un import, un **lot d'analyse** borné, visible, annulable et "
 "reprenable comble les positions sans aucune analyse, sans jamais écraser "
@@ -3892,7 +4026,7 @@ msgstr ""
 "βιβλιοθήκης** ξεκινά από τη διεπαφή, τη νέα εντολή ``blunderdb analyze`` "
 "ή τη λειτουργία διακομιστή."
 
-#: ../../source/historique.rst:438
+#: ../../source/historique.rst:455
 msgid ""
 "Corrections notables : la réponse à un videau importée d'eXtreme Gammon "
 "héritait de l'analyse du doubleur sans être retournée, la notation des "
@@ -3906,15 +4040,15 @@ msgstr ""
 "ακολουθεί πλέον το gnuBG και το XG, το βάθος μιας ανάλυσης gnuBG "
 "διαβάζεται σωστά, και το μέγεθος του πλευρικού πίνακα διατηρείται."
 
-#: ../../source/historique.rst:439
+#: ../../source/historique.rst:456
 msgid "Voir :ref:`panneau_epc`, :ref:`manuel` et :ref:`cli`."
 msgstr "Βλ. :ref:`panneau_epc`, :ref:`manuel` και :ref:`cli`."
 
-#: ../../source/historique.rst:442
+#: ../../source/historique.rst:459
 msgid "0.33.0 (2026-08-26)"
 msgstr "0.33.0 (2026-08-26)"
 
-#: ../../source/historique.rst:444
+#: ../../source/historique.rst:461
 msgid ""
 "Le panneau Stats gagne un onglet **Joueurs** : les trois onglets "
 "précédents décrivent un joueur, celui-ci les compare tous, une ligne par "
@@ -3938,7 +4072,7 @@ msgstr ""
 "εντολών (``blunderdb list --type players``, σε κείμενο, JSON ή CSV) και "
 "σε λειτουργία διακομιστή."
 
-#: ../../source/historique.rst:445
+#: ../../source/historique.rst:462
 msgid ""
 "La **chance** de chaque lancer est désormais conservée en base et "
 "affichée : chance moyenne par lancer, en millièmes de point, signée. Elle"
@@ -3955,7 +4089,7 @@ msgstr ""
 "αρχεία προέλευσης πρέπει να εισαχθούν ξανά· οι μορφές που δεν τη "
 "μεταφέρουν (BGF, Jellyfish ``.mat``) δεν θα τη δώσουν ποτέ."
 
-#: ../../source/historique.rst:446
+#: ../../source/historique.rst:463
 msgid ""
 "L'onglet **Erreurs** indique désormais dans quel *sens* se trompent les "
 "décisions de videau, et non plus seulement combien elles coûtent : une "
@@ -3973,7 +4107,7 @@ msgstr ""
 " το πλήθος του, το tooltip τη χαμένη ισοδυναμία, και το κλικ φορτώνει τις"
 " αντίστοιχες θέσεις."
 
-#: ../../source/historique.rst:447
+#: ../../source/historique.rst:464
 msgid ""
 "Nouvelle commande **Compacter la base**, qui récupère l'espace laissé par"
 " les suppressions : bouton dans les paramètres et sous-commande "
@@ -3983,7 +4117,7 @@ msgstr ""
 "διαγραφές: κουμπί στις ρυθμίσεις και υποεντολή ``blunderdb vacuum``. Δεν "
 "εκτελείται ποτέ από μόνη της."
 
-#: ../../source/historique.rst:448
+#: ../../source/historique.rst:465
 msgid ""
 "Ergonomie : les actions destructives demandent confirmation, une "
 "recherche en cours est signalée, une commande inconnue reçoit un message "
@@ -3997,7 +4131,7 @@ msgstr ""
 "χειρίζονται πλήρως από το πληκτρολόγιο. Η αναζήτηση είναι επίσης αισθητά "
 "ταχύτερη."
 
-#: ../../source/historique.rst:449
+#: ../../source/historique.rst:466
 msgid ""
 "Corrections notables : les non-doubles étiquetés « Double No » par gnuBG "
 "étaient comptés comme des doubles, ce qui faussait le PR videau (une base"
@@ -4014,15 +4148,15 @@ msgstr ""
 "``blunderdb vacuum`` άνοιγε το γραφικό περιβάλλον αντί να συμπυκνώσει τη "
 "βάση."
 
-#: ../../source/historique.rst:450
+#: ../../source/historique.rst:467
 msgid "Voir :ref:`stats` et :ref:`cli`."
 msgstr "Βλ. :ref:`stats` και :ref:`cli`."
 
-#: ../../source/historique.rst:453
+#: ../../source/historique.rst:470
 msgid "0.32.0 (2026-08-09)"
 msgstr "0.32.0 (2026-08-09)"
 
-#: ../../source/historique.rst:455
+#: ../../source/historique.rst:472
 msgid ""
 "Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de "
 "course complète. *(Renommé panneau Eval en 0.34.0.)*"
@@ -4030,7 +4164,7 @@ msgstr ""
 "Ο πίνακας EPC γίνεται ο πίνακας **Bearoff** και κερδίζει την πλήρη "
 "ανάλυση κούρσας. *(Μετονομάστηκε σε πίνακα Eval στην 0.34.0.)*"
 
-#: ../../source/historique.rst:456
+#: ../../source/historique.rst:473
 msgid ""
 "Sur une position de bearoff pur, il affiche — en plus de l'EPC, du pip "
 "count, du wastage et du nombre moyen de lancers de chaque joueur, "
@@ -4046,7 +4180,7 @@ msgstr ""
 "διπλασιασμός/πάρε, διπλασιασμός/πέρασε, με το κενό κάθε απόφασης από την "
 "καλύτερη) καθώς και την **καλύτερη απόφαση κύβου**."
 
-#: ../../source/historique.rst:457
+#: ../../source/historique.rst:474
 msgid ""
 "Deux régimes clairement distingués : *exact* (lecture dans une base two-"
 "sided ; base TS-06-06 de GNUbg intégrée, couvrant jusqu'à 6 pions par "
@@ -4058,7 +4192,7 @@ msgstr ""
 "παίκτη) και *εκτιμημένο* (βαθμονομημένη συνέλιξη, εμφανιζόμενο περιθώριο "
 "σφάλματος — η ετυμηγορία κύβου δεν εκτιμάται ποτέ)."
 
-#: ../../source/historique.rst:458
+#: ../../source/historique.rst:475
 msgid ""
 "La base étendue TS-06-11 (verdict exact jusqu'à 11 pions par joueur, 1,2 "
 "Go) se télécharge depuis le nouvel onglet *Bearoff* de la configuration, "
@@ -4073,7 +4207,7 @@ msgstr ""
 "οποιοδήποτε αμφίπλευρο αρχείο ``.bd`` του gnubg. *(Αντικαταστάθηκε στην "
 "0.36.0: ο πίνακας υπολογίζεται στον υπολογιστή, καμία λήψη πια.)*"
 
-#: ../../source/historique.rst:459
+#: ../../source/historique.rst:476
 msgid ""
 "**Mode défi** pour l'entraînement : les résultats se masquent à chaque "
 "modification et se révèlent zone par zone, d'un clic."
@@ -4081,7 +4215,7 @@ msgstr ""
 "**Λειτουργία πρόκλησης** για εξάσκηση: τα αποτελέσματα κρύβονται σε κάθε "
 "τροποποίηση και αποκαλύπτονται ζώνη προς ζώνη, με ένα κλικ."
 
-#: ../../source/historique.rst:460
+#: ../../source/historique.rst:477
 msgid ""
 "Édition entièrement au plateau : pions des deux jans, joueur au trait "
 "(clic sur le rectangle sortie/score) et position du videau (clic sur le "
@@ -4091,7 +4225,7 @@ msgstr ""
 "βολή (κλικ στο ορθογώνιο bearoff/σκορ) και θέση του κύβου (κλικ στον "
 "κύβο)."
 
-#: ../../source/historique.rst:461
+#: ../../source/historique.rst:478
 msgid ""
 "Le clic sur le plateau est désormais exact à toute échelle d'interface "
 "(un clic sur le point 1 pouvait atterrir sur le point 2)."
@@ -4099,7 +4233,7 @@ msgstr ""
 "Το κλικ στο ταμπλό είναι πλέον ακριβές σε οποιαδήποτε κλίμακα διεπαφής "
 "(ένα κλικ στο σημείο 1 μπορούσε να καταλήξει στο σημείο 2)."
 
-#: ../../source/historique.rst:462
+#: ../../source/historique.rst:479
 msgid ""
 "Nouvelle commande ``blunderdb epc`` en ligne de commande et option "
 "``--bearoff-ts`` du mode serveur."
@@ -4107,7 +4241,7 @@ msgstr ""
 "Νέα εντολή ``blunderdb epc`` στη γραμμή εντολών και επιλογή ``--bearoff-"
 "ts`` της λειτουργίας διακομιστή."
 
-#: ../../source/historique.rst:463
+#: ../../source/historique.rst:480
 msgid ""
 "Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau "
 "Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur "
@@ -4117,15 +4251,15 @@ msgstr ""
 "Bearoff», αναφέρει εξαντλητικά τις υποθέσεις πίσω από κάθε εμφανιζόμενη "
 "τιμή. *(Η ενότητα μετονομάστηκε μαζί με τον πίνακα στην 0.34.0.)*"
 
-#: ../../source/historique.rst:464
+#: ../../source/historique.rst:481
 msgid "Voir :ref:`panneau_epc` et :ref:`epc_methodologie`."
 msgstr "Βλ. :ref:`panneau_epc` και :ref:`epc_methodologie`."
 
-#: ../../source/historique.rst:467
+#: ../../source/historique.rst:484
 msgid "0.31.0 (2026-08-04)"
 msgstr "0.31.0 (2026-08-04)"
 
-#: ../../source/historique.rst:469
+#: ../../source/historique.rst:486
 msgid ""
 "Diffusion d'une base à des tiers : deux mécanismes indépendants, tous "
 "deux facultatifs et choisis au moment de l'export."
@@ -4133,7 +4267,7 @@ msgstr ""
 "Διάχυση μιας βάσης σε τρίτους: δύο ανεξάρτητοι μηχανισμοί, και οι δύο "
 "προαιρετικοί και επιλέξιμοι κατά την εξαγωγή."
 
-#: ../../source/historique.rst:470
+#: ../../source/historique.rst:487
 msgid ""
 "Le **filigrane d'origine** inscrit dans le fichier ce qu'il est et d'où "
 "il vient, signé par une identité d'émetteur créée toute seule au premier "
@@ -4149,7 +4283,7 @@ msgstr ""
 "info``, χωρίς ποτέ να γράφει στο αρχείο) και δεν καταγράφει τίποτα στην "
 "πλευρά του παραλήπτη — κανένα αρχείο καταγραφής, καμία παρακολούθηση."
 
-#: ../../source/historique.rst:471
+#: ../../source/historique.rst:488
 msgid ""
 "La **protection par mot de passe** produit un fichier ``.dbx`` chiffré "
 "(AES-256-GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont"
@@ -4162,7 +4296,7 @@ msgstr ""
 "ταυτότητα εξάγεται και εισάγεται ως ένα ενιαίο αρχείο από τις "
 "προτιμήσεις."
 
-#: ../../source/historique.rst:472
+#: ../../source/historique.rst:489
 msgid ""
 "Fenêtre d'export refondue : un seul écran au lieu de quatre, rappel de ce"
 " qui part réellement (les positions affichées), part couverte de chaque "
@@ -4176,7 +4310,7 @@ msgstr ""
 "μερικό, τα τουρνουά εξαγώγιμα μόνο με τους αγώνες τους — και μια εξαγωγή "
 "τρεις φορές ταχύτερη."
 
-#: ../../source/historique.rst:473
+#: ../../source/historique.rst:490
 msgid ""
 "Fenêtre de configuration réorganisée en trois onglets (Interface, "
 "Couleurs du plateau, Identité d'émetteur), de taille et de position "
@@ -4185,15 +4319,15 @@ msgstr ""
 "Το παράθυρο ρυθμίσεων αναδιοργανώθηκε σε τρεις καρτέλες (Διεπαφή, Χρώματα"
 " ταμπλό, Ταυτότητα εκδότη), με σταθερό μέγεθος και θέση."
 
-#: ../../source/historique.rst:474
+#: ../../source/historique.rst:491
 msgid "Panneau Métadonnées redisposé en une seule grille."
 msgstr "Ο πίνακας Μεταδεδομένων αναδιατάχθηκε σε ένα ενιαίο πλέγμα."
 
-#: ../../source/historique.rst:475
+#: ../../source/historique.rst:492
 msgid "Le panneau Journal, qui ne recevait que l'écho des commandes, est retiré."
 msgstr "Ο πίνακας Ημερολόγιο, που λάμβανε μόνο την ηχώ των εντολών, αφαιρείται."
 
-#: ../../source/historique.rst:476
+#: ../../source/historique.rst:493
 msgid ""
 "Corrections notables : un mot de passe erroné n'ouvre plus une base "
 "protégée, les champs des fenêtres modales ne perdent plus le focus au "
@@ -4207,15 +4341,15 @@ msgstr ""
 " ένα money game, και τα προσωρινά αρχεία (``-wal``, ``-shm``, κλείδωμα) "
 "καθαρίζονται κατά το κλείσιμο."
 
-#: ../../source/historique.rst:477
+#: ../../source/historique.rst:494
 msgid "Voir :ref:`diffusion_controlee` et :ref:`manuel`."
 msgstr "Βλ. :ref:`diffusion_controlee` και :ref:`manuel`."
 
-#: ../../source/historique.rst:480
+#: ../../source/historique.rst:497
 msgid "0.30.0 (2026-07-26)"
 msgstr "0.30.0 (2026-07-26)"
 
-#: ../../source/historique.rst:482
+#: ../../source/historique.rst:499
 msgid ""
 "Recherche par commentaire : le filtre « Texte de recherche » devient le "
 "filtre « Commentaire » et propose trois modes exclusifs — *contient le "
@@ -4231,7 +4365,7 @@ msgstr ""
 " — για να βρεθούν με μία κίνηση οι σχολιασμένες θέσεις, ή αντίθετα "
 "εκείνες που μένουν να σχολιαστούν."
 
-#: ../../source/historique.rst:483
+#: ../../source/historique.rst:500
 msgid ""
 "Positions marquées dans eXtreme Gammon : les marques (*flags*) posées "
 "lors de l'analyse d'un match XG sont désormais lues à l'import et "
@@ -4245,7 +4379,7 @@ msgstr ""
 "``fl``), συνδυάσιμου με κάθε άλλο κριτήριο· μια σημειωμένη απόφαση κύβου "
 "δίνει δύο σημειωμένες θέσεις, τον διπλασιασμό και το πάρε/πέρασε."
 
-#: ../../source/historique.rst:484
+#: ../../source/historique.rst:501
 msgid ""
 "Le marquage n'étant pas rétroactif, il suffit de réimporter le fichier "
 "``.xg`` concerné pour que ses marques rejoignent la base, sans toucher "
@@ -4255,7 +4389,7 @@ msgstr ""
 "αρχείο ``.xg`` για να προστεθούν οι σημάνσεις του στη βάση, χωρίς να "
 "θιγούν υπάρχοντα σχόλια ή αναλύσεις."
 
-#: ../../source/historique.rst:485
+#: ../../source/historique.rst:502
 msgid ""
 "Corrections notables : le PR affiché sur le badge d'un tournoi se "
 "rapporte au joueur de référence et non plus au cumul des deux joueurs, "
@@ -4271,15 +4405,15 @@ msgstr ""
 "διορθώνεται ένα μπλοκάρισμα της αναζήτησης όταν συνδυάζονται ορισμένα "
 "φίλτρα (κείμενο, ημερομηνία, σφάλμα της κίνησης που παίχτηκε)."
 
-#: ../../source/historique.rst:486
+#: ../../source/historique.rst:503
 msgid "Voir :ref:`cmd_mode` et :ref:`manuel`."
 msgstr "Βλ. :ref:`cmd_mode` και :ref:`manuel`."
 
-#: ../../source/historique.rst:489
+#: ../../source/historique.rst:506
 msgid "0.29.0 (2026-07-18)"
 msgstr "0.29.0 (2026-07-18)"
 
-#: ../../source/historique.rst:491
+#: ../../source/historique.rst:508
 msgid ""
 "Export d'un match au format Jellyfish/gnubg (``.mat``) depuis l'interface"
 " (panneau Matchs) comme en ligne de commande, avec la route serveur "
@@ -4291,7 +4425,7 @@ msgstr ""
 "διαδρομή διακομιστή — χρήσιμο για την επανάληψη ενός αγώνα σε άλλο "
 "λογισμικό τάβλι."
 
-#: ../../source/historique.rst:492
+#: ../../source/historique.rst:509
 msgid ""
 "Recherche : nouveau discriminateur « dés exclus » (jeton ``xD65``, "
 "plusieurs autorisés) qui écarte les positions dont le lancer correspond à"
@@ -4301,7 +4435,7 @@ msgstr ""
 "``xD65``, επιτρέπονται περισσότερα) που αποκλείει θέσεις των οποίων η "
 "ζαριά αντιστοιχεί σε δεδομένη ζαριά."
 
-#: ../../source/historique.rst:493
+#: ../../source/historique.rst:510
 msgid ""
 "Ouverture concurrente sécurisée : une base déjà ouverte en écriture dans "
 "une autre fenêtre de blunderDB s'ouvre désormais en lecture seule "
@@ -4315,7 +4449,7 @@ msgstr ""
 "ένδειξη «[μόνο για ανάγνωση]» στη γραμμή τίτλου) αντί να διακινδυνεύει "
 "αλλοίωση."
 
-#: ../../source/historique.rst:494
+#: ../../source/historique.rst:511
 msgid ""
 "Provenance des positions : hors mode match, la barre d'informations au-"
 "dessus du plateau indique le match — et son tournoi — d'où provient la "
@@ -4327,7 +4461,7 @@ msgstr ""
 "προέρχεται η υπό μελέτη θέση, με σήμα «+N» όταν εμφανίζεται σε πολλούς "
 "αγώνες."
 
-#: ../../source/historique.rst:495
+#: ../../source/historique.rst:512
 msgid ""
 "Robustesse accrue face à l'environnement : repli automatique lorsqu'une "
 "police, le presse-papier ou la dernière base ouverte ne sont pas "
@@ -4337,7 +4471,7 @@ msgstr ""
 "μια γραμματοσειρά, το πρόχειρο ή η τελευταία ανοιγμένη βάση δεν είναι "
 "διαθέσιμα."
 
-#: ../../source/historique.rst:496
+#: ../../source/historique.rst:513
 msgid ""
 "Un rechargement explicite de la bibliothèque (``CTRL-R``, bouton de la "
 "barre d'outils ou commande ``e``) rouvre le panneau d'analyse de la "
@@ -4346,7 +4480,7 @@ msgstr ""
 "Μια ρητή επαναφόρτωση της βιβλιοθήκης (``CTRL-R``, κουμπί εργαλειοθήκης ή"
 " εντολή ``e``) ανοίγει ξανά τον πίνακα ανάλυσης στην εμφανιζόμενη θέση."
 
-#: ../../source/historique.rst:497
+#: ../../source/historique.rst:514
 msgid ""
 "Corrections notables : suppression d'un blocage à l'export de grosses "
 "bases, bouton « Aucun » de l'export qui n'exportait pas réellement aucun "
@@ -4360,15 +4494,15 @@ msgstr ""
 "γεγονότος και τουρνουά στη γραμμή πληροφοριών, και διάφορες ρυθμίσεις "
 "εμφάνισης."
 
-#: ../../source/historique.rst:498
+#: ../../source/historique.rst:515
 msgid "Voir :ref:`cmd_mode`, :ref:`panneau_matchs` et :ref:`manuel`."
 msgstr "Βλ. :ref:`cmd_mode`, :ref:`panneau_matchs` και :ref:`manuel`."
 
-#: ../../source/historique.rst:501
+#: ../../source/historique.rst:518
 msgid "0.28.0 (2026-07-15)"
 msgstr "0.28.0 (2026-07-15)"
 
-#: ../../source/historique.rst:503
+#: ../../source/historique.rst:520
 msgid ""
 "Panneau de recherche : filtre unifié « Matchs & Tournois » remplaçant les"
 " champs de saisie d'identifiants par une fenêtre de sélection (listes à "
@@ -4386,7 +4520,7 @@ msgstr ""
 "πλέον τους δείκτες PR/MWC μόνο για τους εμφανιζόμενους αγώνες· η ``cli "
 "list --type tournaments`` κλείνει το αντίστοιχο κενό ισοτιμίας."
 
-#: ../../source/historique.rst:504
+#: ../../source/historique.rst:521
 msgid ""
 "Nouveau filtre « Importée individuellement » (case à cocher du groupe "
 "Autre, ou jeton ``i`` en ligne de commande, ``s i`` ; disponible aussi en"
@@ -4398,7 +4532,7 @@ msgstr ""
 "μέσω ``--individual``) για να βρεθεί μια θέση αποθηκευμένη ή εισαγμένη "
 "μόνη της αντί να χαθεί μέσα σε μια εισαγωγή αγώνα."
 
-#: ../../source/historique.rst:505
+#: ../../source/historique.rst:522
 msgid ""
 "Correction d'une perte de données : la suppression d'un match ne supprime"
 " plus les positions individuellement importées, mises en collection ou "
@@ -4408,7 +4542,7 @@ msgstr ""
 "θέσεις ξεχωριστά εισαγόμενες, τοποθετημένες σε συλλογή, ή ενταγμένες σε "
 "τράπουλα Anki που ο αγώνας περιείχε επίσης."
 
-#: ../../source/historique.rst:506
+#: ../../source/historique.rst:523
 msgid ""
 "Mode serveur (headless) : six nouvelles méthodes pour le planificateur "
 "Anki à répétition espacée — journal des révisions (``anki.reviewLog``), "
@@ -4437,7 +4571,7 @@ msgstr ""
 "(φιλτράρισμα/ταξινόμηση/σελιδοποίηση) και ``stats.matchBadges`` (δείκτες "
 "PR/MWC περιορισμένοι σε μια λίστα αγώνων)."
 
-#: ../../source/historique.rst:507
+#: ../../source/historique.rst:524
 msgid ""
 "Distribution Linux native : paquets ``.deb``/``.rpm``, qui conservent le "
 "bit d'exécution perdu lors du téléchargement du binaire brut."
@@ -4445,7 +4579,7 @@ msgstr ""
 "Εγγενής διανομή Linux: πακέτα ``.deb``/``.rpm``, που διατηρούν το bit "
 "εκτέλεσης που χανόταν κατά τη λήψη του ακατέργαστου εκτελέσιμου."
 
-#: ../../source/historique.rst:508
+#: ../../source/historique.rst:525
 msgid ""
 "Import : après l'import d'un match, l'onglet Matchs s'affiche et les "
 "positions importées sont immédiatement visibles ; après l'import d'une "
@@ -4465,15 +4599,15 @@ msgstr ""
 "macOS, που παρέμενε κενή (τόνοι αποσυντεθειμένοι από το πρόχειρο του "
 "συστήματος)."
 
-#: ../../source/historique.rst:509
+#: ../../source/historique.rst:526
 msgid "Voir :ref:`headless`, :ref:`cmd_mode` et :ref:`telecharge_install`."
 msgstr "Βλ. :ref:`headless`, :ref:`cmd_mode` και :ref:`telecharge_install`."
 
-#: ../../source/historique.rst:512
+#: ../../source/historique.rst:529
 msgid "0.27.0 (2026-06-13)"
 msgstr "0.27.0 (2026-06-13)"
 
-#: ../../source/historique.rst:514
+#: ../../source/historique.rst:531
 msgid ""
 "Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
 "accessible par le bouton *Cram* à côté de *Study*, qui présente des "
@@ -4487,7 +4621,7 @@ msgstr ""
 "— ιδανική για προθέρμανση πριν από ένα τουρνουά ή για εντατική επανάληψη "
 "μιας τράπουλας χωρίς να διαταράσσεται η σειρά της."
 
-#: ../../source/historique.rst:515
+#: ../../source/historique.rst:532
 msgid ""
 "Recherche : nouvelle commande ``blunders`` (alias ``bl``) qui charge "
 "directement les pires erreurs (équité/MWC) dans la vue d'analyse, avec un"
@@ -4505,7 +4639,7 @@ msgstr ""
 "και επεξηγήσεις που, καθώς ο δείκτης περνά πάνω από κάθε φίλτρο του "
 "πίνακα αναζήτησης, εμφανίζουν το αντίστοιχο διακριτικό εντολής."
 
-#: ../../source/historique.rst:516
+#: ../../source/historique.rst:533
 msgid ""
 "Mode serveur (headless) : nouvelles méthodes ``matches.movesByMatch`` "
 "(tous les coups d'un match en un seul appel) et ``positions.epc`` "
@@ -4515,15 +4649,15 @@ msgstr ""
 "(όλες οι κινήσεις ενός αγώνα σε μία κλήση) και ``positions.epc`` "
 "(Effective Pip Count και για τους δύο παίκτες)."
 
-#: ../../source/historique.rst:517
+#: ../../source/historique.rst:534
 msgid "Voir :ref:`panneau_anki` et :ref:`cmd_mode`."
 msgstr "Βλ. :ref:`panneau_anki` και :ref:`cmd_mode`."
 
-#: ../../source/historique.rst:520
+#: ../../source/historique.rst:537
 msgid "0.26.0 (2026-06-09)"
 msgstr "0.26.0 (2026-06-09)"
 
-#: ../../source/historique.rst:522
+#: ../../source/historique.rst:539
 msgid ""
 "Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
 " curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
@@ -4535,7 +4669,7 @@ msgstr ""
 "επιλογή θέσης των πινάκων (κάτω, στο πλάι ή αυτόματα) για καλύτερη "
 "αξιοποίηση των ευρέων οθονών."
 
-#: ../../source/historique.rst:523
+#: ../../source/historique.rst:540
 msgid ""
 "Ajout d'une barre d'informations au-dessus du plateau rappelant les "
 "joueurs et le contexte du match (événement, lieu, ronde, date, longueur)."
@@ -4544,7 +4678,7 @@ msgstr ""
 "παίκτες και το πλαίσιο του αγώνα (γεγονός, τόπος, γύρος, ημερομηνία, "
 "διάρκεια)."
 
-#: ../../source/historique.rst:524
+#: ../../source/historique.rst:541
 msgid ""
 "À l'ouverture d'une base, le panneau des matchs est affiché d'emblée et "
 "la revue débute sur la première position."
@@ -4552,7 +4686,7 @@ msgstr ""
 "Κατά το άνοιγμα μιας βάσης, ο πίνακας των αγώνων εμφανίζεται πλέον αμέσως"
 " και η επισκόπηση ξεκινά από την πρώτη θέση."
 
-#: ../../source/historique.rst:525
+#: ../../source/historique.rst:542
 msgid ""
 "Les raccourcis clavier sont désormais indépendants de la disposition du "
 "clavier (AZERTY, QWERTY, QWERTZ…)."
@@ -4560,7 +4694,7 @@ msgstr ""
 "Οι συντομεύσεις πληκτρολογίου είναι πλέον ανεξάρτητες από τη διάταξη "
 "πληκτρολογίου (AZERTY, QWERTY, QWERTZ…)."
 
-#: ../../source/historique.rst:526
+#: ../../source/historique.rst:543
 msgid ""
 "Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du "
 "videau)."
@@ -4568,7 +4702,7 @@ msgstr ""
 "Διόρθωση της αποκωδικοποίησης XGID (δείκτες Jacoby/Beaver και τιμή του "
 "κύβου)."
 
-#: ../../source/historique.rst:527
+#: ../../source/historique.rst:544
 msgid ""
 "Ajout des onglets de vues multiples : plusieurs espaces de travail "
 "indépendants (liste de positions, position courante, recherche) avec les "
@@ -4581,15 +4715,15 @@ msgstr ""
 "(νέα προβολή), *CTRL-W* (κλείσιμο), *CTRL-PageUp*/*CTRL-PageDown* (αλλαγή"
 " προβολής) και μετονομασία με διπλό κλικ στην καρτέλα."
 
-#: ../../source/historique.rst:528
+#: ../../source/historique.rst:545
 msgid "Voir :ref:`configuration` et :ref:`onglets_vues`."
 msgstr "Βλ. :ref:`configuration` και :ref:`onglets_vues`."
 
-#: ../../source/historique.rst:531
+#: ../../source/historique.rst:548
 msgid "0.25.0 (2026-06-07)"
 msgstr "0.25.0 (2026-06-07)"
 
-#: ../../source/historique.rst:533
+#: ../../source/historique.rst:550
 msgid ""
 "Mode serveur (headless) : deux nouvelles méthodes pour reconstruire une "
 "position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
@@ -4601,16 +4735,16 @@ msgstr ""
 " συμβολοσειρά XGID σε θέση και η ``positions.fromXGP`` διαβάζει ένα "
 "αρχείο μεμονωμένης θέσης ``.xgp``."
 
-#: ../../source/historique.rst:534 ../../source/historique.rst:540
-#: ../../source/historique.rst:558
+#: ../../source/historique.rst:551 ../../source/historique.rst:557
+#: ../../source/historique.rst:575
 msgid "Voir :ref:`headless`."
 msgstr "Βλ. :ref:`headless`."
 
-#: ../../source/historique.rst:537
+#: ../../source/historique.rst:554
 msgid "0.24.0 (2026-06-06)"
 msgstr "0.24.0 (2026-06-06)"
 
-#: ../../source/historique.rst:539
+#: ../../source/historique.rst:556
 msgid ""
 "Ajout d'une image conteneur (Docker) pour le mode headless : un point "
 "d'entrée dédié ``serve`` et un ``Dockerfile.serve`` produisant un binaire"
@@ -4623,11 +4757,11 @@ msgstr ""
 "ανάπτυξη της μηχανής του blunderDB ως υπηρεσία πίσω από έναν αντίστροφο "
 "διακομιστή μεσολάβησης (reverse proxy)."
 
-#: ../../source/historique.rst:543
+#: ../../source/historique.rst:560
 msgid "0.23.0 (2026-06-05)"
 msgstr "0.23.0 (2026-06-05)"
 
-#: ../../source/historique.rst:545
+#: ../../source/historique.rst:562
 msgid ""
 "Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
 " tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
@@ -4641,7 +4775,7 @@ msgstr ""
 "``demo`` για να ανακαλύψει κανείς το εργαλείο χωρίς να εισάγει τις δικές "
 "του παρτίδες. *(Αφαιρέθηκαν στην 0.47.0.)*"
 
-#: ../../source/historique.rst:546
+#: ../../source/historique.rst:563
 msgid ""
 "Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, "
 "dés, videau) depuis la fenêtre de configuration."
@@ -4649,11 +4783,11 @@ msgstr ""
 "Προσαρμογή των χρωμάτων του ταμπλό (φόντο, περίγραμμα, βέλη, πούλια, "
 "ζάρια, κύβος) από το παράθυρο ρυθμίσεων."
 
-#: ../../source/historique.rst:547
+#: ../../source/historique.rst:564
 msgid "Autocomplétion de la ligne de commande (touche *TAB*)."
 msgstr "Αυτόματη συμπλήρωση της γραμμής εντολών (πλήκτρο *TAB*)."
 
-#: ../../source/historique.rst:548
+#: ../../source/historique.rst:565
 msgid ""
 "Panneau de recherche : contrôle explicite du type de décision (Pions / "
 "Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour "
@@ -4665,19 +4799,19 @@ msgstr ""
 "αποφάσεις κύβου, συγχρονισμένος με το ταμπλό· ο προσφερόμενος κύβος "
 "εμφανίζεται στο κέντρο του ταμπλό για τις αποφάσεις πάρε/πέρασε."
 
-#: ../../source/historique.rst:549
+#: ../../source/historique.rst:566
 msgid "Recherche d'une position par son identifiant (filtre ``id``)."
 msgstr "Αναζήτηση μιας θέσης βάσει του αναγνωριστικού της (φίλτρο ``id``)."
 
-#: ../../source/historique.rst:550
+#: ../../source/historique.rst:567
 msgid "Correction de l'attribution de l'erreur de videau au joueur 1."
 msgstr "Διόρθωση της απόδοσης του σφάλματος κύβου στον παίκτη 1."
 
-#: ../../source/historique.rst:553
+#: ../../source/historique.rst:570
 msgid "0.22.0 (2026-06-02)"
 msgstr "0.22.0 (2026-06-02)"
 
-#: ../../source/historique.rst:555
+#: ../../source/historique.rst:572
 msgid ""
 "Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
 "l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
@@ -4695,7 +4829,7 @@ msgstr ""
 "SQLite προς PostgreSQL, και ένας γενικός dispatcher ``call`` που παρέχει "
 "πρόσβαση μέσω γραμμής εντολών σε όλες τις λειτουργίες αποθήκευσης."
 
-#: ../../source/historique.rst:556
+#: ../../source/historique.rst:573
 msgid ""
 "Import de positions uniques depuis de nouveaux formats (eXtreme Gammon "
 "``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec enrichissement"
@@ -4705,7 +4839,7 @@ msgstr ""
 "κείμενο BGBlitz, εγγενής βιβλιοθήκη ``.db``) με εμπλουτισμό των "
 "διπλότυπων μεταξύ μορφών."
 
-#: ../../source/historique.rst:557
+#: ../../source/historique.rst:574
 msgid ""
 "Corrections : les panneaux ne provoquent plus d'erreur lorsqu'aucune base"
 " n'est ouverte et le panneau Commentaires ne boucle plus à l'ouverture."
@@ -4714,11 +4848,11 @@ msgstr ""
 "καμία βάση, και ο πίνακας Σχόλια δεν δημιουργεί πλέον βρόχο κατά το "
 "άνοιγμα."
 
-#: ../../source/historique.rst:561
+#: ../../source/historique.rst:578
 msgid "0.21.0 (2026-06-01)"
 msgstr "0.21.0 (2026-06-01)"
 
-#: ../../source/historique.rst:563
+#: ../../source/historique.rst:580
 msgid ""
 "Internationalisation de l'interface : l'intégralité de blunderDB (barre "
 "d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
@@ -4730,7 +4864,7 @@ msgstr ""
 "αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, "
 "ελληνικά ή ρωσικά."
 
-#: ../../source/historique.rst:564
+#: ../../source/historique.rst:581
 msgid ""
 "Ajout d'une fenêtre de configuration, accessible par un bouton en forme "
 "de rouage dans la barre d'outils, permettant de sélectionner la langue."
@@ -4738,19 +4872,19 @@ msgstr ""
 "Προσθήκη παραθύρου ρυθμίσεων, προσβάσιμου μέσω ενός κουμπιού σε σχήμα "
 "γραναζιού στη γραμμή εργαλείων, που επιτρέπει την επιλογή της γλώσσας."
 
-#: ../../source/historique.rst:565
+#: ../../source/historique.rst:582
 msgid "Le choix de la langue est conservé d'une session à l'autre."
 msgstr "Η επιλογή της γλώσσας διατηρείται από τη μία συνεδρία στην άλλη."
 
-#: ../../source/historique.rst:566
+#: ../../source/historique.rst:583
 msgid "Voir :ref:`configuration`."
 msgstr "Βλ. :ref:`configuration`."
 
-#: ../../source/historique.rst:569
+#: ../../source/historique.rst:586
 msgid "0.20.0 (2026-05-31)"
 msgstr "0.20.0 (2026-05-31)"
 
-#: ../../source/historique.rst:571
+#: ../../source/historique.rst:588
 msgid ""
 "Ajout de la structure d'exclusion *Except* au panneau de recherche : "
 "exclut les positions contenant l'un des pions dessinés, avec marqueur « "
@@ -4762,7 +4896,7 @@ msgstr ""
 " είναι κενό» (διπλό κλικ) και απεριόριστο αριθμό πουλιών ανά σημείο "
 "(εντολή ``x``)."
 
-#: ../../source/historique.rst:572
+#: ../../source/historique.rst:589
 msgid ""
 "Ajout de l'option « premier dé uniquement » au filtre de lancer de dés "
 "(variante D1, option CLI --dice)."
@@ -4770,7 +4904,7 @@ msgstr ""
 "Προσθήκη της επιλογής «μόνο πρώτο ζάρι» στο φίλτρο ζαριάς (παραλλαγή D1, "
 "επιλογή CLI ``--dice``)."
 
-#: ../../source/historique.rst:573
+#: ../../source/historique.rst:590
 msgid ""
 "Panneau Commentaires : focus automatique du champ de saisie à l'ouverture"
 " et boutons éditer / supprimer toujours visibles."
@@ -4778,7 +4912,7 @@ msgstr ""
 "Πίνακας Σχόλια: αυτόματη εστίαση του πεδίου εισαγωγής κατά το άνοιγμα, "
 "και κουμπιά επεξεργασίας/διαγραφής πάντα ορατά."
 
-#: ../../source/historique.rst:574
+#: ../../source/historique.rst:591
 msgid ""
 "Correction du filtre « Search Text » qui ne trouvait pas tous les tags de"
 " commentaires."
@@ -4786,11 +4920,11 @@ msgstr ""
 "Διόρθωση του φίλτρου «Search Text» που δεν έβρισκε όλες τις ετικέτες "
 "σχολίων."
 
-#: ../../source/historique.rst:577
+#: ../../source/historique.rst:594
 msgid "0.19.0 (2026-05-07)"
 msgstr "0.19.0 (2026-05-07)"
 
-#: ../../source/historique.rst:579
+#: ../../source/historique.rst:596
 msgid ""
 "Ajout du panneau Stats : indicateurs PR (Performance Rating), Snowie "
 "Error Rate et MWC cost (Match Winning Chance cost), barre de filtre "
@@ -4807,7 +4941,7 @@ msgstr ""
 "με καμπύλη ανά τουρνουά και scatter plot ανά αγώνα, καρτέλα Σφάλματα με "
 "κατανομή ανά ενέργεια κύβου και ιστόγραμμα των μεγεθών."
 
-#: ../../source/historique.rst:580
+#: ../../source/historique.rst:597
 msgid ""
 "Drill-down interactif vers les positions / matchs / tournois depuis tous "
 "les indicateurs."
@@ -4815,15 +4949,15 @@ msgstr ""
 "Διαδραστική εμβάθυνση προς τις θέσεις / αγώνες / τουρνουά από όλους τους "
 "δείκτες."
 
-#: ../../source/historique.rst:581
+#: ../../source/historique.rst:598
 msgid "Toggle PR / MWC instantané."
 msgstr "Στιγμιαία εναλλαγή PR / MWC."
 
-#: ../../source/historique.rst:582
+#: ../../source/historique.rst:599
 msgid "Commande CLI list --type stats."
 msgstr "Εντολή CLI list --type stats."
 
-#: ../../source/historique.rst:583
+#: ../../source/historique.rst:600
 msgid ""
 "Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
 "gnuBG (seuil 0.16 d'équité pour les cubes proches)."
@@ -4831,23 +4965,23 @@ msgstr ""
 "Ευθυγράμμιση των δεικτών PR / Snowie ER / MWC με το eXtremeGammon και το "
 "gnuBG (κατώφλι equity 0.16 για κοντινούς κύβους)."
 
-#: ../../source/historique.rst:584
+#: ../../source/historique.rst:601
 msgid "Correction du calcul de cube_error pour les décisions Double/Pass."
 msgstr "Διόρθωση του υπολογισμού του cube_error για τις αποφάσεις Double/Pass."
 
-#: ../../source/historique.rst:585
+#: ../../source/historique.rst:602
 msgid "Documentation du modèle de statistiques (:ref:`stats_parity`)."
 msgstr "Τεκμηρίωση του στατιστικού μοντέλου (:ref:`stats_parity`)."
 
-#: ../../source/historique.rst:586
+#: ../../source/historique.rst:603
 msgid "Voir :ref:`stats`."
 msgstr "Βλ. :ref:`stats`."
 
-#: ../../source/historique.rst:589
+#: ../../source/historique.rst:606
 msgid "0.18.0 (2026-04-20)"
 msgstr "0.18.0 (2026-04-20)"
 
-#: ../../source/historique.rst:591
+#: ../../source/historique.rst:608
 msgid ""
 "Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
 "fichiers spécialisés, extraction de 7 modules de service depuis "
@@ -4857,27 +4991,27 @@ msgstr ""
 " εξειδικευμένα αρχεία, εξαγωγή 7 μονάδων υπηρεσίας από το App.svelte "
 "(4888→469 γραμμές), ενοποίηση των stores modal/πίνακα."
 
-#: ../../source/historique.rst:592
+#: ../../source/historique.rst:609
 msgid "Migration complète vers Svelte 5 runes."
 msgstr "Πλήρης μετάβαση στα Svelte 5 runes."
 
-#: ../../source/historique.rst:593
+#: ../../source/historique.rst:610
 msgid ""
 "Remplacement de 9 modales de tableau par un composant générique "
 "DataTableModal."
 msgstr "Αντικατάσταση 9 modal πίνακα με ένα γενικό στοιχείο DataTableModal."
 
-#: ../../source/historique.rst:594
+#: ../../source/historique.rst:611
 msgid "Ajout d'ESLint + Prettier + vitest (125 tests frontend) avec CI."
 msgstr "Προσθήκη ESLint + Prettier + vitest (125 δοκιμές frontend) με CI."
 
-#: ../../source/historique.rst:595
+#: ../../source/historique.rst:612
 msgid "Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier)."
 msgstr ""
 "Συμμόρφωση WCAG 2.1 AA (ορατή εστίαση, ρόλοι ARIA, πλοήγηση με "
 "πληκτρολόγιο)."
 
-#: ../../source/historique.rst:596
+#: ../../source/historique.rst:613
 msgid ""
 "Passage du mutex Database en RWMutex pour un meilleur parallélisme en "
 "lecture."
@@ -4885,23 +5019,23 @@ msgstr ""
 "Μετάβαση του mutex της Database σε RWMutex για καλύτερη παραλληλία στην "
 "ανάγνωση."
 
-#: ../../source/historique.rst:597
+#: ../../source/historique.rst:614
 msgid "Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN)."
 msgstr "Πλήρης τεκμηρίωση CLI (CLI_USAGE.md + Sphinx FR/EN)."
 
-#: ../../source/historique.rst:598
+#: ../../source/historique.rst:615
 msgid "Réécriture du README."
 msgstr "Επανεγγραφή του README."
 
-#: ../../source/historique.rst:599
+#: ../../source/historique.rst:616
 msgid "Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
 msgstr "Διόρθωση όλων των προειδοποιήσεων ESLint (46→0) και Vite (6→0)."
 
-#: ../../source/historique.rst:602
+#: ../../source/historique.rst:619
 msgid "0.17.0 (2026-04-20)"
 msgstr "0.17.0 (2026-04-20)"
 
-#: ../../source/historique.rst:604
+#: ../../source/historique.rst:621
 #, no-python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
@@ -4911,33 +5045,33 @@ msgstr ""
 "Βελτιστοποίηση αποθήκευσης: συμπίεση zlib των δεδομένων ανάλυσης (~80% "
 "μείωση), συμπαγής κωδικοποίηση θέσεων (~90% μείωση μεγέθους)."
 
-#: ../../source/historique.rst:605
+#: ../../source/historique.rst:622
 msgid "Ajout de 5 index manquants pour améliorer les performances de recherche."
 msgstr "Προσθήκη 5 ελλειπόντων ευρετηρίων για βελτίωση των επιδόσεων αναζήτησης."
 
-#: ../../source/historique.rst:606
+#: ../../source/historique.rst:623
 msgid "Correction de la recherche par erreur de cube."
 msgstr "Διόρθωση της αναζήτησης κατά σφάλμα κύβου."
 
-#: ../../source/historique.rst:607
+#: ../../source/historique.rst:624
 msgid "Correction du mode EDIT après une recherche sans résultats."
 msgstr "Διόρθωση της λειτουργίας EDIT μετά από αναζήτηση χωρίς αποτελέσματα."
 
-#: ../../source/historique.rst:608
+#: ../../source/historique.rst:625
 msgid ""
 "Restauration de l'état du panneau de recherche lors du changement "
 "d'onglets."
 msgstr "Επαναφορά της κατάστασης του πίνακα αναζήτησης κατά την αλλαγή καρτελών."
 
-#: ../../source/historique.rst:609
+#: ../../source/historique.rst:626
 msgid "Suppression de 62 instructions de débogage des chemins critiques."
 msgstr "Αφαίρεση 62 εντολών αποσφαλμάτωσης από κρίσιμες διαδρομές."
 
-#: ../../source/historique.rst:612
+#: ../../source/historique.rst:629
 msgid "0.16.0 (2026-04-18)"
 msgstr "0.16.0 (2026-04-18)"
 
-#: ../../source/historique.rst:614
+#: ../../source/historique.rst:631
 msgid ""
 "Schéma de base de données v2.0.0 : déduplication des positions via hash "
 "Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
@@ -4947,7 +5081,7 @@ msgstr ""
 "αποκανονικοποιημένες στήλες φιλτραρίσματος, προ-φίλτρο μοτίβων bitboard, "
 "καταγραφή WAL (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:615
+#: ../../source/historique.rst:632
 msgid ""
 "Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ "
 "positions."
@@ -4955,7 +5089,7 @@ msgstr ""
 "Μαζική εισαγωγή >=3x ταχύτερη, φιλτραρισμένη αναζήτηση <=100 ms σε 10 "
 "χιλ.+ θέσεις."
 
-#: ../../source/historique.rst:616
+#: ../../source/historique.rst:633
 msgid ""
 "NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts "
 "par les versions plus anciennes ; les anciennes DB sont migrées "
@@ -4965,11 +5099,11 @@ msgstr ""
 "ανοιχτούν από παλαιότερες εκδόσεις· οι παλιές DB μεταβαίνουν αυτόματα "
 "επιτόπου (κάντε πρώτα ένα αντίγραφο ασφαλείας)."
 
-#: ../../source/historique.rst:619
+#: ../../source/historique.rst:636
 msgid "0.15.0 (2026-03-31)"
 msgstr "0.15.0 (2026-03-31)"
 
-#: ../../source/historique.rst:621
+#: ../../source/historique.rst:638
 msgid ""
 "Export de la position en image PNG dans le presse-papier (board seul via "
 "Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
@@ -4977,25 +5111,25 @@ msgstr ""
 "Εξαγωγή της θέσης ως εικόνα PNG στο πρόχειρο (μόνο το ταμπλό με Ctrl+X, ή"
 " το ταμπλό με ανάλυση με Ctrl+X Ctrl+X)."
 
-#: ../../source/historique.rst:624
+#: ../../source/historique.rst:641
 msgid "0.14.0 (2026-03-30)"
 msgstr "0.14.0 (2026-03-30)"
 
-#: ../../source/historique.rst:626
+#: ../../source/historique.rst:643
 msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
 msgstr ""
 "Αποκλειστικός πίνακας Anki για μελέτη με επαναλαμβανόμενα διαστήματα "
 "(αλγόριθμος FSRS)."
 
-#: ../../source/historique.rst:627
+#: ../../source/historique.rst:644
 msgid "Import des commentaires depuis les fichiers XG."
 msgstr "Εισαγωγή σχολίων από τα αρχεία XG."
 
-#: ../../source/historique.rst:630
+#: ../../source/historique.rst:647
 msgid "0.13.0 (2026-03-28)"
 msgstr "0.13.0 (2026-03-28)"
 
-#: ../../source/historique.rst:632
+#: ../../source/historique.rst:649
 msgid ""
 "Simplification de l'interface : la navigation dans les matchs et les "
 "collections se fait directement via les panneaux."
@@ -5003,25 +5137,25 @@ msgstr ""
 "Απλοποίηση της διεπαφής: η πλοήγηση στους αγώνες και τις συλλογές γίνεται"
 " πλέον απευθείας μέσω των πινάκων."
 
-#: ../../source/historique.rst:633
+#: ../../source/historique.rst:650
 msgid "Ligne de commande intégrée dans la barre d'état."
 msgstr "Γραμμή εντολών ενσωματωμένη στη γραμμή κατάστασης."
 
-#: ../../source/historique.rst:634
+#: ../../source/historique.rst:651
 msgid "Panneau Console renommé en panneau Log. *(Panneau retiré en 0.31.0.)*"
 msgstr ""
 "Ο πίνακας Κονσόλα μετονομάστηκε σε πίνακα Log. *(Ο πίνακας αφαιρέθηκε "
 "στην 0.31.0.)*"
 
-#: ../../source/historique.rst:635
+#: ../../source/historique.rst:652
 msgid "Panneau Bearoff dédié dans le panneau inférieur."
 msgstr "Αποκλειστικός πίνακας Bearoff στον κάτω πίνακα."
 
-#: ../../source/historique.rst:636
+#: ../../source/historique.rst:653
 msgid "Copier/coller de position dans le panneau de recherche."
 msgstr "Αντιγραφή/επικόλληση θέσης στον πίνακα αναζήτησης."
 
-#: ../../source/historique.rst:637
+#: ../../source/historique.rst:654
 msgid ""
 "Glisser-déposer pour réordonner les collections, les positions dans les "
 "collections, et les matchs dans les tournois."
@@ -5029,45 +5163,45 @@ msgstr ""
 "Μεταφορά και απόθεση για την αναδιάταξη συλλογών, θέσεων μέσα στις "
 "συλλογές, και αγώνων μέσα στα τουρνουά."
 
-#: ../../source/historique.rst:638
+#: ../../source/historique.rst:655
 msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
 msgstr "Στήλη τουρνουά στον πίνακα αγώνων με εσωτερική επεξεργασία."
 
-#: ../../source/historique.rst:639
+#: ../../source/historique.rst:656
 msgid "Affichage automatique du panneau d'analyse après une recherche."
 msgstr "Αυτόματη εμφάνιση του πίνακα ανάλυσης μετά από μια αναζήτηση."
 
-#: ../../source/historique.rst:642
+#: ../../source/historique.rst:659
 msgid "0.12.0 (2026-03-19)"
 msgstr "0.12.0 (2026-03-19)"
 
-#: ../../source/historique.rst:644
+#: ../../source/historique.rst:661
 msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
 msgstr "Εισαγωγή αρχείων θέσεων eXtreme Gammon (XGP) με ανάλυση."
 
-#: ../../source/historique.rst:647
+#: ../../source/historique.rst:664
 msgid "0.11.0 (2026-03-06)"
 msgstr "0.11.0 (2026-03-06)"
 
-#: ../../source/historique.rst:649
+#: ../../source/historique.rst:666
 msgid "Filtre de recherche dans les positions courantes."
 msgstr "Φίλτρο αναζήτησης μέσα στις τρέχουσες φιλτραρισμένες θέσεις."
 
-#: ../../source/historique.rst:650
+#: ../../source/historique.rst:667
 msgid "Ajout de filtres par match et par tournoi."
 msgstr "Προσθήκη φίλτρων ανά αγώνα και ανά τουρνουά."
 
-#: ../../source/historique.rst:651
+#: ../../source/historique.rst:668
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
 msgstr "Αυτόματος καθαρισμός του ταμπλό κατά το άνοιγμα του πίνακα αναζήτησης."
 
-#: ../../source/historique.rst:654
+#: ../../source/historique.rst:671
 msgid "0.10.0 (2026-02-25)"
 msgstr "0.10.0 (2026-02-25)"
 
-#: ../../source/historique.rst:656
+#: ../../source/historique.rst:673
 msgid ""
 "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) et BGBlitz (BGF/TXT)."
@@ -5075,7 +5209,7 @@ msgstr ""
 "Εισαγωγή αγώνων από eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) και BGBlitz (BGF/TXT)."
 
-#: ../../source/historique.rst:657
+#: ../../source/historique.rst:674
 msgid ""
 "Navigation dans les matchs : parcours des coups d'un match importé, avec "
 "mise en évidence du coup joué."
@@ -5083,7 +5217,7 @@ msgstr ""
 "Πλοήγηση στους αγώνες: περιήγηση στις κινήσεις ενός εισαγόμενου αγώνα, με"
 " επισήμανση της κίνησης που παίχτηκε."
 
-#: ../../source/historique.rst:658
+#: ../../source/historique.rst:675
 msgid ""
 "Panneau des matchs : liste, tri, édition inline, permutation des joueurs,"
 " assignation de tournoi."
@@ -5091,11 +5225,11 @@ msgstr ""
 "Πίνακας αγώνων: λίστα, ταξινόμηση, εσωτερική επεξεργασία, εναλλαγή "
 "παικτών, ανάθεση τουρνουά."
 
-#: ../../source/historique.rst:659
+#: ../../source/historique.rst:676
 msgid "Import par dossier récursif et import par glisser-déposer."
 msgstr "Εισαγωγή με αναδρομικό φάκελο και εισαγωγή με μεταφορά και απόθεση."
 
-#: ../../source/historique.rst:660
+#: ../../source/historique.rst:677
 msgid ""
 "Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
 "GNUbg intégrée. *(Remplacé en 0.36.0 : la table est calculée sur la "
@@ -5105,15 +5239,15 @@ msgstr ""
 "bearoff του GNUbg. *(Αντικαταστάθηκε στην 0.36.0: ο πίνακας υπολογίζεται "
 "στον υπολογιστή, κανένας δεν είναι πια ενσωματωμένος.)*"
 
-#: ../../source/historique.rst:661
+#: ../../source/historique.rst:678
 msgid "Collections : regroupement personnalisé de positions."
 msgstr "Συλλογές: προσαρμοσμένη ομαδοποίηση θέσεων."
 
-#: ../../source/historique.rst:662
+#: ../../source/historique.rst:679
 msgid "Tournois : regroupement de matchs par événement."
 msgstr "Τουρνουά: ομαδοποίηση αγώνων ανά εκδήλωση."
 
-#: ../../source/historique.rst:663
+#: ../../source/historique.rst:680
 msgid ""
 "Sauvegarde et restauration de l'état de session (dernière recherche, "
 "position courante)."
@@ -5121,19 +5255,19 @@ msgstr ""
 "Αποθήκευση και επαναφορά της κατάστασης συνεδρίας (τελευταία αναζήτηση, "
 "τρέχουσα θέση)."
 
-#: ../../source/historique.rst:664
+#: ../../source/historique.rst:681
 msgid "Migration automatique du schéma de base de données."
 msgstr "Αυτόματη μετάβαση του σχήματος της βάσης δεδομένων."
 
-#: ../../source/historique.rst:665
+#: ../../source/historique.rst:682
 msgid "Affichage multi-moteurs dans l'analyse."
 msgstr "Εμφάνιση πολλαπλών μηχανών στην ανάλυση."
 
-#: ../../source/historique.rst:666
+#: ../../source/historique.rst:683
 msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
 msgstr "Φίλτρο σφαλμάτων/blunders του παίκτη 1 στις αναζητήσεις."
 
-#: ../../source/historique.rst:667
+#: ../../source/historique.rst:684
 msgid ""
 "Export de la base de données avec sélection granulaire (matchs, "
 "collections, tournois, coups joués)."
@@ -5141,152 +5275,152 @@ msgstr ""
 "Εξαγωγή της βάσης δεδομένων με λεπτομερή επιλογή (αγώνες, συλλογές, "
 "τουρνουά, κινήσεις που παίχτηκαν)."
 
-#: ../../source/historique.rst:668
+#: ../../source/historique.rst:685
 msgid "Bouton de navigation dans les matchs."
 msgstr "Κουμπί πλοήγησης στους αγώνες."
 
-#: ../../source/historique.rst:669
+#: ../../source/historique.rst:686
 msgid "Compte de course (pipcount) dans la navigation des matchs."
 msgstr "Εμφάνιση pip count στην πλοήγηση των αγώνων."
 
-#: ../../source/historique.rst:670
+#: ../../source/historique.rst:687
 msgid "Interface en ligne de commande (CLI) complète."
 msgstr "Πλήρης διεπαφή γραμμής εντολών (CLI)."
 
-#: ../../source/historique.rst:671
+#: ../../source/historique.rst:688
 msgid "Réouverture automatique de la dernière base de données."
 msgstr "Αυτόματο άνοιγμα ξανά της τελευταίας βάσης δεδομένων."
 
-#: ../../source/historique.rst:672
+#: ../../source/historique.rst:689
 msgid "Amélioration de la barre d'outils et des icônes."
 msgstr "Βελτίωση της γραμμής εργαλείων και των εικονιδίων."
 
-#: ../../source/historique.rst:675
+#: ../../source/historique.rst:692
 msgid "0.9.0 (2025-11-02)"
 msgstr "0.9.0 (2025-11-02)"
 
-#: ../../source/historique.rst:677
+#: ../../source/historique.rst:694
 msgid "Correction de bug de la bibliothèque de filtres."
 msgstr "Διόρθωση σφάλματος της βιβλιοθήκης φίλτρων."
 
-#: ../../source/historique.rst:678
+#: ../../source/historique.rst:695
 msgid "Import/export de base de données."
 msgstr "Εισαγωγή/εξαγωγή βάσης δεδομένων."
 
-#: ../../source/historique.rst:679
+#: ../../source/historique.rst:696
 msgid "Affichage de flèches pour les coups sélectionnés."
 msgstr "Εμφάνιση βελών για τις επιλεγμένες κινήσεις."
 
-#: ../../source/historique.rst:680
+#: ../../source/historique.rst:697
 msgid "Raccourcis clavier pour l'import/export."
 msgstr "Συντομεύσεις πληκτρολογίου για την εισαγωγή/εξαγωγή."
 
-#: ../../source/historique.rst:683
+#: ../../source/historique.rst:700
 msgid "0.8.0 (2025-05-03)"
 msgstr "0.8.0 (2025-05-03)"
 
-#: ../../source/historique.rst:685
+#: ../../source/historique.rst:702
 msgid "Possibilité de cacher le compte de course."
 msgstr "Δυνατότητα απόκρυψης του pip count."
 
-#: ../../source/historique.rst:686
+#: ../../source/historique.rst:703
 msgid "Chargement d'une position aléatoire."
 msgstr "Φόρτωση τυχαίας θέσης."
 
-#: ../../source/historique.rst:689
+#: ../../source/historique.rst:706
 msgid "0.7.0 (2025-02-16)"
 msgstr "0.7.0 (2025-02-16)"
 
-#: ../../source/historique.rst:691
+#: ../../source/historique.rst:708
 msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
 msgstr "Υποστήριξη ιαπωνικών και γερμανικών εξαγωγών XG."
 
-#: ../../source/historique.rst:694
+#: ../../source/historique.rst:711
 msgid "0.6.0 (2025-02-13)"
 msgstr "0.6.0 (2025-02-13)"
 
-#: ../../source/historique.rst:696
+#: ../../source/historique.rst:713
 msgid "Ajout de la bibliothèque de filtres."
 msgstr "Προσθήκη βιβλιοθήκης φίλτρων."
 
-#: ../../source/historique.rst:697
+#: ../../source/historique.rst:714
 msgid "Affichage de la version de la base de données dans les métadonnées."
 msgstr "Εμφάνιση της έκδοσης της βάσης δεδομένων στα μεταδεδομένα."
 
-#: ../../source/historique.rst:700
+#: ../../source/historique.rst:717
 msgid "0.5.0 (2025-02-04)"
 msgstr "0.5.0 (2025-02-04)"
 
-#: ../../source/historique.rst:702
+#: ../../source/historique.rst:719
 msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 msgstr "Προσθήκη νέων φίλτρων (καθρέφτης, μη επαφή, jan blot, outfield blot)."
 
-#: ../../source/historique.rst:705
+#: ../../source/historique.rst:722
 msgid "0.4.0 (2025-02-03)"
 msgstr "0.4.0 (2025-02-03)"
 
-#: ../../source/historique.rst:707 ../../source/historique.rst:715
-#: ../../source/historique.rst:722
+#: ../../source/historique.rst:724 ../../source/historique.rst:732
+#: ../../source/historique.rst:739
 msgid "Résolutions de bugs divers."
 msgstr "Διάφορες διορθώσεις σφαλμάτων."
 
-#: ../../source/historique.rst:708
+#: ../../source/historique.rst:725
 msgid "Ajout d'une icône pour blunderDB."
 msgstr "Προσθήκη εικονιδίου για το blunderDB."
 
-#: ../../source/historique.rst:709
+#: ../../source/historique.rst:726
 msgid "Corrections de filtres."
 msgstr "Διορθώσεις φίλτρων."
 
-#: ../../source/historique.rst:710
+#: ../../source/historique.rst:727
 msgid "Ajout du support de MacOS."
 msgstr "Προσθήκη υποστήριξης MacOS."
 
-#: ../../source/historique.rst:713
+#: ../../source/historique.rst:730
 msgid "0.3.0 (2025-01-27)"
 msgstr "0.3.0 (2025-01-27)"
 
-#: ../../source/historique.rst:716
+#: ../../source/historique.rst:733
 msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
 msgstr "Αυτόματη αποθήκευση του μεγέθους του παραθύρου."
 
-#: ../../source/historique.rst:717
+#: ../../source/historique.rst:734
 msgid "Importe les éventuels commentaires depuis XG."
 msgstr "Εισαγωγή τυχόν σχολίων από το XG."
 
-#: ../../source/historique.rst:720
+#: ../../source/historique.rst:737
 msgid "0.2.0 (2025-01-06)"
 msgstr "0.2.0 (2025-01-06)"
 
-#: ../../source/historique.rst:723
+#: ../../source/historique.rst:740
 msgid "Ajout de tables de matchs/TP/GV."
 msgstr "Προσθήκη πινάκων αγώνων/TP/GV."
 
-#: ../../source/historique.rst:724
+#: ../../source/historique.rst:741
 msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
 msgstr "Προσθήκη φίλτρων αναζήτησης (κινήσεις, αποφάσεις ντουμπλέ, ημερομηνία)."
 
-#: ../../source/historique.rst:725
+#: ../../source/historique.rst:742
 msgid "Ajout de métadonnées sur les positions."
 msgstr "Προσθήκη μεταδεδομένων στις θέσεις."
 
-#: ../../source/historique.rst:726
+#: ../../source/historique.rst:743
 msgid "Fonction d'import/export entre instances de blunderDB."
 msgstr "Λειτουργία εισαγωγής/εξαγωγής μεταξύ στιγμιότυπων του blunderDB."
 
-#: ../../source/historique.rst:727
+#: ../../source/historique.rst:744
 msgid "Ajout de fonction de métadonnées sur les bases de données."
 msgstr "Προσθήκη λειτουργίας μεταδεδομένων στις βάσεις δεδομένων."
 
-#: ../../source/historique.rst:728
+#: ../../source/historique.rst:745
 msgid "Introduction des numéros de versions (base de données et application)."
 msgstr "Εισαγωγή αριθμών εκδόσεων (βάσης δεδομένων και εφαρμογής)."
 
-#: ../../source/historique.rst:731
+#: ../../source/historique.rst:748
 msgid "0.1.0 (2024-12-31)"
 msgstr "0.1.0 (2024-12-31)"
 
-#: ../../source/historique.rst:733
+#: ../../source/historique.rst:750
 msgid "Création version bêta."
 msgstr "Έκδοση beta."
 
@@ -5393,3 +5527,4 @@ msgstr "Έκδοση beta."
 #~ " ; la procédure est dans le "
 #~ "manuel des matchs."
 #~ msgstr ""
+

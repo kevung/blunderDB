@@ -42,6 +42,22 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.63.0 (2026-11-28)
+-------------------
+
+- **Documents rédigés lus** : l'import d'un document lit aussi les diagrammes des fichiers DOCX, ODT, EPUB et des pages HTML, image par image dans l'ordre du texte, le texte voisin recoupant les pips et les dés ; un fichier Word 97-2003 est refusé avec la proposition de l'enregistrer en PDF.
+- **Planche de vérification** : l'assistant d'import d'un document montre chaque diagramme à côté du plateau redessiné ; *V* valide, *E* corrige, les compteurs filtrent les entrées, et le relevé se garde à côté du document pour reprendre plus tard ; ``blunderdb document verify`` fait de même en ligne de commande.
+- **Lecture d'un document suivie et annulable** : la lecture affiche sa progression et le temps restant, *Annuler* l'arrête, et les pips imprimés loin du plateau ou après une lettre de camp se lisent.
+- **Le panneau Calculs porte les longues tâches** : la lecture d'un document, l'export, l'archive papier et les impressions y montrent leur progression et s'y annulent.
+- **Feuilles imprimées en PDF réimportable** (Linux) : l'interface imprime ses feuilles en PDF A4 qui portent leur code de réimport ; l'import d'archive relit ce PDF.
+- **Sélection multiple de matchs** : *Ctrl+clic* et *Maj+clic* sélectionnent plusieurs matchs, que l'on imprime ou met en archive papier d'un geste ; un tournoi s'imprime aussi.
+- **Panneau Eval** : l'évaluation la plus profonde de chaque position se réaffiche sans recalcul ; un sélecteur de profondeur réévalue la position ou les seuls coups sélectionnés ; deux icônes remettent la position de départ ou vident le plateau.
+- **Carte des jets** : sélectionner un jet pose ses dés et dessine son meilleur coup sur le plateau, le fil d'Ariane montre les jets en petits dés, et les autres coups se déplient.
+- **Carte des scores** : un clic sur une case des pions évalue les coups candidats à ce score ; la grille se lit en ordre croissant.
+- **Copier une collection entière** : une collection se copie d'un geste, vers une nouvelle collection ou à la suite d'une collection existante, dans l'ordre de la source et sans doublon.
+- **Recherche par motif de coup plus rapide** : le motif se préfiltre sur le meilleur coup de chaque analyse, gardé dans une colonne dérivée ; la migration remplit cette colonne en arrière-plan après l'ouverture de la base, et la recherche reste juste pendant ce rattrapage.
+- Voir :ref:`cli_document`, :ref:`manuel_eval`, :ref:`manuel_matchs`, :ref:`manuel_bibliotheque` et :ref:`manuel_partage`.
+
 0.62.0 (2026-11-27)
 -------------------
 

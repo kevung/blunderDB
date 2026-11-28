@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.63.0" date="2026-11-28">
+      <description>
+        <ul>
+          <li>Document import reads the diagrams of DOCX, ODT, EPUB and HTML files, with a verification sheet and progress that can be cancelled</li>
+          <li>Multiple match selection, printing and paper archive on the selection; sheets printed as reimportable PDF on Linux</li>
+          <li>Eval panel: cached deepest evaluation, local depth selector, re-evaluation of the selected moves</li>
+          <li>Copy a whole collection; faster move-pattern search</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.62.0" date="2026-11-27">
       <description>
         <ul>
