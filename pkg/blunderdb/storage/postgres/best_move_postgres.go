@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"maps"
 	"math"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -229,7 +231,9 @@ func deriveBestMoveRange(ctx context.Context, tx pgx.Tx, tenant, after, upTo int
 	ids := make([]int64, 0, len(raw))
 	xs := make([]string, 0, len(raw))
 	moves := make([]string, 0, len(raw))
-	for id := range raw {
+	// In id order, which the nested loop over unnest follows: two passes over
+	// the same rows lock them in one order instead of deadlocking.
+	for _, id := range slices.Sorted(maps.Keys(raw)) {
 		if a := decoded[id]; a != nil {
 			ids = append(ids, id)
 			xs = append(xs, xmins[id])
