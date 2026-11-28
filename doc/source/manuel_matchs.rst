@@ -66,7 +66,9 @@ fiche du match.
 .. _feuille_match:
 
 **Imprimer…**, dans le menu contextuel d'un match de la liste ou le menu ⋯ de sa
-fiche, imprime le match sur une feuille A4, sans aucun diagramme. Une boîte
+fiche, imprime le match sur une feuille A4 (*Ctrl+clic* ajoute ou retire un match de la sélection,
+*Maj+clic* sélectionne une plage : la commande, comme *Archive papier…*, prend alors toute la
+sélection, 100 matchs au plus, en une seule tâche), sans aucun diagramme. Une boîte
 d'options s'ouvre d'abord ; la feuille est ensuite enregistrée en PDF A4 et
 ouverte dans la visionneuse du système, d'où elle s'imprime. Sous Windows et
 macOS, faute de ce rendu, elle reste un fichier HTML autonome ouvert dans le
@@ -125,7 +127,7 @@ L'impression n'écrit rien dans la base. En ligne de commande : ``match sheet``
 **Archive papier…**, dans le menu contextuel d'un match de la liste, ouvre la
 boîte de l'archive papier : des pages A4 de codes QR, sans texte, qui gardent
 les matchs sur papier. **Exporter…** écrit la page d'archive de ce match, des
-N matchs de la liste filtrée ou de toute la bibliothèque, l'enregistre en PDF
+matchs sélectionnés (100 au plus), des N matchs de la liste filtrée ou de toute la bibliothèque, l'enregistre en PDF
 (en fichier HTML sous Windows et macOS) et l'ouvre, d'où il s'imprime.
 **Importer…** lit une ou plusieurs pages d'archive : le PDF ou le fichier HTML
 exporté, ou des scans et des photos (PNG, JPEG) de ses feuilles, en nombre

@@ -372,6 +372,8 @@
         "batch": "リストの {n} マッチ",
         "batchTip": "1 マッチ 1 枚、ひとつの文書にまとめます",
         "tooMany": "リストに {n} マッチあります。1 回の印刷は最大 {max} マッチです。リストを絞り込んでください。",
+        "selection": "{n} 試合を選択中",
+        "tooManySelected": "{n} 試合を選択中：印刷・アーカイブは最大 {max} 試合まで。",
         "cancelled": "マッチシートを取り消しました"
     },
     "positionSheet": {
@@ -409,6 +411,7 @@
         "exportWhat": "エクスポート",
         "scopeMatch": "このマッチ",
         "scopeList": "リストの {n} マッチ",
+        "scopeSelection": "選択した {n} 試合",
         "scopeLibrary": "ライブラリ全体",
         "export": "エクスポート…",
         "import": "インポート…",
@@ -708,6 +711,7 @@
         "name": "名前",
         "newTournamentPlaceholder": "新規トーナメント…",
         "noMatches": "マッチがありません",
+        "print": "トーナメントを印刷…",
         "noTournaments": "トーナメントがありません",
         "openHint": "ダブルクリックまたは Enter で開く",
         "notesPlaceholder": "メモ…",

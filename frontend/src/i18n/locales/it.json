@@ -372,6 +372,8 @@
         "batch": "Le {n} partite della lista",
         "batchTip": "Un foglio per partita, in un unico documento",
         "tooMany": "{n} partite nella lista: una stampa ne prende al massimo {max}. Filtrate la lista per ridurla.",
+        "selection": "{n} partite selezionate",
+        "tooManySelected": "{n} partite selezionate: al massimo {max} per stampa o archivio.",
         "cancelled": "Foglio di partita annullato"
     },
     "positionSheet": {
@@ -409,6 +411,7 @@
         "exportWhat": "Esporta",
         "scopeMatch": "Questo match",
         "scopeList": "I {n} match dell'elenco",
+        "scopeSelection": "Le {n} partite selezionate",
         "scopeLibrary": "Tutta la libreria",
         "export": "Esporta…",
         "import": "Importa…",
@@ -708,6 +711,7 @@
         "name": "Nome",
         "newTournamentPlaceholder": "Nuovo torneo…",
         "noMatches": "Nessun match",
+        "print": "Stampa il torneo…",
         "noTournaments": "Nessun torneo",
         "openHint": "Doppio clic o Invio per aprire",
         "notesPlaceholder": "Note…",

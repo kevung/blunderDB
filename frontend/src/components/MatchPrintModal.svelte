@@ -9,8 +9,8 @@
 
     let {
         open = false,
-        /** The match the dialog was opened on. */
-        matchId = null,
+        /** The matches the dialog was opened on: one, a selection, or a whole tournament. @type {number[]} */
+        matchIds = [],
         /** How many matches the filtered list holds (CountMatches), for the batch. */
         listedTotal = 0,
         /** Every id of the filtered list, in its order, for the batch. @type {() => Promise<number[]>} */
@@ -22,7 +22,8 @@
     let options = $state({ ...DEFAULT_SHEET_OPTIONS });
     let batch = $state(false);
     let busy = $state(false);
-    const tooMany = $derived(batch && listedTotal > MAX_SHEET_MATCHES);
+    const count = $derived(batch ? listedTotal : matchIds.length);
+    const tooMany = $derived(count > MAX_SHEET_MATCHES);
 
     /** @type {{ key: keyof typeof DEFAULT_SHEET_OPTIONS, label: string, tip: string }[]} */
     const BOXES = [
@@ -36,7 +37,7 @@
     async function print() {
         busy = true;
         try {
-            const ids = batch ? await listAll() : matchId == null ? [] : [matchId];
+            const ids = batch ? await listAll() : matchIds;
             await printMatchSheet(ids, $state.snapshot(options), { onLaunch: () => onclose() });
         } finally {
             busy = false;
@@ -54,6 +55,9 @@
                 {$t(box.label)}
             </label>
         {/each}
+        {#if matchIds.length > 1 && !batch}
+            <p class="print-selection" data-testid="match-print-selection">{$t('matchSheet.selection', { n: matchIds.length })}</p>
+        {/if}
         {#if listedTotal > 1}
             <label title={$t('matchSheet.batchTip')}>
                 <input type="checkbox" bind:checked={batch} data-option="batch" />
@@ -61,12 +65,12 @@
             </label>
         {/if}
         {#if tooMany}
-            <p class="print-warning" role="alert" data-testid="match-print-too-many">{$t('matchSheet.tooMany', { n: listedTotal, max: MAX_SHEET_MATCHES })}</p>
+            <p class="print-warning" role="alert" data-testid="match-print-too-many">{$t(batch ? 'matchSheet.tooMany' : 'matchSheet.tooManySelected', { n: count, max: MAX_SHEET_MATCHES })}</p>
         {/if}
     </div>
     {#snippet footer()}
         <button type="button" onclick={() => onclose()}>{$t('common.cancel')}</button>
-        <button type="button" class="primary" data-testid="match-print-go" disabled={busy || tooMany || (!batch && matchId == null)} onclick={print}>{$t('matchSheet.print')}</button>
+        <button type="button" class="primary" data-testid="match-print-go" disabled={busy || tooMany || (!batch && matchIds.length === 0)} onclick={print}>{$t('matchSheet.print')}</button>
     {/snippet}
 </Modal>
 
@@ -84,6 +88,9 @@
         display: flex;
         gap: var(--space-1);
         align-items: center;
+    }
+    .print-selection {
+        margin: 0;
     }
     .print-warning {
         margin: 0;

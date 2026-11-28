@@ -13,6 +13,9 @@
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import TournamentReview from './TournamentReview.svelte';
     import MatchSheet from './MatchSheet.svelte';
+    import MatchPrintModal from './MatchPrintModal.svelte';
+    import PaperArchiveModal from './PaperArchiveModal.svelte';
+    import { modifierSelect, idsFor } from '../utils/multiSelect.js';
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import { menuFor } from '../services/actionCatalog.js';
     import { sendContext, otherBases } from '../services/sendActions.js';
@@ -247,8 +250,17 @@
 
     $effect(() => {
         void selectedTournament?.id;
-        untrack(() => (sheetMatchId = null));
+        untrack(() => {
+            sheetMatchId = null;
+            multi = new Set();
+        });
     });
+
+    // The matches selected with Ctrl/Shift+click, and the dialogs of print and paper archive they open.
+    let multi = $state(/** @type {Set<number>} */ (new Set()));
+    let multiAnchor = /** @type {number | null} */ (null);
+    let printMatchIds = $state(/** @type {number[] | null} */ (null));
+    let archiveMatchIds = $state(/** @type {number[] | null} */ (null));
 
     // The match whose sheet sits under the table: one click on its row.
     let sheetMatchId = $state(/** @type {number | null} */ (null));
@@ -702,6 +714,8 @@
                 tournamentEdit.cancel();
             } else if (addMatchSearch) {
                 addMatchSearch = '';
+            } else if (multi.size > 0) {
+                multi = new Set();
             } else if (sheetMatchId != null) {
                 sheetMatchId = null;
             } else if (selectedTournament) {
@@ -1067,6 +1081,18 @@
                                 title={$t('direction.named.suisse_tableauHint')}>{$t('direction.direct')}</button
                             >
                         {/if}
+                        {#if multi.size > 1}
+                            <button class="direction-btn" data-testid="tournament-selection-chip" onclick={() => (multi = new Set())}>{$t('matchSheet.selection', { n: multi.size })} ×</button>
+                        {/if}
+                        <button
+                            class="direction-btn"
+                            data-testid="tournament-print"
+                            disabled={tournamentMatches.length === 0}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                printMatchIds = tournamentMatches.map((m) => m.id);
+                            }}>{$t('tournament.print')}</button
+                        >
                         <button
                             class="review-btn"
                             class:active={reviewOpen}
@@ -1087,8 +1113,29 @@
                     rows={tournamentMatches}
                     columns={matchColumns}
                     selectedKey={sheetMatchId}
-                    onSelect={(match) => (sheetMatchId = sheetMatchId === match.id ? null : match.id)}
+                    selectedKeys={multi}
+                    onSelect={(/** @type {any} */ match, /** @type {number} */ _i, /** @type {Event | undefined} */ ev) => {
+                        const sel = modifierSelect(tournamentMatches, (/** @type {any} */ m) => m.id, multi, multiAnchor, match, /** @type {any} */ (ev) ?? {}, sheetMatchId);
+                        if (sel) {
+                            multi = sel.keys;
+                            multiAnchor = sel.anchor;
+                            return;
+                        }
+                        multi = new Set();
+                        sheetMatchId = sheetMatchId === match.id ? null : match.id;
+                    }}
                     onActivate={openMatch}
+                    rowMenu={(/** @type {any} */ match) =>
+                        menuFor(
+                            'match',
+                            {
+                                do: {
+                                    print: () => (printMatchIds = idsFor(tournamentMatches, (/** @type {any} */ m) => m.id, multi, match.id)),
+                                    archive: () => (archiveMatchIds = idsFor(tournamentMatches, (/** @type {any} */ m) => m.id, multi, match.id))
+                                }
+                            },
+                            $t
+                        )}
                     onReorder={matchOrder.reorder}
                     emptyText={$t('tournament.noMatches')}
                 >
@@ -1194,6 +1241,9 @@
         {/if}
     </div>
 </section>
+
+<MatchPrintModal open={printMatchIds !== null} matchIds={printMatchIds ?? []} onclose={() => (printMatchIds = null)} />
+<PaperArchiveModal open={archiveMatchIds !== null} matchIds={archiveMatchIds ?? []} onclose={() => (archiveMatchIds = null)} />
 
 <style>
     /* La Direction d'un tournoi, dans l'en-tête du tournoi sélectionné : un badge d'état quand

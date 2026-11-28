@@ -372,6 +372,8 @@
         "batch": "Die {n} Matches der Liste",
         "batchTip": "Ein Blatt pro Match in einem einzigen Dokument",
         "tooMany": "{n} Matches in der Liste: ein Druck umfasst höchstens {max}. Filtern Sie die Liste, um sie einzugrenzen.",
+        "selection": "{n} Matches ausgewählt",
+        "tooManySelected": "{n} Matches ausgewählt: höchstens {max} pro Druck oder Archiv.",
         "cancelled": "Matchblatt abgebrochen"
     },
     "positionSheet": {
@@ -409,6 +411,7 @@
         "exportWhat": "Exportieren",
         "scopeMatch": "Dieses Match",
         "scopeList": "Die {n} Matches der Liste",
+        "scopeSelection": "Die {n} ausgewählten Matches",
         "scopeLibrary": "Die ganze Bibliothek",
         "export": "Exportieren…",
         "import": "Importieren…",
@@ -708,6 +711,7 @@
         "name": "Name",
         "newTournamentPlaceholder": "Neues Turnier…",
         "noMatches": "Keine Matches",
+        "print": "Turnier drucken…",
         "noTournaments": "Keine Turniere",
         "openHint": "Doppelklick oder Eingabetaste zum Öffnen",
         "notesPlaceholder": "Notizen…",

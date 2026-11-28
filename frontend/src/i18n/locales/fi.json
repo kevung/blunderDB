@@ -372,6 +372,8 @@
         "batch": "Listan {n} ottelua",
         "batchTip": "Yksi lomake ottelua kohden, yhdessä asiakirjassa",
         "tooMany": "Luettelossa on {n} ottelua: yksi tuloste kattaa enintään {max}. Rajaa luetteloa suodattimella.",
+        "selection": "{n} ottelua valittu",
+        "tooManySelected": "{n} ottelua valittu: enintään {max} tulostusta tai arkistoa kohden.",
         "cancelled": "Ottelulomake peruttu"
     },
     "positionSheet": {
@@ -409,6 +411,7 @@
         "exportWhat": "Vie",
         "scopeMatch": "Tämä ottelu",
         "scopeList": "Luettelon {n} ottelua",
+        "scopeSelection": "Valitut {n} ottelua",
         "scopeLibrary": "Koko kirjasto",
         "export": "Vie…",
         "import": "Tuo…",
@@ -708,6 +711,7 @@
         "name": "Nimi",
         "newTournamentPlaceholder": "Uusi turnaus…",
         "noMatches": "Ei otteluita",
+        "print": "Tulosta turnaus…",
         "noTournaments": "Ei turnauksia",
         "openHint": "Avaa kaksoisnapsautuksella tai Enterillä",
         "notesPlaceholder": "Muistiinpanot…",
