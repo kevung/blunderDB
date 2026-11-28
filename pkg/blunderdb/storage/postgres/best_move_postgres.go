@@ -10,6 +10,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 
@@ -114,7 +115,7 @@ func backfillAnalysisBestMove(ctx context.Context, conn beginner, maxBatches int
 		if err := ctx.Err(); err != nil {
 			return false, err
 		}
-		n, left, err := bestMoveBatchPass(ctx, conn)
+		n, left, err := retryBestMoveBatch(ctx, func() (int, bool, error) { return bestMoveBatchPass(ctx, conn) })
 		if err != nil {
 			return false, err
 		}
@@ -124,6 +125,38 @@ func backfillAnalysisBestMove(ctx context.Context, conn beginner, maxBatches int
 		}
 	}
 	return false, nil
+}
+
+// bestMoveRetries bounds how often one batch is replayed after a deadlock
+// (40P01) or a serialization failure (40001): a writer of the same rows
+// beside the open service can lose the race, and the batch rolled back whole,
+// so replaying it is safe. Variables for the tests.
+var (
+	bestMoveRetries      = 5
+	bestMoveRetryBackoff = 200 * time.Millisecond
+)
+
+func retryBestMoveBatch(ctx context.Context, pass func() (int, bool, error)) (int, bool, error) {
+	for attempt := 0; ; attempt++ {
+		n, left, err := pass()
+		if err == nil || attempt >= bestMoveRetries || !isTransientConflict(err) {
+			return n, left, err
+		}
+		slog.Warn("analysis best move: batch lost a conflict; replaying it", "attempt", attempt+1, "error", err)
+		select {
+		case <-ctx.Done():
+			return 0, false, ctx.Err()
+		case <-time.After(bestMoveRetryBackoff << attempt):
+		}
+	}
+}
+
+func isTransientConflict(err error) bool {
+	var s interface{ SQLState() string }
+	if !errors.As(err, &s) {
+		return false
+	}
+	return s.SQLState() == "40P01" || s.SQLState() == "40001"
 }
 
 // bestMoveBatchPass derives one batch of the cursor's first tenant: the rows
