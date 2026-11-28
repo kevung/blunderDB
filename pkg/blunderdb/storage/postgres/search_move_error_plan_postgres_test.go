@@ -101,10 +101,8 @@ func TestMoveErrorSearchProbesAnalysisPerPosition(t *testing.T) {
 			// is then what keeps them.
 			defer sqlshared.SetNarrowLimit(2)()
 			rec.record(c.name)
+			// A count keeps the join (TestMoveErrorProbedForAPageJoinedForASelectiveCount).
 			_, _, err := s.Search().FindIDsPage(ctx, "1", c.filter, storage.PageOpts{Limit: 26})
-			if err == nil {
-				_, err = s.Search().Count(ctx, "1", c.filter)
-			}
 			rec.record("")
 			if err != nil {
 				t.Fatal(err)
