@@ -42,6 +42,7 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
     SheetPDFAvailable: vi.fn(async () => true),
     WriteSheetPDF: vi.fn()
 }));
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({ EventsOn: vi.fn(() => () => {}) }));
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
 vi.mock('../stores/matchListStore.js', () => ({ matchListStore: { reload: vi.fn() } }));
 
