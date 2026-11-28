@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 	"io/fs"
 	"log/slog"
 	"os"
@@ -14,6 +13,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 
 	_ "modernc.org/sqlite"
 
