@@ -160,6 +160,12 @@ type drawOpts struct {
 	hidePipTop bool
 	inkPips    bool // draw the pip counts in the image, figures of inkFont
 	inkFont    int
+	// inkPipsFar puts the counts that many point widths right of the
+	// board instead of left of it, shifted across by inkPipsShift points;
+	// inkPipsLetter writes a W before the top count, a B before the bottom
+	// one.
+	inkPipsFar, inkPipsShift float64
+	inkPipsLetter            bool
 	// tray draws a box beside the field for each row, its borne-off
 	// checkers as thin bars; trayExtra bars more than borne off.
 	tray      bool
@@ -359,8 +365,20 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 	}
 	if o.inkPips {
 		h := 0.55 * p
-		c.inkNumber(strconv.Itoa(pipsOfSide(s.top)), float64(ox)-1.5*p, float64(y0)+0.2*float64(H), h, o.inkFont)
-		c.inkNumber(strconv.Itoa(pipsOfSide(s.bottom)), float64(ox)-1.5*p, float64(y1)-0.2*float64(H), h, o.inkFont)
+		x := float64(ox) - 1.5*p
+		if o.inkPipsFar > 0 {
+			x = float64(d+t) + (o.inkPipsFar+o.inkPipsShift)*p
+		}
+		for k, side := range [2][25]int{s.top, s.bottom} {
+			y := float64(y0) + 0.2*float64(H)
+			if k == 1 {
+				y = float64(y1) - 0.2*float64(H)
+			}
+			l, _ := c.inkNumber(strconv.Itoa(pipsOfSide(side)), x, y, h, o.inkFont)
+			if o.inkPipsLetter {
+				c.inkLetter("WB"[k], l-0.6*h, y, h)
+			}
+		}
 	}
 	if o.pips {
 		if !o.hidePipTop {
@@ -369,6 +387,44 @@ func (c *canvas) draw(s synthPos, ox, oy int, o drawOpts) []Word {
 		word(strconv.Itoa(pipsOfSide(s.bottom)), float64(ox)-1.5*p, float64(y1)-0.2*float64(H))
 	}
 	return words
+}
+
+// inkLetter draws a capital W or B, h pixels high, its right at right and
+// its middle at cy: a B of two stacked boxes, shaped like an 8, a W of four
+// slanted strokes. It gives the letter's left.
+func (c *canvas) inkLetter(l byte, right, cy, h float64) float64 {
+	sw := max(2, int(0.12*h))
+	w := 0.7 * h
+	if l == 'W' {
+		w = 1.1 * h
+	}
+	cx := right - w/2
+	x0, y0 := int(cx-w/2), int(cy-h/2)
+	x1, y1, ym := int(cx+w/2), int(cy+h/2), int(cy)
+	switch l {
+	case 'B':
+		c.rect(x0, y0, x0+sw, y1, 0)
+		for _, y := range []int{y0, ym - sw/2, y1 - sw} {
+			c.rect(x0, y, x1-sw, y+sw, 0)
+		}
+		c.rect(x1-sw, y0+sw, x1, ym-sw/2, 0)
+		c.rect(x1-sw, ym+sw/2, x1, y1-sw, 0)
+	case 'W':
+		xs := []float64{cx - w/2, cx - w/4, cx, cx + w/4, cx + w/2}
+		for k := 0; k < 4; k++ {
+			ya, yb := float64(y0), float64(y1)
+			if k%2 == 1 {
+				ya, yb = yb, ya
+			}
+			for ty := 0; ty < int(h); ty++ {
+				f := float64(ty) / h
+				x := xs[k] + f*(xs[k+1]-xs[k])
+				y := ya + f*(yb-ya)
+				c.rect(int(x)-sw/2, int(y), int(x)-sw/2+sw, int(y)+1, 0)
+			}
+		}
+	}
+	return cx - w/2
 }
 
 func (c *canvas) noise(r *rand.Rand, amp float64) {

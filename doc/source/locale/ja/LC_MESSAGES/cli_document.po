@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-27 15:11+0100\n"
+"POT-Creation-Date: 2026-11-28 01:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.19.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cli_document.rst:4
 msgid "Importer les positions d'un document"
@@ -683,29 +683,36 @@ msgstr ""
 msgid ""
 "Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et"
 " l'image elle-même. Dans l'image, la commande lit les nombres isolés "
-"autour du diagramme, chiffre par chiffre, par comparaison avec la "
-"numérotation des pointes du document, avec huit polices courantes "
-"embarquées, puis avec les chiffres déjà lus dans le document ; un nombre "
-"n'est rendu que si chacun de ses chiffres est reconnu nettement, sinon "
-"elle s'abstient. L'emplacement des pips est appris sur le document : un "
-"nombre lu qui égale les pips d'un diagramme compté à quinze pions par "
-"camp vote pour sa place, et deux places (haut et bas) doivent réunir "
-"assez de votes. Aucun chiffre n'est choisi d'après les pips du diagramme "
-"qu'il accompagne, et rien n'est gardé d'un document à l'autre. Quand le "
-"texte et l'image donnent chacun des pips et qu'ils diffèrent, les pions "
-"ne sont pas confirmés et le doute le dit (``the two disagree``). Une "
-"entrée sans pips lus reste ``to-verify`` (``no printed pip count was "
-"found next to the diagram``)."
+"autour du diagramme, sur la bande horizontale du plateau jusqu'à environ "
+"une demi-largeur de plateau de chaque côté ; une lettre seule devant un "
+"nombre (``W 164``, ``B 123``) ne l'empêche pas d'être lu. Elle les lit "
+"chiffre par chiffre, par comparaison avec la numérotation des pointes du "
+"document, avec huit polices courantes embarquées, puis avec les chiffres "
+"déjà lus dans le document ; un nombre n'est rendu que si chacun de ses "
+"chiffres est reconnu nettement, sinon elle s'abstient. L'emplacement des "
+"pips est appris sur le document : un nombre lu qui égale les pips d'un "
+"diagramme compté à quinze pions par camp vote pour sa place, et deux "
+"places (haut et bas) doivent réunir assez de votes ; une place s'étend "
+"sur les positions voisines qui ont reçu des votes, pour un document qui "
+"place ses plateaux à des endroits ou à des tailles qui varient. Aucun "
+"chiffre n'est choisi d'après les pips du diagramme qu'il accompagne, et "
+"rien n'est gardé d'un document à l'autre. Quand le texte et l'image "
+"donnent chacun des pips et qu'ils diffèrent, les pions ne sont pas "
+"confirmés et le doute le dit (``the two disagree``). Une entrée sans pips"
+" lus reste ``to-verify`` (``no printed pip count was found next to the "
+"diagram``)."
 msgstr ""
 "印刷されたピップ数は 2 つの情報源から読み取られます。PDF "
-"のテキストレイヤーと、画像そのものです。画像では、コマンドは図の周囲にある孤立した数を 1 桁ずつ、文書のポイント番号との比較、埋め込まれた 8 "
+"のテキストレイヤーと、画像そのものです。画像では、コマンドは図の周囲にある孤立した数を、盤面の水平な帯の上で、両側とも盤面の幅の約半分まで読み取ります。数の前にある"
+" 1 文字だけの文字(\\ ``W 164``\\ 、\\ ``B 123``\\ )があっても、その数は読み取られます。1 "
+"桁ずつ、文書のポイント番号との比較、埋め込まれた 8 "
 "つの一般的なフォント、そして文書内で既に読み取った数字を使って読み取ります。数は、すべての桁がはっきり認識された場合にのみ返され、そうでなければ読み取りを控えます。ピップ数の位置は文書から学習されます。1"
 " サイドあたり 15 個で数えた図のピップ数と等しい読み取り済みの数が、その位置に投票し、2 "
-"か所(上と下)が十分な票を集める必要があります。付随する図のピップ数から数字が選ばれることはなく、文書間で何も保持されません。テキストと画像がそれぞれピップ数を与えて両者が異なる場合、駒は確認されず、疑いがそれを示します(``the"
-" two disagree``)。ピップ数が読み取れなかったエントリは\\ ``to-verify``\\ のままです(``no printed "
-"pip count was found next to the diagram``)。"
+"か所(上と下)が十分な票を集める必要があります。位置は、票を得た隣接位置にも広がり、盤面を変動する場所や大きさに配置する文書にも対応します。付随する図のピップ数から数字が選ばれることはなく、文書間で何も保持されません。テキストと画像がそれぞれピップ数を与えて両者が異なる場合、駒は確認されず、疑いがそれを示します(\\"
+" ``the two disagree``\\ )。ピップ数が読み取れなかったエントリは\\ ``to-verify``\\ のままです(\\ "
+"``no printed pip count was found next to the diagram``\\ )。"
 
-#: ../../source/cli_document.rst:417
+#: ../../source/cli_document.rst:422
 msgid ""
 "Une flèche de coup dessinée sur le diagramme (un trait droit et fin, "
 "oblique, seul sur le papier) n'est pas lue comme un pion, et les nombres "
@@ -715,19 +722,19 @@ msgstr ""
 "図の上に描かれた手の矢印(紙面上に単独である、斜めの細い直線)は駒として読み取られず、盤面の横に印刷された 15 "
 "以下の数(駒の数、番号)もピップとは見なされません。"
 
-#: ../../source/cli_document.rst:422
+#: ../../source/cli_document.rst:427
 msgid ""
 "La lecture des chiffres suppose des chiffres arabes sombres sur fond "
 "clair, écrits à l'horizontale, d'au moins 15 pixels de haut à la "
-"résolution de lecture, des pips imprimés à la même place dans tout le "
-"document, et une trentaine de diagrammes lus à quinze pions par camp pour"
-" apprendre cette place."
+"résolution de lecture, des pips imprimés à une place voisine d'un "
+"diagramme à l'autre, et une trentaine de diagrammes lus à quinze pions "
+"par camp pour apprendre cette place."
 msgstr ""
 "数字の読み取りは、明るい背景に暗いアラビア数字が水平に書かれていること、読み取り解像度で高さが 15 "
-"ピクセル以上あること、ピップ数が文書全体で同じ位置に印刷されていること、そしてその位置を学習するために 1 サイドあたり 15 "
-"個で読み取られた図が 30 個ほどあることを前提とします。"
+"ピクセル以上あること、ピップ数が図ごとに近い位置に印刷されていること、そしてその位置を学習するために 1 サイドあたり 15 個で読み取られた図が"
+" 30 個ほどあることを前提とします。"
 
-#: ../../source/cli_document.rst:427
+#: ../../source/cli_document.rst:432
 msgid ""
 "Les doutes nomment ce qui reste à contrôler : une pile qui porte un "
 "chiffre, un disque d'aucune des deux classes (pion pâli ou taché), une "
@@ -738,7 +745,7 @@ msgid ""
 "dessinés."
 msgstr "疑いは、まだ確認すべき点を示します。数字が付いた駒の山、どちらのクラスでもない円盤(色あせた、または汚れた駒)、上から下まで埋まった列、長さで数えた暗い色の山、半分のボード(ポイントのない列)、仮定した進行方向(駒はピップ数の少ない側へ進む)、差から数えたベアオフ済みの駒、中央以外に描かれたキューブ、描かれたダイスです。"
 
-#: ../../source/cli_document.rst:434
+#: ../../source/cli_document.rst:439
 msgid ""
 "Ne sont jamais lus : la valeur et le propriétaire du videau (le contexte "
 "par défaut le dit centré), les dés (aucun), le score (partie libre), le "
@@ -754,11 +761,11 @@ msgstr ""
 "O)で描かれた駒。駒のどれもが塗りつぶされた円盤でないドキュメントは読み取られず、すべての図がこの理由(\\ ``the document "
 "draws no filled checker``\\ )で\\ ``uncertain``\\ になります。"
 
-#: ../../source/cli_document.rst:443
+#: ../../source/cli_document.rst:448
 msgid "Pourquoi l'import refuse"
 msgstr "インポートが拒否する理由"
 
-#: ../../source/cli_document.rst:445
+#: ../../source/cli_document.rst:450
 msgid ""
 "Une entrée ni ``sure`` ni vérifiée n'est pas fiable, et ce qui entre dans"
 " une collection se partage à l'export. L'import refuse donc **tout** le "
@@ -769,7 +776,7 @@ msgstr ""
 "でも検証済みでもないエントリは信頼できず、コレクションに入ったものはエクスポート時に共有されます。そのためインポートは、何も書き込む前に "
 "relevé\\ **全体**\\ を拒否し、ランクを示して、対処を伝えます。"
 
-#: ../../source/cli_document.rst:453
+#: ../../source/cli_document.rst:458
 msgid ""
 "Quand des entrées sont sous un contexte par défaut non confirmé, ou "
 "complètes sans ``--accept-complete``, le message le dit aussi :"
@@ -777,7 +784,7 @@ msgstr ""
 "未確認のデフォルトコンテキストの下にあるエントリや、\\ ``--accept-complete``\\ "
 "なしの完全なエントリがある場合は、メッセージがそれも伝えます。"
 
-#: ../../source/cli_document.rst:460
+#: ../../source/cli_document.rst:465
 msgid ""
 "On vérifie ces entrées, ou on passe ``--force`` pour importer le relevé "
 "tel quel ; l'import dit alors combien d'entrées il a forcées (``Forced: 3"
@@ -787,11 +794,11 @@ msgstr ""
 "をそのままインポートします。その場合、インポートは強制したエントリの数を示します(\\ ``Forced: 3 entries neither "
 "sure nor verified``\\ )。"
 
-#: ../../source/cli_document.rst:467
+#: ../../source/cli_document.rst:472
 msgid "Le repli"
 msgstr "フォールバック"
 
-#: ../../source/cli_document.rst:469
+#: ../../source/cli_document.rst:474
 msgid ""
 "Une entrée dont les pions sont certifiés (``sure``, ou complète avec "
 "``--accept-complete`` et un sens de jeu certain) et dont seul le contexte"
@@ -805,7 +812,7 @@ msgstr ""
 " が持つコンテキスト、つまり読み取れたものと、残りはデフォルトに\\ **フォールバック**\\ させることを提案します。\\ "
 "``check``\\ はこれらの順位を示し、エラーメッセージがフォールバックを提案します。"
 
-#: ../../source/cli_document.rst:480
+#: ../../source/cli_document.rst:485
 msgid ""
 "``import --fallback`` importe ces entrées sans les marquer vérifiées ; la"
 " référence de chacune, dans son commentaire, nomme les champs à contrôler"
@@ -826,11 +833,11 @@ msgstr ""
 "）。フォールバックの対象外となるのは、駒が要確認のエントリ、矛盾したコンテキスト、確認されていないデフォルトコンテキストです。\\ "
 "``--force``\\ を付けても、局面のないエントリは拒否されます。入力するか削除してください。"
 
-#: ../../source/cli_document.rst:491
+#: ../../source/cli_document.rst:496
 msgid "Ce qui entre en base"
 msgstr "データベースに入るもの"
 
-#: ../../source/cli_document.rst:493
+#: ../../source/cli_document.rst:498
 msgid ""
 "Seules les positions entrent, dans l'ordre du document, dans une "
 "collection au nom du document (ou de ``--collection``). Chaque position "
@@ -842,7 +849,7 @@ msgstr ""
 "の名前)のコレクションに入ります。各局面は単独で持ち込まれた局面として入り、ライブラリはその同一性で局面を認識します。すでに持っている局面は重複しません(``new"
 " in the library`` \\ は、足りなかった局面の数です)。"
 
-#: ../../source/cli_document.rst:499
+#: ../../source/cli_document.rst:504
 msgid ""
 "La **description** de la collection porte le titre, l'auteur, l'édition "
 "et l'adresse du document, un par ligne. Une collection existante du même "
@@ -853,7 +860,7 @@ msgstr ""
 "コレクションの\\ **説明**\\ には、ドキュメントのタイトル、著者、版、アドレスが 1 行に 1 "
 "つずつ入ります。同名の既存コレクションは足りない局面を受け取り、説明があればそれを保持します。ダイナミックコレクション(クエリで定義されたもの)は拒否されます。"
 
-#: ../../source/cli_document.rst:503
+#: ../../source/cli_document.rst:508
 msgid ""
 "Chaque position porte un **commentaire** qui donne sa référence, après le"
 " titre du document : ``Mon livre — p. 146, Problem 191``."
@@ -861,18 +868,18 @@ msgstr ""
 "各局面には、ドキュメントのタイトルに続けて参照を示す\\ **コメント**\\ が付きます。\\ ``Mon livre — p. 146, "
 "Problem 191``"
 
-#: ../../source/cli_document.rst:506
+#: ../../source/cli_document.rst:511
 msgid ""
 "Rien d'autre n'entre, jamais : ni image, ni rectangle, ni texte de "
 "l'auteur. Un import interrompu ou refusé n'écrit rien : c'est une seule "
 "transaction."
 msgstr "それ以外のものは決して入りません。画像も、矩形も、著者のテキストも入りません。中断または拒否されたインポートは何も書き込みません。インポートは単一のトランザクションです。"
 
-#: ../../source/cli_document.rst:510
+#: ../../source/cli_document.rst:515
 msgid "Une position répétée"
 msgstr "繰り返される局面"
 
-#: ../../source/cli_document.rst:512
+#: ../../source/cli_document.rst:517
 msgid ""
 "Quand le document montre deux fois la même position, elle n'entre qu'une "
 "fois dans la collection, à sa première apparition. Son commentaire cite "
@@ -882,11 +889,11 @@ msgstr ""
 "ドキュメントが同じ局面を 2 回示す場合、その局面は最初の出現位置でコレクションに 1 回だけ入ります。そのコメントはすべての参照を挙げます。\\"
 " ``Mon livre — p. 2, Problem 1; p. 4``\\ 。\\ ``repeated`` \\ はこの繰り返しの数です。"
 
-#: ../../source/cli_document.rst:518
+#: ../../source/cli_document.rst:523
 msgid "Réimporter"
 msgstr "再インポート"
 
-#: ../../source/cli_document.rst:520
+#: ../../source/cli_document.rst:525
 msgid ""
 "Réimporter le même relevé n'ajoute rien : aucune position nouvelle, rien "
 "dans la collection (``added to the collection: 0``), et le commentaire de"
@@ -897,11 +904,11 @@ msgstr ""
 "collection: 0``)、参照コメントは参照が変わった場合にのみ書き直され、二重にはなりません。したがって、relevé "
 "を修正した後でインポートをやり直せます。"
 
-#: ../../source/cli_document.rst:526
+#: ../../source/cli_document.rst:531
 msgid "Le démon"
 msgstr "デーモン"
 
-#: ../../source/cli_document.rst:528
+#: ../../source/cli_document.rst:533
 msgid ""
 "Le démon ``serve`` importe un relevé sous ``/v1/documents.importReleve`` "
 "avec les mêmes règles ; il n'analyse aucun document (voir "

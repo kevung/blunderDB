@@ -402,13 +402,18 @@ message d'erreur dit de le confirmer.
 
 Les pips imprimés se lisent à deux sources : la couche texte d'un PDF, et
 l'image elle-même. Dans l'image, la commande lit les nombres isolés autour du
-diagramme, chiffre par chiffre, par comparaison avec la numérotation des pointes
-du document, avec huit polices courantes embarquées, puis avec les chiffres déjà
-lus dans le document ; un nombre n'est rendu que si chacun de ses chiffres est
-reconnu nettement, sinon elle s'abstient. L'emplacement des pips est appris sur
+diagramme, sur la bande horizontale du plateau jusqu'à environ une demi-largeur
+de plateau de chaque côté ; une lettre seule devant un nombre (``W 164``,
+``B 123``) ne l'empêche pas d'être lu. Elle les lit chiffre par chiffre, par
+comparaison avec la numérotation des pointes du document, avec huit polices
+courantes embarquées, puis avec les chiffres déjà lus dans le document ; un
+nombre n'est rendu que si chacun de ses chiffres est reconnu nettement, sinon
+elle s'abstient. L'emplacement des pips est appris sur
 le document : un nombre lu qui égale les pips d'un diagramme compté à quinze
 pions par camp vote pour sa place, et deux places (haut et bas) doivent réunir
-assez de votes. Aucun chiffre n'est choisi d'après les pips du diagramme qu'il
+assez de votes ; une place s'étend sur les positions voisines qui ont reçu des
+votes, pour un document qui place ses plateaux à des endroits ou à des tailles
+qui varient. Aucun chiffre n'est choisi d'après les pips du diagramme qu'il
 accompagne, et rien n'est gardé d'un document à l'autre. Quand le texte et
 l'image donnent chacun des pips et qu'ils diffèrent, les pions ne sont pas
 confirmés et le doute le dit (``the two disagree``). Une entrée sans pips lus reste
@@ -421,7 +426,7 @@ pour les pips.
 
 La lecture des chiffres suppose des chiffres arabes sombres sur fond clair,
 écrits à l'horizontale, d'au moins 15 pixels de haut à la résolution de lecture,
-des pips imprimés à la même place dans tout le document, et une trentaine de
+des pips imprimés à une place voisine d'un diagramme à l'autre, et une trentaine de
 diagrammes lus à quinze pions par camp pour apprendre cette place.
 
 Les doutes nomment ce qui reste à contrôler : une pile qui porte un chiffre, un
