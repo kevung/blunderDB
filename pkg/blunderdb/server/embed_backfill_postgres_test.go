@@ -92,6 +92,25 @@ func deferredState(t *testing.T, conn *pgx.Conn) (valid *bool, nulls int) {
 	return valid, nulls
 }
 
+// waitActivity waits until a backend of pg_stat_activity matches where.
+func waitActivity(t *testing.T, conn *pgx.Conn, where string) {
+	t.Helper()
+	for deadline := time.Now().Add(30 * time.Second); ; {
+		var seen bool
+		if err := conn.QueryRow(context.Background(),
+			`SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND `+where+`)`).Scan(&seen); err != nil {
+			t.Fatal(err)
+		}
+		if seen {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("no backend where %s", where)
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+}
+
 func waitDeferred(t *testing.T, c io.Closer) {
 	t.Helper()
 	select {
@@ -102,10 +121,14 @@ func waitDeferred(t *testing.T, c io.Closer) {
 }
 
 // TestBootstrapDeferredBackfills: Bootstrap returns before the passes Migrate
-// defers, which then build the best move index and fill the column.
+// defers, which then build the best move index and fill the column, past the
+// end of the setup ctx.
 func TestBootstrapDeferredBackfills(t *testing.T) {
 	dsn, conn := seedDeferredPending(t)
-	_, c, err := Bootstrap(context.Background(), Config{Backend: "postgres", DSN: dsn})
+	// A host may bound the setup ctx to the start: the passes outlive it.
+	setup, cancel := context.WithCancel(context.Background())
+	_, c, err := Bootstrap(setup, Config{Backend: "postgres", DSN: dsn})
+	cancel()
 	if err != nil {
 		t.Fatalf("Bootstrap: %v", err)
 	}
@@ -140,20 +163,7 @@ func TestBootstrapCloseStopsDeferredBackfills(t *testing.T) {
 		t.Fatalf("Bootstrap: %v", err)
 	}
 	// Close must meet the build itself, not a pass that has not reached it.
-	for deadline := time.Now().Add(30 * time.Second); ; {
-		var waiting bool
-		if err := conn.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM pg_stat_activity
-			WHERE query LIKE 'CREATE INDEX CONCURRENTLY%idx_analysis_best_move%' AND wait_event_type IS NOT NULL)`).Scan(&waiting); err != nil {
-			t.Fatal(err)
-		}
-		if waiting {
-			break
-		}
-		if time.Now().After(deadline) {
-			t.Fatal("the index build never started")
-		}
-		time.Sleep(50 * time.Millisecond)
-	}
+	waitActivity(t, conn, `query LIKE 'CREATE INDEX CONCURRENTLY%idx_analysis_best_move%' AND wait_event_type IS NOT NULL`)
 	ts := httptest.NewServer(h)
 	defer ts.Close()
 	resp, err := http.Get(ts.URL + "/healthz")
@@ -189,5 +199,34 @@ func TestBootstrapCloseStopsDeferredBackfills(t *testing.T) {
 	waitDeferred(t, c)
 	if valid, nulls := deferredState(t, conn); valid == nil || !*valid || nulls != 0 {
 		t.Errorf("after the resumed passes: index valid %v, %d rows NULL; want valid, 0", valid, nulls)
+	}
+}
+
+// TestBootstrapDeferredWaitsForAnotherBuilder: an engine that finds another
+// process holding the index build waits for it, then builds what that
+// process left unbuilt.
+func TestBootstrapDeferredWaitsForAnotherBuilder(t *testing.T) {
+	ctx := context.Background()
+	dsn, conn := seedDeferredPending(t)
+	other, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = other.Close(ctx) }()
+	if _, err := other.Exec(ctx, `SELECT pg_advisory_lock($1)`, int64(0x5f62657374696478)); err != nil {
+		t.Fatal(err)
+	}
+	_, c, err := Bootstrap(ctx, Config{Backend: "postgres", DSN: dsn})
+	if err != nil {
+		t.Fatalf("Bootstrap: %v", err)
+	}
+	defer func() { _ = c.Close() }()
+	waitActivity(t, conn, `wait_event = 'advisory' AND query LIKE '%pg_advisory_lock%'`)
+	if err := other.Close(ctx); err != nil {
+		t.Fatal(err)
+	}
+	waitDeferred(t, c)
+	if valid, nulls := deferredState(t, conn); valid == nil || !*valid || nulls != 0 {
+		t.Errorf("after the other builder left: index valid %v, %d rows NULL; want valid, 0", valid, nulls)
 	}
 }

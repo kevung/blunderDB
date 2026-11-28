@@ -442,6 +442,8 @@ func (s *Storage) BackfillDeferred(ctx context.Context) error {
 
 // bestMoveIndexLockKey keeps two processes from building the index at once:
 // the second would see the first's build as an invalid index and drop it.
+// The second waits rather than gives up: the first may be a short process
+// that stops its build on closing, leaving the index for no one to finish.
 const bestMoveIndexLockKey int64 = 0x5f62657374696478 // "_bestidx"
 
 func (s *Storage) buildBestMoveIndex(ctx context.Context) error {
@@ -450,13 +452,8 @@ func (s *Storage) buildBestMoveIndex(ctx context.Context) error {
 		return fmt.Errorf("postgres: acquire the best move index connection: %w", err)
 	}
 	defer conn.Release()
-	var held bool
-	if err := conn.QueryRow(ctx, `SELECT pg_try_advisory_lock($1)`, bestMoveIndexLockKey).Scan(&held); err != nil {
+	if _, err := conn.Exec(ctx, `SELECT pg_advisory_lock($1)`, bestMoveIndexLockKey); err != nil {
 		return fmt.Errorf("postgres: acquire the best move index lock: %w", err)
-	}
-	if !held {
-		slog.Info("analysis best move: another process builds the index")
-		return nil
 	}
 	defer func() {
 		_, _ = conn.Exec(context.WithoutCancel(ctx), `SELECT pg_advisory_unlock($1)`, bestMoveIndexLockKey)
