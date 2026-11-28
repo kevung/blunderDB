@@ -23,6 +23,11 @@ func BuildPositions(ctx context.Context, s storage.Storage, scope string, src Po
 	if err != nil {
 		return nil, err
 	}
+	// The codes are the long part of a long list: a cancel that came while
+	// reading stops before them.
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	lang, c := catalogue(o.Language)
 	l.Title = strings.TrimSpace(o.Title)
 	if l.Title == "" {

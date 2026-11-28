@@ -591,7 +591,9 @@ l'en-tête (le titre de la recherche ou de la collection, le nombre de positions
 la date) et la légende de la notation. Le document est enregistré en PDF A4
 puis ouvert dans la visionneuse du système, d'où il s'imprime ; sous Windows et
 macOS, faute de ce rendu, il reste un fichier HTML autonome ouvert dans le
-navigateur. En ligne de commande, ``sheet`` écrit la page HTML. Les options de
+navigateur. La boîte se ferme dès le fichier choisi : la liste se construit
+comme une tâche du panneau Calculs, que **Annuler**
+arrête. En ligne de commande, ``sheet`` écrit la page HTML. Les options de
 la boîte :
 
 - **Analyse** (cochée) : l'analyse de chaque position, sur sa ligne.

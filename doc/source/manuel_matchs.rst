@@ -70,7 +70,9 @@ fiche, imprime le match sur une feuille A4, sans aucun diagramme. Une boîte
 d'options s'ouvre d'abord ; la feuille est ensuite enregistrée en PDF A4 et
 ouverte dans la visionneuse du système, d'où elle s'imprime. Sous Windows et
 macOS, faute de ce rendu, elle reste un fichier HTML autonome ouvert dans le
-navigateur.
+navigateur. La boîte se ferme dès le fichier choisi : la feuille se construit
+comme une tâche du panneau Calculs, avec sa progression
+et son bouton **Annuler**, et la barre d'état dit quand elle est prête.
 L'en-tête donne les joueurs, le score final, la longueur, l'évènement, la ronde,
 la date, le nombre de parties et de coups, puis pour chaque joueur son PR, ses
 erreurs, ses blunders et son temps quand le match en a un. La transcription
@@ -137,7 +139,11 @@ d'import de document (:ref:`assistant_import_document`). Un scan à 200 ou 300 d
 de face. Un code illisible est reconstruit par son code de parité quand c'est
 possible ; la barre d'état donne les matchs importés, les doublons et les codes
 manquants. Les matchs passent par l'import ordinaire, et les analyses sont
-recalculées ensuite. En ligne de commande : ``archive`` (:doc:`cli_import_export`),
+recalculées ensuite. L'export comme l'import ferment la boîte dès leur
+lancement et tournent comme une tâche du panneau Calculs :
+sa barre suit les matchs encodés ou les fichiers lus
+puis les matchs écrits, **Annuler** l'arrête sans laisser de fichier ni de
+match à moitié écrit, et l'on continue de travailler pendant ce temps. En ligne de commande : ``archive`` (:doc:`cli_import_export`),
 dont l'export écrit la page HTML et l'import lit aussi le PDF.
 
 **Importer…** lit de la même façon les codes de réimport d'une liste de

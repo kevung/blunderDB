@@ -301,6 +301,8 @@ func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMark
 		}
 	}, func(ctx context.Context) error {
 		var err error
+		ctx, end := withTerminalProgress(ctx, "export")
+		defer end()
 		report, err = cli.db.ExportDatabaseCtx(ctx, opts)
 		return err
 	})
@@ -483,6 +485,8 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 		}
 	}, func(ctx context.Context) error {
 		var err error
+		ctx, end := withTerminalProgress(ctx, "export")
+		defer end()
 		report, err = cli.db.ExportDatabaseCtx(ctx, opts)
 		return err
 	})

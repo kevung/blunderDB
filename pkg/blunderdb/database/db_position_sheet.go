@@ -18,8 +18,15 @@ type PositionSheetOptions = printsheet.PositionsOptions
 // ArkID, in one self-contained HTML document. It writes nothing to the
 // library (ADR-0007).
 func (d *Database) PositionSheetHTML(src PositionSheetSource, opts PositionSheetOptions) (string, error) {
+	return PositionSheetHTMLCtx(context.Background(), d, src, opts)
+}
+
+// PositionSheetHTMLCtx is PositionSheetHTML under ctx: cancelling it stops
+// the reading or, once read, before the codes are drawn. A function, not a
+// method: the interface binds every method of Database.
+func PositionSheetHTMLCtx(ctx context.Context, d *Database, src PositionSheetSource, opts PositionSheetOptions) (string, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-	page, err := printsheet.BuildPositions(context.Background(), d.store, "", src, opts)
+	page, err := printsheet.BuildPositions(ctx, d.store, "", src, opts)
 	return string(page), err
 }

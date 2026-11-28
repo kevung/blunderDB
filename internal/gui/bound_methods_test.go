@@ -150,6 +150,11 @@ var boundAppMethods = []string{
 	"StartGammonNetMatchBatch",
 	"StartGammonNetStaleBatch",
 	"StartMaintenance",
+	"StartExportDatabase",
+	"StartPaperArchiveExport",
+	"StartPaperArchiveImport",
+	"StartMatchSheet",
+	"StartPositionSheet",
 	"StartupFilePath",
 }
 

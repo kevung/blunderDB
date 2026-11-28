@@ -22,9 +22,23 @@ func (d *Database) ExportDatabase(opts ExportOptions) (ingest.ExportReport, erro
 
 // ExportDatabaseCtx is ExportDatabase with a caller-supplied context that
 // aborts an in-flight export.
+//
+// The export holds the read lock, not the write lock, for its whole run: it
+// only reads the library, so other readers need not wait; and every writer
+// that goes through Database takes the write lock, so none slips between two
+// batches and the file stays one consistent cut of the library — a match
+// never leaves without a position it plays, a collection without a member.
+// A lock taken batch by batch would give that up for nothing the store can
+// make good (it has no read snapshot to export from). exportMu keeps two
+// exports apart: an incremental one advances its cursor in the source's
+// metadata, which the read lock does not guard. Cancelling ctx stops the
+// export between two batches and removes the unfinished file; a
+// progress.Func in ctx hears one unit a position or match written.
 func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) (ingest.ExportReport, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.exportMu.Lock()
+	defer d.exportMu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 	if d.db == nil {
 		return ingest.ExportReport{}, fmt.Errorf("no database is currently open")
 	}

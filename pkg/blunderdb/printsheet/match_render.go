@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/arkqr"
+	"github.com/kevung/blunderdb/pkg/blunderdb/progress"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -28,10 +29,11 @@ func BuildMatches(ctx context.Context, s storage.Storage, scope string, ids []in
 	lang, c := catalogue(o.Language)
 	var docs []string
 	var code []arkqr.Frame
-	for _, id := range ids {
+	for i, id := range ids {
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
+		progress.Report(ctx, i, len(ids))
 		ms, err := ReadMatch(ctx, s, scope, id, o)
 		if err != nil {
 			if errors.Is(err, storage.ErrNotFound) {

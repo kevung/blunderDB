@@ -9,7 +9,20 @@ const ImportXGMatch = vi.fn();
 const ImportGnuBGMatch = vi.fn();
 const IsDirectory = vi.fn(async () => false);
 
+/** @type {{ result: any }} */
+const archiveTask = { result: null };
+vi.mock('../services/longOpService.js', () => ({
+    runLongOp: async (/** @type {string} */ _prefix, /** @type {() => Promise<number>} */ start) => {
+        await start();
+        return { status: 'done', result: archiveTask.result };
+    }
+}));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
+    // The import runs as a task; here it is the Database call it wraps.
+    StartPaperArchiveImport: async (/** @type {any[]} */ ...a) => {
+        archiveTask.result = await ImportPaperArchive(...a);
+        return 1;
+    },
     ImportFiles,
     OpenImportDatabaseDialog: vi.fn(),
     OpenPositionFilesDialog: (/** @type {any[]} */ ...a) => OpenPositionFilesDialog(...a),

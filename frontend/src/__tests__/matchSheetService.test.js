@@ -4,22 +4,21 @@
  * La feuille elle-même (numérotation, renvois, ArkID, code) est construite et
  * testée en Go (pkg/blunderdb/printsheet, database). Ici : ce que l'écran lui
  * passe — les matchs, les choix de la boîte, la langue — et le chemin du
- * fichier, enregistré puis ouvert.
+ * fichier, que la tâche écrit, puis ouvert.
  */
 
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 
-const MatchSheetHTML = vi.fn((/** @type {any[]} */ ..._a) => Promise.resolve('<!doctype html><html></html>'));
+const StartMatchSheet = vi.fn((/** @type {any[]} */ ..._a) => Promise.resolve(1));
 const SaveBoardImageDialog = vi.fn((/** @type {any[]} */ ..._a) => Promise.resolve('/tmp/feuille.html'));
-const SaveBoardSVG = vi.fn((/** @type {any[]} */ ..._a) => Promise.resolve(undefined));
 const OpenLocalPage = vi.fn((/** @type {any[]} */ ..._a) => Promise.resolve(undefined));
 
-vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    MatchSheetHTML: (/** @type {any[]} */ ...args) => MatchSheetHTML(...args)
+vi.mock('../services/longOpService.js', () => ({
+    runLongOp: (/** @type {string} */ _prefix, /** @type {() => Promise<number>} */ start) => Promise.resolve(start()).then(() => ({ status: 'done', result: {} }))
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     SaveBoardImageDialog: (/** @type {any[]} */ ...args) => SaveBoardImageDialog(...args),
-    SaveBoardSVG: (/** @type {any[]} */ ...args) => SaveBoardSVG(...args),
+    StartMatchSheet: (/** @type {any[]} */ ...args) => StartMatchSheet(...args),
     OpenLocalPage: (/** @type {any[]} */ ...args) => OpenLocalPage(...args)
 }));
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
@@ -39,32 +38,32 @@ describe('printMatchSheet', () => {
     test('passe les matchs, les choix et la langue, enregistre puis ouvre la feuille', async () => {
         const path = await printMatchSheet([4, 9], { ...DEFAULT_SHEET_OPTIONS, opponentBlunders: true });
         expect(path).toBe('/tmp/feuille.html');
-        const [ids, opts] = /** @type {any[]} */ (MatchSheetHTML.mock.calls[0]);
+        const [ids, opts, out] = /** @type {any[]} */ (StartMatchSheet.mock.calls[0]);
         expect(ids).toEqual([4, 9]);
         expect(opts.opponentBlunders).toBe(true);
         expect(typeof opts.language).toBe('string');
         expect(SaveBoardImageDialog).toHaveBeenCalledWith('html', 'blunderdb-matchs-2.html');
-        expect(SaveBoardSVG).toHaveBeenCalledWith('/tmp/feuille.html', '<!doctype html><html></html>');
+        expect(out).toBe('/tmp/feuille.html');
         expect(OpenLocalPage).toHaveBeenCalledWith('/tmp/feuille.html');
     });
 
     test('une boîte d’enregistrement annulée n’écrit ni n’ouvre rien', async () => {
         SaveBoardImageDialog.mockImplementationOnce(() => Promise.resolve(''));
         expect(await printMatchSheet([4], DEFAULT_SHEET_OPTIONS)).toBeNull();
-        expect(SaveBoardSVG).not.toHaveBeenCalled();
+        expect(StartMatchSheet).not.toHaveBeenCalled();
         expect(OpenLocalPage).not.toHaveBeenCalled();
     });
 
     test('sans match, rien n’est construit', async () => {
         expect(await printMatchSheet([], DEFAULT_SHEET_OPTIONS)).toBeNull();
-        expect(MatchSheetHTML).not.toHaveBeenCalled();
+        expect(StartMatchSheet).not.toHaveBeenCalled();
         expect(sheetFilename([7])).toBe('blunderdb-match-7.html');
     });
 
     test('au-delà du plafond, rien n’est construit ni imprimé', async () => {
         const ids = Array.from({ length: MAX_SHEET_MATCHES + 1 }, (_, i) => i + 1);
         expect(await printMatchSheet(ids, DEFAULT_SHEET_OPTIONS)).toBeNull();
-        expect(MatchSheetHTML).not.toHaveBeenCalled();
+        expect(StartMatchSheet).not.toHaveBeenCalled();
         expect(SaveBoardImageDialog).not.toHaveBeenCalled();
     });
 });

@@ -9,6 +9,7 @@ import {race} from '../models';
 import {training} from '../models';
 import {jobs} from '../models';
 import {openingbook} from '../models';
+import {printsheet} from '../models';
 
 export function ActivateLibraryGroup(arg1:number):Promise<void>;
 
@@ -236,6 +237,8 @@ export function ShowQuestionDialog(arg1:string,arg2:string,arg3:Array<string>,ar
 
 export function StartEvaluationAtRest(arg1:domain.Position,arg2:number,arg3:number,arg4:number,arg5:number):Promise<void>;
 
+export function StartExportDatabase(arg1:domain.ExportOptions):Promise<number>;
+
 export function StartFolderWatch(arg1:string,arg2:number):Promise<gui.WatchStatus>;
 
 export function StartGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
@@ -245,6 +248,14 @@ export function StartGammonNetMatchBatch(arg1:number,arg2:number,arg3:number,arg
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function StartMaintenance(arg1:string):Promise<void>;
+
+export function StartMatchSheet(arg1:Array<number>,arg2:printsheet.MatchOptions,arg3:string):Promise<number>;
+
+export function StartPaperArchiveExport(arg1:Array<number>,arg2:string):Promise<number>;
+
+export function StartPaperArchiveImport(arg1:Array<string>):Promise<number>;
+
+export function StartPositionSheet(arg1:printsheet.PositionSource,arg2:printsheet.PositionsOptions,arg3:string):Promise<number>;
 
 export function StartRollMap(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<void>;
 

@@ -370,7 +370,8 @@
         "reimportCodeTip": "Le code QR du match en fin de transcription, également embarqué dans le fichier",
         "batch": "Les {n} matchs de la liste",
         "batchTip": "Une feuille par match, dans un seul document",
-        "tooMany": "{n} matchs dans la liste : une impression en prend {max} au plus. Filtrez la liste pour la réduire."
+        "tooMany": "{n} matchs dans la liste : une impression en prend {max} au plus. Filtrez la liste pour la réduire.",
+        "cancelled": "Feuille de match annulée"
     },
     "positionSheet": {
         "title": "Imprimer une liste de positions",
@@ -396,7 +397,8 @@
         "library": "Bibliothèque",
         "basket": "Imprimer les positions",
         "basketTip": "Imprime les positions du panier qui viennent de la bibliothèque affichée",
-        "basketTitle": "Panier"
+        "basketTitle": "Panier",
+        "cancelled": "Liste de positions annulée"
     },
     "paperArchive": {
         "menu": "Archive papier…",
@@ -414,7 +416,8 @@
         "importing": "Lecture de l'archive papier…",
         "imported": "Archive papier : {imported} matchs importés, {duplicates} doublons ; {positions} positions importées, {knownPositions} déjà présentes, {missing} codes manquants, {failed} en échec",
         "failed": "Échec de l'archive papier : {err}",
-        "noPdfPayload": "Ce PDF ne porte aucune archive blunderDB : rien n'a été importé"
+        "noPdfPayload": "Ce PDF ne porte aucune archive blunderDB : rien n'a été importé",
+        "cancelled": "Archive papier annulée"
     },
     "match": {
         "errorExportingMat": "Erreur lors de l'export du match",
@@ -1683,7 +1686,8 @@
         "gnubgIdCopied": "ID GNUbg copié dans le presse-papiers",
         "arkIdCopied": "ArkID copié dans le presse-papiers",
         "noMatchForPosition": "Aucun match n'a joué cette position",
-        "moveGone": "Ce coup n'est plus dans le match : ouvert là où vous l'aviez laissé"
+        "moveGone": "Ce coup n'est plus dans le match : ouvert là où vous l'aviez laissé",
+        "exportRunning": "Export en cours — progression et Annuler dans le panneau Calculs"
     },
     "stats": {
         "title": "Stats",
@@ -3824,7 +3828,10 @@
             "transfer": "Transfert",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Autre"
+            "other": "Autre",
+            "export": "Export",
+            "paperArchive": "Archive papier",
+            "print": "Impression"
         }
     },
     "documentImport": {

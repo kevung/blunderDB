@@ -221,9 +221,12 @@ l'export, et sont ce que le fichier contiendra (le nombre de positions de la
 bande d'en-tête, les commentaires, les matchs, les transcriptions, les alias,
 les tournois, les collections, les leçons, les paquets, les filtres). Le fichier
 se choisit en dernier, après **Exporter…** ; fermer ce choix sans nom revient à
-la grille. Une progression
-se superpose ensuite le temps de l'écriture, la fenêtre se ferme d'elle-même et
-le résultat s'affiche dans la barre d'état.
+la grille. La fenêtre se ferme alors et l'écriture tourne comme une tâche du
+panneau Calculs : sa barre compte les positions et les
+matchs écrits, **Annuler** l'arrête et efface le fichier inachevé, et le
+résultat s'affiche dans la barre d'état. Pendant l'export, la bibliothèque se
+lit normalement ; les modifications attendent la fin de l'écriture, pour que le
+fichier soit une image cohérente de la base.
 
 Neuf points méritent l'attention :
 

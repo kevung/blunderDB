@@ -1,11 +1,14 @@
 package cli
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
@@ -103,8 +106,20 @@ func (cli *CLI) runArchiveExport(args []string) error {
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
 	}
-	res, err := cli.db.ExportPaperArchive(ids, *output, *origin)
+	// Ctrl-C stops the encoding between two matches; nothing is written.
+	var page []byte
+	var res *database.PaperArchiveExport
+	err = withInterruptibleContext(nil, func(ctx context.Context) error {
+		ctx, end := withTerminalProgress(ctx, "archive")
+		defer end()
+		var err error
+		page, res, err = database.PaperArchivePageCtx(ctx, cli.db, ids, *origin)
+		return err
+	})
 	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(*output, page, 0o644); err != nil {
 		return err
 	}
 	if *format == "json" {
@@ -151,7 +166,14 @@ func (cli *CLI) runArchiveImport(args []string) error {
 func (cli *CLI) importArchive(paths []string, format string) error {
 	batchID := cli.beginImportBatch(strings.Join(paths, ", "), "archive")
 	var failures domain.ImportReport
-	res, err := cli.db.ImportPaperArchive(paths)
+	var res *database.PaperArchiveImport
+	err := withInterruptibleContext(nil, func(ctx context.Context) error {
+		ctx, end := withTerminalProgress(ctx, "archive")
+		defer end()
+		var err error
+		res, err = database.ImportPaperArchiveCtx(ctx, cli.db, paths)
+		return err
+	})
 	if err != nil {
 		recordFailure(&failures, paths[0], err)
 		cli.finishImportBatch(batchID, failures)

@@ -370,7 +370,8 @@
         "reimportCodeTip": "El código QR del partido al final de la transcripción, también incrustado en el archivo",
         "batch": "Los {n} partidos de la lista",
         "batchTip": "Una hoja por partido, en un solo documento",
-        "tooMany": "{n} partidas en la lista: una impresión admite {max} como máximo. Filtre la lista para reducirla."
+        "tooMany": "{n} partidas en la lista: una impresión admite {max} como máximo. Filtre la lista para reducirla.",
+        "cancelled": "Hoja de partida cancelada"
     },
     "positionSheet": {
         "title": "Imprimir una lista de posiciones",
@@ -396,7 +397,8 @@
         "library": "Biblioteca",
         "basket": "Imprimir las posiciones",
         "basketTip": "Imprime las posiciones de la cesta que vienen de la biblioteca en pantalla",
-        "basketTitle": "Cesta"
+        "basketTitle": "Cesta",
+        "cancelled": "Lista de posiciones cancelada"
     },
     "paperArchive": {
         "menu": "Archivo en papel…",
@@ -414,7 +416,8 @@
         "importing": "Leyendo el archivo en papel…",
         "imported": "Archivo en papel: {imported} partidas importadas, {duplicates} duplicadas; {positions} posiciones importadas, {knownPositions} ya presentes, {missing} códigos faltantes, {failed} fallidas",
         "failed": "Error en el archivo en papel: {err}",
-        "noPdfPayload": "Este PDF no contiene ningún archivo de blunderDB: no se ha importado nada"
+        "noPdfPayload": "Este PDF no contiene ningún archivo de blunderDB: no se ha importado nada",
+        "cancelled": "Archivo en papel cancelado"
     },
     "match": {
         "errorExportingMat": "Error al exportar el partido",
@@ -1683,7 +1686,8 @@
         "gnubgIdCopied": "ID GNUbg copiado al portapapeles",
         "arkIdCopied": "ArkID copiado al portapapeles",
         "noMatchForPosition": "Ningún match ha jugado esta posición",
-        "moveGone": "Esa jugada ya no está en la partida: abierta donde la dejó"
+        "moveGone": "Esa jugada ya no está en la partida: abierta donde la dejó",
+        "exportRunning": "Exportación en curso — progreso y Cancelar en el panel Cálculos"
     },
     "stats": {
         "title": "Stats",
@@ -3824,7 +3828,10 @@
             "transfer": "Transferencia",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Otro"
+            "other": "Otro",
+            "export": "Exportación",
+            "paperArchive": "Archivo en papel",
+            "print": "Impresión"
         }
     },
     "documentImport": {

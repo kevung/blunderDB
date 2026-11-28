@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 00:13+0100\n"
+"POT-Creation-Date: 2026-11-28 01:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -41,9 +41,9 @@ msgid ""
 msgstr ""
 "**分析** パネル（\\ *CTRL-L*\\ ）は、eXtreme Gammon（XG）、GNUbg、BGBlitz、または "
 "gammonNet "
-"からインポートした現在のポジションの分析データを表示します。最良の選択肢（チェッカーの手またはキューブの判断）を、そのエクイティ値と対応するエラーと共に提示します。\\"
+"からインポートした現在のポジションの分析データを表示します。最良の選択肢（チェッカーの手またはキューブの判断）を、そのエクイティ値と対応するエラーと共に提示します。\\ "
 " *d* "
-"キーでチェッカーの手の分析とキューブの分析を切り替えられます。マッチを辿っているときは、実際にプレイされた手が選択肢のリストで強調表示されます。パネルを表示または非表示にするには、\\"
+"キーでチェッカーの手の分析とキューブの分析を切り替えられます。マッチを辿っているときは、実際にプレイされた手が選択肢のリストで強調表示されます。パネルを表示または非表示にするには、\\ "
 " *CTRL-L* を押すか ``list`` コマンドを実行します。"
 
 #: ../../source/manuel_bibliotheque.rst:20
@@ -200,9 +200,9 @@ msgid ""
 "configuration (voir :ref:`configuration <rollout_reglage>`)."
 msgstr ""
 "**解析**\\ パネルは局面を\\ **ロールアウト**\\ "
-"できます。選んだ各ムーブ、またはキューブの各アクションから数百ゲームをプレイし、直接評価ではほとんど差が出ない二つの選択肢を区別します。候補ムーブの表で、\\"
+"できます。選んだ各ムーブ、またはキューブの各アクションから数百ゲームをプレイし、直接評価ではほとんど差が出ない二つの選択肢を区別します。候補ムーブの表で、\\ "
 " *Ctrl+クリック*\\ はムーブを選択に追加または除外し、\\ *Shift+クリック*\\ "
-"はクリックしたムーブまで選択を広げます。通常のクリックはこれまでどおり一つのムーブだけを選択します。選択範囲、または別のムーブ(そのムーブが選択になります)の上での\\"
+"はクリックしたムーブまで選択を広げます。通常のクリックはこれまでどおり一つのムーブだけを選択します。選択範囲、または別のムーブ(そのムーブが選択になります)の上での\\ "
 " **右クリック**\\ でメニューが開き、\\ **ロールアウト(標準)**\\ "
 "を選ぶと、選択したムーブのロールアウトを選んだ設定ですぐに開始します。キューブの判断では、右クリックで判断全体をロールアウトします。パネルの\\ "
 "*Shift+R*\\ キーも同じ動作で(選択がなければ局面の上位候補をロールアウトします)、\\ ``rollout``\\ コマンド(別名 "
@@ -255,7 +255,7 @@ msgstr ""
 "**Rollout**\\ 列に、エクイティと 95 % "
 "信頼区間の半幅がエクイティ列の尺度で示されます。セルにカーソルを重ねると詳細が表示されます。標準偏差、\\ **JSD**\\ "
 "(最善手との差を差の標準偏差で表したもの。上限に達するとそのムーブは決着し、それ以上プレイされません)、ゲーム数、そして\\ **設定**\\ "
-"(エンジンとパラメータの完全なシグネチャ。シグネチャが同じ二つのロールアウトは同じ数値です)です。ロールアウトは、ムーブの優劣がついた時点で停止します。ムーブ行を持たないキューブ判断のロールアウトは、判断の下に表として表示されます。ロールアウトはゲームの中でキューブをプレイします。順位は信頼できますが、絶対的なエクイティはやや劣り、ブロックがそのことを注記します。ビーバーはプレイしません。\\"
+"(エンジンとパラメータの完全なシグネチャ。シグネチャが同じ二つのロールアウトは同じ数値です)です。ロールアウトは、ムーブの優劣がついた時点で停止します。ムーブ行を持たないキューブ判断のロールアウトは、判断の下に表として表示されます。ロールアウトはゲームの中でキューブをプレイします。順位は信頼できますが、絶対的なエクイティはやや劣り、ブロックがそのことを注記します。ビーバーはプレイしません。\\ "
 " *ダブル/テイク*\\ "
 "の行は単純なテイクのもので、ビーバールールのマネーゲームの局面でも同様です(直接解析ではビーバーを数えます)。データベースにない局面はロールアウトできますが、保存されません。"
 
@@ -330,7 +330,7 @@ msgid ""
 msgstr ""
 "ファイルから来たコメントには\\ **出所ラベル**\\ が付く\\ （``XG``、``GNU "
 "BG``、``BGF``、出所が記録されていない場合は\\ *インポート*\\ "
-"）。自分で書いたコメントには付かない。それが通常の場合であり、すべての行に印を付けても雑音にしかならないからである。インポートされたコメントを編集すると、それは自分のものになる\\"
+"）。自分で書いたコメントには付かない。それが通常の場合であり、すべての行に印を付けても雑音にしかならないからである。インポートされたコメントを編集すると、それは自分のものになる\\ "
 " ：編集後、その文はあなたのものである。"
 
 #: ../../source/manuel_bibliotheque.rst:175
@@ -656,7 +656,7 @@ msgid ""
 "le plateau."
 msgstr ""
 "**検索** パネル（\\ *CTRL-F* または *TAB*\\ "
-"）では、自由に組み合わせ可能な条件に従ってポジションをフィルターできます。チェッカーの構造、キューブの判断の種類、エラーの大きさ、日付、タグなどです。\\"
+"）では、自由に組み合わせ可能な条件に従ってポジションをフィルターできます。チェッカーの構造、キューブの判断の種類、エラーの大きさ、日付、タグなどです。\\ "
 " *TAB* キーは検索パネルとポジションエディターを同時に開き、ボード上で検索するチェッカーの構造を定義できます。"
 
 #: ../../source/manuel_bibliotheque.rst:350
@@ -691,7 +691,7 @@ msgid ""
 msgstr ""
 "表示中のポジションの中から検索するには、フィルターを続けた ``ss`` コマンドを使用します（例：\\ ``ss nc``\\ 、\\ ``ss"
 " E>40``\\ ）。\\ ``ss`` "
-"は画面上のリストの中を検索します。直前の検索結果、開いているコレクション、またはレビュー中のマッチのポジションが対象で、コマンドを直接入力しても検索パネル（\\"
+"は画面上のリストの中を検索します。直前の検索結果、開いているコレクション、またはレビュー中のマッチのポジションが対象で、コマンドを直接入力しても検索パネル（\\ "
 " *TAB*\\ ）から入力しても同じです。パネルの *現在の結果内を検索* チェックボックスも同じ規則に従います。\\ *新しいタブで開く* "
 "チェックボックスは、現在のビューではなく新しいビューに結果を表示します（\\ :ref:`onglets_vues` "
 "を参照）。コレクションとマッチでは ``s`` は拒否されます。ライブラリ全体を検索して、表示中のリストを置き換えてしまうからです。"
@@ -857,7 +857,7 @@ msgid ""
 " compte aux matchs contre Bob."
 msgstr ""
 "トークン\\ ``n``\\ は\\ **遭遇**\\ を数えます。\\ ``n>3``\\ "
-"は、データベースで（すべての対局とすべてのプレイヤーを合わせて）少なくとも3回出現した局面を残します。これは「何を間違えたか」とは別の問いです。20回出現してそのうち19回うまく打たれた局面は、それでも暗記しておくべき局面です。数えるのは対局ではなく判断です。同じ局面が1つの対局に2回出れば、判断が2つあったので2と数えます。プレイヤーフィルターと組み合わせると、そのプレイヤーの出現だけを数えます。\\"
+"は、データベースで（すべての対局とすべてのプレイヤーを合わせて）少なくとも3回出現した局面を残します。これは「何を間違えたか」とは別の問いです。20回出現してそのうち19回うまく打たれた局面は、それでも暗記しておくべき局面です。数えるのは対局ではなく判断です。同じ局面が1つの対局に2回出れば、判断が2つあったので2と数えます。プレイヤーフィルターと組み合わせると、そのプレイヤーの出現だけを数えます。\\ "
 " ``n>3 pl!\"Alice\"``\\ はAliceが少なくとも3回打つことになった局面を、\\ ``pl\"Alice\"``\\ "
 "は彼女が戦った対局の局面を残します。\\ ``op\"Bob\"``\\ も同様に、数をBobとの対局に限ります。"
 
@@ -1038,7 +1038,7 @@ msgid ""
 "de ses matchs."
 msgstr ""
 "**マッチ＆トーナメント** "
-"フィルターは、数値IDを入力する方式ではなく、共通のセレクター（モーダルウィンドウ）を利用します。マッチ用とトーナメント用の2つのチェックボックスリストがあり、それぞれテキストで絞り込めます（マッチはプレイヤー、日付、イベント、トーナメントは名前、日付、開催地）。\\"
+"フィルターは、数値IDを入力する方式ではなく、共通のセレクター（モーダルウィンドウ）を利用します。マッチ用とトーナメント用の2つのチェックボックスリストがあり、それぞれテキストで絞り込めます（マッチはプレイヤー、日付、イベント、トーナメントは名前、日付、開催地）。\\ "
 " *すべて* / *なし* "
 "ボタンは、現在絞り込まれているサブセットにのみ作用します。トーナメントをチェックすると、そのメンバーであるマッチがマッチリスト内で自動的にチェックされ（グレー表示になり）、トーナメントがそのマッチ全体の集合に相当することが視覚的にわかります。"
 
@@ -1059,7 +1059,7 @@ msgid ""
 msgstr ""
 "検索パネルの帯には *検索条件*\\ （フィルター）| *履歴* | *保存済み* の切り替えがあり（内部アシスタントが有効なときは4つ目の "
 "*アシスタント* も加わります）、\\ *検索条件* では右端に **検索** ボタンがあります。**履歴** "
-"タブには、過去の検索がその日付とコマンドとともに一覧表示されます：クリックすると検索が選択され、関連するポジションがボード上に表示されます。ダブルクリックすると再実行されます。各エントリはフィルターライブラリに保存する（ブックマークアイコン、フィルターに名前を付けて）か、削除できます。\\"
+"タブには、過去の検索がその日付とコマンドとともに一覧表示されます：クリックすると検索が選択され、関連するポジションがボード上に表示されます。ダブルクリックすると再実行されます。各エントリはフィルターライブラリに保存する（ブックマークアイコン、フィルターに名前を付けて）か、削除できます。\\ "
 " **保存済み** タブには **フィルターライブラリ** "
 "が含まれます：保存済みのフィルターをダブルクリックすると、対応する検索を再実行できます（\\ :ref:`annexe_filtres` "
 "を参照）。\\ ``history`` コマンド（別名 ``hi``\\ ）は検索パネルを開きます。"
@@ -1119,7 +1119,7 @@ msgid ""
 msgstr ""
 "コンピューターから離れて実際の盤で学習するために、局面のリストは 1 局面 1 行で、図なしで印刷されます。盤のコンテキストメニューの\\ "
 "**リストを印刷…**\\ "
-"は、表示中のリスト（検索結果、開いているコレクション、またはライブラリ）を印刷します。コレクションパネルのコレクションのコンテキストメニューの\\"
+"は、表示中のリスト（検索結果、開いているコレクション、またはライブラリ）を印刷します。コレクションパネルのコレクションのコンテキストメニューの\\ "
 " **印刷…**\\ は、そのコレクションを印刷し（ライブコレクションはそのクエリによる）、「他所」パネルのバスケットにある\\ "
 "**局面を印刷**\\ "
 "は、表示中のライブラリに由来するバスケットの局面を印刷します。印刷されるのは常にリスト全体で、スクロールでまだ読み込まれていない行も含まれます。1"
@@ -1140,8 +1140,10 @@ msgid ""
 " la légende de la notation. Le document est enregistré en PDF A4 puis "
 "ouvert dans la visionneuse du système, d'où il s'imprime ; sous Windows "
 "et macOS, faute de ce rendu, il reste un fichier HTML autonome ouvert "
-"dans le navigateur. En ligne de commande, ``sheet`` écrit la page HTML. "
-"Les options de la boîte :"
+"dans le navigateur. La boîte se ferme dès le fichier choisi : la liste se"
+" construit comme une tâche du panneau Calculs, que **Annuler** arrête. En"
+" ligne de commande, ``sheet`` écrit la page HTML. Les options de la boîte"
+" :"
 msgstr ""
 "各行には番号、等幅フォントの "
 "ArkID、続いて手番側とその相手側のピップが示され、盤に並べた局面の確認に使えます。次に分析が続きます。最善手は太字、2 "
@@ -1150,33 +1152,35 @@ msgstr ""
 " 2 つとその損失です。文書は必要な数の番号付き A4 "
 "ページに広がり、各ページにヘッダー（検索またはコレクションのタイトル、局面数、日付）と表記の凡例が付きます。文書は A4 の PDF "
 "として保存され、システムのビューアーで開かれ、そこから印刷します。Windows と macOS ではこの描画がないため、自己完結型 HTML "
-"ファイルのままブラウザーで開かれます。コマンドラインでは\\ ``sheet``\\ が HTML ページを書き出します。ダイアログのオプション："
+"ファイルのままブラウザーで開かれます。ファイルを選ぶとダイアログはすぐに閉じ、リストは\\ **計算**\\ "
+"パネルのタスクとして作成され、\\ **キャンセル**\\ で停止できます。コマンドラインでは\\ "
+"``sheet``\\ が HTML ページを書き出します。ダイアログのオプション："
 
-#: ../../source/manuel_bibliotheque.rst:597
+#: ../../source/manuel_bibliotheque.rst:599
 msgid "**Analyse** (cochée) : l'analyse de chaque position, sur sa ligne."
 msgstr "**分析**\\ （オン）：各局面の分析を、その行に表示します。"
 
-#: ../../source/manuel_bibliotheque.rst:598
+#: ../../source/manuel_bibliotheque.rst:600
 msgid ""
 "**Réponses au verso** (décochée) : chaque page de positions est suivie "
 "d'une page d'analyses sous les mêmes numéros ; imprimée en recto verso, "
 "la feuille devient un questionnaire."
 msgstr "**解答を裏面に**\\ （オフ）：局面の各ページの後に、同じ番号の分析のページが続きます。両面印刷すると、シートは問題用紙になります。"
 
-#: ../../source/manuel_bibliotheque.rst:601
+#: ../../source/manuel_bibliotheque.rst:603
 msgid ""
 "**Commentaires** (cochée) : les commentaires des positions, en entier, "
 "sous leur ligne, au verso avec les réponses. Un commentaire plus long "
 "qu'une page se poursuit sur la suivante."
 msgstr "**コメント**\\ （オン）：局面のコメントを全文、その行の下に、解答とともに裏面に表示します。1 ページより長いコメントは次のページに続きます。"
 
-#: ../../source/manuel_bibliotheque.rst:604
+#: ../../source/manuel_bibliotheque.rst:606
 msgid ""
 "**ArkID développé** (décochée) : la forme développée plutôt que la "
 "compacte."
 msgstr "**ArkID を展開**\\ （オフ）：コンパクト形式ではなく展開形式を使います。"
 
-#: ../../source/manuel_bibliotheque.rst:605
+#: ../../source/manuel_bibliotheque.rst:607
 msgid ""
 "**Code de réimport** (décochée) : des codes QR qui portent les positions,"
 " un bloc toutes les 145 positions, imprimé sur la page de la première "
@@ -1194,24 +1198,24 @@ msgstr ""
 "から再インポートできます。各ブロックは単独で読み込め、読めないコードは同じブロックの他のコードから復元されます。コードが載せるのは局面（ArkID"
 " が表すもの）だけで、分析・コメントは含みません。各局面は単独で持ち込んだ局面として保存され、データベースに既にある局面は重複しません。"
 
-#: ../../source/manuel_bibliotheque.rst:615
+#: ../../source/manuel_bibliotheque.rst:617
 msgid ""
 "L'impression n'écrit rien dans la base. En ligne de commande : ``sheet`` "
 "(:doc:`cli_import_export`)."
 msgstr "印刷はデータベースに何も書き込みません。コマンドラインでは：\\ ``sheet``\\ （:doc:`cli_import_export`）。"
 
-#: ../../source/manuel_bibliotheque.rst:621
 #: ../../source/manuel_bibliotheque.rst:623
+#: ../../source/manuel_bibliotheque.rst:625
 msgid "Panneau Collections"
 msgstr "コレクションパネル"
 
-#: ../../source/manuel_bibliotheque.rst:627
+#: ../../source/manuel_bibliotheque.rst:629
 msgid ""
 "Le panneau Collections : nom, nombre de positions, description, dernière "
 "modification."
 msgstr "Collections パネル：名前、ポジション数、説明、最終更新日時。"
 
-#: ../../source/manuel_bibliotheque.rst:630
+#: ../../source/manuel_bibliotheque.rst:632
 msgid ""
 "Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton"
 " **+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle "
@@ -1227,7 +1231,7 @@ msgstr ""
 "のパネルでは、\\ *Esc* または **キャンセル** で閉じます。マッチ一覧では、⌨ アイコンでマッチの記譜を開き、✎ "
 "アイコンでそのメタデータを修正します。"
 
-#: ../../source/manuel_bibliotheque.rst:638
+#: ../../source/manuel_bibliotheque.rst:640
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -1243,12 +1247,12 @@ msgstr ""
 "**コレクション**\\ "
 "パネル（*CTRL-B*）で局面のコレクションを管理します。コレクションは作成、名前の変更、削除ができます。局面の追加や取り除き（*Del* "
 "キー、確認を求められます）も可能です。コレクションをダブルクリックすると、*左*\\ キーと\\ *右*\\ キーでその局面をたどれます。 "
-"``ss`` コマンドは開いているコレクションの局面の中を検索し、その後 *Esc* でコレクションに戻ります（ "
+"``ss`` コマンドは開いているコレクションの局面の中を検索し、その後 *Esc* でコレクションに戻ります（"
 ":ref:`panneau_recherche` "
 "を参照）。コレクションの並び順、およびコレクション内の局面の並び順は、ドラッグ＆ドロップで変更できます。*CTRL-B* を押すか "
 "``collection`` コマンドを実行するとパネルの表示・非表示が切り替わります。"
 
-#: ../../source/manuel_bibliotheque.rst:649
+#: ../../source/manuel_bibliotheque.rst:651
 msgid ""
 "En tête d'une collection ouverte, le nombre de positions est un lien qui "
 "les remet dans le parcours, depuis la première ; la case **dans cette "
@@ -1258,7 +1262,7 @@ msgstr ""
 "開いたコレクションの見出しでは、局面数がリンクになっており、最初の局面から閲覧に戻します。\\ **このコレクションに含む**\\ "
 "のチェックボックスで、表示中の局面を追加または削除します。空のリストでは\\ **+ 新しいコレクション**\\ を提案します。"
 
-#: ../../source/manuel_bibliotheque.rst:654
+#: ../../source/manuel_bibliotheque.rst:656
 msgid ""
 "La **Pile** est la collection du geste « à revoir plus tard » : un "
 "double-clic hors du plateau, la touche *b* ou le bouton marque-page de la"
@@ -1276,12 +1280,12 @@ msgid ""
 "geste par ``collection pile``."
 msgstr ""
 "\\ **パイル**\\ は「あとで見直す」操作のコレクションです。盤面の外でのダブルクリック、*b*\\ "
-"キー、またはツールバーのブックマークボタンで、表示中の局面がパイルに載り、同じ操作で外れます。盤面の隅のブックマークが、その局面がパイルにあることを、ほかのメッセージなしで示します。この操作は、局面が表示されるすべての場所で使えます。レビュー、検索、編集、Eval、トランスクリプト、クイズ、デュエルです。盤面のリセットは、右クリックのメニュー（\\"
+"キー、またはツールバーのブックマークボタンで、表示中の局面がパイルに載り、同じ操作で外れます。盤面の隅のブックマークが、その局面がパイルにあることを、ほかのメッセージなしで示します。この操作は、局面が表示されるすべての場所で使えます。レビュー、検索、編集、Eval、トランスクリプト、クイズ、デュエルです。盤面のリセットは、右クリックのメニュー（\\ "
 " :ref:`盤面のメニュー <board_menu_contextuel>`\\ "
-"を参照）から行います。パイルは通常のコレクションで、ほかと同じように名前の変更、並べ替え、エクスポート、空にすることができます。初回の使用時に作成され、削除された場合は作り直されます。まだライブラリにない局面（検索盤面や評価盤面の下書き）は、単独で持ち込んだ局面と同じようにその場でライブラリに書き込まれ、そのあとパイルに載ります。コマンドラインでは\\"
+"を参照）から行います。パイルは通常のコレクションで、ほかと同じように名前の変更、並べ替え、エクスポート、空にすることができます。初回の使用時に作成され、削除された場合は作り直されます。まだライブラリにない局面（検索盤面や評価盤面の下書き）は、単独で持ち込んだ局面と同じようにその場でライブラリに書き込まれ、そのあとパイルに載ります。コマンドラインでは\\ "
 " ``collection pile``\\ で同じ操作を行います。"
 
-#: ../../source/manuel_bibliotheque.rst:667
+#: ../../source/manuel_bibliotheque.rst:669
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1295,7 +1299,7 @@ msgstr ""
 "の結果になり、開くたびに再評価されます。コレクション見出しの ◇ ボタンが直近の検索でそれを生きたものにし、◈ "
 "はすでにそうであることを示します。同じボタンでリストに戻せます。生きたものにしても何も壊れません。含まれていた局面は戻ったときにそのまま残っています。"
 
-#: ../../source/manuel_bibliotheque.rst:674
+#: ../../source/manuel_bibliotheque.rst:676
 msgid ""
 "Deux critères de provenance se prêtent à une collection qui se range "
 "seule : ``s i`` garde les positions apportées une à une (à la main ou par"
@@ -1307,7 +1311,7 @@ msgstr ""
 "(手で、または局面ファイルから) 持ち込まれた局面を、\\ ``s fl``\\ "
 "は元のソフトウェアがインポート時にマークしていた局面を残します。どちらも他の任意の条件と組み合わせられます。"
 
-#: ../../source/manuel_bibliotheque.rst:680
+#: ../../source/manuel_bibliotheque.rst:682
 msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
@@ -1318,7 +1322,7 @@ msgstr ""
 "ライブコレクションに表示される ❄ ボタンは、そのコレクションを\\ **固定**\\ "
 "します。その時点で検索が選ぶポジションが、検索の順序のまま通常のコレクションの内容となり、クエリは消去されます。ライブになる前に保持していたポジションは置き換えられます。"
 
-#: ../../source/manuel_bibliotheque.rst:685
+#: ../../source/manuel_bibliotheque.rst:687
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1328,7 +1332,7 @@ msgstr ""
 "このバージョンがもう知らないトークンを含む問い合わせを持つ生きたコレクションは、データベース全体を返すのではなく、**開くことを拒み** "
 "そう告げます。保存された絞り込みが決して起こしてはならない唯一の故障が、黙って広がることだからです。"
 
-#: ../../source/manuel_bibliotheque.rst:690
+#: ../../source/manuel_bibliotheque.rst:692
 msgid ""
 "Une collection vivante ne peut pas porter ``like`` : une collection est "
 "un ensemble, et ce jeton classe. Elle refuse la requête qui le porte, en "
@@ -1341,7 +1345,7 @@ msgstr ""
 "``like`` に対応するのは検索だけです。古い保存済み検索がなお持つ星付きの形（\\ ``like42*``\\ "
 "）は、履歴からでもフィルターライブラリからでも、再実行時に拒否されます。"
 
-#: ../../source/manuel_bibliotheque.rst:696
+#: ../../source/manuel_bibliotheque.rst:698
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1356,10 +1360,10 @@ msgstr ""
 "ライブコレクションは、データベースの\\ **エクスポート後もライブのまま**\\ "
 "です。クエリはコレクションと共に運ばれ、受け取った側でファイル内のポジションに対して再評価されます。エクスポートがコレクションのポジションを含める場合、エクスポート時点でクエリが選ぶポジションが含まれます（上限は"
 " 5,000 "
-"ポジション）。ポジション、マッチ、トーナメントを番号で指定するクエリは、ファイル内の番号に書き換えられます。そのいずれかがファイルに含まれない場合、コレクションは\\"
+"ポジション）。ポジション、マッチ、トーナメントを番号で指定するクエリは、ファイル内の番号に書き換えられます。そのいずれかがファイルに含まれない場合、コレクションは\\ "
 " **固定**\\ され、エクスポート時点でクエリが選ぶポジションを持って書き出されます。"
 
-#: ../../source/manuel_bibliotheque.rst:705
+#: ../../source/manuel_bibliotheque.rst:707
 msgid ""
 "Une collection vivante dont la base refuse la requête (``like``, une "
 "forme étoilée) part **figée et vide**, dans un export comme dans un "
@@ -1369,7 +1373,7 @@ msgstr ""
 "データベースがクエリを拒否するライブコレクション（\\ ``like``\\ 、星付きの形）は、エクスポートでも別のデータベースへの転送でも\\ "
 "**固定された空の状態**\\ になります。ライブのままでは、転送先でもう一度拒否されるだけだからです。"
 
-#: ../../source/manuel_bibliotheque.rst:709
+#: ../../source/manuel_bibliotheque.rst:711
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1383,7 +1387,7 @@ msgstr ""
 " 5,000 ポジションの\\ **上限**\\ "
 "で制限されます。クエリがそれより多く選んだ場合、検索の順序で最初のものだけがデッキに入り、ステータスバーが実際に選ばれたポジション数とともにそれを知らせます。"
 
-#: ../../source/manuel_bibliotheque.rst:719
+#: ../../source/manuel_bibliotheque.rst:721
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1398,7 +1402,7 @@ msgstr ""
 "件を学習すると、同じ問題の 10 "
 "通りの変形や、他について何も教えない特異なポジションになりがちです。参照ポジションは、構造の近いあなたの複数のミスの中心にあり、その教訓がすべてに役立ちます。"
 
-#: ../../source/manuel_bibliotheque.rst:726
+#: ../../source/manuel_bibliotheque.rst:728
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1410,7 +1414,7 @@ msgstr ""
 "で数値化され、ファミリー(ゲームプラン、性質、テーマ)ごとに整理されます。同じファミリーの 2 つのミスは、輸送距離で最大 12 "
 "チェッカーステップ以内なら\\ **隣接**\\ しています。キューブのミスの隣接は同じスコアのものだけです。"
 
-#: ../../source/manuel_bibliotheque.rst:730
+#: ../../source/manuel_bibliotheque.rst:732
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1426,7 +1430,7 @@ msgstr ""
 "な判定(別の深さやロールアウトが異なる結果を示す)は半分として数えられます。裏付けるロールアウトがあれば表示されます。 "
 "各行の先頭の数字はカバーする MWC で、理由は教訓が半分として数えられるときに数えられる値を示します。"
 
-#: ../../source/manuel_bibliotheque.rst:737
+#: ../../source/manuel_bibliotheque.rst:739
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1435,11 +1439,11 @@ msgid ""
 " proposée, et ses voisines sont tenues pour couvertes."
 msgstr ""
 "リストは\\ **多様**\\ "
-"です。選ばれたポジションは隣接ポジションをカバーし、それらは以降のポジションに何ももたらさず、提案されるポジションにほぼ重複するものはありません。\\"
+"です。選ばれたポジションは隣接ポジションをカバーし、それらは以降のポジションに何ももたらさず、提案されるポジションにほぼ重複するものはありません。\\ "
 " **処理済み**\\ のポジション(コメント付き、コレクション内、Anki "
 "カード、または「学習済み」マーク付き)は提案されず、その隣接ポジションはカバー済みとみなされます。"
 
-#: ../../source/manuel_bibliotheque.rst:743
+#: ../../source/manuel_bibliotheque.rst:745
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1452,18 +1456,18 @@ msgid ""
 "de commande : ``blunderdb collection suggest`` (voir "
 ":ref:`cli_collection`)."
 msgstr ""
-"\\ **範囲**\\ はデータベース全体、現在のマッチ、トーナメント、または統計パネルのフィルターで、プレイヤーはこのフィルターのものです。\\"
+"\\ **範囲**\\ はデータベース全体、現在のマッチ、トーナメント、または統計パネルのフィルターで、プレイヤーはこのフィルターのものです。\\ "
 " **サイズ**\\ は 10、20、50 ポジションです。各行には、ファミリー、キューブの場合はスコア、カバーする MWC "
 "とその理由が表示されます。理由とは、要約するミスとマッチの数、あなたの判断の中でのファミリーの大きさ、自身の回収可能分、2 "
 "番目の選択肢との差です。行をクリックするとポジションが開き、チェックしたボックスはワンクリックで\\ **コレクション**、\\ **Anki "
 "デッキ**、または\\ **クイズ**\\ になります。コマンドラインでは ``blunderdb collection suggest``\\ "
 "(\\ :ref:`cli_collection`\\ を参照)を使います。"
 
-#: ../../source/manuel_bibliotheque.rst:756
+#: ../../source/manuel_bibliotheque.rst:758
 msgid "Leçons"
 msgstr "レッスン"
 
-#: ../../source/manuel_bibliotheque.rst:758
+#: ../../source/manuel_bibliotheque.rst:760
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1478,7 +1482,7 @@ msgstr ""
 " コマンドはデータベースのレッスンをステータスバーに一覧表示し、``le 2`` はレッスン 2 を開き、``le edit`` "
 "はレッスンエディタを開きます。"
 
-#: ../../source/manuel_bibliotheque.rst:765
+#: ../../source/manuel_bibliotheque.rst:767
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1491,7 +1495,7 @@ msgstr ""
 "*次へ*\\ でステップを切り替えます。ステップは、表示するコレクションまたはポジションを盤に呼び出し、それを通常の操作で閲覧できます。\\ "
 "*閉じる*\\ でレッスンを終了します。コレクションまたはポジションが削除されたステップも、テキストは残ります。"
 
-#: ../../source/manuel_bibliotheque.rst:772
+#: ../../source/manuel_bibliotheque.rst:774
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1504,7 +1508,7 @@ msgstr ""
 "バーの\\ *ステップ完了*\\ "
 "ボックスは、現在のステップを完了としてマークします。もう一度クリックするとマークが外れ、バーは完了したステップの数を表示します。何かを書き込む操作はこれだけです。レッスンを読む、ステップを変える、レッスンを開くといった操作では、到達したステップも開いたことも記録されません。マークは開いているデータベース(生徒のもの)に書き込まれ、どのエクスポートにも含まれません。レッスンを含むファイルをインポートするとそのレッスンが作成され、同じ名前のレッスンがすでにある場合は変更されません。"
 
-#: ../../source/manuel_bibliotheque.rst:780
+#: ../../source/manuel_bibliotheque.rst:782
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1525,16 +1529,16 @@ msgid ""
 "ligne de commande ou par l'API (:ref:`headless_lecons`)."
 msgstr ""
 "**レッスンエディタ**\\ は、``le edit`` (レッスン 2 なら ``le edit 2``) または閲覧バーの\\ *編集*\\ "
-"ボタンで開きます。左にレッスンの一覧と新規作成用のフィールド、右に選択したレッスンの名前と説明、続いてそのステップが表示されます。各ステップにはタイトル、テキスト、一覧から選ぶコレクション、ポジションがあります。\\"
+"ボタンで開きます。左にレッスンの一覧と新規作成用のフィールド、右に選択したレッスンの名前と説明、続いてそのステップが表示されます。各ステップにはタイトル、テキスト、一覧から選ぶコレクション、ポジションがあります。\\ "
 " *現在のポジション*\\ はボード上に表示中のポジションをステップに付け、\\ *ポジションを外す*\\ はそれを外します。\\ "
 "*ステップを保存*\\ は変更を書き込み、矢印でステップを 1 つ移動でき、\\ *ステップを追加*\\ は末尾に 1 つ追加します。\\ "
 "*読む*\\ はエディタを閉じてレッスンを最初のステップで開きます。\\ *Webページとして書き出す*\\ はレッスンを単体の HTML "
 "ファイル 1 "
-"つに保存します(タイトル、説明、各ステップのテキストとボード、各ポジションの保存済み解析をクイズの答えのように折りたたんだもの、フッターの透かしの出所)。そのまま公開でき、スクリプトもネットワーク呼び出しも含みません。\\"
+"つに保存します(タイトル、説明、各ステップのテキストとボード、各ポジションの保存済み解析をクイズの答えのように折りたたんだもの、フッターの透かしの出所)。そのまま公開でき、スクリプトもネットワーク呼び出しも含みません。\\ "
 " *削除*\\ はレッスンとそのステップを消しますが、ステップが表示していたコレクションやポジションには触れません。レッスンはコマンドラインや "
 "API からも作成・変更できます(:ref:`headless_lecons`)。"
 
-#: ../../source/manuel_bibliotheque.rst:797
+#: ../../source/manuel_bibliotheque.rst:799
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
@@ -1545,7 +1549,7 @@ msgid ""
 "sélection de positions, de collections ou de matchs) n'emporte pas les "
 "leçons."
 msgstr ""
-"バックアップ（エクスポートウィンドウまたはコマンドラインによるライブラリ全体のエクスポート）は、すべてのレッスンを持ち出します。エクスポートウィンドウでは、\\"
+"バックアップ（エクスポートウィンドウまたはコマンドラインによるライブラリ全体のエクスポート）は、すべてのレッスンを持ち出します。エクスポートウィンドウでは、\\ "
 " *レッスン*\\ "
 "の行でレッスンを一つずつ選びます。チェックを入れたレッスンは、その手順が示すコレクションとポジションとともに出力され、ファイルは他のエクスポートと同様に透かしを付けたり、パスワードで保護したり（``.dbx``）できます。このチェックボックスがない部分エクスポート（ポジション、コレクション、マッチの選択）では、レッスンは持ち出されません。"
 
@@ -1578,3 +1582,4 @@ msgstr ""
 #~ " ``like42*`` はクラスをすべての決定の種類と両方の形式に広げますが、目標のマッチを含めることはありません。\\"
 #~ " ``like<12`` "
 #~ "は十二チェッカーピップを超えるものを除きます。何も見つからない並べ替えは、無関係な十局面ではなく、空のリストを返し、そう告げます。"
+

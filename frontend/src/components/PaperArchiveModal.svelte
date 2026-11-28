@@ -29,7 +29,7 @@
         try {
             const ids = scope === 'library' ? [] : scope === 'list' ? await listAll() : matchId == null ? [] : [matchId];
             if (scope !== 'library' && !ids.length) return;
-            await exportPaperArchive(ids);
+            await exportPaperArchive(ids, { onLaunch: () => onclose() });
         } finally {
             busy = false;
         }
@@ -39,7 +39,7 @@
     async function doImport() {
         busy = true;
         try {
-            const res = await importPaperArchive();
+            const res = await importPaperArchive(undefined, { onLaunch: () => onclose() });
             if (res?.imported?.length) onimported();
         } finally {
             busy = false;
