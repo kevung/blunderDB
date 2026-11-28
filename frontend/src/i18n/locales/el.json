@@ -3761,8 +3761,6 @@
             "opponent": "Αντίπαλος",
             "match": "Αγώνας {n}",
             "evaluate": "Αξιολόγηση",
-            "best": "Καλύτερη",
-            "second": "Δεύτερη",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Κινήσεις",
             "close": "Κλείσιμο",

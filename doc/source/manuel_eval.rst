@@ -277,9 +277,13 @@ où le videau de la position ne peut pas se trouver porte un tiret. La
 légende à droite a un bouton par coup ou par verdict (lettre ou sigle,
 notation, nombre de scores) : un clic met ses cases en évidence. Avec des dés,
 le survol d'une case montre son coup sur le plateau. Un clic sur une case
-ouvre un volet avec le score, puis les deux meilleurs coups et leurs équités,
-ou les équités de pas de double, double/prise et double/passe et le verdict, et
-**Évaluer**, qui bascule la vue Décision à ce score ; le volet d'une case au
+ouvre un volet avec le score, puis, avec des dés, le tableau des coups
+candidats à ce score — le même que la vue Décision, d'abord à 0-ply puis à la
+profondeur réglée, le survol d'une ligne montrant le coup sur le plateau —,
+ou, sans dés, les équités de pas de double, double/prise et double/passe et le
+verdict ; un clic sur une autre case interrompt le calcul de la précédente. Le
+volet porte aussi **Évaluer**, qui bascule la vue Décision à ce score ; il
+passe sous la grille quand le panneau est étroit ; le volet d'une case au
 tiret dit *Refusé* et n'a pas **Évaluer**. Le sélecteur *Match en N* choisit
 la longueur ; sa valeur par défaut (9) se règle dans la configuration, onglet
 gammonNet, ligne *Match par défaut*.

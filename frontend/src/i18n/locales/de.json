@@ -3761,8 +3761,6 @@
             "opponent": "Gegner",
             "match": "Match auf {n}",
             "evaluate": "Bewerten",
-            "best": "Bester",
-            "second": "Zweiter",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Züge",
             "close": "Schließen",

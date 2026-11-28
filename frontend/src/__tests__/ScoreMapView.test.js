@@ -4,11 +4,18 @@ import { render, fireEvent } from '@testing-library/svelte';
 import { get } from 'svelte/store';
 
 const handlers = vi.hoisted(() => /** @type {Record<string, (e: any) => void>} */ ({}));
-const app = vi.hoisted(() => ({ StartScoreMap: vi.fn().mockResolvedValue(undefined), CancelScoreMap: vi.fn().mockResolvedValue(undefined) }));
+const app = vi.hoisted(() => ({
+    StartScoreMap: vi.fn().mockResolvedValue(undefined),
+    CancelScoreMap: vi.fn().mockResolvedValue(undefined),
+    EvaluatePositionImmediate: vi.fn(),
+    StartEvaluationAtRest: vi.fn().mockResolvedValue(undefined),
+    CancelEvaluationAtRest: vi.fn().mockResolvedValue(undefined)
+}));
 vi.mock('../../wailsjs/go/gui/App.js', () => app);
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetGammonNetDisplayPly: vi.fn().mockResolvedValue(2),
     GetGammonNetPruneK: vi.fn().mockResolvedValue(0),
+    GetGammonNetCandidates: vi.fn().mockResolvedValue(8),
     GetMapMatchLength: vi.fn().mockResolvedValue(3)
 }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
@@ -74,6 +81,69 @@ describe('ScoreMapView', () => {
         await fireEvent.click(getByText(/^Évaluer|^Evaluate/));
         expect(sendPositionToEval).toHaveBeenCalled();
         expect(get(evalViewStore)).toBe('decision');
+    });
+
+    const candidate = (move, equity) => ({
+        move,
+        equity,
+        equityError: 0,
+        analysisDepth: '0-ply',
+        analysisEngine: 'gammonNet',
+        playerWinChance: 0.5,
+        playerGammonChance: 0.1,
+        playerBackgammonChance: 0,
+        opponentWinChance: 0.5,
+        opponentGammonChance: 0.1,
+        opponentBackgammonChance: 0
+    });
+
+    async function openCell(container, index) {
+        await fireEvent.click(container.querySelectorAll('.cell:not(.blank)')[index]);
+    }
+
+    test('a click evaluates the cell at its own score, 0-ply first, then the configured depth', async () => {
+        app.EvaluatePositionImmediate.mockResolvedValue({ moves: [candidate('24/18 13/11', 0.1)] });
+        const { container, getByText } = render(ScoreMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartScoreMap).toHaveBeenCalled());
+        const tag = app.StartScoreMap.mock.calls.at(-1)[4];
+        cells(3).forEach((cell, index) => handlers['gammonnet-scoremap:cell']({ tag, index, cell }));
+        await Promise.resolve();
+        await openCell(container, 1);
+        await vi.waitFor(() => expect(getByText('24/18 13/11')).toBeTruthy());
+        const [pos] = app.EvaluatePositionImmediate.mock.calls.at(-1);
+        expect(pos.score).toEqual(expect.any(Array));
+        await vi.waitFor(() => expect(app.StartEvaluationAtRest).toHaveBeenCalled());
+        const [, ply, , , deepTag] = app.StartEvaluationAtRest.mock.calls.at(-1);
+        expect(ply).toBe(2);
+        handlers['gammonnet-eval:done']({ tag: deepTag, moves: [candidate('13/7', 0.2)] });
+        await vi.waitFor(() => expect(getByText('13/7')).toBeTruthy());
+    });
+
+    test('another cell cancels the first evaluation, whose late answer is dropped, and a cell seen again answers from memory', async () => {
+        app.EvaluatePositionImmediate.mockImplementation(async (pos) => ({ moves: [candidate(pos.score[0] === 2 ? '6/3 6/2' : '8/4 8/5', 0.1)] }));
+        const { container, getByText, queryByText } = render(ScoreMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartScoreMap).toHaveBeenCalled());
+        const tag = app.StartScoreMap.mock.calls.at(-1)[4];
+        cells(3).forEach((cell, index) => handlers['gammonnet-scoremap:cell']({ tag, index, cell }));
+        await Promise.resolve();
+        await openCell(container, 2);
+        await vi.waitFor(() => expect(app.StartEvaluationAtRest).toHaveBeenCalledTimes(1));
+        const firstTag = app.StartEvaluationAtRest.mock.calls[0][4];
+        app.CancelEvaluationAtRest.mockClear();
+        await openCell(container, 4);
+        expect(app.CancelEvaluationAtRest).toHaveBeenCalled();
+        await vi.waitFor(() => expect(app.StartEvaluationAtRest).toHaveBeenCalledTimes(2));
+        handlers['gammonnet-eval:done']({ tag: firstTag, moves: [candidate('late/answer', 9)] });
+        await Promise.resolve();
+        expect(queryByText('late/answer')).toBeNull();
+        const secondTag = app.StartEvaluationAtRest.mock.calls[1][4];
+        handlers['gammonnet-eval:done']({ tag: secondTag, moves: [candidate('done/second', 0.3)] });
+        await vi.waitFor(() => expect(getByText('done/second')).toBeTruthy());
+        // back on the second cell: no new search
+        await openCell(container, 2);
+        await openCell(container, 4);
+        await vi.waitFor(() => expect(getByText('done/second')).toBeTruthy());
+        expect(app.StartEvaluationAtRest).toHaveBeenCalledTimes(3);
     });
 
     test('a refusal is shown, not a grid', async () => {

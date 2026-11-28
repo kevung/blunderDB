@@ -3761,8 +3761,6 @@
             "opponent": "Rival",
             "match": "Partida a {n}",
             "evaluate": "Evaluar",
-            "best": "Mejor",
-            "second": "Segunda",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Jugadas",
             "close": "Cerrar",

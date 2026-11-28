@@ -14,6 +14,7 @@
     import { signed } from '../utils/rollMap.js';
     import { logger } from '../utils/logger.js';
     import { nextMapTag } from '../utils/mapTag.js';
+    import ScoreCellDetail from './ScoreCellDetail.svelte';
     import { t } from '../i18n';
 
     let { active = true } = $props();
@@ -62,11 +63,27 @@
         }
         if (mine !== tag) return;
         targetPly = ply;
+        mapPruneK = pruneK;
+        await launch(mine, ply, pruneK);
+    }
+
+    let mapPruneK = 0;
+
+    /** @param {number} mine @param {number} ply @param {number} pruneK */
+    async function launch(mine, ply, pruneK) {
         try {
             await StartScoreMap(/** @type {any} */ ($positionStore), matchLength, ply, pruneK, mine);
         } catch (e) {
             if (mine === tag) error = String(e);
         }
+    }
+
+    // A cell's own evaluation takes the search slot and stops the grid's refinement: pick it up
+    // again where it was, the cells already refined being answered from the engine's cache.
+    function resume() {
+        if (!active || error || cells.length === 0) return;
+        const complete = cells.length === matchLength * matchLength && cells.every((c) => c && c.ply >= targetPly);
+        if (!complete) launch((tag = nextMapTag()), targetPly, mapPruneK);
     }
 
     /** @type {Array<() => void>} */
@@ -251,7 +268,14 @@
                     <div class="detail">
                         <div class="detail-head">
                             <b>{detail.awayOnRoll}-{detail.awayOpponent}{detail.crawford ? ` ${$t('maps.scores.crawford')}` : ''}</b>
-                            <button type="button" onclick={() => (detail = null)} aria-label={$t('maps.scores.close')}>×</button>
+                            <button
+                                type="button"
+                                onclick={() => {
+                                    detail = null;
+                                    resume();
+                                }}
+                                aria-label={$t('maps.scores.close')}>×</button
+                            >
                         </div>
                         {#if detail.refused}
                             <div>{$t('maps.scores.refused')}</div>
@@ -266,10 +290,7 @@
                                 {#if detail.verdict === 'too_good'}<div class="best">{$t('maps.verdict.long.too_good')}</div>{/if}
                             {/if}
                         {:else}
-                            <div class="best">{$t('maps.scores.best')} {detail.move} <span class="num">{detail.equity.toFixed(3)}</span></div>
-                            {#if detail.secondMove}
-                                <div>{$t('maps.scores.second')} {detail.secondMove} <span class="num">{detail.secondEquity?.toFixed(3)}</span></div>
-                            {/if}
+                            <ScoreCellDetail cell={detail} position={$positionStore} onSettled={resume} />
                         {/if}
                         {#if !detail.refused && detail.verdict !== 'dmp'}
                             <button type="button" class="evaluate" onclick={() => evaluateAt(detail)}>{$t('maps.scores.evaluate')}</button>
@@ -360,11 +381,17 @@
         font-family: var(--font-family-mono);
         color: var(--color-text-muted);
     }
+    /* The side column takes what the grid leaves; too narrow for both, it wraps under the grid
+       (the wrapping follows the panel's width, not the window's) and scrolls rather than clip. */
     .side {
         display: flex;
         flex-direction: column;
         gap: var(--space-3);
-        min-width: 160px;
+        flex: 1 1 340px;
+        min-width: 0;
+    }
+    .grid {
+        flex: none;
     }
     .legend {
         list-style: none;
@@ -405,6 +432,7 @@
         color: var(--color-text-muted);
     }
     .detail {
+        min-width: 0;
         display: flex;
         flex-direction: column;
         gap: var(--space-1);

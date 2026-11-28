@@ -3761,8 +3761,6 @@
             "opponent": "Avversario",
             "match": "Match a {n}",
             "evaluate": "Valuta",
-            "best": "Migliore",
-            "second": "Seconda",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Mosse",
             "close": "Chiudi",

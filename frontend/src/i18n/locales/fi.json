@@ -3761,8 +3761,6 @@
             "opponent": "Vastustaja",
             "match": "Ottelu {n}:ään",
             "evaluate": "Arvioi",
-            "best": "Paras",
-            "second": "Toinen",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Siirrot",
             "close": "Sulje",

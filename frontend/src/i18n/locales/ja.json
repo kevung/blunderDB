@@ -3761,8 +3761,6 @@
             "opponent": "相手",
             "match": "{n}ポイントマッチ",
             "evaluate": "評価",
-            "best": "最良",
-            "second": "次善",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "手",
             "close": "閉じる",

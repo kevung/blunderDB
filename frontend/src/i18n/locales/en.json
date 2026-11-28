@@ -3761,8 +3761,6 @@
             "opponent": "Opponent",
             "match": "Match to {n}",
             "evaluate": "Evaluate",
-            "best": "Best",
-            "second": "Second",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Plays",
             "close": "Close",

@@ -3761,8 +3761,6 @@
             "opponent": "Соперник",
             "match": "Матч до {n}",
             "evaluate": "Оценить",
-            "best": "Лучший",
-            "second": "Второй",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Ходы",
             "close": "Закрыть",
