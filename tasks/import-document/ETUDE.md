@@ -40,7 +40,17 @@ Fusionné ensuite (issues closes le 2026-11-27, publié dans 0.62.0) :
   Masterclass 61/60/36/16 → 66/64/32/11, douze autres livres inchangés. Limites dans
   `tasks/mesure-import-document-2026-11.md`.
 
-Plus aucune branche ni issue ouverte sur ce chantier.
+En attente de revue (2026-11-28) : #1016 (pips loin du plateau), branche `feat/doc-pips-far`,
+main fusionné dedans, non fusionnée sur main. Bande lointaine dès une demi-case du bord du
+plateau, vue de la bande préférée quand elle voit le nombre seul ou après une lettre ; un nombre
+lu à la place des pips au-dessus de 375 n'est pas comparé (doute « pas de pips » au lieu d'une
+contradiction). Mesure `TestMeasureContextOnPages`, réglage seulement, 13 livres lus par
+l'image, diagramme par diagramme contre 6ac779298 : Back Checker Strategy confirmés 47 → 137
+sur 217, pips image 74 → 180 (160 égaux), aucun confirmé en contradiction avec ses pips, aucun
+confirmé perdu ; 3 plateaux complétés par les pips imprimés (pile haute, deux pions). Les 12
+autres livres : état, plateau, contexte et pips identiques. Contre main 697c069d4 : BCS 0 → 137,
+Endgame 12 → 13. Restes BCS : 20 diagrammes à pips lus qui contredisent le plateau (piles hautes,
+pions manquants ; désaccord nommé, à vérifier) ; videau blanc sur carré noir non lu.
 
 Suite de l'ancienne reprise ci-dessous (2026-11-30, date erronée, écrite le 2026-11-26).
 

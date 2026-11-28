@@ -37,6 +37,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
 import { statusBarModeStore } from '../stores/uiStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { evalVerdictStore } from '../stores/analysisStore.js';
+import { evalCache } from '../services/evalCache.js';
 import EvalPanel from '../components/EvalPanel.svelte';
 
 const move = { index: 0, move: '13/7 8/5', analysisDepth: '2-ply', equity: 0.12 };
@@ -44,6 +45,8 @@ const cube = { analysisDepth: '2-ply', cubefulNoDoubleEquity: 0.8, cubefulDouble
 
 describe('EvalPanel exposes its verdict for CTRL-S', () => {
     beforeEach(() => {
+        // Each test evaluates the same board afresh: none inherits another's answer.
+        evalCache.clear();
         vi.useFakeTimers();
         statusBarModeStore.set('EVAL');
     });
@@ -102,9 +105,11 @@ describe('EvalPanel exposes its verdict for CTRL-S', () => {
     });
 
     test('a late "done" from a search a newer gesture superseded is dropped', async () => {
-        const stale = { ...move, move: '24/18 13/10' };
-        const fresh = { ...move, move: '8/2 6/3' };
-        evaluatePositionImmediate.mockResolvedValue({ moves: [move] });
+        // The immediate tier answers at 0-ply: a deeper answer would already stand in the cache.
+        const zero = { ...move, analysisDepth: '0-ply' };
+        const stale = { ...zero, move: '24/18 13/10' };
+        const fresh = { ...zero, move: '8/2 6/3' };
+        evaluatePositionImmediate.mockResolvedValue({ moves: [zero] });
         positionStore.set({ ...emptyPosition(), dice: [3, 3] });
         render(EvalPanel);
         await vi.advanceTimersByTimeAsync(600); // the at-rest search of board A starts

@@ -495,6 +495,44 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 	return n, nil
 }
 
+// ScorePlays values only the plays of pos for d1-d2 whose resulting position
+// keep accepts, at s's depth, and writes them into out best first; it returns
+// how many there are. Each kept play carries the equity a full search at that
+// depth gives it when it reaches the last pass — deepen is that very pass —
+// whatever the filters would have done with it. Nothing is pruned: a play the
+// pruning network would cut can be asked for.
+func (s *Searcher) ScorePlays(pos *Position, d1, d2 int, keep func(result *Position) bool, out []Candidate) (int, error) {
+	if !pos.Valid() {
+		return 0, fmt.Errorf("gammonnet: position is not structurally valid")
+	}
+	if d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 {
+		return 0, fmt.Errorf("gammonnet: dice %d-%d out of range", d1, d2)
+	}
+	owner := s.cfg.CubeOwner
+	n := s.rankPlaysShallowKeep(pos, d1, d2, 0, 0, s.matchState(), owner, out)
+	if n < 0 {
+		if s.stopped() {
+			return 0, ErrCanceled
+		}
+		return 0, fmt.Errorf("gammonnet: play generation refused or overflowed")
+	}
+	kept := 0
+	for i := 0; i < n; i++ {
+		if keep(&out[i].Play.Result) {
+			out[kept], out[i] = out[i], out[kept]
+			kept++
+		}
+	}
+	if kept > 0 && s.cfg.Ply > 0 && !s.deepen(out, kept, s.cfg.Ply, 0, owner) {
+		if s.stopped() {
+			return 0, ErrCanceled
+		}
+		return 0, fmt.Errorf("gammonnet: deep search refused")
+	}
+	sortByEquity(out[:kept])
+	return kept, nil
+}
+
 // rankPlaysShallow fait les phases une et deux de rankPlays — générer,
 // élaguer, valoriser, trier — sans approfondir, pour que la racine de probsAt
 // assemble plusieurs groupes avant d'approfondir.

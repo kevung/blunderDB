@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 20:58+0100\n"
+"POT-Creation-Date: 2026-11-28 02:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -67,7 +67,12 @@ msgid ""
 "(onglets Transcription, Graphes, À revoir, Détails, Infos, Stats) ; un "
 "second clic ou *ÉCHAP* la referme, un double-clic ou *ENTRÉE* ouvre le "
 "match dans le plateau. Le champ **Ajouter un match…** y range un match de"
-" la base, et ← ramène à la liste des tournois."
+" la base, et ← ramène à la liste des tournois. *Ctrl+clic* ajoute ou "
+"retire un match de la sélection, *Maj+clic* sélectionne une plage ; le "
+"menu contextuel, *Imprimer…* et *Archive papier…*, s'applique alors à "
+"toute la sélection (100 matchs au plus). **Imprimer le tournoi…**, dans l"
+"'en-tête, imprime tous les matchs du tournoi sur une seule feuille, dans "
+"la même boîte que celle du panneau Matchs."
 msgstr ""
 "Το **Νέο τουρνουά** ανοίγει το πεδίο δημιουργίας, που παίρνει την "
 "εστίαση· το *ESC* ή το **Άκυρο** το κλείνει. Το πεδίο φίλτρου, στη λωρίδα"
@@ -85,9 +90,15 @@ msgstr ""
 "Γραφήματα, Προς επανεξέταση, Λεπτομέρειες, Πληροφορίες, Στατιστικά)· ένα "
 "δεύτερο κλικ ή το *ESC* την κλείνει, ένα διπλό κλικ ή το *ENTER* ανοίγει "
 "τον αγώνα στο ταμπλό. Το πεδίο **Προσθήκη αγώνα…** τακτοποιεί εκεί έναν "
-"αγώνα της βάσης, και το ← επιστρέφει στη λίστα των τουρνουά."
+"αγώνα της βάσης, και το ← επιστρέφει στη λίστα των τουρνουά. Το "
+"*Ctrl+κλικ* προσθέτει ή αφαιρεί έναν αγώνα από την επιλογή, το "
+"*Shift+κλικ* επιλέγει ένα εύρος· το μενού περιβάλλοντος, *Εκτύπωση…* και "
+"*Αρχείο σε χαρτί…*, ισχύει τότε για ολόκληρη την επιλογή (έως 100 "
+"αγώνες). Το **Εκτύπωση του τουρνουά…**, στην κεφαλίδα, εκτυπώνει όλους "
+"τους αγώνες του τουρνουά σε ένα μόνο φύλλο, στο ίδιο παράθυρο με αυτό του"
+" πίνακα Αγώνων."
 
-#: ../../source/manuel_tournois.rst:36
+#: ../../source/manuel_tournois.rst:39
 msgid ""
 "Chaque ligne commence par son rang (#) et sa date, comme dans le panneau "
 "Matchs : la liste va du plus récent au plus ancien, et un clic sur un en-"
@@ -106,7 +117,7 @@ msgstr ""
 "εμφανίζεται μόνο σε γκρι, δίπλα στο πεδίο, και η αποθήκευση γράφει "
 "ημερομηνία μόνο αν πληκτρολογήθηκε."
 
-#: ../../source/manuel_tournois.rst:43
+#: ../../source/manuel_tournois.rst:46
 msgid ""
 "La colonne **Origine** dit d'où vient le tournoi, en texte libre : « "
 "importé », « plateforme », « club »… Elle se renseigne dans le formulaire"
@@ -122,7 +133,7 @@ msgstr ""
 "πλατφόρμα και ένα εισαγόμενο ζουν έτσι στην ίδια λίστα· η προέλευση "
 "φεύγει με το τουρνουά στην εξαγωγή και στον συγχρονισμό."
 
-#: ../../source/manuel_tournois.rst:49
+#: ../../source/manuel_tournois.rst:52
 msgid ""
 "Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, "
 "GnuBG et BGF nomment leur événement ; à l'import d'un match nouveau, "
@@ -141,7 +152,7 @@ msgstr ""
 "επανεισαγωγή του αρχείου του δεν αναιρεί την κατάταξη που έγινε με το "
 "χέρι."
 
-#: ../../source/manuel_tournois.rst:57
+#: ../../source/manuel_tournois.rst:60
 msgid ""
 "Les colonnes **PR** et **MWC** de chaque tournoi affichent le PR et la "
 "perte de MWC du **joueur de référence**, sur ses seules décisions. C'est "
@@ -174,7 +185,7 @@ msgstr ""
 "ακόμη και με έναν μόνο αγώνα. Το όνομα του παίκτη αναφοράς εμφανίζεται σε"
 " πλαίσιο υπόδειξης όταν περνάτε πάνω από την τιμή."
 
-#: ../../source/manuel_tournois.rst:73
+#: ../../source/manuel_tournois.rst:76
 msgid ""
 "**Bilan du tournoi.** Le bouton **Bilan**, dans l'en-tête d'un tournoi "
 "ouvert, répond à la question qu'on se pose en rentrant d'une épreuve : "
@@ -192,7 +203,7 @@ msgstr ""
 "πρώτο στη σειρά των χαρακτήρων)· το μενού **Παίκτης** επιλέγει άλλον. Τα "
 "όρια καθορίστηκαν πριν εξεταστεί οποιοδήποτε αποτέλεσμα."
 
-#: ../../source/manuel_tournois.rst:81
+#: ../../source/manuel_tournois.rst:84
 msgid ""
 "**Le niveau habituel** est ce joueur sur ses matchs en points des 365 "
 "jours qui précèdent le tournoi (sa date, à défaut celle de son premier "
@@ -206,7 +217,7 @@ msgstr ""
 "τουρνουά. Μετράει μόνο το πριν: είναι το επίπεδο που είχε κανείς "
 "φτάνοντας. Χρειάζονται τουλάχιστον 5 αγώνες· αλλιώς δηλώνεται άγνωστο."
 
-#: ../../source/manuel_tournois.rst:85
+#: ../../source/manuel_tournois.rst:88
 #, no-python-format
 msgid ""
 "**PR et perte MWC (éq. 7 pts)** du tournoi face au niveau habituel, "
@@ -225,7 +236,7 @@ msgstr ""
 "τριών αγώνων σπάνια λέει «χειρότερα»: οι αριθμοί παραμένουν ορατοί, η "
 "κρίση περιμένει την απόδειξη."
 
-#: ../../source/manuel_tournois.rst:91
+#: ../../source/manuel_tournois.rst:94
 msgid ""
 "**Par ronde** : chaque match dans l'ordre du tournoi, avec l'adversaire, "
 "son PR (intervalle sur les parties) et sa perte éq. 7 pts, face au PR "
@@ -235,7 +246,7 @@ msgstr ""
 "PR του (διάστημα επί των παρτίδων) και την απώλειά του ισοδ. 7 πόντων, σε"
 " σχέση με το συνηθισμένο PR."
 
-#: ../../source/manuel_tournois.rst:93
+#: ../../source/manuel_tournois.rst:96
 msgid ""
 "**Par rang de la décision dans le match**, par tranches de 30 décisions :"
 " si la fin des matchs longs coûte plus que d'habitude, c'est la fatigue "
@@ -246,7 +257,7 @@ msgstr ""
 "κόπωση που πρέπει να δουλευτεί (διαλείμματα, ρυθμός), όχι μια οικογένεια "
 "θέσεων."
 
-#: ../../source/manuel_tournois.rst:96
+#: ../../source/manuel_tournois.rst:99
 msgid ""
 "**Par score** : DMP, partie Crawford, post-Crawford et autres scores, "
 "face aux mêmes scores du niveau habituel — les points où une erreur "
@@ -256,7 +267,7 @@ msgstr ""
 "σχέση με τα ίδια σκορ του συνηθισμένου επιπέδου — τα σημεία όπου ένα "
 "λάθος κρίνει τον αγώνα."
 
-#: ../../source/manuel_tournois.rst:98
+#: ../../source/manuel_tournois.rst:101
 msgid ""
 "**Par rythme** : décisions rapides ou posées, de part et d'autre de la "
 "médiane de vos durées pour ce type de décision dans le match. C'est ainsi"
@@ -267,7 +278,7 @@ msgstr ""
 " των χρόνων σας για αυτόν τον τύπο απόφασης στον αγώνα. Έτσι διαβάζεται "
 "το ρολόι: το απόθεμα χρόνου δεν καταγράφεται κίνηση προς κίνηση."
 
-#: ../../source/manuel_tournois.rst:101
+#: ../../source/manuel_tournois.rst:104
 msgid ""
 "**Familles d'erreurs du tournoi** : au plus trois familles du plan "
 "d'étude (voir :ref:`plan_etude`) restreint aux erreurs du tournoi, avec "
@@ -280,7 +291,7 @@ msgstr ""
 "μετρώνται «προς επιβεβαίωση». Αυτές είναι οι συνεδρίες που πρέπει να "
 "προγραμματιστούν πρώτες."
 
-#: ../../source/manuel_tournois.rst:106
+#: ../../source/manuel_tournois.rst:109
 msgid ""
 "``stats tournament`` imprime le même bilan, et le serveur le sert par "
 "``/v1/stats.tournamentReview``."
@@ -288,11 +299,11 @@ msgstr ""
 "Το ``stats tournament`` τυπώνει τον ίδιο απολογισμό, και ο διακομιστής "
 "τον σερβίρει μέσω του ``/v1/stats.tournamentReview``."
 
-#: ../../source/manuel_tournois.rst:112
+#: ../../source/manuel_tournois.rst:115
 msgid "Diriger un tournoi"
 msgstr "Διεύθυνση τουρνουά"
 
-#: ../../source/manuel_tournois.rst:114
+#: ../../source/manuel_tournois.rst:117
 msgid ""
 "blunderDB sait **diriger** un tournoi, et pas seulement le ranger. La "
 "direction est portée par le moteur **Nicomaque**, de Nicolas Harmand : "
@@ -308,7 +319,7 @@ msgstr ""
 "αγώνες της. Το κουμπί **ⓘ** της επικεφαλίδας της Διεύθυνσης θυμίζει αυτή "
 "την αναφορά και οδηγεί στο αποθετήριο και στην τεκμηρίωση της μηχανής."
 
-#: ../../source/manuel_tournois.rst:120
+#: ../../source/manuel_tournois.rst:123
 msgid ""
 "Un tournoi dirigé se choisit dans le panneau :ref:`panneau_tournois` "
 "(*CTRL-Y*, commande ``direct``) : ouvrir un tournoi, puis **Diriger**. Un"
@@ -329,7 +340,7 @@ msgstr ""
 "**Έξοδος από τη διεύθυνση**, στην επικεφαλίδα της προβολής, ή το "
 "**Κλείσιμο της διεύθυνσης**, στο πάνελ, την κλείνουν."
 
-#: ../../source/manuel_tournois.rst:129
+#: ../../source/manuel_tournois.rst:132
 msgid ""
 "Une direction a trois états : **en préparation** tant qu'aucun match n'a "
 "été lancé, **en cours** ensuite, **terminé** une fois le tournoi clos et "
@@ -342,7 +353,7 @@ msgstr ""
 "κλειστού τουρνουά είναι δυνατό και ζητά επιβεβαίωση: η τελική κατάταξη "
 "παύει να είναι τελική."
 
-#: ../../source/manuel_tournois.rst:135
+#: ../../source/manuel_tournois.rst:138
 msgid ""
 "Tout ce qui est décidé est écrit dans un **journal**, et rien d'autre ne "
 "l'est. Le classement, les arbres, les propositions et les avertissements "
@@ -356,11 +367,11 @@ msgstr ""
 " τίποτα, και μια διόρθωση δεν σβήνει ποτέ ό,τι συνέβη — προστίθεται σε "
 "αυτό."
 
-#: ../../source/manuel_tournois.rst:141
+#: ../../source/manuel_tournois.rst:144
 msgid "La page Direction"
 msgstr "Η σελίδα Διεύθυνσης"
 
-#: ../../source/manuel_tournois.rst:143
+#: ../../source/manuel_tournois.rst:146
 msgid ""
 "C'est là que le directeur passe l'essentiel de son temps. Elle porte, de "
 "haut en bas : les **avertissements** du moteur, qui restent visibles et "
@@ -384,7 +395,7 @@ msgstr ""
 "ουρά υπενθυμίζει κάτω από τον τίτλο της τις συντομεύσεις της (*J* και "
 "*K*, *ENTER*, *ΑΡΙΣΤΕΡΑ* και *ΔΕΞΙΑ*)."
 
-#: ../../source/manuel_tournois.rst:153
+#: ../../source/manuel_tournois.rst:156
 msgid ""
 "La vue occupe toute la largeur de la zone principale, et chaque onglet "
 "défile seul : quitter un onglet puis y revenir, ou passer d'une épreuve à"
@@ -413,7 +424,7 @@ msgstr ""
 "κλήρωση, η έναρξη αγώνα και το κλείσιμο αφήνουν κι αυτά εκεί μια "
 "ειδοποίηση («Η Sophie Martin εγγράφηκε — 16 εγγεγραμμένοι»)."
 
-#: ../../source/manuel_tournois.rst:165
+#: ../../source/manuel_tournois.rst:168
 msgid ""
 "Une Direction s'ouvre sur ses **Joueurs** tant que le tournoi n'est pas "
 "lancé, sur l'onglet **Direction** ensuite, et sur l'onglet où on l'avait "
@@ -429,7 +440,7 @@ msgstr ""
 " καρτέλα. Ένα δεύτερο κλικ στο *Διεύθυνση* ή στο *Άνοιγμα της διεύθυνσης*"
 " όσο φορτώνεται η προβολή αγνοείται."
 
-#: ../../source/manuel_tournois.rst:171
+#: ../../source/manuel_tournois.rst:174
 msgid ""
 "Une ronde proposée s'annonce avant d'être lancée : **Ronde à venir…**, à "
 "côté de *Imprimer la feuille*, demande la date et l'heure à imprimer (« "
@@ -446,7 +457,7 @@ msgstr ""
 " Ένα ζευγάρωμα που περιμένει ελεύθερο τραπέζι φέρει μια παύλα αντί για "
 "αριθμό τραπεζιού."
 
-#: ../../source/manuel_tournois.rst:178
+#: ../../source/manuel_tournois.rst:181
 msgid ""
 "En tête de la vue tournoi, la **bande d'horloge** tient en une ligne : "
 "l'heure, le temps écoulé depuis le premier match lancé, les matchs joués "
@@ -469,7 +480,7 @@ msgstr ""
 "δηλωθεί ως διάλειμμα μετράει επομένως ως παιχνίδι. Μια ώρα που δεν είναι "
 "της σημερινής ημέρας φέρει την ημέρα της."
 
-#: ../../source/manuel_tournois.rst:187
+#: ../../source/manuel_tournois.rst:190
 msgid ""
 "À partir du deuxième jour, le temps écoulé laisse la place au **jour de "
 "jeu** (le jour du premier match lancé est le jour 1) et au **temps de "
@@ -483,7 +494,7 @@ msgstr ""
 "εξέλιξη, χωρίς τις νύχτες ούτε τα διαστήματα όπου κανένα τραπέζι δεν "
 "έπαιζε. Ένα κλειστό τουρνουά δεν έχει πια λωρίδα ρολογιού."
 
-#: ../../source/manuel_tournois.rst:193
+#: ../../source/manuel_tournois.rst:196
 msgid ""
 "Une proposition se confirme d'**un clic** sur *Lancer*. **Tout lancer** "
 "confirme en deux clics les propositions qui ont une table, après en avoir"
@@ -508,7 +519,7 @@ msgstr ""
 "Η *χειροκίνητη κλήρωση ζεύγους* προσφέρεται πάντοτε — η μηχανή προτείνει,"
 " ο διευθυντής αποφασίζει."
 
-#: ../../source/manuel_tournois.rst:203
+#: ../../source/manuel_tournois.rst:206
 msgid ""
 "Un match apparié à la main sans numéro de table prend la première table "
 "libre ; une table où un match est en cours est refusée. Si toutes les "
@@ -521,7 +532,7 @@ msgstr ""
 "του εμφανίζεται στο τέλος του πλέγματος, «χωρίς τραπέζι», μέχρι να "
 "μετακινηθεί σε ένα τραπέζι."
 
-#: ../../source/manuel_tournois.rst:208
+#: ../../source/manuel_tournois.rst:211
 msgid ""
 "Une proposition peut porter une remarque du moteur : aucune table libre, "
 "ou une fin de match attendue pendant une pause. Elle reste lançable dans "
@@ -536,11 +547,11 @@ msgstr ""
 " παρτίδα· στη λήξη οι προτάσεις εμφανίζονται μόνες τους, και τίποτα δεν "
 "ξεκινά από μόνο του."
 
-#: ../../source/manuel_tournois.rst:215
+#: ../../source/manuel_tournois.rst:218
 msgid "La fiche de résultat"
 msgstr "Η καρτέλα αποτελέσματος"
 
-#: ../../source/manuel_tournois.rst:217
+#: ../../source/manuel_tournois.rst:220
 msgid ""
 "Un clic sur une table occupée ouvre la fiche du match. Elle montre deux "
 "grandes cibles : les **noms des deux joueurs**. Cliquer celui qui a gagné"
@@ -559,7 +570,7 @@ msgstr ""
 "καρτέλα κλείνει μόνο όταν γραφτεί το αποτέλεσμα: μια αποτυχία την αφήνει "
 "ανοιχτή, με το μήνυμά της."
 
-#: ../../source/manuel_tournois.rst:225
+#: ../../source/manuel_tournois.rst:228
 msgid ""
 "Le bouton **⋯** de la fiche déplie ce qui sert rarement : le forfait — "
 "chaque bouton nomme l'absent et celui qui gagne —, une remarque libre (« "
@@ -584,7 +595,7 @@ msgstr ""
 "παλιό ημερολόγιο άφησε δύο σε ένα τραπέζι, το πλέγμα δείχνει και τα δύο "
 "κελιά, επισημασμένα, μέχρι να μετακινηθεί το ένα."
 
-#: ../../source/manuel_tournois.rst:236
+#: ../../source/manuel_tournois.rst:239
 msgid ""
 "Une erreur de saisie vue aussitôt se reprend en deux clics sous la grille"
 " : **Corriger** la dernière décision, puis le bon vainqueur (*CTRL-Z* "
@@ -596,11 +607,11 @@ msgstr ""
 "νικητής (το *CTRL-Z* ανοίγει την ίδια διόρθωση). Μια παλαιότερη διόρθωση "
 "γίνεται από το :ref:`ιστορικό <direction_historique>`."
 
-#: ../../source/manuel_tournois.rst:244
+#: ../../source/manuel_tournois.rst:247
 msgid "Les menus contextuels"
 msgstr "Τα μενού περιβάλλοντος"
 
-#: ../../source/manuel_tournois.rst:246
+#: ../../source/manuel_tournois.rst:249
 msgid ""
 "Un clic droit, la touche *MENU* ou *MAJ-F10* sur un objet de la page "
 "Direction ouvre ses actions courantes sans passer par la fiche : une case"
@@ -618,7 +629,7 @@ msgstr ""
 " πάνω στο αντικείμενο· τα *ΠΑΝΩ* και *ΚΑΤΩ* το διατρέχουν, το *ENTER* "
 "επιλέγει, το *ESC* το κλείνει και επιστρέφει την εστίαση στο αντικείμενο."
 
-#: ../../source/manuel_tournois.rst:253
+#: ../../source/manuel_tournois.rst:256
 msgid ""
 "Case occupée : saisir le résultat, forfait de l'un ou de l'autre, changer"
 " de table (viser une table occupée échange les deux matchs), annuler le "
@@ -628,7 +639,7 @@ msgstr ""
 "άλλου, αλλαγή τραπεζιού (η επιλογή κατειλημμένου τραπεζιού ανταλλάσσει "
 "τους δύο αγώνες), ακύρωση του αγώνα, ιστορικό κάθε παίκτη."
 
-#: ../../source/manuel_tournois.rst:256
+#: ../../source/manuel_tournois.rst:259
 msgid ""
 "Case libre : lancer ici la proposition sélectionnée, mettre la table hors"
 " service, ou la remettre en service (tables d'un événement). Une table "
@@ -639,7 +650,7 @@ msgstr ""
 "διοργάνωσης). Ένα τραπέζι δεσμευμένο για άλλο αγώνισμα δεν προσφέρει "
 "τίποτα."
 
-#: ../../source/manuel_tournois.rst:259
+#: ../../source/manuel_tournois.rst:262
 msgid ""
 "Joueur : saisir le résultat de son match en cours, aller à sa table, "
 "historique, apparier à la main avec un autre joueur libre, aller dans "
@@ -652,13 +663,13 @@ msgstr ""
 "παρόντα, απόσυρση τώρα ή μετά τον αγώνα του, επανεγγραφή, διόρθωση των "
 "στοιχείων."
 
-#: ../../source/manuel_tournois.rst:263
+#: ../../source/manuel_tournois.rst:266
 msgid ""
 "Emplacement sans match : rattacher un match importé que cette place "
 "attend."
 msgstr "Θέση χωρίς αγώνα: σύνδεση ενός εισηγμένου αγώνα που περιμένει αυτή η θέση."
 
-#: ../../source/manuel_tournois.rst:264
+#: ../../source/manuel_tournois.rst:267
 msgid ""
 "Proposition : lancer, lancer à la table…, changer la longueur…, apparier "
 "autrement (ces trois entrées ouvrent l'appariement à la main avec les "
@@ -670,7 +681,7 @@ msgstr ""
 "με τους δύο παίκτες, το μήκος και το τραπέζι της αντιστοίχισης), "
 "προσωρινή παράβλεψη, εκτύπωση του φύλλου του γύρου."
 
-#: ../../source/manuel_tournois.rst:268
+#: ../../source/manuel_tournois.rst:271
 msgid ""
 "Ligne d'historique : corriger ou annuler, ajouter une remarque, filtrer "
 "sur un des joueurs."
@@ -678,7 +689,7 @@ msgstr ""
 "Γραμμή ιστορικού: διόρθωση ή ακύρωση, προσθήκη παρατήρησης, φιλτράρισμα "
 "σε έναν από τους παίκτες."
 
-#: ../../source/manuel_tournois.rst:271
+#: ../../source/manuel_tournois.rst:274
 msgid ""
 "Le forfait, l'annulation d'un match et le retrait d'un joueur gardent la "
 "confirmation qu'ils ont dans la fiche et dans les boutons des lignes. "
@@ -692,7 +703,7 @@ msgstr ""
 "γκριζαρισμένες, όπως τα κουμπιά. Ένα μόνο μενού είναι ανοιχτό κάθε φορά: "
 "το άνοιγμα δεύτερου κλείνει το πρώτο."
 
-#: ../../source/manuel_tournois.rst:277
+#: ../../source/manuel_tournois.rst:280
 msgid ""
 "Au clavier, la grille ne prend qu'un arrêt de *TAB* : chaque case se "
 "focalise, libre comprise, et *GAUCHE*, *DROITE*, *HAUT*, *BAS*, *DÉBUT* "
@@ -711,7 +722,7 @@ msgstr ""
 "ήδη ανοιχτή είτε όχι: η επιλογή κατειλημμένου τραπεζιού ανταλλάσσει τους "
 "δύο αγώνες."
 
-#: ../../source/manuel_tournois.rst:284
+#: ../../source/manuel_tournois.rst:287
 msgid ""
 "À la souris, on **glisse** une case occupée sur une autre : sur une case "
 "libre le match change de table ; sur une case occupée, une ligne « Table "
@@ -731,11 +742,11 @@ msgstr ""
 "κατάστασης δίνει τον λόγο. Στη γραμμή εντολών, η ``blunderdb tournament "
 "move`` κάνει την ίδια μετακίνηση ή ανταλλαγή (βλ. :ref:`cli`)."
 
-#: ../../source/manuel_tournois.rst:296
+#: ../../source/manuel_tournois.rst:299
 msgid "Le plein écran"
 msgstr "Πλήρης οθόνη"
 
-#: ../../source/manuel_tournois.rst:298
+#: ../../source/manuel_tournois.rst:301
 msgid ""
 "La touche *F11* de la page Direction, ou le bouton en bas à droite, la "
 "met en plein écran : la barre d'outils, les onglets, le plateau, le "
@@ -756,11 +767,11 @@ msgstr ""
 "έξοδος από τη σελίδα, με αλλαγή καρτέλας της εφαρμογής ή κλείσιμο της "
 "διεύθυνσης, τερματίζει κι αυτή τη λειτουργία."
 
-#: ../../source/manuel_tournois.rst:310
+#: ../../source/manuel_tournois.rst:313
 msgid "La recherche rapide"
 msgstr "Η γρήγορη αναζήτηση"
 
-#: ../../source/manuel_tournois.rst:312
+#: ../../source/manuel_tournois.rst:315
 msgid ""
 "La touche */* de la page Direction ouvre la palette sur le tournoi seul :"
 " joueurs, tables, matchs en cours et épreuves de l'événement ouvert, ou "
@@ -789,11 +800,11 @@ msgstr ""
 "τίποτα, και σε ένα πεδίο εισαγωγής το πλήκτρο παραμένει κάθετος. Το "
 "*CTRL-SHIFT-P* ανοίγει την πλήρη παλέτα, που περιέχει και το τουρνουά."
 
-#: ../../source/manuel_tournois.rst:325
+#: ../../source/manuel_tournois.rst:328
 msgid "Les joueurs"
 msgstr "Οι παίκτες"
 
-#: ../../source/manuel_tournois.rst:327
+#: ../../source/manuel_tournois.rst:330
 msgid ""
 "L'onglet **Joueurs** inscrit, corrige et retire. Le champ d'inscription "
 "garde le focus et se vide après chaque nom : vingt joueurs s'inscrivent "
@@ -807,7 +818,7 @@ msgstr ""
 " παίκτες της βάσης· επιλέγοντας έναν καθορίζεται η ακριβής γραφή που "
 "φέρουν οι αγώνες του και προσυμπληρώνεται η βαθμολογία του με το PR του."
 
-#: ../../source/manuel_tournois.rst:332
+#: ../../source/manuel_tournois.rst:335
 msgid ""
 "L'**annuaire** regroupe les inscrits de tous les tournois dirigés de la "
 "base, dédoublonnés par nom, avec le club et la cote de leur dernière "
@@ -824,7 +835,7 @@ msgstr ""
 " αν είναι· το ευρετήριο αντιγράφεται σε CSV ή αποθηκεύεται σε αρχείο "
 "(**Αποθήκευση…**), και διαβάζεται ξανά επικολλημένο."
 
-#: ../../source/manuel_tournois.rst:339
+#: ../../source/manuel_tournois.rst:342
 msgid ""
 "Une épreuve en doubles inscrit des paires : la case **Paire** ajoute le "
 "nom, le club et la cote du partenaire. La paire joue sous le nom « A / B "
@@ -838,7 +849,7 @@ msgstr ""
 " όρος των δύο, και μια τιμή στο **Βαθμολογία ζευγαριού** την αντικαθιστά."
 " Ο κατάλογος κρατά τα δύο πρόσωπα, ποτέ το ζευγάρι."
 
-#: ../../source/manuel_tournois.rst:345
+#: ../../source/manuel_tournois.rst:348
 msgid ""
 "Avant **Inscrire**, l'aperçu d'un CSV collé liste les lignes illisibles —"
 " sans nom, sans séparateur quand les autres lignes en ont, cote qui n'est"
@@ -851,7 +862,7 @@ msgstr ""
 "διπλότυπα, μέσα στην επικόλληση ή με έναν παίκτη ήδη εγγεγραμμένο. Ένα "
 "διπλότυπο δεν εγγράφεται, εκτός αν επιλεγεί το πλαίσιό του."
 
-#: ../../source/manuel_tournois.rst:350
+#: ../../source/manuel_tournois.rst:353
 msgid ""
 "Le champ de filtre de la liste garde son texte quand on change d'épreuve "
 ": tant qu'il est actif, une puce **filtre : …** s'affiche à côté, et sa "
@@ -861,7 +872,7 @@ msgstr ""
 "αγώνισμα: όσο είναι ενεργό, εμφανίζεται δίπλα ένα διακριτικό **φίλτρο: "
 "…** και ο σταυρός του το καθαρίζει."
 
-#: ../../source/manuel_tournois.rst:353
+#: ../../source/manuel_tournois.rst:356
 msgid ""
 "Un **retardataire** arrivé après le tirage prend une place d'exemption "
 "libre si le tableau en offre une, et l'interface écrit à côté du champ où"
@@ -875,7 +886,7 @@ msgstr ""
 "και η προβολή λέει σε ποια φάση θα μπει. Καμία κλήρωση που έχει ήδη γίνει"
 " δεν ξαναγίνεται."
 
-#: ../../source/manuel_tournois.rst:358
+#: ../../source/manuel_tournois.rst:361
 msgid ""
 "Un retrait se fait *maintenant* ou *après son match en cours*, selon que "
 "le joueur part tout de suite ou finit ce qu'il joue ; il se confirme par "
@@ -885,7 +896,7 @@ msgstr ""
 "το αν ο παίκτης φεύγει αμέσως ή τελειώνει αυτό που παίζει· επιβεβαιώνεται"
 " με ένα κουμπί **Απόσυρση**, όχι κόκκινο αφού τίποτα δεν διαγράφεται."
 
-#: ../../source/manuel_tournois.rst:362
+#: ../../source/manuel_tournois.rst:365
 msgid ""
 "Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Marquer "
 "absent**, sur sa ligne, ouvre un petit formulaire sous son nom — "
@@ -905,7 +916,7 @@ msgstr ""
 " η απουσία δεν είναι παραίτηση. Το **Επιστροφή**, στη γραμμή του, αίρει "
 "την απουσία με ένα κλικ, πριν ή μετά τη δηλωμένη προθεσμία."
 
-#: ../../source/manuel_tournois.rst:370
+#: ../../source/manuel_tournois.rst:373
 msgid ""
 "Corriger la fiche d'un joueur retiré — son nom, son club, sa cote — le "
 "laisse retiré. Son retour est un geste à part : **Réinscrire**, sur sa "
@@ -919,7 +930,7 @@ msgstr ""
 "αποτελέσματα και τις ζωές που είχε όταν αποχώρησε· τα ματς που χάθηκαν με"
 " φορφέ στην αποχώρησή του παραμένουν χαμένα."
 
-#: ../../source/manuel_tournois.rst:375
+#: ../../source/manuel_tournois.rst:378
 msgid ""
 "Un qualifié de poule qui se retire avant le tirage de la phase suivante "
 "laisse une place. La file propose alors un **repêchage** : le suivant de "
@@ -937,11 +948,11 @@ msgstr ""
 "φάση» χωρίς επαναφορά αφήνει τη θέση σε απαλλαγή. Μόλις κληρωθεί το "
 "ταμπλό, ο αποσυρθείς χάνει τον αγώνα του λόγω εγκατάλειψης."
 
-#: ../../source/manuel_tournois.rst:383
+#: ../../source/manuel_tournois.rst:386
 msgid "Arbres, emplacements, classement, historique"
 msgstr "Πίνακες, θέσεις, κατάταξη, ιστορικό"
 
-#: ../../source/manuel_tournois.rst:385
+#: ../../source/manuel_tournois.rst:388
 msgid ""
 "L'onglet **Arbres** dessine les tableaux avec leurs traits, de la "
 "première ronde à la finale, la consolante à côté du tableau principal, "
@@ -960,7 +971,7 @@ msgstr ""
 "σημειώνεται επιτόπου. Μια κουκκίδα δίπλα στο όνομα της καρτέλας δείχνει "
 "ότι ένας πίνακας βρίσκεται σε εξέλιξη."
 
-#: ../../source/manuel_tournois.rst:392
+#: ../../source/manuel_tournois.rst:395
 msgid ""
 "**Cliquer une place** (ou Entrée sur une place focalisée) ouvre sur elle "
 "la même fiche que sur la grille des tables : le vainqueur d'un match en "
@@ -972,7 +983,7 @@ msgstr ""
 "εξέλιξη καταχωρείται με δύο κλικ και ένας ολοκληρωμένος αγώνας "
 "διορθώνεται κάνοντας κλικ στο όνομα του πραγματικού νικητή."
 
-#: ../../source/manuel_tournois.rst:398
+#: ../../source/manuel_tournois.rst:401
 msgid ""
 "L'onglet **Matchs** (titré « Emplacements ») relie le tournoi à la "
 "bibliothèque. Chaque match du tournoi est un emplacement, que l'on peut "
@@ -994,7 +1005,7 @@ msgstr ""
 "καταγεγραμμένο αποτέλεσμα, η διαφορά δείχνεται χωρίς να επιλύεται — κατά "
 "τη διάρκεια ενός τουρνουά, ο λόγος του διευθυντή ισχύει."
 
-#: ../../source/manuel_tournois.rst:406
+#: ../../source/manuel_tournois.rst:409
 msgid ""
 "L'onglet **Classement** montre le classement courant, section par "
 "section, avec le bilan de chacun (victoires–défaites) et les prix "
@@ -1035,7 +1046,7 @@ msgstr ""
 "ίδιο CSV. Το όνομα ενός παίκτη είναι σύνδεσμος: ανοίγει το Ιστορικό "
 "φιλτραρισμένο στον παίκτη, όπου κάθε αποτέλεσμά του διορθώνεται."
 
-#: ../../source/manuel_tournois.rst:423
+#: ../../source/manuel_tournois.rst:426
 msgid ""
 "Clore sans match en cours est un clic ; quand tout est joué, la file "
 "propose aussi **Clore le tournoi**, qui se lance comme une autre "
@@ -1053,7 +1064,7 @@ msgstr ""
 "**Επανάνοιγμα** επιβεβαιώνεται με τον ίδιο τρόπο· η τελική κατάταξη παύει"
 " τότε να είναι τελική, και το επανάνοιγμα μένει στο ημερολόγιο."
 
-#: ../../source/manuel_tournois.rst:432
+#: ../../source/manuel_tournois.rst:435
 msgid ""
 "L'onglet **Historique** est le journal en clair : une ligne par décision,"
 " dans l'ordre, filtrable par joueur ou par match. C'est ce qu'un "
@@ -1067,7 +1078,7 @@ msgstr ""
 "σχολιάζεται μια παλαιότερη απόφαση. Μια γραμμή αποτελέσματος κατονομάζει "
 "και τους δύο παίκτες: τον νικητή και τον αντίπαλό του."
 
-#: ../../source/manuel_tournois.rst:437
+#: ../../source/manuel_tournois.rst:440
 msgid ""
 "**Corriger**, sur la ligne d'un résultat, ouvre sous elle la même reprise"
 " que la dernière décision : cliquer le bon vainqueur, avec le score s'il "
@@ -1079,11 +1090,11 @@ msgstr ""
 "χρειάζεται. Το αρχικό αποτέλεσμα μένει στη θέση του στο ημερολόγιο, η "
 "διόρθωση προστίθεται, και η κατάταξη την λαμβάνει υπόψη αμέσως."
 
-#: ../../source/manuel_tournois.rst:443
+#: ../../source/manuel_tournois.rst:446
 msgid "Les réglages"
 msgstr "Οι ρυθμίσεις"
 
-#: ../../source/manuel_tournois.rst:445
+#: ../../source/manuel_tournois.rst:448
 msgid ""
 "L'onglet **Réglages** s'ouvre sur des **formats nommés** : six tournois "
 "de club prêts à l'emploi, dont le premier est recommandé. En choisir un "
@@ -1093,7 +1104,7 @@ msgstr ""
 "τουρνουά συλλόγου, με το πρώτο να συνιστάται. Η επιλογή ενός αρκεί για να"
 " ξεκινήσετε· τα πεδία παραμένουν τροποποιήσιμα στη συνέχεια."
 
-#: ../../source/manuel_tournois.rst:449
+#: ../../source/manuel_tournois.rst:452
 msgid ""
 "Se règlent ici : les phases (**Ajouter une phase** l'ajoute après les "
 "autres ; une phase déjà ouverte ne se retire pas) et leur longueur de "
@@ -1118,7 +1129,7 @@ msgstr ""
 "συμμετοχής, παρακράτηση του συλλόγου, κλίμακα ανά ενότητα) και ο φάκελος "
 "προβολής."
 
-#: ../../source/manuel_tournois.rst:459
+#: ../../source/manuel_tournois.rst:462
 msgid ""
 "Un **tableau** a trois cases : **Consolante** (ses perdants jouent un "
 "second tableau, section à part au classement), **Réconciliation** (le "
@@ -1142,7 +1153,7 @@ msgstr ""
 "φάση **Όμιλοι** ρυθμίζεται με το μέγεθος των ομίλων (4 εξ ορισμού) και "
 "τον αριθμό των προκρινόμενων ανά όμιλο (2 εξ ορισμού)."
 
-#: ../../source/manuel_tournois.rst:469
+#: ../../source/manuel_tournois.rst:472
 msgid ""
 "La **bascule** d'une phase suisse est la somme des vies restantes à "
 "partir de laquelle on passe au tableau. Si la somme des vies de départ "
@@ -1155,7 +1166,7 @@ msgstr ""
 "μετάβασης, η ελβετική φάση θα παραλειφθεί: οι Ρυθμίσεις το επισημαίνουν "
 "πριν από την πρώτη εκκίνηση."
 
-#: ../../source/manuel_tournois.rst:474
+#: ../../source/manuel_tournois.rst:477
 msgid ""
 "Les réglages restent accessibles **en cours de tournoi** : baisser la "
 "bascule à 22 h pour finir plus tôt, ajouter une consolante le samedi "
@@ -1180,7 +1191,7 @@ msgstr ""
 "αποθηκεύεται: έτσι συμβαίνει με το τουρνουά παρηγοριάς, τη συμφιλίωση ή "
 "την επαναφόρτιση ενός ταμπλό που έχει ήδη κληρωθεί."
 
-#: ../../source/manuel_tournois.rst:484
+#: ../../source/manuel_tournois.rst:487
 msgid ""
 "Une table au plateau cassé se déclare dans **Tables hors service** : ses "
 "numéros, séparés par des virgules (« 7, 12 »). Le moteur ne l'attribue "
@@ -1197,7 +1208,7 @@ msgstr ""
 "των αλλαγών το λέει και ονομάζει ένα ελεύθερο τραπέζι όπου μπορεί να "
 "μετακινηθεί, από την καρτέλα του ματς."
 
-#: ../../source/manuel_tournois.rst:491
+#: ../../source/manuel_tournois.rst:494
 msgid ""
 "Les **têtes de série** sont une option, éteinte par défaut : l'étude du "
 "moteur conclut « pas de têtes de série protégées », qui est la culture "
@@ -1208,11 +1219,11 @@ msgstr ""
 "σημερινή κουλτούρα του τάβλι. Ενεργοποιημένη, οι παίκτες τοποθετούνται "
 "κατά βαθμολογία."
 
-#: ../../source/manuel_tournois.rst:496
+#: ../../source/manuel_tournois.rst:499
 msgid "Les épreuves d'un événement"
 msgstr "Τα αγωνίσματα μιας διοργάνωσης"
 
-#: ../../source/manuel_tournois.rst:498
+#: ../../source/manuel_tournois.rst:501
 msgid ""
 "Plusieurs épreuves jouées sur les mêmes tables — un principal, un speed, "
 "des doubles — se regroupent dans un **Événement**, en tête des Réglages "
@@ -1239,7 +1250,7 @@ msgstr ""
 "μεταφέρει στον κάδο και αποσυνδέει τα αγωνίσματά της χωρίς να διαγράψει "
 "κανένα."
 
-#: ../../source/manuel_tournois.rst:509
+#: ../../source/manuel_tournois.rst:512
 msgid ""
 "Dans un événement, aucune épreuve ne propose une table où joue une autre "
 ": la grille montre ces tables occupées, avec le nom de l'épreuve, et un "
@@ -1258,7 +1269,7 @@ msgstr ""
 "αγωνίσματος ισχύουν και για τη διοργάνωση, και η λίστα των αλλαγών "
 "κατονομάζει τα άλλα αγωνίσματα."
 
-#: ../../source/manuel_tournois.rst:516
+#: ../../source/manuel_tournois.rst:519
 msgid ""
 "Les **propriétés des tables** se règlent dans le panneau Événement : un "
 "tableau d'une ligne par table, avec son **nom** (« Stream », par "
@@ -1291,7 +1302,7 @@ msgstr ""
 "δεσμευμένο τραπέζι. Δύο κάτοχοι διαφορετικών τραπεζιών που συναντιούνται "
 "παίζουν στο μικρότερο από τα δύο."
 
-#: ../../source/manuel_tournois.rst:530
+#: ../../source/manuel_tournois.rst:533
 msgid ""
 "Une **salle** est l'ensemble des tables qui portent le même libellé : « "
 "salle A » pour les tables 1 à 20, « salle B » pour les suivantes. Dans "
@@ -1314,7 +1325,7 @@ msgstr ""
 "τραπεζιού. Ένα αγώνισμα που παίζεται μόνο του ρυθμίζει τις ίδιες "
 "ιδιότητες τραπεζιών στις δικές του Ρυθμίσεις, χωρίς αίθουσες αγωνίσματος."
 
-#: ../../source/manuel_tournois.rst:539
+#: ../../source/manuel_tournois.rst:542
 msgid ""
 "Le **Classement de saison**, dans le panneau Événement, cumule les "
 "épreuves closes de l'événement : chaque place rapporte les points du "
@@ -1337,7 +1348,7 @@ msgstr ""
 "την αντιγράφει με μία στήλη βαθμών ανά αγώνισμα. Ένα μη ολοκληρωμένο "
 "αγώνισμα δεν αποφέρει τίποτα."
 
-#: ../../source/manuel_tournois.rst:548
+#: ../../source/manuel_tournois.rst:551
 msgid ""
 "Ouvrir la Direction d'une épreuve d'un événement ouvre aussi les autres :"
 " un onglet par épreuve apparaît en haut de la Direction, chacun avec son "
@@ -1360,7 +1371,7 @@ msgstr ""
 " Διεύθυνση επανέρχεται όπως την αφήσατε: το ίδιο αγώνισμα ή *Όλα τα "
 "τραπέζια*, και η ίδια καρτέλα της προβολής."
 
-#: ../../source/manuel_tournois.rst:557
+#: ../../source/manuel_tournois.rst:560
 msgid ""
 "L'onglet **Toutes les tables**, à gauche des épreuves, montre toutes les "
 "tables de l'événement en une seule grille : une case par table, quelle "
@@ -1397,7 +1408,7 @@ msgstr ""
 "τραπέζι ή ο παίκτης. Ένα κλικ σε μια διοργάνωση ή σε καρτέλα προβολής "
 "εγκαταλείπει τα *Όλα τα τραπέζια*."
 
-#: ../../source/manuel_tournois.rst:572
+#: ../../source/manuel_tournois.rst:575
 msgid ""
 "Quand l'événement a plusieurs salles, la grille se groupe par salle, sous"
 " le nom de chacune. Le nom d'une table s'affiche à côté de son numéro, "
@@ -1411,7 +1422,7 @@ msgstr ""
 "αστέρι ακολουθούμενο από τους κατόχους για ένα ορισμένο τραπέζι· οι "
 "προτάσεις αναφέρουν επίσης το τραπέζι."
 
-#: ../../source/manuel_tournois.rst:576
+#: ../../source/manuel_tournois.rst:579
 msgid ""
 "Une même personne peut jouer plusieurs épreuves de l'événement : deux "
 "Participants du même nom sont la même personne, et pour une paire de "
@@ -1431,11 +1442,11 @@ msgstr ""
 "ζευγάρωμα παραμένει επιτρεπτό: ο αγώνας ξεκινά, και το κελί του στο "
 "πλέγμα φέρει την ίδια ένδειξη."
 
-#: ../../source/manuel_tournois.rst:585
+#: ../../source/manuel_tournois.rst:588
 msgid "L'affichage du tournoi"
 msgstr "Η προβολή του τουρνουά"
 
-#: ../../source/manuel_tournois.rst:587
+#: ../../source/manuel_tournois.rst:590
 msgid ""
 "Un tournoi se regarde. Choisir un **dossier d'affichage** dans les "
 "Réglages suffit une fois pour toutes : blunderDB y réécrit une page HTML "
@@ -1451,7 +1462,7 @@ msgstr ""
 " εξωτερικό πόρο. Το *Άνοιγμα στο πρόγραμμα περιήγησης* την εμφανίζει "
 "αμέσως."
 
-#: ../../source/manuel_tournois.rst:593
+#: ../../source/manuel_tournois.rst:596
 msgid ""
 "Les joueurs peuvent aussi suivre le tournoi sur leur téléphone. Dans les "
 "Réglages de la Direction, la rubrique **Afficher sur le réseau du club** "
@@ -1477,7 +1488,7 @@ msgstr ""
 "του σταθμού. Η *Διακοπή προβολής* κλείνει τον διακομιστή, ο οποίος "
 "σταματά επίσης όταν κλείσει το blunderDB."
 
-#: ../../source/manuel_tournois.rst:603
+#: ../../source/manuel_tournois.rst:606
 msgid ""
 "L'affichage est éteint tant que le directeur ne l'allume pas, et il est "
 "**en lecture seule** : il ne sert que la page de ce tournoi, aucune autre"
@@ -1515,7 +1526,7 @@ msgstr ""
 "αφήνει την τρέχουσα προβολή να λειτουργεί· η επανεκκίνησή της στη δική "
 "της θύρα την αντικαθιστά αμέσως."
 
-#: ../../source/manuel_tournois.rst:618
+#: ../../source/manuel_tournois.rst:621
 msgid ""
 "Le **pare-feu** de la machine du directeur doit laisser entrer le port "
 "choisi : Windows demande l'autorisation au premier lancement, le pare-feu"
@@ -1534,7 +1545,7 @@ msgstr ""
 " δεν είναι προσβάσιμη, γράφει «Affichage interrompu : données de HH:MM» "
 "αντί να αφήνει να νομίζεται ότι είναι ενημερωμένη."
 
-#: ../../source/manuel_tournois.rst:626
+#: ../../source/manuel_tournois.rst:629
 msgid ""
 "La **feuille d'appariements** se pose sur la table d'accueil : un clic "
 "sur *Imprimer la feuille* ouvre le dialogue d'impression du système. Une "
@@ -1548,7 +1559,7 @@ msgstr ""
 "κουτάκια για το σκορ — και ένας γύρος τριάντα δύο παικτών χωρά σε μία "
 "σελίδα A4."
 
-#: ../../source/manuel_tournois.rst:631
+#: ../../source/manuel_tournois.rst:634
 msgid ""
 "Un événement a son propre dossier de sortie, choisi une fois dans son "
 "panneau de Réglages avec le même bouton *Choisir un dossier* : blunderDB "
@@ -1570,7 +1581,7 @@ msgstr ""
 "αναδημιουργεί τη σελίδα τοίχου· ο δικός του φάκελος ενός προσαρτημένου "
 "αγωνίσματος διατηρείται αλλά αγνοείται όσο παραμένει στη διοργάνωση."
 
-#: ../../source/manuel_tournois.rst:640
+#: ../../source/manuel_tournois.rst:643
 msgid ""
 "Quand une épreuve est en phase de tableau et que celui-ci est tiré, sa "
 "page murale et celle de l'événement montrent l'arbre en grand, lisible de"
@@ -1593,7 +1604,7 @@ msgstr ""
 " παράδειγμα μια ελβετική φάση — δεν έχει δέντρο και η σελίδα μένει όπως "
 "πριν."
 
-#: ../../source/manuel_tournois.rst:650
+#: ../../source/manuel_tournois.rst:653
 msgid ""
 "Sous la rubrique « Est-ce que je joue ? », la page d'une épreuve et la "
 "page murale de l'événement nomment les joueurs qui ne jouent pas en ce "
@@ -1617,7 +1628,7 @@ msgstr ""
 "στον γύρο N» για την απαλλαγή ενός ελβετικού γύρου, και «νικητής/τρια». Η"
 " κατάταξη αναλαμβάνει μόλις τελειώσει το τουρνουά."
 
-#: ../../source/manuel_tournois.rst:660
+#: ../../source/manuel_tournois.rst:663
 msgid ""
 "Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un "
 "tournoi dirigé sans interface graphique : ``list``, ``verify``, "

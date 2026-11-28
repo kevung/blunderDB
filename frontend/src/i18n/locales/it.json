@@ -167,6 +167,7 @@
         "syncTitle": "Sincronizzazione"
     },
     "toolbar": {
+        "importDocument": "Importa un documento…",
         "copyBoardImage": "Copia immagine tavola",
         "copyBoardImageTip": "Copia l'immagine della tavola negli appunti",
         "copyBoardImageWithAnalysis": "con analisi",
@@ -370,7 +371,10 @@
         "reimportCodeTip": "Il codice QR della partita alla fine della trascrizione, incorporato anche nel file",
         "batch": "Le {n} partite della lista",
         "batchTip": "Un foglio per partita, in un unico documento",
-        "tooMany": "{n} partite nella lista: una stampa ne prende al massimo {max}. Filtrate la lista per ridurla."
+        "tooMany": "{n} partite nella lista: una stampa ne prende al massimo {max}. Filtrate la lista per ridurla.",
+        "selection": "{n} partite selezionate",
+        "tooManySelected": "{n} partite selezionate: al massimo {max} per stampa o archivio.",
+        "cancelled": "Foglio di partita annullato"
     },
     "positionSheet": {
         "title": "Stampa un elenco di posizioni",
@@ -396,7 +400,8 @@
         "library": "Libreria",
         "basket": "Stampa le posizioni",
         "basketTip": "Stampa le posizioni del cestino che vengono dalla libreria a schermo",
-        "basketTitle": "Cestino"
+        "basketTitle": "Cestino",
+        "cancelled": "Elenco di posizioni annullato"
     },
     "paperArchive": {
         "menu": "Archivio cartaceo…",
@@ -406,6 +411,7 @@
         "exportWhat": "Esporta",
         "scopeMatch": "Questo match",
         "scopeList": "I {n} match dell'elenco",
+        "scopeSelection": "Le {n} partite selezionate",
         "scopeLibrary": "Tutta la libreria",
         "export": "Esporta…",
         "import": "Importa…",
@@ -413,7 +419,9 @@
         "exported": "Archivio cartaceo salvato: {path} ({matches} match, {codes} codici, {skipped} esclusi)",
         "importing": "Lettura dell'archivio cartaceo…",
         "imported": "Archivio cartaceo: {imported} match importati, {duplicates} duplicati; {positions} posizioni importate, {knownPositions} già presenti, {missing} codici mancanti, {failed} non riusciti",
-        "failed": "Archivio cartaceo non riuscito: {err}"
+        "failed": "Archivio cartaceo non riuscito: {err}",
+        "noPdfPayload": "Questo PDF non contiene alcun archivio blunderDB: nulla è stato importato",
+        "cancelled": "Archivio cartaceo annullato"
     },
     "match": {
         "errorExportingMat": "Errore durante l'esportazione del match",
@@ -703,6 +711,7 @@
         "name": "Nome",
         "newTournamentPlaceholder": "Nuovo torneo…",
         "noMatches": "Nessun match",
+        "print": "Stampa il torneo…",
         "noTournaments": "Nessun torneo",
         "openHint": "Doppio clic o Invio per aprire",
         "notesPlaceholder": "Note…",
@@ -877,6 +886,8 @@
         "hintPlayerBackgammon": "Giocatore: probabilità di backgammon",
         "hintOpponentWin": "Avversario: probabilità di vincere",
         "hintOpponentGammon": "Avversario: probabilità di gammon",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "Variazione di equity rispetto alla valutazione precedente",
         "hintOpponentBackgammon": "Avversario: probabilità di backgammon",
         "empty": "Nessuna analisi",
         "evaluate": "Valuta"
@@ -1108,6 +1119,9 @@
         "batchDone": "gammonNet: {evaluated} analizzata/e, {refused} rifiutata/e, {failed} fallita/e",
         "batchFailed": "gammonNet: analisi non eseguita — {error}",
         "baseline": "Prima del tiro",
+        "depthSelect": "Profondità della valutazione mostrata, solo per questo pannello",
+        "rerun": "Rivaluta la posizione a questa profondità",
+        "rerunPlays": "Rivaluta le {n} mosse selezionate a questa profondità",
         "baselineTooltip": "Valori prima del tiro, nello stesso asse della lista — un riferimento, non una mossa candidata. Lo scarto rispetto a questa riga è la fortuna del tiro, non il merito di una mossa."
     },
     "searchHistory": {
@@ -1682,7 +1696,8 @@
         "gnubgIdCopied": "ID GNUbg copiato negli appunti",
         "arkIdCopied": "ArkID copiato negli appunti",
         "noMatchForPosition": "Nessun match ha giocato questa posizione",
-        "moveGone": "Questa mossa non è più nel match: aperto dove lo avevi lasciato"
+        "moveGone": "Questa mossa non è più nel match: aperto dove lo avevi lasciato",
+        "exportRunning": "Esportazione in corso — avanzamento e Annulla nel pannello Calcoli"
     },
     "stats": {
         "title": "Stats",
@@ -3760,13 +3775,12 @@
             "opponent": "Avversario",
             "match": "Match a {n}",
             "evaluate": "Valuta",
-            "best": "Migliore",
-            "second": "Seconda",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Mosse",
             "close": "Chiudi",
             "refused": "Rifiutato",
             "crawford": "Crawford",
+            "postCrawford": "post-Crawford",
             "error": "Errore"
         },
         "verdict": {
@@ -3774,13 +3788,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "Nessun raddoppio",
                 "double_take": "Raddoppio/Accetta",
                 "double_pass": "Raddoppio/Passa",
-                "too_good": "Troppo buono"
+                "too_good": "Troppo buono",
+                "dmp": "Nessun cubo al doppio match point"
             }
         },
         "menu": {
@@ -3823,12 +3839,19 @@
             "transfer": "Trasferimento",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Altro"
+            "other": "Altro",
+            "export": "Esportazione",
+            "paperArchive": "Archivio cartaceo",
+            "print": "Stampa"
         }
     },
     "documentImport": {
         "title": "Importa un documento",
         "reading": "Lettura del documento…",
+        "progress": "pagina {page} / {pages} · {diagrams} diagrammi",
+        "eta": "mancano {eta}",
+        "cancelled": "Lettura annullata.",
+        "importCancelled": "Importazione annullata.",
         "failed": "Importazione del documento non riuscita: {err}",
         "summary": "{title}: {entries} voci (sicure {sure}, da verificare {toVerify}, incerte {uncertain})",
         "defaults": "Valori predefiniti del documento",
@@ -3841,18 +3864,10 @@
         "acceptComplete": "Accetta le voci di 15 + 15 pedine lette senza dubbio ({n})",
         "fallback": "Importa con il contesto della posizione quando non è letto ({n}); i campi da verificare sono nel riferimento",
         "collection": "Raccolta",
-        "review": "Voci da verificare ({n})",
-        "reviewNone": "Nessuna voce da verificare.",
         "refused": "L'importazione è rifiutata per il rango {ranks}: conferma, accetta o usa il ripiego.",
         "run": "Importa",
         "imported": "Raccolta {collection}: {added} posizioni aggiunte, {repeated} ripetute",
         "importedDetail": "{entries} voci, {positions} posizioni distinte ({fresh} nuove); complete: {complete}, ripiego: {fallback}",
-        "state": {
-            "sure": "sicura",
-            "to-verify": "da verificare",
-            "uncertain": "incerta"
-        },
-        "check": "Da confrontare con il diagramma: {fields}",
         "field": {
             "cube": "cubo",
             "dice": "dadi",
@@ -3864,6 +3879,18 @@
             "pips": "conteggi dei pip",
             "diagram": "lettura del diagramma"
         },
-        "importMenu": "Importa un documento…"
+        "importMenu": "Importa un documento…",
+        "sheet": {
+            "filter": {
+                "sure": "Sicure",
+                "to-verify": "Da verificare",
+                "uncertain": "Incerte",
+                "verified": "Verificate"
+            },
+            "verify": "Convalida",
+            "unverify": "Annulla la convalida",
+            "edit": "Correggi",
+            "write": "Scrivi"
+        }
     }
 }

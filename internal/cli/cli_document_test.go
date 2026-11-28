@@ -328,3 +328,52 @@ func TestCLI_DocumentAnalyze(t *testing.T) {
 		t.Errorf("a JSON file was analysed as a PDF")
 	}
 }
+
+// document verify writes the verdict in the relevé; given the document, it
+// changes the relevé kept beside it, which document check then reads.
+func TestCLI_DocumentVerify(t *testing.T) {
+	cli, _ := setupCLIWithDB(t)
+	data, err := os.ReadFile("pkg/blunderdb/document/testdata/xg-diagrammes.pdf")
+	if err != nil {
+		t.Fatal(err)
+	}
+	pdf := filepath.Join(t.TempDir(), "livre.pdf")
+	if err := os.WriteFile(pdf, data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := cli.Run([]string{"document", "check", pdf}); err == nil || !strings.Contains(err.Error(), "no relevé kept beside") {
+		t.Fatalf("check without a relevé: %v", err)
+	}
+	r, err := document.AnalyzeFile(pdf, document.AnalyzeOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := document.WriteFile(document.SidecarPath(pdf), r); err != nil {
+		t.Fatal(err)
+	}
+	out := captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "verify", pdf, "--rank", "1,2"}); err != nil {
+			t.Fatal(err)
+		}
+	})
+	if !strings.Contains(out, "verified 2 of") {
+		t.Errorf("verify:\n%s", out)
+	}
+	out = captureOut(t, cli, func() {
+		if err := cli.Run([]string{"document", "check", pdf}); err != nil {
+			t.Fatal(err)
+		}
+	})
+	if !strings.Contains(out, "verified 2)") {
+		t.Errorf("check after verify:\n%s", out)
+	}
+	if err := cli.Run([]string{"document", "verify", pdf, "--rank", "1,2", "--position", "XGID=x"}); err == nil {
+		t.Error("--position on two ranks accepted")
+	}
+	if err := cli.Run([]string{"document", "verify", pdf, "--rank", "1", "--undo"}); err != nil {
+		t.Fatal(err)
+	}
+	if kept, _ := document.LoadSidecar(pdf); kept == nil || kept.Entries[0].Verified || !kept.Entries[1].Verified {
+		t.Error("--undo not kept")
+	}
+}

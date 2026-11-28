@@ -17,14 +17,17 @@ vi.mock('../stores/positionStore.js', async (importOriginal) => ({
     listedIds: () => Promise.resolve([11, 12])
 }));
 
+vi.mock('../services/longOpService.js', () => ({
+    runLongOp: vi.fn((/** @type {string} */ _prefix, /** @type {() => Promise<number>} */ start) => Promise.resolve(start()).then(() => ({ status: 'done', result: undefined })))
+}));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     OpenExportDatabaseDialog: vi.fn(() => Promise.resolve('/tmp/export.db')),
+    StartExportDatabase: vi.fn(() => Promise.resolve(1)),
     OpenExportMatDialog: vi.fn(() => Promise.resolve('')),
     ShowAlert: vi.fn(() => Promise.resolve())
 }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    ExportDatabase: vi.fn(() => Promise.resolve()),
     CollectionCoverage: vi.fn(() => Promise.resolve({})),
     LoadMetadata: vi.fn(() => Promise.resolve({})),
     ExportMatchMAT: vi.fn(() => Promise.resolve()),
@@ -43,8 +46,8 @@ import { exportMatchesStore, exportOptionsStore, exportPositionCountStore, expor
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { activeModal } from '../stores/uiStore.js';
-import { ExportDatabase, MatchIDsReachedBy } from '../../wailsjs/go/database/Database.js';
-import { OpenExportDatabaseDialog } from '../../wailsjs/go/gui/App.js';
+import { MatchIDsReachedBy } from '../../wailsjs/go/database/Database.js';
+import { OpenExportDatabaseDialog, StartExportDatabase } from '../../wailsjs/go/gui/App.js';
 
 /** The dialog's picks once it has auto-selected every item of the ticked families. */
 function pickEverything() {
@@ -77,7 +80,7 @@ describe('the whole library', () => {
         pickEverything();
         await handleExportCommit();
 
-        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        const sent = vi.mocked(StartExportDatabase).mock.calls[0][0];
         expect(sent).toMatchObject({
             wholeLibrary: true,
             positionIDs: [],
@@ -106,7 +109,7 @@ describe('the whole library', () => {
         exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, collectionIDs: [8], lessonIDs: [] }));
         await handleExportCommit();
 
-        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        const sent = vi.mocked(StartExportDatabase).mock.calls[0][0];
         expect(sent).toMatchObject({ includeCollections: true, collectionIDs: [8], includeLessons: false, lessonIDs: [] });
     });
 });
@@ -120,7 +123,7 @@ describe('a filtered list', () => {
         pickEverything();
         await handleExportCommit();
 
-        const sent = vi.mocked(ExportDatabase).mock.calls[0][0];
+        const sent = vi.mocked(StartExportDatabase).mock.calls[0][0];
         expect(sent).toMatchObject({ wholeLibrary: false, positionIDs: [11, 12], includeMatches: true, includeTranscriptions: true, matchIDs: [2], includeAnkiDecks: false });
     });
 
@@ -130,14 +133,14 @@ describe('a filtered list', () => {
         pickEverything();
         exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeTranscriptions: false }));
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: true, includeTranscriptions: false });
+        expect(vi.mocked(StartExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: true, includeTranscriptions: false });
 
         vi.clearAllMocks();
         await exportDatabase();
         pickEverything();
         exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeMatches: false, matchIDs: [] }));
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeTranscriptions: false });
+        expect(vi.mocked(StartExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeTranscriptions: false });
     });
 
     test('sends the aliases only with their matches, and not once unticked', async () => {
@@ -145,21 +148,21 @@ describe('a filtered list', () => {
         await exportDatabase();
         pickEverything();
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: true, includeAliases: true });
+        expect(vi.mocked(StartExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: true, includeAliases: true });
 
         vi.clearAllMocks();
         await exportDatabase();
         pickEverything();
         exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeAliases: false }));
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeAliases: false });
+        expect(vi.mocked(StartExportDatabase).mock.calls[0][0]).toMatchObject({ includeAliases: false });
 
         vi.clearAllMocks();
         await exportDatabase();
         pickEverything();
         exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeMatches: false, matchIDs: [] }));
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeAliases: false });
+        expect(vi.mocked(StartExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeAliases: false });
     });
 });
 
@@ -169,10 +172,10 @@ describe('the file', () => {
         expect(OpenExportDatabaseDialog).not.toHaveBeenCalled();
         vi.mocked(OpenExportDatabaseDialog).mockResolvedValueOnce('');
         await handleExportCommit();
-        expect(ExportDatabase).not.toHaveBeenCalled();
+        expect(StartExportDatabase).not.toHaveBeenCalled();
         expect(get(activeModal)).not.toBeNull();
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ exportPath: '/tmp/export.db' });
+        expect(vi.mocked(StartExportDatabase).mock.calls[0][0]).toMatchObject({ exportPath: '/tmp/export.db' });
     });
 });
 
@@ -187,7 +190,7 @@ describe('a list exported as the whole library', () => {
         exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, ...scopeDefaults(true) }));
         pickEverything();
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ wholeLibrary: true, positionIDs: [], matchIDs: [] });
+        expect(vi.mocked(StartExportDatabase).mock.calls[0][0]).toMatchObject({ wholeLibrary: true, positionIDs: [], matchIDs: [] });
     });
 });
 
@@ -196,7 +199,7 @@ describe('a list', () => {
         await exportDatabase();
         exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, includeCollections: true, collectionIDs: [7], includeAnkiDecks: true, deckIDs: [5] }));
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({
+        expect(vi.mocked(StartExportDatabase).mock.calls[0][0]).toMatchObject({
             includeCollectionPositions: false,
             includeAnkiDecks: true,
             deckIDs: [5],
@@ -214,13 +217,13 @@ describe('a list', () => {
             includeAnkiHistory: true
         }));
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[1][0]).toMatchObject({ includeCollectionPositions: true, includeAnkiHistory: true });
+        expect(vi.mocked(StartExportDatabase).mock.calls[1][0]).toMatchObject({ includeCollectionPositions: true, includeAnkiHistory: true });
     });
 
     test('sends the drafts of the matches its tournaments bring', async () => {
         await exportDatabase();
         exportOptionsStore.update((/** @type {any} */ o) => ({ ...o, matchIDs: [], includeTournaments: true, includeTournamentIDs: [4] }));
         await handleExportCommit();
-        expect(vi.mocked(ExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeTranscriptions: true, includeAliases: true });
+        expect(vi.mocked(StartExportDatabase).mock.calls[0][0]).toMatchObject({ includeMatches: false, includeTranscriptions: true, includeAliases: true });
     });
 });

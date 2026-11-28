@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"github.com/kevung/blunderdb/pkg/blunderdb/document"
 	"io/fs"
 	"log"
 	"os"
@@ -153,6 +154,7 @@ func NewApp(db *database.Database) *App {
 		database.SetOpenGuard(db, a.refuseHeldLibrary)
 		database.SetMatchStatsFillReport(db, a.matchStatsFillReport())
 		database.SetTaskTracker(db, a.trackDirectTask)
+		database.SetDocumentProgress(db, func(p document.Progress) { a.emitBatch(documentProgressEvent, p) })
 		database.SetBlunderCountReady(db, func() {
 			if a.ctx != nil {
 				runtime.EventsEmit(a.ctx, blunderCountReadyEvent)
@@ -321,19 +323,20 @@ func (a *App) OpenPaperArchiveDialog() ([]string, error) {
 	return runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Import a Paper Archive",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "Paper archive (*.html, *.png, *.jpg)", Pattern: "*.html;*.htm;*.png;*.jpg;*.jpeg"},
+			{DisplayName: "Paper archive (*.pdf, *.html, *.png, *.jpg)", Pattern: "*.pdf;*.html;*.htm;*.png;*.jpg;*.jpeg"},
 			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
 		},
 	})
 }
 
-// OpenDocumentDialog asks for a document to import: a PDF, a page image or the
-// Relevé already read from one.
+// OpenDocumentDialog asks for a document to import: a PDF, a page image, the
+// Relevé already read from one, or a sheet blunderDB printed (HTML or PDF),
+// which goes to the paper archive import.
 func (a *App) OpenDocumentDialog() (string, error) {
 	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Import a Document",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "Document (*.pdf, *.png, *.jpg, *.json)", Pattern: "*.pdf;*.png;*.jpg;*.jpeg;*.json"},
+			{DisplayName: "Document (*.pdf, *.png, *.jpg, *.json, *.html)", Pattern: "*.pdf;*.png;*.jpg;*.jpeg;*.json;*.html;*.htm"},
 			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
 		},
 	})
@@ -344,7 +347,7 @@ func (a *App) OpenPositionFilesDialog() ([]string, error) {
 	return runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Import Position or Match Files",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "All Supported Files (*.txt, *.xg, *.xgp, *.sgf, *.mat, *.bgf, *.ogxm, *.png, *.jpg)", Pattern: "*.txt;*.xg;*.xgp;*.sgf;*.mat;*.bgf;*.ogxm;*.png;*.jpg;*.jpeg"},
+			{DisplayName: "All Supported Files (*.txt, *.xg, *.xgp, *.sgf, *.mat, *.bgf, *.ogxm, *.pdf, *.png, *.jpg)", Pattern: "*.txt;*.xg;*.xgp;*.sgf;*.mat;*.bgf;*.ogxm;*.pdf;*.png;*.jpg;*.jpeg"},
 			{DisplayName: "Position Files (*.txt)", Pattern: "*.txt"},
 			{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"},
 			{DisplayName: "XG Position Files (*.xgp)", Pattern: "*.xgp"},
@@ -352,6 +355,7 @@ func (a *App) OpenPositionFilesDialog() ([]string, error) {
 			{DisplayName: "Jellyfish Match Files (*.mat)", Pattern: "*.mat"},
 			{DisplayName: "BGBlitz Match Files (*.bgf)", Pattern: "*.bgf"},
 			{DisplayName: "HedgeHog Match Files (*.ogxm)", Pattern: "*.ogxm"},
+			{DisplayName: "PDF: printed sheets, position books (*.pdf)", Pattern: "*.pdf"},
 			{DisplayName: "Board Screenshots (*.png, *.jpg)", Pattern: "*.png;*.jpg;*.jpeg;*.gif"},
 			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
 		},
@@ -538,15 +542,16 @@ var openFile = func(path string) error {
 	return nil
 }
 
-// OpenLocalPage opens a generated display page (an .html file written by the
-// Direction) in the default browser. The runtime's BrowserOpenURL refuses the
-// file scheme, so this is the only way the wall page reaches the screen; it
-// accepts nothing but an existing .html file, so the webview cannot make it
-// launch an arbitrary document.
+// OpenLocalPage opens a generated page — an .html file written by the
+// Direction, or a printed sheet's .pdf — in the default browser or viewer.
+// The runtime's BrowserOpenURL refuses the file scheme, so this is the only
+// way such a page reaches the screen; it accepts nothing but an existing
+// .html or .pdf file, so the webview cannot make it launch an arbitrary
+// document.
 func (a *App) OpenLocalPage(path string) error {
 	ext := strings.ToLower(filepath.Ext(path))
-	if ext != ".html" && ext != ".htm" {
-		return newGUIError(CodeInvalid, "not an HTML page: "+path)
+	if ext != ".html" && ext != ".htm" && ext != ".pdf" {
+		return newGUIError(CodeInvalid, "not an HTML page or a PDF: "+path)
 	}
 	if !filepath.IsAbs(path) {
 		return newGUIError(CodeInvalid, "page path must be absolute: "+path)

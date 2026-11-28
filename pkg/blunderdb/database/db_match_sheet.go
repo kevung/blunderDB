@@ -14,8 +14,15 @@ type MatchSheetOptions = printsheet.MatchOptions
 // and the positions to review written in ArkID. It writes nothing to the
 // library (ADR-0007).
 func (d *Database) MatchSheetHTML(matchIDs []int64, opts MatchSheetOptions) (string, error) {
+	return MatchSheetHTMLCtx(context.Background(), d, matchIDs, opts)
+}
+
+// MatchSheetHTMLCtx is MatchSheetHTML under ctx: cancelling it stops between
+// two matches, and a progress.Func in ctx hears one unit a match read. A
+// function, not a method: the interface binds every method of Database.
+func MatchSheetHTMLCtx(ctx context.Context, d *Database, matchIDs []int64, opts MatchSheetOptions) (string, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-	page, err := printsheet.BuildMatches(context.Background(), d.store, "", matchIDs, opts)
+	page, err := printsheet.BuildMatches(ctx, d.store, "", matchIDs, opts)
 	return string(page), err
 }

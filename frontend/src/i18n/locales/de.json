@@ -167,6 +167,7 @@
         "syncTitle": "Synchronisierung"
     },
     "toolbar": {
+        "importDocument": "Dokument importieren…",
         "copyBoardImage": "Brettbild kopieren",
         "copyBoardImageTip": "Brettbild in die Zwischenablage kopieren",
         "copyBoardImageWithAnalysis": "mit Analyse",
@@ -370,7 +371,10 @@
         "reimportCodeTip": "Der QR-Code des Matches am Ende der Transkription, auch in die Datei eingebettet",
         "batch": "Die {n} Matches der Liste",
         "batchTip": "Ein Blatt pro Match in einem einzigen Dokument",
-        "tooMany": "{n} Matches in der Liste: ein Druck umfasst höchstens {max}. Filtern Sie die Liste, um sie einzugrenzen."
+        "tooMany": "{n} Matches in der Liste: ein Druck umfasst höchstens {max}. Filtern Sie die Liste, um sie einzugrenzen.",
+        "selection": "{n} Matches ausgewählt",
+        "tooManySelected": "{n} Matches ausgewählt: höchstens {max} pro Druck oder Archiv.",
+        "cancelled": "Matchblatt abgebrochen"
     },
     "positionSheet": {
         "title": "Stellungsliste drucken",
@@ -396,7 +400,8 @@
         "library": "Bibliothek",
         "basket": "Stellungen drucken",
         "basketTip": "Druckt die Stellungen des Korbs aus der angezeigten Bibliothek",
-        "basketTitle": "Korb"
+        "basketTitle": "Korb",
+        "cancelled": "Positionsliste abgebrochen"
     },
     "paperArchive": {
         "menu": "Papierarchiv…",
@@ -406,6 +411,7 @@
         "exportWhat": "Exportieren",
         "scopeMatch": "Dieses Match",
         "scopeList": "Die {n} Matches der Liste",
+        "scopeSelection": "Die {n} ausgewählten Matches",
         "scopeLibrary": "Die ganze Bibliothek",
         "export": "Exportieren…",
         "import": "Importieren…",
@@ -413,7 +419,9 @@
         "exported": "Papierarchiv gespeichert: {path} ({matches} Matches, {codes} Codes, {skipped} ausgelassen)",
         "importing": "Papierarchiv wird gelesen…",
         "imported": "Papierarchiv: {imported} Matches importiert, {duplicates} Duplikate; {positions} Stellungen importiert, {knownPositions} bereits vorhanden, {missing} Codes fehlen, {failed} fehlgeschlagen",
-        "failed": "Papierarchiv fehlgeschlagen: {err}"
+        "failed": "Papierarchiv fehlgeschlagen: {err}",
+        "noPdfPayload": "Dieses PDF enthält kein blunderDB-Archiv: nichts importiert",
+        "cancelled": "Papierarchiv abgebrochen"
     },
     "match": {
         "errorExportingMat": "Fehler beim Exportieren des Matches",
@@ -703,6 +711,7 @@
         "name": "Name",
         "newTournamentPlaceholder": "Neues Turnier…",
         "noMatches": "Keine Matches",
+        "print": "Turnier drucken…",
         "noTournaments": "Keine Turniere",
         "openHint": "Doppelklick oder Eingabetaste zum Öffnen",
         "notesPlaceholder": "Notizen…",
@@ -877,6 +886,8 @@
         "hintPlayerBackgammon": "Spieler: Backgammon-Chance",
         "hintOpponentWin": "Gegner: Gewinnchance",
         "hintOpponentGammon": "Gegner: Gammon-Chance",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "Equity-Änderung gegenüber der vorigen Auswertung",
         "hintOpponentBackgammon": "Gegner: Backgammon-Chance",
         "empty": "Keine Analyse",
         "evaluate": "Bewerten"
@@ -1108,6 +1119,9 @@
         "batchDone": "gammonNet: {evaluated} analysiert, {refused} abgelehnt, {failed} fehlgeschlagen",
         "batchFailed": "gammonNet: Analyse nicht ausgeführt — {error}",
         "baseline": "Vor dem Wurf",
+        "depthSelect": "Tiefe der angezeigten Auswertung, nur für dieses Panel",
+        "rerun": "Position mit dieser Tiefe neu auswerten",
+        "rerunPlays": "Die {n} ausgewählten Züge mit dieser Tiefe neu auswerten",
         "baselineTooltip": "Werte vor dem Wurf, in der Achse der Liste — ein Bezugspunkt, kein Zugkandidat. Der Abstand zu dieser Zeile ist das Würfelglück, nicht das Verdienst eines Zuges."
     },
     "searchHistory": {
@@ -1682,7 +1696,8 @@
         "gnubgIdCopied": "GNUbg-ID in die Zwischenablage kopiert",
         "arkIdCopied": "ArkID in die Zwischenablage kopiert",
         "noMatchForPosition": "Kein Match hat diese Position gespielt",
-        "moveGone": "Dieser Zug ist nicht mehr im Match: geöffnet, wo Sie aufgehört hatten"
+        "moveGone": "Dieser Zug ist nicht mehr im Match: geöffnet, wo Sie aufgehört hatten",
+        "exportRunning": "Export läuft — Fortschritt und Abbrechen im Panel Berechnungen"
     },
     "stats": {
         "title": "Stats",
@@ -3760,13 +3775,12 @@
             "opponent": "Gegner",
             "match": "Match auf {n}",
             "evaluate": "Bewerten",
-            "best": "Bester",
-            "second": "Zweiter",
             "progress": "{ply}-ply: {n} / {total}",
             "legend": "Züge",
             "close": "Schließen",
             "refused": "Abgelehnt",
             "crawford": "Crawford",
+            "postCrawford": "Post-Crawford",
             "error": "Fehler"
         },
         "verdict": {
@@ -3774,13 +3788,15 @@
                 "no_double": "ND",
                 "double_take": "D/T",
                 "double_pass": "D/P",
-                "too_good": "TG"
+                "too_good": "TG",
+                "dmp": "DMP"
             },
             "long": {
                 "no_double": "Kein Doppel",
                 "double_take": "Doppel/Annahme",
                 "double_pass": "Doppel/Passen",
-                "too_good": "Zu gut"
+                "too_good": "Zu gut",
+                "dmp": "Kein Doppler beim Double-Match-Point"
             }
         },
         "menu": {
@@ -3823,12 +3839,19 @@
             "transfer": "Übertragung",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Sonstige"
+            "other": "Sonstige",
+            "export": "Export",
+            "paperArchive": "Papierarchiv",
+            "print": "Druck"
         }
     },
     "documentImport": {
         "title": "Dokument importieren",
         "reading": "Dokument wird gelesen…",
+        "progress": "Seite {page} / {pages} · {diagrams} Diagramme",
+        "eta": "noch {eta}",
+        "cancelled": "Lesen abgebrochen.",
+        "importCancelled": "Import abgebrochen.",
         "failed": "Dokumentimport fehlgeschlagen: {err}",
         "summary": "{title}: {entries} Einträge (sicher {sure}, zu prüfen {toVerify}, unsicher {uncertain})",
         "defaults": "Standardwerte des Dokuments",
@@ -3841,18 +3864,10 @@
         "acceptComplete": "Einträge mit 15 + 15 zweifelsfrei gelesenen Steinen akzeptieren ({n})",
         "fallback": "Mit dem Kontext der Stellung importieren, wenn er nicht gelesen ist ({n}); zu prüfende Felder stehen in der Referenz",
         "collection": "Sammlung",
-        "review": "Zu prüfende Einträge ({n})",
-        "reviewNone": "Kein Eintrag zu prüfen.",
         "refused": "Der Import wird für Rang {ranks} abgelehnt: bestätigen, akzeptieren oder Rückfall verwenden.",
         "run": "Importieren",
         "imported": "Sammlung {collection}: {added} Stellungen hinzugefügt, {repeated} wiederholt",
         "importedDetail": "{entries} Einträge, {positions} verschiedene Stellungen ({fresh} neu); vollständig: {complete}, Rückfall: {fallback}",
-        "state": {
-            "sure": "sicher",
-            "to-verify": "zu prüfen",
-            "uncertain": "unsicher"
-        },
-        "check": "Mit dem Diagramm vergleichen: {fields}",
         "field": {
             "cube": "Doppelwürfel",
             "dice": "Würfel",
@@ -3864,6 +3879,18 @@
             "pips": "Pipcounts",
             "diagram": "Lesen des Diagramms"
         },
-        "importMenu": "Dokument importieren…"
+        "importMenu": "Dokument importieren…",
+        "sheet": {
+            "filter": {
+                "sure": "Sicher",
+                "to-verify": "Zu prüfen",
+                "uncertain": "Unsicher",
+                "verified": "Geprüft"
+            },
+            "verify": "Bestätigen",
+            "unverify": "Bestätigung zurücknehmen",
+            "edit": "Korrigieren",
+            "write": "Schreiben"
+        }
     }
 }

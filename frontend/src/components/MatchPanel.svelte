@@ -18,6 +18,7 @@
     import MatchSheet from './MatchSheet.svelte';
     import MatchPrintModal from './MatchPrintModal.svelte';
     import PaperArchiveModal from './PaperArchiveModal.svelte';
+    import { modifierSelect, idsFor } from '../utils/multiSelect.js';
     import { importPaperArchive } from '../services/paperArchiveService.js';
     import { clampSheetWidth, rememberedSheetShare, rememberSheetShare } from '../utils/matchSheet.js';
     import { resizable } from '../utils/resizeHandle.js';
@@ -64,10 +65,14 @@
     let filterTimer;
     /** @type {any} */
     let selectedMatch = $state(null);
-    /** The match the print dialog was opened on, null while it is closed. @type {number|null} */
-    let printMatchId = $state(null);
-    /** The match the paper archive dialog was opened on, null while it is closed. @type {number|null} */
-    let archiveMatchId = $state(null);
+    /** The matches the print dialog was opened on, null while it is closed. @type {number[]|null} */
+    let printMatchIds = $state(null);
+    /** The matches the paper archive dialog was opened on, null while it is closed. @type {number[]|null} */
+    let archiveMatchIds = $state(null);
+    /** The matches selected with Ctrl/Shift+click; empty for the ordinary single selection. @type {Set<number>} */
+    let multi = $state(new Set());
+    /** @type {number|null} */
+    let multiAnchor = null;
     // The « Autres bases » panel speaks of the match the user selected: noted on the gesture, not
     // on selectedMatch, which hiding the tab and restoring the last visited match also move.
     /** @param {any} match */
@@ -435,6 +440,9 @@
                 tournamentEdit.cancel();
                 sheet?.cancelTournamentEdit();
                 event.preventDefault();
+            } else if (multi.size > 0) {
+                multi = new Set();
+                event.preventDefault();
             } else if (sheetMatchId != null) {
                 // Close the sheet first
                 closeSheet();
@@ -555,6 +563,11 @@
                         >{$t('match.idsFilter', { n: $matchListStore.ids.length })} ×</button
                     >
                 {/if}
+                {#if multi.size > 1}
+                    <button type="button" class="toolbar-btn match-ids-chip" data-testid="match-selection-chip" onclick={() => (multi = new Set())}
+                        >{$t('matchSheet.selection', { n: multi.size })} ×</button
+                    >
+                {/if}
                 {#if matches.length > 0 && matches.length < matchTotal}<span class="match-count">{$t('match.countOfTotal', { shown: matches.length, total: matchTotal })}</span>{/if}
                 <button class="toolbar-btn" onclick={() => (showManagePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
@@ -580,8 +593,17 @@
                     libraryDragAttrs(() =>
                         matchEdit.isEditing(match.id) ? null : { group: $activeGroupId, kind: 'match', id: match.id, label: `${match.player1_name || '?'} – ${match.player2_name || '?'}` }
                     )}
-                onSelect={(/** @type {Match} */ match) => {
-                    if (!matchEdit.isEditing(match.id)) selectMatch(match);
+                selectedKeys={multi}
+                onSelect={(/** @type {Match} */ match, /** @type {number} */ _i, /** @type {Event | undefined} */ ev) => {
+                    if (matchEdit.isEditing(match.id)) return;
+                    const sel = modifierSelect(sortedMatches, (/** @type {Match} */ m) => m.id, multi, multiAnchor, match, /** @type {any} */ (ev) ?? {}, selectedMatch?.id ?? null);
+                    if (sel) {
+                        multi = sel.keys;
+                        multiAnchor = sel.anchor;
+                        return;
+                    }
+                    multi = new Set();
+                    selectMatch(match);
                 }}
                 onActivate={(/** @type {Match} */ match) => {
                     if (!matchEdit.isEditing(match.id)) handleDoubleClick(match);
@@ -598,8 +620,8 @@
                                       ...sendMatch(match).do,
                                       open: () => handleDoubleClick(match),
                                       exportMat: () => exportMatchMat(match),
-                                      print: () => (printMatchId = match.id),
-                                      archive: () => (archiveMatchId = match.id),
+                                      print: () => (printMatchIds = idsFor(sortedMatches, (/** @type {Match} */ m) => m.id, multi, match.id)),
+                                      archive: () => (archiveMatchIds = idsFor(sortedMatches, (/** @type {Match} */ m) => m.id, multi, match.id)),
                                       editTranscription: () => editMatchTranscription(match.id),
                                       swapPlayers: () => swapMatchPlayers(match, undefined),
                                       edit: () => startEditMatch(match, undefined),
@@ -759,7 +781,7 @@
                 use:resizable={{ side: true, size: sheetWidth, clamp: (width) => clampSheetWidth(width, contentWidth), onResize: setSheetWidth, onCommit: () => rememberSheetShare(sheetShare) }}
             ></div>
             <div class="sheet-slot" style:flex-basis={contentWidth > 0 ? `${sheetWidth}px` : `${sheetShare * 100}%`}>
-                <MatchSheet bind:this={sheet} matchId={sheetMatchId} onDeleted={onSheetDeleted} onPrint={(/** @type {Match} */ m) => (printMatchId = m.id)} />
+                <MatchSheet bind:this={sheet} matchId={sheetMatchId} onDeleted={onSheetDeleted} onPrint={(/** @type {Match} */ m) => (printMatchIds = [m.id])} />
             </div>
         {/if}
     </div>
@@ -776,20 +798,20 @@
 {/if}
 
 <MatchPrintModal
-    open={printMatchId !== null}
-    matchId={printMatchId}
+    open={printMatchIds !== null}
+    matchIds={printMatchIds ?? []}
     listedTotal={matchTotal}
     listAll={async () => (await matchListStore.allRows()).map((/** @type {Match} */ m) => m.id)}
-    onclose={() => (printMatchId = null)}
+    onclose={() => (printMatchIds = null)}
 />
 
 <PaperArchiveModal
-    open={archiveMatchId !== null}
-    matchId={archiveMatchId}
+    open={archiveMatchIds !== null}
+    matchIds={archiveMatchIds ?? []}
     listedTotal={matchTotal}
     listAll={async () => (await matchListStore.allRows()).map((/** @type {Match} */ m) => m.id)}
     onimported={() => matchListStore.reload()}
-    onclose={() => (archiveMatchId = null)}
+    onclose={() => (archiveMatchIds = null)}
 />
 
 <style>

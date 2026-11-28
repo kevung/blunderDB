@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 15:27+0100\n"
+"POT-Creation-Date: 2026-11-28 01:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.19.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/manuel_bibliotheque.rst:4
 msgid "Analyse, commentaires et recherche"
@@ -1366,9 +1366,13 @@ msgid ""
 " puis les deux autres et leur perte. Le document s'étend sur autant de "
 "pages A4 que nécessaire, numérotées, avec sur chacune l'en-tête (le titre"
 " de la recherche ou de la collection, le nombre de positions, la date) et"
-" la légende de la notation. Le fichier HTML autonome est enregistré puis "
-"ouvert dans le navigateur, qui l'imprime ou l'enregistre en PDF. Les "
-"options de la boîte :"
+" la légende de la notation. Le document est enregistré en PDF A4 puis "
+"ouvert dans la visionneuse du système, d'où il s'imprime ; sous Windows "
+"et macOS, faute de ce rendu, il reste un fichier HTML autonome ouvert "
+"dans le navigateur. La boîte se ferme dès le fichier choisi : la liste se"
+" construit comme une tâche du panneau Calculs, que **Annuler** arrête. En"
+" ligne de commande, ``sheet`` écrit la page HTML. Les options de la boîte"
+" :"
 msgstr ""
 "Jokainen rivi antaa numeron, ArkID:n tasalevyisellä kirjasimella ja "
 "sitten vuorossa olevan pelaajan ja hänen vastustajansa pipit, joilla "
@@ -1380,15 +1384,20 @@ msgstr ""
 "toiminto, sitten kaksi muuta ja niiden menetys. Asiakirja jatkuu niin "
 "monelle numeroidulle A4-sivulle kuin tarvitaan, ja jokaisella on "
 "ylätunniste (haun tai kokoelman otsikko, asemien määrä, päivämäärä) ja "
-"merkintätavan selite. Itsenäinen HTML-tiedosto tallennetaan ja avataan "
-"selaimessa, joka tulostaa sen tai tallentaa sen PDF-tiedostona. Ikkunan "
-"asetukset:"
+"merkintätavan selite. Asiakirja tallennetaan A4-kokoisena PDF-tiedostona "
+"ja avataan järjestelmän katseluohjelmassa, josta se tulostetaan; "
+"Windowsissa ja macOS:ssä, kun tätä renderöintiä ei ole, se jää "
+"itsenäiseksi HTML-tiedostoksi, joka avataan selaimessa. Ikkuna sulkeutuu "
+"heti, kun tiedosto on valittu: luettelo rakennetaan "
+"**Laskennat**-paneelin tehtävänä, jonka "
+"**Peruuta** pysäyttää. Komentorivillä ``sheet`` kirjoittaa HTML-sivun. "
+"Ikkunan asetukset:"
 
-#: ../../source/manuel_bibliotheque.rst:595
+#: ../../source/manuel_bibliotheque.rst:599
 msgid "**Analyse** (cochée) : l'analyse de chaque position, sur sa ligne."
 msgstr "**Analyysi** (valittu): kunkin aseman analyysi sen rivillä."
 
-#: ../../source/manuel_bibliotheque.rst:596
+#: ../../source/manuel_bibliotheque.rst:600
 msgid ""
 "**Réponses au verso** (décochée) : chaque page de positions est suivie "
 "d'une page d'analyses sous les mêmes numéros ; imprimée en recto verso, "
@@ -1398,7 +1407,7 @@ msgstr ""
 "analyysisivu samoilla numeroilla; kaksipuolisena tulostettuna arkista "
 "tulee kysely."
 
-#: ../../source/manuel_bibliotheque.rst:599
+#: ../../source/manuel_bibliotheque.rst:603
 msgid ""
 "**Commentaires** (cochée) : les commentaires des positions, en entier, "
 "sous leur ligne, au verso avec les réponses. Un commentaire plus long "
@@ -1408,27 +1417,27 @@ msgstr ""
 "kääntöpuolella vastausten kanssa. Sivua pidempi kommentti jatkuu "
 "seuraavalle sivulle."
 
-#: ../../source/manuel_bibliotheque.rst:602
+#: ../../source/manuel_bibliotheque.rst:606
 msgid ""
 "**ArkID développé** (décochée) : la forme développée plutôt que la "
 "compacte."
 msgstr "**Laajennettu ArkID** (ei valittu): laajennettu muoto tiiviin sijaan."
 
-#: ../../source/manuel_bibliotheque.rst:603
+#: ../../source/manuel_bibliotheque.rst:607
 msgid ""
 "**Code de réimport** (décochée) : des codes QR qui portent les positions,"
 " un bloc toutes les 145 positions, imprimé sur la page de la première "
-"position de son bloc et embarqué dans le fichier. Le fichier enregistré, "
-"ou le scan ou la photo d'une seule page, se réimporte par :ref:`Archive "
-"papier… <archive_papier_interface>` : chaque bloc se relit seul, et un "
-"code illisible est reconstruit par les autres codes de son bloc. Les "
-"codes ne portent que les positions (ce que dit l'ArkID), sans analyses ni"
-" commentaires ; chacune est enregistrée comme une position apportée "
-"seule, et une position déjà en base n'est pas dupliquée."
+"position de son bloc et joint au PDF. Le PDF enregistré, ou le scan ou la"
+" photo d'une seule page, se réimporte par :ref:`Archive papier… "
+"<archive_papier_interface>` : chaque bloc se relit seul, et un code "
+"illisible est reconstruit par les autres codes de son bloc. Les codes ne "
+"portent que les positions (ce que dit l'ArkID), sans analyses ni "
+"commentaires ; chacune est enregistrée comme une position apportée seule,"
+" et une position déjà en base n'est pas dupliquée."
 msgstr ""
 "**Uudelleentuontikoodi** (ei valittuna): QR-koodit, jotka kantavat "
 "asemat, lohko joka 145 asemalle, tulostettuna lohkonsa ensimmäisen aseman"
-" sivulle ja upotettuna tiedostoon. Tallennettu tiedosto tai yhden sivun "
+" sivulle ja liitettynä PDF-tiedostoon. Tallennettu PDF tai yhden sivun "
 "skannaus tai valokuva tuodaan takaisin kohdasta :ref:`Paperiarkisto… "
 "<archive_papier_interface>`: jokainen lohko luetaan yksinään, ja "
 "lukukelvoton koodi rakennetaan uudelleen lohkonsa muista koodeista. "
@@ -1436,7 +1445,7 @@ msgstr ""
 " kommentteja; jokainen tallennetaan yksinään tuotuna asemana, eikä "
 "tietokannassa jo olevaa asemaa kahdenneta."
 
-#: ../../source/manuel_bibliotheque.rst:613
+#: ../../source/manuel_bibliotheque.rst:617
 msgid ""
 "L'impression n'écrit rien dans la base. En ligne de commande : ``sheet`` "
 "(:doc:`cli_import_export`)."
@@ -1444,18 +1453,18 @@ msgstr ""
 "Tulostus ei kirjoita mitään tietokantaan. Komentorivillä: ``sheet`` "
 "(:doc:`cli_import_export`)."
 
-#: ../../source/manuel_bibliotheque.rst:619
-#: ../../source/manuel_bibliotheque.rst:621
+#: ../../source/manuel_bibliotheque.rst:623
+#: ../../source/manuel_bibliotheque.rst:625
 msgid "Panneau Collections"
 msgstr "Kokoelmapaneeli"
 
-#: ../../source/manuel_bibliotheque.rst:625
+#: ../../source/manuel_bibliotheque.rst:629
 msgid ""
 "Le panneau Collections : nom, nombre de positions, description, dernière "
 "modification."
 msgstr "Kokoelmat-paneeli: nimi, asemien määrä, kuvaus, viimeisin muokkaus."
 
-#: ../../source/manuel_bibliotheque.rst:628
+#: ../../source/manuel_bibliotheque.rst:632
 msgid ""
 "Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton"
 " **+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle "
@@ -1472,7 +1481,7 @@ msgstr ""
 "Kokoelmat- ja Turnaukset-paneeleissa. Otteluluettelossa ⌨-kuvake avaa "
 "ottelun litteroinnin ja ✎-kuvake korjaa sen metatiedot."
 
-#: ../../source/manuel_bibliotheque.rst:636
+#: ../../source/manuel_bibliotheque.rst:640
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -1495,7 +1504,7 @@ msgstr ""
 " tai suorita komento ``collection`` näyttääksesi tai piilottaaksesi "
 "paneelin."
 
-#: ../../source/manuel_bibliotheque.rst:647
+#: ../../source/manuel_bibliotheque.rst:651
 msgid ""
 "En tête d'une collection ouverte, le nombre de positions est un lien qui "
 "les remet dans le parcours, depuis la première ; la case **dans cette "
@@ -1507,7 +1516,7 @@ msgstr ""
 "näytetyn aseman kokoelmaan tai poistaa sen. Tyhjä luettelo tarjoaa **+ "
 "Uusi kokoelma** -painikkeen."
 
-#: ../../source/manuel_bibliotheque.rst:652
+#: ../../source/manuel_bibliotheque.rst:656
 msgid ""
 "La **Pile** est la collection du geste « à revoir plus tard » : un "
 "double-clic hors du plateau, la touche *b* ou le bouton marque-page de la"
@@ -1539,7 +1548,7 @@ msgstr ""
 "sinne heti kuten yksinään tuotu asema ja lisätään sitten pinoon. "
 "Komentorivi tekee saman eleen komennolla ``collection pile``."
 
-#: ../../source/manuel_bibliotheque.rst:665
+#: ../../source/manuel_bibliotheque.rst:669
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1555,7 +1564,7 @@ msgstr ""
 "jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen "
 "sisältämät asemat ovat yhä tallella, kun palaat."
 
-#: ../../source/manuel_bibliotheque.rst:672
+#: ../../source/manuel_bibliotheque.rst:676
 msgid ""
 "Deux critères de provenance se prêtent à une collection qui se range "
 "seule : ``s i`` garde les positions apportées une à une (à la main ou par"
@@ -1568,7 +1577,7 @@ msgstr ""
 "ottelun mukana tulleita, ``s fl`` ne, jotka alkuperäinen ohjelma oli "
 "merkinnyt tuonnissa. Molemmat yhdistyvät mihin tahansa muuhun kriteeriin."
 
-#: ../../source/manuel_bibliotheque.rst:678
+#: ../../source/manuel_bibliotheque.rst:682
 msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
@@ -1581,7 +1590,7 @@ msgstr ""
 "järjestyksessä, ja kysely tyhjennetään. Asemat, jotka kokoelmassa oli "
 "ennen sen muuttumista eläväksi, korvataan."
 
-#: ../../source/manuel_bibliotheque.rst:683
+#: ../../source/manuel_bibliotheque.rst:687
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1593,7 +1602,7 @@ msgstr ""
 "palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla "
 "suodattimella ei saa olla: laajeta hiljaisuudessa."
 
-#: ../../source/manuel_bibliotheque.rst:688
+#: ../../source/manuel_bibliotheque.rst:692
 msgid ""
 "Une collection vivante ne peut pas porter ``like`` : une collection est "
 "un ensemble, et ce jeton classe. Elle refuse la requête qui le porte, en "
@@ -1607,7 +1616,7 @@ msgstr ""
 "vanhempi tallennettu haku vielä sisältää, hylätään toistettaessa, olipa "
 "se historiasta tai suodatinkirjastosta."
 
-#: ../../source/manuel_bibliotheque.rst:694
+#: ../../source/manuel_bibliotheque.rst:698
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1628,7 +1637,7 @@ msgstr ""
 "tiedoston ulkopuolelle, kokoelma viedään **jäädytettynä** niillä "
 "asemilla, jotka kysely valitsee viennin hetkellä."
 
-#: ../../source/manuel_bibliotheque.rst:703
+#: ../../source/manuel_bibliotheque.rst:707
 msgid ""
 "Une collection vivante dont la base refuse la requête (``like``, une "
 "forme étoilée) part **figée et vide**, dans un export comme dans un "
@@ -1639,7 +1648,7 @@ msgstr ""
 "viedään tai siirretään toiseen tietokantaan **jäädytettynä ja tyhjänä**: "
 "elävänä se vain hylättäisiin siellä uudelleen."
 
-#: ../../source/manuel_bibliotheque.rst:707
+#: ../../source/manuel_bibliotheque.rst:711
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1657,7 +1666,7 @@ msgstr ""
 "järjestyksessä syöttävät pakkaa, ja tilarivi kertoo tämän yhdessä "
 "valittujen asemien todellisen määrän kanssa."
 
-#: ../../source/manuel_bibliotheque.rst:717
+#: ../../source/manuel_bibliotheque.rst:721
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1674,7 +1683,7 @@ msgstr ""
 "opeta mitään muista; viiteasema on usean virheesi keskellä, rakenteeltaan"
 " samankaltaisena, ja sen opetus palvelee kaikkia."
 
-#: ../../source/manuel_bibliotheque.rst:724
+#: ../../source/manuel_bibliotheque.rst:728
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1688,7 +1697,7 @@ msgstr ""
 "on enintään 12 nappulaaskelta; tuplauskuution virheen naapureita ovat "
 "vain samassa tilanteessa olevat."
 
-#: ../../source/manuel_bibliotheque.rst:728
+#: ../../source/manuel_bibliotheque.rst:732
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1706,7 +1715,7 @@ msgstr ""
 "alussa oleva luku on katettu MWC; peruste antaa luvun, joka lasketaan, "
 "kun oppitunti lasketaan puoliksi."
 
-#: ../../source/manuel_bibliotheque.rst:735
+#: ../../source/manuel_bibliotheque.rst:739
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1720,7 +1729,7 @@ msgstr ""
 "kokoelmassa olevaa, Anki-korttia tai „opiskelluksi“ merkittyä — ei "
 "koskaan ehdoteta, ja sen naapurien katsotaan olevan katettuja."
 
-#: ../../source/manuel_bibliotheque.rst:741
+#: ../../source/manuel_bibliotheque.rst:745
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1744,11 +1753,11 @@ msgstr ""
 "**tietovisaksi**. Komentorivillä: ``blunderdb collection suggest`` (katso"
 " :ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:754
+#: ../../source/manuel_bibliotheque.rst:758
 msgid "Leçons"
 msgstr "Oppitunnit"
 
-#: ../../source/manuel_bibliotheque.rst:756
+#: ../../source/manuel_bibliotheque.rst:760
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1764,7 +1773,7 @@ msgstr ""
 " Komento ``le`` luettelee tietokannan oppitunnit tilarivillä; ``le 2`` "
 "avaa oppitunnin 2; ``le edit`` avaa oppituntieditorin."
 
-#: ../../source/manuel_bibliotheque.rst:763
+#: ../../source/manuel_bibliotheque.rst:767
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1779,7 +1788,7 @@ msgstr ""
 "näyttää, ja sitä selataan tavallisin elein. *Sulje* poistuu oppitunnilta."
 " Vaihe, jonka kokoelma tai asema on poistettu, säilyttää tekstinsä."
 
-#: ../../source/manuel_bibliotheque.rst:770
+#: ../../source/manuel_bibliotheque.rst:774
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1798,7 +1807,7 @@ msgstr ""
 "sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa "
 "oleva oppitunti jää koskematta."
 
-#: ../../source/manuel_bibliotheque.rst:778
+#: ../../source/manuel_bibliotheque.rst:782
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1836,7 +1845,7 @@ msgstr ""
 "Oppitunteja voi luoda ja muokata myös komentoriviltä tai API:n kautta "
 "(:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:795
+#: ../../source/manuel_bibliotheque.rst:799
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
@@ -1898,3 +1907,4 @@ msgstr ""
 #~ "joka ei löydä mitään, palauttaa tyhjän"
 #~ " listan ja sanoo sen, eikä kymmentä"
 #~ " asiaankuulumatonta asemaa."
+

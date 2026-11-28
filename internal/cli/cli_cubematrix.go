@@ -75,13 +75,14 @@ func (cli *CLI) runCubeMatrix(args []string) error {
 	return nil
 }
 
-// cubeMatrixGlyphs names the four verdicts in the two characters a grid can
+// cubeMatrixGlyphs names the verdicts in the few characters a grid can
 // afford. The legend is printed under the grid rather than trusted to memory.
 var cubeMatrixGlyphs = map[string]string{
-	"no_double":   "ND",
-	"double_take": "DT",
-	"double_pass": "DP",
-	"too_good":    "TG",
+	"no_double":          "ND",
+	"double_take":        "DT",
+	"double_pass":        "DP",
+	"too_good":           "TG",
+	gammonnet.VerdictDMP: "DMP",
 }
 
 // printCubeMatrix renders the grid: rows are the doubling side's away score,
@@ -118,7 +119,7 @@ func (cli *CLI) printCubeMatrix(m gammonnet.CubeMatrix) {
 	}
 
 	fmt.Fprintln(cli.stdout())
-	fmt.Fprintln(cli.stdout(), "ND no double   DT double, take   DP double, pass   TG too good   ? not evaluable")
+	fmt.Fprintln(cli.stdout(), "ND no double   DT double, take   DP double, pass   TG too good   DMP double match point, no cube   ? not evaluable")
 	for _, c := range m.Cells {
 		if c.Refused {
 			fmt.Fprintf(cli.stdout(), "  %d-away/%d-away: %s\n", c.AwayOnRoll, c.AwayOpponent, c.Reason)

@@ -55,7 +55,7 @@ func Page(title, origin string, codes []Code) ([]byte, error) {
 @page { size: A4; margin: 0 }
 html, body { margin: 0; padding: 0; background: #fff; color: #000; font-family: sans-serif }
 .sheet { position: relative; width: %.1fmm; height: %.1fmm; overflow: hidden; page-break-after: always; break-after: page }
-.sheet:last-child { page-break-after: auto; break-after: auto }
+.sheet:last-of-type { page-break-after: auto; break-after: auto }
 .quad { position: absolute; width: %.2fmm; height: %.2fmm }
 .code { position: absolute }
 .code svg { display: block; shape-rendering: crispEdges }

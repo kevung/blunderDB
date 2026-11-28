@@ -59,7 +59,9 @@ Le parcours en trois commandes
    ./blunderdb document import --db base.db releve.json
 
 1. ``analyze`` lit le PDF et écrit le relevé (sans ``-o``, il l'écrit sur la
-   sortie standard). Il résume ce qu'il a trouvé :
+   sortie standard). Quand l'erreur standard est un terminal, il y écrit la
+   progression de la lecture (``page 37/212, 54 diagrams``) ; rien n'est écrit
+   dans un script. Il résume ce qu'il a trouvé :
 
    .. code-block:: text
 
@@ -87,6 +89,11 @@ Le parcours en trois commandes
       Unverified: rank 4, 5, 6 (import refused without --force)
       Review:
         rank 4, p. 12, Problem 3, to-verify: context not read, to check against the diagram: cube (drawn)
+
+   ``check`` reçoit aussi le document lui-même (``check livre.pdf``) : il lit
+   alors le relevé que la planche de vérification de l'interface garde à côté
+   (``livre.pdf.releve.json``, :ref:`assistant_import_document`) et en donne
+   l'avancement, ``verified`` compris.
 
 3. ``import`` écrit les positions dans la collection :
 
@@ -126,6 +133,22 @@ l'ordre du document :
 * ``rect`` — où le diagramme se trouve sur la page, en fraction de sa taille,
   pour le retrouver dans le PDF ;
 * ``verified`` — ``true`` quand une personne a comparé la lecture au diagramme.
+
+``verify`` écrit le verdict d'une personne dans le relevé, sans base :
+
+.. code-block:: bash
+
+   ./blunderdb document verify releve.json --rank 3,4,9
+   ./blunderdb document verify releve.json --rank 12 --position "XGID=..."
+   ./blunderdb document verify releve.json --rank 12 --undo
+
+``--rank`` nomme les entrées, séparées par des virgules ; elles deviennent
+vérifiées. ``--position`` remplace la lecture d'une seule entrée par le XGID
+correct, refusé s'il n'est pas une position légale ; une correction dont le
+contexte n'est plus celui du défaut garde le sien, à vérifier. ``--undo`` retire
+le verdict. Donné à la place du relevé, le document fait écrire dans le relevé
+gardé à côté de lui. La commande affiche le fichier écrit et l'avancement :
+``releve.json: verified 3 of 6 entries (sure 3, to verify 2, uncertain 1)``.
 
 On relit un relevé en ouvrant le PDF à la page de l'entrée. On y corrige la
 position (le XGID), on marque ``"verified": true`` une entrée contrôlée, on

@@ -76,6 +76,7 @@
      * @property {any} [sort]
      * @property {any} [sortOptions]
      * @property {any} [selectedKey]
+     * @property {Set<any>} [selectedKeys]
      * @property {(row: any, index: number) => string} [rowClass]
      * @property {(row: any, index: number) => Record<string, any>} [rowAttrs]
      * @property {boolean} [pointerRows]
@@ -113,6 +114,8 @@
         sortOptions = {},
         /** Key of the selected row (gets the `selected` class). */
         selectedKey = undefined,
+        /** Keys of a multiple selection (Ctrl/Shift+click): each row gets the `selected` class. */
+        selectedKeys = undefined,
         /** Extra classes for a row: (row, index) => string. */
         rowClass = undefined,
         /** Extra attributes spread on a row, over the table's own handlers: (row, index) => object. Not `class`. */
@@ -269,6 +272,7 @@
 
     /** @param {any} row */
     function isSelected(row) {
+        if (selectedKeys && selectedKeys.size > 0) return selectedKeys.has(rowKey(row));
         return selectedKey !== undefined && selectedKey !== null && rowKey(row) === selectedKey;
     }
 

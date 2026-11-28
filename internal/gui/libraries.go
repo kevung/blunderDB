@@ -200,6 +200,7 @@ func (a *App) libraryBusy() error {
 func (a *App) exchangeLocked(other *database.Database) error {
 	a.libs.exchanging.Store(true)
 	defer a.libs.exchanging.Store(false)
+	a.cancelBoundLongOps()
 	return database.Exchange(a.db, other)
 }
 

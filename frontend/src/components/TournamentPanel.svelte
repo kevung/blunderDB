@@ -13,6 +13,9 @@
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import TournamentReview from './TournamentReview.svelte';
     import MatchSheet from './MatchSheet.svelte';
+    import MatchPrintModal from './MatchPrintModal.svelte';
+    import PaperArchiveModal from './PaperArchiveModal.svelte';
+    import { modifierSelect, idsFor } from '../utils/multiSelect.js';
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import { menuFor } from '../services/actionCatalog.js';
     import { sendContext, otherBases } from '../services/sendActions.js';
@@ -247,8 +250,17 @@
 
     $effect(() => {
         void selectedTournament?.id;
-        untrack(() => (sheetMatchId = null));
+        untrack(() => {
+            sheetMatchId = null;
+            multi = new Set();
+        });
     });
+
+    // The matches selected with Ctrl/Shift+click, and the dialogs of print and paper archive they open.
+    let multi = $state(/** @type {Set<number>} */ (new Set()));
+    let multiAnchor = /** @type {number | null} */ (null);
+    let printMatchIds = $state(/** @type {number[] | null} */ (null));
+    let archiveMatchIds = $state(/** @type {number[] | null} */ (null));
 
     // The match whose sheet sits under the table: one click on its row.
     let sheetMatchId = $state(/** @type {number | null} */ (null));
@@ -297,7 +309,7 @@
 
     async function loadAllMatches() {
         try {
-            availableMatches = (await readOfLibrary(() => ListMatches({ Unassigned: true, Text: addMatchSearch.trim(), Limit: 50 }))) || [];
+            availableMatches = (await readOfLibrary(() => ListMatches(/** @type {any} */ ({ Unassigned: true, Text: addMatchSearch.trim(), Limit: 50 })))) || [];
         } catch (error) {
             if (isLibraryLeft(error)) return;
             logger.error('Error loading matches:', error);
@@ -341,7 +353,7 @@
             } else {
                 return 0;
             }
-            const cmp = typeof valA === 'number' ? valA - valB : valA.localeCompare(valB);
+            const cmp = typeof valA === 'number' ? valA - /** @type {number} */ (valB) : valA.localeCompare(valB);
             return sortOrder === 'asc' ? cmp : -cmp;
         });
     }
@@ -447,7 +459,7 @@
 
     /**
      * @param {Tournament} tournament
-     * @param {Event} event
+     * @param {Event | undefined} event
      */
     async function deleteTournamentEntry(tournament, event) {
         event?.stopPropagation();
@@ -469,7 +481,7 @@
 
     /**
      * @param {Tournament} tournament
-     * @param {Event} event
+     * @param {Event | undefined} event
      */
     function startEdit(tournament, event) {
         event?.stopPropagation();
@@ -521,7 +533,7 @@
         set: (next) => tournamentMatchesStore.set(next),
         persist: (next) =>
             ReorderTournamentMatches(
-                selectedTournament.id,
+                /** @type {any} */ (selectedTournament).id,
                 next.map((m) => m.id)
             ),
         label: 'matches'
@@ -612,41 +624,43 @@
             const currentPlayedMove = startMovePos.checker_move || '';
             const currentPlayedCubeAction = startMovePos.cube_action || '';
 
-            analysisStore.set({
-                positionId: analysis?.positionId || null,
-                xgid: analysis?.xgid || '',
-                player1: analysis?.player1 || '',
-                player2: analysis?.player2 || '',
-                analysisType: analysis?.analysisType || '',
-                analysisEngineVersion: analysis?.analysisEngineVersion || '',
-                checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
-                doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
-                    analysisDepth: '',
-                    playerWinChances: 0,
-                    playerGammonChances: 0,
-                    playerBackgammonChances: 0,
-                    opponentWinChances: 0,
-                    opponentGammonChances: 0,
-                    opponentBackgammonChances: 0,
-                    cubelessNoDoubleEquity: 0,
-                    cubelessDoubleEquity: 0,
-                    cubefulNoDoubleEquity: 0,
-                    cubefulNoDoubleError: 0,
-                    cubefulDoubleTakeEquity: 0,
-                    cubefulDoubleTakeError: 0,
-                    cubefulDoublePassEquity: 0,
-                    cubefulDoublePassError: 0,
-                    bestCubeAction: '',
-                    wrongPassPercentage: 0,
-                    wrongTakePercentage: 0
-                },
-                playedMove: currentPlayedMove,
-                playedCubeAction: currentPlayedCubeAction,
-                playedMoves: analysis?.playedMoves || [],
-                playedCubeActions: analysis?.playedCubeActions || [],
-                creationDate: analysis?.creationDate || '',
-                lastModifiedDate: analysis?.lastModifiedDate || ''
-            });
+            analysisStore.set(
+                /** @type {any} */ ({
+                    positionId: analysis?.positionId || null,
+                    xgid: analysis?.xgid || '',
+                    player1: analysis?.player1 || '',
+                    player2: analysis?.player2 || '',
+                    analysisType: analysis?.analysisType || '',
+                    analysisEngineVersion: analysis?.analysisEngineVersion || '',
+                    checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
+                    doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
+                        analysisDepth: '',
+                        playerWinChances: 0,
+                        playerGammonChances: 0,
+                        playerBackgammonChances: 0,
+                        opponentWinChances: 0,
+                        opponentGammonChances: 0,
+                        opponentBackgammonChances: 0,
+                        cubelessNoDoubleEquity: 0,
+                        cubelessDoubleEquity: 0,
+                        cubefulNoDoubleEquity: 0,
+                        cubefulNoDoubleError: 0,
+                        cubefulDoubleTakeEquity: 0,
+                        cubefulDoubleTakeError: 0,
+                        cubefulDoublePassEquity: 0,
+                        cubefulDoublePassError: 0,
+                        bestCubeAction: '',
+                        wrongPassPercentage: 0,
+                        wrongTakePercentage: 0
+                    },
+                    playedMove: currentPlayedMove,
+                    playedCubeAction: currentPlayedCubeAction,
+                    playedMoves: analysis?.playedMoves || [],
+                    playedCubeActions: analysis?.playedCubeActions || [],
+                    creationDate: analysis?.creationDate || '',
+                    lastModifiedDate: analysis?.lastModifiedDate || ''
+                })
+            );
 
             commentTextStore.set('');
             selectedMoveStore.set(null);
@@ -702,6 +716,8 @@
                 tournamentEdit.cancel();
             } else if (addMatchSearch) {
                 addMatchSearch = '';
+            } else if (multi.size > 0) {
+                multi = new Set();
             } else if (sheetMatchId != null) {
                 sheetMatchId = null;
             } else if (selectedTournament) {
@@ -1067,6 +1083,18 @@
                                 title={$t('direction.named.suisse_tableauHint')}>{$t('direction.direct')}</button
                             >
                         {/if}
+                        {#if multi.size > 1}
+                            <button class="direction-btn" data-testid="tournament-selection-chip" onclick={() => (multi = new Set())}>{$t('matchSheet.selection', { n: multi.size })} ×</button>
+                        {/if}
+                        <button
+                            class="direction-btn"
+                            data-testid="tournament-print"
+                            disabled={tournamentMatches.length === 0}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                printMatchIds = tournamentMatches.map((m) => m.id);
+                            }}>{$t('tournament.print')}</button
+                        >
                         <button
                             class="review-btn"
                             class:active={reviewOpen}
@@ -1087,8 +1115,29 @@
                     rows={tournamentMatches}
                     columns={matchColumns}
                     selectedKey={sheetMatchId}
-                    onSelect={(match) => (sheetMatchId = sheetMatchId === match.id ? null : match.id)}
+                    selectedKeys={multi}
+                    onSelect={(/** @type {any} */ match, /** @type {number} */ _i, /** @type {Event | undefined} */ ev) => {
+                        const sel = modifierSelect(tournamentMatches, (/** @type {any} */ m) => m.id, multi, multiAnchor, match, /** @type {any} */ (ev) ?? {}, sheetMatchId);
+                        if (sel) {
+                            multi = sel.keys;
+                            multiAnchor = sel.anchor;
+                            return;
+                        }
+                        multi = new Set();
+                        sheetMatchId = sheetMatchId === match.id ? null : match.id;
+                    }}
                     onActivate={openMatch}
+                    rowMenu={(/** @type {any} */ match) =>
+                        menuFor(
+                            'match',
+                            {
+                                do: {
+                                    print: () => (printMatchIds = idsFor(tournamentMatches, (/** @type {any} */ m) => m.id, multi, match.id)),
+                                    archive: () => (archiveMatchIds = idsFor(tournamentMatches, (/** @type {any} */ m) => m.id, multi, match.id))
+                                }
+                            },
+                            $t
+                        )}
                     onReorder={matchOrder.reorder}
                     emptyText={$t('tournament.noMatches')}
                 >
@@ -1170,8 +1219,8 @@
                         <EntityAutocomplete
                             bind:value={addMatchSearch}
                             items={availableMatches}
-                            key={(m) => m.id}
-                            label={(m) => `${m.player1_name} ${$t('tournament.vs')} ${m.player2_name}`}
+                            key={(/** @type {Match} */ m) => m.id}
+                            label={(/** @type {Match} */ m) => `${m.player1_name} ${$t('tournament.vs')} ${m.player2_name}`}
                             filter={matchMatchesQuery}
                             variant="field"
                             placement="above"
@@ -1179,10 +1228,10 @@
                             fillOnSelect={false}
                             placeholder={$t('tournament.addMatchPlaceholder')}
                             onFocus={loadAllMatches}
-                            onSelect={(m) => addMatchToTournament(m.id)}
+                            onSelect={(/** @type {Match} */ m) => addMatchToTournament(m.id)}
                             onCancel={() => (addMatchSearch = '')}
                         >
-                            {#snippet item(match)}
+                            {#snippet item(/** @type {Match} */ match)}
                                 {match.player1_name}
                                 {$t('tournament.vs')}
                                 {match.player2_name} <span class="match-pts">{match.match_length}pt</span>
@@ -1194,6 +1243,9 @@
         {/if}
     </div>
 </section>
+
+<MatchPrintModal open={printMatchIds !== null} matchIds={printMatchIds ?? []} onclose={() => (printMatchIds = null)} />
+<PaperArchiveModal open={archiveMatchIds !== null} matchIds={archiveMatchIds ?? []} onclose={() => (archiveMatchIds = null)} />
 
 <style>
     /* La Direction d'un tournoi, dans l'en-tête du tournoi sélectionné : un badge d'état quand

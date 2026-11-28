@@ -23,7 +23,10 @@
         repair: 'calculs.kind.repair',
         transfer: 'calculs.kind.transfer',
         bearoff: 'calculs.kind.bearoff',
-        sync: 'calculs.kind.sync'
+        sync: 'calculs.kind.sync',
+        export: 'calculs.kind.export',
+        'paper-archive': 'calculs.kind.paperArchive',
+        print: 'calculs.kind.print'
     };
 
     /** @param {import('../stores/jobsStore.js').JobInfo} job */

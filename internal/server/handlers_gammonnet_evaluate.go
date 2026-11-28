@@ -20,7 +20,15 @@ type gammonnetEvaluateReq struct {
 	Ply *int `json:"ply,omitempty"`
 	// Candidates bounds the checker plays returned, 1 to 20 (default 5).
 	Candidates int `json:"candidates"`
+	// Moves, when given, values only these plays (dice set), ranked among
+	// themselves, as the desktop panel re-runs the plays it has selected;
+	// Candidates is then ignored. At most maxMovesEvaluated.
+	Moves []string `json:"moves,omitempty"`
 }
+
+// maxMovesEvaluated bounds a targeted request: as many plays as Candidates
+// may return.
+const maxMovesEvaluated = 20
 
 type gammonnetEvaluateResp struct {
 	Decision string                       `json:"decision"`
@@ -55,6 +63,10 @@ func (s *Server) handleGammonNetEvaluate(w http.ResponseWriter, r *http.Request)
 		writeErrorCode(w, CodeInvalid, "candidates must be between 1 and 20")
 		return
 	}
+	if len(req.Moves) > maxMovesEvaluated {
+		writeErrorCode(w, CodeInvalid, fmt.Sprintf("at most %d moves", maxMovesEvaluated))
+		return
+	}
 	scope := scopeOf(r)
 	if s.refuseAnalysis(w, scope) {
 		return
@@ -72,7 +84,11 @@ func (s *Server) handleGammonNetEvaluate(w http.ResponseWriter, r *http.Request)
 	ran := s.analysis.run(r.Context(), scope, func(get searcherFor) {
 		cost := get.clock()
 		searcher, release := boundSearcher(r.Context(), get, ply, 0)
-		res, err = gammonnet.EvaluatePositionWithMET(searcher, pos, met, ply, 0, req.Candidates)
+		if len(req.Moves) > 0 {
+			res.Moves, err = gammonnet.EvaluatePlaysWithMET(searcher, pos, met, ply, 0, req.Moves)
+		} else {
+			res, err = gammonnet.EvaluatePositionWithMET(searcher, pos, met, ply, 0, req.Candidates)
+		}
 		release()
 		s.quota.charge(scope, cost())
 	})

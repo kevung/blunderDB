@@ -252,7 +252,7 @@ Panneau d'analyse
    :align: center
 
    "Clic", "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
-   "Ctrl+Clic", "Ajouter ou retirer un coup de la sélection à rouler."
+   "Ctrl+Clic", "Ajouter ou retirer un coup de la sélection, à rouler ou à réévaluer seule à la profondeur du sélecteur de la bande."
    "Maj+Clic", "Étendre la sélection jusqu'au coup cliqué."
    "Clic droit", "Menu du coup : rouler les coups sélectionnés avec le réglage choisi, ou annuler le rollout en cours ; copier la position et l'analyse, ou la position et les coups sélectionnés."
    "HAUT, k", "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
@@ -292,6 +292,8 @@ Panneau des matchs
 
    "Clic", "Sélectionner un match."
    "Double-clic", "Naviguer dans le match."
+   "CTRL-Clic", "Ajouter un match à la sélection, ou l'en retirer ; *Imprimer…* et *Archive papier…* du menu contextuel prennent alors toute la sélection (100 matchs au plus)."
+   "MAJ-Clic", "Sélectionner la plage de matchs depuis le dernier clic."
    "HAUT, k", "Sélectionner le match précédent."
    "BAS, j", "Sélectionner le match suivant."
    "ENTREE", "Charger le match sélectionné."
@@ -300,7 +302,7 @@ Panneau des matchs
    "[ / ] (vidéo ouverte)", "Ralentir ou accélérer la lecture de la vidéo, par pas de 0,25 entre 0,25× et 4×."
    "/", "Aller au champ de filtre (joueur, événement, tournoi, date). *Esc* efface le filtre."
    "GAUCHE / DROITE, DÉBUT / FIN (focus sur un onglet de la fiche du match)", "Passer à l'onglet précédent / suivant (Transcription, Graphes, À revoir, Détails, Infos, Stats), ou au premier / dernier."
-   "Esc", "Désélectionner/fermer le panneau."
+   "Esc", "Vider la sélection de matchs, sinon désélectionner/fermer le panneau."
 
 .. _raccourcis_anki_panel:
 
@@ -336,7 +338,8 @@ Panneau des tournois
    "HAUT, k", "Sélectionner le tournoi précédent, quand le panneau a le focus ou qu'aucune direction n'est affichée."
    "BAS, j", "Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune direction n'est affichée."
    "Double-clic (sur un match du tournoi)", "Naviguer dans le match."
-   "Esc", "Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
+   "CTRL-Clic, MAJ-Clic (sur un match du tournoi)", "Ajouter ou retirer un match de la sélection, ou sélectionner une plage ; *Imprimer…* et *Archive papier…* du menu contextuel prennent toute la sélection (100 matchs au plus)."
+   "Esc", "Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, sinon vider la sélection de matchs, sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 
 .. _raccourcis_direction:
 

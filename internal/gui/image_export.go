@@ -28,11 +28,14 @@ func (a *App) SaveBoardImageDialog(format, defaultName string) (string, error) {
 	case "html":
 		filter = runtime.FileFilter{DisplayName: "HTML document (*.html)", Pattern: "*.html"}
 		title = "Save the report"
+	case "pdf":
+		filter = runtime.FileFilter{DisplayName: "PDF document (*.pdf)", Pattern: "*.pdf"}
+		title = "Save the sheet"
 	case "json":
 		filter = runtime.FileFilter{DisplayName: "JSON (*.json)", Pattern: "*.json"}
 		title = "Save the events"
 	default:
-		return "", fmt.Errorf("unsupported format %q (svg, png, html or json)", format)
+		return "", fmt.Errorf("unsupported format %q (svg, png, html, pdf or json)", format)
 	}
 
 	path, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
