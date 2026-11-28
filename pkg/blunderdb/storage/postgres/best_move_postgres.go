@@ -36,7 +36,7 @@ const bestMoveIndexSQL = `CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_analysis_b
 // ensureBestMoveIndex builds idx_analysis_best_move. An interrupted build
 // leaves an invalid index that IF NOT EXISTS would keep: it is dropped and
 // built again. A role that does not own analysis cannot build it and leaves
-// it to the owner's Migrate.
+// it to the owner's start.
 func ensureBestMoveIndex(ctx context.Context, db execer) error {
 	var owner bool
 	var valid *bool
@@ -46,7 +46,11 @@ func ensureBestMoveIndex(ctx context.Context, db execer) error {
 		   FROM pg_class c WHERE c.oid = to_regclass('analysis')`).Scan(&owner, &valid); err != nil {
 		return fmt.Errorf("postgres: probe idx_analysis_best_move: %w", err)
 	}
-	if !owner || (valid != nil && *valid) {
+	if !owner {
+		slog.Warn("analysis best move: this role does not own analysis; the index waits for the owner's start")
+		return nil
+	}
+	if valid != nil && *valid {
 		return nil
 	}
 	if valid != nil {

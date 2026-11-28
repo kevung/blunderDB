@@ -137,11 +137,21 @@ func TestMigratePostgres(t *testing.T) {
 		t.Errorf("tables:\n got  %v\n want %v", tables, wantTables)
 	}
 
-	indexes := queryNames(t, conn,
-		`SELECT indexname FROM pg_indexes
-		 WHERE schemaname='public' AND indexname LIKE 'idx_%' ORDER BY indexname`)
-	if !slices.Equal(indexes, wantIndexes) {
-		t.Errorf("indexes:\n got  %v\n want %v", indexes, wantIndexes)
+	listIndexes := func() []string {
+		return queryNames(t, conn,
+			`SELECT indexname FROM pg_indexes
+			 WHERE schemaname='public' AND indexname LIKE 'idx_%' ORDER BY indexname`)
+	}
+	// The best move index is the open service's: BackfillDeferred builds it.
+	afterMigrate := slices.DeleteFunc(slices.Clone(wantIndexes), func(n string) bool { return n == "idx_analysis_best_move" })
+	if indexes := listIndexes(); !slices.Equal(indexes, afterMigrate) {
+		t.Errorf("indexes after Migrate:\n got  %v\n want %v", indexes, afterMigrate)
+	}
+	if err := s.BackfillDeferred(ctx); err != nil {
+		t.Fatalf("BackfillDeferred: %v", err)
+	}
+	if indexes := listIndexes(); !slices.Equal(indexes, wantIndexes) {
+		t.Errorf("indexes after BackfillDeferred:\n got  %v\n want %v", indexes, wantIndexes)
 	}
 
 	// Every domain table is multi-tenant; metadata and schema_migrations are

@@ -25,6 +25,9 @@ import (
 func TestMovePatternReadsTheBestMoveIndexUnderRLS(t *testing.T) {
 	ctx := context.Background()
 	s, rec, dsn := probeFixture(ctx, t)
+	if err := s.BackfillDeferred(ctx); err != nil {
+		t.Fatalf("BackfillDeferred: %v", err)
+	}
 	conn, err := pgx.Connect(ctx, dsn)
 	if err != nil {
 		t.Fatal(err)

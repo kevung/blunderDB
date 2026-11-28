@@ -142,13 +142,16 @@ func TestBestMoveBackfillRunsBesideAReader(t *testing.T) {
 }
 
 // TestMigrateLeavesTheBestMoveBackfillToTheService: Migrate returns with
-// every row still NULL and the cursor pending, so the daemon serves before
-// the pass ends; BackfillDeferred then ends it.
+// no best move index, every row still NULL and the cursor pending, so the
+// daemon serves before either is built; BackfillDeferred then builds both.
 func TestMigrateLeavesTheBestMoveBackfillToTheService(t *testing.T) {
 	ctx := context.Background()
 	s, conn := seedBestMovePending(t, 4)
 	if err := s.Migrate(ctx); err != nil {
 		t.Fatalf("Migrate: %v", err)
+	}
+	if valid := bestMoveIndexValid(t, conn); valid != nil {
+		t.Fatalf("Migrate built idx_analysis_best_move (valid %v)", *valid)
 	}
 	if nulls, _ := bestMoveState(t, conn); nulls != 8 {
 		t.Fatalf("Migrate derived the best move: %d rows NULL, want 8", nulls)
@@ -156,7 +159,21 @@ func TestMigrateLeavesTheBestMoveBackfillToTheService(t *testing.T) {
 	if err := s.BackfillDeferred(ctx); err != nil {
 		t.Fatalf("BackfillDeferred: %v", err)
 	}
+	if valid := bestMoveIndexValid(t, conn); valid == nil || !*valid {
+		t.Errorf("idx_analysis_best_move after BackfillDeferred: %v, want valid", valid)
+	}
 	if nulls, _ := bestMoveState(t, conn); nulls != 0 {
 		t.Errorf("%d rows NULL after BackfillDeferred, want 0", nulls)
 	}
+}
+
+// bestMoveIndexValid is nil without idx_analysis_best_move, else its indisvalid.
+func bestMoveIndexValid(t *testing.T, conn *pgx.Conn) *bool {
+	t.Helper()
+	var valid *bool
+	if err := conn.QueryRow(context.Background(),
+		`SELECT (SELECT indisvalid FROM pg_index WHERE indexrelid = to_regclass('idx_analysis_best_move'))`).Scan(&valid); err != nil {
+		t.Fatal(err)
+	}
+	return valid
 }

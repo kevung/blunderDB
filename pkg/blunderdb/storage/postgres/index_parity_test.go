@@ -232,7 +232,7 @@ func TestIndexParityWithSQLite(t *testing.T) {
 	if len(pgIdx) == 0 {
 		t.Fatal("no CREATE INDEX found in the embedded migrations")
 	}
-	// Built by Migrate outside the chain, CONCURRENTLY (ensureBestMoveIndex).
+	// Built by BackfillDeferred outside the chain, CONCURRENTLY (ensureBestMoveIndex).
 	for name, decl := range parseIndexes(strings.Replace(bestMoveIndexSQL, "CONCURRENTLY ", "", 1), "--") {
 		pgIdx[name] = decl
 	}

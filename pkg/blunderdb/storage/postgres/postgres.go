@@ -281,9 +281,6 @@ func (s *Storage) Migrate(ctx context.Context) error {
 	if err := repairMatchStatsShape(ctx, conn); err != nil {
 		return err
 	}
-	if err := ensureBestMoveIndex(ctx, conn); err != nil {
-		return err
-	}
 	if err := runGoBackfills(ctx, conn); err != nil {
 		return err
 	}
@@ -434,12 +431,37 @@ func runGoBackfills(ctx context.Context, conn migrationConn) error {
 	return nil
 }
 
-// BackfillDeferred runs the passes Migrate leaves to the open service: about
-// an hour at 15 M analyses. They take no lock a request waits on, resume
-// where they stopped, and the search lets a row not reached yet through to
-// its blob. It returns when they end or ctx is done.
+// BackfillDeferred runs the passes Migrate leaves to the open service: the
+// best move index (91 s at 10 M analyses), then the best move column (about
+// an hour at 15 M). They take no lock a request waits on, resume where they
+// stopped, and the search is right without either: a row not reached yet
+// passes the prefilter to its blob. It returns when they end or ctx is done.
 func (s *Storage) BackfillDeferred(ctx context.Context) error {
-	return runBestMoveBackfill(ctx, s.pool)
+	return errors.Join(s.buildBestMoveIndex(ctx), runBestMoveBackfill(ctx, s.pool))
+}
+
+// bestMoveIndexLockKey keeps two processes from building the index at once:
+// the second would see the first's build as an invalid index and drop it.
+const bestMoveIndexLockKey int64 = 0x5f62657374696478 // "_bestidx"
+
+func (s *Storage) buildBestMoveIndex(ctx context.Context) error {
+	conn, err := s.pool.Acquire(ctx)
+	if err != nil {
+		return fmt.Errorf("postgres: acquire the best move index connection: %w", err)
+	}
+	defer conn.Release()
+	var held bool
+	if err := conn.QueryRow(ctx, `SELECT pg_try_advisory_lock($1)`, bestMoveIndexLockKey).Scan(&held); err != nil {
+		return fmt.Errorf("postgres: acquire the best move index lock: %w", err)
+	}
+	if !held {
+		slog.Info("analysis best move: another process builds the index")
+		return nil
+	}
+	defer func() {
+		_, _ = conn.Exec(context.WithoutCancel(ctx), `SELECT pg_advisory_unlock($1)`, bestMoveIndexLockKey)
+	}()
+	return ensureBestMoveIndex(ctx, conn)
 }
 
 // runBestMoveBackfill runs backfillAnalysisBestMove over the tenants 077
@@ -456,6 +478,7 @@ func runBestMoveBackfill(ctx context.Context, conn migrationConn) error {
 		return fmt.Errorf("postgres: probe the best move backfill role: %w", err)
 	}
 	if !sees {
+		slog.Warn("analysis best move: this role sees only some tenants' rows; the backfill waits for the owner's start, and the search settles NULL rows on the blob")
 		return nil
 	}
 	_, err := backfillAnalysisBestMove(ctx, conn, 0)
