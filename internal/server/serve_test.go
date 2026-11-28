@@ -182,7 +182,7 @@ func (b blockingBackfillStore) BackfillDeferred(ctx context.Context) error {
 func TestDeferredBackfillDoesNotHoldTheStart(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	st := blockingBackfillStore{release: make(chan struct{})}
-	done := startDeferredBackfills(ctx, st, slog.New(slog.DiscardHandler))
+	done := StartDeferredBackfills(ctx, st, slog.New(slog.DiscardHandler))
 	select {
 	case <-done:
 		t.Fatal("the pass ended before it was released")
