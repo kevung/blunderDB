@@ -17,7 +17,20 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllCollections: vi.fn(async () => [])
 }));
 const OpenDocumentDialog = vi.fn();
+/** @type {{ result: any }} */
+const archiveTask = { result: null };
+vi.mock('../services/longOpService.js', () => ({
+    runLongOp: async (/** @type {string} */ _prefix, /** @type {() => Promise<number>} */ start) => {
+        await start();
+        return { status: 'done', result: archiveTask.result };
+    }
+}));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
+    // The import runs as a task; here it is the Database call it wraps.
+    StartPaperArchiveImport: async (/** @type {any[]} */ ...a) => {
+        archiveTask.result = await ImportPaperArchive(...a);
+        return 1;
+    },
     OpenDocumentDialog: (/** @type {any[]} */ ...a) => OpenDocumentDialog(...a),
     IsBlunderDBArchive: async (/** @type {string} */ p) => p.includes('feuille'),
     ReadFileContent: vi.fn(),

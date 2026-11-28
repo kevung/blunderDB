@@ -1,7 +1,8 @@
 import { get, writable } from 'svelte/store';
-import { PositionSheetHTML, CountCollectionPositions } from '../../wailsjs/go/database/Database.js';
+import { CountCollectionPositions } from '../../wailsjs/go/database/Database.js';
+import { StartPositionSheet } from '../../wailsjs/go/gui/App.js';
 import { setStatusBarMessage } from './databaseService.js';
-import { saveAndOpenPage } from './printService.js';
+import { printSheet } from './printService.js';
 import { browsingLibrary, listedIds } from '../stores/positionStore.js';
 import { activeCollectionStore } from '../stores/collectionStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
@@ -71,25 +72,27 @@ export function openIdsPrint(ids, title) {
 
 /**
  * Construit la liste, propose de l'enregistrer, puis l'ouvre dans le
- * navigateur, d'où elle s'imprime.
+ * navigateur, d'où elle s'imprime ; la construction tourne comme tâche du
+ * panneau Calculs, annulable.
  * @param {{ ids?: number[], collection?: number }} source
  * @param {typeof DEFAULT_POSITION_SHEET_OPTIONS & { title?: string }} options
+ * @param {{ onLaunch?: () => void }} [hooks] appelé une fois la tâche lancée (la boîte se ferme)
  * @returns {Promise<string|null>} le chemin écrit, ou null.
  */
-export async function printPositionSheet(source, options) {
+export async function printPositionSheet(source, options, hooks = {}) {
     if (source.ids && !source.ids.length) return null;
     if (source.ids && source.ids.length > MAX_SHEET_POSITIONS) {
         setStatusBarMessage(tMsg('positionSheet.tooMany', { n: source.ids.length, max: MAX_SHEET_POSITIONS }));
         return null;
     }
-    setStatusBarMessage(tMsg('positionSheet.building'));
-    let html;
-    try {
-        html = await PositionSheetHTML(/** @type {any} */ (source), /** @type {any} */ ({ ...options, language: get(language) }));
-    } catch (err) {
-        logger.error('could not build the position list:', err);
-        setStatusBarMessage(tMsg('positionSheet.failed', { err }));
-        return null;
-    }
-    return saveAndOpenPage(html, 'blunderdb-positions.html', { saved: 'positionSheet.saved', failed: 'positionSheet.failed' });
+    const opts = { ...options, language: get(language) };
+    return printSheet(
+        'blunderdb-positions.html',
+        { saved: 'positionSheet.saved', failed: 'positionSheet.failed', cancelled: 'positionSheet.cancelled' },
+        (path) => {
+            setStatusBarMessage(tMsg('positionSheet.building'));
+            return StartPositionSheet(/** @type {any} */ (source), /** @type {any} */ (opts), path);
+        },
+        hooks
+    );
 }

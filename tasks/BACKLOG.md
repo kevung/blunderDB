@@ -100,6 +100,18 @@ propre issue le jour où il est lancé.
   diverger si le libellé stocké n'est pas l'une des trois actions.
 - **Archive papier : l'import n'est pas au catalogue d'actions** — le catalogue n'a pas d'entrée
   sans objet.
+- **Opérations longues encore sans progression ni annulation** (audit
+  `tasks/progression-operations-longues/AUDIT.md`) — l'export de base, l'archive papier et les
+  impressions de feuilles sont des tâches du panneau Calculs (`internal/gui/long_ops.go`, paquet
+  `progress`). Restent, sur le même modèle (`startLongOp` + `progress.Report` dans le moteur) :
+  l'aperçu de l'export (`PlanExportCtx` en Background, relancé à chaque case : annuler
+  l'ancien) ; `.apkg` (`ExportAnkiPackage` : ctx et garde contre le double clic) ; l'analyse
+  d'un import `.db` (`AnalyzeImportDatabase`) ; le rapport et les calculs de stats (un filtre
+  changé doit annuler l'ancien calcul : demande un ctx par onglet côté frontend) ; vider la
+  corbeille (`EmptyTrash`, verrou en écriture d'un bloc) ; `TransferToGroup` (brancher
+  `task.Progress`). L'export garde le verrou en lecture d'un bout à l'autre : le store n'offre
+  pas d'instantané de lecture, et un verrou par lot laisserait une écriture couper le fichier ;
+  un instantané (transaction de lecture SQLite) le permettrait.
 
 ## Ouvert — Moteur
 

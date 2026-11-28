@@ -14,6 +14,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/pdfattach"
+	"github.com/kevung/blunderdb/pkg/blunderdb/progress"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
@@ -55,10 +56,11 @@ func ExportArchive(ctx context.Context, s storage.Storage, scope string, ids []i
 	}
 	var payloads [][]byte
 	var labels []string
-	for _, id := range ids {
+	for i, id := range ids {
 		if err := ctx.Err(); err != nil {
 			return nil, res, err
 		}
+		progress.Report(ctx, i, len(ids))
 		am, label, err := ArchiveMatch(ctx, s, scope, id)
 		if err == nil {
 			var data []byte
@@ -77,6 +79,7 @@ func ExportArchive(ctx context.Context, s storage.Storage, scope string, ids []i
 	if len(payloads) == 0 {
 		return nil, res, fmt.Errorf("no match to archive: %w", storage.ErrInvalid)
 	}
+	progress.Report(ctx, len(ids), len(ids))
 	frames, owner, err := arkqr.Frames(payloads)
 	if err != nil {
 		return nil, res, fmt.Errorf("%w: %w", storage.ErrInvalid, err)

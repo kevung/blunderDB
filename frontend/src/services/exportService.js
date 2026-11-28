@@ -1,8 +1,8 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
-import { OpenExportDatabaseDialog, OpenExportMatDialog, ShowAlert } from '../../wailsjs/go/gui/App.js';
+import { OpenExportDatabaseDialog, OpenExportMatDialog, ShowAlert, StartExportDatabase } from '../../wailsjs/go/gui/App.js';
+import { runLongOp } from './longOpService.js';
 import {
-    ExportDatabase,
     CollectionCoverage,
     LoadMetadata,
     ExportMatchMAT,
@@ -315,6 +315,9 @@ export async function handleExportCommit(plan = null) {
     logger.log('Committing export to:', exportPath);
     exportModalModeStore.set('exporting');
 
+    // Read before the dialog's state is reset at launch.
+    const posCount = plan?.positions ?? get(exportPositionCountStore);
+    let launched = false;
     try {
         const exportOptions = get(exportOptionsStore);
         const baseOptions = await buildExportOptions(exportOptions, exportPath);
@@ -322,30 +325,48 @@ export async function handleExportCommit(plan = null) {
         // Both mechanisms are plain export options: the watermark is sealed and written by
         // the backend, and a password wraps the finished file. Neither changes anything
         // about what is exported.
-        const report = await ExportDatabase(
-            /** @type {any} */ ({
-                ...baseOptions,
-                watermark: exportOptions.watermarkEnabled ? (exportOptions.watermark || '').trim() : '',
-                watermarkNote: exportOptions.watermarkEnabled ? (exportOptions.watermarkNote || '').trim() : '',
-                password: exportOptions.passwordEnabled ? exportOptions.password || '' : ''
-            })
-        );
+        const sent = /** @type {any} */ ({
+            ...baseOptions,
+            watermark: exportOptions.watermarkEnabled ? (exportOptions.watermark || '').trim() : '',
+            watermarkNote: exportOptions.watermarkEnabled ? (exportOptions.watermarkNote || '').trim() : '',
+            password: exportOptions.passwordEnabled ? exportOptions.password || '' : ''
+        });
+        // The export runs as a task of the Calculs panel, which shows its progress and
+        // cancels it for real: the dialog closes as soon as it starts.
+        const outcome = await runLongOp('export-db', async () => {
+            const id = await StartExportDatabase(sent);
+            launched = true;
+            closeModal();
+            resetExportState();
+            setStatusBarMessage(tMsg('status.exportRunning'));
+            return id;
+        });
+        if (outcome.status === 'cancelled') {
+            setStatusBarMessage(tMsg('status.exportCancelled'));
+            statusBarModeStore.set('NORMAL');
+            return;
+        }
+        if (outcome.status === 'error') throw outcome.message;
+        const report = outcome.result;
 
         logger.log('Export completed successfully');
 
         // No completion screen: the status bar reports, as for every long
         // operation.
-        const posCount = plan?.positions ?? get(exportPositionCountStore);
-        closeModal();
-        resetExportState();
+        if (!launched) {
+            closeModal();
+            resetExportState();
+        }
         // The user's own notes leave signed only with a watermark: say how many did.
         const signed = report?.signedComments ?? 0;
         setStatusBarMessage(signed > 0 ? tMsg('status.exportCompletedSigned', { posCount, signed }) : tMsg('status.exportCompleted', { posCount }));
         statusBarModeStore.set('NORMAL');
     } catch (error) {
         logger.error('Error committing export:', error);
-        closeModal();
-        resetExportState();
+        if (!launched) {
+            closeModal();
+            resetExportState();
+        }
         setStatusBarMessage(tMsg('status.errorCommittingExport', { error }));
         await ShowAlert(`Error committing export: ${error}`);
         statusBarModeStore.set('NORMAL');

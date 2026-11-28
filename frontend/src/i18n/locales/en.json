@@ -371,7 +371,8 @@
         "reimportCodeTip": "The match's QR code at the end of the transcription, also embedded in the file",
         "batch": "The {n} matches of the list",
         "batchTip": "One sheet per match, in a single document",
-        "tooMany": "{n} matches in the list: one print takes {max} at most. Filter the list to narrow it."
+        "tooMany": "{n} matches in the list: one print takes {max} at most. Filter the list to narrow it.",
+        "cancelled": "Match sheet cancelled"
     },
     "positionSheet": {
         "title": "Print a position list",
@@ -397,7 +398,8 @@
         "library": "Library",
         "basket": "Print the positions",
         "basketTip": "Prints the Basket's positions that come from the library on screen",
-        "basketTitle": "Basket"
+        "basketTitle": "Basket",
+        "cancelled": "Position list cancelled"
     },
     "paperArchive": {
         "menu": "Paper archive…",
@@ -415,7 +417,8 @@
         "importing": "Reading the paper archive…",
         "imported": "Paper archive: {imported} matches imported, {duplicates} duplicates; {positions} positions imported, {knownPositions} already held, {missing} codes missing, {failed} failed",
         "failed": "Paper archive failed: {err}",
-        "noPdfPayload": "This PDF carries no blunderDB archive: nothing imported"
+        "noPdfPayload": "This PDF carries no blunderDB archive: nothing imported",
+        "cancelled": "Paper archive cancelled"
     },
     "match": {
         "errorExportingMat": "Error exporting match",
@@ -1684,7 +1687,8 @@
         "gnubgIdCopied": "GNUbg ID copied to the clipboard",
         "arkIdCopied": "ArkID copied to the clipboard",
         "noMatchForPosition": "No match has played this position",
-        "moveGone": "That move is no longer in the match: opened where you left it"
+        "moveGone": "That move is no longer in the match: opened where you left it",
+        "exportRunning": "Export running — progress and Cancel in the Jobs panel"
     },
     "stats": {
         "title": "Stats",
@@ -3826,7 +3830,10 @@
             "transfer": "Transfer",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Other"
+            "other": "Other",
+            "export": "Export",
+            "paperArchive": "Paper archive",
+            "print": "Printing"
         }
     },
     "documentImport": {

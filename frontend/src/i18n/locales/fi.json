@@ -371,7 +371,8 @@
         "reimportCodeTip": "Ottelun QR-koodi kirjauksen lopussa, upotettuna myös tiedostoon",
         "batch": "Listan {n} ottelua",
         "batchTip": "Yksi lomake ottelua kohden, yhdessä asiakirjassa",
-        "tooMany": "Luettelossa on {n} ottelua: yksi tuloste kattaa enintään {max}. Rajaa luetteloa suodattimella."
+        "tooMany": "Luettelossa on {n} ottelua: yksi tuloste kattaa enintään {max}. Rajaa luetteloa suodattimella.",
+        "cancelled": "Ottelulomake peruttu"
     },
     "positionSheet": {
         "title": "Tulosta asemaluettelo",
@@ -397,7 +398,8 @@
         "library": "Kirjasto",
         "basket": "Tulosta asemat",
         "basketTip": "Tulostaa korin asemat, jotka ovat näytöllä olevasta kirjastosta",
-        "basketTitle": "Kori"
+        "basketTitle": "Kori",
+        "cancelled": "Asemaluettelo peruttu"
     },
     "paperArchive": {
         "menu": "Paperiarkisto…",
@@ -415,7 +417,8 @@
         "importing": "Luetaan paperiarkistoa…",
         "imported": "Paperiarkisto: {imported} ottelua tuotu, {duplicates} kaksoiskappaletta; {positions} asemaa tuotu, {knownPositions} jo kirjastossa, {missing} koodia puuttuu, {failed} epäonnistui",
         "failed": "Paperiarkisto epäonnistui: {err}",
-        "noPdfPayload": "Tämä PDF ei sisällä blunderDB-arkistoa: mitään ei tuotu"
+        "noPdfPayload": "Tämä PDF ei sisällä blunderDB-arkistoa: mitään ei tuotu",
+        "cancelled": "Paperiarkisto peruttu"
     },
     "match": {
         "errorExportingMat": "Virhe ottelun viennissä",
@@ -1684,7 +1687,8 @@
         "gnubgIdCopied": "GNUbg-tunnus kopioitu leikepöydälle",
         "arkIdCopied": "ArkID kopioitu leikepöydälle",
         "noMatchForPosition": "Mikään ottelu ei ole pelannut tätä asemaa",
-        "moveGone": "Siirtoa ei enää ole ottelussa: avattu siihen, mihin se jäi"
+        "moveGone": "Siirtoa ei enää ole ottelussa: avattu siihen, mihin se jäi",
+        "exportRunning": "Vienti käynnissä — edistyminen ja Peruuta Laskennat-paneelissa"
     },
     "stats": {
         "title": "Tilastot",
@@ -3826,7 +3830,10 @@
             "transfer": "Siirto",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Muu"
+            "other": "Muu",
+            "export": "Vienti",
+            "paperArchive": "Paperiarkisto",
+            "print": "Tulostus"
         }
     },
     "documentImport": {

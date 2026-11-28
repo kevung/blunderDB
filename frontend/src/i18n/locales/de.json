@@ -371,7 +371,8 @@
         "reimportCodeTip": "Der QR-Code des Matches am Ende der Transkription, auch in die Datei eingebettet",
         "batch": "Die {n} Matches der Liste",
         "batchTip": "Ein Blatt pro Match in einem einzigen Dokument",
-        "tooMany": "{n} Matches in der Liste: ein Druck umfasst höchstens {max}. Filtern Sie die Liste, um sie einzugrenzen."
+        "tooMany": "{n} Matches in der Liste: ein Druck umfasst höchstens {max}. Filtern Sie die Liste, um sie einzugrenzen.",
+        "cancelled": "Matchblatt abgebrochen"
     },
     "positionSheet": {
         "title": "Stellungsliste drucken",
@@ -397,7 +398,8 @@
         "library": "Bibliothek",
         "basket": "Stellungen drucken",
         "basketTip": "Druckt die Stellungen des Korbs aus der angezeigten Bibliothek",
-        "basketTitle": "Korb"
+        "basketTitle": "Korb",
+        "cancelled": "Positionsliste abgebrochen"
     },
     "paperArchive": {
         "menu": "Papierarchiv…",
@@ -415,7 +417,8 @@
         "importing": "Papierarchiv wird gelesen…",
         "imported": "Papierarchiv: {imported} Matches importiert, {duplicates} Duplikate; {positions} Stellungen importiert, {knownPositions} bereits vorhanden, {missing} Codes fehlen, {failed} fehlgeschlagen",
         "failed": "Papierarchiv fehlgeschlagen: {err}",
-        "noPdfPayload": "Dieses PDF enthält kein blunderDB-Archiv: nichts importiert"
+        "noPdfPayload": "Dieses PDF enthält kein blunderDB-Archiv: nichts importiert",
+        "cancelled": "Papierarchiv abgebrochen"
     },
     "match": {
         "errorExportingMat": "Fehler beim Exportieren des Matches",
@@ -1684,7 +1687,8 @@
         "gnubgIdCopied": "GNUbg-ID in die Zwischenablage kopiert",
         "arkIdCopied": "ArkID in die Zwischenablage kopiert",
         "noMatchForPosition": "Kein Match hat diese Position gespielt",
-        "moveGone": "Dieser Zug ist nicht mehr im Match: geöffnet, wo Sie aufgehört hatten"
+        "moveGone": "Dieser Zug ist nicht mehr im Match: geöffnet, wo Sie aufgehört hatten",
+        "exportRunning": "Export läuft — Fortschritt und Abbrechen im Panel Berechnungen"
     },
     "stats": {
         "title": "Stats",
@@ -3826,7 +3830,10 @@
             "transfer": "Übertragung",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Sonstige"
+            "other": "Sonstige",
+            "export": "Export",
+            "paperArchive": "Papierarchiv",
+            "print": "Druck"
         }
     },
     "documentImport": {

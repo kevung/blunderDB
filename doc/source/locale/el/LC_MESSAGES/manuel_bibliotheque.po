@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 00:13+0100\n"
+"POT-Creation-Date: 2026-11-28 01:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -1406,8 +1406,10 @@ msgid ""
 " la légende de la notation. Le document est enregistré en PDF A4 puis "
 "ouvert dans la visionneuse du système, d'où il s'imprime ; sous Windows "
 "et macOS, faute de ce rendu, il reste un fichier HTML autonome ouvert "
-"dans le navigateur. En ligne de commande, ``sheet`` écrit la page HTML. "
-"Les options de la boîte :"
+"dans le navigateur. La boîte se ferme dès le fichier choisi : la liste se"
+" construit comme une tâche du panneau Calculs, que **Annuler** arrête. En"
+" ligne de commande, ``sheet`` écrit la page HTML. Les options de la boîte"
+" :"
 msgstr ""
 "Κάθε γραμμή δίνει τον αριθμό, το ArkID σε γραμματοσειρά σταθερού πλάτους,"
 " και μετά τα pips του παίκτη που παίζει και του αντιπάλου του, για να "
@@ -1422,14 +1424,17 @@ msgstr ""
 "θέσεων, η ημερομηνία) και το υπόμνημα του συμβολισμού. Το έγγραφο "
 "αποθηκεύεται ως PDF A4 και ανοίγει στο πρόγραμμα προβολής του συστήματος,"
 " από όπου εκτυπώνεται· σε Windows και macOS, ελλείψει αυτής της απόδοσης,"
-" παραμένει αυτόνομο αρχείο HTML που ανοίγει στον περιηγητή. Στη γραμμή "
-"εντολών, το ``sheet`` γράφει τη σελίδα HTML. Οι επιλογές του παραθύρου:"
+" παραμένει αυτόνομο αρχείο HTML που ανοίγει στον περιηγητή. Το παράθυρο "
+"κλείνει μόλις επιλεγεί το αρχείο: η λίστα δημιουργείται ως εργασία του "
+"πίνακα **Υπολογισμοί**, την οποία σταματά η "
+"**Ακύρωση**. Στη γραμμή εντολών, το ``sheet`` γράφει τη σελίδα HTML. Οι "
+"επιλογές του παραθύρου:"
 
-#: ../../source/manuel_bibliotheque.rst:597
+#: ../../source/manuel_bibliotheque.rst:599
 msgid "**Analyse** (cochée) : l'analyse de chaque position, sur sa ligne."
 msgstr "**Ανάλυση** (επιλεγμένη): η ανάλυση κάθε θέσης, στη γραμμή της."
 
-#: ../../source/manuel_bibliotheque.rst:598
+#: ../../source/manuel_bibliotheque.rst:600
 msgid ""
 "**Réponses au verso** (décochée) : chaque page de positions est suivie "
 "d'une page d'analyses sous les mêmes numéros ; imprimée en recto verso, "
@@ -1439,7 +1444,7 @@ msgstr ""
 "ακολουθείται από μια σελίδα αναλύσεων κάτω από τους ίδιους αριθμούς· "
 "εκτυπωμένο διπλής όψης, το φύλλο γίνεται ερωτηματολόγιο."
 
-#: ../../source/manuel_bibliotheque.rst:601
+#: ../../source/manuel_bibliotheque.rst:603
 msgid ""
 "**Commentaires** (cochée) : les commentaires des positions, en entier, "
 "sous leur ligne, au verso avec les réponses. Un commentaire plus long "
@@ -1449,7 +1454,7 @@ msgstr ""
 "γραμμή τους, στην πίσω όψη με τις απαντήσεις. Ένα σχόλιο μεγαλύτερο από "
 "μία σελίδα συνεχίζεται στην επόμενη."
 
-#: ../../source/manuel_bibliotheque.rst:604
+#: ../../source/manuel_bibliotheque.rst:606
 msgid ""
 "**ArkID développé** (décochée) : la forme développée plutôt que la "
 "compacte."
@@ -1457,7 +1462,7 @@ msgstr ""
 "**Αναπτυγμένο ArkID** (μη επιλεγμένη): η αναπτυγμένη μορφή αντί της "
 "συμπαγούς."
 
-#: ../../source/manuel_bibliotheque.rst:605
+#: ../../source/manuel_bibliotheque.rst:607
 msgid ""
 "**Code de réimport** (décochée) : des codes QR qui portent les positions,"
 " un bloc toutes les 145 positions, imprimé sur la page de la première "
@@ -1479,7 +1484,7 @@ msgstr ""
 "αναλύσεις ή σχόλια· κάθε θέση αποθηκεύεται ως θέση που εισάγεται μόνη "
 "της, και μια θέση που υπάρχει ήδη στη βάση δεν διπλασιάζεται."
 
-#: ../../source/manuel_bibliotheque.rst:615
+#: ../../source/manuel_bibliotheque.rst:617
 msgid ""
 "L'impression n'écrit rien dans la base. En ligne de commande : ``sheet`` "
 "(:doc:`cli_import_export`)."
@@ -1487,12 +1492,12 @@ msgstr ""
 "Η εκτύπωση δεν γράφει τίποτα στη βάση δεδομένων. Στη γραμμή εντολών: "
 "``sheet`` (:doc:`cli_import_export`)."
 
-#: ../../source/manuel_bibliotheque.rst:621
 #: ../../source/manuel_bibliotheque.rst:623
+#: ../../source/manuel_bibliotheque.rst:625
 msgid "Panneau Collections"
 msgstr "Πίνακας Συλλογών"
 
-#: ../../source/manuel_bibliotheque.rst:627
+#: ../../source/manuel_bibliotheque.rst:629
 msgid ""
 "Le panneau Collections : nom, nombre de positions, description, dernière "
 "modification."
@@ -1500,7 +1505,7 @@ msgstr ""
 "Ο πίνακας Συλλογών: όνομα, αριθμός θέσεων, περιγραφή, τελευταία "
 "τροποποίηση."
 
-#: ../../source/manuel_bibliotheque.rst:630
+#: ../../source/manuel_bibliotheque.rst:632
 msgid ""
 "Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton"
 " **+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle "
@@ -1518,7 +1523,7 @@ msgstr ""
 "αγώνων, το εικονίδιο ⌨ ανοίγει τη μεταγραφή του αγώνα και το εικονίδιο ✎ "
 "διορθώνει τα μεταδεδομένα του."
 
-#: ../../source/manuel_bibliotheque.rst:638
+#: ../../source/manuel_bibliotheque.rst:640
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -1542,7 +1547,7 @@ msgstr ""
 "*CTRL-B* ή εκτελέστε την εντολή ``collection`` για να εμφανίσετε ή να "
 "αποκρύψετε τον πίνακα."
 
-#: ../../source/manuel_bibliotheque.rst:649
+#: ../../source/manuel_bibliotheque.rst:651
 msgid ""
 "En tête d'une collection ouverte, le nombre de positions est un lien qui "
 "les remet dans le parcours, depuis la première ; la case **dans cette "
@@ -1554,7 +1559,7 @@ msgstr ""
 " συλλογή** προσθέτει ή αφαιρεί την εμφανιζόμενη θέση. Μια κενή λίστα "
 "προτείνει **+ Νέα συλλογή**."
 
-#: ../../source/manuel_bibliotheque.rst:654
+#: ../../source/manuel_bibliotheque.rst:656
 msgid ""
 "La **Pile** est la collection du geste « à revoir plus tard » : un "
 "double-clic hors du plateau, la touche *b* ou le bouton marque-page de la"
@@ -1587,7 +1592,7 @@ msgstr ""
 "που φέρνει κανείς μόνη της, και κατόπιν μπαίνει στη Στοίβα. Η γραμμή "
 "εντολών κάνει την ίδια χειρονομία με το ``collection pile``."
 
-#: ../../source/manuel_bibliotheque.rst:667
+#: ../../source/manuel_bibliotheque.rst:669
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1605,7 +1610,7 @@ msgstr ""
 "καταστρέφεται: οι θέσεις που περιείχε είναι ακόμη εκεί όταν γυρίσετε "
 "πίσω."
 
-#: ../../source/manuel_bibliotheque.rst:674
+#: ../../source/manuel_bibliotheque.rst:676
 msgid ""
 "Deux critères de provenance se prêtent à une collection qui se range "
 "seule : ``s i`` garde les positions apportées une à une (à la main ou par"
@@ -1619,7 +1624,7 @@ msgstr ""
 "το λογισμικό προέλευσης είχε σημειώσει κατά την εισαγωγή. Και τα δύο "
 "συνδυάζονται με οποιοδήποτε άλλο κριτήριο."
 
-#: ../../source/manuel_bibliotheque.rst:680
+#: ../../source/manuel_bibliotheque.rst:682
 msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
@@ -1632,7 +1637,7 @@ msgstr ""
 "συνηθισμένης συλλογής, με τη σειρά της αναζήτησης, και το ερώτημα "
 "διαγράφεται. Οι θέσεις που περιείχε πριν γίνει ζωντανή αντικαθίστανται."
 
-#: ../../source/manuel_bibliotheque.rst:685
+#: ../../source/manuel_bibliotheque.rst:687
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1644,7 +1649,7 @@ msgstr ""
 "επιστρέψει όλη τη βάση. Είναι η μοναδική βλάβη που ένα αποθηκευμένο "
 "φίλτρο δεν πρέπει να έχει: να διευρύνεται σιωπηλά."
 
-#: ../../source/manuel_bibliotheque.rst:690
+#: ../../source/manuel_bibliotheque.rst:692
 msgid ""
 "Une collection vivante ne peut pas porter ``like`` : une collection est "
 "un ensemble, et ce jeton classe. Elle refuse la requête qui le porte, en "
@@ -1659,7 +1664,7 @@ msgstr ""
 " φέρει ακόμη απορρίπτεται κατά την επανάληψη, από το ιστορικό ή από τη "
 "βιβλιοθήκη φίλτρων."
 
-#: ../../source/manuel_bibliotheque.rst:696
+#: ../../source/manuel_bibliotheque.rst:698
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1681,7 +1686,7 @@ msgstr ""
 "**παγωμένη**, με τις θέσεις που επιλέγει το ερώτημα τη στιγμή της "
 "εξαγωγής."
 
-#: ../../source/manuel_bibliotheque.rst:705
+#: ../../source/manuel_bibliotheque.rst:707
 msgid ""
 "Une collection vivante dont la base refuse la requête (``like``, une "
 "forme étoilée) part **figée et vide**, dans un export comme dans un "
@@ -1692,7 +1697,7 @@ msgstr ""
 "μια αστερισμένη μορφή) εξάγεται ή μεταφέρεται σε άλλη βάση **παγωμένη και"
 " κενή**: ζωντανή, θα απορριπτόταν εκεί ξανά."
 
-#: ../../source/manuel_bibliotheque.rst:709
+#: ../../source/manuel_bibliotheque.rst:711
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1711,7 +1716,7 @@ msgstr ""
 "τροφοδοτούν το πακέτο, και η γραμμή κατάστασης το αναφέρει μαζί με τον "
 "πραγματικό αριθμό των επιλεγμένων θέσεων."
 
-#: ../../source/manuel_bibliotheque.rst:719
+#: ../../source/manuel_bibliotheque.rst:721
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1729,7 +1734,7 @@ msgstr ""
 "κέντρο πολλών λαθών σας, παρόμοιας δομής, και το μάθημά της εξυπηρετεί "
 "όλα."
 
-#: ../../source/manuel_bibliotheque.rst:726
+#: ../../source/manuel_bibliotheque.rst:728
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1743,7 +1748,7 @@ msgstr ""
 "βήματα πούλιων απόστασης μεταφοράς· ένα λάθος κύβου έχει ως γείτονες μόνο"
 " όσα έχουν το ίδιο σκορ."
 
-#: ../../source/manuel_bibliotheque.rst:730
+#: ../../source/manuel_bibliotheque.rst:732
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1762,7 +1767,7 @@ msgstr ""
 " που καλύπτεται· ο λόγος δίνει τον αριθμό που μετράει όταν το μάθημα "
 "μετράει για το μισό."
 
-#: ../../source/manuel_bibliotheque.rst:737
+#: ../../source/manuel_bibliotheque.rst:739
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1776,7 +1781,7 @@ msgstr ""
 "με σχόλιο, σε συλλογή, κάρτα Anki ή σημειωμένη ως «μελετημένη» — δεν "
 "προτείνεται ποτέ, και οι γείτονές της θεωρούνται καλυμμένοι."
 
-#: ../../source/manuel_bibliotheque.rst:743
+#: ../../source/manuel_bibliotheque.rst:745
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1800,11 +1805,11 @@ msgstr ""
 "Στη γραμμή εντολών: ``blunderdb collection suggest`` (βλ. "
 ":ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:756
+#: ../../source/manuel_bibliotheque.rst:758
 msgid "Leçons"
 msgstr "Μαθήματα"
 
-#: ../../source/manuel_bibliotheque.rst:758
+#: ../../source/manuel_bibliotheque.rst:760
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1820,7 +1825,7 @@ msgstr ""
 "``le`` εμφανίζει τα μαθήματα της βάσης στη γραμμή κατάστασης· το ``le 2``"
 " ανοίγει το μάθημα 2· το ``le edit`` ανοίγει τον επεξεργαστή μαθημάτων."
 
-#: ../../source/manuel_bibliotheque.rst:765
+#: ../../source/manuel_bibliotheque.rst:767
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1836,7 +1841,7 @@ msgstr ""
 "συνήθεις κινήσεις. Το *Κλείσιμο* εγκαταλείπει το μάθημα. Ένα βήμα του "
 "οποίου η συλλογή ή η θέση έχει διαγραφεί διατηρεί το κείμενό του."
 
-#: ../../source/manuel_bibliotheque.rst:772
+#: ../../source/manuel_bibliotheque.rst:774
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1855,7 +1860,7 @@ msgstr ""
 "αρχείου που περιέχει μάθημα το δημιουργεί· ένα μάθημα με το ίδιο όνομα "
 "που υπάρχει ήδη δεν αγγίζεται."
 
-#: ../../source/manuel_bibliotheque.rst:780
+#: ../../source/manuel_bibliotheque.rst:782
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1894,7 +1899,7 @@ msgstr ""
 "εμφάνιζαν. Τα μαθήματα δημιουργούνται και τροποποιούνται επίσης από τη "
 "γραμμή εντολών ή μέσω του API (:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:797
+#: ../../source/manuel_bibliotheque.rst:799
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
@@ -1960,3 +1965,4 @@ msgstr ""
 #~ "που δεν βρίσκει τίποτα επιστρέφει κενή"
 #~ " λίστα και το λέει, αντί για "
 #~ "δέκα άσχετες θέσεις."
+

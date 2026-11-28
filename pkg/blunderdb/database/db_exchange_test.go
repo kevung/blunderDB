@@ -110,7 +110,7 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		"gate": true,
 	}
 	handle := map[string]bool{
-		"mu": true, "cancelMu": true, "switchMu": true, "beforeSwitch": true, "openGuard": true,
+		"mu": true, "exportMu": true, "cancelMu": true, "switchMu": true, "beforeSwitch": true, "openGuard": true,
 		"transcriptMu": true, "duelMu": true,
 		// Refused while set (idleForExchange) or only alive during one import.
 		"importCancel": true, "openCancel": true, "exchanging": true, "borrowed": true,

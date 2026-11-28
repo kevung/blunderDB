@@ -371,7 +371,8 @@
         "reimportCodeTip": "Il codice QR della partita alla fine della trascrizione, incorporato anche nel file",
         "batch": "Le {n} partite della lista",
         "batchTip": "Un foglio per partita, in un unico documento",
-        "tooMany": "{n} partite nella lista: una stampa ne prende al massimo {max}. Filtrate la lista per ridurla."
+        "tooMany": "{n} partite nella lista: una stampa ne prende al massimo {max}. Filtrate la lista per ridurla.",
+        "cancelled": "Foglio di partita annullato"
     },
     "positionSheet": {
         "title": "Stampa un elenco di posizioni",
@@ -397,7 +398,8 @@
         "library": "Libreria",
         "basket": "Stampa le posizioni",
         "basketTip": "Stampa le posizioni del cestino che vengono dalla libreria a schermo",
-        "basketTitle": "Cestino"
+        "basketTitle": "Cestino",
+        "cancelled": "Elenco di posizioni annullato"
     },
     "paperArchive": {
         "menu": "Archivio cartaceo…",
@@ -415,7 +417,8 @@
         "importing": "Lettura dell'archivio cartaceo…",
         "imported": "Archivio cartaceo: {imported} match importati, {duplicates} duplicati; {positions} posizioni importate, {knownPositions} già presenti, {missing} codici mancanti, {failed} non riusciti",
         "failed": "Archivio cartaceo non riuscito: {err}",
-        "noPdfPayload": "Questo PDF non contiene alcun archivio blunderDB: nulla è stato importato"
+        "noPdfPayload": "Questo PDF non contiene alcun archivio blunderDB: nulla è stato importato",
+        "cancelled": "Archivio cartaceo annullato"
     },
     "match": {
         "errorExportingMat": "Errore durante l'esportazione del match",
@@ -1684,7 +1687,8 @@
         "gnubgIdCopied": "ID GNUbg copiato negli appunti",
         "arkIdCopied": "ArkID copiato negli appunti",
         "noMatchForPosition": "Nessun match ha giocato questa posizione",
-        "moveGone": "Questa mossa non è più nel match: aperto dove lo avevi lasciato"
+        "moveGone": "Questa mossa non è più nel match: aperto dove lo avevi lasciato",
+        "exportRunning": "Esportazione in corso — avanzamento e Annulla nel pannello Calcoli"
     },
     "stats": {
         "title": "Stats",
@@ -3826,7 +3830,10 @@
             "transfer": "Trasferimento",
             "bearoff": "Bearoff",
             "sync": "Sync",
-            "other": "Altro"
+            "other": "Altro",
+            "export": "Esportazione",
+            "paperArchive": "Archivio cartaceo",
+            "print": "Stampa"
         }
     },
     "documentImport": {

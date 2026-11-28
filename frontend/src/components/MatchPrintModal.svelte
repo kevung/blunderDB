@@ -37,7 +37,7 @@
         busy = true;
         try {
             const ids = batch ? await listAll() : matchId == null ? [] : [matchId];
-            await printMatchSheet(ids, $state.snapshot(options));
+            await printMatchSheet(ids, $state.snapshot(options), { onLaunch: () => onclose() });
         } finally {
             busy = false;
         }

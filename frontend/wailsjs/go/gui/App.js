@@ -454,6 +454,10 @@ export function StartEvaluationAtRest(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['gui']['App']['StartEvaluationAtRest'](arg1, arg2, arg3, arg4, arg5);
 }
 
+export function StartExportDatabase(arg1) {
+  return window['go']['gui']['App']['StartExportDatabase'](arg1);
+}
+
 export function StartFolderWatch(arg1, arg2) {
   return window['go']['gui']['App']['StartFolderWatch'](arg1, arg2);
 }
@@ -472,6 +476,22 @@ export function StartGammonNetStaleBatch(arg1, arg2, arg3) {
 
 export function StartMaintenance(arg1) {
   return window['go']['gui']['App']['StartMaintenance'](arg1);
+}
+
+export function StartMatchSheet(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['StartMatchSheet'](arg1, arg2, arg3);
+}
+
+export function StartPaperArchiveExport(arg1, arg2) {
+  return window['go']['gui']['App']['StartPaperArchiveExport'](arg1, arg2);
+}
+
+export function StartPaperArchiveImport(arg1) {
+  return window['go']['gui']['App']['StartPaperArchiveImport'](arg1);
+}
+
+export function StartPositionSheet(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['StartPositionSheet'](arg1, arg2, arg3);
 }
 
 export function StartRollMap(arg1, arg2, arg3, arg4) {

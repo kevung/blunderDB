@@ -30,6 +30,7 @@ import (
 type Database struct {
 	db                *sql.DB
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
+	exportMu          sync.Mutex                          // one export at a time: an incremental one writes its cursor under the read lock
 	cancelMu          sync.Mutex                          // guards importCancel, gate (held briefly; taken after mu, never before)
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
 	openCancel        *context.CancelFunc                 // cancels the in-flight OpenDatabase from its first line; nil when idle

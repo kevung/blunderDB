@@ -371,7 +371,8 @@
         "reimportCodeTip": "棋譜の末尾にマッチの QR コードを置き、ファイルにも埋め込みます",
         "batch": "リストの {n} マッチ",
         "batchTip": "1 マッチ 1 枚、ひとつの文書にまとめます",
-        "tooMany": "リストに {n} マッチあります。1 回の印刷は最大 {max} マッチです。リストを絞り込んでください。"
+        "tooMany": "リストに {n} マッチあります。1 回の印刷は最大 {max} マッチです。リストを絞り込んでください。",
+        "cancelled": "マッチシートを取り消しました"
     },
     "positionSheet": {
         "title": "局面リストを印刷",
@@ -397,7 +398,8 @@
         "library": "ライブラリ",
         "basket": "局面を印刷",
         "basketTip": "画面のライブラリから来たバスケットの局面を印刷します",
-        "basketTitle": "バスケット"
+        "basketTitle": "バスケット",
+        "cancelled": "ポジションリストを取り消しました"
     },
     "paperArchive": {
         "menu": "紙のアーカイブ…",
@@ -415,7 +417,8 @@
         "importing": "紙のアーカイブを読み込み中…",
         "imported": "紙のアーカイブ：{imported} マッチをインポート、{duplicates} 重複、{positions} 局面をインポート、{knownPositions} は既存、{missing} コード欠落、{failed} 失敗",
         "failed": "紙のアーカイブに失敗しました：{err}",
-        "noPdfPayload": "この PDF には blunderDB のアーカイブが含まれていません。何もインポートされませんでした"
+        "noPdfPayload": "この PDF には blunderDB のアーカイブが含まれていません。何もインポートされませんでした",
+        "cancelled": "紙アーカイブを取り消しました"
     },
     "match": {
         "errorExportingMat": "マッチのエクスポート中にエラーが発生しました",
@@ -1684,7 +1687,8 @@
         "gnubgIdCopied": "GNUbg ID をクリップボードにコピーしました",
         "arkIdCopied": "ArkID をクリップボードにコピーしました",
         "noMatchForPosition": "この局面を指したマッチはありません",
-        "moveGone": "この手はもうマッチにありません。前回の位置で開きました"
+        "moveGone": "この手はもうマッチにありません。前回の位置で開きました",
+        "exportRunning": "エクスポート中 — 進捗と取り消しは計算パネルで"
     },
     "stats": {
         "title": "統計",
@@ -3826,7 +3830,10 @@
             "transfer": "転送",
             "bearoff": "ベアオフ",
             "sync": "同期",
-            "other": "その他"
+            "other": "その他",
+            "export": "エクスポート",
+            "paperArchive": "紙アーカイブ",
+            "print": "印刷"
         }
     },
     "documentImport": {
