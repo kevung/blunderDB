@@ -86,6 +86,11 @@
   </branding>
 
   <releases>
+    <release version="0.63.1" date="2026-11-28">
+      <description>
+        <p>An engine embedded in another server on PostgreSQL now builds the move-pattern index and fills the best moves of the stored analyses after it starts, as the standalone server does.</p>
+      </description>
+    </release>
     <release version="0.63.0" date="2026-11-28">
       <description>
         <ul>
