@@ -335,12 +335,19 @@ Un jet sans coup légal s'écrit *Danse*. Les 21 jets paraissent aussitôt à
 raffinent ensuite un à un. Une ligne pas encore à la profondeur réglée est
 grisée, sa case en pointillé.
 
-Le fil d'Ariane (« Départ › moi 6-4 24/14 › lui 5-2 13/8 24/22 › Mes jets »)
-dit d'où vient la position évaluée et à qui sont les jets affichés (*Mes jets*
-ou *Ses jets*), et le plateau le suit ; chaque maillon remonte. Sur un jet
-sélectionné, **Réponses** joue son meilleur coup et affiche les 21 réponses
-suivantes, **Autre coup…** fait choisir un autre coup légal de ce jet (pas sur
-une danse). La profondeur est sans limite. Changer la position d'une autre
+Sélectionner un jet laisse le plateau sur la position *avant* le jet : les dés
+du jet y sont posés et son meilleur coup y est dessiné en flèches.
+**Réponses ›**, le double-clic ou *ENTRÉE* jouent ce coup : le plateau passe à
+la position après lui et la carte aux jets de l'adversaire. Le chevron de la
+ligne sélectionnée déplie, sous elle, les autres coups légaux du jet (pas sur
+une danse), chacun avec son écart au meilleur, évalués ensemble à 0-ply, ou à
+la profondeur plus grande qu'une évaluation de ce jet a déjà atteinte dans le
+panneau ; survoler un coup dessine ses flèches, cliquer dessus le joue. Le fil
+d'Ariane montre les jets joués depuis la position de départ, en petits dés,
+avec un trait de couleur pour le camp qui les a joués (bleu le joueur de la
+position de départ, orange son adversaire) ; chaque maillon remonte. Le
+dernier maillon, en pointillé, est le jet sélectionné et pas encore joué, ou
+deux dés vides sans sélection. La profondeur est sans limite. Changer la position d'une autre
 façon remet le fil à zéro. Le menu contextuel d'un coup candidat (Analyse ou
 Évaluation) offre *Réponses adverses*, qui ouvre cette vue sur la position
 après ce coup (grisé quand la notation du coup peut mener à plusieurs

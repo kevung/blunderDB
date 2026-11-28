@@ -279,6 +279,7 @@ Panneau Eval
    "BAS, j", "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
    "Maj+R", "Lancer le rollout des coups sélectionnés (sans sélection, de la position) avec le réglage choisi ; une seconde pression l'arrête."
    "Esc", "Arrêter le rollout en cours, sinon désélectionner le coup."
+   "Double-clic, ENTRÉE (vue Jets)", "Jouer le meilleur coup du jet sélectionné et afficher les réponses de l'adversaire."
 
 .. _raccourcis_match_panel:
 

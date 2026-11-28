@@ -235,9 +235,10 @@ export const OUTSIDE = [
     'transferBasketStore',
     'lockedGroupsStore',
     'transferHistoryStore',
-    // The Eval panel's view, the roll trail and the score map's length: the board's transient state.
+    // The Eval panel's view, the roll trail, its previewed roll and the score map's length: the board's transient state.
     'evalViewStore',
     'rollTrailStore',
+    'rollPreviewStore',
     'mapMatchLengthStore',
     // The board's transient state, recomputed from the position on screen.
     'analysisChallengeStore',

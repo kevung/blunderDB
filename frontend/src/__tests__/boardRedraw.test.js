@@ -49,6 +49,8 @@ describe('les déclencheurs de repaint', () => {
         // enfoncé sur un plateau immobile.
         expect(BOARD_REDRAW_TRIGGERS.map((t) => t.name)).toContain('transcriptionBoardSwap');
         expect(BOARD_REDRAW_TRIGGERS.map((t) => t.name)).toContain('captureDoubts');
+        // Le jet choisi dans la carte des jets n'écrit pas la position : sans lui, ni dés ni flèches.
+        expect(BOARD_REDRAW_TRIGGERS.map((t) => t.name)).toContain('rollPreview');
 
         const schedule = vi.fn();
         const unsubscribe = subscribeBoardRedrawTriggers(schedule);

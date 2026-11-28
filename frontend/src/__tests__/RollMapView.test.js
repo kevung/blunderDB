@@ -9,12 +9,13 @@ const app = vi.hoisted(() => ({
     CancelRollMap: vi.fn().mockResolvedValue(undefined),
     PrefetchRollMaps: vi.fn().mockResolvedValue(undefined),
     CancelRollMapPrefetch: vi.fn().mockResolvedValue(undefined),
-    LegalMoves: vi.fn()
+    EvaluatePositionImmediate: vi.fn()
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => app);
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetGammonNetDisplayPly: vi.fn().mockResolvedValue(2),
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    GetGammonNetPruneK: vi.fn().mockResolvedValue(0),
+    GetGammonNetCandidates: vi.fn().mockResolvedValue(8)
 }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
     EventsOn: vi.fn((name, fn) => {
@@ -26,7 +27,8 @@ vi.mock('../services/modeMachine.js', () => ({ sendPositionToEval: vi.fn(), togg
 
 import RollMapView from '../components/RollMapView.svelte';
 import { positionStore } from '../stores/positionStore.js';
-import { rollTrailStore } from '../stores/mapStore.js';
+import { rollTrailStore, rollPreviewStore } from '../stores/mapStore.js';
+import { evalCache } from '../services/evalCache.js';
 import { sendPositionToEval } from '../services/modeMachine.js';
 
 function opening() {
@@ -63,6 +65,7 @@ describe('RollMapView', () => {
         vi.clearAllMocks();
         positionStore.set(opening());
         rollTrailStore.set({ root: null, steps: [] });
+        evalCache.clear();
     });
     afterEach(() => rollTrailStore.set({ root: null, steps: [] }));
 
@@ -164,28 +167,75 @@ describe('RollMapView', () => {
         expect(container.querySelectorAll('tbody tr')).toHaveLength(21);
     });
 
-    test('another play lists the legal plays but the best, told apart by their board', async () => {
-        const board = (from, to) => {
-            const b = JSON.parse(JSON.stringify(opening().board));
-            b.points[from] = { checkers: b.points[from].checkers - 1, color: 0 };
-            b.points[to] = { checkers: b.points[to].checkers + 1, color: 0 };
-            return b;
-        };
-        // the best play under another spelling, and one other play
-        app.LegalMoves.mockResolvedValue([
-            { notation: '24/18 18/14', result: { board: board(24, 14) } },
-            { notation: '13/7 13/9', result: { board: board(13, 9) } }
-        ]);
-        const { container, getByText, findByText } = render(RollMapView, { active: true });
+    /** The 4-6 row of the table. */
+    const row46 = (container) => [...container.querySelectorAll('tbody tr')].find((r) => r.querySelector('.roll')?.textContent === '4-6');
+
+    test('a roll selected stays on the position before it: its dice and best play are previewed', async () => {
+        const before = get(positionStore);
+        const { container, unmount } = render(RollMapView, { active: true });
         await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalled());
         await feed(app.StartRollMap.mock.calls[0][3]);
-        const row = [...container.querySelectorAll('tbody tr')].find((r) => r.querySelector('.roll').textContent === '4-6');
-        await fireEvent.click(row);
-        await fireEvent.click(getByText(/^Autre coup|^Other play/));
-        await findByText('13/7 13/9');
-        expect(container.querySelectorAll('.others li')).toHaveLength(1);
-        expect(app.LegalMoves.mock.calls[0][0].dice).toEqual([4, 6]);
-        await fireEvent.click(getByText('13/7 13/9'));
+        expect(get(rollPreviewStore)).toBeNull();
+        await fireEvent.click(row46(container));
+        expect(get(rollPreviewStore)).toEqual({ dice: [4, 6], move: '24/14' });
+        expect(get(positionStore)).toBe(before);
+        expect(sendPositionToEval).not.toHaveBeenCalled();
+        expect(get(rollTrailStore).steps).toHaveLength(0);
+        // the trail ends on the selection, not played: dashed, with its dice
+        const pending = container.querySelector('.trail .crumb.pending');
+        expect([...pending.querySelectorAll('.mini-die')].map((d) => d.dataset.value)).toEqual(['4', '6']);
+        // a second click keeps the selection (a double-click goes through two)
+        await fireEvent.click(row46(container));
+        expect(get(rollPreviewStore)).not.toBeNull();
+        await fireEvent.keyDown(container.querySelector('.roll-map'), { key: 'Escape' });
+        expect(get(rollPreviewStore)).toBeNull();
+        await fireEvent.click(row46(container));
+        unmount();
+        expect(get(rollPreviewStore)).toBeNull();
+    });
+
+    test('a double-click or Enter descends, and the trail shows the roll as dice on its side', async () => {
+        const { container } = render(RollMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalled());
+        await feed(app.StartRollMap.mock.calls[0][3]);
+        await fireEvent.dblClick(row46(container));
+        expect(get(rollTrailStore).steps).toHaveLength(1);
+        expect(get(rollTrailStore).steps[0]).toMatchObject({ die1: 4, die2: 6, move: '24/14' });
+        expect(get(rollPreviewStore)).toBeNull();
+        const step = container.querySelector('.trail .crumb.step.me');
+        expect([...step.querySelectorAll('.mini-die')].map((d) => d.dataset.value)).toEqual(['4', '6']);
+        expect(container.querySelector('.trail .crumb.pending.him')).not.toBeNull();
+
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalledTimes(2));
+        await feed(app.StartRollMap.mock.calls[1][3]);
+        await fireEvent.click(row46(container));
+        await fireEvent.keyDown(container.querySelector('.roll-map'), { key: 'Enter' });
+        expect(get(rollTrailStore).steps).toHaveLength(2);
+    });
+
+    test('the chevron lists the other plays under the row, each against the best; hover previews, a click descends', async () => {
+        const move = (m, equity) => ({ move: m, equity, analysisDepth: '0-ply' });
+        app.EvaluatePositionImmediate.mockResolvedValue({ metId: 0, moves: [move('13/7 13/9', 0.1), move('24/14', 0.3), move('24/18 13/9', 0.05)] });
+        const { container, findAllByText } = render(RollMapView, { active: true });
+        await vi.waitFor(() => expect(app.StartRollMap).toHaveBeenCalled());
+        await feed(app.StartRollMap.mock.calls[0][3]);
+        expect(container.querySelector('.chevron')).toBeNull();
+        await fireEvent.click(row46(container));
+        await fireEvent.click(container.querySelector('.chevron'));
+        await findAllByText('13/7 13/9');
+        expect(app.EvaluatePositionImmediate.mock.calls[0][0].dice).toEqual([4, 6]);
+        const others = [...container.querySelectorAll('tbody tr.other')];
+        expect(others.map((r) => r.querySelector('.move').textContent)).toEqual(['13/7 13/9', '24/18 13/9']);
+        expect(others[0].querySelector('.gap').textContent.trim()).toBe('-0.200');
+        // they sit right under the selected row
+        expect(row46(container).nextElementSibling).toBe(others[0]);
+
+        await fireEvent.mouseEnter(others[1]);
+        expect(get(rollPreviewStore)).toEqual({ dice: [4, 6], move: '24/18 13/9' });
+        await fireEvent.mouseLeave(others[1]);
+        expect(get(rollPreviewStore).move).toBe('24/14');
+
+        await fireEvent.click(others[0]);
         const step = get(rollTrailStore).steps[0];
         expect(step.move).toBe('13/7 13/9');
         expect(step.after.board.points[9]).toEqual({ checkers: 1, color: 0 });

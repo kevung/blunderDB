@@ -14,6 +14,7 @@ import { pipcountVisibleStore } from '../stores/uiStore.js';
 import { transcriptionArrowsStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
 import { duelBoardStore } from '../stores/duelStore.js';
 import { captureDoubtsStore } from '../stores/captureStore.js';
+import { rollPreviewStore } from '../stores/mapStore.js';
 
 /**
  * Les stores dont tout changement rend le plateau sale. Nommés, parce qu'un
@@ -43,7 +44,9 @@ export const BOARD_REDRAW_TRIGGERS = Object.freeze([
     // L'ordre des dés d'un Duel, que le joueur intervertit.
     Object.freeze({ name: 'duelBoard', store: duelBoardStore }),
     // Les doutes d'une lecture de capture : les points et le videau cerclés.
-    Object.freeze({ name: 'captureDoubts', store: captureDoubtsStore })
+    Object.freeze({ name: 'captureDoubts', store: captureDoubtsStore }),
+    // Le jet choisi dans la carte des jets : ses dés et les flèches de son coup.
+    Object.freeze({ name: 'rollPreview', store: rollPreviewStore })
 ]);
 
 /**

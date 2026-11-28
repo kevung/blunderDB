@@ -1,20 +1,21 @@
 <script>
     // The roll map: the 21 rolls of a position, best play and equity of each. The position is the
-    // one the trail leads to; descending plays a roll's best play (or another) and shows the
-    // replies. Only the view on screen computes in the foreground: the map shares one search slot
+    // one the trail leads to; a roll selected stays on it, its dice and play previewed on the board
+    // (rollPreviewStore), until a descent plays that play (or another) and shows the replies. Only the view on screen computes in the foreground: the map shares one search slot
     // with the panel's own evaluation, so a newer start supersedes the last. Once the map is done,
     // the maps one roll below it are prefetched in the background (every reply at 0 then 1 ply,
     // the row selected at the map's depth), so that descending answers at once; leaving the map
     // cancels that prefetch.
     import { onMount, onDestroy, untrack } from 'svelte';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
-    import { StartRollMap, CancelRollMap, PrefetchRollMaps, CancelRollMapPrefetch, LegalMoves } from '../../wailsjs/go/gui/App.js';
-    import { GetGammonNetDisplayPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
+    import { StartRollMap, CancelRollMap, PrefetchRollMaps, CancelRollMapPrefetch, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+    import { GetGammonNetDisplayPly, GetGammonNetPruneK, GetGammonNetCandidates } from '../../wailsjs/go/main/Config.js';
     import { positionStore } from '../stores/positionStore';
-    import { rollTrailStore } from '../stores/mapStore.js';
+    import { rollTrailStore, rollPreviewStore } from '../stores/mapStore.js';
     import { descend, climbTo } from '../services/mapService.js';
+    import { evalCache, evalCacheKey, rankMoves, plyOf } from '../services/evalCache.js';
     import { ROLL_COUNT, rollStats, sortRows, deviationScale, signed, rollLabel, rollIndex } from '../utils/rollMap.js';
-    import { positionAfterPlay } from '../utils/moveNotation.js';
+    import MiniDie from './MiniDie.svelte';
     import { nextMapTag } from '../utils/mapTag.js';
     import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
@@ -31,7 +32,11 @@
     let descending = $state(false);
     let marketOnly = $state(false);
     let selected = $state(-1);
-    let others = $state(/** @type {Array<any> | null} */ (null));
+    // The other plays of the selected roll, shown under its row while expanded; hovered is the
+    // one whose arrows the board draws instead of the best play's.
+    let expanded = $state(false);
+    let others = $state(/** @type {Array<{ move: string, gap: number, ply: number }> | null} */ (null));
+    let hovered = $state(/** @type {string | null} */ (null));
     // ready[i] is the depth the replies to row i are prefetched to; a row is marked once they
     // stand at the map's own depth, the one a descent shows.
     let ready = $state(/** @type {Array<number>} */ (Array(ROLL_COUNT).fill(-1)));
@@ -76,6 +81,7 @@
         error = '';
         selected = -1;
         others = null;
+        hovered = null;
         ready = Array(ROLL_COUNT).fill(-1);
         let ply = MAX_PLY;
         pruneK = 0;
@@ -119,6 +125,7 @@
         ];
     });
     onDestroy(() => {
+        rollPreviewStore.set(null);
         tag = nextMapTag();
         off.forEach((f) => f && f());
         CancelRollMap().catch(() => {});
@@ -158,59 +165,114 @@
 
     let selectedRow = $derived(selected >= 0 ? rows[selected] : null);
 
+    // The board stays on the position before the roll: the roll's dice and the play are previewed.
+    $effect(() => {
+        const row = active ? selectedRow : null;
+        const play = hovered;
+        rollPreviewStore.set(row ? { dice: [row.die1, row.die2], move: play ?? (row.dance ? '' : (row.move ?? '')) } : null);
+    });
+
+    // The other plays follow the selection while the list is open.
+    $effect(() => {
+        const focus = selected;
+        const open = expanded;
+        others = null;
+        if (!open || focus < 0) return;
+        untrack(() => loadOthers(focus));
+    });
+
     /** @param {any} row */
     function pick(row) {
-        selected = selected === row.index ? -1 : row.index;
-        others = null;
+        if (selected !== row.index) hovered = null;
+        selected = row.index;
     }
 
-    function replies() {
+    /** Descend with the selected roll's best play, or with play. @param {string} [play] */
+    function replies(play) {
         const row = selectedRow;
-        if (row) descend(row.die1, row.die2, row.move ?? '');
+        if (!row) return;
+        selected = -1;
+        hovered = null;
+        descend(row.die1, row.die2, play ?? row.move ?? '');
     }
 
-    /** @param {any} board */
-    const boardKey = (board) => JSON.stringify([(board?.points ?? []).map((/** @type {any} */ p) => (p.checkers ? [p.color, p.checkers] : 0)), board?.bearoff ?? []]);
+    /** @param {any} row */
+    function descendRow(row) {
+        pick(row);
+        replies();
+    }
 
-    /** The legal plays of the selected roll but its best one, told apart by the board they leave. */
-    async function chooseOther() {
-        const row = selectedRow;
+    /** @param {MouseEvent} event */
+    function toggleOthers(event) {
+        event.stopPropagation();
+        expanded = !expanded;
+    }
+
+    /** The legal plays of the selected roll but its best, each measured against it on one search. */
+    /** @param {number} index */
+    async function loadOthers(index) {
+        const row = rows[index];
         if (!row || row.dance) return;
         const asked = request;
-        const rolled = { ...shown, dice: [row.die1, row.die2] };
-        const best = row.move ? positionAfterPlay(rolled, row.die1, row.die2, row.move) : null;
-        const bestKey = best ? boardKey(best.board) : null;
-        /** @type {any[]} */
-        let plays = [];
+        const rolled = { ...JSON.parse(JSON.stringify(shown)), id: 0, dice: [row.die1, row.die2] };
+        /** @type {any} */
+        let entry = null;
         try {
-            plays = (await LegalMoves(/** @type {any} */ (rolled))) ?? [];
+            const [pruneK, candidates] = await Promise.all([GetGammonNetPruneK(), GetGammonNetCandidates()]);
+            const result = await EvaluatePositionImmediate(/** @type {any} */ (rolled), pruneK, candidates);
+            // A deeper ranking of this roll, computed earlier in the Eval panel, takes precedence.
+            entry = result?.refused ? null : evalCache.put(evalCacheKey(rolled, { pruneK, candidates }), result);
         } catch (e) {
-            logger.error('roll map: legal plays:', e);
+            logger.error('roll map: other plays:', e);
         }
-        if (asked !== request || selectedRow !== row) return;
-        others = plays.filter((/** @type {any} */ p) => boardKey(p.result?.board) !== bestKey);
+        if (asked !== request || selected !== index || !expanded) return;
+        const moves = rankMoves(entry?.moves ?? []);
+        const best = moves.find((m) => m.move === row.move) ?? moves[0];
+        others = moves.filter((m) => m !== best).map((m) => ({ move: m.move, gap: m.equity - best.equity, ply: plyOf(m.analysisDepth) }));
     }
 
-    /** @param {any} play a domain.LegalPlay */
-    function playOther(play) {
-        const row = selectedRow;
-        if (row) descend(row.die1, row.die2, play.notation, play.result?.board);
+    /** Enter descends, Escape drops the selection. @param {KeyboardEvent} event */
+    function onKey(event) {
+        if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+        if (event.key === 'Enter' && selectedRow) {
+            event.preventDefault();
+            event.stopPropagation();
+            replies();
+        } else if (event.key === 'Escape' && selected >= 0) {
+            event.preventDefault();
+            event.stopPropagation();
+            selected = -1;
+            hovered = null;
+        }
     }
 
-    /** One link of the trail: who played, the roll and its play. */
+    /** Who plays the n-th link of the trail. @param {number} i */
+    const side = (i) => (i % 2 === 0 ? 'me' : 'him');
+
+    /** One link of the trail, for assistive technology: who played, the roll and its play. */
     /** @param {any} step @param {number} i */
     const crumb = (step, i) => `${i % 2 === 0 ? $t('maps.rolls.me') : $t('maps.rolls.him')} ${step.die1}-${step.die2} ${step.move || $t('maps.rolls.dance')}`;
 </script>
 
-<div class="roll-map">
+<!-- Focusable so that a click on a row leaves Enter and Escape here. -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="roll-map" tabindex="-1" onkeydown={onKey}>
     <nav class="trail" aria-label={$t('maps.rolls.trail')}>
         <button type="button" class="crumb" onclick={() => climbTo(0)} disabled={!trail.steps.length}>{$t('maps.rolls.start')}</button>
         {#each trail.steps as step, i (i)}
             <span class="sep" aria-hidden="true">›</span>
-            <button type="button" class="crumb" onclick={() => climbTo(i + 1)} disabled={i === trail.steps.length - 1}>{crumb(step, i)}</button>
+            <button type="button" class="crumb step {side(i)}" onclick={() => climbTo(i + 1)} disabled={i === trail.steps.length - 1} title={crumb(step, i)} aria-label={crumb(step, i)}>
+                <i class="side" aria-hidden="true"></i><MiniDie value={step.die1} /><MiniDie value={step.die2} />
+            </button>
         {/each}
         <span class="sep" aria-hidden="true">›</span>
-        <span class="crumb current" aria-current="true">{mover ? $t('maps.rolls.myRolls') : $t('maps.rolls.hisRolls')}</span>
+        <span
+            class="crumb step pending {mover ? 'me' : 'him'}"
+            aria-current="true"
+            title={selectedRow ? `${mover ? $t('maps.rolls.myRolls') : $t('maps.rolls.hisRolls')} ${rollLabel(selectedRow)}` : mover ? $t('maps.rolls.myRolls') : $t('maps.rolls.hisRolls')}
+        >
+            <i class="side" aria-hidden="true"></i><MiniDie value={selectedRow?.die1 ?? 0} /><MiniDie value={selectedRow?.die2 ?? 0} />
+        </span>
     </nav>
 
     {#if error}
@@ -250,9 +312,29 @@
                 <tbody>
                     {#each visible as row (row.index)}
                         {@const dev = row.equity - stats.average}
-                        <tr class:selected={selected === row.index} class:pending={row.ply < targetPly} class:ready={ready[row.index] >= targetPly} onclick={() => pick(row)}>
+                        {@const open = selected === row.index && expanded && !row.dance}
+                        <tr
+                            class:selected={selected === row.index}
+                            class:pending={row.ply < targetPly}
+                            class:ready={ready[row.index] >= targetPly}
+                            onclick={() => pick(row)}
+                            ondblclick={() => descendRow(row)}
+                        >
                             <td class="roll">{rollLabel(row)}</td>
-                            <td class="move">{row.dance ? $t('maps.rolls.dance') : row.move}</td>
+                            <td class="move">
+                                {#if selected === row.index && !row.dance}
+                                    <button
+                                        type="button"
+                                        class="chevron"
+                                        aria-expanded={open}
+                                        title={$t('maps.rolls.otherPlays')}
+                                        aria-label={$t('maps.rolls.otherPlays')}
+                                        onclick={toggleOthers}
+                                        ondblclick={(e) => e.stopPropagation()}>{open ? '▾' : '▸'}</button
+                                    >
+                                {/if}
+                                {row.dance ? $t('maps.rolls.dance') : row.move}
+                            </td>
                             <td class="num">{row.equity.toFixed(3)}</td>
                             <td class="gap">
                                 <span class="bar" aria-hidden="true"><i class:neg={dev < 0} style={`width:${Math.abs(level(row.equity)) * 50}%`}></i></span>
@@ -262,6 +344,23 @@
                                 >{#if row.marketLost}<span title={$t('maps.rolls.marketTip')}>{$t('maps.verdict.short.double_pass')}</span>{/if}</td
                             >
                         </tr>
+                        {#if open}
+                            {#each others ?? [] as play (play.move)}
+                                <tr
+                                    class="other"
+                                    class:hovered={hovered === play.move}
+                                    onmouseenter={() => (hovered = play.move)}
+                                    onmouseleave={() => (hovered = null)}
+                                    onclick={() => replies(play.move)}
+                                >
+                                    <td></td>
+                                    <td class="move">{play.move}</td>
+                                    <td class="num ply">{play.ply >= 0 ? `${play.ply}-ply` : ''}</td>
+                                    <td class="gap"><span class="figure">{signed(play.gap)}</span></td>
+                                    <td></td>
+                                </tr>
+                            {/each}
+                        {/if}
                     {/each}
                 </tbody>
             </table>
@@ -280,6 +379,7 @@
                                 class:selected={selected === row.index}
                                 style={shade(row.equity)}
                                 onclick={() => pick(row)}
+                                ondblclick={() => descendRow(row)}
                                 title={`${rollLabel(row)} ${row.equity.toFixed(3)}`}
                             >
                                 <span class="dice">{a}{b}</span>
@@ -296,18 +396,8 @@
         {#if selectedRow}
             <div class="actions">
                 <b>{rollLabel(selectedRow)}</b>
-                <button type="button" onclick={replies}>{$t('maps.rolls.replies')} ›</button>
-                {#if !selectedRow.dance}
-                    <button type="button" onclick={chooseOther}>{$t('maps.rolls.other')}</button>
-                {/if}
+                <button type="button" onclick={() => replies()}>{$t('maps.rolls.replies')} ›</button>
             </div>
-            {#if others}
-                <ul class="others">
-                    {#each others as play, i (i)}
-                        <li><button type="button" onclick={() => playOther(play)}>{play.notation}</button></li>
-                    {/each}
-                </ul>
-            {/if}
         {/if}
     {/if}
 </div>
@@ -346,6 +436,36 @@
     }
     .sep {
         color: var(--color-text-muted);
+    }
+    .roll-map:focus {
+        outline: none;
+    }
+    .crumb.step {
+        --side: var(--map-play-1);
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        padding: 1px 3px;
+        border: 1px solid transparent;
+        border-radius: var(--radius);
+        color: var(--color-text);
+        text-decoration: none;
+    }
+    .crumb.step.him {
+        --side: var(--map-play-2);
+    }
+    .crumb.step:not(:disabled):hover {
+        border-color: var(--color-border);
+    }
+    .crumb.step.pending {
+        border: 1px dashed var(--side);
+        font-weight: 400;
+    }
+    .side {
+        width: 4px;
+        align-self: stretch;
+        border-radius: 2px;
+        background: var(--side);
     }
     .summary {
         display: flex;
@@ -508,8 +628,7 @@
         gap: var(--space-2);
         align-items: center;
     }
-    .actions button,
-    .others button {
+    .actions button {
         border: 1px solid var(--color-border);
         border-radius: var(--radius);
         background: var(--color-surface);
@@ -517,13 +636,26 @@
         padding: 2px var(--space-2);
         cursor: pointer;
     }
-    .others {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-1);
-        list-style: none;
-        margin: 0;
-        padding: 0;
+    .chevron {
+        background: none;
+        border: none;
+        padding: 0 2px;
+        color: var(--color-text);
+        cursor: pointer;
+    }
+    .rows tr.other td {
+        color: var(--color-text-muted);
+        font-size: var(--font-size-small);
+    }
+    .rows tr.other td.move {
+        padding-left: calc(6px + 1.2em);
+    }
+    .rows tr.other.hovered td,
+    .rows tr.other:hover td {
+        color: var(--color-text);
+    }
+    .ply {
+        font-size: var(--font-size-small);
     }
     .error {
         color: var(--color-danger);
