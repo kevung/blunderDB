@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Direct unit tests of buildWhere: inputs in, SQL text and
@@ -307,6 +308,66 @@ func TestBuildWhereStructureWritesNoMaskOfZero(t *testing.T) {
 	for _, a := range wc.args {
 		if a == int64(0) {
 			t.Errorf("args = %v: a mask of zero is bound", wc.args)
+		}
+	}
+}
+
+// sqlRecorder is fakeExecer keeping the text of every read.
+type sqlRecorder struct {
+	fakeExecer
+	sql []string
+}
+
+func (r *sqlRecorder) Query(ctx context.Context, query string, args ...any) (Rows, error) {
+	r.sql = append(r.sql, query)
+	return r.fakeExecer.Query(ctx, query, args...)
+}
+
+func (r *sqlRecorder) QueryRow(ctx context.Context, query string, args ...any) Row {
+	r.sql = append(r.sql, query)
+	return r.fakeExecer.QueryRow(ctx, query, args...)
+}
+
+// A common move error is read by one probe of analysis per position for a
+// page, and for a bounded count below countJoinFloor; a full count, or a
+// bounded one of a selective threshold, keeps the join (probed, twice its time
+// at E>80, measured).
+func TestMoveErrorProbedForAPageJoinedForASelectiveCount(t *testing.T) {
+	defer SetNarrowLimit(-1)()
+	const probe = "FROM analysis e WHERE e.position_id = p.id"
+	reads := map[string]func(*SearchStore, domain.SearchFilters) error{
+		"page": func(s *SearchStore, f domain.SearchFilters) error {
+			_, _, err := s.FindPage(context.Background(), "", f, storage.PageOpts{Limit: 50})
+			return err
+		},
+		"countUpTo": func(s *SearchStore, f domain.SearchFilters) error {
+			_, _, err := s.CountUpTo(context.Background(), "", f, 10000)
+			return err
+		},
+		"count": func(s *SearchStore, f domain.SearchFilters) error {
+			_, err := s.Count(context.Background(), "", f)
+			return err
+		},
+		"indexOf": func(s *SearchStore, f domain.SearchFilters) error {
+			_, _, err := s.IndexOf(context.Background(), "", f, 1)
+			return err
+		},
+	}
+	for name, read := range reads {
+		for _, e := range []string{"E>20", "E<80", fmt.Sprintf("E>%d", countJoinFloor), "E>80"} {
+			rec := &sqlRecorder{}
+			if err := read(&SearchStore{DB: rec}, domain.SearchFilters{MoveErrorFilter: e}); err != nil {
+				t.Fatalf("%s %s: %v", name, e, err)
+			}
+			var probed, joined bool
+			for _, q := range rec.sql {
+				probed = probed || strings.Contains(q, probe)
+				joined = joined || strings.Contains(q, positionErrExpr+" >= ?") || strings.Contains(q, positionErrExpr+" <= ?")
+			}
+			want := name == "page" || name == "countUpTo" && (e == "E>20" || e == "E<80")
+			if probed != want || joined == want {
+				t.Errorf("%s %s: probed %v, joined %v, want probed %v", name, e, probed, joined, want)
+			}
 		}
 	}
 }
