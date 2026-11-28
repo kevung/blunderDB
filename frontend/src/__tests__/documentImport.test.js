@@ -32,12 +32,21 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ReviewDocumentReleve: vi.fn(),
     ConfirmDocumentReleve: vi.fn(async () => '{"releve":2}'),
     ImportDocumentReleve: vi.fn(async () => ({ collection: 'Livre', added: 2, repeated: 0, entries: 2, positions: 2, newPositions: 2, complete: 0, fallback: 1 })),
-    GetAllCollections: vi.fn(async () => [])
+    GetAllCollections: vi.fn(async () => []),
+    CancelImport: vi.fn(async () => {})
+}));
+const events = /** @type {Record<string, (p: any) => void>} */ ({});
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({
+    EventsOn: vi.fn((/** @type {string} */ name, /** @type {(p: any) => void} */ fn) => {
+        events[name] = fn;
+        return () => {};
+    })
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({ OpenDocumentDialog: vi.fn(async () => '/tmp/livre.pdf'), ReadFileContent: vi.fn(), IsBlunderDBArchive: vi.fn(async () => false) }));
 
 import * as db from '../../wailsjs/go/database/Database.js';
-import { startDocumentImport, setChoice } from '../services/documentImportService.js';
+import * as app from '../../wailsjs/go/gui/App.js';
+import { startDocumentImport, setChoice, cancelDocumentImport } from '../services/documentImportService.js';
 import { documentImportStore, initialDocumentImport } from '../stores/documentImportStore.js';
 import { activeModal, MODAL } from '../stores/uiStore.js';
 import { importForegroundStore } from '../stores/groupActivityStore.js';
@@ -116,5 +125,39 @@ describe('the assistant, mounted', () => {
         slow(review({ refused: [2, 99] }));
         await first;
         expect(get(documentImportStore).review.refused).toEqual([]);
+    });
+});
+
+describe('reading progress and cancellation', () => {
+    beforeEach(() => {
+        documentImportStore.set(initialDocumentImport());
+        /** @type {any} */ (db.SummarizeDocumentReleve).mockReset().mockResolvedValue(summary(true));
+        /** @type {any} */ (db.ReviewDocumentReleve).mockReset().mockResolvedValue(review());
+        /** @type {any} */ (app.OpenDocumentDialog).mockClear();
+        /** @type {any} */ (db.CancelImport).mockClear();
+    });
+    afterEach(() => cleanup());
+
+    test('a given path skips the file dialog', async () => {
+        await startDocumentImport('/tmp/donne.pdf');
+        expect(app.OpenDocumentDialog).not.toHaveBeenCalled();
+        expect(db.AnalyzeDocument).toHaveBeenLastCalledWith('/tmp/donne.pdf', '', '');
+    });
+
+    test('the progress event is shown, and Cancel stops the reading', async () => {
+        /** @type {(e: any) => void} */ let fail = () => {};
+        /** @type {any} */ (db.AnalyzeDocument).mockImplementationOnce(() => new Promise((_, reject) => (fail = reject)));
+        const { findByTestId, getByTestId } = render(DocumentImportModal, { visible: true });
+        const started = startDocumentImport('/tmp/livre.pdf');
+        await waitFor(() => expect(get(documentImportStore).phase).toBe('reading'));
+        events['document-analyze:progress']({ page: 37, pages: 212, diagrams: 54 });
+        expect((await findByTestId('document-import-progress')).textContent).toContain('37 / 212');
+        await fireEvent.click(getByTestId('document-import-cancel'));
+        expect(db.CancelImport).toHaveBeenCalled();
+        fail(new Error('context canceled'));
+        await started;
+        expect(get(documentImportStore).phase).toBe('idle');
+        expect(get(activeModal)).not.toBe(MODAL.DOCUMENT_IMPORT);
+        cancelDocumentImport();
     });
 });

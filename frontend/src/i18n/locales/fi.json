@@ -167,6 +167,7 @@
         "syncTitle": "Synkronointi"
     },
     "toolbar": {
+        "importDocument": "Tuo asiakirja…",
         "copyBoardImage": "Kopioi lautakuva",
         "copyBoardImageTip": "Kopioi lautakuva leikepöydälle",
         "copyBoardImageWithAnalysis": "analyysin kanssa",
@@ -3831,6 +3832,10 @@
     "documentImport": {
         "title": "Tuo asiakirja",
         "reading": "Luetaan asiakirjaa…",
+        "progress": "sivu {page} / {pages} · {diagrams} kaaviota",
+        "eta": "{eta} jäljellä",
+        "cancelled": "Lukeminen peruttu.",
+        "importCancelled": "Tuonti peruttu.",
         "failed": "Asiakirjan tuonti epäonnistui: {err}",
         "summary": "{title}: {entries} merkintää (varmoja {sure}, tarkistettavia {toVerify}, epävarmoja {uncertain})",
         "defaults": "Asiakirjan oletukset",

@@ -12,6 +12,7 @@ import { get } from 'svelte/store';
 const stub = vi.hoisted(() => (names) => Object.fromEntries(names.map((/** @type {number} */ n) => [n, vi.fn()])));
 vi.mock('../services/databaseService.js', () => stub(['newDatabase', 'openDatabase', 'exitApp']));
 vi.mock('../services/importService.js', () => stub(['importDatabase', 'importPosition', 'importFolder', 'pastePosition']));
+vi.mock('../services/documentImportService.js', () => stub(['startDocumentImport']));
 vi.mock('../services/exportService.js', () => stub(['exportDatabase']));
 vi.mock('../services/clipboardService.js', () => stub(['copyPosition', 'copyBoardImage']));
 vi.mock('../services/positionService.js', () =>
@@ -46,6 +47,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { activeModal, activeTabStore, MODAL } from '../stores/uiStore.js';
 import * as databaseService from '../services/databaseService.js';
 import * as importService from '../services/importService.js';
+import * as documentImportService from '../services/documentImportService.js';
 import * as exportService from '../services/exportService.js';
 import * as clipboardService from '../services/clipboardService.js';
 import * as positionService from '../services/positionService.js';
@@ -58,6 +60,7 @@ const EXPECTED = [
     databaseService.newDatabase,
     databaseService.openDatabase,
     importService.importDatabase,
+    documentImportService.startDocumentImport,
     exportService.exportDatabase,
     databaseService.exitApp,
     importService.importPosition,

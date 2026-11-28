@@ -167,6 +167,7 @@
         "syncTitle": "同期"
     },
     "toolbar": {
+        "importDocument": "文書を読み込む…",
         "copyBoardImage": "盤面画像をコピー",
         "copyBoardImageTip": "盤面画像をクリップボードにコピー",
         "copyBoardImageWithAnalysis": "解析付き",
@@ -3831,6 +3832,10 @@
     "documentImport": {
         "title": "文書を取り込む",
         "reading": "文書を読み取っています…",
+        "progress": "{page} / {pages} ページ · 図 {diagrams} 件",
+        "eta": "残り {eta}",
+        "cancelled": "読み取りを中止しました。",
+        "importCancelled": "読み込みを中止しました。",
         "failed": "文書の取り込みに失敗しました: {err}",
         "summary": "{title}: {entries} 件(確実 {sure}、要確認 {toVerify}、不確か {uncertain})",
         "defaults": "文書の既定値",

@@ -279,7 +279,21 @@ func readPageAt(pages Pages, i int) (*readPage, error) {
 
 // Read reads every diagram of the pages, in the document's order.
 func Read(ctx context.Context, pages Pages) (*Result, error) {
+	return ReadProgress(ctx, pages, nil)
+}
+
+// ReadProgress is Read reporting, after each page read, how many pages are
+// done (never decreasing, the pages the style is learned on included) and how
+// many diagrams were found so far. onPage may be nil.
+func ReadProgress(ctx context.Context, pages Pages, onPage func(done, diagrams int)) (*Result, error) {
 	n := pages.Len()
+	reached := 0
+	report := func(done, diagrams int) {
+		if onPage != nil && done > reached {
+			reached = done
+			onPage(done, diagrams)
+		}
+	}
 	if n > MaxPages {
 		return nil, fmt.Errorf("%w: %d pages, at most %d", ErrPage, n, MaxPages)
 	}
@@ -299,6 +313,7 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 			return nil, err
 		}
 		memo[i] = rp
+		report(i+1, len(samples)+len(rp.zs))
 		if rp.pg.Unread != nil {
 			if unread++; firstUnread == nil {
 				firstUnread = fmt.Errorf("page %d: %w", i+1, rp.pg.Unread)
@@ -357,6 +372,7 @@ func Read(ctx context.Context, pages Pages) (*Result, error) {
 		if len(zs) > 0 && len(pg.Words) > 0 {
 			words[i] = pg.Words
 		}
+		report(i+1, len(rds))
 	}
 	// The pips printed in the image: the document's figures read, then the
 	// two places of its pip counts learned on the readings judged without

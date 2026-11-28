@@ -155,8 +155,9 @@ et ``blunderdb events alias``.
 L'assistant d'import de l'interface
 -----------------------------------
 
-La commande ``import_document`` (``idoc``, :doc:`cmd_mode`) ou le bouton **Importer un
-document…** de la liste des collections vide ouvre l'assistant : on choisit un PDF, une
+La commande ``import_document`` (``idoc``, :doc:`cmd_mode`), le bouton **Importer un
+document…** de la barre d'outils ou celui de la liste des collections vide ouvre
+l'assistant : on choisit un PDF, une
 image de page ou un relevé ``.json`` déjà lu. L'assistant appelle les mêmes fonctions que
 ``document analyze``, ``check`` et ``import`` et n'applique aucune règle de plus
 (:ref:`cli_document`). Un fichier que blunderDB a produit — PDF ou page HTML
@@ -176,8 +177,12 @@ comme par :ref:`Archive papier… <archive_papier_interface>`.
 * **Collection** : vide, elle prend le titre du document.
 
 Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; l'assistant n'offre
-pas ``--force``. Pendant la lecture et l'import, **Annuler** et la fermeture sont
-suspendus. Le bilan donne le nombre de positions ajoutées et répétées.
+pas ``--force``. Pendant la lecture, une barre de progression indique la page lue sur le
+total, les diagrammes trouvés jusque-là et le temps restant estimé. **Annuler**, la
+fermeture et la touche Échap arrêtent la lecture ou l'import en cours : l'assistant
+se ferme sur « Lecture annulée » après une lecture, et revient à la revue après un
+import, qui n'a alors rien écrit. La tâche figure aussi dans le panneau des calculs.
+Le bilan donne le nombre de positions ajoutées et répétées.
 
 .. _panneau_metadata:
 

@@ -21,7 +21,7 @@ func analyzeScans(rd *pdf.Reader, r *Releve, opts AnalyzeOptions, outline []pdf.
 	if n > structure.MaxPages {
 		return nil, fmt.Errorf("document: %d pages, at most %d", n, structure.MaxPages)
 	}
-	res, err := structure.Read(opts.context(), pdfScans{opts.context(), rd, n})
+	res, err := structure.ReadProgress(opts.context(), pdfScans{opts.context(), rd, n}, opts.pageHook(n))
 	if errors.Is(err, structure.ErrNoPage) && errors.Is(err, pdf.ErrNoPageImage) {
 		return nil, fmt.Errorf("%w; %w", ErrNoGlyphDiagram, err)
 	}

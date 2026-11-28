@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 00:31+0100\n"
+"POT-Creation-Date: 2026-11-28 01:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -370,29 +370,29 @@ msgstr "El asistente de importación de la interfaz"
 
 #: ../../source/manuel_partage.rst:158
 msgid ""
-"La commande ``import_document`` (``idoc``, :doc:`cmd_mode`) ou le bouton "
-"**Importer un document…** de la liste des collections vide ouvre "
-"l'assistant : on choisit un PDF, une image de page ou un relevé ``.json``"
-" déjà lu. L'assistant appelle les mêmes fonctions que ``document "
-"analyze``, ``check`` et ``import`` et n'applique aucune règle de plus "
-"(:ref:`cli_document`). Un fichier que blunderDB a produit — PDF ou page "
-"HTML d'archive papier, de feuille de match ou de liste de positions avec "
-"codes de réimport — ne passe pas par l'assistant : il s'importe "
-"directement par ses codes, comme par :ref:`Archive papier… "
+"La commande ``import_document`` (``idoc``, :doc:`cmd_mode`), le bouton "
+"**Importer un document…** de la barre d'outils ou celui de la liste des "
+"collections vide ouvre l'assistant : on choisit un PDF, une image de page"
+" ou un relevé ``.json`` déjà lu. L'assistant appelle les mêmes fonctions "
+"que ``document analyze``, ``check`` et ``import`` et n'applique aucune "
+"règle de plus (:ref:`cli_document`). Un fichier que blunderDB a produit —"
+" PDF ou page HTML d'archive papier, de feuille de match ou de liste de "
+"positions avec codes de réimport — ne passe pas par l'assistant : il "
+"s'importe directement par ses codes, comme par :ref:`Archive papier… "
 "<archive_papier_interface>`."
 msgstr ""
-"El comando ``import_document`` (``idoc``, :doc:`cmd_mode`) o el botón "
-"**Importar un documento…** de la lista de colecciones vacía abre el "
-"asistente: se elige un PDF, una imagen de página o un relevé ``.json`` ya"
-" leído. El asistente llama a las mismas funciones que ``document "
-"analyze``, ``check`` e ``import`` y no aplica ninguna regla más "
-"(:ref:`cli_document`). Un archivo que blunderDB ha producido — un PDF o "
-"una página HTML de archivo en papel, de hoja de match o de lista de "
-"posiciones con códigos de reimportación — no pasa por el asistente: se "
-"importa directamente por sus códigos, como con :ref:`Archivo en papel… "
-"<archive_papier_interface>`."
+"El comando ``import_document`` (``idoc``, :doc:`cmd_mode`), el botón "
+"**Importar un documento…** de la barra de herramientas o el de la lista "
+"de colecciones vacía abre el asistente: se elige un PDF, una imagen de "
+"página o un relevé ``.json`` ya leído. El asistente llama a las mismas "
+"funciones que ``document analyze``, ``check`` e ``import`` y no aplica "
+"ninguna regla más (:ref:`cli_document`). Un archivo que blunderDB ha "
+"producido — un PDF o una página HTML de archivo en papel, de hoja de "
+"match o de lista de posiciones con códigos de reimportación — no pasa por"
+" el asistente: se importa directamente por sus códigos, como con "
+":ref:`Archivo en papel… <archive_papier_interface>`."
 
-#: ../../source/manuel_partage.rst:167
+#: ../../source/manuel_partage.rst:168
 msgid ""
 "**Défauts et sens de jeu** : le contexte par défaut du document et le "
 "sens de jeu supposé sont décrits. Un seul bouton les confirme pour tout "
@@ -404,7 +404,7 @@ msgstr ""
 "confirma para todo el documento, tras comprobar algunos diagramas; nada "
 "se confirma sin este gesto."
 
-#: ../../source/manuel_partage.rst:170
+#: ../../source/manuel_partage.rst:171
 msgid ""
 "**Entrées à vérifier** : la liste donne, pour chaque entrée que l'import "
 "refuserait en l'état, sa page, son étiquette, son état et la note qui "
@@ -416,11 +416,11 @@ msgstr ""
 "nota que nombra los campos que hay que comparar con el diagrama. Las que "
 "las opciones actuales no cubren aparecen en negrita."
 
-#: ../../source/manuel_partage.rst:173
+#: ../../source/manuel_partage.rst:174
 msgid "**Entrées complètes** : la case équivaut à ``--accept-complete``."
 msgstr "**Entradas completas**: la casilla equivale a ``--accept-complete``."
 
-#: ../../source/manuel_partage.rst:174
+#: ../../source/manuel_partage.rst:175
 msgid ""
 "**Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une"
 " fois les défauts confirmés."
@@ -428,27 +428,37 @@ msgstr ""
 "**Recurso**: la casilla equivale a ``--fallback``; solo se ofrece una vez"
 " confirmados los valores por defecto."
 
-#: ../../source/manuel_partage.rst:176
+#: ../../source/manuel_partage.rst:177
 msgid "**Collection** : vide, elle prend le titre du document."
 msgstr "**Colección**: si está vacía, toma el título del documento."
 
-#: ../../source/manuel_partage.rst:178
+#: ../../source/manuel_partage.rst:179
 msgid ""
 "Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; "
-"l'assistant n'offre pas ``--force``. Pendant la lecture et l'import, "
-"**Annuler** et la fermeture sont suspendus. Le bilan donne le nombre de "
-"positions ajoutées et répétées."
+"l'assistant n'offre pas ``--force``. Pendant la lecture, une barre de "
+"progression indique la page lue sur le total, les diagrammes trouvés "
+"jusque-là et le temps restant estimé. **Annuler**, la fermeture et la "
+"touche Échap arrêtent la lecture ou l'import en cours : l'assistant se "
+"ferme sur « Lecture annulée » après une lecture, et revient à la revue "
+"après un import, qui n'a alors rien écrit. La tâche figure aussi dans le "
+"panneau des calculs. Le bilan donne le nombre de positions ajoutées et "
+"répétées."
 msgstr ""
-"El botón **Importar** permanece en gris mientras se rechace una entrada; "
-"el asistente no ofrece ``--force``. Durante la lectura y la importación, "
-"**Cancelar** y el cierre quedan suspendidos. El balance indica el número "
-"de posiciones añadidas y repetidas."
+"El botón **Importar** permanece atenuado mientras se rechace una entrada;"
+" el asistente no ofrece ``--force``. Durante la lectura, una barra de "
+"progreso indica la página leída sobre el total, los diagramas encontrados"
+" hasta el momento y el tiempo restante estimado. **Cancelar**, el cierre "
+"y la tecla Escape detienen la lectura o la importación en curso: el "
+"asistente se cierra con «Lectura cancelada» tras una lectura, y vuelve a "
+"la revisión tras una importación, que entonces no ha escrito nada. La "
+"tarea aparece también en el panel de cálculos. El balance indica el "
+"número de posiciones añadidas y repetidas."
 
-#: ../../source/manuel_partage.rst:185
+#: ../../source/manuel_partage.rst:190
 msgid "Panneau Métadonnées"
 msgstr "Panel de Metadatos"
 
-#: ../../source/manuel_partage.rst:187
+#: ../../source/manuel_partage.rst:192
 msgid ""
 "Le panneau **Métadonnées** (*CTRL-M*) affiche les informations générales "
 "de la base de données courante : *Utilisateur*, date de création "
@@ -463,7 +473,7 @@ msgstr ""
 "modifican en el sitio y se guardan al salir del campo; la versión es de "
 "solo lectura. También accesible mediante el comando ``meta``."
 
-#: ../../source/manuel_partage.rst:193
+#: ../../source/manuel_partage.rst:198
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -473,11 +483,11 @@ msgstr ""
 " :ref:`diffusion_controlee`. Una base de datos corriente no muestra esa "
 "sección."
 
-#: ../../source/manuel_partage.rst:199
+#: ../../source/manuel_partage.rst:204
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Distribuir una base de datos: origen y contraseña"
 
-#: ../../source/manuel_partage.rst:201
+#: ../../source/manuel_partage.rst:206
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -489,7 +499,7 @@ msgstr ""
 "momento de la exportación**: marcar el archivo con su origen y protegerlo"
 " con una contraseña."
 
-#: ../../source/manuel_partage.rst:208
+#: ../../source/manuel_partage.rst:213
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -502,11 +512,11 @@ msgstr ""
 "ningún sitio queda constancia de quién la abrió, cuándo, ni de dónde "
 "procede su contenido."
 
-#: ../../source/manuel_partage.rst:214
+#: ../../source/manuel_partage.rst:219
 msgid "Marquer une base de son origine"
 msgstr "Marcar una base de datos con su origen"
 
-#: ../../source/manuel_partage.rst:216
+#: ../../source/manuel_partage.rst:221
 msgid ""
 "La fenêtre d'export tient en un seul écran : une bande d'en-tête — le "
 "nombre de positions exportées, **Annuler** et **Exporter…** — puis une "
@@ -530,11 +540,11 @@ msgstr ""
 "Después se superpone una barra de progreso mientras dura la escritura, la"
 " ventana se cierra sola y el resultado aparece en la barra de estado."
 
-#: ../../source/manuel_partage.rst:228
+#: ../../source/manuel_partage.rst:233
 msgid "Neuf points méritent l'attention :"
 msgstr "Nueve puntos merecen atención:"
 
-#: ../../source/manuel_partage.rst:230
+#: ../../source/manuel_partage.rst:235
 msgid ""
 "**La portée** : depuis une liste — une recherche, une collection —, la "
 "ligne *Portée* choisit entre la *Liste courante* et *Toute la "
@@ -549,7 +559,7 @@ msgstr ""
 " en las que se jugaron esas posiciones; cada partida marcada sale con "
 "todas sus posiciones. Desde la biblioteca, el alcance es la biblioteca."
 
-#: ../../source/manuel_partage.rst:235
+#: ../../source/manuel_partage.rst:240
 msgid ""
 "**Toute la bibliothèque** est l'export du serveur et de ``export --type "
 "database`` : toutes les familles sont cochées d'emblée, les paquets Anki "
@@ -561,7 +571,7 @@ msgstr ""
 "mazos Anki con su historial de repaso, y las transcripciones en curso "
 "salen con el resto."
 
-#: ../../source/manuel_partage.rst:239
+#: ../../source/manuel_partage.rst:244
 msgid ""
 "**La synchronisation** : avec *Toute la bibliothèque*, la ligne "
 "*Synchronisation* propose *Seulement ce qui est nouveau depuis le dernier"
@@ -577,7 +587,7 @@ msgstr ""
 " nuevo (véase :ref:`Sincronizar dos máquinas "
 "<synchroniser_deux_machines>`)."
 
-#: ../../source/manuel_partage.rst:245
+#: ../../source/manuel_partage.rst:250
 msgid ""
 "**Un match part avec son brouillon de transcription**, sous la case "
 "*Transcriptions* de la ligne *Matchs*, cochée d'emblée ; les matchs qu'un"
@@ -597,7 +607,7 @@ msgstr ""
 "un enlace web sale tal cual. El archivo desde el que se importó una "
 "partida tampoco sale más que por su nombre."
 
-#: ../../source/manuel_partage.rst:252
+#: ../../source/manuel_partage.rst:257
 msgid ""
 "**Un match part avec les alias de ses joueurs et de son événement** : la "
 "case *Alias*, cochée d'emblée, fait suivre la fusion de joueurs, et le "
@@ -610,7 +620,7 @@ msgstr ""
 "alias que no nombra a nadie de las partidas exportadas se queda con "
 "usted."
 
-#: ../../source/manuel_partage.rst:256
+#: ../../source/manuel_partage.rst:261
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la liste "
 "arrive tronquée.** La liste des collections affiche, pour chacune, la "
@@ -633,7 +643,7 @@ msgstr ""
 "consulta selecciona hoy, y la lista la marca en rojo como «congelada» con"
 " una nota; marcar *+ sus posiciones* la deja viva."
 
-#: ../../source/manuel_partage.rst:265
+#: ../../source/manuel_partage.rst:270
 msgid ""
 "**Un tournoi part toujours avec ses matchs** : sans eux, le lien "
 "tournoi–match n'existe pas et le tournoi arriverait vide. Cocher un "
@@ -653,7 +663,7 @@ msgstr ""
 " su equipo. La Dirección se recupera abriendo el archivo, o importándolo "
 "en otra base."
 
-#: ../../source/manuel_partage.rst:273
+#: ../../source/manuel_partage.rst:278
 msgid ""
 "**Un paquet Anki part avec ses positions**, en copie d'étude neuve. La "
 "case *avec mon historique* emporte en plus l'état de chaque carte et le "
@@ -667,7 +677,7 @@ msgstr ""
 " otra máquina. Está desmarcada para una lista y marcada para la "
 "biblioteca."
 
-#: ../../source/manuel_partage.rst:277
+#: ../../source/manuel_partage.rst:282
 msgid ""
 "**Les filtres enregistrés** n'exportent pas du contenu mais vos propres "
 "recherches, sans utilité dans la base de quelqu'un d'autre ; la case est "
@@ -681,7 +691,7 @@ msgstr ""
 "partida o un torneo por su número se renumera para el archivo; si designa"
 " uno que no sale, se queda con usted."
 
-#: ../../source/manuel_partage.rst:283
+#: ../../source/manuel_partage.rst:288
 msgid ""
 "Les collections, leçons, transcriptions, paquets Anki, alias et tournois "
 "partent avec les dates de création et d'ajout qu'ils portent chez vous, "
@@ -691,7 +701,7 @@ msgstr ""
 "salen con las fechas de creación y de adición que tienen en su equipo, no"
 " con la fecha de la exportación."
 
-#: ../../source/manuel_partage.rst:287
+#: ../../source/manuel_partage.rst:292
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date de création* décrivent "
 "le **fichier produit** ; ils sont préremplis depuis la base source."
@@ -700,11 +710,11 @@ msgstr ""
 "**archivo producido**; vienen rellenados de antemano a partir de la base "
 "de origen."
 
-#: ../../source/manuel_partage.rst:290
+#: ../../source/manuel_partage.rst:295
 msgid "Cocher **Filigrane** fait apparaître deux champs :"
 msgstr "Al marcar **Marca de agua** aparecen dos campos:"
 
-#: ../../source/manuel_partage.rst:292
+#: ../../source/manuel_partage.rst:297
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -716,7 +726,7 @@ msgstr ""
 "**obligatorio**: mientras esté vacío, aparece bordeado de rojo y el botón"
 " de exportación permanece inactivo."
 
-#: ../../source/manuel_partage.rst:295
+#: ../../source/manuel_partage.rst:300
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -724,7 +734,7 @@ msgstr ""
 "**Nota**, opcional — condiciones de uso, dirección de contacto, una "
 "petición de no redistribuir."
 
-#: ../../source/manuel_partage.rst:298
+#: ../../source/manuel_partage.rst:303
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -738,7 +748,7 @@ msgstr ""
 "SQLite corriente y blunderDB es software libre. No impide nada: dice de "
 "dónde viene el archivo."
 
-#: ../../source/manuel_partage.rst:304
+#: ../../source/manuel_partage.rst:309
 msgid ""
 "Les commentaires que vous avez écrits sont signés avec la même identité :"
 " le destinataire voit qu'ils viennent de vous, et s'ils ont été altérés "
@@ -754,11 +764,11 @@ msgstr ""
 " la exportación, cuántos de sus comentarios se han firmado; una "
 "exportación sin marca no firma ninguno."
 
-#: ../../source/manuel_partage.rst:311
+#: ../../source/manuel_partage.rst:316
 msgid "Identité d'émetteur"
 msgstr "Identidad del emisor"
 
-#: ../../source/manuel_partage.rst:313
+#: ../../source/manuel_partage.rst:318
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -771,7 +781,7 @@ msgstr ""
 "Pertenece a una persona y no a una base de datos: todos tus archivos "
 "llevan la misma huella pública, con la forma ``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel_partage.rst:318
+#: ../../source/manuel_partage.rst:323
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -785,7 +795,7 @@ msgstr ""
 " por una frase de contraseña. **Ese archivo permite firmar en tu nombre: "
 "no lo compartas.**"
 
-#: ../../source/manuel_partage.rst:324
+#: ../../source/manuel_partage.rst:329
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -795,7 +805,7 @@ msgstr ""
 "pestaña *Identidad del emisor* muestra tu nombre y tu huella, y ofrece "
 "*Guardar identidad…*, *Cargar identidad…* y *Regenerar…*."
 
-#: ../../source/manuel_partage.rst:330
+#: ../../source/manuel_partage.rst:335
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -807,7 +817,7 @@ msgstr ""
 " de identidad se ha filtrado, quien lo posea podrá seguir firmando con tu"
 " huella antigua, y esas marcas seguirán siendo válidas."
 
-#: ../../source/manuel_partage.rst:335
+#: ../../source/manuel_partage.rst:340
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -816,7 +826,7 @@ msgstr ""
 "Lo que te protege tras una filtración no es el software: es publicar tu "
 "nueva huella y desautorizar la antigua ante tus destinatarios."
 
-#: ../../source/manuel_partage.rst:339
+#: ../../source/manuel_partage.rst:344
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -824,11 +834,11 @@ msgstr ""
 "La regeneración sobrescribe la clave actual; blunderDB ofrece guardarla "
 "antes de reemplazarla."
 
-#: ../../source/manuel_partage.rst:343
+#: ../../source/manuel_partage.rst:348
 msgid "Protéger une base par un mot de passe"
 msgstr "Proteger una base de datos con una contraseña"
 
-#: ../../source/manuel_partage.rst:345
+#: ../../source/manuel_partage.rst:350
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -838,7 +848,7 @@ msgstr ""
 "protegido; el icono con forma de ojo la muestra **mientras se mantiene "
 "pulsado** y vuelve a ocultarla al soltarlo."
 
-#: ../../source/manuel_partage.rst:349
+#: ../../source/manuel_partage.rst:354
 msgid ""
 "Cocher **Mot de passe** produit un fichier d'extension ``.dbx`` — y "
 "compris si le nom choisi dans la fenêtre d'enregistrement finit en "
@@ -854,7 +864,7 @@ msgstr ""
 "contraseña e instala una base ordinaria al lado; después ya no se pide "
 "nada."
 
-#: ../../source/manuel_partage.rst:356
+#: ../../source/manuel_partage.rst:361
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -868,7 +878,7 @@ msgstr ""
 "piensas transmitirlo— y la eliminación solo se produce tras una apertura "
 "correcta."
 
-#: ../../source/manuel_partage.rst:363
+#: ../../source/manuel_partage.rst:368
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -880,7 +890,7 @@ msgstr ""
 "adjunto reenviado por error. No protege frente a aquel a quien has dado "
 "la contraseña."
 
-#: ../../source/manuel_partage.rst:368
+#: ../../source/manuel_partage.rst:373
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -888,7 +898,7 @@ msgstr ""
 "La contraseña se comprueba en **cada** apertura, incluso si el archivo ya"
 " se había abierto antes en ese equipo."
 
-#: ../../source/manuel_partage.rst:371
+#: ../../source/manuel_partage.rst:376
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -904,7 +914,7 @@ msgstr ""
 "también cualquier alteración del archivo cifrado; nunca se obtiene en "
 "silencio una base corrupta."
 
-#: ../../source/manuel_partage.rst:378
+#: ../../source/manuel_partage.rst:383
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -912,11 +922,11 @@ msgstr ""
 "La cabecera del archivo protegido permanece **en claro**: su origen sigue"
 " siendo legible sin la contraseña."
 
-#: ../../source/manuel_partage.rst:382
+#: ../../source/manuel_partage.rst:387
 msgid "Lire l'origine d'un fichier"
 msgstr "Leer el origen de un archivo"
 
-#: ../../source/manuel_partage.rst:384
+#: ../../source/manuel_partage.rst:389
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -928,11 +938,11 @@ msgstr ""
 "del panel, de solo lectura, que indica lo que se inscribió, por quién, "
 "cuándo, y el estado de la firma:"
 
-#: ../../source/manuel_partage.rst:389
+#: ../../source/manuel_partage.rst:394
 msgid "« ✓ marquée par vous » : le fichier porte votre marque, intacte ;"
 msgstr "«✓ marcada por usted»: el archivo lleva su marca, intacta;"
 
-#: ../../source/manuel_partage.rst:391
+#: ../../source/manuel_partage.rst:396
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -940,15 +950,15 @@ msgstr ""
 "«✓ firma verificada»: la marca está intacta y procede de otra clave; "
 "compara su huella con la que te haya comunicado el autor;"
 
-#: ../../source/manuel_partage.rst:393
+#: ../../source/manuel_partage.rst:398
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ firma no válida»: el documento ha sido modificado o falsificado."
 
-#: ../../source/manuel_partage.rst:395
+#: ../../source/manuel_partage.rst:400
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Esta sección no aparece en una base de datos corriente."
 
-#: ../../source/manuel_partage.rst:397
+#: ../../source/manuel_partage.rst:402
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -962,11 +972,11 @@ msgstr ""
 "Consulta ``CLI_USAGE.md`` para las opciones ``--watermark`` y "
 "``--password`` de ``export``, así como para ``identity`` y ``open``."
 
-#: ../../source/manuel_partage.rst:406
+#: ../../source/manuel_partage.rst:411
 msgid "Publier une base pour d'autres"
 msgstr "Publicar una base para otros"
 
-#: ../../source/manuel_partage.rst:408
+#: ../../source/manuel_partage.rst:413
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -981,7 +991,7 @@ msgstr ""
 "su diseño: nunca se registra nada del lado de quien recibe un archivo, "
 "así que no habría nada que comunicar a un servicio, aunque existiera."
 
-#: ../../source/manuel_partage.rst:414
+#: ../../source/manuel_partage.rst:419
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -989,13 +999,13 @@ msgstr ""
 "Lo que hace utilizable por otro una base publicada se reduce a cuatro "
 "campos, todos ya presentes:"
 
-#: ../../source/manuel_partage.rst:417
+#: ../../source/manuel_partage.rst:422
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Usuario** — quién la constituyó, con el nombre que quiere ver citado."
 
-#: ../../source/manuel_partage.rst:418
+#: ../../source/manuel_partage.rst:423
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -1005,7 +1015,7 @@ msgstr ""
 "lista: «240 decisiones de cubo al marcador, comentadas, nivel "
 "intermedio»."
 
-#: ../../source/manuel_partage.rst:420
+#: ../../source/manuel_partage.rst:425
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -1014,7 +1024,7 @@ msgstr ""
 "**Origen** (de la marca de agua) — qué es este archivo y para quién se "
 "produjo. Es lo primero que el destinatario lee en el panel *Metadatos*."
 
-#: ../../source/manuel_partage.rst:423
+#: ../../source/manuel_partage.rst:428
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -1024,7 +1034,7 @@ msgstr ""
 "comparándola el destinatario comprueba que el archivo viene de usted y no"
 " de alguien que ha tomado su nombre."
 
-#: ../../source/manuel_partage.rst:427
+#: ../../source/manuel_partage.rst:432
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -1034,7 +1044,7 @@ msgstr ""
 "utilizable; simplemente es anónima, y el panel *Metadatos* no muestra "
 "entonces ninguna sección *Origen*."
 
-#: ../../source/manuel_partage.rst:431
+#: ../../source/manuel_partage.rst:436
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
@@ -1048,3 +1058,20 @@ msgstr ""
 "es una lista mantenida por quienes publican, no un servicio prestado por "
 "blunderDB. Anunciar una allí requiere el enlace, los cuatro campos "
 "anteriores y la huella."
+
+#~ msgid ""
+#~ "Le bouton **Importer** reste grisé tant"
+#~ " qu'une entrée est refusée ; "
+#~ "l'assistant n'offre pas ``--force``. Pendant"
+#~ " la lecture et l'import, **Annuler** "
+#~ "et la fermeture sont suspendus. Le "
+#~ "bilan donne le nombre de positions "
+#~ "ajoutées et répétées."
+#~ msgstr ""
+#~ "El botón **Importar** permanece en gris"
+#~ " mientras se rechace una entrada; el"
+#~ " asistente no ofrece ``--force``. Durante"
+#~ " la lectura y la importación, "
+#~ "**Cancelar** y el cierre quedan "
+#~ "suspendidos. El balance indica el número"
+#~ " de posiciones añadidas y repetidas."

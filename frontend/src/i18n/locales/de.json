@@ -167,6 +167,7 @@
         "syncTitle": "Synchronisierung"
     },
     "toolbar": {
+        "importDocument": "Dokument importieren…",
         "copyBoardImage": "Brettbild kopieren",
         "copyBoardImageTip": "Brettbild in die Zwischenablage kopieren",
         "copyBoardImageWithAnalysis": "mit Analyse",
@@ -3831,6 +3832,10 @@
     "documentImport": {
         "title": "Dokument importieren",
         "reading": "Dokument wird gelesen…",
+        "progress": "Seite {page} / {pages} · {diagrams} Diagramme",
+        "eta": "noch {eta}",
+        "cancelled": "Lesen abgebrochen.",
+        "importCancelled": "Import abgebrochen.",
         "failed": "Dokumentimport fehlgeschlagen: {err}",
         "summary": "{title}: {entries} Einträge (sicher {sure}, zu prüfen {toVerify}, unsicher {uncertain})",
         "defaults": "Standardwerte des Dokuments",

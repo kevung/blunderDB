@@ -167,6 +167,7 @@
         "syncTitle": "Συγχρονισμός"
     },
     "toolbar": {
+        "importDocument": "Εισαγωγή εγγράφου…",
         "copyBoardImage": "Αντιγραφή εικόνας ταμπλό",
         "copyBoardImageTip": "Αντιγραφή εικόνας ταμπλό στο πρόχειρο",
         "copyBoardImageWithAnalysis": "με ανάλυση",
@@ -3831,6 +3832,10 @@
     "documentImport": {
         "title": "Εισαγωγή εγγράφου",
         "reading": "Ανάγνωση του εγγράφου…",
+        "progress": "σελίδα {page} / {pages} · {diagrams} διαγράμματα",
+        "eta": "απομένουν {eta}",
+        "cancelled": "Η ανάγνωση ακυρώθηκε.",
+        "importCancelled": "Η εισαγωγή ακυρώθηκε.",
         "failed": "Η εισαγωγή του εγγράφου απέτυχε: {err}",
         "summary": "{title}: {entries} καταχωρήσεις (βέβαιες {sure}, προς έλεγχο {toVerify}, αβέβαιες {uncertain})",
         "defaults": "Προεπιλογές του εγγράφου",

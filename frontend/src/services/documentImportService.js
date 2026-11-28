@@ -1,6 +1,7 @@
 import { get } from 'svelte/store';
-import { GetAllCollections, AnalyzeDocument, SummarizeDocumentReleve, ReviewDocumentReleve, ConfirmDocumentReleve, ImportDocumentReleve } from '../../wailsjs/go/database/Database.js';
+import { CancelImport, GetAllCollections, AnalyzeDocument, SummarizeDocumentReleve, ReviewDocumentReleve, ConfirmDocumentReleve, ImportDocumentReleve } from '../../wailsjs/go/database/Database.js';
 import { OpenDocumentDialog, ReadFileContent } from '../../wailsjs/go/gui/App.js';
+import { EventsOn } from '../../wailsjs/runtime/runtime.js';
 import { documentImportStore, initialDocumentImport } from '../stores/documentImportStore.js';
 import { openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -56,12 +57,22 @@ async function load(releve, choices = get(documentImportStore)) {
     patch({ releve, summary, review, phase: 'review', error: '' });
 }
 
+// Annulation demandée par la personne : l'erreur qui revient du moteur n'en est pas une.
+let cancelRequested = false;
+
+/** @param {unknown} err */
+function isCancellation(err) {
+    return cancelRequested || /context canceled/i.test(messageOf(err));
+}
+
 /**
- * Choisit un document (PDF, image ou Relevé .json), le lit et ouvre l'assistant.
- * @param {string} [given] un document déjà choisi (un dépôt, Ctrl-I) : pas de boîte de choix
+ * Lit un document (PDF, image, dossier d'images ou Relevé .json) et ouvre l'assistant.
+ * Sans chemin, la personne le choisit dans la boîte de fichiers.
+ * @param {string} [given]
  */
-export async function startDocumentImport(given = '') {
+export async function startDocumentImport(given) {
     let path = '';
+    let off = () => {};
     try {
         path = given || (await OpenDocumentDialog()) || '';
         if (!path) return;
@@ -71,6 +82,7 @@ export async function startDocumentImport(given = '') {
             await archive.importPaperArchive([path]);
             return;
         }
+        cancelRequested = false;
         documentImportStore.set({ ...initialDocumentImport(), phase: 'reading', path });
         setBusy('reading');
         openModal(MODAL.DOCUMENT_IMPORT);
@@ -78,16 +90,39 @@ export async function startDocumentImport(given = '') {
             const file = await ReadFileContent(path);
             await load(file?.content ?? '');
         } else {
+            const startedAt = Date.now();
+            off = EventsOn('document-analyze:progress', (/** @type {{page: number, pages: number, diagrams: number}} */ p) => {
+                patch({ progress: { page: p.page, pages: p.pages, diagrams: p.diagrams, startedAt } });
+            });
             await load(await AnalyzeDocument(path, '', ''));
         }
     } catch (err) {
+        if (path && isCancellation(err)) {
+            closeDocumentImport();
+            setStatusBarMessage(tMsg('documentImport.cancelled'));
+            return;
+        }
         logger.error('could not read the document:', err);
         if (path) {
             patch({ phase: 'review', error: messageOf(err) });
         } else {
             setStatusBarMessage(tMsg('documentImport.failed', { err }));
         }
+    } finally {
+        off();
+        patch({ progress: null });
     }
+}
+
+/** Annule la lecture ou l'import en cours ; hors de là, ferme l'assistant. */
+export function cancelDocumentImport() {
+    const phase = get(documentImportStore).phase;
+    if (phase !== 'reading' && phase !== 'importing') {
+        closeDocumentImport();
+        return;
+    }
+    cancelRequested = true;
+    CancelImport().catch((err) => logger.error('Error calling CancelImport:', err));
 }
 
 /** Confirme d'un geste les défauts du document et son sens de jeu, puis relit le Relevé. */
@@ -120,6 +155,7 @@ export async function setChoice(name, value) {
 export async function runDocumentImport() {
     const s = get(documentImportStore);
     patch({ phase: 'importing', error: '' });
+    cancelRequested = false;
     try {
         const result = await ImportDocumentReleve(s.releve, s.collection, s.acceptComplete, s.fallback, false);
         setStatusBarMessage(tMsg('documentImport.imported', { collection: result?.collection ?? '', added: result?.added ?? 0, repeated: result?.repeated ?? 0 }));
@@ -130,6 +166,11 @@ export async function runDocumentImport() {
         }
         patch({ phase: 'done', result });
     } catch (err) {
+        if (isCancellation(err)) {
+            setStatusBarMessage(tMsg('documentImport.importCancelled'));
+            patch({ phase: 'review', error: '' });
+            return;
+        }
         logger.error('could not import the document:', err);
         patch({ phase: 'review', error: messageOf(err) });
     }
