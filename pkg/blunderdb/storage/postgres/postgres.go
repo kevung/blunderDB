@@ -281,6 +281,9 @@ func (s *Storage) Migrate(ctx context.Context) error {
 	if err := repairMatchStatsShape(ctx, conn); err != nil {
 		return err
 	}
+	if err := ensureBestMoveIndex(ctx, conn); err != nil {
+		return err
+	}
 	if err := runGoBackfills(ctx, conn); err != nil {
 		return err
 	}
@@ -386,9 +389,9 @@ const goBackfillsKey = "go_backfills"
 // runs them once more.
 const goBackfillsGeneration = "5"
 
-// runGoBackfills runs, once per library, the passes the SQL chain cannot:
-// each lifts FORCE, which takes an ACCESS EXCLUSIVE lock on the tables it
-// touches, so it is not paid at every start. The row is written only when
+// runGoBackfills runs, once per library, the passes the SQL chain cannot.
+// Those of runGenerationBackfills lift FORCE, which takes an ACCESS EXCLUSIVE
+// lock on the tables they touch, so it is not paid at every start. The row is written only when
 // every pass saw every tenant's rows; a pass whose table stayed busy past
 // unforcedLockTimeout is left for the next Migrate rather than failing it.
 func runGoBackfills(ctx context.Context, conn migrationConn) error {
@@ -438,37 +441,24 @@ func runGenerationBackfills(ctx context.Context, conn migrationConn) error {
 	return nil
 }
 
-// bestMoveBackfillKey marks, in metadata, that backfillAnalysisBestMove saw
-// every row. It stands apart from goBackfillsKey: bumping the generation for
-// it would run every pass again, and those rewrite rows the journal reports.
-const bestMoveBackfillKey = "best_move_backfill"
-
-// runBestMoveBackfill runs backfillAnalysisBestMove until it has seen every
-// tenant's rows once. Later NULLs (an older binary's write, which the 077
-// trigger clears) stay for the search to settle on the blob.
+// runBestMoveBackfill runs backfillAnalysisBestMove over the tenants 077
+// listed, once. Later NULLs (an older binary's write, which the 077 trigger
+// clears) stay for the search to settle on the blob. Only a role that sees
+// every tenant's rows once bound to it runs it: another one's policy could
+// hide rows the cursor would then pass.
 func runBestMoveBackfill(ctx context.Context, conn migrationConn) error {
-	var done string
-	err := conn.QueryRow(ctx, `SELECT value FROM metadata WHERE key = $1`, bestMoveBackfillKey).Scan(&done)
-	switch {
-	case err == nil:
-		return nil
-	case !errors.Is(err, pgx.ErrNoRows):
-		return fmt.Errorf("postgres: read %s: %w", bestMoveBackfillKey, err)
+	var sees bool
+	if err := conn.QueryRow(ctx,
+		`SELECT pg_has_role(c.relowner, 'USAGE') OR r.rolsuper OR r.rolbypassrls
+		   FROM pg_class c CROSS JOIN pg_roles r
+		  WHERE c.oid = to_regclass('analysis') AND r.rolname = current_user`).Scan(&sees); err != nil {
+		return fmt.Errorf("postgres: probe the best move backfill role: %w", err)
 	}
-	complete, err := backfillAnalysisBestMove(ctx, conn)
-	if errors.Is(err, errUnforcedLockTimeout) {
-		slog.Warn("postgres: analysis stayed locked; the best move backfill resumes at the next start", "lock_timeout", unforcedLockTimeout)
+	if !sees {
 		return nil
 	}
-	if err != nil || !complete {
-		return err
-	}
-	if _, err := conn.Exec(ctx,
-		`INSERT INTO metadata (key, value) VALUES ($1, '1') ON CONFLICT (key) DO NOTHING`,
-		bestMoveBackfillKey); err != nil {
-		return fmt.Errorf("postgres: write %s: %w", bestMoveBackfillKey, err)
-	}
-	return nil
+	_, err := backfillAnalysisBestMove(ctx, conn, 0)
+	return err
 }
 
 // migrationConn is the connection Migrate holds: statements, and the

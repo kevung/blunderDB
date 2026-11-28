@@ -58,7 +58,9 @@ func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
 		t.Fatalf("ApplyRLS: %v", err)
 	}
 	tables := []string{"analysis", "match_stats"}
-	execUnforced(t, conn, tables, append(seed, `DELETE FROM metadata WHERE key = 'best_move_backfill'`,
+	// 077 run again lists the tenants the backfill reads.
+	rerun077 := []string{`DELETE FROM schema_migrations WHERE version = '077_analysis_best_move'`}
+	execUnforced(t, conn, tables, append(append(seed, rerun077...),
 		// The generation the deployed libraries record: a binary that bumped
 		// it would run every pass again over them.
 		`UPDATE metadata SET value = '5' WHERE key = 'go_backfills'`))
@@ -117,7 +119,7 @@ func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
 			for scope, pid := range pending {
 				reset = append(reset, `UPDATE analysis SET best_move = NULL WHERE tenant_id = `+scope+` AND position_id = `+strconv.FormatInt(pid, 10))
 			}
-			execUnforced(t, conn, tables, append(reset, `DELETE FROM metadata WHERE key = 'best_move_backfill'`))
+			execUnforced(t, conn, tables, append(reset, rerun077...))
 		}
 		before := map[string]state{"1": read("1"), "2": read("2")}
 		var seqBefore int64
@@ -147,13 +149,14 @@ func TestMigrate_BestMoveBackfillRewritesNothingElse(t *testing.T) {
 		if seqAfter != seqBefore {
 			t.Errorf("%s: change_log_seq %d → %d: the backfill journalled", m.who, seqBefore, seqAfter)
 		}
-		var gen, done string
+		var gen string
+		var pendingCursor *string
 		if err := conn.QueryRow(ctx, `SELECT (SELECT value FROM metadata WHERE key = 'go_backfills'),
-		        (SELECT value FROM metadata WHERE key = 'best_move_backfill')`).Scan(&gen, &done); err != nil {
+		        (SELECT value FROM metadata WHERE key = 'best_move_backfill_pending')`).Scan(&gen, &pendingCursor); err != nil {
 			t.Fatalf("read the backfill marks: %v", err)
 		}
-		if gen != "5" || done == "" {
-			t.Errorf("%s: go_backfills %q, best_move_backfill %q, want 5 and recorded", m.who, gen, done)
+		if gen != "5" || pendingCursor != nil {
+			t.Errorf("%s: go_backfills %q, best_move_backfill_pending %v, want 5 and closed", m.who, gen, pendingCursor)
 		}
 	}
 
