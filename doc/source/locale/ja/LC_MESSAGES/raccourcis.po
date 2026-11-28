@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 02:13+0100\n"
+"POT-Creation-Date: 2026-11-28 02:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1015,8 +1015,10 @@ msgid "Ctrl+Clic"
 msgstr "Ctrl+クリック"
 
 #: ../../source/raccourcis.rst:1
-msgid "Ajouter ou retirer un coup de la sélection à rouler."
-msgstr "ロールアウトする選択にムーブを追加または除外します。"
+msgid ""
+"Ajouter ou retirer un coup de la sélection, à rouler ou à réévaluer seule"
+" à la profondeur du sélecteur de la bande."
+msgstr "選択にムーブを追加または除外します。ロールアウトするか、バンドのセレクターの深さでその手だけを再評価します。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Maj+Clic"
@@ -1081,6 +1083,10 @@ msgstr ""
 #: ../../source/raccourcis.rst:267
 msgid "Panneau Eval"
 msgstr "Eval パネル"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ajouter ou retirer un coup de la sélection à rouler."
+msgstr "ロールアウトする選択にムーブを追加または除外します。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Arrêter le rollout en cours, sinon désélectionner le coup."

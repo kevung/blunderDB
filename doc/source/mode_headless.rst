@@ -1519,7 +1519,8 @@ journalise la séance par ``training.save`` comme les autres exercices, avec
 
 ``gammonnet.evaluate`` évalue une position nue (``position`` ou ``xgid``), sans
 rien lire ni écrire dans le tenant : avec dés, les meilleurs coups
-(``candidates``, 5 par défaut, au plus 20) ; sans dés, la décision de videau.
+(``candidates``, 5 par défaut, au plus 20), ou les seuls coups de ``moves``
+(au plus 20), classés entre eux ; sans dés, la décision de videau.
 ``ply`` va de 0 à 2 (2 par défaut) ; une recherche plus profonde est le travail
 d'``analyzeMissing``.
 

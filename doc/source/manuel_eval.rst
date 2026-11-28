@@ -57,9 +57,30 @@ réglable dans l'onglet *gammonNet* de la configuration) la remplace en
 arrière-plan — tout nouveau geste annule ce calcul de fond. La profondeur
 affichée dans la bande de badges, ou au sein du badge de régime sur une
 position de course, est toujours celle qui a effectivement produit le
-chiffre montré, jamais celle demandée ; elle ne se répète pas sur chaque
-ligne, puisqu'une évaluation en direct partage la même profondeur pour tous
-les coups.
+chiffre montré, jamais celle demandée ; elle ne se répète sur chaque
+ligne, dans une colonne **Profondeur**, que lorsque les coups viennent de
+profondeurs différentes, et la bande donne alors l'étendue (« 2–4-ply »).
+
+Chaque évaluation reste en mémoire le temps de la session : revenir à une
+position déjà évaluée — par un autre plateau, une autre vue (*Décision*,
+*Scores*, *Jets*) ou un autre score — réaffiche aussitôt le résultat le plus
+profond déjà calculé, sans nouvelle recherche. Une position s'y reconnaît à
+tout ce qui change l'évaluation (plateau, score, videau, dés, règles de la
+séance, élagage, nombre de candidats, table d'équités de match), et pour
+chacune seule l'évaluation la plus profonde est gardée, coup par coup. Ce
+cache n'est jamais écrit sur le disque ni exporté.
+
+Le sélecteur de profondeur de la bande relance l'évaluation affichée à la
+profondeur choisie, pour ce panneau seulement : le réglage de la
+configuration ne change pas, et un changement de position y revient. Le
+bouton voisin relance à la profondeur affichée par le sélecteur. Avec des
+coups sélectionnés (*Ctrl+clic*, *Maj+clic*, ou un clic), seuls ces coups
+sont réévalués, le bouton en portant le nombre ; les autres lignes gardent
+leur évaluation et leur profondeur, et le tableau se reclasse. Après une
+relance, la colonne **Δ** donne, pour chaque coup réévalué, l'écart de son
+équité avec celle qu'il affichait avant. Un coup réévalué seul reçoit
+exactement l'équité qu'une évaluation complète à la même profondeur lui
+donne.
 L'équité des coups candidats et de la décision de videau suit le score de
 la position : en money game elle est exprimée en points, à un score de
 match en **équité normalisée** — la même échelle que XG et GNU Backgammon,

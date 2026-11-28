@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 02:13+0100\n"
+"POT-Creation-Date: 2026-11-28 02:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1088,8 +1088,12 @@ msgid "Ctrl+Clic"
 msgstr "Ctrl+клик"
 
 #: ../../source/raccourcis.rst:1
-msgid "Ajouter ou retirer un coup de la sélection à rouler."
-msgstr "Добавить ход в выделение для роллаута или убрать его."
+msgid ""
+"Ajouter ou retirer un coup de la sélection, à rouler ou à réévaluer seule"
+" à la profondeur du sélecteur de la bande."
+msgstr ""
+"Добавить ход в выделение или убрать его — для роллаута или для отдельной "
+"переоценки на глубине селектора полосы."
 
 #: ../../source/raccourcis.rst:1
 msgid "Maj+Clic"
@@ -1160,6 +1164,10 @@ msgstr ""
 #: ../../source/raccourcis.rst:267
 msgid "Panneau Eval"
 msgstr "Панель Eval"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ajouter ou retirer un coup de la sélection à rouler."
+msgstr "Добавить ход в выделение для роллаута или убрать его."
 
 #: ../../source/raccourcis.rst:1
 msgid "Arrêter le rollout en cours, sinon désélectionner le coup."

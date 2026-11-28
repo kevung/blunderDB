@@ -886,6 +886,8 @@
         "hintPlayerBackgammon": "Jugador: probabilidad de backgammon",
         "hintOpponentWin": "Rival: probabilidad de ganar",
         "hintOpponentGammon": "Rival: probabilidad de gammon",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "Variación de equity respecto a la evaluación anterior",
         "hintOpponentBackgammon": "Rival: probabilidad de backgammon",
         "empty": "Sin análisis",
         "evaluate": "Evaluar"
@@ -1117,6 +1119,9 @@
         "batchDone": "gammonNet: {evaluated} analizada(s), {refused} rechazada(s), {failed} fallida(s)",
         "batchFailed": "gammonNet: análisis no realizado — {error}",
         "baseline": "Antes de la tirada",
+        "depthSelect": "Profundidad de la evaluación mostrada, solo para este panel",
+        "rerun": "Reevaluar la posición a esta profundidad",
+        "rerunPlays": "Reevaluar las {n} jugadas seleccionadas a esta profundidad",
         "baselineTooltip": "Valores antes de la tirada, en el eje de la lista — una referencia, no una jugada candidata. La diferencia con esta fila es la suerte de la tirada, no el mérito de una jugada."
     },
     "searchHistory": {

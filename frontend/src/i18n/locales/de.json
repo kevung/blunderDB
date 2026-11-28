@@ -886,6 +886,8 @@
         "hintPlayerBackgammon": "Spieler: Backgammon-Chance",
         "hintOpponentWin": "Gegner: Gewinnchance",
         "hintOpponentGammon": "Gegner: Gammon-Chance",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "Equity-Änderung gegenüber der vorigen Auswertung",
         "hintOpponentBackgammon": "Gegner: Backgammon-Chance",
         "empty": "Keine Analyse",
         "evaluate": "Bewerten"
@@ -1117,6 +1119,9 @@
         "batchDone": "gammonNet: {evaluated} analysiert, {refused} abgelehnt, {failed} fehlgeschlagen",
         "batchFailed": "gammonNet: Analyse nicht ausgeführt — {error}",
         "baseline": "Vor dem Wurf",
+        "depthSelect": "Tiefe der angezeigten Auswertung, nur für dieses Panel",
+        "rerun": "Position mit dieser Tiefe neu auswerten",
+        "rerunPlays": "Die {n} ausgewählten Züge mit dieser Tiefe neu auswerten",
         "baselineTooltip": "Werte vor dem Wurf, in der Achse der Liste — ein Bezugspunkt, kein Zugkandidat. Der Abstand zu dieser Zeile ist das Würfelglück, nicht das Verdienst eines Zuges."
     },
     "searchHistory": {

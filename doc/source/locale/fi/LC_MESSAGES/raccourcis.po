@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 02:13+0100\n"
+"POT-Creation-Date: 2026-11-28 02:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1089,8 +1089,12 @@ msgid "Ctrl+Clic"
 msgstr "Ctrl+napsautus"
 
 #: ../../source/raccourcis.rst:1
-msgid "Ajouter ou retirer un coup de la sélection à rouler."
-msgstr "Lisää siirto rollattavaan valintaan tai poista se siitä."
+msgid ""
+"Ajouter ou retirer un coup de la sélection, à rouler ou à réévaluer seule"
+" à la profondeur du sélecteur de la bande."
+msgstr ""
+"Lisää siirto valintaan tai poista se siitä rollattavaksi tai "
+"evaluoitavaksi uudelleen yksin kaistan valitsimen syvyydellä."
 
 #: ../../source/raccourcis.rst:1
 msgid "Maj+Clic"
@@ -1163,6 +1167,10 @@ msgstr ""
 #: ../../source/raccourcis.rst:267
 msgid "Panneau Eval"
 msgstr "Eval-paneeli"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ajouter ou retirer un coup de la sélection à rouler."
+msgstr "Lisää siirto rollattavaan valintaan tai poista se siitä."
 
 #: ../../source/raccourcis.rst:1
 msgid "Arrêter le rollout en cours, sinon désélectionner le coup."

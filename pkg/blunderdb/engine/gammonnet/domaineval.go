@@ -229,6 +229,66 @@ func EvaluatePositionWithMET(searcher *Searcher, pos domain.Position, met *engin
 	return evaluateConfigured(&gnPos, &pos, searcher, cfg, state, candidates)
 }
 
+// EvaluatePlaysWithMET values only the named plays of pos, dice set, at ply,
+// best first, in pos's referential as EvaluatePositionWithMET reports it: a
+// play gets the equity the full search at that depth gives it when it reaches
+// the deepest pass (Searcher.ScorePlays), so a targeted re-run and a full one
+// agree on every play they share. EquityError is measured against the best of
+// these plays only. A name that is not a legal play here is an error. searcher
+// may be nil; otherwise it is re-aimed like EvaluatePositionWith's.
+func EvaluatePlaysWithMET(searcher *Searcher, pos domain.Position, met *engine.MET, ply, pruneK int, plays []string) ([]domain.CheckerMove, error) {
+	if pos.Dice[0] < 1 || pos.Dice[0] > 6 || pos.Dice[1] < 1 || pos.Dice[1] > 6 {
+		return nil, fmt.Errorf("gammonnet: plays need dice, got %v", pos.Dice)
+	}
+	if len(plays) == 0 {
+		return nil, fmt.Errorf("gammonnet: no play to evaluate")
+	}
+	gnPos, err := FromDomain(&pos)
+	if err != nil {
+		return nil, err
+	}
+	cfg, state, err := ConfigForPositionMET(&pos, met, ply, pruneK)
+	if err != nil {
+		return nil, err
+	}
+	if searcher == nil {
+		fresh, err := NewSearcher(cfg)
+		if err != nil {
+			return nil, err
+		}
+		searcher = fresh.WithCores(CoresFor(cfg.Ply))
+	} else if err := searcher.Reconfigure(cfg); err != nil {
+		return nil, err
+	}
+	scale, ok := NewEquityScale(state)
+	if !ok {
+		return nil, fmt.Errorf("gammonnet: no equity referential at score %v", pos.Score)
+	}
+
+	notations := notationIndex(domain.LegalMoves(&pos), pos.PlayerOnRoll)
+	known := make(map[string]bool, len(notations))
+	for _, n := range notations {
+		known[n] = true
+	}
+	wanted := make(map[string]bool, len(plays))
+	for _, p := range plays {
+		if !known[p] {
+			return nil, fmt.Errorf("gammonnet: %q is not a legal play here", p)
+		}
+		wanted[p] = true
+	}
+
+	out := searcher.scratch()
+	n, err := searcher.ScorePlays(&gnPos, pos.Dice[0], pos.Dice[1], func(r *Position) bool { return wanted[notations[*r]] }, out)
+	if err != nil {
+		return nil, err
+	}
+	if n == 0 {
+		return nil, nil
+	}
+	return candidateRows(out[:n], notations, DepthLabel(cfg.Ply), scale), nil
+}
+
 // RankAllPlaysWithMET values EVERY legal play of pos, dice set, at 0-ply with
 // the pruning pass off, best first, in pos's referential as
 // EvaluatePositionWithMET reports it. A transcriber picks the play that was
@@ -367,7 +427,11 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 	}
 
 	notations := notationIndex(domain.LegalMoves(pos), pos.PlayerOnRoll)
+	return candidateRows(out, notations, depthLabel, scale), nil
+}
 
+// candidateRows renders out, best first, as domain rows in pos's referential.
+func candidateRows(out []Candidate, notations map[Position]string, depthLabel string, scale EquityScale) []domain.CheckerMove {
 	// out is best-first, so each loss is bestEquity-equity (nil for the
 	// best), as ingest/merge.go does. Both sides are converted first
 	// (ADR-0019): the map is increasing and affine, so the ranking holds and
@@ -403,7 +467,7 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 			OpponentBackgammonChance: 100 * float64(mine[PLoseBackgammon]),
 		})
 	}
-	return moves, nil
+	return moves
 }
 
 // notationIndex maps each legal play's resulting board (a comparable

@@ -9,7 +9,8 @@
     import { positionRefusal } from '../services/positionRefusal.js';
     import { saveScratchBoard } from '../services/scratchBoard.js';
     import { GetEpcChallenge, SaveEpcChallenge, GetGammonNetDisplayPly, GetGammonNetPruneK, GetGammonNetCandidates } from '../../wailsjs/go/main/Config.js';
-    import { EvaluatePositionImmediate, StartEvaluationAtRest, CancelEvaluationAtRest } from '../../wailsjs/go/gui/App.js';
+    import { EvaluatePositionImmediate, StartEvaluationAtRest, StartPlaysEvaluationAtRest, CancelEvaluationAtRest } from '../../wailsjs/go/gui/App.js';
+    import { evalCache, evalCacheKey, equityDeltas, mergeMoves, plyOf } from '../services/evalCache.js';
     import { EventsOn, BrowserOpenURL } from '../../wailsjs/runtime/runtime.js';
     import { logger } from '../utils/logger.js';
     import { isBareLetter, isRolloutKey } from '../utils/keys.js';
@@ -118,6 +119,26 @@
     let evalRestTimer = null;
     let evalGeneration = 0; // guards a late "done" against a position the user already left
     let escalationSignature = ''; // the board of the escalation evalGeneration names
+    // What the search evalGeneration names is for: the at-rest escalation ('auto'), a re-run of
+    // the position at the panel's depth ('local'), or of the selected plays only ('plays'); key
+    // is its evalCache entry, before the rows on screen when it started.
+    /** @type {{ kind: 'auto' | 'local' | 'plays', key: string, before: any[] }} */
+    let pendingRun = { kind: 'auto', key: '', before: [] };
+
+    const PLY_OPTIONS = [0, 1, 2, 3, 4];
+    // The configured display depth, and the panel's own while the position stays: a new
+    // position goes back to the configuration, so a deep check never slows the next gesture.
+    let globalPly = $state(2);
+    let localPly = $state(/** @type {number | null} */ (null));
+    let panelPly = $derived(localPly ?? globalPly);
+    let rerunning = $state(false);
+    // The equity change of each play the last re-run touched (the Δ column), null before one.
+    let evalDeltas = $state(/** @type {Map<string, number> | null} */ (null));
+
+    /** The cache entry as an answer applyEvalResult takes. @param {any} entry @param {number} metId */
+    function entryResult(entry, metId) {
+        return { metId, moves: entry.moves, cube: entry.cube, cubeVerdict: entry.cubeVerdict, race: entry.race, preRoll: entry.preRoll };
+    }
 
     // The signature is the effect's only tracked dependency; everything else is
     // untrack()ed, since reading the $state it writes loops
@@ -185,6 +206,9 @@
         selectedMoveStore.set(null);
         pickedMoves = [];
         anchor = null;
+        localPly = null;
+        evalDeltas = null;
+        rerunning = false;
         evalSettled = false;
         evalFailed = false;
         evalFailedMessage = '';
@@ -205,7 +229,9 @@
                 GetGammonNetCandidates().then((candidates) =>
                     EvaluatePositionImmediate(/** @type {any} */ (pos), pruneK, candidates).then((result) => {
                         if (generation !== evalGeneration) return; // superseded while awaiting
-                        applyEvalResult(result, signature);
+                        // A deeper answer already computed for this position shows at once.
+                        const entry = result?.refused ? null : evalCache.put(evalCacheKey(pos, { pruneK, candidates }), result);
+                        applyEvalResult(entry ? entryResult(entry, result.metId ?? 0) : result, signature);
                     })
                 )
             )
@@ -221,6 +247,11 @@
             Promise.all([GetGammonNetDisplayPly(), GetGammonNetPruneK(), GetGammonNetCandidates()])
                 .then(([ply, pruneK, candidates]) => {
                     if (generation !== evalGeneration) return;
+                    globalPly = ply;
+                    const key = evalCacheKey(pos, { pruneK, candidates });
+                    // Already as deep in the cache (shown by the 0-ply tier): no search.
+                    if ((evalCache.get(key, evalMetId)?.ply ?? -1) >= ply) return;
+                    pendingRun = { kind: 'auto', key, before: [] };
                     StartEvaluationAtRest(/** @type {any} */ (pos), ply, pruneK, candidates, generation).catch((error) => {
                         logger.error('gammonNet evaluation-at-rest failed to start:', error);
                         if (generation !== evalGeneration) return;
@@ -235,6 +266,60 @@
                     evalFailedMessage = String(error);
                 });
         }, EVAL_REST_DELAY_MS);
+    }
+
+    // Re-runs at the panel's depth, without touching the configuration: the selected plays only
+    // when there are (the others keep their rows and depths), else the whole position.
+    /** @param {number} ply */
+    function rerunAt(ply) {
+        const pos = $positionStore;
+        if (!isActive || !pos) return;
+        localPly = ply;
+        evalGeneration += 1;
+        const generation = evalGeneration;
+        escalationSignature = positionSignature;
+        if (evalRestTimer) {
+            clearTimeout(evalRestTimer);
+            evalRestTimer = null;
+        }
+        const plays = rolloutSelection();
+        rerunning = true;
+        evalFailed = false;
+        Promise.all([GetGammonNetPruneK(), GetGammonNetCandidates()])
+            .then(([pruneK, candidates]) => {
+                if (generation !== evalGeneration) return;
+                const key = evalCacheKey(pos, { pruneK, candidates });
+                pendingRun = { kind: plays.length ? 'plays' : 'local', key, before: evalMoves };
+                const started = plays.length
+                    ? StartPlaysEvaluationAtRest(/** @type {any} */ (pos), ply, pruneK, plays, generation)
+                    : StartEvaluationAtRest(/** @type {any} */ (pos), ply, pruneK, candidates, generation);
+                return started;
+            })
+            .catch((error) => {
+                logger.error('gammonNet re-run failed to start:', error);
+                if (generation !== evalGeneration) return;
+                rerunning = false;
+                evalFailed = true;
+                evalFailedMessage = String(error);
+            });
+    }
+
+    /** An answer of the search evalGeneration names, folded into the cache, then shown. @param {any} result */
+    function applyRunResult(result) {
+        const run = pendingRun;
+        rerunning = false;
+        const entry = result?.refused ? null : evalCache.put(run.key, result);
+        if (run.kind === 'auto' || !entry) {
+            applyEvalResult(entry ? entryResult(entry, result.metId ?? 0) : result, escalationSignature);
+            return;
+        }
+        // A re-run shows what it computed, deeper or not, and how far each play moved.
+        evalDeltas = equityDeltas(run.before, result.moves);
+        if (run.kind === 'plays') {
+            applyEvalResult({ metId: result.metId ?? 0, moves: mergeMoves(evalMoves, result.moves ?? []), race: evalRaceOverride, preRoll: evalPreRoll }, escalationSignature);
+        } else {
+            applyEvalResult(result, escalationSignature);
+        }
     }
 
     // The depth label names what actually produced the result; "cancelled"
@@ -281,11 +366,14 @@
             // names the escalation it belongs to.
             EventsOn('gammonnet-eval:done', (result) => {
                 if (result?.tag !== evalGeneration) return;
-                applyEvalResult(result, escalationSignature);
+                applyRunResult(result);
             }),
-            EventsOn('gammonnet-eval:cancelled', () => {}),
+            EventsOn('gammonnet-eval:cancelled', (e) => {
+                if (e?.tag === evalGeneration) rerunning = false;
+            }),
             EventsOn('gammonnet-eval:error', (e) => {
                 if (e?.tag !== evalGeneration) return;
+                rerunning = false;
                 logger.error('gammonNet evaluation-at-rest error:', e);
                 evalFailed = true;
                 evalFailedMessage = String(e);
@@ -565,7 +653,13 @@
     }
 
     // Off a race, depth is named once in the strip (ADR-0018 rule 4).
-    let genericDepthLabel = $derived(data.race ? null : hasDiceSet ? (evalMoves[0]?.analysisDepth ?? null) : (evalCubeAnalysis?.analysisDepth ?? null));
+    // Rows from several depths (a targeted re-run) each name theirs, and the strip the span.
+    let moveDepths = $derived([...new Set(evalMoves.map((m) => plyOf(m.analysisDepth)))].filter((p) => p >= 0).sort((a, b) => a - b));
+    let mixedDepths = $derived(moveDepths.length > 1);
+    let genericDepthLabel = $derived(
+        data.race ? null : hasDiceSet ? (mixedDepths ? `${moveDepths[0]}–${moveDepths.at(-1)}-ply` : (evalMoves[0]?.analysisDepth ?? null)) : (evalCubeAnalysis?.analysisDepth ?? null)
+    );
+    let rerunPlays = $derived(hasDiceSet ? selectedPlays({ picked: pickedMoves, anchor, selected: $selectedMoveStore }).length : 0);
 </script>
 
 <!-- Present in every state, errors included: a failed evaluation leaves the position savable. -->
@@ -615,6 +709,39 @@
             {/if}
             {#if genericDepthLabel}
                 <span class="badge badge-evaluated" title={$t('analysis.analysisDepth')}>{genericDepthLabel}</span>
+            {/if}
+            {#if $evalViewStore === EVAL_VIEW.DECISION}
+                <span class="depth-rerun">
+                    <select
+                        data-testid="eval-depth"
+                        value={panelPly}
+                        title={$t('eval.depthSelect')}
+                        aria-label={$t('eval.depthSelect')}
+                        onchange={(e) => rerunAt(Number(/** @type {HTMLSelectElement} */ (e.currentTarget).value))}
+                    >
+                        {#each PLY_OPTIONS as ply (ply)}
+                            <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
+                        {/each}
+                    </select>
+                    <button
+                        type="button"
+                        class="board-reset"
+                        class:running={rerunning}
+                        data-testid="eval-rerun"
+                        onclick={() => rerunAt(panelPly)}
+                        title={rerunPlays ? $t('eval.rerunPlays', { n: rerunPlays }) : $t('eval.rerun')}
+                        aria-label={rerunPlays ? $t('eval.rerunPlays', { n: rerunPlays }) : $t('eval.rerun')}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
+                            />
+                        </svg>
+                        {#if rerunPlays}<span class="rerun-count">{rerunPlays}</span>{/if}
+                    </button>
+                </span>
             {/if}
         {/if}
         <button class="eval-engine-badge" onclick={openGammonNetRepo} title={$t('eval.engineTooltip')} aria-label={$t('eval.engineTooltip')}>?</button>
@@ -774,6 +901,8 @@
                                 onRowClick={handleMoveRowClick}
                                 onRowContextMenu={handleRowContextMenu}
                                 showProvenance={false}
+                                showDepth={mixedDepths}
+                                deltas={evalDeltas}
                                 baseline={baselineFacts}
                                 {isMoney}
                             />
@@ -979,6 +1108,32 @@
     .board-reset svg {
         width: 14px;
         height: 14px;
+    }
+
+    .depth-rerun {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .depth-rerun select {
+        font-size: var(--font-size-small);
+    }
+
+    .board-reset.running {
+        color: var(--color-primary);
+        animation: rerun-pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes rerun-pulse {
+        50% {
+            opacity: 0.4;
+        }
+    }
+
+    .rerun-count {
+        font-size: var(--font-size-small);
+        margin-left: 1px;
     }
 
     .add-position:hover:not(:disabled) {

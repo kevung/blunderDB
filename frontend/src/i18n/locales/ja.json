@@ -886,6 +886,8 @@
         "hintPlayerBackgammon": "プレイヤー: バックギャモン勝率",
         "hintOpponentWin": "相手: 勝率",
         "hintOpponentGammon": "相手: ギャモン勝率",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "前回の評価からのエクイティの変化",
         "hintOpponentBackgammon": "相手: バックギャモン勝率",
         "empty": "解析なし",
         "evaluate": "評価"
@@ -1117,6 +1119,9 @@
         "batchDone": "gammonNet: {evaluated} 件解析、{refused} 件却下、{failed} 件失敗",
         "batchFailed": "gammonNet：解析を実行できません — {error}",
         "baseline": "ロール前",
+        "depthSelect": "表示中の評価の深さ（このパネルのみ）",
+        "rerun": "この深さで局面を再評価",
+        "rerunPlays": "選択した{n}手をこの深さで再評価",
         "baselineTooltip": "ロール前の数値。リストと同じ軸で表示される基準値であり、候補手ではありません。この行との差はロールの運であり、指し手の巧拙ではありません。"
     },
     "searchHistory": {

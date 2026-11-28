@@ -886,6 +886,8 @@
         "hintPlayerBackgammon": "Player: chance to win a backgammon",
         "hintOpponentWin": "Opponent: chance to win",
         "hintOpponentGammon": "Opponent: chance to win a gammon",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "Equity change from the previous evaluation",
         "hintOpponentBackgammon": "Opponent: chance to win a backgammon",
         "empty": "No analysis",
         "evaluate": "Evaluate"
@@ -1117,6 +1119,9 @@
         "batchDone": "gammonNet: {evaluated} analyzed, {refused} refused, {failed} failed",
         "batchFailed": "gammonNet: analysis not run — {error}",
         "baseline": "Before the roll",
+        "depthSelect": "Depth of the evaluation shown, for this panel only",
+        "rerun": "Re-evaluate the position at this depth",
+        "rerunPlays": "Re-evaluate the {n} selected moves at this depth",
         "baselineTooltip": "Pre-roll figures, in the axis of the list — a reference, not a candidate move. The gap to this row is the luck of the roll, not the merit of a play."
     },
     "searchHistory": {

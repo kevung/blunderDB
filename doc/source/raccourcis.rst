@@ -252,7 +252,7 @@ Panneau d'analyse
    :align: center
 
    "Clic", "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
-   "Ctrl+Clic", "Ajouter ou retirer un coup de la sélection à rouler."
+   "Ctrl+Clic", "Ajouter ou retirer un coup de la sélection, à rouler ou à réévaluer seule à la profondeur du sélecteur de la bande."
    "Maj+Clic", "Étendre la sélection jusqu'au coup cliqué."
    "Clic droit", "Menu du coup : rouler les coups sélectionnés avec le réglage choisi, ou annuler le rollout en cours ; copier la position et l'analyse, ou la position et les coups sélectionnés."
    "HAUT, k", "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."

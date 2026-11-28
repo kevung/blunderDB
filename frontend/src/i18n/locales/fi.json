@@ -886,6 +886,8 @@
         "hintPlayerBackgammon": "Pelaaja: backgammonin todennäköisyys",
         "hintOpponentWin": "Vastustaja: voittotodennäköisyys",
         "hintOpponentGammon": "Vastustaja: gammonin todennäköisyys",
+        "equityDelta": "Δ",
+        "hintEquityDelta": "Equityn muutos edelliseen arvioon",
         "hintOpponentBackgammon": "Vastustaja: backgammonin todennäköisyys",
         "empty": "Ei analyysia",
         "evaluate": "Arvioi"
@@ -1117,6 +1119,9 @@
         "batchDone": "gammonNet: {evaluated} analysoitu, {refused} hylätty, {failed} epäonnistui",
         "batchFailed": "gammonNet: analyysia ei tehty — {error}",
         "baseline": "Ennen heittoa",
+        "depthSelect": "Näytetyn arvion syvyys, vain tässä paneelissa",
+        "rerun": "Arvioi asema uudelleen tällä syvyydellä",
+        "rerunPlays": "Arvioi {n} valittua siirtoa uudelleen tällä syvyydellä",
         "baselineTooltip": "Arvot ennen heittoa, listan akselissa — vertailukohta, ei ehdokassiirto. Ero tähän riviin on heiton onni, ei siirron ansio."
     },
     "searchHistory": {

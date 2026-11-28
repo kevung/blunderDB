@@ -490,6 +490,10 @@ export function StartPaperArchiveImport(arg1) {
   return window['go']['gui']['App']['StartPaperArchiveImport'](arg1);
 }
 
+export function StartPlaysEvaluationAtRest(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['gui']['App']['StartPlaysEvaluationAtRest'](arg1, arg2, arg3, arg4, arg5);
+}
+
 export function StartPositionSheet(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartPositionSheet'](arg1, arg2, arg3);
 }

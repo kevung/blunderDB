@@ -13,6 +13,10 @@
     // isMoney (ADR-0016 point 6): the equity header's referential; undefined keeps it plain.
     // projection (ADR-0048 decision 4): `judge` (nine columns) or `identify`
     // (move, equity, error), defined in utils/analysisRows.js.
+    // showDepth: a depth column for a list whose rows come from several depths (EvalPanel after
+    // a targeted re-run); a list at one depth names it once, above the table.
+    // deltas (Map play → equity change): the Δ column after a re-run, empty for the plays it
+    // did not touch; null, no column.
     // selectedMoves: the plays picked for a rollout (Ctrl/Shift+click), highlighted with selectedMove.
     // rollouts (utils/rolloutRows.js): a play that was rolled out carries its result in a last
     // column, which only exists when one has; the full detail is the cell's tooltip.
@@ -36,8 +40,15 @@
         showProvenance = true,
         baseline = null,
         isMoney = undefined,
-        projection = 'judge'
+        projection = 'judge',
+        showDepth = false,
+        deltas = null
     } = $props();
+
+    let depthCol = $derived(showDepth && !(showProvenance && projection !== 'identify'));
+    let deltaCol = $derived(!!deltas);
+    /** @param {number | undefined} d */
+    const deltaCell = (d) => (d === undefined ? '' : `${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(3)}`);
 
     let block = $derived(checkerRows(moves, { t: $t, isPlayedMove, showProvenance, baseline, isMoney, projection }));
 
@@ -112,6 +123,12 @@
                         }}>{block.header[i]}{getSortIndicator(column)}</th
                     >
                 {/each}
+                {#if depthCol}
+                    <th>{$t('analysis.depth')}</th>
+                {/if}
+                {#if deltaCol}
+                    <th title={$t('analysis.hintEquityDelta')}>{$t('analysis.equityDelta')}</th>
+                {/if}
                 {#if showRollout}
                     <th class="rollout-col" title={$t('rollout.columnHint')}>{rolloutHeader}</th>
                 {/if}
@@ -124,6 +141,8 @@
                     {#each block.baseline.cells as cell, i (i)}
                         <td>{cell}</td>
                     {/each}
+                    {#if depthCol}<td></td>{/if}
+                    {#if deltaCol}<td></td>{/if}
                 </tr>
             </tbody>
         {/if}
@@ -145,6 +164,12 @@
                     {#each row.cells as cell, i (i)}
                         <td>{cell}</td>
                     {/each}
+                    {#if depthCol}
+                        <td data-testid="row-depth">{row.move.analysisDepth ?? ''}</td>
+                    {/if}
+                    {#if deltaCol}
+                        <td data-testid="row-delta">{deltaCell(deltas?.get(row.move.move))}</td>
+                    {/if}
                     {#if showRollout}
                         <td class="rollout-col" class:live={rolled?.live} title={rolloutTitle(rolled)} data-testid={rolled ? 'rollout-cell' : undefined}>{rolloutCell(rolled)}</td>
                     {/if}

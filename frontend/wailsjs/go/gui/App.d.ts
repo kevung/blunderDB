@@ -255,6 +255,8 @@ export function StartPaperArchiveExport(arg1:Array<number>,arg2:string):Promise<
 
 export function StartPaperArchiveImport(arg1:Array<string>):Promise<number>;
 
+export function StartPlaysEvaluationAtRest(arg1:domain.Position,arg2:number,arg3:number,arg4:Array<string>,arg5:number):Promise<void>;
+
 export function StartPositionSheet(arg1:printsheet.PositionSource,arg2:printsheet.PositionsOptions,arg3:string):Promise<number>;
 
 export function StartRollMap(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<void>;

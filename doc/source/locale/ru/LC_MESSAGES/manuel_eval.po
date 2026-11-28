@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 01:58+0100\n"
+"POT-Creation-Date: 2026-11-28 02:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -128,29 +128,9 @@ msgid ""
 " calcul de fond. La profondeur affichée dans la bande de badges, ou au "
 "sein du badge de régime sur une position de course, est toujours celle "
 "qui a effectivement produit le chiffre montré, jamais celle demandée ; "
-"elle ne se répète pas sur chaque ligne, puisqu'une évaluation en direct "
-"partage la même profondeur pour tous les coups. L'équité des coups "
-"candidats et de la décision de videau suit le score de la position : en "
-"money game elle est exprimée en points, à un score de match en **équité "
-"normalisée** — la même échelle que XG et GNU Backgammon, où gagner la "
-"valeur du videau courant vaut +1 et la perdre −1 — jamais mélangées dans "
-"un même tableau. L'en-tête de la colonne le dit explicitement plutôt que "
-"de laisser deviner l'échelle : « Équité (money) » en money game, « Équité"
-" (match) » à un score de match. Elle tient compte du **videau vivant** : "
-"la recherche valorise chaque position finale par le modèle de videau "
-"(Janowski, efficacité mesurée) dans l'état du videau de la position, "
-"comme le font XG et GNU Backgammon en évaluation *cubeful*. C'est ce qui "
-"rend visibles au score les effets gammon-go et gammon-save — à "
-"4-away/2-away, le joueur mené joue 8/2 6/2 sur un 6-4 d'ouverture parce "
-"que son double précoce donnera au gammon la valeur du match, ce qu'une "
-"évaluation sans videau ne peut pas voir. La ligne *avant le jet*, elle, "
-"reste une équité **cubeless** : c'est un fait de la position, pas une "
-"décision. L'évaluation n'est jamais enregistrée : c'est un calcul, pas "
-"une analyse. Cliquer un coup candidat l'affiche sur le plateau sous forme"
-" de flèches, exactement comme dans le panneau Analyse. Le bouton **?** "
-"discret, dans la bande de badges, mène au dépôt du moteur `gammonNet "
-"<https://github.com/kevung/gammonNet>`_ ; l'attribution complète (réseau "
-"Strehl, configuration gammonNet) figure dans les Remerciements de l'aide."
+"elle ne se répète sur chaque ligne, dans une colonne **Profondeur**, que "
+"lorsque les coups viennent de profondeurs différentes, et la bande donne "
+"alors l'étendue (« 2–4-ply »)."
 msgstr ""
 "Таблица фактов и решение вычисляются gammonNet, встроенным в приложение, "
 "без XG и gnubg. Расчёт следует за позицией, никогда не замораживая "
@@ -160,30 +140,97 @@ msgstr ""
 " в фоне — любое новое действие отменяет этот фоновый расчёт. Глубина, "
 "показанная в полосе значков или внутри значка режима на гоночной позиции,"
 " всегда та, что действительно дала показанное число, а не запрошенная; "
-"она не повторяется в каждой строке, поскольку живая оценка использует "
-"одну и ту же глубину для всех ходов. Эквити кандидатных ходов и решения "
-"по кубу следует счёту позиции: в money game она выражается в пунктах, при"
-" счёте матча — в **нормализованной эквити**, той же шкале, что у XG и GNU"
-" Backgammon, где выигрыш текущей стоимости куба равен +1, а проигрыш −1, "
-"— и они никогда не смешиваются в одной таблице. Заголовок столбца прямо "
-"называет её, вместо того чтобы оставлять шкалу угадывать: «Equity "
-"(money)» в money game, «Equity (match)» при счёте матча. Она учитывает "
-"**живой куб**: поиск оценивает каждую конечную позицию через модель куба "
-"(Яновский, измеренная эффективность) в состоянии куба данной позиции — "
-"так же, как это делают XG и GNU Backgammon в *cubeful*-оценке. Именно это"
-" делает видимыми при счёте эффекты gammon-go и gammon-save — при "
-"4-away/2-away отстающий игрок играет 8/2 6/2 на открывающем 6-4, потому "
-"что его ранний дабл придаст гаммону цену матча — то, чего оценка без куба"
-" увидеть не может. Строка *до броска*, напротив, остаётся "
-"**cubeless**-эквити: это факт о позиции, а не решение. Оценка никогда не "
-"сохраняется: это расчёт, а не анализ. Щелчок по кандидатному ходу "
-"показывает его на доске стрелками, точно как в панели анализа. Неброская "
-"кнопка **?** в полосе значков ведёт в репозиторий движка `gammonNet "
-"<https://github.com/kevung/gammonNet>`_; полное указание авторства (сеть "
-"Strehl, конфигурация gammonNet) приведено в разделе «Благодарности» "
-"справки."
+"она повторяется в каждой строке, в столбце **Глубина**, только когда ходы"
+" получены на разных глубинах, и тогда полоса показывает диапазон "
+"(«2–4-ply»)."
 
-#: ../../source/manuel_eval.rst:87
+#: ../../source/manuel_eval.rst:64
+msgid ""
+"Chaque évaluation reste en mémoire le temps de la session : revenir à une"
+" position déjà évaluée — par un autre plateau, une autre vue (*Décision*,"
+" *Scores*, *Jets*) ou un autre score — réaffiche aussitôt le résultat le "
+"plus profond déjà calculé, sans nouvelle recherche. Une position s'y "
+"reconnaît à tout ce qui change l'évaluation (plateau, score, videau, dés,"
+" règles de la séance, élagage, nombre de candidats, table d'équités de "
+"match), et pour chacune seule l'évaluation la plus profonde est gardée, "
+"coup par coup. Ce cache n'est jamais écrit sur le disque ni exporté."
+msgstr ""
+"Каждая оценка хранится в памяти в течение сеанса: возврат к уже оценённой"
+" позиции — через другую доску, другой вид (*Решение*, *Счета*, *Броски*) "
+"или другой счёт — сразу снова показывает самый глубокий уже вычисленный "
+"результат, без нового поиска. Позиция узнаётся там по всему, что меняет "
+"оценку (доска, счёт, куб, кости, правила сеанса, отсечение, число "
+"кандидатов, таблица эквити матча), и для каждой сохраняется только самая "
+"глубокая оценка, ход за ходом. Этот кэш никогда не записывается на диск и"
+" не экспортируется."
+
+#: ../../source/manuel_eval.rst:73
+msgid ""
+"Le sélecteur de profondeur de la bande relance l'évaluation affichée à la"
+" profondeur choisie, pour ce panneau seulement : le réglage de la "
+"configuration ne change pas, et un changement de position y revient. Le "
+"bouton voisin relance à la profondeur affichée par le sélecteur. Avec des"
+" coups sélectionnés (*Ctrl+clic*, *Maj+clic*, ou un clic), seuls ces "
+"coups sont réévalués, le bouton en portant le nombre ; les autres lignes "
+"gardent leur évaluation et leur profondeur, et le tableau se reclasse. "
+"Après une relance, la colonne **Δ** donne, pour chaque coup réévalué, "
+"l'écart de son équité avec celle qu'il affichait avant. Un coup réévalué "
+"seul reçoit exactement l'équité qu'une évaluation complète à la même "
+"profondeur lui donne. L'équité des coups candidats et de la décision de "
+"videau suit le score de la position : en money game elle est exprimée en "
+"points, à un score de match en **équité normalisée** — la même échelle "
+"que XG et GNU Backgammon, où gagner la valeur du videau courant vaut +1 "
+"et la perdre −1 — jamais mélangées dans un même tableau. L'en-tête de la "
+"colonne le dit explicitement plutôt que de laisser deviner l'échelle : « "
+"Équité (money) » en money game, « Équité (match) » à un score de match. "
+"Elle tient compte du **videau vivant** : la recherche valorise chaque "
+"position finale par le modèle de videau (Janowski, efficacité mesurée) "
+"dans l'état du videau de la position, comme le font XG et GNU Backgammon "
+"en évaluation *cubeful*. C'est ce qui rend visibles au score les effets "
+"gammon-go et gammon-save — à 4-away/2-away, le joueur mené joue 8/2 6/2 "
+"sur un 6-4 d'ouverture parce que son double précoce donnera au gammon la "
+"valeur du match, ce qu'une évaluation sans videau ne peut pas voir. La "
+"ligne *avant le jet*, elle, reste une équité **cubeless** : c'est un fait"
+" de la position, pas une décision. L'évaluation n'est jamais enregistrée "
+": c'est un calcul, pas une analyse. Cliquer un coup candidat l'affiche "
+"sur le plateau sous forme de flèches, exactement comme dans le panneau "
+"Analyse. Le bouton **?** discret, dans la bande de badges, mène au dépôt "
+"du moteur `gammonNet <https://github.com/kevung/gammonNet>`_ ; "
+"l'attribution complète (réseau Strehl, configuration gammonNet) figure "
+"dans les Remerciements de l'aide."
+msgstr ""
+"Селектор глубины в полосе перезапускает показанную оценку на выбранной "
+"глубине, только для этой панели: настройка в конфигурации не меняется, а "
+"при смене позиции возвращается к ней. Соседняя кнопка перезапускает на "
+"глубине, показанной селектором. При выбранных ходах (*Ctrl+клик*, "
+"*Shift+клик* или щелчок) переоцениваются только эти ходы, а на кнопке "
+"указано их число; остальные строки сохраняют свою оценку и глубину, и "
+"таблица пересортировывается. После перезапуска столбец **Δ** показывает "
+"для каждого переоценённого хода разницу между его эквити и тем, что он "
+"показывал раньше. Ход, переоценённый отдельно, получает ровно ту эквити, "
+"которую ему даёт полная оценка на той же глубине. Эквити кандидатных "
+"ходов и решения по кубу следует счёту позиции: в money game она "
+"выражается в пунктах, при счёте матча — в **нормализованной эквити**, той"
+" же шкале, что у XG и GNU Backgammon, где выигрыш текущей стоимости куба "
+"равен +1, а проигрыш −1, — и они никогда не смешиваются в одной таблице. "
+"Заголовок столбца прямо называет её, вместо того чтобы оставлять шкалу "
+"угадывать: «Equity (money)» в money game, «Equity (match)» при счёте "
+"матча. Она учитывает **живой куб**: поиск оценивает каждую конечную "
+"позицию через модель куба (Яновский, измеренная эффективность) в "
+"состоянии куба данной позиции — так же, как это делают XG и GNU "
+"Backgammon в *cubeful*-оценке. Именно это делает видимыми при счёте "
+"эффекты gammon-go и gammon-save — при 4-away/2-away отстающий игрок "
+"играет 8/2 6/2 на открывающем 6-4, потому что его ранний дабл придаст "
+"гаммону цену матча — то, чего оценка без куба увидеть не может. Строка "
+"*до броска*, напротив, остаётся **cubeless**-эквити: это факт о позиции, "
+"а не решение. Оценка никогда не сохраняется: это расчёт, а не анализ. "
+"Щелчок по кандидатному ходу показывает его на доске стрелками, точно как "
+"в панели анализа. Неброская кнопка **?** в полосе значков ведёт в "
+"репозиторий движка `gammonNet <https://github.com/kevung/gammonNet>`_; "
+"полное указание авторства (сеть Strehl, конфигурация gammonNet) приведено"
+" в разделе «Благодарности» справки."
+
+#: ../../source/manuel_eval.rst:108
 msgid ""
 "Le panneau **roule** la position comme le panneau Analyse (voir "
 ":ref:`rollouts`) : *Ctrl+clic* et *Maj+clic* sélectionnent des coups, le "
@@ -209,7 +256,7 @@ msgstr ""
 "прежней. Роллаут, запущенный до изменения доски, не показывается на новой"
 " позиции."
 
-#: ../../source/manuel_eval.rst:99
+#: ../../source/manuel_eval.rst:120
 msgid ""
 "Les deux icônes à gauche du bouton *Ajouter à la base* remettent le "
 "plateau à la position de départ du backgammon, ou le vident ; elles font "
@@ -224,7 +271,7 @@ msgstr ""
 "деньги, куб возвращается в центр, кости убираются, а ход возвращается "
 "нижнему игроку; показанная оценка пересчитывается для новой позиции."
 
-#: ../../source/manuel_eval.rst:106
+#: ../../source/manuel_eval.rst:127
 msgid ""
 "Le bouton **Ajouter à la base**, en fin de bande de badges, après la case"
 " *Défi*, enregistre dans la base la position posée sur le plateau ; "
@@ -276,7 +323,7 @@ msgstr ""
 "верхний игрок снял все свои шашки); её всплывающая подсказка называет "
 "причину."
 
-#: ../../source/manuel_eval.rst:129
+#: ../../source/manuel_eval.rst:150
 msgid ""
 "L'utilisateur édite la position des pions sur l'ensemble du plateau, "
 "exactement comme en mode édition : clic gauche place un pion du joueur du"
@@ -296,7 +343,7 @@ msgstr ""
 "касается шашек или обобщённого куба в зависимости от того, выставлены ли "
 "кости."
 
-#: ../../source/manuel_eval.rst:138
+#: ../../source/manuel_eval.rst:159
 msgid ""
 "Dans chaque tableau de faits, une ligne par joueur — repérée par sa "
 "pastille de couleur, le joueur noir étant toujours en bas. Le premier "
@@ -323,7 +370,7 @@ msgstr ""
 " сами таблицы фактов: четыре столбца, которые они несли, только что "
 "сменили ось — на игрока на ходу, во главе списка ходов."
 
-#: ../../source/manuel_eval.rst:151
+#: ../../source/manuel_eval.rst:172
 msgid ""
 "La décision de videau a toujours la même forme, quelle que soit l'origine"
 " des chiffres — table exacte, régime évalué ou évaluation gammonNet "
@@ -345,7 +392,7 @@ msgstr ""
 "выделению и по пустой ячейке отрыва. Если куб уже был передан, варианты "
 "читаются как *без редабла*, *редабл/тейк*, *редабл/пас*."
 
-#: ../../source/manuel_eval.rst:161
+#: ../../source/manuel_eval.rst:182
 msgid ""
 "Une dernière ligne donne le **verdict**. Il prend quatre valeurs : *pas "
 "de double*, *double, prend*, *double, passe* et *trop bon pour doubler*, "
@@ -362,7 +409,7 @@ msgstr ""
 "единственное место, где панель говорит, что вердикта **нет**, вместо того"
 " чтобы создавать впечатление идущего расчёта:"
 
-#: ../../source/manuel_eval.rst:168
+#: ../../source/manuel_eval.rst:189
 msgid ""
 "*pas de décision* — le régime n'y a pas droit ; le verdict de videau "
 "n'est jamais estimé (voir le badge *estimé*) ;"
@@ -370,7 +417,7 @@ msgstr ""
 "*нет решения* — режим не имеет на него права; вердикт по кубу никогда не "
 "оценивается приближённо (см. значок *оценка*);"
 
-#: ../../source/manuel_eval.rst:170
+#: ../../source/manuel_eval.rst:191
 msgid ""
 "*non évaluable à ce score* — le moteur refuse la position, typiquement un"
 " score hors de l'horizon de la table d'équité de match, c'est-à-dire un "
@@ -380,7 +427,7 @@ msgstr ""
 "правило, из-за счёта за горизонтом таблицы матчевых эквити, то есть когда"
 " одной из сторон осталось набрать больше 64 очков;"
 
-#: ../../source/manuel_eval.rst:173
+#: ../../source/manuel_eval.rst:194
 msgid ""
 "*videau adverse* et *videau mort (Crawford)* — le videau ne peut pas être"
 " retourné. Les équités restent affichées, à titre indicatif, mais aucune "
@@ -391,7 +438,7 @@ msgstr ""
 "Эквити по-прежнему отображаются, для справки, но ни у одного варианта нет"
 " отрыва: ошибка — это цена выбора, а выбора здесь нет."
 
-#: ../../source/manuel_eval.rst:178
+#: ../../source/manuel_eval.rst:199
 msgid ""
 "En money game, les règles **Jacoby** et **Beaver** actives sur la "
 "position apparaissent sous le tableau de videau, en petits badges à côté "
@@ -405,7 +452,7 @@ msgstr ""
 "правилу Jacoby — это не тот же расчёт, что без него, и ничто другое на "
 "экране об этом не говорило."
 
-#: ../../source/manuel_eval.rst:184
+#: ../../source/manuel_eval.rst:205
 msgid ""
 "Sous la règle **Beaver**, la ligne *double, prend* vaut la meilleure "
 "réponse de l'adversaire autre que passer : prendre, ou *beaver* — "
@@ -423,7 +470,7 @@ msgstr ""
 "ошибки читаются в этой строке, как и без правила; при счёте матча правило"
 " не применяется."
 
-#: ../../source/manuel_eval.rst:191
+#: ../../source/manuel_eval.rst:212
 msgid ""
 "Un troisième badge, **Videau max**, apparaît lorsque l'identifiant "
 "d'origine plafonne le videau — au score comme en money game. Celui-là ne "
@@ -441,7 +488,7 @@ msgstr ""
 "которой blunderDB и eXtreme Gammon могут вынести два разных вердикта об "
 "одной и той же позиции."
 
-#: ../../source/manuel_eval.rst:199
+#: ../../source/manuel_eval.rst:220
 msgid ""
 "Le **joueur au trait** et la **position du videau** s'éditent directement"
 " sur le plateau, comme en mode édition : cliquer le rectangle "
@@ -469,7 +516,7 @@ msgstr ""
 "chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__) и"
 " как расширить точную область."
 
-#: ../../source/manuel_eval.rst:211
+#: ../../source/manuel_eval.rst:232
 msgid ""
 "Le **score** s'édite lui aussi directement sur le plateau, comme en mode "
 "édition : clic gauche sur le rectangle score d'un joueur décrémente son "
@@ -497,7 +544,7 @@ msgstr ""
 "счёте матча. Значок тогда становится составным («точно (победа) · "
 "рассчитано (куб)»), чтобы сказать об этом явно."
 
-#: ../../source/manuel_eval.rst:224
+#: ../../source/manuel_eval.rst:245
 msgid ""
 "Les **dés** s'éditent enfin de la même façon, et ce sont eux qui décident"
 " de la question posée : des dés posés font une décision de pions (la "
@@ -519,7 +566,7 @@ msgstr ""
 "чтобы задать вопрос куба, а следующий клик по кости возвращает их такими,"
 " какими они были."
 
-#: ../../source/manuel_eval.rst:233
+#: ../../source/manuel_eval.rst:254
 msgid ""
 "*RETOUR ARRIERE*, ou *Effacer la position* dans le menu d'un clic droit "
 "en dehors du plateau, efface la position : plateau vide, score money (-1,"
@@ -536,11 +583,11 @@ msgstr ""
 "тем, что панель показывает по умолчанию. Пункт *Начальная позиция* в том "
 "же меню расставляет шашки новой партии на эти же значения."
 
-#: ../../source/manuel_eval.rst:243
+#: ../../source/manuel_eval.rst:264
 msgid "Cartes des scores et des jets"
 msgstr "Карты счетов и бросков"
 
-#: ../../source/manuel_eval.rst:245
+#: ../../source/manuel_eval.rst:266
 msgid ""
 "Un sélecteur à trois segments en tête du panneau choisit sa vue : "
 "**Décision** (le panneau décrit plus haut), **Scores** et **Jets**. Seule"
@@ -567,7 +614,7 @@ msgstr ""
 "идущий роллаут *уступает* в своей следующей контрольной точке, а затем "
 "продолжает (см. :ref:`панель «Расчёты» <manuel_calculs>`)."
 
-#: ../../source/manuel_eval.rst:257
+#: ../../source/manuel_eval.rst:278
 msgid ""
 "**Carte des scores.** Une décision de videau n'est pas une propriété du "
 "damier : les mêmes pions, le même compte de pips, se doublent à "
@@ -592,7 +639,7 @@ msgstr ""
 "отмечены «PC», так как куб в партии Кроуфорда мёртв. Поэтому позиция "
 "пост-Кроуфорда никогда не обводится рамкой в клетке Кроуфорда."
 
-#: ../../source/manuel_eval.rst:269
+#: ../../source/manuel_eval.rst:290
 msgid ""
 "Avec des dés, chaque case porte la lettre du meilleur coup à ce score (A "
 "le plus fréquent de la grille, puis B, C…) et son équité en dessous. Les "
@@ -652,7 +699,7 @@ msgstr ""
 "**Оценить**. Селектор *Матч до N* выбирает длину; значение по умолчанию "
 "(9) задаётся в настройках, вкладка gammonNet, строка *Матч по умолчанию*."
 
-#: ../../source/manuel_eval.rst:298
+#: ../../source/manuel_eval.rst:319
 msgid ""
 "Les commandes ``sm`` et ``cm`` ouvrent cette vue. Elle remplace "
 "l'ancienne matrice du videau, dont la grille se calcule toujours hors de "
@@ -663,7 +710,7 @@ msgstr ""
 "куба, сетка которой по-прежнему вычисляется вне интерфейса командой "
 "командной строки :ref:`cubematrix <cli_cubematrix>`."
 
-#: ../../source/manuel_eval.rst:302
+#: ../../source/manuel_eval.rst:323
 msgid ""
 "**Carte des jets.** La vue Jets évalue les 21 jets de la position, dés "
 "ignorés : pour chacun, le meilleur coup, l'équité du joueur au trait "
@@ -696,7 +743,7 @@ msgstr ""
 "заданная глубина больше; на 2-ply они потом уточняются по одному. Строка,"
 " ещё не дошедшая до заданной глубины, серая, а её клетка пунктирная."
 
-#: ../../source/manuel_eval.rst:317
+#: ../../source/manuel_eval.rst:338
 msgid ""
 "Le fil d'Ariane (« Départ › moi 6-4 24/14 › lui 5-2 13/8 24/22 › Mes jets"
 " ») dit d'où vient la position évaluée et à qui sont les jets affichés "
@@ -721,7 +768,7 @@ msgstr ""
 "хода (неактивно, если запись хода может вести к нескольким доскам), и "
 "*Карта счетов*. Команда ``jets`` открывает вид."
 
-#: ../../source/manuel_eval.rst:328
+#: ../../source/manuel_eval.rst:349
 msgid ""
 "Une carte déjà calculée tant que blunderDB reste ouvert — des jets ou des"
 " scores, à la profondeur demandée ou à une profondeur qu'un calcul plus "
@@ -736,7 +783,7 @@ msgstr ""
 " расчёт продолжается с последней известной глубины. Смена позиции, "
 "глубины, отсечения или таблицы эквити матча запускает поиск заново."
 
-#: ../../source/manuel_eval.rst:334
+#: ../../source/manuel_eval.rst:355
 msgid ""
 "Une fois la carte des jets achevée, blunderDB calcule en fond les cartes "
 "un jet plus bas, pour que **Réponses** s'affiche aussitôt : les réponses "
@@ -765,11 +812,11 @@ msgstr ""
 " затем уточняют. Подготовленная так карта бит в бит совпадает с той, что "
 "дало бы прямое вычисление."
 
-#: ../../source/manuel_eval.rst:350
+#: ../../source/manuel_eval.rst:371
 msgid "Panneau Données de référence"
 msgstr "Панель «Справочные данные»"
 
-#: ../../source/manuel_eval.rst:352
+#: ../../source/manuel_eval.rst:373
 msgid ""
 "Le panneau **Données de référence** réunit les tables du score. Il "
 "s'ouvre par *CTRL-MAJ-R* ou la commande ``ref``, sans base ouverte. Les "
@@ -789,7 +836,7 @@ msgstr ""
 "строка — игрок, о котором идёт речь, столбец — его соперник. Пять "
 "вкладок:"
 
-#: ../../source/manuel_eval.rst:359
+#: ../../source/manuel_eval.rst:380
 msgid ""
 "**MET** — la table d'équité de match Kazaross-XG2, de 1 à 15 points "
 "restants, en pour cent de chances de gagner le match ;"
@@ -797,7 +844,7 @@ msgstr ""
 "**MET** — таблица матчевого эквити Kazaross-XG2, от 1 до 15 оставшихся "
 "очков, в процентах шансов выиграть матч;"
 
-#: ../../source/manuel_eval.rst:361
+#: ../../source/manuel_eval.rst:382
 msgid ""
 "**Points de prise** — au videau 2 (de 2 à 9 points restants) et au videau"
 " 4 (de 3 à 9), chacun en deux grilles côte à côte : course longue (videau"
@@ -807,11 +854,11 @@ msgstr ""
 " (от 3 до 9), каждая в двух таблицах рядом: длинная гонка (живой куб) и "
 "последний бросок (мёртвый куб);"
 
-#: ../../source/manuel_eval.rst:364
+#: ../../source/manuel_eval.rst:385
 msgid "**Valeurs du gammon** — aux videaux 1, 2 et 4 ;"
 msgstr "**Значения гаммона** — при кубах 1, 2 и 4;"
 
-#: ../../source/manuel_eval.rst:365
+#: ../../source/manuel_eval.rst:386
 msgid ""
 "**Agrégé** — une grille de 2 à 9 points restants, dont une légende en "
 "tête rappelle l'organisation de chaque case. Elle porte trois lignes : le"
@@ -825,11 +872,11 @@ msgstr ""
 "затем значения гаммона при кубах 1, 2 и 4 приглушённым цветом. Тире "
 "отмечает значение, которое таблица не определяет при этом счёте;"
 
-#: ../../source/manuel_eval.rst:370
+#: ../../source/manuel_eval.rst:391
 msgid "**Nombres de Neil** — un raccourci de tête de la MET, dû à Neil Kazaross."
 msgstr "**Числа Нила** — мысленное правило для MET, принадлежащее Neil Kazaross."
 
-#: ../../source/manuel_eval.rst:372
+#: ../../source/manuel_eval.rst:393
 msgid ""
 "**Les nombres de Neil.** L'équité du meneur s'estime par E ≃ 50 % + "
 "(écart de score) × Neil(*n*), où *n* est le nombre de points restants du "
@@ -861,11 +908,11 @@ msgstr ""
 "когда лидеру осталось 1 или 2 очка: строка лидера при 2 оставшихся очках "
 "показывает значение MET приглушённым цветом и без отклонения."
 
-#: ../../source/manuel_eval.rst:390
+#: ../../source/manuel_eval.rst:411
 msgid "Amener une position dans le panneau Eval"
 msgstr "Перенос позиции в панель Eval"
 
-#: ../../source/manuel_eval.rst:392
+#: ../../source/manuel_eval.rst:413
 msgid ""
 "Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude "
 "part le plus souvent d'une position déjà en main. Quatre gestes l'y "
@@ -874,7 +921,7 @@ msgstr ""
 "Панель по умолчанию открывается на позиции bearoff, но изучение чаще "
 "всего начинается с уже имеющейся позиции. Четыре жеста приводят к ней:"
 
-#: ../../source/manuel_eval.rst:395
+#: ../../source/manuel_eval.rst:416
 msgid ""
 "**Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la "
 "navigation d'un match, puis *Évaluer cette position* : le panneau Eval "
@@ -891,7 +938,7 @@ msgstr ""
 " меню не появляется ни в панели Eval, ни в панели Поиска, где правая "
 "кнопка уже служит для расстановки шашек другого цвета."
 
-#: ../../source/manuel_eval.rst:403
+#: ../../source/manuel_eval.rst:424
 msgid ""
 "**Clic droit sur le plateau, puis** *Évaluer dans un nouvel onglet* : une"
 " nouvelle vue, nommée *Variante de #n* (n étant le numéro de la vue "
@@ -906,7 +953,7 @@ msgstr ""
 "варианты. Исходный вид сохраняет свою позицию, список и анализ. Этот "
 "пункт не предлагается в панели Транскрипции."
 
-#: ../../source/manuel_eval.rst:409
+#: ../../source/manuel_eval.rst:430
 msgid ""
 "**CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse, "
 "puis la coller une fois dans le panneau Eval. Le collage accepte aussi un"
@@ -922,7 +969,7 @@ msgstr ""
 ":ref:`глоссарий <glossaire>`) или ID GNUbg (GNU Backgammon): достаточно, "
 "чтобы он был в буфере обмена."
 
-#: ../../source/manuel_eval.rst:416
+#: ../../source/manuel_eval.rst:437
 msgid ""
 "**La commande** ``import XGID=…`` (ou ``import OGID=…``, ``import "
 "ArkID=…``) pour le cas où l'identifiant n'est pas dans le presse-papier "
@@ -940,7 +987,7 @@ msgstr ""
 "идентичен вставке — то же чтение, та же дедупликация, то же открытие "
 "импортированной позиции."
 
-#: ../../source/manuel_eval.rst:424
+#: ../../source/manuel_eval.rst:445
 msgid ""
 "Un OGID ou un ArkID ne porte qu'une position : ni évaluation, ni "
 "commentaire. La position arrive donc sans analyse, exactement comme un "
@@ -950,7 +997,7 @@ msgstr ""
 "позиция приходит без анализа, точно так же, как «голый» XGID, и "
 "встроенный оценщик может восполнить его позже."
 
-#: ../../source/manuel_eval.rst:428
+#: ../../source/manuel_eval.rst:449
 msgid ""
 "Un ID GNUbg se colle sous la forme que GNU Backgammon copie : l'ID de "
 "position et l'ID de match joints par deux-points "
@@ -965,7 +1012,7 @@ msgstr ""
 "игрока на ходу, ни кости, ни счёт: позиция тогда приходит с ходом нижнего"
 " игрока, без костей, в игре на деньги, с кубом в центре."
 
-#: ../../source/manuel_eval.rst:434
+#: ../../source/manuel_eval.rst:455
 msgid ""
 "Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du "
 "match (``7C``) : sans lui, un joueur à un point du but est après la "
@@ -976,7 +1023,7 @@ msgstr ""
 " без неё игрок, которому осталось одно очко, находится уже после партии "
 "Кроуфорда. В ArkID это ``c`` после счетов (``[14c]``), с тем же эффектом."
 
-#: ../../source/manuel_eval.rst:438
+#: ../../source/manuel_eval.rst:459
 msgid ""
 "Un ArkID s'obtient par *Copier l'ArkID* dans le menu d'une position (voir"
 " :ref:`menu_contextuel_actions`), par la commande ``arkid`` (voir "
@@ -988,7 +1035,7 @@ msgstr ""
 ":ref:`cli_arkid`) или, для сервера, через маршрут ``positions.arkId``. "
 "Вставленная позиция попадает в ту же строку базы, что и оригинал."
 
-#: ../../source/manuel_eval.rst:443
+#: ../../source/manuel_eval.rst:464
 msgid ""
 "**Une capture d'écran du plateau** (eXtreme Gammon, thème par défaut) se "
 "lit de trois façons : coller l'image (*CTRL-V*), la glisser sur la "
@@ -1017,7 +1064,7 @@ msgstr ""
 "опознана ни одна известная доска, отклоняется, причина указывается в "
 "строке состояния. То же чтение доступно в командной строке (``capture``)."
 
-#: ../../source/manuel_eval.rst:455
+#: ../../source/manuel_eval.rst:476
 msgid ""
 "Le plateau du panneau Eval est un brouillon : la position y arrive sans "
 "son identifiant de base, de sorte qu'aucune modification faite ici ne "
@@ -1031,7 +1078,7 @@ msgstr ""
 "остаются доступны (шашки, куб, кости, счёт), и оценка следует за каждым "
 "изменением."
 
-#: ../../source/manuel_eval.rst:461
+#: ../../source/manuel_eval.rst:482
 msgid ""
 "Dans l'autre sens, *CTRL-C* copie le plateau du panneau Eval dans le "
 "presse-papier, avec un XGID recalculé à partir des pions posés — donc "
@@ -1046,7 +1093,7 @@ msgstr ""
 "только позиция: оценка, показанная панелью, не является записью базы и не"
 " сопровождает копию."
 
-#: ../../source/manuel_eval.rst:467
+#: ../../source/manuel_eval.rst:488
 msgid ""
 "En quittant le panneau Eval, la position consultée auparavant est "
 "restaurée : le brouillon n'est jamais enregistré tout seul."
@@ -1054,7 +1101,7 @@ msgstr ""
 "При выходе из панели Eval восстанавливается ранее просматривавшаяся "
 "позиция: черновик никогда не сохраняется сам по себе."
 
-#: ../../source/manuel_eval.rst:470
+#: ../../source/manuel_eval.rst:491
 msgid ""
 "Lorsque la position est un bearoff pur (tous les pions des deux joueurs "
 "dans leur jan) et qu'aucun dé n'est posé, la décision de videau affiche, "
@@ -1064,7 +1111,7 @@ msgstr ""
 "доме) и кости не выставлены, решение по кубу отображает для игрока на "
 "ходу:"
 
-#: ../../source/manuel_eval.rst:474
+#: ../../source/manuel_eval.rst:495
 msgid ""
 "en régime *exact* : les équités money (cubeless, sans double, "
 "double/prend, double/passe) et le **verdict de videau money** (pas de "
@@ -1076,7 +1123,7 @@ msgstr ""
 " слишком хорошо для дабла) — вне счёта матча; случай счёта матча см. "
 "выше,"
 
-#: ../../source/manuel_eval.rst:479
+#: ../../source/manuel_eval.rst:500
 msgid ""
 "en régime *évalué* : les mêmes équités et le même verdict à quatre "
 "valeurs, mais **joués par gammonNet** (recherche + modèle de videau "
@@ -1088,7 +1135,7 @@ msgstr ""
 " а не прочитанные из таблицы — доступные **даже при счёте матча**, чего "
 "режим оценки никогда не мог предложить;"
 
-#: ../../source/manuel_eval.rst:484
+#: ../../source/manuel_eval.rst:505
 msgid ""
 "en régime *estimé* : le verdict de videau n'est alors volontairement pas "
 "affiché — seule la probabilité de gain, dans le tableau de faits, "
@@ -1097,7 +1144,7 @@ msgstr ""
 "в режиме *оценки*: вердикт по кубу тогда намеренно не отображается — "
 "доступна лишь вероятность выигрыша в таблице фактов, с её погрешностью."
 
-#: ../../source/manuel_eval.rst:488
+#: ../../source/manuel_eval.rst:509
 msgid ""
 "Dès que des dés sont posés sur une position de course, cette décision de "
 "videau *avant le jet* disparaît — le plateau demande alors une décision "
@@ -1112,7 +1159,7 @@ msgstr ""
 "переходит в строку *до броска* во главе списка ходов, рядом с EPC, "
 "который по-прежнему показан чуть левее."
 
-#: ../../source/manuel_eval.rst:495
+#: ../../source/manuel_eval.rst:516
 msgid ""
 "Un badge indique le régime : **exact** (valeur lue dans une base de "
 "données two-sided), **évalué · <profondeur>** (joué par gammonNet — la "
@@ -1133,7 +1180,7 @@ msgstr ""
 "заменяя на месте режим оценки, показанный во время ожидания. Точное "
 "определение трёх режимов и их допущений см. в :ref:`epc_methodologie`."
 
-#: ../../source/manuel_eval.rst:505
+#: ../../source/manuel_eval.rst:526
 msgid ""
 "**Élargir le domaine exact.** La table calculée au premier lancement "
 "couvre 6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet "
@@ -1143,7 +1190,7 @@ msgstr ""
 "охватывает 6 шашек с каждой стороны. Два способа пойти дальше, во вкладке"
 " *Bearoff* настроек:"
 
-#: ../../source/manuel_eval.rst:509
+#: ../../source/manuel_eval.rst:530
 msgid ""
 "calculer une table deux faces plus large — jusqu'à TS-06-15 si la machine"
 " a la mémoire pour. L'onglet annonce la taille, la mémoire et le temps "
@@ -1157,7 +1204,7 @@ msgstr ""
 "Отменённое вычисление оставляет файл ``.part``, который никогда не "
 "читается как таблица;"
 
-#: ../../source/manuel_eval.rst:515
+#: ../../source/manuel_eval.rst:536
 msgid ""
 "indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au "
 "domaine le plus large l'emporte automatiquement."
@@ -1165,7 +1212,7 @@ msgstr ""
 "указать любой two-sided файл ``.bd`` из gnubg. База с самой широкой "
 "областью автоматически имеет приоритет."
 
-#: ../../source/manuel_eval.rst:518
+#: ../../source/manuel_eval.rst:539
 msgid ""
 "**Le plateau du panneau est un brouillon, et il est retenu.** Quitter le "
 "panneau Eval puis y revenir retrouve la position sur laquelle on l'a "
@@ -1184,7 +1231,7 @@ msgstr ""
 "пути в базу ничего не записывается — у черновика нет идентичности "
 "позиции, а его оценка пересчитывается по прибытии, а не переносится."
 
-#: ../../source/manuel_eval.rst:527
+#: ../../source/manuel_eval.rst:548
 msgid ""
 "**Mode défi.** La case *Défi*, dans la bande d'en-tête, active un mode "
 "entraînement : à chaque modification de la position, les valeurs de trois"
@@ -1220,7 +1267,7 @@ msgstr ""
 "оценивать EPC каждой стороны, затем принимать решение по кубу или по "
 "ходу, прежде чем проверить. Настройка запоминается."
 
-#: ../../source/manuel_eval.rst:547
+#: ../../source/manuel_eval.rst:568
 msgid ""
 "**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : on y "
 "pose, colle (*CTRL-V*) et modifie une position, on l'évalue, on la roule,"
@@ -1257,7 +1304,7 @@ msgstr ""
 "завершённая сессия не записывается (журнал об этом сообщает). Управление "
 "турниром требует открытой базы."
 
-#: ../../source/manuel_eval.rst:563
+#: ../../source/manuel_eval.rst:584
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
@@ -1265,11 +1312,11 @@ msgstr ""
 "Для закрытия панели Eval нажмите *CTRL-E* или переключитесь на другую "
 "вкладку."
 
-#: ../../source/manuel_eval.rst:568
+#: ../../source/manuel_eval.rst:589
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Методология и допущения панели Eval"
 
-#: ../../source/manuel_eval.rst:570
+#: ../../source/manuel_eval.rst:591
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
@@ -1277,7 +1324,7 @@ msgstr ""
 "Каждое значение, отображаемое панелью, опирается на точные допущения, "
 "исчерпывающе изложенные здесь."
 
-#: ../../source/manuel_eval.rst:573
+#: ../../source/manuel_eval.rst:594
 msgid ""
 "**Domaine.** La *zone course* — probabilité de gain et verdict de videau "
 "— ne traite que le bearoff pur : tous les pions restants des deux joueurs"
@@ -1289,7 +1336,7 @@ msgstr ""
 "своём доме. Позиция оценивается *до броска*; выставленные кости "
 "игнорируются."
 
-#: ../../source/manuel_eval.rst:578
+#: ../../source/manuel_eval.rst:599
 msgid ""
 "Les **blocs EPC**, eux, vont plus loin : un camp obtient son EPC dès que "
 "son pion le plus éloigné tient dans la table une face chargée. Avec la "
@@ -1312,7 +1359,7 @@ msgstr ""
 "шесть пунктов, её имя появляется в углу блока гонки («OS-08») — без него "
 "читалось бы «шесть» по умолчанию и сторона казалась бы полностью дома."
 
-#: ../../source/manuel_eval.rst:588
+#: ../../source/manuel_eval.rst:609
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -1332,7 +1379,7 @@ msgstr ""
 "игра*: каждый игрок минимизирует свои броски, игнорируя соперника; это "
 "стандартное определение EPC."
 
-#: ../../source/manuel_eval.rst:597
+#: ../../source/manuel_eval.rst:618
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (TS-06-06 calculée au premier lancement, "
@@ -1348,7 +1395,7 @@ msgstr ""
 "обеих сторон: никаких дополнительных допущений, ошибка ограничена "
 "квантованием (< 0,002 %)."
 
-#: ../../source/manuel_eval.rst:603
+#: ../../source/manuel_eval.rst:624
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -1362,7 +1409,7 @@ msgstr ""
 "соперника) с последующей фиксированной полиномиальной поправкой, "
 "откалиброванной офлайн по базе TS-06-11. Три допущения:"
 
-#: ../../source/manuel_eval.rst:609
+#: ../../source/manuel_eval.rst:630
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
@@ -1370,7 +1417,7 @@ msgstr ""
 "**независимость** двух процессов снятия — структурная в гонке: без "
 "контакта нет никакого взаимодействия;"
 
-#: ../../source/manuel_eval.rst:612
+#: ../../source/manuel_eval.rst:633
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -1383,7 +1430,7 @@ msgstr ""
 " преувеличивает преимущество лидера), которое поправка статистически "
 "поглощает;"
 
-#: ../../source/manuel_eval.rst:617
+#: ../../source/manuel_eval.rst:638
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -1398,7 +1445,7 @@ msgstr ""
 "экстраполируется** — тенденция монотонна, но никакой оракул её не "
 "подтверждает."
 
-#: ../../source/manuel_eval.rst:623
+#: ../../source/manuel_eval.rst:644
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -1416,7 +1463,7 @@ msgstr ""
 "восстанавливается из сохранённых эквити по правилу GNUbg, проверенному "
 "один в один против его анализа."
 
-#: ../../source/manuel_eval.rst:631
+#: ../../source/manuel_eval.rst:652
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -1440,7 +1487,7 @@ msgstr ""
 "пункте 2: 62 % выигрыша, точное D/T +0,006 против +0,475 у XG). "
 "Отображаемое **решение** при этом совпадает с решением движков."
 
-#: ../../source/manuel_eval.rst:642
+#: ../../source/manuel_eval.rst:663
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -1459,7 +1506,7 @@ msgstr ""
 "раз и не мог делать оценочный режим (см. ниже) и позволяет, единственный "
 "из трёх режимов наряду с точным, вердикт **при счёте матча**."
 
-#: ../../source/manuel_eval.rst:650
+#: ../../source/manuel_eval.rst:671
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -1490,7 +1537,7 @@ msgstr ""
 "расходятся на близком решении, — а не размытая ошибка, которая стоила бы "
 "эквити повсюду."
 
-#: ../../source/manuel_eval.rst:663
+#: ../../source/manuel_eval.rst:684
 msgid ""
 "Cette mesure porte sur des décisions **money**, en course. Le verdict au "
 "score de match — que ce régime est seul à savoir rendre — et les "
@@ -1502,7 +1549,7 @@ msgstr ""
 "позиции опубликованных измерений не имеют: сказанное выше на эти случаи "
 "не переносится."
 
-#: ../../source/manuel_eval.rst:667
+#: ../../source/manuel_eval.rst:688
 msgid ""
 "**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
 "cela ne rapporte rien. Une décision de pions à 3 plis évalue le réseau "
@@ -1526,7 +1573,7 @@ msgstr ""
 "порядка ниже 0,020 — порога, с которого eXtreme Gammon вообще говорит об "
 "ошибке. На решение, во всех случаях вместе, выигрыш равен 0,0000."
 
-#: ../../source/manuel_eval.rst:678
+#: ../../source/manuel_eval.rst:699
 msgid ""
 "Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans "
 "l'onglet *gammonNet* de la configuration. À 3 et 4 plis, comme dans "
@@ -1546,7 +1593,7 @@ msgstr ""
 "воспроизводимо (``TestThreePlyMeasure``), и вывод будет пересмотрен, если"
 " сеть изменится."
 
-#: ../../source/manuel_eval.rst:686
+#: ../../source/manuel_eval.rst:707
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -1576,7 +1623,7 @@ msgstr ""
 " показывать вердикт — этот пробел заполняет поиск, разыгрывающий "
 "траекторию, а не статистическая сводка."
 
-#: ../../source/manuel_eval.rst:699
+#: ../../source/manuel_eval.rst:720
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"
