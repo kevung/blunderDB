@@ -168,13 +168,31 @@ comme par :ref:`Archive papier… <archive_papier_interface>`.
 * **Défauts et sens de jeu** : le contexte par défaut du document et le sens de jeu
   supposé sont décrits. Un seul bouton les confirme pour tout le document, après
   contrôle sur quelques diagrammes ; rien n'est confirmé sans ce geste.
-* **Entrées à vérifier** : la liste donne, pour chaque entrée que l'import refuserait
-  en l'état, sa page, son étiquette, son état et la note qui nomme les champs à
-  comparer au diagramme. Celles que les choix en cours ne couvrent pas sont en gras.
+* **Planche de vérification** : quatre compteurs, **Sûres**, **À vérifier**,
+  **Incertaines** et **Vérifiées**, filtrent les entrées ; la planche s'ouvre sur
+  celles à vérifier. Pour l'entrée montrée, le diagramme d'origine, recadré depuis
+  le fichier à chaque affichage, est placé à côté du plateau redessiné dans le sens
+  de jeu du document ; les champs à comparer sont nommés en rouge sous le plateau,
+  encadré tant que l'entrée n'est pas vérifiée. Un diagramme dessiné par une police
+  de plateau, lu exactement, n'a pas de vignette.
+* **Clavier de la planche** : *V* (ou *Espace*) valide l'entrée, qui devient
+  vérifiée, et passe à la suivante ; sur une entrée vérifiée, *V* retire la
+  validation. *E* ouvre la position en XGID : le plateau suit la saisie, *Entrée*
+  écrit la correction et valide l'entrée, *Échap* l'abandonne. *J* ou les flèches
+  droite et bas passent à l'entrée suivante, *K* ou les flèches gauche et haut à la
+  précédente.
 * **Entrées complètes** : la case équivaut à ``--accept-complete``.
 * **Repli** : la case équivaut à ``--fallback`` ; elle n'est offerte qu'une fois les
   défauts confirmés.
 * **Collection** : vide, elle prend le titre du document.
+
+Chaque verdict est écrit aussitôt dans le relevé, gardé à côté du document sous le
+nom du fichier suivi de ``.releve.json`` (``livre.pdf.releve.json``) ; rien n'entre
+en base avant l'import, et aucune image n'est gardée. Rouvrir le même document
+reprend ce relevé, sans relire le document, là où la vérification s'était arrêtée ;
+un document modifié depuis est relu. Ouvrir le relevé ``.json`` lui-même reprend
+aussi la vérification, avec les vignettes tant que le document est à côté. L'import
+accepte les entrées vérifiées.
 
 Le bouton **Importer** reste grisé tant qu'une entrée est refusée ; l'assistant n'offre
 pas ``--force``. Pendant la lecture, une barre de progression indique la page lue sur le
