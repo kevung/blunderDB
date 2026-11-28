@@ -478,6 +478,14 @@ export function DiscardFromTrash(arg1) {
   return window['go']['database']['Database']['DiscardFromTrash'](arg1);
 }
 
+export function DocumentDiagramImage(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['database']['Database']['DocumentDiagramImage'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
+export function DocumentSheet(arg1) {
+  return window['go']['database']['Database']['DocumentSheet'](arg1);
+}
+
 export function DuelOffer() {
   return window['go']['database']['Database']['DuelOffer']();
 }
@@ -1046,6 +1054,10 @@ export function LoadComment(arg1) {
   return window['go']['database']['Database']['LoadComment'](arg1);
 }
 
+export function LoadDocumentReleve(arg1) {
+  return window['go']['database']['Database']['LoadDocumentReleve'](arg1);
+}
+
 export function LoadEditPosition(arg1) {
   return window['go']['database']['Database']['LoadEditPosition'](arg1);
 }
@@ -1498,6 +1510,10 @@ export function SaveDisplayedEvaluation(arg1, arg2, arg3) {
   return window['go']['database']['Database']['SaveDisplayedEvaluation'](arg1, arg2, arg3);
 }
 
+export function SaveDocumentReleve(arg1, arg2) {
+  return window['go']['database']['Database']['SaveDocumentReleve'](arg1, arg2);
+}
+
 export function SaveEditPosition(arg1, arg2) {
   return window['go']['database']['Database']['SaveEditPosition'](arg1, arg2);
 }
@@ -1928,6 +1944,10 @@ export function UpdateTournamentOrigin(arg1, arg2) {
 
 export function Vacuum() {
   return window['go']['database']['Database']['Vacuum']();
+}
+
+export function VerifyDocumentEntry(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['database']['Database']['VerifyDocumentEntry'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function WithdrawParticipant(arg1, arg2, arg3) {

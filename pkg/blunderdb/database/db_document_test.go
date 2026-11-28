@@ -1,6 +1,9 @@
 package database
 
 import (
+	"errors"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -31,5 +34,49 @@ func TestAnalyzeDocumentReportsProgressAndIsTracked(t *testing.T) {
 	}
 	if len(kinds) != 1 || kinds[0] != TaskImport {
 		t.Fatalf("tracked kinds = %v", kinds)
+	}
+}
+
+func TestDocumentVerificationKeepsItsProgressBesideTheDocument(t *testing.T) {
+	d := newTestDB(t)
+	data, err := os.ReadFile("pkg/blunderdb/document/testdata/xg-diagrammes.pdf")
+	if err != nil {
+		t.Fatal(err)
+	}
+	pdf := filepath.Join(t.TempDir(), "livre.pdf")
+	if err := os.WriteFile(pdf, data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if got, err := d.LoadDocumentReleve(pdf); err != nil || got != "" {
+		t.Fatalf("no relevé yet: %q %v", got, err)
+	}
+	releve, err := d.AnalyzeDocument(pdf, "", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if dst, err := d.SaveDocumentReleve(pdf, releve); err != nil || dst != pdf+document.SidecarSuffix {
+		t.Fatalf("saved to %q: %v", dst, err)
+	}
+	sheet, err := d.DocumentSheet(releve)
+	if err != nil || len(sheet) == 0 {
+		t.Fatalf("sheet: %v %v", sheet, err)
+	}
+	out, err := d.VerifyDocumentEntry(pdf, releve, sheet[0].Rank, true, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	kept, err := d.LoadDocumentReleve(pdf)
+	if err != nil || kept != out {
+		t.Fatalf("the verdict was not kept beside the document: %v", err)
+	}
+	if again, _ := d.DocumentSheet(kept); !again[0].Verified {
+		t.Error("rank 1 not verified once read back")
+	}
+	if _, err := d.DocumentDiagramImage(pdf, 1, 0.1, 0.1, 0.5, 0.3); !errors.Is(err, document.ErrNoPageImage) {
+		t.Errorf("a board-font page has no image: %v", err)
+	}
+	url, err := d.DocumentDiagramImage("pkg/blunderdb/document/testdata/sans-pips", 1, 0.1, 0.1, 0.5, 0.3)
+	if err != nil || !strings.HasPrefix(url, "data:image/png;base64,") {
+		t.Errorf("crop of a page image: %.40q %v", url, err)
 	}
 }

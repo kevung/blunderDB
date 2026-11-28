@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 00:13+0100\n"
+"POT-Creation-Date: 2026-11-28 01:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -34,10 +34,10 @@ msgid ""
 msgstr "Luo uusi tietokantatiedosto valinnaisilla metatiedoilla."
 
 #: ../../source/cli_import_export.rst:15 ../../source/cli_import_export.rst:42
-#: ../../source/cli_import_export.rst:403
-#: ../../source/cli_import_export.rst:527
-#: ../../source/cli_import_export.rst:595
-#: ../../source/cli_import_export.rst:621
+#: ../../source/cli_import_export.rst:404
+#: ../../source/cli_import_export.rst:528
+#: ../../source/cli_import_export.rst:596
+#: ../../source/cli_import_export.rst:622
 msgid "**Options:**"
 msgstr "**Valitsimet:**"
 
@@ -458,18 +458,19 @@ msgid ""
 "Range dans une collection, dans l'ordre du document, les positions d'un "
 "PDF imprimé par eXtreme Gammon ou des pages d'un livre scanné en images, "
 "en trois commandes (``analyze``, ``check``, ``import``) autour d'un "
-"**relevé** JSON. Voir :ref:`cli_document`."
+"**relevé** JSON ; ``verify`` y note les entrées comparées à leur "
+"diagramme. Voir :ref:`cli_document`."
 msgstr ""
 "Sijoittaa kokoelmaan asiakirjan järjestyksessä eXtreme Gammonin "
 "tulostaman PDF:n asemat tai skannatun kirjan sivut kuvina kolmella "
 "komennolla (``analyze``, ``check``, ``import``) JSON-**relevén** "
-"ympärillä. Ks. :ref:`cli_document`."
+"ympärillä. ``verify`` merkitsee siihen kaavioonsa verratut merkinnät. Ks. :ref:`cli_document`."
 
-#: ../../source/cli_import_export.rst:291
+#: ../../source/cli_import_export.rst:292
 msgid "archive — Archive papier des matchs"
 msgstr "archive — Otteluiden paperiarkisto"
 
-#: ../../source/cli_import_export.rst:293
+#: ../../source/cli_import_export.rst:294
 msgid ""
 "Imprime des matchs en codes QR sur des feuilles A4, pour garder une "
 "bibliothèque sur papier en peu de place, et les réimporte depuis la page "
@@ -479,7 +480,7 @@ msgstr ""
 " pienessä tilassa, ja tuo ne takaisin sivulta tai arkin skannauksesta tai"
 " valokuvasta."
 
-#: ../../source/cli_import_export.rst:304
+#: ../../source/cli_import_export.rst:305
 msgid ""
 "``export`` écrit une page HTML autonome, à imprimer : chaque match tient "
 "en général dans un seul code (environ 250 octets pour un match en 7 "
@@ -530,7 +531,7 @@ msgstr ""
 " ei säilytetä: ne lasketaan uudelleen tuonnin jälkeen. Turnausta ei "
 "säilytetä: se johdetaan tuonnissa uudelleen tapahtumasta."
 
-#: ../../source/cli_import_export.rst:327
+#: ../../source/cli_import_export.rst:328
 msgid ""
 "``import`` lit la page exportée (les matchs y sont aussi inscrits en "
 "clair, sans lecture optique), le PDF qu'en imprime l'interface (archive, "
@@ -558,7 +559,7 @@ msgstr ""
 "Palvelintilassa ``/v1/exports.archive`` palauttaa sivun ja "
 "``/v1/imports.archive`` ottaa vastaan ladatun sivun, PDF:n tai kuvan."
 
-#: ../../source/cli_import_export.rst:339
+#: ../../source/cli_import_export.rst:340
 msgid ""
 "``import`` lit aussi les codes de réimport d'une liste de positions "
 "imprimée (``sheet --reimport-code``) : le fichier enregistré, ou les "
@@ -578,7 +579,7 @@ msgstr ""
 "``list_positions_known``. Erätuonti ei ota listaa vastaan: se sivuuttaa "
 "sen ja kertoo syyn."
 
-#: ../../source/cli_import_export.rst:348
+#: ../../source/cli_import_export.rst:349
 msgid ""
 "Dans l'interface, la boîte *Archive papier…* du menu contextuel d'un "
 "match fait l'export et l'import (:ref:`Archive papier… "
@@ -590,11 +591,11 @@ msgstr ""
 "tuonti avautuu myös tyhjästä otteluluettelosta ja komennolla "
 "``import_archive``."
 
-#: ../../source/cli_import_export.rst:353
+#: ../../source/cli_import_export.rst:354
 msgid "sheet — Liste de positions imprimable"
 msgstr "sheet — Tulostettava asemaluettelo"
 
-#: ../../source/cli_import_export.rst:355
+#: ../../source/cli_import_export.rst:356
 msgid ""
 "Écrit la liste imprimable de l'interface (:ref:`liste_imprimable`) : "
 "toute une recherche, une collection ou une liste d'identifiants, une "
@@ -646,7 +647,7 @@ msgstr ""
 "``options``-oliota tai niille valinnoille, joita ``options``-olio ei "
 "nimeä, se käyttää samoja oletuksia kuin komento."
 
-#: ../../source/cli_import_export.rst:378
+#: ../../source/cli_import_export.rst:379
 msgid ""
 "``--reimport-code`` (désactivé par défaut) code les positions par blocs "
 "de 145, chacun en deux codes QR et un code de parité imprimés sur la page"
@@ -662,19 +663,19 @@ msgstr ""
 "lohkolta. Asema vie siinä noin 13 tavua: sen ArkID, ilman analyysia ja "
 "kommenttia."
 
-#: ../../source/cli_import_export.rst:395
+#: ../../source/cli_import_export.rst:396
 msgid "export — Exporter des données"
 msgstr "export — Vie tietoja"
 
-#: ../../source/cli_import_export.rst:397
+#: ../../source/cli_import_export.rst:398
 msgid "Exporte le contenu de la base vers des fichiers."
 msgstr "Vie tietokannan sisältö tiedostoihin."
 
-#: ../../source/cli_import_export.rst:405
+#: ../../source/cli_import_export.rst:406
 msgid "``--db`` — Base source (obligatoire)."
 msgstr "``--db`` — Lähdetietokanta (pakollinen)."
 
-#: ../../source/cli_import_export.rst:406
+#: ../../source/cli_import_export.rst:407
 msgid ""
 "``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
 "``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
@@ -684,7 +685,7 @@ msgstr ""
 "``mat`` (yhden tai useamman ottelun vienti Jellyfish ``.mat`` "
 "-transkriptioon) (pakollinen)."
 
-#: ../../source/cli_import_export.rst:409
+#: ../../source/cli_import_export.rst:410
 msgid ""
 "``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
 "utilisé avec ``--dir``)."
@@ -692,7 +693,7 @@ msgstr ""
 "``--file`` — Tulostiedosto (pakollinen, paitsi ``--type mat`` "
 "-vaihtoehdolle yhdessä ``--dir`` kanssa)."
 
-#: ../../source/cli_import_export.rst:411
+#: ../../source/cli_import_export.rst:412
 msgid ""
 "``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
 "(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
@@ -702,27 +703,27 @@ msgstr ""
 "(useita otteluita, yksi tiedosto ottelua kohden; ilman ``--match-ids`` "
 "viedään kaikki ottelut)."
 
-#: ../../source/cli_import_export.rst:414
+#: ../../source/cli_import_export.rst:415
 msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
 msgstr "``--analysis`` — Sisällytä analyysit (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:415
+#: ../../source/cli_import_export.rst:416
 msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
 msgstr "``--comments`` — Sisällytä kommentit (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:416
+#: ../../source/cli_import_export.rst:417
 msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
 msgstr "``--filters`` — Sisällytä suodatinkirjasto (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:417
+#: ../../source/cli_import_export.rst:418
 msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
 msgstr "``--played-moves`` — Sisällytä pelatut siirrot (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:418
+#: ../../source/cli_import_export.rst:419
 msgid "``--matches`` — Inclure les matchs (défaut: oui)."
 msgstr "``--matches`` — Sisällytä ottelut (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:419
+#: ../../source/cli_import_export.rst:420
 msgid ""
 "``--transcriptions`` — Inclure le brouillon de transcription de chaque "
 "match exporté (défaut: oui)."
@@ -730,7 +731,7 @@ msgstr ""
 "``--transcriptions`` — Sisällytä kunkin viedyn ottelun litterointiluonnos"
 " (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:421
+#: ../../source/cli_import_export.rst:422
 msgid ""
 "``--aliases`` — Inclure les alias de joueurs et d'événements que les "
 "matchs exportés écrivent, pour que la fusion de joueurs les suive "
@@ -740,19 +741,19 @@ msgstr ""
 " ottelut kirjoittavat, jotta pelaajien yhdistäminen seuraa niitä (oletus:"
 " kyllä)."
 
-#: ../../source/cli_import_export.rst:423
+#: ../../source/cli_import_export.rst:424
 msgid "``--collections`` — Inclure les collections (défaut: oui)."
 msgstr "``--collections`` — Sisällytä kokoelmat (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:424
+#: ../../source/cli_import_export.rst:425
 msgid "``--tournaments`` — Inclure les tournois (défaut: oui)."
 msgstr "``--tournaments`` — Sisällytä turnaukset (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:425
+#: ../../source/cli_import_export.rst:426
 msgid "``--decks`` — Inclure les paquets Anki (défaut: oui)."
 msgstr "``--decks`` — Sisällytä Anki-pakat (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:426
+#: ../../source/cli_import_export.rst:427
 msgid ""
 "``--lessons`` — Inclure les leçons, avec les collections et les positions"
 " que leurs étapes montrent (défaut: oui)."
@@ -760,7 +761,7 @@ msgstr ""
 "``--lessons`` — Sisällytä oppitunnit sekä kokoelmat ja asemat, jotka "
 "niiden vaiheet näyttävät (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:428
+#: ../../source/cli_import_export.rst:429
 msgid ""
 "``--anki-history`` — Emporter l'historique de révision des paquets "
 "exportés : l'état de chaque carte et le journal de ses révisions (défaut:"
@@ -769,7 +770,7 @@ msgstr ""
 "``--anki-history`` — Vie mukana viedyn pakan kertaushistoria: kunkin "
 "kortin tila ja sen kertausten loki (oletus: kyllä)."
 
-#: ../../source/cli_import_export.rst:430
+#: ../../source/cli_import_export.rst:431
 msgid ""
 "``--collection-ids`` — IDs de collections à exporter (séparés par des "
 "virgules, vide = toutes)."
@@ -777,7 +778,7 @@ msgstr ""
 "``--collection-ids`` — Vietävien kokoelmien tunnukset (pilkulla "
 "eroteltuna, tyhjä = kaikki)."
 
-#: ../../source/cli_import_export.rst:432
+#: ../../source/cli_import_export.rst:433
 msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
@@ -785,7 +786,7 @@ msgstr ""
 "``--match-ids`` — Vietävien otteluiden tunnukset (pilkulla eroteltuna, "
 "tyhjä = kaikki)."
 
-#: ../../source/cli_import_export.rst:433
+#: ../../source/cli_import_export.rst:434
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules, vide = tous)."
@@ -793,7 +794,7 @@ msgstr ""
 "``--tournament-ids`` — Vietävien turnausten tunnukset (pilkulla "
 "eroteltuna, tyhjä = kaikki)."
 
-#: ../../source/cli_import_export.rst:435
+#: ../../source/cli_import_export.rst:436
 msgid ""
 "``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions "
 "(séparés par des virgules, vide = tous)."
@@ -801,7 +802,7 @@ msgstr ""
 "``--deck-ids`` — Asemineen vietävien Anki-pakkojen tunnukset (pilkulla "
 "eroteltuna, tyhjä = kaikki)."
 
-#: ../../source/cli_import_export.rst:437
+#: ../../source/cli_import_export.rst:438
 msgid ""
 "``--lesson-ids`` — IDs de leçons à exporter (séparés par des virgules, "
 "vide = toutes)."
@@ -809,13 +810,13 @@ msgstr ""
 "``--lesson-ids`` — Viedyistä oppitunneista tunnisteet (pilkuilla "
 "erotettuina, tyhjä = kaikki)."
 
-#: ../../source/cli_import_export.rst:440
+#: ../../source/cli_import_export.rst:441
 msgid ""
 "``--password`` — Enveloppe le résultat dans un conteneur chiffré "
 "(``.dbx``)."
 msgstr "``--password`` — Kääri tuloksen salattuun säiliöön (``.dbx``)."
 
-#: ../../source/cli_import_export.rst:441
+#: ../../source/cli_import_export.rst:442
 msgid ""
 "``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
 "fichier exporté (voir :ref:`diffusion_controlee`)."
@@ -823,7 +824,7 @@ msgstr ""
 "``--watermark`` — Kirjoittaa **allekirjoitetun** alkuperäilmoituksen "
 "vietyyn tiedostoon (katso :ref:`diffusion_controlee`)."
 
-#: ../../source/cli_import_export.rst:443
+#: ../../source/cli_import_export.rst:444
 msgid ""
 "``--watermark-note`` — Texte libre associé au filigrane (conditions "
 "d'usage, contact) ; utilisé avec ``--watermark``."
@@ -831,7 +832,7 @@ msgstr ""
 "``--watermark-note`` — Vesileimaan liitettävä vapaa teksti (käyttöehdot, "
 "yhteystieto); käytetään yhdessä ``--watermark``-valitsimen kanssa."
 
-#: ../../source/cli_import_export.rst:445
+#: ../../source/cli_import_export.rst:446
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document "
 "résumant l'export: chemin, taille en octets, nombres)."
@@ -839,7 +840,7 @@ msgstr ""
 "``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json`` (vientiä "
 "kokoava asiakirja: polku, koko tavuina, määrät)."
 
-#: ../../source/cli_import_export.rst:447
+#: ../../source/cli_import_export.rst:448
 msgid ""
 "``--incremental`` — Avec ``--type database`` : n'exporte que ce qui est "
 "entré dans la bibliothèque depuis le dernier export incrémental vers le "
@@ -858,7 +859,7 @@ msgstr ""
 "tiedostonimi hylätään: paikalla oleva tiedosto sisältää edellisen "
 "muutoserän, jota toinen kone ei ehkä ole vielä yhdistänyt."
 
-#: ../../source/cli_import_export.rst:454
+#: ../../source/cli_import_export.rst:455
 msgid ""
 "``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, "
 "à la place du dossier de destination."
@@ -866,7 +867,7 @@ msgstr ""
 "``--sync-cursor`` — Valitsimen ``--incremental`` kanssa: luetun ja "
 "eteenpäin siirretyn merkin nimi kohdekansion sijaan."
 
-#: ../../source/cli_import_export.rst:456
+#: ../../source/cli_import_export.rst:457
 msgid ""
 "``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille "
 "par famille, ce que l'export écrirait, sans écrire de fichier (``--file``"
@@ -882,7 +883,7 @@ msgstr ""
 "„recherche“-pakat, joiden lähde menettäisi osan, nimetään. Muun tyypin "
 "kanssa valinta hylätään."
 
-#: ../../source/cli_import_export.rst:462
+#: ../../source/cli_import_export.rst:463
 msgid ""
 "``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des "
 "identifiants derrière un compte : ``positions``, ``comments`` (les "
@@ -900,7 +901,7 @@ msgstr ""
 "``ankiDecks``, ``transcriptions`` tai ``filters``. ``--offset`` ja "
 "``--limit`` valitsevat sivun (enintään 1000 tunnistetta)."
 
-#: ../../source/cli_import_export.rst:468
+#: ../../source/cli_import_export.rst:469
 msgid ""
 "``--type database`` exporte toute la bibliothèque, comme l'export du "
 "serveur et comme la fenêtre d'export quand la liste affichée est la "
@@ -926,12 +927,12 @@ msgstr ""
 "jos kaikki ottelut viedään. ``--type matches`` ottaa mukaan myös kunkin "
 "ottelun luonnoksen."
 
-#: ../../source/cli_import_export.rst:477
-#: ../../source/cli_import_export.rst:562
+#: ../../source/cli_import_export.rst:478
+#: ../../source/cli_import_export.rst:563
 msgid "**Exemples:**"
 msgstr "**Esimerkkejä:**"
 
-#: ../../source/cli_import_export.rst:500
+#: ../../source/cli_import_export.rst:501
 msgid ""
 "Un filigrane est signé avec l'identité d'émetteur locale (voir la "
 "commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
@@ -955,11 +956,11 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
 "mark-origin-and-nothing-else.md>`__."
 
-#: ../../source/cli_import_export.rst:512
+#: ../../source/cli_import_export.rst:513
 msgid "transfer — Copier d'une bibliothèque à une autre"
 msgstr "transfer — Kopiointi kirjastosta toiseen"
 
-#: ../../source/cli_import_export.rst:514
+#: ../../source/cli_import_export.rst:515
 msgid ""
 "Copie une partie d'une bibliothèque dans une autre, sans fichier "
 "intermédiaire à manipuler. La sélection est celle de ``export --type "
@@ -978,7 +979,7 @@ msgstr ""
 "oppituntia tai Anki-pakkaa kahdenneta. A:sta B:hen ja sitten B:stä A:han "
 "kopioiminen ei siis luo kaksoiskappaleita."
 
-#: ../../source/cli_import_export.rst:529
+#: ../../source/cli_import_export.rst:530
 msgid ""
 "``--from`` — Bibliothèque source (obligatoire ; elle doit exister et être"
 " au schéma de cette version de blunderDB). Une bibliothèque plus ancienne"
@@ -992,7 +993,7 @@ msgstr ""
 "avaa se kerran blunderDB:ssä. Myös uudempi kirjasto hylätään: päivitä "
 "blunderDB."
 
-#: ../../source/cli_import_export.rst:534
+#: ../../source/cli_import_export.rst:535
 msgid ""
 "``--to`` — Bibliothèque de destination (obligatoire ; créée si elle "
 "n'existe pas). Elle ne peut pas être la source."
@@ -1000,7 +1001,7 @@ msgstr ""
 "``--to`` — Kohdekirjasto (pakollinen; luodaan, jos sitä ei ole). Se ei "
 "voi olla lähde."
 
-#: ../../source/cli_import_export.rst:536
+#: ../../source/cli_import_export.rst:537
 msgid ""
 "``--analysis``, ``--comments``, ``--played-moves``, ``--matches``, "
 "``--transcriptions``, ``--aliases``, ``--collections``, "
@@ -1013,7 +1014,7 @@ msgstr ""
 "``export``: arvoon ``false`` asetettu valinta poistaa oman ryhmänsä "
 "(oletus: kyllä kaikille)."
 
-#: ../../source/cli_import_export.rst:540
+#: ../../source/cli_import_export.rst:541
 msgid ""
 "``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
 "ids``, ``--lesson-ids`` — Une liste d'IDs de la source restreint sa "
@@ -1025,7 +1026,7 @@ msgstr ""
 "kohteisiin ja sisällyttää sen. ID, jota lähde ei sisällä, on virhe, eikä "
 "mitään kopioida."
 
-#: ../../source/cli_import_export.rst:544
+#: ../../source/cli_import_export.rst:545
 msgid ""
 "``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la "
 "source et ce que la destination en a pris)."
@@ -1033,7 +1034,7 @@ msgstr ""
 "``--format`` — ``text`` (oletus) tai ``json`` (mitä lähteestä luettiin ja"
 " mitä kohde siitä otti)."
 
-#: ../../source/cli_import_export.rst:547
+#: ../../source/cli_import_export.rst:548
 msgid ""
 "**Quelles positions partent.** Sans liste d'IDs, toutes les positions de "
 "la source partent, rangées ou non. Dès qu'une liste d'IDs est donnée, "
@@ -1054,7 +1055,7 @@ msgstr ""
 " päivämäärä, paikka), mutta ei saman turnauksen muita otteluita; "
 "valitsimella ``--tournaments=false`` se saapuu ilman turnausta."
 
-#: ../../source/cli_import_export.rst:556
+#: ../../source/cli_import_export.rst:557
 msgid ""
 "Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal "
 "d'import, ni métadonnée de la source ; la destination garde les siennes, "
@@ -1068,7 +1069,7 @@ msgstr ""
 "kopioida: pakka saapuu ilman historiaa, ja jo olemassa oleva samanniminen"
 " pakka säilyttää omansa."
 
-#: ../../source/cli_import_export.rst:577
+#: ../../source/cli_import_export.rst:578
 msgid ""
 "Le serveur offre le même transfert entre deux tenants, tiré par le tenant"
 " qui reçoit (voir :ref:`mode_headless_transfert`)."
@@ -1076,11 +1077,11 @@ msgstr ""
 "Palvelin tarjoaa saman siirron kahden tenantin välillä, vastaanottavan "
 "tenantin vetämänä (ks. :ref:`mode_headless_transfert`)."
 
-#: ../../source/cli_import_export.rst:581
+#: ../../source/cli_import_export.rst:582
 msgid "identity — Identité d'émetteur"
 msgstr "identity — Liikkeeseenlaskijan identiteetti"
 
-#: ../../source/cli_import_export.rst:583
+#: ../../source/cli_import_export.rst:584
 msgid ""
 "Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
 "signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
@@ -1094,19 +1095,19 @@ msgstr ""
 "Se kuuluu henkilölle, ei tietokannalle: kaikki merkitsemäsi kantaa yhtä "
 "ja samaa julkista sormenjälkeä."
 
-#: ../../source/cli_import_export.rst:597
+#: ../../source/cli_import_export.rst:598
 msgid "``--name`` — Change le nom affiché de l'identité."
 msgstr "``--name`` — Vaihtaa identiteetin näyttönimen."
 
-#: ../../source/cli_import_export.rst:598
+#: ../../source/cli_import_export.rst:599
 msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
 msgstr "``--export`` — Vie identiteetin ``.bdbid``-tiedostoon."
 
-#: ../../source/cli_import_export.rst:599
+#: ../../source/cli_import_export.rst:600
 msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
 msgstr "``--import`` — Tuo identiteetin ``.bdbid``-tiedostosta."
 
-#: ../../source/cli_import_export.rst:600
+#: ../../source/cli_import_export.rst:601
 msgid ""
 "``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
 "exporté/importé (l'identité locale, elle, est volontairement non "
@@ -1115,7 +1116,7 @@ msgstr ""
 "``--passphrase`` — Valinnainen tunnuslause, joka suojaa viedyn/tuodun "
 "tiedoston (paikallinen identiteetti jätetään tarkoituksella suojaamatta)."
 
-#: ../../source/cli_import_export.rst:602
+#: ../../source/cli_import_export.rst:603
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom, "
 "empreinte, chemin de stockage)."
@@ -1123,7 +1124,7 @@ msgstr ""
 "``--format`` — Tulostusmuoto: ``text`` (oletus) tai ``json`` (nimi, "
 "sormenjälki, tallennuspolku)."
 
-#: ../../source/cli_import_export.rst:605
+#: ../../source/cli_import_export.rst:606
 msgid ""
 "Le fichier exporté permet à quiconque le détient de signer en votre nom —"
 " ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
@@ -1135,11 +1136,11 @@ msgstr ""
 "muuttaa vain nimilapun: jo merkityt tiedostot säilyttävät nimen, jolla ne"
 " sinetöitiin, ja ne todentuvat edelleen."
 
-#: ../../source/cli_import_export.rst:611
+#: ../../source/cli_import_export.rst:612
 msgid "open — Ouvrir un fichier protégé"
 msgstr "open — Suojatun tiedoston avaaminen"
 
-#: ../../source/cli_import_export.rst:613
+#: ../../source/cli_import_export.rst:614
 msgid ""
 "Transforme un fichier protégé par mot de passe (``.dbx``) en base "
 "ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
@@ -1149,15 +1150,15 @@ msgstr ""
 "tietokannaksi. Salasanaa kysytään vain kerran; sen jälkeen kyseessä on "
 "tavallinen tiedosto."
 
-#: ../../source/cli_import_export.rst:623
+#: ../../source/cli_import_export.rst:624
 msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
 msgstr "``--db`` — Avattava ``.dbx``-tiedosto (pakollinen)."
 
-#: ../../source/cli_import_export.rst:624
+#: ../../source/cli_import_export.rst:625
 msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
 msgstr "``--password`` — Säiliön salasana (pakollinen)."
 
-#: ../../source/cli_import_export.rst:625
+#: ../../source/cli_import_export.rst:626
 msgid ""
 "``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
 "extension ``.db``)."
@@ -1165,7 +1166,7 @@ msgstr ""
 "``--file`` — Tavallisen tietokannan tulostuspolku (oletus: sama nimi, "
 "pääte ``.db``)."
 
-#: ../../source/cli_import_export.rst:628
+#: ../../source/cli_import_export.rst:629
 msgid ""
 "Ce que le mot de passe protège : le *transport* du fichier — la copie "
 "égarée dans un dossier de téléchargements, la pièce jointe envoyée par "
@@ -1315,3 +1316,4 @@ msgstr ""
 #~ "mitään. Daemon tarjoaa tuonnin osoitteessa "
 #~ "``/v1/documents.importReleve``. Se ei analysoi "
 #~ "yhtään PDF:ää."
+

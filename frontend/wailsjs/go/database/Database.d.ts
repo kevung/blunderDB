@@ -13,10 +13,10 @@ import {domain} from '../models';
 import {race} from '../models';
 import {duel} from '../models';
 import {direction} from '../models';
+import {document} from '../models';
 import {engine} from '../models';
 import {apkg} from '../models';
 import {tournoi} from '../models';
-import {document} from '../models';
 import {maintenance} from '../models';
 import {printsheet} from '../models';
 import {parser} from '../models';
@@ -262,6 +262,10 @@ export function DirectoryEntrants(arg1:number):Promise<Array<service.DirectoryEn
 export function DirectorySources():Promise<Array<service.DirectorySource>>;
 
 export function DiscardFromTrash(arg1:number):Promise<void>;
+
+export function DocumentDiagramImage(arg1:string,arg2:number,arg3:number,arg4:number,arg5:number,arg6:number):Promise<string>;
+
+export function DocumentSheet(arg1:string):Promise<Array<document.SheetEntry>>;
 
 export function DuelOffer():Promise<database.DuelOffer>;
 
@@ -547,6 +551,8 @@ export function LoadCommandHistory():Promise<Array<string>>;
 
 export function LoadComment(arg1:number):Promise<string>;
 
+export function LoadDocumentReleve(arg1:string):Promise<string>;
+
 export function LoadEditPosition(arg1:string):Promise<string>;
 
 export function LoadExcludePosition(arg1:string):Promise<string>;
@@ -773,6 +779,8 @@ export function SaveComment(arg1:number,arg2:string):Promise<void>;
 
 export function SaveDisplayedEvaluation(arg1:number,arg2:domain.PositionAnalysis,arg3:number):Promise<string>;
 
+export function SaveDocumentReleve(arg1:string,arg2:string):Promise<string>;
+
 export function SaveEditPosition(arg1:string,arg2:string):Promise<void>;
 
 export function SaveExcludePosition(arg1:string,arg2:string):Promise<void>;
@@ -988,6 +996,8 @@ export function UpdateTournamentComment(arg1:number,arg2:string):Promise<void>;
 export function UpdateTournamentOrigin(arg1:number,arg2:string):Promise<void>;
 
 export function Vacuum():Promise<database.VacuumResult>;
+
+export function VerifyDocumentEntry(arg1:string,arg2:string,arg3:number,arg4:boolean,arg5:string):Promise<string>;
 
 export function WithdrawParticipant(arg1:number,arg2:string,arg3:boolean):Promise<service.DirectionView>;
 

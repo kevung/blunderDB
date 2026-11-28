@@ -6,6 +6,7 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 
 const AnalyzeDocument = vi.fn(async () => '{"releve":1}');
 const ImportPaperArchive = vi.fn(async () => ({ imported: [1], duplicates: 0, positions: 0, knownPositions: 0, missing: [], failed: [] }));
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({ EventsOn: vi.fn(() => () => {}) }));
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     AnalyzeDocument: (/** @type {any[]} */ ...a) => AnalyzeDocument(...a),
     ImportPaperArchive: (/** @type {any[]} */ ...a) => ImportPaperArchive(...a),
@@ -14,6 +15,9 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ReviewDocumentReleve: vi.fn(),
     ConfirmDocumentReleve: vi.fn(),
     ImportDocumentReleve: vi.fn(),
+    LoadDocumentReleve: vi.fn(async () => ''),
+    SaveDocumentReleve: vi.fn(async () => ''),
+    DocumentSheet: vi.fn(async () => []),
     GetAllCollections: vi.fn(async () => [])
 }));
 const OpenDocumentDialog = vi.fn();

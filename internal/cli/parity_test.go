@@ -75,6 +75,7 @@ const (
 	whyDirectionRead     = "a read of the Direction the daemon serves (ADR-0057) to a client that draws the view itself; the CLI's `tournament` subcommand prints the sheets a script needs (list, standings, page, export, verify), not this view"
 	whyDocumentAnalysis  = "reading a document is done on the machine that holds the file (ADR-0117 rule 6): the daemon imports a Relevé (/v1/documents.importReleve) and reads no PDF a client would upload"
 	whyDocumentAssistant = "the import assistant of the desktop reads, reviews and confirms a Relevé held in memory; the CLI does the same on the file (document check lists the entries to review, text or json; confirming is setting \"confirmed\": true), the daemon imports the Relevé a desktop confirmed"
+	whyDocumentSheet     = "the verification sheet keeps its progress in the Relevé beside the document, on the machine that holds the file (ADR-0117 rule 6): the CLI reads and writes that file (document check, document verify), the daemon has no document to crop or write beside"
 	whyTrainingJournal   = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): a session exists only because someone answered it. A client that drills a person records and reads it over /v1/training.*, which `blunderdb call` also serves; a CLI sub-command would have no session of its own to run"
 )
 
@@ -248,6 +249,11 @@ var databaseParity = map[string]parityEntry{
 	"SummarizeDocumentReleve":           {CLI: "document check", Why: whyDocumentAssistant},
 	"ReviewDocumentReleve":              {CLI: "document check", Why: whyDocumentAssistant},
 	"ConfirmDocumentReleve":             {CLI: "document check", Why: whyDocumentAssistant},
+	"DocumentSheet":                     {CLI: "document check", Why: whyDocumentAssistant},
+	"VerifyDocumentEntry":               {CLI: "document verify", Why: whyDocumentSheet},
+	"LoadDocumentReleve":                {CLI: "document check", Why: whyDocumentSheet},
+	"SaveDocumentReleve":                {CLI: "document verify", Why: whyDocumentSheet},
+	"DocumentDiagramImage":              {Why: whyDocumentSheet + "; the CLI has no screen to show a cropped diagram on"},
 	"ImportLessonMarkdown":              {Server: "/v1/lessons.importMarkdown", Why: "Database.ImportLessonMarkdown serves the desktop, whose interface has no gesture for it yet; the CLI has no verb for it yet"},
 	"LessonHTMLCtx":                     {Why: whyCtxVariant},
 	"LessonPositionIDs":                 {Why: "lets the desktop draw a Lesson's boards in the palette on screen before asking for the document; the CLI and the daemon draw them with the built-in diagram"},

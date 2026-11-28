@@ -96,6 +96,12 @@ propre issue le jour où il est lancé.
 - **document : un videau lu par une seule source suffit** — exiger deux sources, ou une source
   encadrée. La règle du videau manquant fait perdre `complete` dans un document qui ne dessine le
   videau que possédé.
+- **document : suites de la planche de vérification** — (1) vérification par familles (ETUDE
+  §2.3 : une décision pour toutes les entrées d'un même doute), à mesurer d'abord sur un livre
+  réel ; (2) correction au plateau (clic sur les pions, mode EDIT) au lieu du XGID saisi ;
+  (3) compteur « Relevé : N à vérifier » dans la barre d'état et mémoire du poste des relevés en
+  cours (ETUDE §5, jamais exportée) ; (4) les doutes entourés sur le plateau même, pas seulement
+  nommés dessous ; (5) vignette d'un PDF dessiné par police (pas de rastériseur vectoriel).
 - **printsheet : `cubeChoices`** (`printsheet/positions.go:270-277`) — `Best` et `Others` peuvent
   diverger si le libellé stocké n'est pas l'une des trois actions.
 - **Archive papier : l'import n'est pas au catalogue d'actions** — le catalogue n'a pas d'entrée

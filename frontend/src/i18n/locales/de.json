@@ -3855,18 +3855,10 @@
         "acceptComplete": "Einträge mit 15 + 15 zweifelsfrei gelesenen Steinen akzeptieren ({n})",
         "fallback": "Mit dem Kontext der Stellung importieren, wenn er nicht gelesen ist ({n}); zu prüfende Felder stehen in der Referenz",
         "collection": "Sammlung",
-        "review": "Zu prüfende Einträge ({n})",
-        "reviewNone": "Kein Eintrag zu prüfen.",
         "refused": "Der Import wird für Rang {ranks} abgelehnt: bestätigen, akzeptieren oder Rückfall verwenden.",
         "run": "Importieren",
         "imported": "Sammlung {collection}: {added} Stellungen hinzugefügt, {repeated} wiederholt",
         "importedDetail": "{entries} Einträge, {positions} verschiedene Stellungen ({fresh} neu); vollständig: {complete}, Rückfall: {fallback}",
-        "state": {
-            "sure": "sicher",
-            "to-verify": "zu prüfen",
-            "uncertain": "unsicher"
-        },
-        "check": "Mit dem Diagramm vergleichen: {fields}",
         "field": {
             "cube": "Doppelwürfel",
             "dice": "Würfel",
@@ -3878,6 +3870,18 @@
             "pips": "Pipcounts",
             "diagram": "Lesen des Diagramms"
         },
-        "importMenu": "Dokument importieren…"
+        "importMenu": "Dokument importieren…",
+        "sheet": {
+            "filter": {
+                "sure": "Sicher",
+                "to-verify": "Zu prüfen",
+                "uncertain": "Unsicher",
+                "verified": "Geprüft"
+            },
+            "verify": "Bestätigen",
+            "unverify": "Bestätigung zurücknehmen",
+            "edit": "Korrigieren",
+            "write": "Schreiben"
+        }
     }
 }

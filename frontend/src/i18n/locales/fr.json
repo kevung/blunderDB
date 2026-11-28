@@ -3855,18 +3855,10 @@
         "acceptComplete": "Accepter les entrées de 15 + 15 pions lus sans doute ({n})",
         "fallback": "Importer sous le contexte que porte la position quand il n'est pas lu ({n}), les champs à vérifier nommés dans la référence",
         "collection": "Collection",
-        "review": "Entrées à vérifier ({n})",
-        "reviewNone": "Aucune entrée à vérifier.",
         "refused": "L'import est refusé pour le rang {ranks} : confirmez, acceptez ou utilisez le repli.",
         "run": "Importer",
         "imported": "Collection {collection} : {added} positions ajoutées, {repeated} répétées",
         "importedDetail": "{entries} entrées, {positions} positions distinctes ({fresh} nouvelles) ; complètes : {complete}, repli : {fallback}",
-        "state": {
-            "sure": "sûre",
-            "to-verify": "à vérifier",
-            "uncertain": "incertaine"
-        },
-        "check": "À comparer au diagramme : {fields}",
         "field": {
             "cube": "videau",
             "dice": "dés",
@@ -3878,6 +3870,18 @@
             "pips": "décomptes",
             "diagram": "lecture du diagramme"
         },
-        "importMenu": "Importer un document…"
+        "importMenu": "Importer un document…",
+        "sheet": {
+            "filter": {
+                "sure": "Sûres",
+                "to-verify": "À vérifier",
+                "uncertain": "Incertaines",
+                "verified": "Vérifiées"
+            },
+            "verify": "Valider",
+            "unverify": "Retirer la validation",
+            "edit": "Corriger",
+            "write": "Écrire"
+        }
     }
 }
