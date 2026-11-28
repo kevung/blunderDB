@@ -3404,6 +3404,31 @@ Examples:
   blunderdb document import --db database.db releve.json --collection "My book" --force
 ```
 
+### `blunderdb document verify`
+
+```
+Usage: blunderdb document verify [options] <releve.json|document>
+
+Record that entries of a relevé were compared with their diagrams: they become verified, and an
+import accepts them. --position replaces what was read by the correct XGID (one rank only);
+--undo withdraws the verdict. Given a document rather than a relevé, the relevé kept beside it
+by the interface's verification sheet is the one changed. Nothing is written to a database.
+
+Options:
+  -position string
+    	The correct position of the entry, as an XGID
+  -rank string
+    	Ranks of the entries, separated by commas (required)
+  -undo
+    	Withdraw the verdict: the entries are no longer verified
+
+Examples:
+  blunderdb document verify releve.json --rank 12
+  blunderdb document verify releve.json --rank 3,4,9
+  blunderdb document verify book.pdf --rank 12 --position "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:5:10"
+  blunderdb document verify releve.json --rank 12 --undo
+```
+
 ### `blunderdb duel contribute`
 
 ```

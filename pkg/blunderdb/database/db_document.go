@@ -1,6 +1,8 @@
 package database
 
 import (
+	"context"
+	"encoding/base64"
 	"fmt"
 	"time"
 
@@ -101,4 +103,83 @@ func (d *Database) ConfirmDocumentReleve(releveJSON string) (string, error) {
 	}
 	out, err := r.Encode()
 	return string(out), err
+}
+
+// DocumentSheet lists every entry of a Relevé for the verification sheet:
+// page, rectangle of its diagram, position read, state, whether a person
+// verified it and the fields to compare. It reads and writes no database.
+func (d *Database) DocumentSheet(releveJSON string) ([]document.SheetEntry, error) {
+	r, err := document.Decode([]byte(releveJSON))
+	if err != nil {
+		return nil, err
+	}
+	return document.Sheet(r), nil
+}
+
+// LoadDocumentReleve returns the Relevé kept for what the person opened at
+// path — beside a document, or the Relevé file itself — as JSON text, ""
+// when there is none or it was read from another version of the document:
+// a book is verified over several sittings. It reads no database.
+func (d *Database) LoadDocumentReleve(path string) (string, error) {
+	if document.IsReleveFile(path) {
+		return "", nil
+	}
+	r, err := document.LoadSidecar(path)
+	if err != nil || r == nil {
+		return "", err
+	}
+	out, err := r.Encode()
+	return string(out), err
+}
+
+// SaveDocumentReleve writes the Relevé where LoadDocumentReleve finds it
+// again and returns that file's path. Nothing goes into the database: the
+// progress of a verification lives with the document (ADR-0117).
+func (d *Database) SaveDocumentReleve(path, releveJSON string) (string, error) {
+	r, err := document.Decode([]byte(releveJSON))
+	if err != nil {
+		return "", err
+	}
+	dst := document.ReleveFileFor(path)
+	return dst, document.WriteFile(dst, r)
+}
+
+// VerifyDocumentEntry records a person's verdict on the entry of the given
+// rank — verified or not, with position as the correction of what was read
+// when not empty — and returns the Relevé as JSON text, also written where
+// SaveDocumentReleve writes it when path is not empty.
+func (d *Database) VerifyDocumentEntry(path, releveJSON string, rank int, verified bool, position string) (string, error) {
+	r, err := document.Decode([]byte(releveJSON))
+	if err != nil {
+		return "", err
+	}
+	if err := document.SetVerified(r, rank, verified, position); err != nil {
+		return "", err
+	}
+	out, err := r.Encode()
+	if err != nil {
+		return "", err
+	}
+	if path != "" {
+		if err := document.WriteFile(document.ReleveFileFor(path), r); err != nil {
+			return string(out), fmt.Errorf("the verdict is kept until the import but could not be saved: %w", err)
+		}
+	}
+	return string(out), nil
+}
+
+// DocumentDiagramImage crops the diagram at the rectangle (fractions of the
+// page) of the given page of what the person opened at path, from its
+// document, and returns it as a PNG data URL at most 480 pixels wide. It is
+// redrawn from the file each time and never stored.
+func (d *Database) DocumentDiagramImage(path string, page int, x, y, w, h float64) (string, error) {
+	src := document.SourceFor(path)
+	if src == "" {
+		return "", document.ErrNoPageImage
+	}
+	png, err := document.DiagramImage(context.Background(), src, page, document.Rect{X: x, Y: y, W: w, H: h}, 480)
+	if err != nil {
+		return "", err
+	}
+	return "data:image/png;base64," + base64.StdEncoding.EncodeToString(png), nil
 }

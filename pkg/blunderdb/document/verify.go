@@ -116,6 +116,31 @@ func SourceOf(relevePath string) string {
 	return src
 }
 
+// IsReleveFile reports a path named as a Relevé, which is then read and
+// written itself rather than beside it.
+func IsReleveFile(path string) bool {
+	return strings.EqualFold(filepath.Ext(path), ".json")
+}
+
+// ReleveFileFor is where the Relevé of what a person opened is kept: the
+// file itself when it is a Relevé, else beside the document.
+func ReleveFileFor(path string) string {
+	if IsReleveFile(path) {
+		return path
+	}
+	return SidecarPath(path)
+}
+
+// SourceFor is the document whose pages the diagrams of what a person
+// opened are cropped from: the document itself, or the one a Relevé kept
+// beside it was read from ("" when unknown).
+func SourceFor(path string) string {
+	if IsReleveFile(path) {
+		return SourceOf(path)
+	}
+	return path
+}
+
 // LoadSidecar reads the Relevé kept beside the document at path. It returns
 // nil, and no error, when there is none or when it was read from another
 // version of the file (its SHA-256 differs): the document is then read anew.
